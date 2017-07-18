@@ -1,0 +1,56 @@
+<div class="container">
+<p>{{message}}</p>
+<form class="form-horizontal" (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
+<fieldset>
+
+<!-- Form Name -->
+<legend>Register</legend>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textinput">User name</label>  
+  <div class="col-md-4">
+  <input id="textinput" name="UserName" type="text" ngModel placeholder="User name" class="form-control input-md" required [(ngModel)]="model.textinput" 
+               #textinput="ngModel">
+  <div [hidden]="textinput.valid || textinput.pristine"
+             class="alert alert-danger">
+          Name is required
+        </div>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textinput">Password</label>  
+  <div class="col-md-4">
+  <input id="password" name="Password" type="password" ngModel placeholder="Password" class="form-control input-md" required [(ngModel)]="model.password"
+  #password="ngModel">
+  <div [hidden]="password.valid || password.pristine"
+             class="alert alert-danger">
+          password is required
+        </div>
+
+    
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="email">Password (Confirm)</label>  
+  <div class="col-md-4">
+  <input id="email" name="password_confirm" ngModel type="password" placeholder="Password (Confirm)" class="form-control input-md" required="">
+    
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button id="singlebutton" name="singlebutton" class="btn btn-primary" [disabled]="!userForm.form.valid">Register</button>
+  </div>
+</div>
+
+</fieldset>
+</form>
+</div>

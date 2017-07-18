@@ -1,0 +1,29 @@
+<app-nav></app-nav>
+  <div class="container">
+  <p>{{message}}</p>
+  <h2>Members</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Member</th>
+        <th>ID</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let member of obj | paginate: { itemsPerPage: 2, currentPage: p }; let i = index">
+            <td *ngIf="member.id != '_design/_auth'">
+             {{member.doc.name}}
+            </td>
+            <td *ngIf="member.id != '_design/_auth'">
+             {{member.id}}
+            </td>
+            <td *ngIf="member.id != '_design/_auth'">
+                <button class="btn btn-danger" ngMOdel (click)="onDelete(member.doc.id,member.doc._rev,i)">Delete</button>
+            </td>
+         </tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+<app-footer></app-footer>
