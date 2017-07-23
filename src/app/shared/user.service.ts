@@ -17,7 +17,7 @@ export class UserService {
     }
     
     unset():any {
-        this.user = {};
+        this.user = '';
     }
     
 }

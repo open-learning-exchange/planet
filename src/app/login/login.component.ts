@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
 // import { FormGroup, FormControl } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
+import { Router, CanActivate } from '@angular/router';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +15,8 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private couchService: CouchService,
-        // private router: Router
+        private userService: UserService,
+        private router: Router
     ) {}
     
     model = { name:'', password:'', repeatPassword:'' };
@@ -24,6 +27,7 @@ export class LoginComponent implements OnInit {
             // UserName = new FormControl(),
             // Password = new FormControl()
         // });
+        console.log(this.userService.get());
     }        
 
     onSubmit = function(user){
@@ -32,15 +36,8 @@ export class LoginComponent implements OnInit {
     
     login(user) {
         this.couchService.post('_session', {'name':user.UserName, 'password':user.Password}, { withCredentials:true })
-            .then((data) => { 
-                this.message = 'Hi, ' + data.name + '!';
-                // this.reRoute();
-                console.log(data);
-            },(error) => this.message = 'Username and/or password do not match');
-        /**this.couchService.post('_session', {'name':name, 'password':password}, { withCredentials:true })
-            .then((data) => { 
-                this.message = 'Hi, ' + data.name + '!';
-                // this.reRoute();
-            },(error) => this.message = 'Username and/or password do not match');**/
+        .then((data) => { 
+            this.router.navigate(['/dashboard']);
+        },(error) => this.message = 'Username and/or password do not match');
     }
 }
