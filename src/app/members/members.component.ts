@@ -22,7 +22,7 @@ export class MembersComponent implements OnInit {
      this.couchService.get('_users/_all_docs?include_docs=true')
         .then((data) => {
             this.obj = data.rows;
-            console.log(data.rows);
+            console.log(data);
         }, (error) => this.message = '');
   }
 

@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule,ReactiveFormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
-
+import { HostBinding } from '@angular/core';
 import { RouterModule,Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -19,7 +19,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
 import { MembersComponent } from './members/members.component';
 import { TestComponent } from './test/test.component';
-import { NgxPaginationModule } from 'ngx-pagination'
+import { NgxPaginationModule } from 'ngx-pagination';
+import { MeetupsComponent } from './meetups/meetups.component';
+import { MeetupsaddComponent } from './meetupsadd/meetupsadd.component'
 
 // const appRoutes: Routes = [
   // { path: '',   component: LoginComponent, pathMatch: 'full' }
@@ -36,7 +38,9 @@ import { NgxPaginationModule } from 'ngx-pagination'
     DashboardComponent,
     RegisterComponent,
     MembersComponent,
-    TestComponent
+    TestComponent,
+    MeetupsComponent,
+    MeetupsaddComponent
   ],
   imports: [
     BrowserModule,
@@ -72,6 +76,16 @@ import { NgxPaginationModule } from 'ngx-pagination'
             path: 'members',
             canActivate: [AuthService],
             component: MembersComponent
+        },
+        {
+            path: 'meetups',
+            canActivate: [AuthService],
+            component: MeetupsComponent
+        },
+         {
+            path: 'meetupsadd',
+            canActivate: [AuthService],
+            component: MeetupsaddComponent
         },
         {
             path: '**',

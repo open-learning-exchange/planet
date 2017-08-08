@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
 
@@ -16,8 +16,18 @@ export class LoginComponent implements OnInit {
     constructor(
         private couchService: CouchService,
         private userService: UserService,
-        private router: Router
-    ) {}
+        private router: Router,
+      
+    ) { 
+       document.body.style.backgroundImage = "url(../assets/planet_home.png)"
+       document.body.style.backgroundRepeat = "no-repeat";
+       document.body.style.backgroundSize  = "cover";
+       document.body.style.backgroundPosition = "center center";
+       document.body.style.backgroundAttachment = "fixed";
+}
+ngOnDestroy(){
+        document.body.style.backgroundImage = "none";
+      }
     
     model = { name:'', password:'', repeatPassword:'' };
     message = "";

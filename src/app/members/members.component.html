@@ -6,6 +6,7 @@
     <thead>
       <tr>
         <th>Member</th>
+        <th>ID</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -15,7 +16,10 @@
              {{member.doc.name}}
             </td>
             <td *ngIf="member.id != '_design/_auth'">
-                <button class="btn btn-danger" ngMOdel (click)="onDelete(member.id,member.doc._rev,i)">Delete</button>
+             {{member.id}}
+            </td>
+            <td *ngIf="member.id != '_design/_auth'">
+                <button class="btn btn-danger" ngMOdel (click)="onDelete(member.doc.id,member.doc._rev,i)">Delete</button>
             </td>
          </tr>
     </tbody>

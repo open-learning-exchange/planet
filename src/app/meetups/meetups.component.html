@@ -1,0 +1,30 @@
+<app-nav></app-nav>
+  <div class="container">
+  <p>{{message}}</p>
+  <h2>Meetups</h2>
+   <a routerLink="../meetupsadd" class='btn btn-primary' routerLinkActive="active">Meetup Add</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let meetups of obj | paginate: { itemsPerPage: 2, currentPage: p }; let i = index">
+            <td *ngIf="meetups.id != '_design/_auth'">
+             {{meetups.doc.title}}
+            </td>
+            <td *ngIf="meetups.id != '_design/_auth'">
+             {{meetups.doc.description}}
+            </td>
+            <td *ngIf="meetups.id != '_design/_auth'">
+                <button class="btn btn-danger" ngMOdel (click)="onDelete(meetups.doc.id,meetups.doc._rev,i)">Delete</button>
+            </td>
+         </tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+<app-footer></app-footer>
