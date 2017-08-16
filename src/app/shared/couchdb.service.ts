@@ -6,7 +6,7 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class CouchService {
     private headers = new Headers({'Content-Type':'application/json'});
-    private baseUrl = 'http://127.0.0.1:5986/';
+    private baseUrl = 'http://127.0.0.1:5984/';
     
     constructor(private http: Http) {}
     
