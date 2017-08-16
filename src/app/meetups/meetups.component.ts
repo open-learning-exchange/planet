@@ -1,28 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Router, CanActivate } from '@angular/router';
-import { UserService } from '../shared/user.service';
 
 @Component({
-  selector: 'app-meetups',
   templateUrl: './meetups.component.html',
-  styleUrls: ['./meetups.component.css']
 })
 export class MeetupsComponent implements OnInit {
   message = "";
-  obj = [];	
+  meetups = [];	
   constructor(
-  		private couchService: CouchService,
-        private userService: UserService,
-        private router: Router
+  		private couchService: CouchService
   	) { }
+    
+  getMeetups() {
+    this.couchService.get('meetups/_all_docs?include_docs=true')
+        .then((data) => {
+            this.meetups = data.rows;
+        }, (error) => this.message = 'There was a problem getting meetups');
+  }
+  
+  deleteMeetup(meetupId,meetupRev) {
+    this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
+        .then((data) => {
+            this.getMeetups();
+        }, (error) => this.message = 'There was a problem deleting this meetup');
+  }
 
   ngOnInit() {
-  	this.couchService.get('meetups/_all_docs?include_docs=true')
-        .then((data) => {
-            this.obj = data.rows;
-            console.log(data);
-        }, (error) => this.message = '');
+  	this.getMeetups();
   }
 
 }
