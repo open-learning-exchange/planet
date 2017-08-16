@@ -1,0 +1,22 @@
+dist/
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# IDEs
+.idea/
+jsconfig.json
+.vscode/
+
+# Typings file.
+typings/
+
+# Misc
+tmp/
+
+# Mac OSX Finder files.
+**/.DS_Store
+.DS_Store
+
+# Files
+src/app/shared/couchdb.service.ts
