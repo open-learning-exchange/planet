@@ -1,17 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+
 import { UserService } from '../shared/user.service';
 
+// Main page once logged in.  At this stage is more of a placeholder.
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+    template: `
+        <div id="greeting">Hi, {{name}}</div>
+    `
 })
 export class DashboardComponent implements OnInit {
-
-  constructor(private userService: UserService) { }
-
-  ngOnInit() {
-      console.log(this.userService.get());
-  }
-
+    name = '';
+    roles:string[] = [];
+    
+    constructor(
+        private userService: UserService
+    ) {}
+    
+    ngOnInit() {
+        Object.assign(this,this.userService.get());
+    }
 }

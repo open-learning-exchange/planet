@@ -6,16 +6,22 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class CouchService {
     private headers = new Headers({'Content-Type':'application/json'});
-    private baseUrl = 'http://127.0.0.1:5986/';
+    private defaultOpts = {headers:this.headers,withCredentials:true};
+    private baseUrl = 'http://127.0.0.1:5984/';
+    
+    private setOpts(opts?:any) {
+        return Object.assign({},this.defaultOpts,opts) || this.defaultOpts;
+    }
     
     constructor(private http: Http) {}
     
-    put(db:string,data:any): Promise<any> {
+    put(db:string,data:any,opts?:any): Promise<any> {
         const url = this.baseUrl + db;
         const putData = data ? JSON.stringify(data) : '';
+        opts = this.setOpts(opts);
         
         return this.http
-            .put(url,putData,{headers:this.headers})
+            .put(url,putData,opts)
             .toPromise()
             .then(this.handleRes)
             .catch(this.handleError);
@@ -24,7 +30,7 @@ export class CouchService {
     post(db:string,data:any,opts?:any): Promise<any> {
         const url = this.baseUrl + db;
         const postData = data ? JSON.stringify(data) : '';
-        opts = Object.assign({},{headers:this.headers},opts) || {headers:this.headers};
+        opts = this.setOpts(opts);
         
         return this.http
             .post(url,postData,opts)
@@ -35,7 +41,7 @@ export class CouchService {
     
     get(db:string,opts?:any): Promise<any> {
         const url = this.baseUrl + db;
-        opts = opts || {};
+        opts = this.setOpts(opts);
         
         return this.http
             .get(url,opts)
@@ -46,7 +52,7 @@ export class CouchService {
     
     delete(db:string,opts?:any): Promise<any> {
         const url = this.baseUrl + db;
-        opts = opts || {};
+        opts = this.setOpts(opts);
         
         return this.http
             .delete(url,opts)

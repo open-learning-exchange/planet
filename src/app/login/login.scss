@@ -1,0 +1,60 @@
+@import '../variables';
+
+.ole-login {
+    
+    height:110vh;
+    width:600px;
+    margin: -($body-margin) auto;
+    color:white;
+    background: linear-gradient($ole-blue-light,$ole-blue-dark);
+    
+    .ole-logo {
+        position:relative;
+        top:-200px;
+        height:600px;
+        width:600px;
+        background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
+        
+        img {
+            position:relative;
+            top:50%;
+            transform:translate(0,-50%);
+            height:100px;
+            width:100px;
+            display:block;
+            margin:0 auto;
+        }
+    }
+    
+    
+    form {
+    
+        width:300px;
+        margin:0 auto;
+        text-align:center;
+    
+        div {
+            margin:8px 0;
+            label {
+                display:inline-block;
+                width: 33%;
+                text-align:right;
+                margin-right:3px;
+            }
+    
+        }
+    }
+    
+    input {
+        border:0px;
+        border-bottom:1px solid white;
+        color:white;
+        background:none;
+    }
+    
+    input::-webkit-input-placeholder {
+        color: white;
+        opacity:1;
+    }
+    
+}

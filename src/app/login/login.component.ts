@@ -1,53 +1,76 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
-// import { FormGroup, FormControl } from '@angular/forms';
+import { Component } from '@angular/core';
+
 import { CouchService } from '../shared/couchdb.service';
-import { Router, CanActivate } from '@angular/router';
-import { UserService } from '../shared/user.service';
+import { Router } from '@angular/router';
+
+require('./login.scss');
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+    template: `
+        <div class="ole-login">
+            <div class="ole-logo">
+                <img src="assets/cropped-ole-ico-logo-180x180.png">
+            </div>
+            <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+                <div>
+                    <input [(ngModel)]="model.name" placeholder="Username" name="name" />
+                </div>
+                <div>
+                    <input [(ngModel)]="model.password" placeholder="Password" name="password" />
+                </div>
+                <div *ngIf="createMode">
+                    <input [(ngModel)]="model.repeatPassword" placeholder="Repeat Password" name="repeatPassword" />
+                </div>
+                <div>
+                    <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? 'Already have an account?' : 'Are you new?' }}</a>
+                    <button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'Login' }}</button>
+                </div>
+            </form>
+        <div id="login-status">{{message}}</div>
+        </div>
+    `,
+    styleUrls:['./login.scss']
+    
 })
-export class LoginComponent implements OnInit {
-
-    // form;
-
+export class LoginComponent { 
     constructor(
         private couchService: CouchService,
-        private userService: UserService,
-        private router: Router,
-      
-    ) { 
-       document.body.style.backgroundImage = "url(../assets/planet_home.png)"
-       document.body.style.backgroundRepeat = "no-repeat";
-       document.body.style.backgroundSize  = "cover";
-       document.body.style.backgroundPosition = "center center";
-       document.body.style.backgroundAttachment = "fixed";
-}
-ngOnDestroy(){
-        document.body.style.backgroundImage = "none";
-      }
+        private router: Router
+    ) {}
     
-    model = { name:'', password:'', repeatPassword:'' };
-    message = "";
-
-    ngOnInit(){
-        // this.form = new FormGroup({
-            // UserName = new FormControl(),
-            // Password = new FormControl()
-        // });
-        console.log(this.userService.get());
-    }        
-
-    onSubmit = function(user){
-        this.login(user);
+    createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
+    model = { name:'', password:'', repeatPassword:'' }
+    message = '';
+    
+    onSubmit() {
+        if(this.createMode) {
+            this.createUser(this.model);
+        } else {
+            this.login(this.model);
+        }
     }
     
-    login(user) {
-        this.couchService.post('_session', {'name':user.UserName, 'password':user.Password}, { withCredentials:true })
-        .then((data) => { 
-            this.router.navigate(['/dashboard']);
-        },(error) => this.message = 'Username and/or password do not match');
+    reRoute() {
+        this.router.navigate(['/'], {});
+    }
+    
+    createUser({name,password,repeatPassword}:{name:string,password:string,repeatPassword:string}) {
+        if(password === repeatPassword) {
+            this.couchService.put('_users/org.couchdb.user:' + name, {'name': name, 'password': password, 'roles': [], 'type': 'user'})
+                .then((data) => {
+                    this.message = 'User created: ' + data.id.replace('org.couchdb.user:','');
+                    this.reRoute();
+                }, (error) => this.message = '');
+        } else {
+            this.message = 'Passwords do not match';
+        }
+    }
+    
+    login({name,password}:{name:string,password:string}) {
+        this.couchService.post('_session', {'name':name, 'password':password}, { withCredentials:true })
+            .then((data) => { 
+                this.message = 'Hi, ' + data.name + '!';
+                this.reRoute();
+            },(error) => this.message = 'Username and/or password do not match');
     }
 }
