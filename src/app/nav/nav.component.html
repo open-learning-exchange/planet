@@ -1,22 +1,27 @@
 <nav *ngIf="isLoggedIn.name" class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
   <ul class="nav navbar-nav mr-auto">
     <li class="nav-item active">
-      <a class="nav-link" href="/dashboard">Home <span class="sr-only">(current)</span></a>
+      <a class="nav-link" href="/dashboard"><i class="fa fa-home" aria-hidden="true"></i>
+Home <span class="sr-only">(current)</span></a>
     </li>
     <li  role="presentation" >
-      <a class="nav-link" href="/#">My Library <span class="badge badge-success">4</span></a>
+      <a class="nav-link" href="/resources"><i class="fa fa-university" aria-hidden="true"></i>
+My Library <span class="badge badge-success">4</span></a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="/#">My Course <span class="badge badge-success">40</span></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="/members">Members <span class="badge badge-success">54</span></a>
+      <a class="nav-link" href="/members"><i class="fa fa-user-plus" aria-hidden="true"></i>
+Members <span class="badge badge-success">54</span></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="/meetups">My Meetups <span class="badge badge-success">2</span></a>
+      <a class="nav-link" href="/meetups"><i class="fa fa-handshake-o" aria-hidden="true"></i>
+My Meetups <span class="badge badge-success">2</span></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" (click)="logout()">Logout </a>
+      <a class="nav-link" (click)="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i>
+Logout </a>
     </li>
   </ul>
 </nav>

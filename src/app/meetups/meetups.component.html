@@ -2,7 +2,8 @@
   <div class="container">
   <p>{{message}}</p>
   <h2>Meetups</h2>
-   <a routerLink="../meetupsadd" class='btn btn-primary' routerLinkActive="active">Meetup Add</a>
+   <a routerLink="../meetupsadd" class='btn btn-primary' routerLinkActive="active"><i class="fa fa-plus" aria-hidden="true"></i>
+Meetup Add</a><br>
   <table class="table">
     <thead>
       <tr>
@@ -12,15 +13,16 @@
       </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let meetups of obj | paginate: { itemsPerPage: 2, currentPage: p }; let i = index">
-            <td *ngIf="meetups.id != '_design/_auth'">
+        <tr *ngFor="let meetups of obj | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+            <td *ngIf="meetups.id != '_design/meetup'">
              {{meetups.doc.title}}
             </td>
-            <td *ngIf="meetups.id != '_design/_auth'">
+            <td *ngIf="meetups.id != '_design/meetup'">
              {{meetups.doc.description}}
             </td>
-            <td *ngIf="meetups.id != '_design/_auth'">
-                <button class="btn btn-danger" ngMOdel (click)="onDelete(meetups.doc.id,meetups.doc._rev,i)">Delete</button>
+            <td *ngIf="meetups.id != '_design/meetup'">
+                <button class="btn btn-primary" ngMOdel (click)="onEdit(meetups.id,meetups.doc._rev,i)"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+                <button class="btn btn-danger" ngMOdel (click)="onDelete(meetups.id,meetups.doc._rev,i)"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
             </td>
          </tr>
     </tbody>

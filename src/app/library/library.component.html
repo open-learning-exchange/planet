@@ -1,0 +1,30 @@
+<app-nav></app-nav>
+<div class="container">
+<div id="parentLibrary"><p id="resourcePage">
+	<a id="addNewResource" class="btn btn-success" href="/add"><i class="fa fa-plus" aria-hidden="true"></i> Add New Resource</a>
+	<a id="requestResource" class="btn btn-success" href="#resource/add">Request Resource</a>
+	<a id="searchOfResource" class="btn btn-primary" href='/search'><i class="fa fa-search" aria-hidden="true"></i>
+ Search</a>
+</p>
+	<p id="labelOnResource"><a href="#resources">Resources</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#collection">Collections</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#resources/pending">Pending Resources</a></p>
+</div>
+<table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td>
+                <button class="btn btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</button>
+                <button class="btn btn-danger" ><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+            </td>
+         </tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>
+<app-footer></app-footer>

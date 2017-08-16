@@ -24,5 +24,27 @@ export class MeetupsComponent implements OnInit {
             console.log(data);
         }, (error) => this.message = '');
   }
+    onDelete(meetups_id,rev_id,index){
+        if(meetups_id) {
+            this.couchService.delete('meetups/'+meetups_id+'?rev='+rev_id)
+                .then((data) => {
+                    this.obj.splice(index,1);
+                }, (error) => this.message = '');
+        } else {
+            this.message = 'There is no meetups';
+        }
+    }
+
+/*        onDelete(meetups_id,rev_id,index){
+          if(meetups_id) {
+              this.couchService.get('meetups/'+meetups_id+'?rev='+rev_id)
+                  .then((data) => {
+                      this.obj.splice(index,1);
+                  }, (error) => this.message = '');
+          } else {
+              this.message = 'There is no meetups';
+          }
+      }
+      */
 
 }

@@ -1,19 +1,53 @@
+<div class="container">
+<div class="card">
+    <div id="my-tab-content" class="tab-content">
+        <div class="tab-pane active" id="login">
+            <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                        alt="">
+        </div>
+    </div>
+    <form  (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
+        <div class="input-container">
+            <input type="text" id="Username" name="UserName" required="required" ngModel />
+            <label for="Username">Username</label>
+            <div class="bar"></div>
+        </div>
+        <div class="input-container">
+            <input type="password" id="Password"  name="Password" ngModel required="required"/>
+            <label for="Password">Password</label>
+            <div class="bar"></div>
+        </div>
+        <div class="button-container">
+            <button type="submit" class="btn btn-primary"><span>Sign in</span></button><BR />
+            <a href="/register" class="text-center new-account">Become a member </a><BR />
+            <div class="text-center">
+                <a href="#" class="">FEEDBACK</a> | <a href="#" class="">LANGUAGE</a>
+            </div>
+      </div>
+      <div class="footer"><a href="#">Forgot your password?</a></div>
+    </form>
+  </div>
+  </div>
+
 <!-- <div class='dark' [ngStyle]="{'background': 'url(../assets/planet_home.png) no-repeat center 0 fixed','min-height': '800px','-webkit-background-size': 'cover','-moz-background-size': 'cover','-o-background-size': 'cover','background-size': 'cover'}"> -->
-    <div class="container">
+    <!-- <div class="container">
         <div class="row">
             <div class="col-sm-6 col-md-4 col-md-offset-4" style="margin: 100px auto 0;">
                 {{message}}
                 
-                <div class="account-wall">
+                <div class="account-wall"> -->
+               
+
                     <!-- <form class="form-signin" (ngSubmit)="onSubmit(userForm.value)" [formGroup] = "form.value"> -->
                     <!-- <input type="text" class="form-control" placeholder="UserName" name="UserName" formControlName="UserName"> -->
                     <!-- <input type="password" class="form-control" placeholder="Password" name="Password" formControlName="Password"> -->
-                      <form class="form-signin" (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
+                      <!-- <form class="form-signin" >
                        
-                    <label for="Username">Username</label>
-                    <input type="text" class="form-control" placeholder="UserName" name="UserName" ngModel>
+                    <label for="Username"><i class="fa fa-user" aria-hidden="true"></i>
+Username</label>
+                    <input type="text" class="form-control" placeholder="UserName" name="UserName" ngModel style="background: none;" ><div class="bar"></div>
                     <label for="Password">Password</label>
-                    <input type="password" class="form-control" placeholder="Password" name="Password" ngModel>
+                    <input type="password" class="form-control" placeholder="Password" name="Password" ngModel style="background: none;">
                     <button class="btn btn-lg btn-primary btn-block" type="submit">
                         Sign in</button>
                     <a href="/register" class="text-center new-account">Become a member </a><BR />
@@ -25,5 +59,5 @@
                 
             </div>
         </div>
-    </div>
+    </div> -->
 <!-- </div> -->

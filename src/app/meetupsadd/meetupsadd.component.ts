@@ -27,7 +27,7 @@ export class MeetupsaddComponent implements OnInit {
       	console.log(meetup.description,meetup.title)
         this.couchService.post('meetups', {'title': meetup.title, 'description': meetup.description})
             .then((data) => {
-                this.message = 'meetup created: ';
+              alert('Meetup Added');
                 //this.router.navigate(['']);
             }, (error) => this.message = '');
         } else {

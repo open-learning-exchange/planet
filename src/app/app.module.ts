@@ -21,7 +21,8 @@ import { MembersComponent } from './members/members.component';
 import { TestComponent } from './test/test.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MeetupsComponent } from './meetups/meetups.component';
-import { MeetupsaddComponent } from './meetupsadd/meetupsadd.component'
+import { MeetupsaddComponent } from './meetupsadd/meetupsadd.component';
+import { LibraryComponent } from './library/library.component'
 
 // const appRoutes: Routes = [
   // { path: '',   component: LoginComponent, pathMatch: 'full' }
@@ -40,7 +41,8 @@ import { MeetupsaddComponent } from './meetupsadd/meetupsadd.component'
     MembersComponent,
     TestComponent,
     MeetupsComponent,
-    MeetupsaddComponent
+    MeetupsaddComponent,
+    LibraryComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +54,17 @@ import { MeetupsaddComponent } from './meetupsadd/meetupsadd.component'
         {
             path: '',
             component: LoginComponent
+        },
+        {
+            path: 'resources',
+            canActivate: [AuthService],
+            component: LibraryComponent,
+            children: [
+              {
+                path: 'add',
+                component: LibraryComponent
+              }
+            ]
         },
         {
             path: 'login',
