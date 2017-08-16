@@ -19,4 +19,4 @@ tmp/
 .DS_Store
 
 # Files
-src/app/shared/couchdb.service
+src/app/shared/couchdb.service.ts
