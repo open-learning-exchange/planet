@@ -7,6 +7,7 @@
     margin: -($body-margin) auto;
     color:white;
     background: linear-gradient($ole-blue-light,$ole-blue-dark);
+    text-align:center;
     
     .ole-logo {
         position:relative;
@@ -14,16 +15,19 @@
         height:600px;
         width:600px;
         background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
-        
-        img {
+        * {
             position:relative;
             top:50%;
-            transform:translate(0,-50%);
+            transform:translate(0,-50%);            
+            text-shadow:1px 1px black;
+        }
+        img {
             height:100px;
             width:100px;
             display:block;
             margin:0 auto;
         }
+        
     }
     
     
@@ -31,18 +35,19 @@
     
         width:300px;
         margin:0 auto;
-        text-align:center;
+        
+        input {
+            width:300px;
+        }
     
         div {
             margin:8px 0;
-            label {
-                display:inline-block;
-                width: 33%;
-                text-align:right;
-                margin-right:3px;
-            }
-    
         }
+            
+        .login-actions a {
+            display:inline-block;
+        }
+        
     }
     
     input {

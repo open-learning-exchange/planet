@@ -10,6 +10,8 @@ require('./login.scss');
         <div class="ole-login">
             <div class="ole-logo">
                 <img src="assets/cropped-ole-ico-logo-180x180.png">
+                <h1>Planet Learning</h1>
+                <h3>Version 2.01</h3>
             </div>
             <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
                 <div>
@@ -21,9 +23,9 @@ require('./login.scss');
                 <div *ngIf="createMode">
                     <input [(ngModel)]="model.repeatPassword" placeholder="Repeat Password" name="repeatPassword" />
                 </div>
-                <div>
+                <div class="login-actions">
+                    <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
                     <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? 'Already have an account?' : 'Are you new?' }}</a>
-                    <button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'Login' }}</button>
                 </div>
             </form>
         <div id="login-status">{{message}}</div>
