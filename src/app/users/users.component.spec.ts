@@ -79,8 +79,8 @@ describe('Users', () => {
             let userSpy = spyOn(userService, 'get').and.returnValue({ roles:['_admin'] });
             let couchSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({rows:[]}));
             comp.ngOnInit();
-            expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true',{ withCredentials:true });
-            expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins',{ withCredentials:true });
+            expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
+            expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
         });
         
     });
@@ -93,7 +93,7 @@ describe('Users', () => {
             let initSpy = spyOn(comp,'initializeData').and.callFake(() => { } );
             let couchSpy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({}));
             comp.deleteRole({name:'Test',roles:['one','two','three']},1,testEvent);
-            expect(couchService.put).toHaveBeenCalledWith('_users/org.couchdb.user:Test',{name:'Test',roles:['one','three']},{ withCredentials:true });
+            expect(couchService.put).toHaveBeenCalledWith('_users/org.couchdb.user:Test',{name:'Test',roles:['one','three']});
         });
         
     });
