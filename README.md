@@ -1,28 +1,24 @@
-# AngBellApp
+# BeLL apps Angular reboot prototype **Planet**
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.1.
+Project to create a prototype for a reboot of the BeLL apps using Angular4 & CouchDB.
 
-## Development server
+## To work on this
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+The only prequisite is Vagrant.  After cloning the repository, run `vagrant up` in the console.  Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`
 
-## Code scaffolding
+## Unit & end-to-end tests
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+To run testing you will have to first ssh into the virtual machine with `vagrant ssh`, then you can run one of the two commands:
 
-## Build
+`ng test` - Unit tests
+Open `localhost:9876` once this is done compiling
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+`ng e2e` - End-to-end tests
+Open `localhost:49152` once this is done compiling
 
-## Running unit tests
+## Project guidelines
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+* Please check out [the project page](https://github.com/ole-vi/planet/projects/1) for available tasks to work on.
+* If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
+* To work on an issue, create a new branch with a descriptive title.
+* Please wait for at least two positive reviews before merging a PR into the master branch
