@@ -10,12 +10,23 @@ export class MeetupsComponent implements OnInit {
   constructor(
   		private couchService: CouchService
   	) { }
-
-  ngOnInit() {
-  	this.couchService.get('meetups/_all_docs?include_docs=true')
+    
+  getMeetups() {
+    this.couchService.get('meetups/_all_docs?include_docs=true')
         .then((data) => {
             this.meetups = data.rows;
         }, (error) => this.message = 'There was a problem getting meetups');
+  }
+  
+  deleteMeetup(meetupId,meetupRev) {
+    this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
+        .then((data) => {
+            this.getMeetups();
+        }, (error) => this.message = 'There was a problem deleting this meetup');
+  }
+
+  ngOnInit() {
+  	this.getMeetups();
   }
 
 }

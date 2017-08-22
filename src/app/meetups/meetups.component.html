@@ -12,15 +12,15 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let meetups of obj; let i = index">
-            <td *ngIf="meetups.id != '_design/_auth'">
-                {{meetups.doc.title}}
+        <tr *ngFor="let meetup of meetups; let i = index">
+            <td>
+                {{meetup.doc.title}}
             </td>
-            <td *ngIf="meetups.id != '_design/_auth'">
-                {{meetups.doc.description}}
+            <td>
+                {{meetup.doc.description}}
             </td>
-            <td *ngIf="meetups.id != '_design/_auth'">
-                <button class="btn btn-danger" ngMOdel (click)="onDelete(meetups.doc.id,meetups.doc._rev,i)">Delete</button>
+            <td>
+                <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
             </td>
         </tr>
     </tbody>
