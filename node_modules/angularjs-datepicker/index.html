@@ -1,0 +1,57 @@
+<!doctype html>
+<html ng-app="720kb">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="http://720kb.github.io/csshelper/assets/ext/src/helper.css">
+  <link rel="stylesheet" type="text/css" href="src/css/angular-datepicker.css">
+  <style>
+    input[type="text"] {
+      border: 2px solid grey;
+    }
+    *:focus{
+      outline:4px solid red;
+    }
+  </style>
+  <title>Angularjs Datepicker</title>
+</head>
+<body ng-controller="TestController as ctrl">
+  <div class="separator50"></div>
+  <div class="col6 offset-left2">
+    <div class="col3">
+      <div datepicker datepicker-class="test-custom-class" date-min-limit="2016/02/28" date-max-limit="2016/03/03" date-typer="true">
+        <input ng-model="date1" type="text" class="angular-datepicker-input"/>
+      </div>
+      Date 1 is: {{date1}}
+    </div>
+    <div class="col3">
+      <div class="datepicker"
+      date-set-hidden="true"
+      datepicker-append-to="body"
+      date-format="MMMM d, y"
+      date-set="2015/11/26"
+      date-min-limit="2014/08/07"
+      date-max-limit="2016/09/07"
+      date-typer="true"
+      date-disabled-dates="['2014/08/07', '2014/08/08' ]"
+      button-prev='<i class="fa fa-arrow-circle-left"></i>'
+      button-next='<i class="fa fa-arrow-circle-right"></i>'>
+      <input ng-model="date2" type="text" class="angular-datepicker-input"/>
+    </div>
+    Date 2 is: {{date2}}
+    <input ng-model="date4" type="text" class="angular-datepicker-input"/>
+  </div>
+  <div class="col3">
+    <datepicker datepicker-show="{{ctrl.visibility}}">
+      <input ng-model="date3" type="text" class="angular-datepicker-input"/>
+    </datepicker>
+    Date 3 is: {{date3}}
+  </div>
+</div>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular-route.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.6.0/angular-locale_es.js"></script>
+<script type="text/javascript" src="src/js/angular-datepicker.js"></script>
+<script type="text/javascript" src="assets/js/index.js"></script>
+</body>
+</html>
