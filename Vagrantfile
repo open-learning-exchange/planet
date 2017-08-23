@@ -15,13 +15,13 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ole/jessie64"
   config.vm.box_version = "0.1.6"
 
-  config.vm.hostname = "planetangular"
+  config.vm.hostname = "planet"
 
-  config.vm.define "planetangular" do |planetangular|
+  config.vm.define "planet" do |planet|
   end
 
   config.vm.provider "virtualbox" do |vb|
-    vb.name = "planetangular"
+    vb.name = "planet"
   end
 
   # Disable automatic box update checking. If you disable this, then
@@ -35,7 +35,7 @@ Vagrant.configure(2) do |config|
   # config.vm.network "forwarded_port", guest: 80, host: 8082
   config.vm.network "forwarded_port", guest: 5984, host: 5984, auto_correct: true
   config.vm.network "forwarded_port", guest: 5986, host: 5986, auto_correct: true
-  config.vm.network "forwarded_port", guest: 9000, host: 9000, auto_correct: true
+  config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
   config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
@@ -88,9 +88,35 @@ Vagrant.configure(2) do |config|
     bash nodesource_setup.sh
     apt-get -y install nodejs
     cd /vagrant
-    echo "npm install"
-    echo "npm run watch"
-#    npm install
-#    npm run watch
+    # node_modules folder breaks when setting up in Windows, so use binding to fix
+    echo "Preparing local node_modules folder…"
+    mkdir -p /vagrant_node_modules
+    mkdir -p /vagrant/node_modules
+    chown vagrant:vagrant /vagrant_node_modules
+    mount --bind /vagrant_node_modules /vagrant/node_modules
+    npm install
+    git clone https://github.com/pouchdb/add-cors-to-couchdb.git
+    cd add-cors-to-couchdb
+    npm install
+    npm install -g @angular/cli
+    git clone https://github.com/ole-vi/planet.git
+    echo "inside planet folder"
+    cd planet
+    echo "install"
+    npm install
+    node bin.js http://localhost:5984
+    cd ..
+    curl -X PUT http://127.0.0.1:5984/_users
+    curl -X PUT http://127.0.0.1:5984/_replicator
+    curl -X PUT http://127.0.0.1:5984/_global_changes
+    sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'
   SHELL
+  
+  # Run binding on each startup make sure the mount is available on VM restart
+  config.vm.provision "shell", run: "always", inline: <<-SHELL
+    docker start planet
+    # mount --bind /vagrant_node_modules /vagrant/node_modules
+    sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'
+  SHELL
+  
 end
