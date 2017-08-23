@@ -15,13 +15,13 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ole/jessie64"
   config.vm.box_version = "0.1.6"
 
-  config.vm.hostname = "planetangular"
+  config.vm.hostname = "planet"
 
-  config.vm.define "planetangular" do |planetangular|
+  config.vm.define "planet" do |planet|
   end
 
   config.vm.provider "virtualbox" do |vb|
-    vb.name = "planetangular"
+    vb.name = "planet"
   end
 
   # Disable automatic box update checking. If you disable this, then
