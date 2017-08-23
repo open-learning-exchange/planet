@@ -2,18 +2,18 @@
 
 .ole-login {
     
-    height:110vh;
+    height:100vh;
     width:600px;
-    margin: -($body-margin) auto;
+    margin: 0 auto;
     color:white;
     background: linear-gradient($ole-blue-light,$ole-blue-dark);
     text-align:center;
+    overflow:hidden;
     
     .ole-logo {
-        position:relative;
-        top:-200px;
+        margin-top:-200px;
         height:600px;
-        width:600px;
+        width:100%;
         background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
         * {
             position:relative;
