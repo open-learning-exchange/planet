@@ -83,18 +83,26 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SHELL
 #    docker pull portainer/portainer
 #    sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
+
+    # Add CouchDB Docker
     docker pull klaemo/couchdb
     sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb
+    # Set up Node.js
     cd ~
     curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
     bash nodesource_setup.sh
     apt-get -y install nodejs
+    # Install Angular CLI
     npm install -g @angular/cli
+    
+    # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
     cd add-cors-to-couchdb
     npm install
     node bin.js http://localhost:5984
     cd /vagrant
+    # End add CORS to CouchDB
+    
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     echo "Preparing local node_modules folder…"
     mkdir -p /vagrant_node_modules
@@ -102,17 +110,22 @@ Vagrant.configure(2) do |config|
     chown vagrant:vagrant /vagrant_node_modules
     mount --bind /vagrant_node_modules /vagrant/node_modules
     npm install
+    # End node_modules fix
+    
+    # Add initial Couch databases here
     curl -X PUT http://127.0.0.1:5984/_users
     curl -X PUT http://127.0.0.1:5984/_replicator
     curl -X PUT http://127.0.0.1:5984/_global_changes
     curl -X PUT http://127.0.0.1:5984/meetups
-    sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'
+    # End Couch database addition
+    
   SHELL
   
   # Run binding on each startup make sure the mount is available on VM restart
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     docker start planet
     mount --bind /vagrant_node_modules /vagrant/node_modules
+    # Starts the app in a screen (virtual terminal)
     sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'
   SHELL
   
