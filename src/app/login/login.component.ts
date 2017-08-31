@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 require('./login.scss');
 
@@ -32,18 +32,24 @@ require('./login.scss');
         </div>
     `,
     styleUrls:['./login.scss']
-    
+
 })
-export class LoginComponent { 
+export class LoginComponent {
     constructor(
         private couchService: CouchService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {}
-    
+
+    ngOnInit() {
+       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    }
+
     createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
     model = { name:'', password:'', repeatPassword:'' }
     message = '';
-    
+    returnUrl: string;
+
     onSubmit() {
         if(this.createMode) {
             this.createUser(this.model);
@@ -51,11 +57,11 @@ export class LoginComponent {
             this.login(this.model);
         }
     }
-    
+
     reRoute() {
-        this.router.navigate(['/'], {});
+        this.router.navigate([this.returnUrl]);
     }
-    
+
     createUser({name,password,repeatPassword}:{name:string,password:string,repeatPassword:string}) {
         if(password === repeatPassword) {
             this.couchService.put('_users/org.couchdb.user:' + name, {'name': name, 'password': password, 'roles': [], 'type': 'user'})
@@ -67,10 +73,10 @@ export class LoginComponent {
             this.message = 'Passwords do not match';
         }
     }
-    
+
     login({name,password}:{name:string,password:string}) {
         this.couchService.post('_session', {'name':name, 'password':password}, { withCredentials:true })
-            .then((data) => { 
+            .then((data) => {
                 this.message = 'Hi, ' + data.name + '!';
                 this.reRoute();
             },(error) => this.message = 'Username and/or password do not match');
