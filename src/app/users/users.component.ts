@@ -60,24 +60,29 @@ export class UsersComponent implements OnInit {
         }
     }
     
+    // Commenting out the logic for including CouchDB admins.
+    // Uncomment those lines if we end up using CouchDB admins.
     ngOnInit() {
         Object.assign(this,this.userService.get());
-        if(this.roles.indexOf('_admin') > -1) {
+        // if(this.roles.indexOf('_admin') > -1) {
             this.initializeData();
-        } else {
+        // } else {
             // A non-admin user cannot receive all user docs
-            this.message = 'Access restricted to admins';
-            this.displayTable = false;
-        }
+            // this.message = 'Access restricted to admins';
+            // this.displayTable = false;
+        // }
     }
     
+    // Setting withCredentials to false allows user & admin query while in Admin party.
+    // These queries FAIL when an admin is set.
+    // If we decide to create CouchDB admins to control this, then remove withCredentials:false (default it is true for queries)
     getUsers() {
-        return this.couchService.get('_users/_all_docs?include_docs=true');
+        return this.couchService.get('_users/_all_docs?include_docs=true',{withCredentials:false});
     }
     
     getAdmins() {
         // This is working for my locally setup couchdb instance, but may need to be changed once Vagrant or Docker is setup
-        return this.couchService.get('_node/couchdb@localhost/_config/admins');
+        return this.couchService.get('_node/nonode@nohost/_config/admins',{withCredentials:false});
     }
     
     initializeData() {
