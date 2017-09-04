@@ -1,0 +1,9 @@
+<form (ngSubmit)="onSubmit(resourcesForm.value)" #resourcesForm="ngForm">
+  File Upload : <input  (change)="onChange($event)" type="file" /> 
+</form>
+<div>
+  {{message}}
+  <ol>
+    <li *ngFor="let attachment of attachments">{{_.keys(attachment.doc._attachments)[0]}}</li>
+  </ol>
+</div>

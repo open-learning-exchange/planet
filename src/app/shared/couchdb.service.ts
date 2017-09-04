@@ -61,7 +61,19 @@ export class CouchService {
             .then(this.handleRes)
             .catch(this.handleError);
     }
-    
+
+    //For Attachment files
+    saveAttachment(db:string,data:any,content_type:any): Promise<any> {
+        const url = this.baseUrl + db;
+        var headers = new Headers({'Content-Type':content_type});
+        var defaultOpts = {headers:headers,withCredentials:true};
+        return this.http
+            .put(url,data,defaultOpts)
+            .toPromise()
+            .then(this.handleRes)
+            .catch(this.handleError);
+    }
+
     private handleRes = (res:any) => res.json();
     
     private handleError(error: any): Promise<any> {
