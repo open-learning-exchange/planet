@@ -1,0 +1,19 @@
+services:
+  couchdb:
+    expose:
+      - 5984
+    image: klaemo/couchdb
+    ports:
+      - "5984:5984"
+  planet:
+    build:
+      context: ../
+      dockerfile: docker-dev/Dockerfile
+    ports:
+      - "3000:3000"
+    user: "ole"
+    volumes:
+      - "../:/planet"
+    depends_on:
+      - couchdb
+version: "3"
