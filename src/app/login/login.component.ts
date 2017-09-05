@@ -39,9 +39,7 @@ export class LoginComponent {
         private couchService: CouchService,
         private router: Router,
         private route: ActivatedRoute
-    ) {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    }
+    ) { }
 
     createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
     model = { name:'', password:'', repeatPassword:'' }
@@ -57,6 +55,7 @@ export class LoginComponent {
     }
 
     reRoute() {
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         this.router.navigate([this.returnUrl]);
     }
 
