@@ -2,8 +2,8 @@
   File Upload : <input  (change)="onChange($event)" type="file" /> 
 </form>
 <div>
-  {{message}}
+  <pre>{{message | json}}</pre>
   <ol>
-    <li *ngFor="let attachment of attachments">{{_.keys(attachment.doc._attachments)[0]}}</li>
+    <li *ngFor="let attachment of attachments">{{ attachment.doc.filename }}</li>
   </ol>
 </div>
