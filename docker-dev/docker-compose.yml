@@ -4,7 +4,8 @@ services:
       - 5984
     image: klaemo/couchdb
     ports:
-      - "5984:5984"
+      - "2200:5984"
+      - "2201:5986"
   db-init:
     build:
       context: ./db-init/

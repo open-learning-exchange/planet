@@ -3,9 +3,8 @@ FROM node:6.11-alpine
 WORKDIR /root
 
 RUN apk update ;\
-    apk add curl ;\
-    apk add git
+    apk add --no-cache curl git
 
-ADD ./docker-entrypoint.sh /usr/local/bin
+COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
 
-CMD docker-entrypoint.sh
+CMD sh ./docker-entrypoint.sh
