@@ -1,9 +1,22 @@
-<form (ngSubmit)="onSubmit(resourcesForm.value)" #resourcesForm="ngForm">
-  File Upload : <input  (change)="onChange($event)" type="file" /> 
+<form (ngSubmit)="submitResource()" #resourcesForm="ngForm">
+  <div class="form-group">
+    <label>File Type:</label>
+    <select [(ngModel)]="resource.mediaType" name="mediaType">
+      <option value="image">Image</option>
+      <option value="video">Video</option>
+      <option value="audio">Audio</option>
+      <option value="pdf">PDF</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>File Upload:</label>
+    <input type="file" (change)="bindFile($event)" />
+  </div>
+  <button type="submit">Submit</button>
 </form>
 <div>
   <span>{{message}}</span>
   <ol>
-    <li *ngFor="let attachment of attachments">{{ attachment.doc.filename }}</li>
+    <li *ngFor="let resource of resources"><a [routerLink]="['/resources/view',resource.doc._id]">{{ resource.doc.filename }}</a></li>
   </ol>
 </div>

@@ -3,51 +3,51 @@ import { CouchService } from '../shared/couchdb.service';
 import { Headers } from '@angular/http';
 
 @Component({
-  templateUrl: './resources.component.html',
-  styleUrls: ['./resources.component.scss']
+  templateUrl: './resources.component.html'
 })
 export class ResourcesComponent implements OnInit {
 
   upload_files = [];
-  attachments = [];
+  resources = [];
   message = "";
- 
+  file:any;
+  resource = { mediaType:'' }
+
   constructor(private couchService: CouchService) { }
 
   ngOnInit() {
-    this.getAllAttachment();
+    this.getResources();
   }
 
-  onChange(event) {
-    var files = event.target.files[0];
-    var filename = files.name;
-    var filetype = files.type;
-    
-    this.couchService.post('resources',{'filename' : filename}).then(
-      (data) => {
-        //upload files in the given id
-        var url = 'resources/' + data.id + '/' + filename + '?rev=' + data.rev,
-          fileOpts = { headers:new Headers({'Content-Type':filetype}) };
-        this.couchService.put(url,files,fileOpts).then(
-            (data)=>{
-              this.message = "Success";
-              event.target.files = null;
-              this.getAllAttachment();
-            },(error)=>{
-              this.message = "Error";
-            }
-          );
-      },
-      (error) => {
-        this.message = "Error";
-      }
-    )
+  bindFile(event) {
+    this.file = event.target.files[0];
   }
 
-  getAllAttachment(){
+  submitResource() {
+    let reader = new FileReader(),
+      rComp = this;
+    reader.readAsDataURL(this.file);
+    reader.onload = () => {
+      // FileReader result has file type at start of string, need to remove for CouchDB
+      let fileData = reader.result.split(',')[1],
+        attachments = {};
+
+      attachments[rComp.file.name] = {"content_type":rComp.file.type,"data":fileData};
+
+      let resource = Object.assign({},{"filename":rComp.file.name,"_id":rComp.file.name,"_attachments":attachments},rComp.resource);
+
+      this.couchService.put('resources/' + rComp.file.name,resource).then(
+        (data) => {
+          this.message = "Success";
+          this.getResources();
+        },(error) => {this.message = "Error"});
+    }
+  }
+
+  getResources(){
     this.couchService.get('resources/_all_docs?include_docs=true')
     .then((data) => {
-        this.attachments = data.rows;
+        this.resources = data.rows;
     }, (error) => this.message = 'Error');
   }
 
