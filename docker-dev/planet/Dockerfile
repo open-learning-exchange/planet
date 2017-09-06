@@ -16,7 +16,7 @@ EXPOSE 3000
 VOLUME ["/$APP"]
 WORKDIR /$APP
 
-ADD docker-dev/docker-entrypoint.sh /docker-entrypoint.sh
+ADD ./docker-entrypoint.sh docker-entrypoint.sh
 
 #ENTRYPOINT ["/bin/bash", "-c"]
 CMD bash -c 'npm install && ng serve'

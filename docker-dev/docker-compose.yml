@@ -5,10 +5,14 @@ services:
     image: klaemo/couchdb
     ports:
       - "5984:5984"
+  db-init:
+    build:
+      context: ./db-init/
+    depends_on:
+      - couchdb
   planet:
     build:
-      context: ../
-      dockerfile: docker-dev/Dockerfile
+      context: ./planet/
     ports:
       - "3000:3000"
     volumes:
