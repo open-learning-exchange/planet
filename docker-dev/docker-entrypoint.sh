@@ -13,5 +13,4 @@ curl -X PUT http://couchdb:5984/_global_changes
 curl -X PUT http://couchdb:5984/meetups
 # End Couch database addition
 
-npm install
 ng serve
