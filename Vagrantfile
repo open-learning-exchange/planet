@@ -92,8 +92,6 @@ Vagrant.configure(2) do |config|
     curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
     bash nodesource_setup.sh
     apt-get -y install nodejs
-    # Update npm to latest version
-    # sudo npm install -g npm@latest
     # Install Angular CLI
     sudo npm install -g @angular/cli
     
