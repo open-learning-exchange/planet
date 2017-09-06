@@ -11,9 +11,8 @@ services:
       dockerfile: docker-dev/Dockerfile
     ports:
       - "3000:3000"
-    user: "ole"
     volumes:
       - "../:/planet"
     depends_on:
       - couchdb
-version: "3"
+version: "2"
