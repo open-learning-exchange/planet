@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ResourcesComponent } from './resources.component';
+import { ResourcesViewComponent } from './resources-view.component';
 import { ResourcesRouterModule } from './resources-router.module'
 
 @NgModule({
@@ -10,7 +11,7 @@ import { ResourcesRouterModule } from './resources-router.module'
     ResourcesRouterModule,FormsModule,CommonModule
   ],
   declarations: [
-    ResourcesComponent
+    ResourcesComponent,ResourcesViewComponent
   ]
 })
 export class ResourcesModule {}
