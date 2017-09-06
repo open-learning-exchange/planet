@@ -1,4 +1,5 @@
 import { AngBellAppPage } from './app.po';
+import { browser, by, element } from 'protractor';
 
 describe('ang-bell-app App', () => {
   let page: AngBellAppPage;
@@ -9,6 +10,6 @@ describe('ang-bell-app App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!');
+    expect(page.getHeaderText()).toEqual('Planet Learning');
   });
 });
