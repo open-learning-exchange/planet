@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-router.module';
 import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
+import { LoaderService } from './shared/loader.service';
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { UserService } from './shared/user.service';
     AppComponent, PageNotFoundComponent
   ],
   providers: [ 
-    CouchService, AuthService, UserService
+    CouchService, AuthService, UserService, LoaderService
   ],
   bootstrap: [ AppComponent ]
 })

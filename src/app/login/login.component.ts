@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
+import { LoaderService } from '../shared/loader.service';
 
 require('./login.scss');
 
@@ -37,9 +38,16 @@ require('./login.scss');
 export class LoginComponent { 
     constructor(
         private couchService: CouchService,
-        private router: Router
+        private router: Router,
+        private loaderService: LoaderService
     ) {}
-    
+    ngOnInit() {
+        var that = this
+        //http call starts
+        this.loaderService.display(true);
+        setTimeout(function(){ that.loaderService.display(false); }, 2000);
+    }
+
     createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
     model = { name:'', password:'', repeatPassword:'' }
     message = '';

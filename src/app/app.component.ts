@@ -1,7 +1,21 @@
-import { Component } from '@angular/core';
+import { Component,OnInit} from '@angular/core';
+import { LoaderService } from './shared/loader.service';
 
 @Component({
   selector: 'planet',
-  template: '<router-outlet></router-outlet>'
+  template: '<router-outlet><span *ngIf="showLoader" class="loading"></span></router-outlet>',
+  styleUrls: ['app.component.css']
 })
-export class AppComponent { }
+export class AppComponent { 
+	showLoader: boolean;
+
+    constructor(
+        private loaderService: LoaderService) {
+    }
+
+    ngOnInit() {
+        this.loaderService.status.subscribe((val: boolean) => {
+            this.showLoader = val;
+        });
+    }
+}
