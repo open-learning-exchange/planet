@@ -18,10 +18,10 @@ require('./login.scss');
                     <input [(ngModel)]="model.name" placeholder="Username" name="name" />
                 </div>
                 <div>
-                    <input [(ngModel)]="model.password" placeholder="Password" name="password" />
+                    <input [(ngModel)]="model.password" placeholder="Password" name="password" type="password" />
                 </div>
                 <div *ngIf="createMode">
-                    <input [(ngModel)]="model.repeatPassword" placeholder="Repeat Password" name="repeatPassword" />
+                    <input [(ngModel)]="model.repeatPassword" placeholder="Repeat Password" name="repeatPassword" type="password" />
                 </div>
                 <div class="login-actions">
                     <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
