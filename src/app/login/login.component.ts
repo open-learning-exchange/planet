@@ -28,7 +28,6 @@ require('./login.scss');
                     <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? 'Already have an account?' : 'Are you new?' }}</a>
                 </div>
             </form>
-        <div id="login-status">{{message}}</div>
         </div>
     `,
     styleUrls:['./login.scss']
