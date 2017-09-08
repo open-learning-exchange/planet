@@ -28,6 +28,7 @@ require('./login.scss');
                     <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? 'Already have an account?' : 'Are you new?' }}</a>
                 </div>
             </form>
+            <div id="login-status">{{message}}</div>
         </div>
     `,
     styleUrls:['./login.scss']
@@ -70,7 +71,6 @@ export class LoginComponent {
     login({name,password}:{name:string,password:string}) {
         this.couchService.post('_session', {'name':name, 'password':password}, { withCredentials:true })
             .then((data) => { 
-                this.message = 'Hi, ' + data.name + '!';
                 this.reRoute();
             },(error) => this.message = 'Username and/or password do not match');
     }
