@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
     selector:'main-navigation',
     template: `
         <ul>
-            <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
+            <li *ngFor="let comp of components"><a routerLinkActive="active-link" [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li> 
             <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
         </ul>
     `,

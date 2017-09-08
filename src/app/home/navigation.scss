@@ -35,5 +35,14 @@
     li:last-child a {
         border:none;
     }
-    
+
+    a.active-link{
+        color: #1abc9c;
+        text-decoration: none;
+    }
+    a:hover{
+        color: #1abc9c;
+        text-decoration: none;
+    }
+
 }
