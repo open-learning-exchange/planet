@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
+import { TranslateService } from 'ng2-Translate';
 
 require('./login.scss');
 
@@ -11,24 +12,29 @@ require('./login.scss');
             <div class="ole-logo">
                 <img src="assets/cropped-ole-ico-logo-180x180.png">
                 <h1>Planet Learning</h1>
-                <h3>Version 2.01</h3>
+                <h3>{{'Version' | translate}} 2.01</h3>
             </div>
             <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
                 <div>
-                    <input [(ngModel)]="model.name" placeholder="Username" name="name" />
+                    <input [(ngModel)]="model.name" placeholder="{{'Username' |translate}}" name="name" />
                 </div>
                 <div>
-                    <input [(ngModel)]="model.password" placeholder="Password" name="password" />
+                    <input [(ngModel)]="model.password" placeholder="{{'Password' |translate}}" name="password" />
                 </div>
                 <div *ngIf="createMode">
-                    <input [(ngModel)]="model.repeatPassword" placeholder="Repeat Password" name="repeatPassword" />
+                    <input [(ngModel)]="model.repeatPassword" placeholder="{{'Repeat Password' |translate}}" name="repeatPassword" />
                 </div>
                 <div class="login-actions">
-                    <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
-                    <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? 'Already have an account?' : 'Are you new?' }}</a>
-                </div>
+                    <div><button class="ole-btn cursor-pointer">{{ createMode ? ('Create User' | translate) : ('Sign_In' | translate)}}</button></div>
+                    <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? ('Already have an account?' | translate) : ('Are you new?' | translate) }}</a>                </div>
             </form>
-        <div id="login-status">{{message}}</div>
+        <div id="login-language">
+            <select (change)="onChange($event.target.value)" [(ngModel)]="selectedValue">
+                <option value="en">English</option>
+                <option value="np">Nepali</option>
+            </select>
+        </div>
+        <div id="login-status">{{message | translate}}</div>
         </div>
     `,
     styleUrls:['./login.scss']
@@ -37,12 +43,25 @@ require('./login.scss');
 export class LoginComponent { 
     constructor(
         private couchService: CouchService,
+        private translate: TranslateService,
         private router: Router
-    ) {}
+    ) {
+        if(localStorage.getItem('currentLanguage') != undefined){
+            this.selectedValue = localStorage.getItem('currentLanguage');
+            this.translate.use(this.selectedValue);
+        }else{
+            let browserLang = translate.getBrowserLang();
+            translate.use(browserLang.match(/en|np/) ? browserLang : "en");
+            this.selectedValue = browserLang.match(/en|np/) ? browserLang : "en";
+            localStorage.setItem('currentLanguage', this.selectedValue)
+            this.translate.use(this.selectedValue);
+        }
+    }
     
     createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
     model = { name:'', password:'', repeatPassword:'' }
     message = '';
+    selectedValue = "";
     
     onSubmit() {
         if(this.createMode) {
@@ -74,5 +93,10 @@ export class LoginComponent {
                 this.message = 'Hi, ' + data.name + '!';
                 this.reRoute();
             },(error) => this.message = 'Username and/or password do not match');
+    }
+
+    onChange(selectedValue){
+        this.translate.use(selectedValue);
+        localStorage.setItem('currentLanguage', selectedValue)
     }
 }

@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
+import { TranslateService } from 'ng2-Translate';
 
 @Component({
     selector:'main-navigation',
     template: `
         <ul>
-            <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
-            <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
+            <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{ comp.name.toUpperCase() | translate}}</a></li>
+            <li><a href="#" class="km-logout" (click)="logoutClick()">{{'LOGOUT' | translate}}</a></li>
         </ul>
     `,
     styleUrls:['./navigation.scss']
@@ -16,8 +17,12 @@ import { Router } from '@angular/router';
 export class NavigationComponent {
     constructor(
         private couchService:CouchService,
-        private router:Router
-    ){}
+        private router:Router,
+        private translate:TranslateService
+    ){
+        if(localStorage.getItem("currentLanguage") != undefined)
+            this.translate.use(localStorage.getItem("currentLanguage"))
+    }
 
     components = [
         { link:'', name:'Home' },
