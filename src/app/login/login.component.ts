@@ -42,9 +42,9 @@ export class LoginComponent {
     ) { }
 
     createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
+    returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     model = { name:'', password:'', repeatPassword:'' }
     message = '';
-    returnUrl: string;
 
     onSubmit() {
         if(this.createMode) {
@@ -55,7 +55,6 @@ export class LoginComponent {
     }
 
     reRoute() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         this.router.navigate([this.returnUrl]);
     }
 
