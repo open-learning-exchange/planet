@@ -1,0 +1,25 @@
+services:
+  couchdb:
+    expose:
+      - 5984
+    image: treehouses/rpi-couchdb:2.0.0
+    ports:
+      - "2200:5984"
+      - "2201:5986"
+  db-init:
+    build:
+      dockerfile: rpi-Dockerfile
+      context: ./db-init/
+    depends_on:
+      - couchdb
+  planet:
+    build:
+      dockerfile: rpi-Dockerfile
+      context: ./planet/
+    ports:
+      - "3000:3000"
+    volumes:
+      - "../:/planet"
+    depends_on:
+      - couchdb
+version: "2"
