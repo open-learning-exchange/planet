@@ -1,0 +1,23 @@
+services:
+  couchdb:
+    expose:
+      - 5984
+    image: klaemo/couchdb
+    ports:
+      - "2200:5984"
+      - "2201:5986"
+  db-init:
+    build:
+      context: ./db-init/
+    depends_on:
+      - couchdb
+  planet:
+    build:
+      context: ./planet/
+    ports:
+      - "3000:3000"
+    volumes:
+      - "../:/planet"
+    depends_on:
+      - couchdb
+version: "2"
