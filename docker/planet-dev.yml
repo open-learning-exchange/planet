@@ -7,13 +7,11 @@ services:
       - "2200:5984"
       - "2201:5986"
   db-init:
-    build:
-      context: ./db-init/
+    image: treehouses/planet-dev:db-init-latest
     depends_on:
       - couchdb
   planet:
-    build:
-      context: ./planet/
+    image: treehouses/planet-dev:latest
     ports:
       - "3000:3000"
     volumes:
