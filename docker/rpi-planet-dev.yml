@@ -13,9 +13,7 @@ services:
     depends_on:
       - couchdb
   planet:
-    build:
-      dockerfile: rpi-Dockerfile
-      context: ./planet/
+    image: treehouses/planet-dev:latest-rpi
     ports:
       - "3000:3000"
     volumes:
