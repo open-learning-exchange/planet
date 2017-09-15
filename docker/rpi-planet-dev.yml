@@ -7,9 +7,7 @@ services:
       - "2200:5984"
       - "2201:5986"
   db-init:
-    build:
-      dockerfile: rpi-Dockerfile
-      context: ./db-init/
+    image: treehouses/planet-dev:db-init-latest-rpi
     depends_on:
       - couchdb
   planet:
