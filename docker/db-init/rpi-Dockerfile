@@ -1,0 +1,10 @@
+FROM arm32v7/node:6.11-slim
+
+WORKDIR /root
+
+RUN apt-get update ;\
+    apt-get install git curl -y
+
+COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
+
+CMD sh ./docker-entrypoint.sh
