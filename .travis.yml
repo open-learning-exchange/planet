@@ -57,6 +57,7 @@ before_install:
   - cd add-cors-to-couchdb
   - npm install
   - node bin.js http://localhost:5984
+  - cd ..
   # End add CORS to CouchDB
 
 # Add initial Couch databases here
