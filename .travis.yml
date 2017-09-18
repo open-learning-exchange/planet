@@ -86,4 +86,4 @@ script:
   #- (cd tests && codeceptjs run --steps)
   #- python -m unittest discover tests
 
-  - karma start config/karma.conf.js --single-run
+  #- karma start config/karma.conf.js --single-run
