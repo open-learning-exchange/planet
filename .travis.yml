@@ -51,8 +51,7 @@ before_install:
   #- curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
   #- bash nodesource_setup.sh
   #- apt-get -y install nodejs
-# Install Angular CLI
-  - npm install -g @angular/cli
+
 # Add CORS to CouchDB so app has access to databases
   - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
   - cd add-cors-to-couchdb
@@ -75,6 +74,8 @@ before_script:
 - npm install -g karma
 - npm install
 - ng build
+# Install Angular CLI
+- npm install -g @angular/cli
 
 script:
   - export
