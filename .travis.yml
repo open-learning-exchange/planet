@@ -71,11 +71,10 @@ before_install:
   - sh -e /etc/init.d/xvfb start
 
 before_script:
-- npm install -g karma
 - npm install
-- ng build
-# Install Angular CLI
 - npm install -g @angular/cli
+- npm install -g karma
+- ng build
 
 script:
   - export
