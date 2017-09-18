@@ -94,6 +94,11 @@ Vagrant.configure(2) do |config|
     apt-get -y install nodejs
     # Install Angular CLI
     npm install -g @angular/cli
+    # Install Chrome for e2e/Protractor tests
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+    sudo apt-get update
+    sudo apt-get install -fy google-chrome-stable
     
     # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
