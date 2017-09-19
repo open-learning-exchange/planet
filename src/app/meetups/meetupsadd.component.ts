@@ -16,8 +16,7 @@ import { CouchService } from '../shared/couchdb.service';
         </div>
         <button name="singlebutton" class="btn btn-primary" type="submit">Save</button>
     </form>
-    `,
-    providers:[CouchService]
+    `
 })
 export class MeetupsaddComponent implements OnInit {
   message = "";

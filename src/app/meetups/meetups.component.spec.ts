@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { CouchService } from '../shared/couchdb.service';
 import { MeetupsComponent } from './meetups.component';
 import { HttpModule } from '@angular/http';
 
@@ -12,7 +12,8 @@ describe('MeetupsComponent', () => {
       imports: [
         HttpModule
     ],
-      declarations: [ MeetupsComponent ]
+      declarations: [ MeetupsComponent ],
+      providers:[CouchService]
     })
     .compileComponents();
   }));

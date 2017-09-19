@@ -3,7 +3,6 @@ import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   templateUrl: './meetups.component.html',
-  providers:[CouchService]
 })
 export class MeetupsComponent implements OnInit {
   message = "";
