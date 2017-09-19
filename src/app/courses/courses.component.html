@@ -1,0 +1,116 @@
+{{message}}
+<h1>Add Courses</h1>
+<form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+  <div class="row">
+    <div class="form-group col-4" [ngClass]="{
+      'has-danger': courseTitle.invalid && (courseTitle.dirty || courseTitle.touched),
+      'has-success': courseTitle.valid && (courseTitle.dirty || courseTitle.touched)
+    }">
+      <label>Course Title</label>
+      <input type="text" class="form-control" formControlName="courseTitle" required>
+    </div>
+    <div class="form-group col-4">
+      <label>Language of Instruction</label>
+      <input type="text" class="form-control" formControlName="languageOfInstruction">
+    </div>
+    <div class="form-group col-4">
+      <label>Member Limit</label>
+      <input type="text" class="form-control" formControlName="memberLimit">
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Course Leader</label>
+      <!-- need to create a select with options from number of members available -->
+      <!-- for this to work we need all the memberes' id from the members database which is not created yet -->
+      <select multiple class="form-control" formControlName="courseLeader">
+        <!-- i created this according to the entry in the old bell apps couch db members database -->
+        <option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Description</label>
+    <textarea class="form-control" formControlName="description"></textarea>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Method</label>
+      <input type="text" class="form-control" formControlName="method">
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Grade Level</label>
+      <select class="form-control" formControlName="gradeLevel"> 
+      <option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</option> 
+    </select>
+    </div>
+    <div class="form-group col-4">
+      <label>Subject Level</label>
+      <select class="form-control" formControlName="subjectLevel"> 
+      <option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</option> 
+    </select>
+    </div>
+  </div>
+  <div class="row">
+    <!-- create directives for date and time validations -->
+    <div class="form-group col-4">
+      <label>Start Date</label>
+      <input type="date" class="form-control" formControlName="startDate" [value]="startDate | date:'shortTime'">
+    </div>
+    <div class="form-group col-4">
+      <label>End Date</label>
+      <input type="date" class="form-control" formControlName="endDate">
+    </div>
+    <div class="form-group radio col-4">
+      <div>Frequency</div>
+      <!-- radio buttons need same name to allow only one value to be selected! -->
+      <label> 
+      <input type="radio" name="daysToggler" (change)="toogleWeekly(false)">
+      Daily
+    </label>
+      <label>
+      <input type="radio" name="daysToggler" (change)="toogleWeekly(true)">
+      Weekly
+    </label>
+    </div>
+  </div>
+  <div class="form-check form-check-inline" *ngIf="isWeekly">
+    <div class="form-check-label">Day</div>
+    <label class="form-check-label" *ngFor="let day of days">
+      <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)">
+      {{day}}
+    </label>
+  </div>
+  <!-- use html pattern for time -->
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Start Time</label>
+      <input type="time" class="form-control" formControlName="startTime">
+    </div>
+    <div class="form-group col-4">
+      <label>End Time</label>
+      <input type="time" class="form-control" formControlName="endTime">
+    </div>
+    <div class="form-group col-4">
+      <label>Location</label>
+      <input type="text" class="form-control" formControlName="location">
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-2">
+      <label for="backgroundCol">Background Color</label>
+      <input type="color" class="form-control" formControlName="backgroundColor">
+    </div>
+    <div class="form-group col-2">
+      <label>Foreground Color</label>
+      <input type="color" class="form-control" formControlName="foregroundColor">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="courseForm.pristine">Submit</button>
+  <button type="submit" class="btn btn-danger" (click)="cancel()">Cancel</button>
+</form>
+
+<p>Form value: {{ courseForm.value | json }}</p>
+<p>{{name}}</p>

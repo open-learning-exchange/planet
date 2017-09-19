@@ -1,0 +1,9 @@
+{
+  "views": {
+    "courseTitles": {
+      "map": "function (doc) {\n emit(doc.courseTitle, 1);\n }",
+      "reduce": "_count"
+    }
+  },
+  "language": "javascript"
+}

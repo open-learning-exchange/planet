@@ -1,0 +1,4 @@
+{
+  "validate_doc_update":
+    "function(newDoc, oldDoc, userCtx, secObj) {\n  function require(field, message) {\n    message = message || field + ' is required';\n    if (!newDoc[field]) {\n      throw ({ forbidden: message });\n    }\n  }\n  if (!newDoc._deleted) {\n    require('courseTitle');\n    require('description');\n  }\n}"
+}
