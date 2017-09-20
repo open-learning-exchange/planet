@@ -93,7 +93,7 @@ Vagrant.configure(2) do |config|
     bash nodesource_setup.sh
     apt-get -y install nodejs
     # Install Angular CLI
-    npm install -g @angular/cli
+    sudo npm install -g @angular/cli
     
     # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
