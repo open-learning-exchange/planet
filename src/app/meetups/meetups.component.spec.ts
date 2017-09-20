@@ -11,7 +11,7 @@ describe('MeetupsComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpModule
-    ],
+      ],
       declarations: [ MeetupsComponent ],
       providers:[CouchService]
     })
