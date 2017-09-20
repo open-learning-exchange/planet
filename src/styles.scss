@@ -14,9 +14,11 @@ body {
   .ng-valid[required],
   .ng-valid.required {
     border-left: 5px solid $ole-green;
+    border-color: $ole-green;
   }
 
-  .ng-invalid:not(form) {
-    border-left: 5px solid #a94442;
+  .ng-touched.ng-invalid:not(form) {
+    border-left: 5px solid $error-red;
+    border-color: $error-red;
   }
 }

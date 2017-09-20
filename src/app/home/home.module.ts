@@ -9,6 +9,7 @@ import { UsersComponent } from '../users/users.component';
 
 import { HomeRouterModule } from './home-router.module';
 import { CoursesComponent } from '../courses/courses.component';
+import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 
 @NgModule({
   imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
@@ -17,7 +18,8 @@ import { CoursesComponent } from '../courses/courses.component';
     DashboardComponent,
     NavigationComponent,
     UsersComponent,
-    CoursesComponent
+    CoursesComponent,
+    FormErrorMessagesComponent
   ]
 })
 export class HomeModule {}

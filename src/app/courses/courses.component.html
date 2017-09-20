@@ -2,12 +2,10 @@
 <h1>Add Courses</h1>
 <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
   <div class="row">
-    <div class="form-group col-4" [ngClass]="{
-      'has-danger': courseTitle.invalid && (courseTitle.dirty || courseTitle.touched),
-      'has-success': courseTitle.valid && (courseTitle.dirty || courseTitle.touched)
-    }">
+    <div class="form-group col-4">
       <label>Course Title</label>
       <input type="text" class="form-control" formControlName="courseTitle" required>
+      <app-form-error-messages [control]="courseForm.controls.courseTitle"></app-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>Language of Instruction</label>
@@ -15,7 +13,7 @@
     </div>
     <div class="form-group col-4">
       <label>Member Limit</label>
-      <input type="text" class="form-control" formControlName="memberLimit">
+      <input type="number" class="form-control" formControlName="memberLimit">
     </div>
   </div>
   <div class="row">
@@ -32,6 +30,7 @@
   <div class="form-group">
     <label>Description</label>
     <textarea class="form-control" formControlName="description"></textarea>
+    <app-form-error-messages [control]="courseForm.controls.description"></app-form-error-messages>
   </div>
   <div class="row">
     <div class="form-group col-4">

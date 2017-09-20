@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Location } from '@angular/common';
 import { CouchService } from '../shared/couchdb.service';
-
+import { CustomValidators } from './custom-validators';
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
@@ -65,7 +65,7 @@ export class CoursesComponent implements OnInit {
       courseTitle: ['', Validators.required],
       description: ['', Validators.required],
       languageOfInstruction: '',
-      memberLimit: '',
+      memberLimit: ['', CustomValidators.isValidNumber],
       courseLeader: [''],
       method: '',
       gradeLevel: '',
