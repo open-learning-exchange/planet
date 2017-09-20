@@ -31,6 +31,9 @@ notifications:
     on_success: always  # options: [always|never|change] default: change
     on_failure: always  # options: [always|never|change] default: always
     on_start: never    # options: [always|never|change] default: never
+    
+#Emails temporarily off for pre-alpha stage
+    email: false
 
 services:
   - docker
