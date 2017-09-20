@@ -25,13 +25,15 @@ cache:
      - node_modules
 
 notifications:
-  email: false
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/063276d3941fa8443947
     on_success: always  # options: [always|never|change] default: change
     on_failure: always  # options: [always|never|change] default: always
     on_start: never    # options: [always|never|change] default: never
+
+  email: false
+    
 
 services:
   - docker
