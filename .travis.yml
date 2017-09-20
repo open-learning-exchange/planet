@@ -25,6 +25,7 @@ cache:
      - node_modules
 
 notifications:
+  email: false
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/063276d3941fa8443947
