@@ -10,7 +10,7 @@ require('./login.scss');
         <div class="ole-login">
             <div class="ole-logo">
                 <img src="assets/cropped-ole-ico-logo-180x180.png">
-                <h1>Planet Learning</h1>
+                <h1 i18n>Planet Learning</h1>
                 <h3>Version 2.01</h3>
             </div>
             <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
