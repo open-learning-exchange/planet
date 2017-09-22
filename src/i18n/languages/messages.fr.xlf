@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target xml:lang="fr" state="needs-translation">Planet Learning</target>
+        <target xml:lang="fr" state="translated">Apprentissage de la planète</target>
       </trans-unit>
     </body>
   </file>
