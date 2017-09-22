@@ -1,16 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="en">
     <body>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
         <source>Planet Learning</source>
-        <target>Planet Learning</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
+        <target xml:lang="en" state="needs-translation">Planet Learning</target>
       </trans-unit>
     </body>
   </file>
 </xliff>
-
