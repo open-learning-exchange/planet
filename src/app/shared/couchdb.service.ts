@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
+import { environment } from '../../environments/environment';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -8,7 +9,7 @@ export class CouchService {
     private headers = new Headers({'Content-Type':'application/json'});
     private defaultOpts = {headers:this.headers,withCredentials:true};
     // CouchDB ports are 2200 and 2201 (forwarded from 5984 and 5986 on virtual machine)
-    private baseUrl = 'http://127.0.0.1:2200/';
+    private baseUrl = 'http://127.0.0.1:' + environment.couchPort + '/';
     
     private setOpts(opts?:any) {
         return Object.assign({},this.defaultOpts,opts) || this.defaultOpts;
