@@ -62,7 +62,7 @@ export class CouchService {
             .then(this.handleRes)
             .catch(this.handleError);
     }
-    
+
     private handleRes = (res:any) => res.json();
     
     private handleError(error: any): Promise<any> {

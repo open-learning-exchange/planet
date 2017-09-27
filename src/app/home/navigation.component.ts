@@ -21,7 +21,7 @@ export class NavigationComponent {
 
     components = [
         { link:'', name:'Home' },
-        { link:'', name:'Library' },
+        { link:'resources', name:'Library' },
         { link:'', name:'Courses' },
         { link:'meetups', name:'Meetups' },
         { link:'users', name:'Members' },

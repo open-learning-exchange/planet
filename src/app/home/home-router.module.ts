@@ -10,6 +10,7 @@ const routes: Routes = [
         children: [
             { path:'', component:DashboardComponent},
             { path:'users', component:UsersComponent},
+            { path:'resources', loadChildren:'../resources/resources.module#ResourcesModule'},
             { path:'meetups', loadChildren:'../meetups/meetups.module#MeetupsModule'}
         ]
     }
