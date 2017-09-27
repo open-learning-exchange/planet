@@ -2,7 +2,7 @@
 // https://github.com/angular/protractor/blob/master/lib/config.ts
 
 const { SpecReporter } = require('jasmine-spec-reporter'),
-  userHandler = require('./e2e/userHandler.js'),
+  userHandler = require('./e2e/userHandler.ts'),
   timeStamp = Date.now(),
   user = userHandler(timeStamp);
 
