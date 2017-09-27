@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+#dist: trusty
 
 branches:
   except:
@@ -35,53 +35,47 @@ notifications:
 services:
   - docker
 
-install:
-  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
-  #- travis_retry npm install -g codeceptjs
-  #- travis_retry npm install -g webdriverio
-  #- travis_retry npm install -g cookie
-
 before_install:
-# docker pull portainer/portainer
-# sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
-# Add CouchDB Docker
+  # Portainer
+  #- docker pull portainer/portainer
+  #- sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
+  
+  # Add CouchDB Docker
   - docker pull klaemo/couchdb:2.0.0
   - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
-# Set up Node.js
-  #- curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
-  #- bash nodesource_setup.sh
-  #- apt-get -y install nodejs
-
-# Add CORS to CouchDB so app has access to databases
+  
+  # Add CORS to CouchDB so app has access to databases
   - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
   - cd add-cors-to-couchdb
   - npm install
   - node bin.js http://localhost:5984
   - cd ..
-  # End add CORS to CouchDB
-
-# Add initial Couch databases here
+  
+  # Add initial Couch databases here
   - curl -X PUT http://127.0.0.1:5984/_users
   - curl -X PUT http://127.0.0.1:5984/_replicator
   - curl -X PUT http://127.0.0.1:5984/_global_changes
   - curl -X PUT http://127.0.0.1:5984/meetups
-# End Couch database addition
 
+  # CHROME & xvfb stuff
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 
+install:
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+
 before_script:
-- npm install
-- npm install -g @angular/cli
-- npm install -g karma
-#- ng build
+  - travis_retry npm install
+  - travis_retry npm install -g @angular/cli
+  - travis_retry npm install -g karma
+  #- ng build
 
 script:
   - export
   - docker ps -a | grep planet
   - curl -X GET http://127.0.0.1:5984/_all_dbs
   - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 4 ]; then exit 1; fi
-  - node -v
+  #- node -v
   #- ng test
-  #- ng e2e
+  - ng e2e --environment test
