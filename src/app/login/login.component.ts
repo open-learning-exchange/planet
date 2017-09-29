@@ -43,12 +43,16 @@ export class LoginComponent {
 
     createMode:boolean = this.router.url.split('?')[0] === '/login/newuser';
     returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    model = { name:'', password:'', repeatPassword:'' }
+    model = { name:'', password:'', repeatPassword:'' };
     message = '';
 
     onSubmit() {
         if(this.createMode) {
-            this.createUser(this.model);
+            if (this.checkAdminExistence()) {
+                this.createAdmin(this.model);
+            } else {
+                this.createUser(this.model);
+            }
         } else {
             this.login(this.model);
         }
@@ -64,10 +68,34 @@ export class LoginComponent {
                 .then((data) => {
                     this.message = 'User created: ' + data.id.replace('org.couchdb.user:','');
                     this.reRoute();
+                }, (error) => {
+                    this.message = '';
+                    console.log('Need admin privilage to create a user');
+            });
+        } else {
+            this.message = 'Passwords do not match';
+        }
+    }
+
+    createAdmin({name,password,repeatPassword}:{name:string,password:string,repeatPassword:string}) {
+        if(password === repeatPassword) {
+            this.couchService.put('_node/nonode@nohost/_config/admins/' + name + ' -d ' + "'" + '"' + password + '"' + "'", {})
+                .then((data) => {
+                    this.message = 'Admin created: ' + data.id.replace('org.couchdb.user:','');
+                    this.reRoute();
                 }, (error) => this.message = '');
         } else {
             this.message = 'Passwords do not match';
         }
+    }
+
+    checkAdminExistence() {
+        this.couchService.get('_users/_all_docs')
+            .then((data) => {
+                return true; //user can see data so there is no admin
+            }, (error) => {
+                return false; //user doesn't have permission so there is no admin
+            });
     }
 
     login({name,password}:{name:string,password:string}) {
