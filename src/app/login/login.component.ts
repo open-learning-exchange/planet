@@ -48,11 +48,7 @@ export class LoginComponent {
 
     onSubmit() {
         if(this.createMode) {
-            if (this.checkAdminExistence()) {
-                this.createAdmin(this.model);
-            } else {
-                this.createUser(this.model);
-            }
+            this.checkAdminExistence()
         } else {
             this.login(this.model);
         }
@@ -70,7 +66,6 @@ export class LoginComponent {
                     this.reRoute();
                 }, (error) => {
                     this.message = '';
-                    console.log('Need admin privilage to create a user');
             });
         } else {
             this.message = 'Passwords do not match';
@@ -79,9 +74,8 @@ export class LoginComponent {
 
     createAdmin({name,password,repeatPassword}:{name:string,password:string,repeatPassword:string}) {
         if(password === repeatPassword) {
-            this.couchService.put('_node/nonode@nohost/_config/admins/' + name + ' -d ' + "'" + '"' + password + '"' + "'", {})
+            this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
                 .then((data) => {
-                    this.message = 'Admin created: ' + data.id.replace('org.couchdb.user:','');
                     this.reRoute();
                 }, (error) => this.message = '');
         } else {
@@ -92,9 +86,9 @@ export class LoginComponent {
     checkAdminExistence() {
         this.couchService.get('_users/_all_docs')
             .then((data) => {
-                return true; //user can see data so there is no admin
+                this.createAdmin(this.model); //user can see data so there is no admin
             }, (error) => {
-                return false; //user doesn't have permission so there is no admin
+                this.createUser(this.model); //user doesn't have permission so there is an admin
             });
     }
 
