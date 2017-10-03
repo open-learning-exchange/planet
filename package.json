@@ -8,6 +8,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "vagrant ssh -c 'cd /vagrant;ng lint'",
+    "lint-fix": "vagrant ssh -c 'cd /vagrant;ng lint --fix'",
     "e2e": "ng e2e",
     "install-hooks": "cp -a git-hooks/. .git/hooks/"
   },
