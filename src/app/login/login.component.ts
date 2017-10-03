@@ -24,8 +24,8 @@ require('./login.scss');
                     <input [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
                 </div>
                 <div class="login-actions">
-                    <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
-                    <a [routerLink]="createMode ? ['/login'] : ['newuser']">{{ createMode ? 'Already have an account?' : 'Are you new?' }}</a>
+                    <div><button class="ole-btn cursor-pointer" i18n>{createMode, select, true {Create User} false {SIGN-IN}}</button></div>
+                    <a [routerLink]="createMode ? ['/login'] : ['newuser']" i18n>{createMode, select, true {Already have an account?} false {Are you new?}}</a>
                 </div>
             </form>
             <div id="login-status">{{message}}</div>
