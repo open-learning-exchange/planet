@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
     template: `
         <ul>
             <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
-            <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
+            <li><a href="#" class="km-logout" (click)="logoutClick()" i18n>LOGOUT</a></li>
         </ul>
     `,
     styleUrls:['./navigation.scss']

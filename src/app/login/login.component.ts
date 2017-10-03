@@ -11,17 +11,17 @@ require('./login.scss');
             <div class="ole-logo">
                 <img src="assets/cropped-ole-ico-logo-180x180.png">
                 <h1 i18n>Planet Learning</h1>
-                <h3>Version 2.01</h3>
+                <h3 i18n>Version 2.01</h3>
             </div>
             <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
                 <div>
-                    <input [(ngModel)]="model.name" placeholder="Username" name="name" />
+                    <input [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
                 </div>
                 <div>
-                    <input [(ngModel)]="model.password" placeholder="Password" name="password" type="password" />
+                    <input [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
                 </div>
                 <div *ngIf="createMode">
-                    <input [(ngModel)]="model.repeatPassword" placeholder="Repeat Password" name="repeatPassword" type="password" />
+                    <input [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
                 </div>
                 <div class="login-actions">
                     <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>

@@ -1,14 +1,13 @@
-
 <div class="container">
 <p>{{message}}</p>
-<h2>Meetups</h2>
-<a routerLink="add" class='btn btn-primary' routerLinkActive="active">Meetup Add</a>
+<h2 i18n>Meetups</h2>
+<a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Meetup Add</a>
 <table class="table">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Actions</th>
+            <th i18n>Title</th>
+            <th i18n>Description</th>
+            <th i18n>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -20,7 +19,7 @@
                 {{meetup.doc.description}}
             </td>
             <td>
-                <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
+                <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)" i18n>Delete</button>
             </td>
         </tr>
     </tbody>

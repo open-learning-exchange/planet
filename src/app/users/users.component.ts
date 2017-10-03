@@ -12,13 +12,13 @@ import { CouchService } from '../shared/couchdb.service';
                     <select [(ngModel)]="selectedRole" name="role">
                         <option *ngFor="let role of roleList" [value]="role">{{role}}</option>
                     </select>
-                    <button class="ole-btn cursor-pointer" type="submit">Add role to selected</button>
+                    <button class="ole-btn cursor-pointer" type="submit" i18n>Add role to selected</button>
                 </div>
             </form>
             <table class="ole-table">
                 <thead>
-                    <td>User name</td>
-                    <td>Roles</td>
+                    <td i18n>User name</td>
+                    <td i18n>Roles</td>
                 </thead>
                 <tbody>
                     <tr *ngFor="let user of allUsers" [ngClass]="{'cursor-pointer':user._id,'hoverable':user._id,'selected':user.selected}" (click)="select(user)">

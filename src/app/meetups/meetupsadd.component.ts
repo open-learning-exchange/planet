@@ -5,16 +5,16 @@ import { CouchService } from '../shared/couchdb.service';
   template: `
     <p>{{message}}</p>
     <form class="form-horizontal" (ngSubmit)="onSubmit(meetupForm.value)" #meetupForm="ngForm">
-        <legend>Start a New Meetup</legend>
+        <legend i18n>Start a New Meetup</legend>
         <div class="form-group col-md-4">
-            <label class="control-label">Title</label>  
-            <input name="title" type="text" ngModel placeholder="title" class="form-control input-md" required="" />
+            <label class="control-label" i18n>Title</label>  
+            <input name="title" type="text" ngModel i18n-placeholder placeholder="title" class="form-control input-md" required="" />
         </div>
         <div class="form-group">
-            <label class="col-md-4 control-label">Description</label>
-            <input name="description" type="text" ngModel placeholder="description" class="form-control input-md" required="" />
+            <label class="col-md-4 control-label" i18n>Description</label>
+            <input name="description" type="text" ngModel i18n-placeholder placeholder="description" class="form-control input-md" required="" />
         </div>
-        <button name="singlebutton" class="btn btn-primary" type="submit">Save</button>
+        <button name="singlebutton" class="btn btn-primary" type="submit" i18n>Save</button>
     </form>
     `
 })
