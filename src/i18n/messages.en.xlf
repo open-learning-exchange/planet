@@ -9,7 +9,7 @@
           <context context-type="sourcefile">app\page-not-found\page-not-found.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">
+        <target xml:lang="en" state="translated">
                     Oops!</target>
       </trans-unit>
       <trans-unit id="bfe453bf8d643b8f5c07a6a0c49550d1ff0dd0bf" datatype="html">
@@ -19,7 +19,7 @@
           <context context-type="sourcefile">app\page-not-found\page-not-found.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">
+        <target xml:lang="en" state="translated">
                     404 Not Found</target>
       </trans-unit>
       <trans-unit id="243c3cc3173b7cacf5c60af657d85616c28a0550" datatype="html">
@@ -30,7 +30,7 @@
           <context context-type="sourcefile">app\page-not-found\page-not-found.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">
+        <target xml:lang="en" state="translated">
                     Sorry, an error has occured, Requested page not found!
                 </target>
       </trans-unit>
@@ -40,7 +40,7 @@
           <context context-type="sourcefile">app\dashboard\dashboard.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Hi, <x id="INTERPOLATION"/></target>
+        <target xml:lang="en" state="translated">Hi, <x id="INTERPOLATION"/></target>
       </trans-unit>
       <trans-unit id="5bf6688ec0b312dac6d7cf96d57978548f0bc7b7" datatype="html">
         <source>Add role to selected</source>
@@ -48,7 +48,7 @@
           <context context-type="sourcefile">app\users\users.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Add role to selected</target>
+        <target xml:lang="en" state="translated">Add to selected</target>
       </trans-unit>
       <trans-unit id="024886ca34a6f309e3e51c2ed849320592c3faaa" datatype="html">
         <source>User name</source>
@@ -56,7 +56,7 @@
           <context context-type="sourcefile">app\users\users.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">User name</target>
+        <target xml:lang="en" state="translated">User name</target>
       </trans-unit>
       <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html">
         <source>Roles</source>
@@ -64,7 +64,7 @@
           <context context-type="sourcefile">app\users\users.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Roles</target>
+        <target xml:lang="en" state="translated">Roles</target>
       </trans-unit>
       <trans-unit id="afd707a7a917a96605804e92e66cb17e2bf5c7e2" datatype="html">
         <source>LOGOUT</source>
@@ -72,15 +72,15 @@
           <context context-type="sourcefile">app\home\navigation.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">LOGOUT</target>
+        <target xml:lang="en" state="translated">LOGOUT</target>
       </trans-unit>
-      <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
+      <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html" approved="yes">
         <source>Planet Learning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target xml:lang="en" state="translated">Planet Learning</target>
+        <target xml:lang="en">Planet Learning</target>
       </trans-unit>
       <trans-unit id="a41821f3aa75b8ebb8965ac06f11049e8f283a07" datatype="html">
         <source>Version 2.01</source>
@@ -88,7 +88,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Version 2.01</target>
+        <target xml:lang="en" state="translated">Version 2.01</target>
       </trans-unit>
       <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
         <source>Username</source>
@@ -96,7 +96,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Username</target>
+        <target xml:lang="en" state="translated">Username</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -104,7 +104,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Password</target>
+        <target xml:lang="en" state="translated">Password</target>
       </trans-unit>
       <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html">
         <source>Repeat Password</source>
@@ -112,7 +112,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Repeat Password</target>
+        <target xml:lang="en" state="translated">Repeat Password</target>
       </trans-unit>
       <trans-unit id="59e94e0b01b5636a2631d0f7fa3b6560993c8997" datatype="html">
         <source>{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</source>
@@ -120,7 +120,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</target>
+        <target xml:lang="en" state="translated">{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</target>
       </trans-unit>
       <trans-unit id="7321f65ec54f11307a5c802dacf0dd9c3d2fed7c" datatype="html">
         <source>{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</source>
@@ -128,7 +128,7 @@
           <context context-type="sourcefile">app\login\login.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</target>
+        <target xml:lang="en" state="translated">{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
         <source>Meetups</source>
@@ -136,7 +136,7 @@
           <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Meetups</target>
+        <target xml:lang="en" state="translated">Meetups</target>
       </trans-unit>
       <trans-unit id="aa8e10de4fdfb075cb282d33ca1688f8186018fc" datatype="html">
         <source>Meetup Add</source>
@@ -144,7 +144,7 @@
           <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Meetup Add</target>
+        <target xml:lang="en" state="translated">Meetup Add</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
@@ -156,7 +156,7 @@
           <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Title</target>
+        <target xml:lang="en" state="translated">Title</target>
       </trans-unit>
       <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html">
         <source>Description</source>
@@ -168,7 +168,7 @@
           <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Description</target>
+        <target xml:lang="en" state="translated">Description</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
         <source>Actions</source>
@@ -176,7 +176,7 @@
           <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Actions</target>
+        <target xml:lang="en" state="translated">Actions</target>
       </trans-unit>
       <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
         <source>Delete</source>
@@ -184,7 +184,7 @@
           <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Delete</target>
+        <target xml:lang="en" state="translated">Delete</target>
       </trans-unit>
       <trans-unit id="c1120e39e6f0678a82b287bebdb34b05be575163" datatype="html">
         <source>Start a New Meetup</source>
@@ -192,7 +192,7 @@
           <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Start a New Meetup</target>
+        <target xml:lang="en" state="translated">Start a New Meetup</target>
       </trans-unit>
       <trans-unit id="a817ef2e565053d06453d5b831a730da41223092" datatype="html">
         <source>title</source>
@@ -200,7 +200,7 @@
           <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">title</target>
+        <target xml:lang="en" state="translated">title</target>
       </trans-unit>
       <trans-unit id="f5fb76b5c7e146dc251edbfaa4847004a81af582" datatype="html">
         <source>description</source>
@@ -208,7 +208,7 @@
           <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">description</target>
+        <target xml:lang="en" state="translated">description</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
@@ -216,7 +216,7 @@
           <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Save</target>
+        <target xml:lang="en" state="translated">Save</target>
       </trans-unit>
     </body>
   </file>
