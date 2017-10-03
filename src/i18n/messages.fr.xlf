@@ -114,6 +114,22 @@
         </context-group>
         <target xml:lang="fr" state="needs-translation">Repeat Password</target>
       </trans-unit>
+      <trans-unit id="59e94e0b01b5636a2631d0f7fa3b6560993c8997" datatype="html">
+        <source>{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\login\login.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <target xml:lang="fr" state="needs-translation">{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</target>
+      </trans-unit>
+      <trans-unit id="7321f65ec54f11307a5c802dacf0dd9c3d2fed7c" datatype="html">
+        <source>{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\login\login.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <target xml:lang="fr" state="needs-translation">{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</target>
+      </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
         <source>Meetups</source>
         <context-group purpose="location">
