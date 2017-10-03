@@ -6,14 +6,14 @@ import { UsersComponent } from '../users/users.component';
 import { HomeComponent } from './home.component';
 
 const routes: Routes = [
-    { path:'', component:HomeComponent,
-        children: [
-            { path:'', component:DashboardComponent},
-            { path:'users', component:UsersComponent},
-            { path:'resources', loadChildren:'../resources/resources.module#ResourcesModule'},
-            { path:'meetups', loadChildren:'../meetups/meetups.module#MeetupsModule'}
-        ]
-    }
+  { path: '', component: HomeComponent,
+    children: [
+      { path: '', component: DashboardComponent},
+      { path: 'users', component: UsersComponent},
+      { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule'},
+      { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule'}
+    ]
+  }
 ];
 
 @NgModule({

@@ -5,12 +5,12 @@ import { ResourcesComponent } from './resources.component';
 import { ResourcesViewComponent } from './resources-view.component';
 
 const routes: Routes = [
-    { path:'', component:ResourcesComponent},
-    { path:'view/:id', component:ResourcesViewComponent}
+  { path: '', component: ResourcesComponent},
+  { path: 'view/:id', component: ResourcesViewComponent}
 ];
 
 @NgModule({
-    imports:[RouterModule.forChild(routes)],
-    exports:[RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 export class ResourcesRouterModule {}

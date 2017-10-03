@@ -13,7 +13,7 @@ describe('MeetupsaddComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpModule ],
       declarations: [ MeetupsaddComponent ],
-      providers:[CouchService]
+      providers: [CouchService]
     })
     .compileComponents();
   }));

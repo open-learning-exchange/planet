@@ -9,29 +9,29 @@ import { UserService } from '../shared/user.service';
 
 describe('Dashboard', () => {
 
-    const setup = () => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [DashboardComponent],
-            providers: [UserService]
-        });
-        const fixture = TestBed.createComponent(DashboardComponent),
-            comp = fixture.componentInstance,
-            de = fixture.debugElement.query(By.css('#greeting')),
-            greetElement = de.nativeElement;
-        return { fixture, comp, de, greetElement };
-    };
-
-    it('Should be a DashboardComponent', () => {
-        const { comp } = setup();
-        expect(comp instanceof DashboardComponent).toBe(true, 'Should create AppComponent');
+  const setup = () => {
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      declarations: [DashboardComponent],
+      providers: [UserService]
     });
+    const fixture = TestBed.createComponent(DashboardComponent),
+      comp = fixture.componentInstance,
+      de = fixture.debugElement.query(By.css('#greeting')),
+      greetElement = de.nativeElement;
+    return { fixture, comp, de, greetElement };
+  };
 
-    it('Should display the correct title', () => {
-        const { fixture, comp, greetElement } = setup();
-        comp.name = 'paul';
-        fixture.detectChanges();
-        expect(greetElement.textContent).toBe('Hi, paul', 'Greeting displays correctly');
-    });
+  it('Should be a DashboardComponent', () => {
+    const { comp } = setup();
+    expect(comp instanceof DashboardComponent).toBe(true, 'Should create AppComponent');
+  });
+
+  it('Should display the correct title', () => {
+    const { fixture, comp, greetElement } = setup();
+    comp.name = 'paul';
+    fixture.detectChanges();
+    expect(greetElement.textContent).toBe('Hi, paul', 'Greeting displays correctly');
+  });
 
 });
