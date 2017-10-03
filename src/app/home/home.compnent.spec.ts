@@ -8,21 +8,21 @@ import { NavigationComponent } from './navigation.component';
 import { CouchService } from '../shared/couchdb.service';
 
 describe('Home', () => {
-    
-    const setup = () => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule,CommonModule,HttpModule],
-            declarations: [HomeComponent,NavigationComponent],
-            providers: [CouchService]
-        });
-        let fixture = TestBed.createComponent(HomeComponent);
-        let comp = fixture.componentInstance;
-        return { fixture, comp };
-    }
-    
-    it('Should be a HomeComponent', () => {
-        let { comp } = setup();
-        expect(comp instanceof HomeComponent).toBe(true,'Should create HomeComponent');
+
+  const setup = () => {
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule, CommonModule, HttpModule],
+      declarations: [HomeComponent, NavigationComponent],
+      providers: [CouchService]
     });
-    
+    const fixture = TestBed.createComponent(HomeComponent),
+      comp = fixture.componentInstance;
+    return { fixture, comp };
+  };
+
+  it('Should be a HomeComponent', () => {
+    const { comp } = setup();
+    expect(comp instanceof HomeComponent).toBe(true, 'Should create HomeComponent');
+  });
+
 });

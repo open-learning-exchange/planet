@@ -1,4 +1,4 @@
 export const environment = {
-  production:false,
-  couchPort:'5984'
+  production: false,
+  couchPort: '5984'
 };

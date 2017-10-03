@@ -5,15 +5,15 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 
 describe('App', () => {
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [AppComponent]
-        });
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      declarations: [AppComponent]
     });
-    
-    it('Should be an AppComponent', () => {
-        let fixture = TestBed.createComponent(AppComponent);
-        expect(fixture.componentInstance instanceof AppComponent).toBe(true,'Should create AppComponent');
-    });
+  });
+
+  it('Should be an AppComponent', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    expect(fixture.componentInstance instanceof AppComponent).toBe(true, 'Should create AppComponent');
+  });
 });

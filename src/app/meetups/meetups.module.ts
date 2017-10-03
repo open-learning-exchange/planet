@@ -5,14 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { MeetupsComponent } from './meetups.component';
 import { MeetupsaddComponent } from './meetupsadd.component';
 
-import { MeetupsRouterModule } from './meetups-router.module'
+import { MeetupsRouterModule } from './meetups-router.module';
 
 @NgModule({
   imports: [
-    MeetupsRouterModule,CommonModule,FormsModule
+    MeetupsRouterModule, CommonModule, FormsModule
   ],
   declarations: [
-    MeetupsComponent,MeetupsaddComponent
+    MeetupsComponent, MeetupsaddComponent
   ]
 })
 export class MeetupsModule {}

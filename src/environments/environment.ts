@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  couchPort:'2200'
+  couchPort: '2200'
 };

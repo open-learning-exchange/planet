@@ -1,39 +1,39 @@
 @import '../variables';
 
 :host {
-    
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    background-color:$ole-blue-dark;
-    
-    ul {
-        list-style-type:none;
-        margin:0;
-        padding:0;
-    }
-    
-    li {
-        float:left;
-        display:block;
-        width:12%;
-        text-align:center;
-    }
-    
-    a {
-        text-decoration:none;
-        display:block;
-        color:white;
-        font-weight:500;
-        padding:0 0;
-        margin:10px 0;
-        border-right:2px white solid;
-        line-height:1em;
-    }
-    
-    li:last-child a {
-        border:none;
-    }
-    
+
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background-color:$ole-blue-dark;
+
+  ul {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+  }
+
+  li {
+    float:left;
+    display:block;
+    width:12%;
+    text-align:center;
+  }
+
+  a {
+    text-decoration:none;
+    display:block;
+    color:white;
+    font-weight:500;
+    padding:0 0;
+    margin:10px 0;
+    border-right:2px white solid;
+    line-height:1em;
+  }
+
+  li:last-child a {
+    border:none;
+  }
+
 }
