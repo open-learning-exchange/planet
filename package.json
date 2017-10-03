@@ -7,8 +7,9 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "lint": "vagrant ssh -c 'cd /vagrant;ng lint'",
+    "e2e": "ng e2e",
+    "install-hooks": "cp -a git-hooks/. .git/hooks/"
   },
   "private": true,
   "dependencies": {
