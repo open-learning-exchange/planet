@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -10,8 +10,10 @@ import {
 } from '@angular/forms';
 import { Location } from '@angular/common';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/map';
 
 import * as constants from './constants';
 
@@ -21,7 +23,7 @@ import { CouchService } from '../shared/couchdb.service';
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.scss']
 })
-export class CoursesComponent implements OnInit {
+export class CoursesComponent {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses';
@@ -67,6 +69,12 @@ export class CoursesComponent implements OnInit {
       backgroundColor: '',
       foregroundColor: ''
     });
+
+    // set default values to first item in the array
+    this.courseForm.patchValue({
+      gradeLevel: this.gradeLevels[0],
+      subjectLevel: this.subjectLevels[0]
+    });
   }
 
   onSubmit() {
@@ -102,7 +110,6 @@ export class CoursesComponent implements OnInit {
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
     return this.courseCheckerService$(ac.value).map(res => {
-      console.log(res);
       if (res) {
         return { checkCourseExists: 'Course already exists' };
       } else {
@@ -133,17 +140,11 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // set default values to first item in the array
-    this.courseForm.patchValue({
-      gradeLevel: this.gradeLevels[0],
-      subjectLevel: this.subjectLevels[0]
-    });
-  }
-
   cancel() {
     this.location.back();
   }
+
+  /* FOR TOGGLING DAILY/WEEKLY DAYS */
 
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.courseForm.controls.day;
@@ -160,8 +161,12 @@ export class CoursesComponent implements OnInit {
 
   // remove old values from array on radio button change
   toogleWeekly(val: boolean) {
+    // empty the array
+    this.courseForm.setControl('day', this.fb.array([]));
+    if (val) {
+      // add all days to the array if the course is daily
+      this.courseForm.setControl('day', this.fb.array(this.days));
+    }
     this.isWeekly = val;
-    this.days.forEach(day => this.onDayChange(day, false));
-    this.days.forEach(day => this.onDayChange(day, !val));
   }
 }

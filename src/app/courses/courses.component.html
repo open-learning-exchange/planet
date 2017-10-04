@@ -67,16 +67,16 @@
       <div>Frequency</div>
       <!-- radio buttons need same name to allow only one value to be selected! -->
       <label> 
-      <input type="radio" name="daysToggler" (change)="toogleWeekly(false)">
+      <input type="radio" name="daysToggler" (change)="toogleWeekly(true)">
       Daily
     </label>
       <label>
-      <input type="radio" name="daysToggler" (change)="toogleWeekly(true)">
+      <input type="radio" name="daysToggler" (change)="toogleWeekly(false)">
       Weekly
     </label>
     </div>
   </div>
-  <div class="form-check form-check-inline" *ngIf="isWeekly">
+  <div class="form-check form-check-inline" *ngIf="!isWeekly">
     <div class="form-check-label">Day</div>
     <label class="form-check-label" *ngFor="let day of days">
       <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)">
@@ -112,5 +112,5 @@
   <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
 </form>
 
-<p>Form value: {{ courseForm.valid | json }}</p>
+<p>Form value: {{ courseForm.value | json }}</p>
 <p>{{name}}</p>
