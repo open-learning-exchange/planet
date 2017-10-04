@@ -4,11 +4,16 @@ import {
   FormControl,
   FormGroup,
   FormArray,
-  Validators
+  Validators,
+  ValidationErrors,
+  AbstractControl
 } from '@angular/forms';
 import { Location } from '@angular/common';
+
+import { Observable } from 'rxjs';
+import 'rxjs/add/operator/debounceTime';
+
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from './custom-validators';
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
@@ -62,10 +67,17 @@ export class CoursesComponent implements OnInit {
 
   createForm() {
     this.courseForm = this.fb.group({
-      courseTitle: ['', Validators.required],
+      courseTitle: [
+        '',
+        [Validators.required],
+        [
+          (ac: AbstractControl): Observable<ValidationErrors | null> =>
+            this.checkCourseExists$(ac)
+        ]
+      ],
       description: ['', Validators.required],
       languageOfInstruction: '',
-      memberLimit: ['', CustomValidators.isValidNumber],
+      memberLimit: ['', Validators.min(0)],
       courseLeader: [''],
       method: '',
       gradeLevel: '',
@@ -85,30 +97,63 @@ export class CoursesComponent implements OnInit {
     this.addCourse(this.courseForm.value);
   }
 
-  addCourse(courseInfo) {
-    this.couchService.post(this.dbName, { ...courseInfo }).then(data => {
-      this.checkCourseTitle(data.id, data.rev);
-    });
+  // TODO move validators to their own file and debounce them
+  searchQuery(courseTitle) {
+    return JSON.parse(`
+    {
+      "selector": {
+        "courseTitle": "${courseTitle}"
+      },
+      "fields": ["courseTitle"],
+      "limit": 1
+    }
+    `);
   }
 
-  checkCourseTitle(id, rev) {
-    const courseTitle = this.courseForm.controls.courseTitle.value;
-    const url = `${this
-      .dbName}/_design/courses-checker/_view/courseTitles/?group=true&key="${courseTitle}"`;
-    this.couchService.get(url).then(data => {
-      if (data.rows[0].value > 1) {
-        this.deleteCourse(id, rev);
+  public courseCheckerService$(title: string): Observable<boolean> {
+    const isDuplicate = this.couchService
+      .post(`${this.dbName}/_find`, this.searchQuery(title))
+      .then(data => {
+        if (data.docs.length > 0) {
+          return true;
+        }
+        return false;
+      });
+    return Observable.fromPromise(isDuplicate);
+  }
+
+  public checkCourseExists$(
+    ac: AbstractControl
+  ): Observable<ValidationErrors | null> {
+    return this.courseCheckerService$(ac.value).map(res => {
+      console.log(res);
+      if (res) {
+        return { checkCourseExists: 'Course already exists' };
       } else {
-        this.message = 'Yay unique document';
+        return null;
       }
     });
+
+    // another way of checking if course title is unique
+    // this.courseForm.controls['courseTitle'].valueChanges
+    //   .debounceTime(500)
+    //   .subscribe(title => {
+    //     this.couchService
+    //       .post(`courses/_find`, this.searchQuery(title))
+    //       .then(data => {
+    //         if (data.docs.length === 0) {
+    //           this.isUnique = true;
+    //           return;
+    //         }
+    //         this.isUnique = false;
+    //       });
+    //   });
   }
 
-  deleteCourse(id, rev) {
-    const url = `${this.dbName}/${id}?rev=${rev}`;
-    this.couchService.delete(url).then(data => {
-      console.log(data);
-      this.message = 'Duplicate found so it was Successfully deleted';
+  addCourse(courseInfo) {
+    this.couchService.post(this.dbName, { ...courseInfo }).then(data => {
+      // does not work..need to use router?
+      this.location.go('/');
     });
   }
 
@@ -121,7 +166,6 @@ export class CoursesComponent implements OnInit {
   }
 
   cancel() {
-    this.courseForm.reset();
     this.location.back();
   }
 
@@ -143,9 +187,5 @@ export class CoursesComponent implements OnInit {
     this.isWeekly = val;
     this.days.forEach(day => this.onDayChange(day, false));
     this.days.forEach(day => this.onDayChange(day, !val));
-  }
-
-  get courseTitle() {
-    return this.courseForm.get('courseTitle');
   }
 }

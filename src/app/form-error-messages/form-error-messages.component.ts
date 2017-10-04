@@ -12,8 +12,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 })
 export class FormErrorMessagesComponent {
   private static readonly errorMessages = {
-    required: field => 'This is required',
-    memberLimit: params => params.message
+    required: field => 'This is required'
   };
   @Input() private control: AbstractControlDirective | AbstractControl;
 
