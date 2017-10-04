@@ -6,7 +6,7 @@ export class LoginPage {
   }
 
   getHeaderText() {
-    return element(by.css('planet h1')).getText();
+    return element(by.css('planet-app h1')).getText();
   }
 
   getUsernameInput() {

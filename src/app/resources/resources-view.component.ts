@@ -32,7 +32,7 @@ export class ResourcesViewComponent implements OnInit {
   resource = {};
   mediaType = '';
   resourceSrc = '';
-  pdfSrc:any;
+  pdfSrc: any;
   contentType = '';
   // This url might need to be dynamic in final version
   urlPrefix = 'http://127.0.0.1:2200/resources/';
@@ -43,13 +43,13 @@ export class ResourcesViewComponent implements OnInit {
       .subscribe(resource => this.resource = resource);
   }
 
-  getResource(id:string){
+  getResource(id: string) {
     return this.couchService.get('resources/' + id)
       .then((data) => {
         this.mediaType = data.mediaType;
         this.contentType = data._attachments[id].content_type;
         this.resourceSrc = this.urlPrefix + data._id + '/' + data.filename;
-        if(this.mediaType === 'pdf') {
+        if (this.mediaType === 'pdf') {
           this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
         }
         return data;

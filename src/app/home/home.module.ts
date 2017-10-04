@@ -7,14 +7,14 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
 
-import { HomeRouterModule } from './home-router.module'
+import { HomeRouterModule } from './home-router.module';
 
 @NgModule({
   imports: [
-    HomeRouterModule,CommonModule,FormsModule
+    HomeRouterModule, CommonModule, FormsModule
   ],
   declarations: [
-    HomeComponent,DashboardComponent,NavigationComponent,UsersComponent
+    HomeComponent, DashboardComponent, NavigationComponent, UsersComponent
   ]
 })
 export class HomeModule {}

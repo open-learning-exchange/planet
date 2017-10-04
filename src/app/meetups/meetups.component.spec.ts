@@ -13,7 +13,7 @@ describe('MeetupsComponent', () => {
         HttpModule
       ],
       declarations: [ MeetupsComponent ],
-      providers:[CouchService]
+      providers: [CouchService]
     })
     .compileComponents();
   }));

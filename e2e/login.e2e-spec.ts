@@ -16,8 +16,8 @@ describe('Login', () => {
 
   it('should login', () => {
     page.navigateTo();
-    let userInput = page.getUsernameInput();
-    let passInput = page.getPasswordInput();
+    const userInput = page.getUsernameInput();
+    const passInput = page.getPasswordInput();
     userInput.sendKeys(browser.params.user);
     passInput.sendKeys('e2e');
     page.clickSignin();

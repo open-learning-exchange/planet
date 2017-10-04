@@ -1,65 +1,65 @@
 @import '../variables';
 
 .ole-login {
-    
-    height:100vh;
-    width:600px;
-    margin: 0 auto;
-    color:white;
-    background: linear-gradient($ole-blue-light,$ole-blue-dark);
-    text-align:center;
-    overflow:hidden;
-    
-    .ole-logo {
-        margin-top:-200px;
-        height:600px;
-        width:100%;
-        background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
-        * {
-            position:relative;
-            top:50%;
-            transform:translate(0,-50%);            
-            text-shadow:1px 1px black;
-        }
-        img {
-            height:100px;
-            width:100px;
-            display:block;
-            margin:0 auto;
-        }
-        
+
+  height:100vh;
+  width:600px;
+  margin: 0 auto;
+  color:white;
+  background: linear-gradient($ole-blue-light,$ole-blue-dark);
+  text-align:center;
+  overflow:hidden;
+
+  .ole-logo {
+    margin-top:-200px;
+    height:600px;
+    width:100%;
+    background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
+    * {
+      position:relative;
+      top:50%;
+      transform:translate(0,-50%);
+      text-shadow:1px 1px black;
     }
-    
-    
-    form {
-    
-        width:300px;
-        margin:0 auto;
-        
-        input {
-            width:300px;
-        }
-    
-        div {
-            margin:8px 0;
-        }
-            
-        .login-actions a {
-            display:inline-block;
-        }
-        
+    img {
+      height:100px;
+      width:100px;
+      display:block;
+      margin:0 auto;
     }
-    
+
+  }
+
+
+  form {
+
+    width:300px;
+    margin:0 auto;
+
     input {
-        border:0px;
-        border-bottom:1px solid white;
-        color:white;
-        background:none;
+      width:300px;
     }
-    
-    input::-webkit-input-placeholder {
-        color: white;
-        opacity:1;
+
+    div {
+      margin:8px 0;
     }
-    
+
+    .login-actions a {
+      display:inline-block;
+    }
+
+  }
+
+  input {
+    border:0px;
+    border-bottom:1px solid white;
+    color:white;
+    background:none;
+  }
+
+  input::-webkit-input-placeholder {
+    color: white;
+    opacity:1;
+  }
+
 }

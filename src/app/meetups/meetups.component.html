@@ -4,26 +4,26 @@
 <h2>Meetups</h2>
 <a routerLink="add" class='btn btn-primary' routerLinkActive="active">Meetup Add</a>
 <table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let meetup of meetups; let i = index">
-            <td>
-                {{meetup.doc.title}}
-            </td>
-            <td>
-                {{meetup.doc.description}}
-            </td>
-            <td>
-                <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let meetup of meetups; let i = index">
+      <td>
+        {{meetup.doc.title}}
+      </td>
+      <td>
+        {{meetup.doc.description}}
+      </td>
+      <td>
+        <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
 </table>
 <!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
 </div>
