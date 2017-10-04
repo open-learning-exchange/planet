@@ -49,8 +49,14 @@ export class LoginComponent {
   message = '';
 
   onSubmit() {
-    if (this.createMode) {
-      this.createUser(this.model);
+    if(this.createMode) {
+      this.checkAdminExistence().then((isAdmin) => {
+        if (isAdmin) {
+          this.createAdmin(this.model);
+        } else {
+          this.createUser(this.model);
+        }
+      });
     } else {
       this.login(this.model);
     }
@@ -70,6 +76,26 @@ export class LoginComponent {
     } else {
       this.message = 'Passwords do not match';
     }
+  }
+
+  createAdmin({name,password,repeatPassword}:{name:string,password:string,repeatPassword:string}) {
+    if(password === repeatPassword) {
+      this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
+          .then((data) => {
+            this.reRoute();
+          }, (error) => this.message = '');
+    } else {
+      this.message = 'Passwords do not match';
+    }
+  }
+
+  checkAdminExistence() {
+    return this.couchService.get('_users/_all_docs')
+        .then((data) => {
+          return true; //user can see data so there is no admin
+        }, (error) => {
+          return false; //user doesn't have permission so there is an admin
+        });
   }
 
   login({name, password}: {name: string, password: string}) {
