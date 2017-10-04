@@ -13,6 +13,8 @@ import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
 
+import * as constants from './constants';
+
 import { CouchService } from '../shared/couchdb.service';
 @Component({
   selector: 'app-courses',
@@ -22,40 +24,14 @@ import { CouchService } from '../shared/couchdb.service';
 export class CoursesComponent implements OnInit {
   // needs member document to implement
   members = [];
-  message: String;
   readonly dbName = 'courses';
 
   courseForm: FormGroup;
 
   isWeekly = false;
-  gradeLevels = [
-    'Pre-Kindergarten',
-    'Kindergarten',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    'College',
-    'Post-Graduate'
-  ];
-  subjectLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
-  days = [
-    'Saturday',
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday'
-  ];
+  gradeLevels = constants.gradeLevels;
+  subjectLevels = constants.subjectLevels;
+  days = constants.days;
 
   constructor(
     private location: Location,
