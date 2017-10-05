@@ -29,7 +29,7 @@ export const days = [
   'Friday'
 ];
 
-export default function searchQuery(selector, query) {
+export default function searchDocuments(selector, query) {
   return JSON.parse(`
     {
       "selector": {
