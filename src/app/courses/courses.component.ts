@@ -82,13 +82,13 @@ export class CoursesComponent {
   }
 
   // TODO move validators to their own file and debounce them
-  searchQuery(courseTitle) {
+  searchQuery(selector, query) {
     return JSON.parse(`
     {
       "selector": {
-        "courseTitle": "${courseTitle}"
+        "${selector}": "${query}"
       },
-      "fields": ["courseTitle"],
+      "fields": ["${selector}"],
       "limit": 1
     }
     `);
@@ -96,7 +96,7 @@ export class CoursesComponent {
 
   public courseCheckerService$(title: string): Observable<boolean> {
     const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, this.searchQuery(title))
+      .post(`${this.dbName}/_find`, this.searchQuery('courseTitle', title))
       .then(data => {
         if (data.docs.length > 0) {
           return true;
