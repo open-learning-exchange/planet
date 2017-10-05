@@ -11,9 +11,10 @@ import {
 import { Location } from '@angular/common';
 
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/observable/timer';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
 
 import searchDocuments, * as constants from './constants';
 
@@ -81,7 +82,7 @@ export class CoursesComponent {
     this.addCourse(this.courseForm.value);
   }
 
-  // TODO move validators to their own file and debounce them
+  // TODO move validators to their own file
   public courseCheckerService$(title: string): Observable<boolean> {
     const isDuplicate = this.couchService
       .post(`${this.dbName}/_find`, searchDocuments('courseTitle', title))
@@ -97,12 +98,15 @@ export class CoursesComponent {
   public checkCourseExists$(
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
-    return this.courseCheckerService$(ac.value).map(res => {
-      if (res) {
-        return { checkCourseExists: 'Course already exists' };
-      } else {
-        return null;
-      }
+    // calls service every 1s for input change
+    return Observable.timer(1000).switchMap(() => {
+      return this.courseCheckerService$(ac.value).map(res => {
+        if (res) {
+          return { checkCourseExists: 'Course already exists' };
+        } else {
+          return null;
+        }
+      });
     });
 
     // another way of checking if course title is unique
