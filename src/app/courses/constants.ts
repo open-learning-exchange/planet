@@ -28,3 +28,15 @@ export const days = [
   'Thursday',
   'Friday'
 ];
+
+export default function searchQuery(selector, query) {
+  return JSON.parse(`
+    {
+      "selector": {
+        "${selector}": "${query}"
+      },
+      "fields": ["${selector}"],
+      "limit": 1
+    }
+    `);
+}

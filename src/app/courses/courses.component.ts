@@ -15,7 +15,7 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/map';
 
-import * as constants from './constants';
+import searchQuery, * as constants from './constants';
 
 import { CouchService } from '../shared/couchdb.service';
 @Component({
@@ -82,21 +82,9 @@ export class CoursesComponent {
   }
 
   // TODO move validators to their own file and debounce them
-  searchQuery(selector, query) {
-    return JSON.parse(`
-    {
-      "selector": {
-        "${selector}": "${query}"
-      },
-      "fields": ["${selector}"],
-      "limit": 1
-    }
-    `);
-  }
-
   public courseCheckerService$(title: string): Observable<boolean> {
     const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, this.searchQuery('courseTitle', title))
+      .post(`${this.dbName}/_find`, searchQuery('courseTitle', title))
       .then(data => {
         if (data.docs.length > 0) {
           return true;
