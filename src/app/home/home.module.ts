@@ -20,6 +20,7 @@ import { FormErrorMessagesComponent } from '../form-error-messages/form-error-me
     UsersComponent,
     CoursesComponent,
     FormErrorMessagesComponent
-  ]
+  ],
+  providers: []
 })
 export class HomeModule {}
