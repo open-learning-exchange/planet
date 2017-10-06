@@ -17,6 +17,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 
 import searchDocuments, * as constants from './constants';
+import { CustomValidators } from './custom-validators';
 
 import { CouchService } from '../shared/couchdb.service';
 @Component({
@@ -45,31 +46,34 @@ export class CoursesComponent {
   }
 
   createForm() {
-    this.courseForm = this.fb.group({
-      courseTitle: [
-        '',
-        [Validators.required],
-        [
-          (ac: AbstractControl): Observable<ValidationErrors | null> =>
-            this.checkCourseExists$(ac)
-        ]
-      ],
-      description: ['', Validators.required],
-      languageOfInstruction: '',
-      memberLimit: ['', Validators.min(0)],
-      courseLeader: [''],
-      method: '',
-      gradeLevel: '',
-      subjectLevel: '',
-      startDate: '',
-      endDate: '',
-      day: this.fb.array([]),
-      startTime: '',
-      endTime: '',
-      location: '',
-      backgroundColor: '',
-      foregroundColor: ''
-    });
+    this.courseForm = this.fb.group(
+      {
+        courseTitle: [
+          '',
+          [Validators.required],
+          [
+            (ac: AbstractControl): Observable<ValidationErrors | null> =>
+              this.checkCourseExists$(ac)
+          ]
+        ],
+        description: ['', Validators.required],
+        languageOfInstruction: '',
+        memberLimit: ['', [Validators.min(0), Validators.pattern('^[0-9]$')]],
+        courseLeader: [''],
+        method: '',
+        gradeLevel: '',
+        subjectLevel: '',
+        startDate: '',
+        endDate: '',
+        day: this.fb.array([]),
+        startTime: '',
+        endTime: '',
+        location: '',
+        backgroundColor: '',
+        foregroundColor: ''
+      },
+      { validators: CustomValidators.validateDates }
+    );
 
     // set default values to first item in the array
     this.courseForm.patchValue({
