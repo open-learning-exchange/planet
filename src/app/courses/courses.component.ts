@@ -33,7 +33,7 @@ export class CoursesComponent implements OnDestroy {
 
   courseForm: FormGroup;
 
-  isWeekly = false;
+  isWeekly = false; // for toggling the days checkbox
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   days = constants.days;
@@ -70,7 +70,7 @@ export class CoursesComponent implements OnDestroy {
       endDate: ['', CourseValidatorsService.validateDates()],
       day: this.fb.array([]),
       startTime: '',
-      endTime: '',
+      endTime: ['', CourseValidatorsService.validateTimes()],
       location: '',
       backgroundColor: '',
       foregroundColor: ''

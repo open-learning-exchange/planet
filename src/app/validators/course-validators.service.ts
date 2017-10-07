@@ -20,7 +20,7 @@ export class CourseValidatorsService {
       if (!endDate) {
         endDate = ac;
         startDate = ac.parent.get('startDate');
-        if (!endDate) {
+        if (!startDate) {
           throw new Error(
             'validateDates(): startDate control is not found in parent group'
           );
@@ -37,7 +37,44 @@ export class CourseValidatorsService {
       if (
         new Date(startDate.value).getTime() > new Date(endDate.value).getTime()
       ) {
-        console.log('should be false');
+        return { isNumber: false };
+      }
+    };
+  }
+
+  static validateTimes(): ValidatorFn {
+    let startTime: AbstractControl;
+    let endTime: AbstractControl;
+    const ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    return (ac: AbstractControl) => {
+      if (!ac.parent) {
+        return null;
+      }
+
+      if (!endTime) {
+        endTime = ac;
+        startTime = ac.parent.get('startTime');
+        if (!startTime) {
+          throw new Error(
+            'validateTimes(): startTime control is not found in parent group'
+          );
+        }
+
+        startTime.valueChanges.takeUntil(ngUnsubscribe).subscribe(() => {
+          endTime.updateValueAndValidity();
+        });
+      }
+
+      if (!startTime) {
+        return null;
+      }
+
+      // cannot directly convert time (HH:MM) to Date object so added Unix time date
+      if (
+        new Date('1970-1-1 ' + startTime.value).getTime() >
+        new Date('1970-1-1 ' + endTime.value).getTime()
+      ) {
         return { isNumber: false };
       }
     };
