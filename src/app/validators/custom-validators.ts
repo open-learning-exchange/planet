@@ -42,6 +42,7 @@ export class CustomValidators {
       return null;
     }
 
+    // the regex is for hh:mm because input type=time always evaluates to this form regardless of how it may appear to the user
     const isValidTime = /^([01]?[0-9]|2[0-3]):[0-5][0-9]?$/.test(ac.value);
 
     return isValidTime ? null : errMessage;
@@ -58,6 +59,7 @@ export class CustomValidators {
       return null;
     }
 
+    // the regex is for yyyy-mm-dd because input type=date always evaluates to this form regardless of how it may appear to the user
     const dateRegEx = /^\d{4}-\d{2}-\d{2}/;
 
     if (!ac.value.match(dateRegEx)) {
