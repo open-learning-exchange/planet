@@ -12,7 +12,7 @@ export class CourseValidatorsService {
     let endDate: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    return (ac: AbstractControl) => {
+    return (ac: AbstractControl): { [key: string]: any } => {
       if (!ac.parent) {
         return null;
       }
@@ -47,7 +47,7 @@ export class CourseValidatorsService {
     let endTime: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    return (ac: AbstractControl) => {
+    return (ac: AbstractControl): { [key: string]: any } => {
       if (!ac.parent) {
         return null;
       }
