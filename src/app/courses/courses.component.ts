@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,12 +9,13 @@ import {
   AbstractControl
 } from '@angular/forms';
 import { Location } from '@angular/common';
-
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/observable/timer';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/takeUntil';
 
 import searchDocuments, * as constants from './constants';
 import { CourseValidatorsService } from '../validators/course-validators.service';
@@ -25,7 +26,7 @@ import { CouchService } from '../shared/couchdb.service';
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.scss']
 })
-export class CoursesComponent {
+export class CoursesComponent implements OnDestroy {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses';
@@ -36,6 +37,9 @@ export class CoursesComponent {
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   days = constants.days;
+
+  // for unsubscribing from Observables
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private location: Location,
@@ -57,7 +61,7 @@ export class CoursesComponent {
       ],
       description: ['', Validators.required],
       languageOfInstruction: '',
-      memberLimit: ['', [Validators.min(0), Validators.pattern('^[0-9]$')]],
+      memberLimit: ['', [Validators.min(0), Validators.pattern('^[0-9]+$')]],
       courseLeader: [''],
       method: '',
       gradeLevel: '',
@@ -93,22 +97,24 @@ export class CoursesComponent {
         }
         return false;
       });
-    return Observable.fromPromise(isDuplicate);
+    return Observable.fromPromise(isDuplicate).takeUntil(this.ngUnsubscribe);
   }
 
   public checkCourseExists$(
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
     // calls service every 1s for input change
-    return Observable.timer(1000).switchMap(() => {
-      return this.courseCheckerService$(ac.value).map(res => {
-        if (res) {
-          return { checkCourseExists: 'Course already exists' };
-        } else {
-          return null;
-        }
+    return Observable.timer(1000)
+      .takeUntil(this.ngUnsubscribe)
+      .switchMap(() => {
+        return this.courseCheckerService$(ac.value).map(res => {
+          if (res) {
+            return { checkCourseExists: 'Course already exists' };
+          } else {
+            return null;
+          }
+        });
       });
-    });
 
     // another way of checking if course title is unique
     // this.courseForm.controls['courseTitle'].valueChanges
@@ -161,5 +167,11 @@ export class CoursesComponent {
       this.courseForm.setControl('day', this.fb.array(this.days));
     }
     this.isWeekly = val;
+  }
+
+  ngOnDestroy() {
+    // unsubscribing from observables
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }

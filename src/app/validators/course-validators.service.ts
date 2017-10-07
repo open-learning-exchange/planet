@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ValidatorFn, AbstractControl } from '@angular/forms';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/takeUntil';
 
 @Injectable()
 export class CourseValidatorsService {
@@ -8,6 +10,7 @@ export class CourseValidatorsService {
   static validateDates(): ValidatorFn {
     let startDate: AbstractControl;
     let endDate: AbstractControl;
+    const ngUnsubscribe: Subject<void> = new Subject<void>();
 
     return (ac: AbstractControl) => {
       if (!ac.parent) {
@@ -22,7 +25,7 @@ export class CourseValidatorsService {
             'validateDates(): startDate control is not found in parent group'
           );
         }
-        startDate.valueChanges.subscribe(() => {
+        startDate.valueChanges.takeUntil(ngUnsubscribe).subscribe(() => {
           endDate.updateValueAndValidity();
         });
       }
