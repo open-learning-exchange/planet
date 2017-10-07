@@ -9,5 +9,6 @@ $ole-green-dark: rgb(89, 156, 55);
 $ole-light-grey: rgb(200, 200, 200);
 $ole-grey: rgb(150, 150, 150);
 
+$pending: #ed9121; // Dogi's WIP label color
 $error-red: #a94442;
-$body-margin: 8px;
+// $body-margin: 8px; we won't need to use this if we use bootstrap's container class

@@ -8,7 +8,13 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       <li *ngFor="let error of listOfErrors()">{{error}}</li>
     </ul>
   `,
-  styles: []
+  styles: [
+    `ul {
+      list-style-type: none;
+      font-size: .8rem;
+      padding-left: .2em;
+    }`
+  ]
 })
 export class FormErrorMessagesComponent {
   private static readonly errorMessages = {

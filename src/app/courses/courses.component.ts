@@ -7,6 +7,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -26,7 +27,7 @@ export class CoursesComponent {
 
   courseForm: FormGroup;
 
-  isWeekly = false; // for toggling the days checkbox
+  showDaysCheckBox = true; // for toggling the days checkbox
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -35,6 +36,7 @@ export class CoursesComponent {
 
   constructor(
     private location: Location,
+    private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
     private courseValidatorService: CourseValidatorService
@@ -90,20 +92,27 @@ export class CoursesComponent {
     this.courseForm.patchValue({
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
+      memberLimit: 10,
       backgroundColor: '#ffffff',
       foregroundColor: '#000000'
     });
   }
 
   onSubmit() {
-    this.addCourse(this.courseForm.value);
+    if (this.courseForm.valid) {
+      this.addCourse(this.courseForm.value);
+    } else {
+      Object.keys(this.courseForm.controls).forEach(field => {
+        const control = this.courseForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
+    }
   }
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...courseInfo }).then(data => {
-      // does not work..need to use router?
-      this.location.go('/');
+      this.router.navigate(['/']);
     });
   }
 
@@ -134,6 +143,6 @@ export class CoursesComponent {
       // add all days to the array if the course is daily
       this.courseForm.setControl('day', this.fb.array(this.days));
     }
-    this.isWeekly = val;
+    this.showDaysCheckBox = val;
   }
 }

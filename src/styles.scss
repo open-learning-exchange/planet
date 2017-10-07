@@ -2,23 +2,11 @@
 
 body {
   font-family: $font-family;
-  margin: $body-margin;
+  // margin: $body-margin; we won't need to use this if we use bootstrap's container class
 
   a,
   a:hover {
     text-decoration: none;
     color: inherit;
-  }
-
-  /* from the angular docs */
-  .ng-valid[required],
-  .ng-valid.required {
-    border-left: 5px solid $ole-green;
-    border-color: $ole-green;
-  }
-
-  .ng-touched.ng-invalid:not(form) {
-    border-left: 5px solid $error-red;
-    border-color: $error-red;
   }
 }

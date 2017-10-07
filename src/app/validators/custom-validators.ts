@@ -22,6 +22,10 @@ export class CustomValidators {
       }
     };
 
+    if (!ac.value) {
+      return null;
+    }
+
     const isValidHex = /^#[A-F0-9]{6}$/i.test(ac.value);
 
     return isValidHex ? null : errMessage;
@@ -34,6 +38,10 @@ export class CustomValidators {
       }
     };
 
+    if (!ac.value) {
+      return null;
+    }
+
     const isValidTime = /^([01]?[0-9]|2[0-3]):[0-5][0-9]?$/.test(ac.value);
 
     return isValidTime ? null : errMessage;
@@ -45,6 +53,10 @@ export class CustomValidators {
         message: 'Date must be in the form of yyyy-mm-dd'
       }
     };
+
+    if (!ac.value) {
+      return null;
+    }
 
     const dateRegEx = /^\d{4}-\d{2}-\d{2}/;
 
