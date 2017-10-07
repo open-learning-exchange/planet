@@ -2,7 +2,7 @@ import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
-export class CustomValidatorsService {
+export class CustomValidators {
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl): ValidationErrors {
     const errMessage = {
@@ -66,10 +66,14 @@ export class CustomValidatorsService {
     return null;
   }
 
+  // for validating whether end date comes before start date or not
   static endDateValidator(): ValidatorFn {
     let startDate: AbstractControl;
     let endDate: AbstractControl;
+
+    // for unsubscribing from Observables
     const ngUnsubscribe: Subject<void> = new Subject<void>();
+
     const errMessage = {
       invalidEndDate: {
         message: 'The end date cannot be before the start date'
@@ -110,6 +114,7 @@ export class CustomValidatorsService {
     };
   }
 
+  // for validating whether end time comes before start date or not
   static endTimeValidator(): ValidatorFn {
     let startTime: AbstractControl;
     let endTime: AbstractControl;
@@ -144,7 +149,7 @@ export class CustomValidatorsService {
         return null;
       }
 
-      // cannot directly convert time (HH:MM) to Date object so added Unix time date
+      // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
       if (
         new Date('1970-1-1 ' + startTime.value).getTime() >
         new Date('1970-1-1 ' + endTime.value).getTime()

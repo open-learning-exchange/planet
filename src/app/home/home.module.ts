@@ -11,6 +11,8 @@ import { HomeRouterModule } from './home-router.module';
 import { CoursesComponent } from '../courses/courses.component';
 import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 
+import { CourseValidatorService } from '../validators/course-validator.service';
+
 @NgModule({
   imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
   declarations: [
@@ -21,6 +23,6 @@ import { FormErrorMessagesComponent } from '../form-error-messages/form-error-me
     CoursesComponent,
     FormErrorMessagesComponent
   ],
-  providers: []
+  providers: [CourseValidatorService]
 })
 export class HomeModule {}

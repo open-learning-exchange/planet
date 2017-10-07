@@ -4,22 +4,13 @@ import {
   FormControl,
   FormGroup,
   FormArray,
-  Validators,
-  ValidationErrors,
-  AbstractControl
+  Validators
 } from '@angular/forms';
 import { Location } from '@angular/common';
-// Make sure not to import the entire rxjs library!!!
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/observable/timer';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/takeUntil';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidatorsService } from '../validators/custom-validators.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { CourseValidatorService } from '../validators/course-validator.service';
 // searchDocuments is declared as a default export so we can import it like this
 import searchDocuments, * as constants from './constants';
 
@@ -28,7 +19,7 @@ import searchDocuments, * as constants from './constants';
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.scss']
 })
-export class CoursesComponent implements OnDestroy {
+export class CoursesComponent {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
@@ -42,13 +33,11 @@ export class CoursesComponent implements OnDestroy {
   subjectLevels = constants.subjectLevels;
   days = constants.days;
 
-  // for unsubscribing from Observables
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
-
   constructor(
     private location: Location,
     private fb: FormBuilder,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private courseValidatorService: CourseValidatorService
   ) {
     this.createForm();
   }
@@ -57,43 +46,44 @@ export class CoursesComponent implements OnDestroy {
     this.courseForm = this.fb.group({
       courseTitle: [
         '',
-        [Validators.required],
-        [
-          (ac: AbstractControl): Observable<ValidationErrors | null> =>
-            this.checkCourseExists$(ac)
-        ]
+        Validators.required,
+        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
+        ac => this.courseValidatorService.checkCourseExists$(ac)
       ],
       description: ['', Validators.required],
       languageOfInstruction: '',
       memberLimit: [
-        '',
-        [CustomValidatorsService.integerValidator, Validators.min(1)]
+        '', // need to compose validators if we use more than one
+        Validators.compose([
+          CustomValidators.integerValidator,
+          Validators.min(1)
+        ])
       ],
       courseLeader: [''],
       method: '',
       gradeLevel: '',
       subjectLevel: '',
-      startDate: ['', CustomValidatorsService.dateValidator],
+      startDate: ['', CustomValidators.dateValidator],
       endDate: [
         '',
-        // need to compose validators if we use more than one
         Validators.compose([
-          CustomValidatorsService.endDateValidator(),
-          CustomValidatorsService.dateValidator
+          // we are using a higher order function so we  need to call the validator function
+          CustomValidators.endDateValidator(),
+          CustomValidators.dateValidator
         ])
       ],
       day: this.fb.array([]),
-      startTime: ['', CustomValidatorsService.timeValidator],
+      startTime: ['', CustomValidators.timeValidator],
       endTime: [
         '',
         Validators.compose([
-          CustomValidatorsService.endTimeValidator(),
-          CustomValidatorsService.timeValidator
+          CustomValidators.endTimeValidator(),
+          CustomValidators.timeValidator
         ])
       ],
       location: '',
-      backgroundColor: ['', CustomValidatorsService.hexValidator],
-      foregroundColor: ['', CustomValidatorsService.hexValidator]
+      backgroundColor: ['', CustomValidators.hexValidator],
+      foregroundColor: ['', CustomValidators.hexValidator]
     });
 
     // set default values
@@ -109,52 +99,8 @@ export class CoursesComponent implements OnDestroy {
     this.addCourse(this.courseForm.value);
   }
 
-  // TODO move validators to their own file
-  public courseCheckerService$(title: string): Observable<boolean> {
-    const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, searchDocuments('courseTitle', title))
-      .then(data => {
-        if (data.docs.length > 0) {
-          return true;
-        }
-        return false;
-      });
-    return Observable.fromPromise(isDuplicate).takeUntil(this.ngUnsubscribe);
-  }
-
-  public checkCourseExists$(
-    ac: AbstractControl
-  ): Observable<ValidationErrors | null> {
-    // calls service every 1s for input change
-    return Observable.timer(1000)
-      .takeUntil(this.ngUnsubscribe)
-      .switchMap(() => {
-        return this.courseCheckerService$(ac.value).map(res => {
-          if (res) {
-            return { checkCourseExists: 'Course already exists' };
-          } else {
-            return null;
-          }
-        });
-      });
-
-    // another way of checking if course title is unique
-    // this.courseForm.controls['courseTitle'].valueChanges
-    //   .debounceTime(500)
-    //   .subscribe(title => {
-    //     this.couchService
-    //       .post(`courses/_find`, this.searchQuery(title))
-    //       .then(data => {
-    //         if (data.docs.length === 0) {
-    //           this.isUnique = true;
-    //           return;
-    //         }
-    //         this.isUnique = false;
-    //       });
-    //   });
-  }
-
   addCourse(courseInfo) {
+    // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...courseInfo }).then(data => {
       // does not work..need to use router?
       this.location.go('/');
@@ -189,11 +135,5 @@ export class CoursesComponent implements OnDestroy {
       this.courseForm.setControl('day', this.fb.array(this.days));
     }
     this.isWeekly = val;
-  }
-
-  ngOnDestroy() {
-    // unsubscribing from observables
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 }
