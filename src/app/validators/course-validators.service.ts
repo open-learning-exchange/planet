@@ -1,18 +1,83 @@
 import { Injectable } from '@angular/core';
-import { ValidatorFn, AbstractControl } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
 @Injectable()
 export class CourseValidatorsService {
-  constructor() {}
+  static integerValidator(ac: AbstractControl): ValidationErrors {
+    const errMessage = {
+      invalidInt: {
+        message: 'Please enter a valid number'
+      }
+    };
 
-  static validateDates(): ValidatorFn {
+    const isValidInt = Number.isInteger(ac.value);
+    return isValidInt ? null : errMessage;
+  }
+
+  static hexValidator(ac: AbstractControl): ValidationErrors {
+    const errMessage = {
+      invalidHex: {
+        message: 'Hex is not valid'
+      }
+    };
+
+    const isValidHex = /^#[A-F0-9]{6}$/i.test(ac.value);
+
+    return isValidHex ? null : errMessage;
+  }
+
+  static timeValidator(ac: AbstractControl): ValidationErrors {
+    const errMessage = {
+      invalidTime: {
+        message: 'Time must be in the form hh:mm'
+      }
+    };
+
+    const isValidTime = /^([01]?[0-9]|2[0-3]):[0-5][0-9]?$/.test(ac.value);
+
+    return isValidTime ? null : errMessage;
+  }
+
+  static dateValidator(ac: AbstractControl): ValidationErrors {
+    const formErrMessage = {
+      invalidDateFormat: {
+        message: 'Date must be in the form of yyyy-mm-dd'
+      }
+    };
+
+    const dateRegEx = /^\d{4}-\d{2}-\d{2}/;
+
+    if (!ac.value.match(dateRegEx)) {
+      return formErrMessage;
+    }
+    const date = new Date(ac.value);
+
+    const errMessage = {
+      invalidDate: {
+        message: 'Date is invalid'
+      }
+    };
+
+    if (!date.getTime()) {
+      return errMessage;
+    }
+
+    return null;
+  }
+
+  static endDateValidator(): ValidatorFn {
     let startDate: AbstractControl;
     let endDate: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
+    const errMessage = {
+      invalidEndDate: {
+        message: 'The end date cannot be before the start date'
+      }
+    };
 
-    return (ac: AbstractControl): { [key: string]: any } => {
+    return (ac: AbstractControl): ValidationErrors => {
       if (!ac.parent) {
         return null;
       }
@@ -41,16 +106,20 @@ export class CourseValidatorsService {
       if (
         new Date(startDate.value).getTime() > new Date(endDate.value).getTime()
       ) {
-        return { isNumber: false };
+        return errMessage;
       }
     };
   }
 
-  static validateTimes(): ValidatorFn {
+  static endTimeValidator(): ValidatorFn {
     let startTime: AbstractControl;
     let endTime: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
-
+    const errMessage = {
+      inavlidEndTime: {
+        message: 'The end time cannot be before the start time'
+      }
+    };
     return (ac: AbstractControl): { [key: string]: any } => {
       if (!ac.parent) {
         return null;
@@ -81,7 +150,7 @@ export class CourseValidatorsService {
         new Date('1970-1-1 ' + startTime.value).getTime() >
         new Date('1970-1-1 ' + endTime.value).getTime()
       ) {
-        return { isNumber: false };
+        return errMessage;
       }
     };
   }

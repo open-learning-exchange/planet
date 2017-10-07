@@ -65,25 +65,42 @@ export class CoursesComponent implements OnDestroy {
       ],
       description: ['', Validators.required],
       languageOfInstruction: '',
-      memberLimit: ['', [Validators.min(0), Validators.pattern('^[0-9]+$')]],
+      memberLimit: [
+        '',
+        [CourseValidatorsService.integerValidator, Validators.min(1)]
+      ],
       courseLeader: [''],
       method: '',
       gradeLevel: '',
       subjectLevel: '',
-      startDate: '',
-      endDate: ['', CourseValidatorsService.validateDates()],
+      startDate: ['', CourseValidatorsService.dateValidator],
+      endDate: [
+        '',
+        [
+          CourseValidatorsService.dateValidator,
+          CourseValidatorsService.endDateValidator()
+        ]
+      ],
       day: this.fb.array([]),
-      startTime: '',
-      endTime: ['', CourseValidatorsService.validateTimes()],
+      startTime: ['', CourseValidatorsService.timeValidator],
+      endTime: [
+        '',
+        [
+          CourseValidatorsService.timeValidator,
+          CourseValidatorsService.endTimeValidator()
+        ]
+      ],
       location: '',
-      backgroundColor: '',
-      foregroundColor: ''
+      backgroundColor: ['', CourseValidatorsService.hexValidator],
+      foregroundColor: ['', CourseValidatorsService.hexValidator]
     });
 
     // set default values
     this.courseForm.patchValue({
       gradeLevel: this.gradeLevels[0],
-      subjectLevel: this.subjectLevels[0]
+      subjectLevel: this.subjectLevels[0],
+      backgroundColor: '#ffffff',
+      foregroundColor: '#000000'
     });
   }
 

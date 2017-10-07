@@ -12,7 +12,15 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 })
 export class FormErrorMessagesComponent {
   private static readonly errorMessages = {
-    required: field => 'This is required'
+    required: () => 'This field is required',
+    min: params => 'The number cannot be below ' + params.min,
+    invalidInt: params => params.message,
+    invalidHex: params => params.message,
+    invalidTime: params => params.message,
+    invalidDateFormat: params => params.message,
+    invalidDate: params => params.message,
+    invalidEndDate: params => params.message,
+    inavlidEndTime: params => params.message
   };
   @Input() private control: AbstractControlDirective | AbstractControl;
 
@@ -24,12 +32,14 @@ export class FormErrorMessagesComponent {
     );
   }
 
+  // loops through the keys of the error objectt
   listOfErrors(): string[] {
     return Object.keys(this.control.errors).map(field =>
       this.getMessage(field, this.control.errors[field])
     );
   }
 
+  // calls the statuc method errorMessages
   private getMessage(type: string, params: any) {
     return FormErrorMessagesComponent.errorMessages[type](params);
   }

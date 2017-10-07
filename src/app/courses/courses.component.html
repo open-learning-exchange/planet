@@ -1,4 +1,5 @@
 <h1>Add Courses</h1>
+<!-- nvalidate - disable browser's default validators to use our validators -->
 <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
   <div class="row">
     <div class="form-group col-4">
@@ -15,7 +16,8 @@
     <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
     <div class="form-group col-4">
       <label>Member Limit</label>
-      <input type="number" class="form-control" formControlName="memberLimit">
+      <input type="number" min="1" class="form-control" formControlName="memberLimit">
+      <app-form-error-messages [control]="courseForm.controls.memberLimit"></app-form-error-messages>
     </div>
   </div>
   <div class="row">
@@ -43,56 +45,55 @@
   <div class="row">
     <div class="form-group col-4">
       <label>Grade Level</label>
-      <select class="form-control" formControlName="gradeLevel"> 
-      <option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</option> 
-    </select>
+      <select class="form-control" formControlName="gradeLevel">
+        <option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</option>
+      </select>
     </div>
     <div class="form-group col-4">
       <label>Subject Level</label>
-      <select class="form-control" formControlName="subjectLevel"> 
-      <option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</option> 
-    </select>
+      <select class="form-control" formControlName="subjectLevel">
+        <option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</option>
+      </select>
     </div>
   </div>
   <div class="row">
-    <!-- create directives for date and time validations -->
     <div class="form-group col-4">
       <label>Start Date</label>
-      <input type="date" class="form-control" formControlName="startDate" [value]="startDate | date:'shortTime'">
+      <input type="date" class="form-control" formControlName="startDate">
+      <app-form-error-messages [control]="courseForm.controls.startDate"></app-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>End Date</label>
       <input type="date" class="form-control" formControlName="endDate">
+      <app-form-error-messages [control]="courseForm.controls.endDate"></app-form-error-messages>
     </div>
     <div class="form-group radio col-4">
       <div>Frequency</div>
       <!-- radio buttons need same name to allow only one value to be selected! -->
-      <label> 
-      <input type="radio" name="daysToggler" (change)="toogleWeekly(true)">
-      Daily
-    </label>
       <label>
-      <input type="radio" name="daysToggler" (change)="toogleWeekly(false)">
-      Weekly
-    </label>
+        <input type="radio" name="daysToggler" (change)="toogleWeekly(true)"> Daily
+      </label>
+      <label>
+        <input type="radio" name="daysToggler" (change)="toogleWeekly(false)"> Weekly
+      </label>
     </div>
   </div>
   <div class="form-check form-check-inline" *ngIf="!isWeekly">
     <div class="form-check-label">Day</div>
     <label class="form-check-label" *ngFor="let day of days">
-      <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)">
-      {{day}}
+      <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)"> {{day}}
     </label>
   </div>
-  <!-- use html pattern for time -->
   <div class="row">
     <div class="form-group col-4">
       <label>Start Time</label>
       <input type="time" class="form-control" formControlName="startTime">
+      <app-form-error-messages [control]="courseForm.controls.startTime"></app-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>End Time</label>
       <input type="time" class="form-control" formControlName="endTime">
+      <app-form-error-messages [control]="courseForm.controls.endTime"></app-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>Location</label>
@@ -103,10 +104,13 @@
     <div class="form-group col-2">
       <label for="backgroundCol">Background Color</label>
       <input type="color" class="form-control" formControlName="backgroundColor">
+      <app-form-error-messages [control]="courseForm.controls.backgroundColor"></app-form-error-messages>
     </div>
     <div class="form-group col-2">
       <label>Foreground Color</label>
       <input type="color" class="form-control" formControlName="foregroundColor">
+      <app-form-error-messages [control]="courseForm.controls.foregroundColor"></app-form-error-messages>
+
     </div>
   </div>
   <button type="submit" class="btn btn-primary" [disabled]="courseForm.pristine || !courseForm.valid">Submit</button>
@@ -114,4 +118,3 @@
 </form>
 
 <p>Form value: {{ courseForm.value | json }}</p>
-<p>{{name}}</p>
