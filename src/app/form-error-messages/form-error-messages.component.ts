@@ -12,6 +12,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 })
 export class FormErrorMessagesComponent {
   private static readonly errorMessages = {
+    // even though they have the same return type, different names are used since it's easier to understand/debug
     required: () => 'This field is required',
     min: params => 'The number cannot be below ' + params.min,
     invalidInt: params => params.message,

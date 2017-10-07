@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
-@Injectable()
-export class CourseValidatorsService {
+export class CustomValidatorsService {
+  // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl): ValidationErrors {
     const errMessage = {
       invalidInt: {

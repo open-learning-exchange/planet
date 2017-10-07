@@ -11,12 +11,10 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 
-import { CourseValidatorsService } from './validators/course-validators.service';
-
 @NgModule({
   imports: [BrowserModule, AppRoutingModule, HttpModule],
   declarations: [AppComponent, PageNotFoundComponent],
-  providers: [CouchService, AuthService, UserService, CourseValidatorsService],
+  providers: [CouchService, AuthService, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

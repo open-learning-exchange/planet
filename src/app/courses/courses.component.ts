@@ -19,7 +19,7 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CourseValidatorsService } from '../validators/course-validators.service';
+import { CustomValidatorsService } from '../validators/custom-validators.service';
 // searchDocuments is declared as a default export so we can import it like this
 import searchDocuments, * as constants from './constants';
 
@@ -67,32 +67,33 @@ export class CoursesComponent implements OnDestroy {
       languageOfInstruction: '',
       memberLimit: [
         '',
-        [CourseValidatorsService.integerValidator, Validators.min(1)]
+        [CustomValidatorsService.integerValidator, Validators.min(1)]
       ],
       courseLeader: [''],
       method: '',
       gradeLevel: '',
       subjectLevel: '',
-      startDate: ['', CourseValidatorsService.dateValidator],
+      startDate: ['', CustomValidatorsService.dateValidator],
       endDate: [
         '',
-        [
-          CourseValidatorsService.dateValidator,
-          CourseValidatorsService.endDateValidator()
-        ]
+        // need to compose validators if we use more than one
+        Validators.compose([
+          CustomValidatorsService.endDateValidator(),
+          CustomValidatorsService.dateValidator
+        ])
       ],
       day: this.fb.array([]),
-      startTime: ['', CourseValidatorsService.timeValidator],
+      startTime: ['', CustomValidatorsService.timeValidator],
       endTime: [
         '',
-        [
-          CourseValidatorsService.timeValidator,
-          CourseValidatorsService.endTimeValidator()
-        ]
+        Validators.compose([
+          CustomValidatorsService.endTimeValidator(),
+          CustomValidatorsService.timeValidator
+        ])
       ],
       location: '',
-      backgroundColor: ['', CourseValidatorsService.hexValidator],
-      foregroundColor: ['', CourseValidatorsService.hexValidator]
+      backgroundColor: ['', CustomValidatorsService.hexValidator],
+      foregroundColor: ['', CustomValidatorsService.hexValidator]
     });
 
     // set default values
