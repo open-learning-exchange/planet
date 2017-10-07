@@ -9,6 +9,7 @@ import {
   AbstractControl
 } from '@angular/forms';
 import { Location } from '@angular/common';
+// Make sure not to import the entire rxjs library!!!
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/observable/timer';
@@ -17,10 +18,11 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
-import searchDocuments, * as constants from './constants';
-import { CourseValidatorsService } from '../validators/course-validators.service';
-
 import { CouchService } from '../shared/couchdb.service';
+import { CourseValidatorsService } from '../validators/course-validators.service';
+// searchDocuments is declared as a default export so we can import it like this
+import searchDocuments, * as constants from './constants';
+
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
@@ -29,11 +31,13 @@ import { CouchService } from '../shared/couchdb.service';
 export class CoursesComponent implements OnDestroy {
   // needs member document to implement
   members = [];
-  readonly dbName = 'courses';
+  readonly dbName = 'courses'; // make database name a constant
 
   courseForm: FormGroup;
 
   isWeekly = false; // for toggling the days checkbox
+
+  // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   days = constants.days;
@@ -76,7 +80,7 @@ export class CoursesComponent implements OnDestroy {
       foregroundColor: ''
     });
 
-    // set default values to first item in the array
+    // set default values
     this.courseForm.patchValue({
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0]

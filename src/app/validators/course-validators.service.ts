@@ -25,15 +25,19 @@ export class CourseValidatorsService {
             'validateDates(): startDate control is not found in parent group'
           );
         }
+
+        // run validators again on when start date's value changes
         startDate.valueChanges.takeUntil(ngUnsubscribe).subscribe(() => {
           endDate.updateValueAndValidity();
         });
       }
 
+      // if start date has not been given a value yet return back
       if (!startDate) {
         return null;
       }
 
+      // converts value from input type=date to Date obj for easy comparision
       if (
         new Date(startDate.value).getTime() > new Date(endDate.value).getTime()
       ) {
@@ -61,11 +65,13 @@ export class CourseValidatorsService {
           );
         }
 
+        // run validators again on when start time's value changes
         startTime.valueChanges.takeUntil(ngUnsubscribe).subscribe(() => {
           endTime.updateValueAndValidity();
         });
       }
 
+      // if start time has not been given a value yet return back
       if (!startTime) {
         return null;
       }
