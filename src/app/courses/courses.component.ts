@@ -109,11 +109,10 @@ export class CoursesComponent {
     }
   }
 
-  addCourse(courseInfo) {
+  async addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...courseInfo }).then(data => {
-      this.router.navigate(['/']);
-    });
+    await this.couchService.post(this.dbName, { ...courseInfo });
+    this.router.navigate(['/']);
   }
 
   cancel() {

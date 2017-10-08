@@ -69,16 +69,14 @@ function (newDoc, oldDoc, userCtx, secObj) {
     require('courseTitle');
     require('description');
 
-    if (newDoc['startTime'] || newDoc['endTime']) {
+    if (newDoc['endTime']) {
       require('startTime');
-      require('endTime');
       isTime('startTime');
       isTime('endTime');
       endTimeValidator();
     }
-    if (newDoc['startDate'] || newDoc['endDate']) {
+    if (newDoc['endDate']) {
       require('startDate');
-      require('endDate');
       isTime('startDate');
       isTime('endDate');
       endDateValidator();
