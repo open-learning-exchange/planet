@@ -73,7 +73,7 @@ script:
 before_deploy:
   # Decrypt ssh key to connect to docker builder
   - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
-    -in deploy_rsa.enc -out ./deploy/deploy_rsa -d
+    -in ./deploy/deploy_rsa.enc -out ./deploy/deploy_rsa -d
 deploy:
   provider: script
   skip_cleanup: true
