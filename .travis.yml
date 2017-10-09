@@ -1,81 +1,82 @@
 sudo: required
 #dist: trusty
-
 branches:
   except:
   #- l10n_dev
-
 language: node_js
 node_js:
   - "8"
-  
 addons:
-apt:
-  sources:
-    - google-chrome
-  packages:
-    - google-chrome-stable
-    - google-chrome-beta
-
+  ssh_known_hosts: docker.ole.org
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+      - google-chrome-beta
 env:
-  - TRAVIS_NODE_VERSION="7.9.0"
+  global:
+    - secure: "AeOjxGVTiU926c+tTO3ZWCBiwTy0sjjZROTY9pfQdBBmrZye7MX7/0oxJhI3gMfSDJCswD9AYswBpvdnwd2SU8tbP5Puo5RjzeJ8+QGaVz3nMwigxMMbFtxpwlSvp8I2BcaVY4o383X1wxPu80zx+nvEF8IQ1HSA/ANQYxX+91J/m06dZsmCVqOA5OFghAPEk0cNQig4X+9utHUxAuBu1aqRmjs+yaBYYgohwChHsGtwU5j3xhgT3Ti6kTtXeNISxSm23GXRe1TdhrTc3L9Pjybd+N9Jc8UMAt5x0v8wXN9KqDQvTlPLgsNa0S8eMArcLpIr/LrrFDDhow8bnNBAojwiy8gBKzhD0bWt1nX0iI1Xvy0tfSS4jlz+1GM8RLx5hOGH3zXiZgBNcvypWxLezPQYT5GfNE57KZfH/gdMaNgJkSe1qRdEAnJypcU20F/Q3y83+sEgPIBCasvSbisr5wGi/VqpoLet9lkLGhyi2QAwuNaV4vi8gET7O2EOhu0NtdiFcIQsr/Cbr2LrNHI4+/RmTJ9cqAOg6ckZq0vqeYks8ggFqNG5q9nPbc/oJ9tNLr2dHlzEJGTvGHF+ftiCy+lMCYaIfVHzH/nkTgze74Bnihs3RGQCtTcbn8w+0/3PT/x2TDt7Xkuvsn2RhkP2fCSVM16TlQz09RlMvjmoYvoVo="
+    - secure: "rXOoNCwfRHsVVz22qSzuyAyF7XdiuOStD+LjaDZw6Ki5khM+SK4zSNnNY3kvvJA6tYR2f5po0/L6DPFFuWcpytyROECYgydlCMsU/eVoqPyPtfImSyDx7Wur5o5rdkKUL1yGz489dPZXaCyGxXkOXPLX2MwP6+zCat1Mog6Rr/Vrqp7s4Vofg3KwoPsMQ+Tijihb+KObQlYfTvKP29Cq6gD3i60pcfQc+GYjIs9SAzgpaEN8eQN/buuFrbty+UB5KTQgc4Z71C1+/c9gMHZQFX9RgSYL+HAmUOxv4BIyA+3iosAMp8DY1Hay9l/ekLso77QbTH+uC08Yy74B5pSjCBYiBD1hv6QS5hIj8ThEfLoD7nwdhPXgQffOqTRjw1EPU4v80ZUKywAAa5CsFjYaECaBPpbMJF8DinMVlEEIyb42lyn5tF+cMuSPT3OcGdfwK/3znw23vLBUbuCsygh1XIclN7qAYlp3xnpi5xSway0Gmuwbg1JZRpk/Hhn/OKmeQ2gGqHAix1vR77hvPRoP+OhYmIMwBqeOeC3jq8vjxpxb1tgQE2xcuovXiZvvxPu6Pstg2bRW/fKU4+P1hd0S/R8MRUKqtukGqxCeD5fr6DGRGGPpUq2ywYZV1nH6x0/9Bi4ZXeO1/ZcrEIsZ8XPKpPQP38/B6pz1lbzOdzEKlZU="
+    - COMMIT=${TRAVIS_COMMIT::8}
+    - TRAVIS_NODE_VERSION="7.9.0"
 cache:
-   directories:
-     - $(npm root -g)
-     - node_modules
-
+  directories:
+    - "$(npm root -g)"
+    - node_modules
 notifications:
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/063276d3941fa8443947
     on_success: always  # options: [always|never|change] default: change
     on_failure: always  # options: [always|never|change] default: always
-    on_start: never    # options: [always|never|change] default: never
-
+    on_start: never     # options: [always|never|change] default: never
 services:
   - docker
-
 before_install:
-  # Portainer
-  #- docker pull portainer/portainer
-  #- sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
-  
   # Add CouchDB Docker
   - docker pull klaemo/couchdb:2.0.0
-  - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
-  
-  # Add CORS to CouchDB so app has access to databases
+  - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb
+    -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
   - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
   - cd add-cors-to-couchdb
   - npm install
   - node bin.js http://localhost:5984
   - cd ..
-  
   # Add initial Couch databases here
   - curl -X PUT http://127.0.0.1:5984/_users
   - curl -X PUT http://127.0.0.1:5984/_replicator
   - curl -X PUT http://127.0.0.1:5984/_global_changes
   - curl -X PUT http://127.0.0.1:5984/meetups
-
   # CHROME & xvfb stuff
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-
 install:
-  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
-
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
+    && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh
+    && nvm install $TRAVIS_NODE_VERSION
 before_script:
   - travis_retry npm install
   - travis_retry npm install -g @angular/cli
   - travis_retry npm install -g karma
   #- ng build
-
 script:
   - export
   - docker ps -a | grep planet
   - curl -X GET http://127.0.0.1:5984/_all_dbs
-  - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 4 ]; then exit 1; fi
+  - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 4 ];
+    then exit 1; fi
   #- node -v
   #- ng test
   - ng e2e --environment test
+before_deploy:
+  # Decrypt ssh key to connect to docker builder
+  - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
+    -in deploy_rsa.enc -out ./deploy/deploy_rsa -d
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ./deploy/deploy.sh
+  on:
+    all_branches: true
