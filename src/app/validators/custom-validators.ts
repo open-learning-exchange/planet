@@ -1,6 +1,5 @@
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
 
 export class CustomValidators {
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
