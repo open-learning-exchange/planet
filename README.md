@@ -28,7 +28,7 @@ Similarly, we have a few other npm commands that work from the host machine to r
 
 `npm run v-lint-fix` = `ng lint --fix` This will fix any lint errors that TSLint can automatically fix
 
-Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh` and `cd /vagrant` and runs in the format:
+Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh` and `cd /vagrant`) and runs in the format:
 
 `LNG=es npm start`
 
