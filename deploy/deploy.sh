@@ -11,8 +11,8 @@ build_message(){
 
 build_docker() {
   build_message Build the docker images ...
-  docker build -f ./docker/planet/Dockerfile  ./docker/planet -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT_ID ./docker/planet
-  docker build -f ./docker/db-init/Dockerfile ./docker/db-init -t $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT_ID ./docker/db-init
+  docker build -f ./docker/planet/Dockerfile  ./docker/planet -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT_ID
+  docker build -f ./docker/db-init/Dockerfile ./docker/db-init -t $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT_ID
 }
 
 tag_latest_docker() {
