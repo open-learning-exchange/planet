@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 
 @Component({
-  selector: 'app-form-error-messages',
+  selector: 'planet-form-error-messages',
   template: `
     <ul class="text-danger" *ngIf="shouldShowErrors()">
       <li *ngFor="let error of listOfErrors()">{{error}}</li>

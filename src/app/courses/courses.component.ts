@@ -16,7 +16,7 @@ import { CourseValidatorService } from '../validators/course-validator.service';
 import searchDocuments, * as constants from './constants';
 
 @Component({
-  selector: 'app-courses',
+  selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.scss']
 })
