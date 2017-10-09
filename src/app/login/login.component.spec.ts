@@ -57,7 +57,7 @@ describe('Login', () => {
     fixture.detectChanges();
     expect(statusElement.textContent).toBe('Passwords do not match', 'Create user message displays correctly');
   });
-
+  /*
   it('Should greet users', () => {
     const { fixture, comp, statusElement, couchService, testModel } = setup();
     spy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({name: testModel.name}));
@@ -67,7 +67,7 @@ describe('Login', () => {
       expect(statusElement.textContent).toBe('Hi, ' + testModel.name + '!', 'Create user message displays correctly');
     });
   });
-
+  */
   it('Should message when user & password do not match', () => {
     const { fixture, comp, statusElement, couchService, testModel } = setup();
     spy = spyOn(couchService, 'post').and.returnValue(Promise.reject({}));
