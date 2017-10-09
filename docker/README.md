@@ -49,13 +49,13 @@ docker-compose -f planet-dev.yml -p planet-dev stop
 4. When you go back to code
 
 ```
-docker-compose -f docker-compose.yml -p planet-dev start
+docker-compose -f planet-dev.yml -p planet-dev start
 ```
 
 5. When you have to delete the environment
 
 ```
-docker-compose -f docker-compose.yml -p planet-dev down
+docker-compose -f planet-dev.yml -p planet-dev down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.

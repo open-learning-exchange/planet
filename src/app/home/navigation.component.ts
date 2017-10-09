@@ -4,35 +4,37 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'main-navigation',
+  selector: 'planet-navigation',
   template: `
-        <ul>
-            <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
-            <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
-        </ul>
-    `,
+    <ul>
+      <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
+      <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
+    </ul>
+  `,
   styleUrls: ['./navigation.scss']
 })
 export class NavigationComponent {
-  constructor(private couchService: CouchService, private router: Router) {}
+  constructor(
+    private couchService: CouchService,
+    private router: Router
+  ) {}
 
   components = [
     { link: '', name: 'Home' },
-    { link: '', name: 'Library' },
+    { link: 'resources', name: 'Library' },
     { link: 'courses', name: 'Courses' },
     { link: 'meetups', name: 'Meetups' },
     { link: 'users', name: 'Members' },
     { link: '', name: 'Reports' },
-    { link: '', name: 'Feedback' }
+    { link: '', name: 'Feedback' },
   ];
 
   logoutClick() {
-    this.couchService
-      .delete('_session', { withCredentials: true })
-      .then((data: any) => {
-        if (data.ok === true) {
-          this.router.navigate(['/login'], {});
-        }
-      });
+    this.couchService.delete('_session', { withCredentials: true }).then((data: any) => {
+      if (data.ok === true) {
+        this.router.navigate(['/login'], {});
+      }
+    });
   }
+
 }

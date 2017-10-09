@@ -14,9 +14,15 @@ import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 
 @NgModule({
-  imports: [BrowserModule, AppRoutingModule, HttpModule],
-  declarations: [AppComponent, PageNotFoundComponent],
-  providers: [CouchService, AuthService, UserService],
-  bootstrap: [AppComponent]
+  imports: [
+    BrowserModule, AppRoutingModule, HttpModule
+  ],
+  declarations: [
+    AppComponent, PageNotFoundComponent
+  ],
+  providers: [
+    CouchService, AuthService, UserService
+  ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule {}
