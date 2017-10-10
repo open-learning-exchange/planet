@@ -56,48 +56,43 @@ clone_branch(){
     TEST_DIRECTORY=/tmp/"planet-$RANDOM_FINGERPRINT"
 }
 
-clone_pr(){
-    TEMPORARY_BRANCH="travis-build"
-    cd /tmp && rm -rf "planet-$RANDOM_FINGERPRINT";
-    git clone https://github.com/ole-vi/planet.git "planet-$commit-$pull" && cd "planet-$commit-$pull" || exit
-    git fetch origin pull/"$pull"/head:"$TEMPORARY_BRANCH"
-    git checkout "$TEMPORARY_BRANCH"
-    TEST_DIRECTORY=/tmp/"planet-$commit-$pull"
-}
+# clone_pr(){
+#     TEMPORARY_BRANCH="travis-build"
+#     cd /tmp && rm -rf "planet-$RANDOM_FINGERPRINT";
+#     git clone https://github.com/ole-vi/planet.git "planet-$commit-$pull" && cd "planet-$commit-$pull" || exit
+#     git fetch origin pull/"$pull"/head:"$TEMPORARY_BRANCH"
+#     git checkout "$TEMPORARY_BRANCH"
+#     TEST_DIRECTORY=/tmp/"planet-$commit-$pull"
+# }
 
 remove_temporary_folders(){
-    if [ -z "$pull" ]
-    then
 	rm -rf "$TEST_DIRECTORY"
-    else
-	rm -rf "$TEST_DIRECTORY"
-    fi
 }
 
 build_docker() {
   build_message Build the docker images ...
-  build_message Deploy planet as $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT-rpi
-  build_message Deploy db-init as $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT-rpi
-  docker build -f ./docker/planet/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT-rpi ./docker/planet
-  docker build -f ./docker/db-init/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT-rpi ./docker/db-init
+  build_message Deploy planet as $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
+  build_message Deploy db-init as $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
+  docker build -f ./docker/planet/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT ./docker/planet
+  docker build -f ./docker/db-init/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT ./docker/db-init
 }
 
 tag_latest_docker() {
   build_message Tag latest docker images ...
-  docker tag $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:latest-rpi
-  docker tag $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:db-init-latest-rpi
+  docker tag $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-latest
+  docker tag $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
 push_docker() {
   build_message Pushing docker images ...
-  docker push $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT-rpi
-  docker push $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT-rpi
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
 }
 
 push_latest_docker() {
   build_message Pushing latest docker images ...
-  docker push $DOCKER_ORG/$DOCKER_REPO:latest-rpi
-  docker push $DOCKER_ORG/$DOCKER_REPO:db-init-latest-rpi
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-latest
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
 RANDOM_FINGERPRINT=$(random_generator)
