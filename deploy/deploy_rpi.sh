@@ -23,7 +23,7 @@ case $i in
     echo "usage: deploy_rpi.sh -c=<commit-sha>|--commit=<commit-sha>"
     echo "usage: deploy_rpi.sh -p=<pull-request-number>|--pull=<pull-request-number>"
     echo "usage: deploy_rpi.sh -u=<docker-user-name>|--duser=<docker-user-name>"
-    echo "usage: deploy_rpi.sh -k=<dokcer-password>|--dpass=<docker-password>"
+    echo "usage: deploy_rpi.sh -k=<docker-password>|--dpass=<docker-password>"
     exit 1;
     ;;
 esac
