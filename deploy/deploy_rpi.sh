@@ -95,6 +95,10 @@ push_latest_docker() {
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
+create_footprint() {
+  echo $(date +%Y-%m-%d.%H-%M-%S) >> $FOOTPRINT
+}
+
 RANDOM_FINGERPRINT=$(random_generator)
 login_docker
 DOCKER_ORG=treehouses
@@ -106,6 +110,10 @@ clone_branch
 
 VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
 
+FILENAME=$VERSION-$BRANCH-$COMMIT
+FOOTPRINT=~/travis-build/$FILENAME
+create_footprint
+
 build_docker
 push_docker
 if [[ $BRANCH = master ]];
@@ -115,3 +123,4 @@ if [[ $BRANCH = master ]];
 fi
 
 remove_temporary_folders
+create_footprint
