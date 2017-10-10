@@ -35,6 +35,10 @@ notifications:
 services:
   - docker
 before_install:
+  # Portainer
+  #- docker pull portainer/portainer
+￼  #- sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
+
   # Add CouchDB Docker
   - docker pull klaemo/couchdb:2.0.0
   - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb
