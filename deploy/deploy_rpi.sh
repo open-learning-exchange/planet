@@ -76,6 +76,8 @@ remove_temporary_folders(){
 
 build_docker() {
   build_message Build the docker images ...
+  build_message Deploy planet as $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT-rpi
+  build_message Deploy db-init as $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT-rpi
   docker build -f ./docker/planet/rpi-Dockerfile  ./docker/planet -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT-rpi
   docker build -f ./docker/db-init/rpi-Dockerfile ./docker/db-init -t $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT-rpi
 }
