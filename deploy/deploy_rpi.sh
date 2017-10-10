@@ -79,8 +79,8 @@ build_docker() {
 
 tag_latest_docker() {
   build_message Tag latest docker images ...
-  docker tag $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-latest
-  docker tag $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-latest
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
 push_docker() {
