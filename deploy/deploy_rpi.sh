@@ -102,16 +102,12 @@ RANDOM_FINGERPRINT=$(random_generator)
 login_docker
 DOCKER_ORG=treehouses
 DOCKER_REPO=planet-dev
-VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
 BRANCH=$branch
 COMMIT=${commit::8}
 
-if [ -z "$pull" ]
-then
-    clone_branch
-else
-    clone_pr
-fi
+clone_branch
+
+VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
 
 build_docker
 push_docker
