@@ -47,3 +47,6 @@ if [[ $BRANCH = master ]];
   tag_latest_docker
   push_latest_docker
 fi
+
+build_message Building Raspberry Pi docker image...
+ssh -o StrictHostKeyChecking=no -p 22 travis@docker.ole.org 'bash -s' -- < .deploy/deploy_rpi.sh --branch="$BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS"
