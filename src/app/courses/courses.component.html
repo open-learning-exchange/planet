@@ -5,7 +5,7 @@
     <div class="form-group col-4">
       <label>Course Title</label>
       <input type="text" class="form-control" formControlName="courseTitle" required>
-      <app-form-error-messages [control]="courseForm.controls.courseTitle"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>Language of Instruction</label>
@@ -15,7 +15,7 @@
     <div class="form-group col-4">
       <label>Member Limit</label>
       <input type="number" min="1" class="form-control" formControlName="memberLimit">
-      <app-form-error-messages [control]="courseForm.controls.memberLimit"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages>
     </div>
   </div>
   <div class="row">
@@ -32,7 +32,7 @@
   <div class="form-group">
     <label>Description</label>
     <textarea class="form-control" formControlName="description" required></textarea>
-    <app-form-error-messages [control]="courseForm.controls.description"></app-form-error-messages>
+    <planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages>
   </div>
   <div class="row">
     <div class="form-group col-4">
@@ -58,12 +58,12 @@
     <div class="form-group col-4">
       <label>Start Date</label>
       <input type="date" class="form-control" formControlName="startDate">
-      <app-form-error-messages [control]="courseForm.controls.startDate"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>End Date</label>
       <input type="date" class="form-control" formControlName="endDate">
-      <app-form-error-messages [control]="courseForm.controls.endDate"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages>
     </div>
     <div class="form-group radio col-4">
       <div>Frequency</div>
@@ -86,12 +86,12 @@
     <div class="form-group col-4">
       <label>Start Time</label>
       <input type="time" class="form-control" formControlName="startTime">
-      <app-form-error-messages [control]="courseForm.controls.startTime"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>End Time</label>
       <input type="time" class="form-control" formControlName="endTime">
-      <app-form-error-messages [control]="courseForm.controls.endTime"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <label>Location</label>
@@ -102,12 +102,12 @@
     <div class="form-group col-2">
       <label for="backgroundCol">Background Color</label>
       <input type="color" class="form-control" formControlName="backgroundColor">
-      <app-form-error-messages [control]="courseForm.controls.backgroundColor"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
     </div>
     <div class="form-group col-2">
       <label>Foreground Color</label>
       <input type="color" class="form-control" formControlName="foregroundColor">
-      <app-form-error-messages [control]="courseForm.controls.foregroundColor"></app-form-error-messages>
+      <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
 
     </div>
   </div>
