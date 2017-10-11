@@ -122,6 +122,8 @@ Vagrant.configure(2) do |config|
     curl -X PUT http://127.0.0.1:5984/_replicator
     curl -X PUT http://127.0.0.1:5984/_global_changes
     curl -X PUT http://127.0.0.1:5984/meetups
+    curl -X PUT http://127.0.0.1:5984/courses
+    curl -X PUT http://127.0.0.1:5984/courses/_design/course-validators -d @design/courses/course-validators.json
     # End Couch database addition
     
   SHELL
