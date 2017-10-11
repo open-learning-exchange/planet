@@ -10,11 +10,11 @@
     "v-build":"vagrant ssh -c 'cd /vagrant;ng build'",
     "test": "ng test",
     "v-test": "vagrant ssh -c 'cd /vagrant;ng test'",
-    "lint": "ng lint'",
+    "lint": "ng lint",
     "v-lint": "vagrant ssh -c 'cd /vagrant;ng lint'",
     "v-lint-fix": "vagrant ssh -c 'cd /vagrant;ng lint --fix'",
     "e2e": "ng e2e --environment test",
-    "v-e2e": "vagrant ssh -c 'cd /vagrant;ng e2e --environment test",
+    "v-e2e": "vagrant ssh -c 'cd /vagrant;ng e2e --environment test'",
     "install-hooks": "cp -a git-hooks/. .git/hooks/"
   },
   "private": true,
