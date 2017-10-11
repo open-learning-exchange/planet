@@ -5,6 +5,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { environment } from '../../environments/environment';
+
 @Component({
   template: `
     <div [ngSwitch]="mediaType">
@@ -35,7 +37,7 @@ export class ResourcesViewComponent implements OnInit {
   pdfSrc: any;
   contentType = '';
   // This url might need to be dynamic in final version
-  urlPrefix = 'http://127.0.0.1:2200/resources/';
+  urlPrefix = environment.couchAddress + 'resources/';
 
   ngOnInit() {
     this.route.paramMap
