@@ -33,19 +33,24 @@ tag_latest_docker() {
 push_docker() {
   build_message Pushing docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT
+  sleep 5s
   docker push $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
+  sleep 5s
   docker push $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
+  sleep 5s
 }
 
 push_latest_docker() {
   build_message Pushing latest docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:latest
+  sleep 5s
   docker push $DOCKER_ORG/$DOCKER_REPO:latest
+  sleep 5s
   docker push $DOCKER_ORG/$DOCKER_REPO:db-init-latest
+  sleep 5s
 }
 
 docker login -u $DOCKER_USER -p $DOCKER_PASS
-docker ps
 build_docker
 push_docker
 if [[ $BRANCH = master ]];
