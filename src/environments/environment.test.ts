@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  couchPort: '5984'
+  couchAddress: 'http://127.0.0.1:5984/'
 };
