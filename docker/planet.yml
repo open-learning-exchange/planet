@@ -11,9 +11,13 @@ services:
     depends_on:
       - couchdb
   planet:
-    image: treehouse/planet-dev:latest
+    image: treehouses/planet:latest
     ports:
-      - "3000:3000"
+      - "80:80"
+    environment:
+      - HOST_PROTOCOL=http
+      - DB_HOST=127.0.0.1
+      - DB_PORT=2200
     volumes:
       - "../:/planet"
     depends_on:

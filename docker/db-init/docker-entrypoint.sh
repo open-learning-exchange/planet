@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#CORS DOWNLOAD
-git clone https://github.com/pouchdb/add-cors-to-couchdb.git
-
 #WAIT_TIME
 echo  "Waiting for couchdb to start"
 WAIT_TIME=0
@@ -13,10 +10,7 @@ until curl couchdb:5984 || [ $WAIT_TIME -eq 180 ]; do
 done
 
 #CORS SETUP
-cd add-cors-to-couchdb
-npm install
-node bin.js http://couchdb:5984
-cd -
+add-cors-to-couchdb http://couchdb:5984
 
 #MIGRATOR
 curl -X PUT http://couchdb:5984/_users

@@ -19,24 +19,28 @@ build_message(){
 build_docker() {
   build_message Build the docker images ...
   docker build -f ./docker/planet-dev/Dockerfile  ./docker/planet-dev -t $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT
+  docker build -f ./docker/planet/Dockerfile ./ -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
   docker build -f ./docker/db-init/Dockerfile ./docker/db-init -t $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
 }
 
 tag_latest_docker() {
   build_message Tag latest docker images ...
   docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:latest
+  docker tag $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:latest
   docker tag $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:db-init-latest
 }
 
 push_docker() {
   build_message Pushing docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT
+  docker push $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
   docker push $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
 }
 
 push_latest_docker() {
   build_message Pushing latest docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:latest
+  docker push $DOCKER_ORG/$DOCKER_REPO:latest
   docker push $DOCKER_ORG/$DOCKER_REPO:db-init-latest
 }
 

@@ -1,18 +1,23 @@
-
-FROM node:6.11-stretch
-ENV APP planet
+### STAGE 1: Build ###
+# We label our stage as ‘builder’
+FROM node:6.11-alpine as builder
 MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
-# context must be in root repository
-COPY . /$APP
-WORKDIR /$APP
-# install required software before using nvm/node/npm/bower
-RUN apt-get update \
-  && apt-get install -y curl git python build-essential \
-  && npm install
+COPY package.json ./
+## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
+RUN npm i && mkdir /ng-app && cp -R ./node_modules ./ng-app
+WORKDIR /ng-app
+COPY . .
+## Build the angular app in production mode and store the artifacts in dist folder
+RUN $(npm bin)/ng build --prod
 
-FROM node:6.11-alpine
-RUN apk --no-cache add ca-certificates
-WORKDIR /$APP
-COPY --from=0 /$APP .
 
-CMD bash -c 'ng serve'
+### STAGE 2: Setup ###
+FROM nginx:1.13.3-alpine
+## Copy our default nginx config
+COPY docker/planet/default.conf /etc/nginx/conf.d/
+## Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+## From ‘builder’ stage copy over the artifacts in dist folder to default nginx public folder
+COPY --from=builder /ng-app/dist /usr/share/nginx/html
+COPY docker/planet/docker-entrypoint.sh ./
+CMD sh ./docker-entrypoint.sh
