@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 export class CouchService {
   private headers = new Headers({'Content-Type': 'application/json'});
   private defaultOpts = {headers: this.headers, withCredentials: true};
-  // CouchDB ports are 2200 and 2201 (forwarded from 5984 and 5986 on virtual machine)
   private baseUrl = environment.couchAddress;
 
   private setOpts(opts?: any) {

@@ -36,7 +36,6 @@ export class ResourcesViewComponent implements OnInit {
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
-  // This url might need to be dynamic in final version
   urlPrefix = environment.couchAddress + 'resources/';
 
   ngOnInit() {
