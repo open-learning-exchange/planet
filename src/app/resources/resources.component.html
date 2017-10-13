@@ -1,3 +1,6 @@
+<!-- FOR DEMO ONLY -->
+<planet-list-item></planet-list-item>
+
 <form (ngSubmit)="submitResource()" #resourcesForm="ngForm">
   <div class="form-group">
     <label>File Type:</label>
@@ -17,6 +20,8 @@
 <div>
   <span>{{message}}</span>
   <ol>
-    <li *ngFor="let resource of resources"><a [routerLink]="['/resources/view',resource.doc._id]">{{ resource.doc.filename }}</a></li>
+    <li *ngFor="let resource of resources">
+      <a [routerLink]="['/resources/view',resource.doc._id]">{{ resource.doc.filename }}</a>
+    </li>
   </ol>
 </div>

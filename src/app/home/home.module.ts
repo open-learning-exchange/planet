@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { SharedModule } from '../shared/shared.module';
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
@@ -14,7 +13,7 @@ import { FormErrorMessagesComponent } from '../form-error-messages/form-error-me
 import { CourseValidatorService } from '../validators/course-validator.service';
 
 @NgModule({
-  imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [SharedModule, HomeRouterModule],
   declarations: [
     HomeComponent,
     DashboardComponent,
