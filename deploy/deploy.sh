@@ -2,7 +2,7 @@
 
 DOCKER_ORG=treehouses
 DOCKER_REPO=planet
-DOCKER_RPO_DEV=planet-dev
+DOCKER_REPO_DEV=planet-dev
 VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
 BRANCH=$TRAVIS_BRANCH
 COMMIT=${TRAVIS_COMMIT::8}
