@@ -11,7 +11,7 @@ services:
     depends_on:
       - couchdb
   planet:
-    image: treehouses/planet-dev:latest
+    image: try:try4
     ports:
       - "3000:3000"
     volumes:

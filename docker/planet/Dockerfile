@@ -1,22 +1,18 @@
+
 FROM node:6.11-stretch
-
-MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
-
 ENV APP planet
-
+MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
+# context must be in root repository
+COPY . /$APP
+WORKDIR /$APP
 # install required software before using nvm/node/npm/bower
 RUN apt-get update \
   && apt-get install -y curl git python build-essential \
-  # install angular cli
-  && npm install -g @angular/cli
+  && npm install
 
-# exposes port 3000 but your app may use any port specified in it
-EXPOSE 3000
-
-VOLUME ["/$APP"]
+FROM node:6.11-alpine
+RUN apk --no-cache add ca-certificates
 WORKDIR /$APP
+COPY --from=0 /$APP .
 
-#ADD ./docker-entrypoint.sh docker-entrypoint.sh
-
-#ENTRYPOINT ["/bin/bash", "-c"]
-CMD bash -c 'npm install && ng serve'
+CMD bash -c 'ng serve'
