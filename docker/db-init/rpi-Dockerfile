@@ -1,9 +1,10 @@
-FROM arm32v7/node:6.11-slim
+FROM hypriot/node:6.10.0-alpine
+RUN apk update ;\
+    apk add --no-cache curl git ;\
+    #CORS DOWNLOAD
+    npm install -g add-cors-to-couchdb
 
 WORKDIR /root
-
-RUN apt-get update ;\
-    apt-get install git curl -y
 
 COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
 

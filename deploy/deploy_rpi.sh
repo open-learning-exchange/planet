@@ -72,26 +72,31 @@ remove_temporary_folders(){
 build_docker() {
   build_message Build the docker images ...
   build_message Deploy planet as $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT
+  build_message Deploy planet production as $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
   build_message Deploy db-init as $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
   docker build -f ./docker/planet-dev/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT ./docker/planet-dev
+  docker build -f ./docker/planet/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT .
   docker build -f ./docker/db-init/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT ./docker/db-init
 }
 
 tag_latest_docker() {
   build_message Tag latest docker images ...
   docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-latest
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-latest
   docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
 push_docker() {
   build_message Pushing docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
 }
 
 push_latest_docker() {
   build_message Pushing latest docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-latest
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-latest
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
