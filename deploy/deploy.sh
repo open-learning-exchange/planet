@@ -19,7 +19,7 @@ build_message(){
 build_docker() {
   build_message Build the docker images ...
   docker build -f ./docker/planet-dev/Dockerfile  ./docker/planet-dev -t $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT
-  docker build -f ./docker/planet/Dockerfile ./ -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
+  docker build -f ./docker/planet/Dockerfile . -t $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
   docker build -f ./docker/db-init/Dockerfile ./docker/db-init -t $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
 }
 
