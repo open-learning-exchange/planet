@@ -45,6 +45,7 @@ push_latest_docker() {
 }
 
 docker login -u $DOCKER_USER -p $DOCKER_PASS
+docker ps
 build_docker
 push_docker
 if [[ $BRANCH = master ]];
