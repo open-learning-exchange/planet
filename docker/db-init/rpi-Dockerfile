@@ -1,4 +1,4 @@
-FROM hypriot/node:6.10.0-alpine
+FROM hypriot/rpi-node:6.10.0-alpine
 RUN apk update ;\
     apk add --no-cache curl git ;\
     #CORS DOWNLOAD
