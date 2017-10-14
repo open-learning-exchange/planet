@@ -1,8 +1,7 @@
 <!-- FOR DEMO ONLY -->
 <!-- use the async pipe when fetching for database -->
-<!-- Rather than passing the entire object I think its better to pass only the required fields since it will keep the list item component more generalized and reusable -->
-<ng-template ngFor let-data [ngForOf]="datum">
-  <planet-list-item [title]=data.title></planet-list-item>
+<ng-template ngFor let-item [ngForOf]="items">
+  <planet-list-item [item]=item></planet-list-item>
 </ng-template>
 
 <form (ngSubmit)="submitResource()" #resourcesForm="ngForm">

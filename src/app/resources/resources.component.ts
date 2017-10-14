@@ -8,7 +8,7 @@ import { Headers } from '@angular/http';
 export class ResourcesComponent implements OnInit {
   upload_files = [];
   // FROM OLD COUCH DB
-  datum = [
+  items = [
     {
       _id: 'bd13ee4258650c89aa53e8849d0a6119',
       _rev: '12-db142e5abbb6f076f0feacc05218c1ca',
@@ -19,7 +19,7 @@ export class ResourcesComponent implements OnInit {
       Publisher: 'na',
       language: 'English',
       Year: '2017',
-      linkToLicense: 'na',
+      linkToLicense: '',
       subject: ['Arts'],
       Level: ['Professional'],
       Tag: null,
