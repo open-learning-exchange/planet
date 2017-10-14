@@ -15,7 +15,8 @@ export class ListItemComponent implements OnInit {
 
   ngOnInit() {
     if (this.item.sum > 0 && this.item.timesRated > 0) {
-      this.rating = Math.round(this.item.sum / this.item.timesRated);
+      const temp = (this.item.sum / this.item.timesRated).toFixed(1);
+      this.rating = parseFloat(temp);
     }
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
