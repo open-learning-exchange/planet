@@ -8,7 +8,6 @@ import { UsersComponent } from '../users/users.component';
 
 import { HomeRouterModule } from './home-router.module';
 import { CoursesComponent } from '../courses/courses.component';
-import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 
 import { CourseValidatorService } from '../validators/course-validator.service';
 
@@ -19,8 +18,7 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     DashboardComponent,
     NavigationComponent,
     UsersComponent,
-    CoursesComponent,
-    FormErrorMessagesComponent
+    CoursesComponent
   ],
   providers: [CourseValidatorService]
 })
