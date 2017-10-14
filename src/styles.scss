@@ -10,6 +10,7 @@ body {
     color: inherit;
   }
 
+  // STYLING FOR TABLE LIST ENTRIES
   .list-item {
     display: grid;
     grid-template-columns: auto 140px;
@@ -17,19 +18,23 @@ body {
     border-bottom: 2px solid #ccc;
     margin-top: 1em;
     padding-bottom: 0.5em;
+
     .list-item-info {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
+
       h3 {
         text-transform: uppercase;
         font-size: 1.25rem;
         letter-spacing: 0.05em;
       }
+
       .list-item-content {
         font-size: 0.975rem;
         margin-bottom: 0.5em;
       }
+
       .list-item-action {
         .btn {
           margin-right: 0.5em;
@@ -37,6 +42,8 @@ body {
       }
     }
 
+    // the colored stars are placed on top of the uncolored ones
+    // the width is set dynamically with JS
     .stars {
       display: inline-block;
       font-size: 1.5rem;
@@ -112,6 +119,7 @@ body {
     }
   }
 
+  // swap bootstrap's default color with oles
   .btn-outline-primary {
     border-color: $ole-blue;
     color: $ole-blue;

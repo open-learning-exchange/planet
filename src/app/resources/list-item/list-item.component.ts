@@ -18,6 +18,8 @@ export class ListItemComponent implements OnInit {
       const temp = (this.item.sum / this.item.timesRated).toFixed(1);
       this.rating = parseFloat(temp);
     }
+
+    // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
   }
