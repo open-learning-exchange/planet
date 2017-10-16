@@ -6,7 +6,9 @@ import { environment } from '../../environments/environment';
 export class CouchService {
   private headers = new Headers({'Content-Type': 'application/json'});
   private defaultOpts = {headers: this.headers, withCredentials: true};
-  private baseUrl = environment.couchAddress;
+ // private baseUrl = environment.couchAddress;
+
+  private baseUrl = 'http://localhost:5984/'
 
   private setOpts(opts?: any) {
     return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
