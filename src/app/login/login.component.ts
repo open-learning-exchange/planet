@@ -17,17 +17,28 @@ require('./login.scss');
         <div>
           <input [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
         </div>
-        <div>
+        <div *ngIf="createMode || resetMode == false">
           <input [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
         </div>
         <div *ngIf="createMode">
           <input [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
         </div>
         <div class="login-actions">
-          <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
-          <a [routerLink]="createMode ? ['/login'] : ['newuser']">
-            {{ createMode ? 'Already have an account?' : 'Are you new?' }}
-          </a>
+          <div>
+            <button class="ole-btn cursor-pointer" *ngIf="createMode">{{ 'Create User' }}</button>
+            <button class="ole-btn cursor-pointer" *ngIf="resetMode">{{ 'Reset'}}</button>
+            <button class="ole-btn cursor-pointer" *ngIf="createMode == false && resetMode == false">{{ 'SIGN-IN'}}</button>
+          </div>
+          <div>
+            <a [routerLink]="resetMode ? ['/login'] : ['/login/resetpassword']">
+              {{ resetMode ? 'Already have an account?' : 'RESET' }}
+            </a>
+          </div>
+          <div>
+            <a [routerLink]="createMode ? ['/login'] : ['/login/newuser']">
+              {{ createMode ? 'Already have an account?' : 'SIGN-UP' }}
+            </a>
+          </div>
         </div>
       </form>
       <div id="login-status">{{message}}</div>
@@ -44,6 +55,7 @@ export class LoginComponent {
   ) { }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
+  resetMode: boolean = this.router.url.split('?')[0] === '/login/resetpassword';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
@@ -57,6 +69,8 @@ export class LoginComponent {
           this.createUser(this.model);
         }
       });
+    } else if (this.resetMode) {
+      this.resetPassword(this.model);
     } else {
       this.login(this.model);
     }
@@ -103,5 +117,16 @@ export class LoginComponent {
       .then((data) => {
         this.reRoute();
       }, (error) => this.message = 'Username and/or password do not match');
+  }
+
+  resetPassword({name}: {name: string}) {
+    //checkbyname and password
+    this.couchService.get('_users/_design/planet/_view/CheckByUser?key="' + name + '"')
+      .then((data) => {
+         console.log(data);
+       }, (error) => {
+          this.message = 'Username does not exist.'
+         return false; 
+    });
   }
 }
