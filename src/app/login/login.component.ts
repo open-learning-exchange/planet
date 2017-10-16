@@ -26,8 +26,8 @@ require('./login.scss');
         <div class="login-actions">
           <div>
             <button class="ole-btn cursor-pointer" *ngIf="createMode">{{ 'Create User' }}</button>
-            <button class="ole-btn cursor-pointer" *ngIf="resetMode">{{ 'Reset'}}</button>
-            <button class="ole-btn cursor-pointer" *ngIf="createMode == false && resetMode == false">{{ 'SIGN-IN'}}</button>
+            <button class="ole-btn cursor-pointer" *ngIf="resetMode">{{ 'Reset' }}</button>
+            <button class="ole-btn cursor-pointer" *ngIf="createMode == false && resetMode == false">{{ 'SIGN-IN' }}</button>
           </div>
           <div>
             <a [routerLink]="resetMode ? ['/login'] : ['/login/resetpassword']">
