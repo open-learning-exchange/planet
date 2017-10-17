@@ -1,0 +1,24 @@
+	<div class="container">
+		<p>{{message}}</p>
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th>Nation Name</th>
+	      <th>Nation Url</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr *ngFor="let nations of nation; let i = index">
+	      <td>
+	        {{nations.doc.name}}
+	      </td>
+	      <td>
+	        {{nations.doc.nationurl}}
+	      </td>
+	      <td>
+        <button class="btn btn-danger">Delete</button>
+      </td>
+	    </tr>
+	  </tbody>
+	</table>
+</div>
