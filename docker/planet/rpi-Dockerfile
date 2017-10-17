@@ -1,6 +1,6 @@
 ### STAGE 1: Build ###
 # We label our stage as ‘builder’
-FROM hypriot/rpi-node:6.10-alpine as builder
+FROM hypriot/rpi-node:6.10.0-alpine as builder
 MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
 COPY package.json ./
 ## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
