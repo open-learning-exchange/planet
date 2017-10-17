@@ -17,6 +17,7 @@ export class NationComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.getNationList();
 	}
 
 	getNationList() {
