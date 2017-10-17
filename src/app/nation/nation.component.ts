@@ -23,8 +23,6 @@ export class NationComponent implements OnInit {
 	getNationList() {
 		this.couchService.get('nations/_all_docs?include_docs=true')
 			.then((data) => {
-				console.log('Helo')
-				console.log(data)
 				this.nation = data.rows;
 			}, (error) => this.message = 'There was a problem getting NationList');
 	}
