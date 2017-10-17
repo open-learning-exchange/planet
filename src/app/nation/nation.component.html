@@ -1,0 +1,20 @@
+<form class="form-horizontal" (ngSubmit)="onSubmit(nationForm.value)" #nationForm="ngForm">
+    <legend>Add Nation</legend>
+    <div class="form-group col-md-4">
+      <label class="control-label">Admin Name</label>
+      <input name="admin_name" type="text" ngModel placeholder="Admin Name" class="form-control input-md" required="" />
+    </div>
+    <div class="form-group col-md-4">
+      <label class="control-label">Name</label>
+      <input name="nation_name" type="text" ngModel placeholder="Name" class="form-control input-md" required="" />
+    </div>
+    <div class="form-group col-md-4">
+      <label class="control-label">Nationurl</label>
+      <input name="nationurl" type="text" ngModel placeholder="Nationurl" class="form-control input-md" required="" />
+    </div>
+    <div class="form-group col-md-4">
+      <label class="control-label">Type</label>
+      <input name="type" type="text" ngModel placeholder="Type" class="form-control input-md" required="" />
+    </div>
+    <button name="singlebutton" class="btn btn-primary" type="submit">Save</button>
+  </form>
