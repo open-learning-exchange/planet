@@ -118,7 +118,7 @@ Vagrant.configure(2) do |config|
     # End node_modules fix
 
     # Add initial Couch databases here
-    chmod -x couchdb-setup.sh
+    chmod +x couchdb-setup.sh
     ./couchdb-setup.sh -p 5984
     # End Couch database addition
 
