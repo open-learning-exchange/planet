@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ole/jessie64"
-  config.vm.box_version = "0.1.6"
+  config.vm.box_version = "0.2.2"
 
   config.vm.hostname = "planet"
 
@@ -85,20 +85,9 @@ Vagrant.configure(2) do |config|
 #    sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
 
     # Add CouchDB Docker
-    docker pull klaemo/couchdb
-    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb
-    # Set up Node.js
-    cd ~
-    curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
-    bash nodesource_setup.sh
-    apt-get -y install nodejs
+    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
     # Install Angular CLI
     npm install -g @angular/cli
-    # Install Chrome for e2e/Protractor tests
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-    sudo apt-get update
-    sudo apt-get install -fy google-chrome-stable
 
     # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
