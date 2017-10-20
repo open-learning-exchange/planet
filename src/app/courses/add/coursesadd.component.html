@@ -1,0 +1,119 @@
+<h1>Add Courses</h1>
+<!-- nvalidate - disable browser's default validators to use our validators -->
+<form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="row">
+        <div class="form-group col-4">
+            <label>Course Title</label>
+            <input type="text" class="form-control" formControlName="courseTitle" required>
+            <planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages>
+        </div>
+        <div class="form-group col-4">
+            <label>Language of Instruction</label>
+            <input type="text" class="form-control" formControlName="languageOfInstruction">
+        </div>
+        <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+        <div class="form-group col-4">
+            <label>Member Limit</label>
+            <input type="number" min="1" class="form-control" formControlName="memberLimit">
+            <planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-4">
+            <label>Course Leader</label>
+            <!-- need to create a select with options from number of members available -->
+            <!-- for this to work we need all the memberes' id from the members database which is not created yet -->
+            <select multiple class="form-control" formControlName="courseLeader">
+                <!-- i created this according to the entry in the old bell apps couch db members database -->
+                <option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" formControlName="description" required></textarea>
+        <planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages>
+    </div>
+    <div class="row">
+        <div class="form-group col-4">
+            <label>Method</label>
+            <input type="text" class="form-control" formControlName="method">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-4">
+            <label>Grade Level</label>
+            <select class="form-control" formControlName="gradeLevel">
+                <option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</option>
+            </select>
+        </div>
+        <div class="form-group col-4">
+            <label>Subject Level</label>
+            <select class="form-control" formControlName="subjectLevel">
+                <option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-4">
+            <label>Start Date</label>
+            <input type="date" class="form-control" formControlName="startDate">
+            <planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages>
+        </div>
+        <div class="form-group col-4">
+            <label>End Date</label>
+            <input type="date" class="form-control" formControlName="endDate">
+            <planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages>
+        </div>
+        <div class="form-group radio col-4">
+            <div>Frequency</div>
+            <!-- radio buttons need same name to allow only one value to be selected! -->
+            <label>
+                <input type="radio" name="daysToggler" (change)="toogleWeekly(true)"> Daily
+            </label>
+            <label>
+                <input type="radio" name="daysToggler" (change)="toogleWeekly(false)"> Weekly
+            </label>
+        </div>
+    </div>
+    <div class="form-check form-check-inline" *ngIf="!showDaysCheckBox">
+        <div>Day</div>
+        <label class="form-check-label" *ngFor="let day of days">
+            <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)"> {{day}}
+        </label>
+    </div>
+    <div class="row">
+        <div class="form-group col-4">
+            <label>Start Time</label>
+            <input type="time" class="form-control" formControlName="startTime">
+            <planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages>
+        </div>
+        <div class="form-group col-4">
+            <label>End Time</label>
+            <input type="time" class="form-control" formControlName="endTime">
+            <planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages>
+        </div>
+        <div class="form-group col-4">
+            <label>Location</label>
+            <input type="text" class="form-control" formControlName="location">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-2">
+            <label for="backgroundCol">Background Color</label>
+            <input type="color" class="form-control" formControlName="backgroundColor">
+            <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
+        </div>
+        <div class="form-group col-2">
+            <label>Foreground Color</label>
+            <input type="color" class="form-control" formControlName="foregroundColor">
+            <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
+
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+</form>
+
+<p>Form value: {{ courseForm.value | json }}</p>
+<p>{{ courseForm.valid }}</p>

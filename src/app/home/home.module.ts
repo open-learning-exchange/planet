@@ -8,10 +8,6 @@ import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
 
 import { HomeRouterModule } from './home-router.module';
-import { CoursesComponent } from '../courses/courses.component';
-import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
-
-import { CourseValidatorService } from '../validators/course-validator.service';
 
 @NgModule({
   imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
@@ -19,10 +15,7 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     HomeComponent,
     DashboardComponent,
     NavigationComponent,
-    UsersComponent,
-    CoursesComponent,
-    FormErrorMessagesComponent
-  ],
-  providers: [CourseValidatorService]
+    UsersComponent
+  ]
 })
 export class HomeModule {}
