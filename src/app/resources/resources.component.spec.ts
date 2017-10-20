@@ -11,9 +11,9 @@ describe('ResourcesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, RouterModule,HttpModule],
+      imports: [ FormsModule, RouterModule, HttpModule],
       declarations: [ ResourcesComponent ],
-      providers:[CouchService]
+      providers: [CouchService]
     })
     .compileComponents();
   }));
