@@ -17,6 +17,7 @@
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
+      "serviceWorker": true,
       "styles": [
         "styles.scss",
         "../node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -24,7 +25,7 @@
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
-        "../node_modules/bootstrap/dist/js/bootstrap.min.js"  
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
@@ -57,6 +58,7 @@
   },
   "defaults": {
     "styleExt": "scss",
+    "poll": 1,
     "class": {
       "spec": false
     },
@@ -65,10 +67,12 @@
       "inlineStyle": false,
       "inlineTemplate": false
     },
-    "serve": {
-        "port":3000,
-        "host":"0.0.0.0"
+    "build": {
+      "poll": 1
     },
-    "poll":true
+    "serve": {
+      "port": 3000,
+      "host": "0.0.0.0"
+    }
   }
 }
