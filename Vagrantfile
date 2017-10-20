@@ -99,7 +99,7 @@ Vagrant.configure(2) do |config|
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
     sudo apt-get update
     sudo apt-get install -fy google-chrome-stable
-    
+
     # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
     cd add-cors-to-couchdb
@@ -107,7 +107,7 @@ Vagrant.configure(2) do |config|
     node bin.js http://localhost:5984
     cd /vagrant
     # End add CORS to CouchDB
-    
+
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     echo "Preparing local node_modules folder…"
     mkdir -p /vagrant_node_modules
@@ -116,18 +116,14 @@ Vagrant.configure(2) do |config|
     mount --bind /vagrant_node_modules /vagrant/node_modules
     npm install
     # End node_modules fix
-    
+
     # Add initial Couch databases here
-    curl -X PUT http://127.0.0.1:5984/_users
-    curl -X PUT http://127.0.0.1:5984/_replicator
-    curl -X PUT http://127.0.0.1:5984/_global_changes
-    curl -X PUT http://127.0.0.1:5984/meetups
-    curl -X PUT http://127.0.0.1:5984/courses
-    curl -X PUT http://127.0.0.1:5984/courses/_design/course-validators -d @design/courses/course-validators.json
+    chmod +x couchdb-setup.sh
+    ./couchdb-setup.sh -p 5984
     # End Couch database addition
-    
+
   SHELL
-  
+
   # Run binding on each startup make sure the mount is available on VM restart
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     docker start planet
@@ -135,5 +131,5 @@ Vagrant.configure(2) do |config|
     # Starts the app in a screen (virtual terminal)
     sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'
   SHELL
-  
+
 end
