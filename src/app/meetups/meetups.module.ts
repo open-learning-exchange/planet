@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { MeetupsComponent } from './meetups.component';
-import { MeetupsaddComponent } from './meetupsadd.component';
+import { MeetupsaddComponent } from './meetups-add.component';
 
 import { MeetupsRouterModule } from './meetups-router.module';
 
@@ -12,7 +12,7 @@ import { MeetupsRouterModule } from './meetups-router.module';
     MeetupsRouterModule, CommonModule, FormsModule
   ],
   declarations: [
-    MeetupsComponent, MeetupsaddComponent
+    MeetupsComponent, MeetupsAddComponent
   ]
 })
 export class MeetupsModule {}
