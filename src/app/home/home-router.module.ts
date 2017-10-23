@@ -7,7 +7,6 @@ import { HomeComponent } from './home.component';
 import { CoursesComponent } from '../courses/courses.component';
 import { NationComponent } from '../nation/nation.component';
 
-
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [

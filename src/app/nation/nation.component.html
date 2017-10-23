@@ -3,8 +3,8 @@
   <form class="form-horizontal"(ngSubmit)="onSubmit(nation.value)" #nation="ngForm">
     <div class="form-group">
       <label for="admin_name">Admin Name</label>
-      <input type="text" style="width:50%;" class="form-control" id="admin_name" required minlength="5" maxlength="30" [(ngModel)]="nation.admin_name" name="admin_name" #admin_name="ngModel">
-      <div *ngIf="admin_name.errors && (admin_name.dirty || admin_name.touched)" class="alert alert-danger" style="width:50%;">
+      <input type="text" class="form-control" id="admin_name" required minlength="5" maxlength="30" [(ngModel)]="nation.admin_name" name="admin_name" #admin_name="ngModel">
+      <div *ngIf="admin_name.errors && (admin_name.dirty || admin_name.touched)" class="alert alert-danger" id = "danger">
         <div [hidden]="!admin_name.errors.required">
           Admin name is is required!
         </div>
@@ -18,8 +18,8 @@
     </div>
      <div class="form-group">
       <label for="nation_name">Name</label>
-      <input type="text" class="form-control" style="width:50%;" id="nation_name" required minlength="5" maxlength="30" [(ngModel)]="nation.nation_name" name="nation_name" #nation_name="ngModel">
-      <div *ngIf="nation_name.errors && (nation_name.dirty || nation_name.touched)" class="alert alert-danger" style="width:50%;">
+      <input type="text" class="form-control" id="nation_name" required minlength="5" maxlength="30" [(ngModel)]="nation.nation_name" name="nation_name" #nation_name="ngModel">
+      <div *ngIf="nation_name.errors && (nation_name.dirty || nation_name.touched)" class="alert alert-danger"  id = "danger">
         <div [hidden]="!nation_name.errors.required">
            Name is is required!
         </div>
@@ -33,8 +33,8 @@
     </div>
     <div class="form-group">
       <label for="nation_name">Nationurl</label>
-      <input type="text" class="form-control" style="width:50%;" id="nationurl" required minlength="5" maxlength="30" [(ngModel)]="nation.nationurl" name="nationurl" #nationurl="ngModel">
-      <div *ngIf="nationurl.errors && (nationurl.dirty || nationurl.touched)" class="alert alert-danger" style="width:50%;">
+      <input type="text" class="form-control" id="nationurl" required minlength="5" maxlength="30" [(ngModel)]="nation.nationurl" name="nationurl" #nationurl="ngModel">
+      <div *ngIf="nationurl.errors && (nationurl.dirty || nationurl.touched)" class="alert alert-danger" id = "danger">
         <div [hidden]="!nationurl.errors.required">
            NationUrl is is required!
         </div>
@@ -42,8 +42,8 @@
     </div>
      <div class="form-group">
       <label for="nation_name">Type</label>
-      <input type="text" class="form-control" style="width:50%;" id="type" required minlength="5" maxlength="30" [(ngModel)]="nation.type" name="type" #type="ngModel">
-      <div *ngIf="type.errors && (type.dirty || type.touched)" class="alert alert-danger" style="width:50%;">
+      <input type="text" class="form-control" id="type" required minlength="5" maxlength="30" [(ngModel)]="nation.type" name="type" #type="ngModel">
+      <div *ngIf="type.errors && (type.dirty || type.touched)" class="alert alert-danger" id = "danger">
         <div [hidden]="!type.errors.required">
            Type is is required!
         </div>

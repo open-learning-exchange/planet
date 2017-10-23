@@ -9,27 +9,26 @@ import { CouchService } from '../shared/couchdb.service';
   styleUrls: ['./nation.component.scss']
 })
 export class NationComponent implements OnInit {
-message = '';
+  message = '';
   constructor(
-  	private couchService: CouchService,
+    private couchService: CouchService,
   	private router: Router
-
   ) { }
+
   ngOnInit() {
   }
+
   onSubmit(nation) {
-    if (nation.nation_name !== '' && nation.nationurl !== '' && nation.type !=="") {
-    console.log(nation.nation_name, nation.nationurl, nation.type);
-    this.couchService.post('nations', {'adminname':nation.admin_name, 'nationname': nation.nation_name,'nationurl':nation.nationurl, 'type':nation.type}, )
-      .then((data) => {
-      	alert('Nation has been sucessfully created');
-      	 this.router.navigate(['']);
+    if(nation.nation_name !== "" && nation.nationurl !== "" && nation.type !=="") {
+      this.couchService.post('nations', {'adminname':nation.admin_name, 'nationname': nation.nation_name,'nationurl':nation.nationurl, 'type':nation.type}, )
+        .then((data) => {
+        alert('Nation has been sucessfully created');
+        this.router.navigate(['']);
       }, (error) => this.message = 'Error');
-    } else {
+    }else{
       this.message = 'Please complete the form';
     }
   }
-
 }
 
 

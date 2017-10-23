@@ -12,7 +12,7 @@
     "v-test": "vagrant ssh -c 'cd /vagrant;ng test'",
     "lint": "ng lint",
     "v-lint": "vagrant ssh -c 'cd /vagrant;ng lint'",
-    "v-lint-fix": "vagrant ssh -c 'cd /vagrant;ng lint --fix'",
+    "v-lint-fix":"vagrant ssh -c 'cd /vagrant;ng lint --fix'",
     "e2e": "ng e2e --environment test",
     "v-e2e": "vagrant ssh -c 'cd /vagrant;ng e2e --environment test'",
     "install-hooks": "cp -a git-hooks/. .git/hooks/"
@@ -53,7 +53,6 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "node-sass": "^4.5.3",
-    "popper.js": "^1.12.5",
     "protractor": "~5.1.2",
     "request-promise": "^4.2.1",
     "ts-node": "~3.0.4",
