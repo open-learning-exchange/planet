@@ -1,3 +1,44 @@
-<p>
-  community works!
-</p>
+<div class="container">
+<h2 i18n>Communities List</h2>
+<div>
+  <input #box (keyup)="onKey()" [(ngModel)]="filter" placeholder="Search By Nation Name">
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Community</th>
+      <th>Last App Update</th>
+      <th>Version No.</th>
+      <th>Nation Name</th>
+      <th>Last Publications Sync</th>
+      <th>Last Activities Sync</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let community of community; let i = index">
+       <td>
+        {{community.name}}
+      </td>
+      <td>
+        {{community.lastAppUpdateDat}}
+      </td>
+      <td>
+        {{community.version}}
+      </td>
+       <td>
+          {{community.nationName}}
+      </td>
+      <td>
+          {{community.lastPublicationsSyncDate}}
+      </td>
+      <td>
+          {{community.lastActivitiesSyncDate}}
+      </td>
+      <td>
+        <button class="btn btn-danger" ngMOdel (click)="deleteCommunity(community._id,community._rev)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
