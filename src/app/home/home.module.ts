@@ -12,7 +12,6 @@ import { CoursesComponent } from '../courses/courses.component';
 import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 
 import { CourseValidatorService } from '../validators/course-validator.service';
-import { NationComponent } from '../nation/nation.component';
 
 @NgModule({
   imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
@@ -22,8 +21,7 @@ import { NationComponent } from '../nation/nation.component';
     NavigationComponent,
     UsersComponent,
     CoursesComponent,
-    FormErrorMessagesComponent,
-    NationComponent
+    FormErrorMessagesComponent
   ],
   providers: [CourseValidatorService]
 })
