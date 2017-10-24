@@ -21,15 +21,15 @@ export class CommunityComponent implements OnInit {
     this.couchService.post('community/_find',{
                   "selector": {
                       "$and": [
-                          {
-                              "_id": { "$gt": null }
-                          },
-                          {
-                              "nationName":  { $regex: '.*' + this.filter + '.*' }
-                          },
-                          {
-                              "registrationRequest": { $regex: '.*' + this.selectedValue + '.*' }
-                          }
+                        {
+                          "_id": { "$gt": null }
+                        },
+                        {
+                          "nationName":  { $regex: '.*' + this.filter + '.*' }
+                        },
+                        {
+                          "registrationRequest": { $regex: '.*' + this.selectedValue + '.*' }
+                        }
                       ]
                     }
                   }
@@ -40,11 +40,10 @@ export class CommunityComponent implements OnInit {
   }
 
   filterCommunity() {
-      this.getcommunitylist();
+    this.getcommunitylist();
   }
 
   deleteCommunity(communityId, communityRev) {
-    console.log(communityId, communityRev)
     this.couchService.delete('community/' + communityId + '?rev=' + communityRev)
       .then((data) => {
         this.getcommunitylist();

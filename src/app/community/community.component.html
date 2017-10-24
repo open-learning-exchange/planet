@@ -1,13 +1,19 @@
 <h2 i18n>Communities List</h2>
-<div>
-  <input (keyup)="filterCommunity()" [(ngModel)]="filter" placeholder="Search By Nation Name">
-  <select  [(ngModel)]="selectedValue" (change)="filterCommunity()">
-      <option  value="">All</option>
-      <option  value="pending">Pending</option>
-      <option  value="accepted">Accepted</option>
-      <option  value="rejected">Rejected</option>
-  </select>
+<br/>
+<div class="row">
+  <div class="col-md-3">
+      <input (keyup)="filterCommunity()" class="form-control" [(ngModel)]="filter" placeholder="Search By Nation Name">
+  </div>
+  <div class="col-md-3">
+    <select  [(ngModel)]="selectedValue" (change)="filterCommunity()" class="form-control">
+        <option  value="">All</option>
+        <option  value="pending">Pending</option>
+        <option  value="accepted">Accepted</option>
+        <option  value="rejected">Rejected</option>
+    </select>
+  </div>
 </div>
+<br/>
 <table class="table">
   <thead>
     <tr>
@@ -31,14 +37,14 @@
       <td>
         {{community.version}}
       </td>
-       <td>
-          {{community.nationName}}
+      <td>
+        {{community.nationName}}
       </td>
       <td>
-          {{community.lastPublicationsSyncDate}}
+        {{community.lastPublicationsSyncDate}}
       </td>
       <td>
-          {{community.lastActivitiesSyncDate}}
+        {{community.lastActivitiesSyncDate}}
       </td>
       <td>
         <button class="btn btn-danger" ngMOdel (click)="deleteCommunity(community._id,community._rev)">Delete</button>
