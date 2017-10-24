@@ -5,8 +5,7 @@ import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   selector: 'app-community',
-  templateUrl: './community.component.html',
-  styleUrls: ['./community.component.scss']
+  templateUrl: './community.component.html'
 })
 export class CommunityComponent implements OnInit {
   message = '';
