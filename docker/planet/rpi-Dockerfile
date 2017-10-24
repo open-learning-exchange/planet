@@ -6,7 +6,7 @@ COPY package.json ./
 ## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
 RUN apt-get update \
   && apt-get install -y curl git python build-essential \
-  && npm install node-sass \
+  && npm install -g node-sass \
   && npm rebuild node-sass \
   && npm install \
   && mkdir /ng-app && cp -R ./node_modules ./ng-app
