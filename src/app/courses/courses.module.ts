@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CoursesComponent } from './courses.component';
-import { CoursesaddComponent } from './add/coursesadd.component';
-import { CoursesrequestComponent } from './request/coursesrequest.component';
+import { CoursesAddComponent } from './add-courses/courses-add.component';
+import { CoursesRequestComponent } from './request-courses/courses-request.component';
 import { CoursesRouterModule } from './courses-router.module';
 
 import { CourseValidatorService } from '../validators/course-validator.service';
@@ -14,8 +14,8 @@ import { FormErrorMessagesComponent } from '../form-error-messages/form-error-me
     imports: [CoursesRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
     declarations: [
         CoursesComponent,
-        CoursesaddComponent,
-        CoursesrequestComponent,
+        CoursesAddComponent,
+        CoursesRequestComponent,
         FormErrorMessagesComponent
     ],
     providers: [CourseValidatorService]

@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { CoursesaddComponent } from './add/coursesadd.component';
+import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesComponent } from './courses.component';
-import { CoursesrequestComponent } from './request/coursesrequest.component';
+import { CoursesRequestComponent } from './request-courses/courses-request.component';
 
 const routes: Routes = [
     { path: '', component: CoursesComponent},
-    { path: 'add', component: CoursesaddComponent},
-    { path: 'request', component: CoursesrequestComponent}
+    { path: 'add', component: CoursesAddComponent},
+    { path: 'request', component: CoursesRequestComponent}
 ];
 
 @NgModule({

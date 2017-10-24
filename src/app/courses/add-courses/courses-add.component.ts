@@ -17,10 +17,10 @@ import searchDocuments, * as constants from './constants';
 
 @Component({
   selector: 'planet-courses',
-  templateUrl: 'coursesadd.component.html',
-  styleUrls: ['coursesadd.component.scss']
+  templateUrl: 'courses-add.component.html',
+  styleUrls: ['courses-add.component.scss']
 })
-export class CoursesaddComponent {
+export class CoursesAddComponent {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
