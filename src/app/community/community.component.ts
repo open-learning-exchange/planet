@@ -10,26 +10,37 @@ import { CouchService } from '../shared/couchdb.service';
 })
 export class CommunityComponent implements OnInit {
   message = '';
-  community = [];
+  communities = [];
   filter = '';
-
+  selectedValue ='';
   constructor(
     private couchService: CouchService
     ) { }
 
   getcommunitylist() {
-      this.couchService.post('community/_find',{
-                    "selector": {
-                       "_id": {
-                          "$gt": null
-                        },
-                        "nationName":  { $regex: '.*' + this.filter + '.*' }
-                      }
+    this.couchService.post('community/_find',{
+                  "selector": {
+                      "$and": [
+                          {
+                              "_id": { "$gt": null }
+                          },
+                          {
+                              "nationName":  { $regex: '.*' + this.filter + '.*' }
+                          },
+                          {
+                              "registrationRequest": { $regex: '.*' + this.selectedValue + '.*' }
+                          }
+                      ]
                     }
-                )
-      .then((data) => {
-        this.community = data.docs;
-      }, (error) => this.message = 'There was a problem getting community');
+                  }
+              )
+    .then((data) => {
+      this.communities = data.docs;
+    }, (error) => this.message = 'There was a problem getting community');
+  }
+
+  filterCommunity() {
+      this.getcommunitylist();
   }
 
   deleteCommunity(communityId, communityRev) {
@@ -37,10 +48,7 @@ export class CommunityComponent implements OnInit {
     this.couchService.delete('community/' + communityId + '?rev=' + communityRev)
       .then((data) => {
         this.getcommunitylist();
-      }, (error) => this.message = 'There was a problem deleting this community');
-  }
-  onKey() {
-    this.getcommunitylist();
+      }, (error) => this.message = 'There was a problem deleting this.communities');
   }
 
   ngOnInit() {

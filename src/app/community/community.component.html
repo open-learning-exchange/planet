@@ -1,7 +1,12 @@
-<div class="container">
 <h2 i18n>Communities List</h2>
 <div>
-  <input #box (keyup)="onKey()" [(ngModel)]="filter" placeholder="Search By Nation Name">
+  <input (keyup)="filterCommunity()" [(ngModel)]="filter" placeholder="Search By Nation Name">
+  <select  [(ngModel)]="selectedValue" (change)="filterCommunity()">
+      <option  value="">All</option>
+      <option  value="pending">Pending</option>
+      <option  value="accepted">Accepted</option>
+      <option  value="rejected">Rejected</option>
+  </select>
 </div>
 <table class="table">
   <thead>
@@ -16,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let community of community; let i = index">
+    <tr *ngFor="let community of communities; let i = index">
        <td>
         {{community.name}}
       </td>
@@ -41,4 +46,3 @@
     </tr>
   </tbody>
 </table>
-</div>
