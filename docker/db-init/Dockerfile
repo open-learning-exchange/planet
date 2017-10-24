@@ -7,6 +7,8 @@ RUN apk update ;\
 
 WORKDIR /root
 
-COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
+COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
+COPY ./couchdb-setup.sh /root/couchdb-setup.sh
+ADD ./design /root/design
 
 CMD sh ./docker-entrypoint.sh

@@ -76,7 +76,7 @@ build_docker() {
   build_message Deploy db-init as $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
   docker build -f ./docker/planet-dev/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT ./docker/planet-dev
   docker build -f ./docker/planet/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT .
-  docker build -f ./docker/db-init/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT ./docker/db-init
+  docker build -f ./docker/db-init/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT .
 }
 
 tag_latest_docker() {

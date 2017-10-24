@@ -13,9 +13,4 @@ done
 add-cors-to-couchdb http://couchdb:5984
 
 #MIGRATOR
-curl -X PUT http://couchdb:5984/_users
-curl -X PUT http://couchdb:5984/_replicator
-curl -X PUT http://couchdb:5984/_global_changes
-curl -X PUT http://couchdb:5984/meetups
-curl -X PUT http://couchdb:5984/courses
-curl -X PUT http://couchdb:5984/courses/_design/course-validators -d @../../design/courses/course-validators.json
+./couchdb-setup.sh -p 5984 -h couchdb
