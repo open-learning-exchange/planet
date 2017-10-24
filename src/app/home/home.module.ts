@@ -12,6 +12,7 @@ import { CoursesComponent } from '../courses/courses.component';
 import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 
 import { CourseValidatorService } from '../validators/course-validator.service';
+import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 
 @NgModule({
@@ -25,6 +26,6 @@ import { NationComponent } from '../nation/nation.component';
     FormErrorMessagesComponent,
     NationComponent
   ],
-  providers: [CourseValidatorService]
+  providers: [CourseValidatorService,NationValidatorService]
 })
 export class HomeModule {}

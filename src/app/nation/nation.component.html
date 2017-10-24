@@ -1,53 +1,38 @@
+<h1>Add Nation </h1>
+<!-- nvalidate - disable browser's default validators to use our validators -->
+<form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Admin Name</label>
+      <input type="text" class="form-control" formControlName="adminName" required>
+      <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
+    </div>
+    <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Name</label>
+      <input type="text" class="form-control" formControlName="name" required>
+      <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Nationurl</label>
+      <input type="text" class="form-control" formControlName="nationUrl">
+      <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+   <div class="form-group col-4">
+      <label>Type</label>
+      <input type="text" class="form-control" formControlName="type">
+      <planet-form-error-messages [control]="nationForm.controls.type"></planet-form-error-messages>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+</form>
 
-  <h1>Add Nation </h1>
-  <form class="form-horizontal"(ngSubmit)="onSubmit(nation.value)" #nation="ngForm">
-    <div class="form-group">
-      <label for="admin_name">Admin Name</label>
-      <input type="text" class="form-control" id="admin_name" required minlength="5" maxlength="30" [(ngModel)]="nation.admin_name" name="admin_name" #admin_name="ngModel">
-      <div *ngIf="admin_name.errors && (admin_name.dirty || admin_name.touched)" class="alert alert-danger" id = "danger">
-        <div [hidden]="!admin_name.errors.required">
-          Admin name is is required!
-        </div>
-        <div [hidden]="!admin_name.errors.minlength">
-          Admin name must be at least 5 characters long.
-        </div>
-        <div [hidden]="!admin_name.errors.maxlength">
-          Admin name cannot be more than 30 characters long.
-        </div>
-      </div>
-    </div>
-     <div class="form-group">
-      <label for="nation_name">Name</label>
-      <input type="text" class="form-control" id="nation_name" required minlength="5" maxlength="30" [(ngModel)]="nation.nation_name" name="nation_name" #nation_name="ngModel">
-      <div *ngIf="nation_name.errors && (nation_name.dirty || nation_name.touched)" class="alert alert-danger"  id = "danger">
-        <div [hidden]="!nation_name.errors.required">
-           Name is is required!
-        </div>
-        <div [hidden]="!nation_name.errors.minlength">
-           Name must be at least 5 characters long.
-        </div>
-        <div [hidden]="!nation_name.errors.maxlength">
-           Name cannot be more than 30 characters long.
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="nation_name">Nationurl</label>
-      <input type="text" class="form-control" id="nationurl" required minlength="5" maxlength="30" [(ngModel)]="nation.nationurl" name="nationurl" #nationurl="ngModel">
-      <div *ngIf="nationurl.errors && (nationurl.dirty || nationurl.touched)" class="alert alert-danger" id = "danger">
-        <div [hidden]="!nationurl.errors.required">
-           NationUrl is is required!
-        </div>
-      </div>
-    </div>
-     <div class="form-group">
-      <label for="nation_name">Type</label>
-      <input type="text" class="form-control" id="type" required minlength="5" maxlength="30" [(ngModel)]="nation.type" name="type" #type="ngModel">
-      <div *ngIf="type.errors && (type.dirty || type.touched)" class="alert alert-danger" id = "danger">
-        <div [hidden]="!type.errors.required">
-           Type is is required!
-        </div>
-      </div>
-    </div>
-    <button name="singlebutton" class="btn btn-primary" type="submit">Save</button>
-  </form>
+<p>Form value: {{ nationForm.value | json }}</p>
+<p>{{ nationForm.valid }}</p>
