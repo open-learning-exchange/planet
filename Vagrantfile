@@ -87,7 +87,7 @@ Vagrant.configure(2) do |config|
     # Add CouchDB Docker
     sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
     # Install Angular CLI
-    npm install -g @angular/cli
+    sudo npm install -g @angular/cli
 
     # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
