@@ -18,14 +18,13 @@ import { CouchService } from '../shared/couchdb.service';
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let nations of nation | paginate: { itemsPerPage: 2, currentPage: p }">
+						<tr *ngFor="let nations of nation">
 							<td>{{nations.doc.name}}</td>
 							<td>{{nations.doc.admin_name}}</td>
 							<td>{{nations.doc.nationurl}}</td>
 						</tr>
 					</tbody>
-				</table>
-				<pagination-controls (pageChange)="p = $event"></pagination-controls> `
+				</table>`
 })
 export class NationComponent implements OnInit {
 	message = '';
