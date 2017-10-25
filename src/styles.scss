@@ -1,15 +1,12 @@
 @import './app/variables';
 
 body {
-    font-family:$font-family;
-    margin:$body-margin;
-    
-    a, a:hover {
-        text-decoration:none;
-        color:inherit;
-    }
-    
+  font-family: $font-family;
+  // margin: $body-margin; we won't need to use this if we use bootstrap's container class
+
+  a,
+  a:hover {
+    text-decoration: none;
+    color: inherit;
+  }
 }
-
-
-

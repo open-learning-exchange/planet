@@ -1,16 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { MeetupsaddComponent } from './meetupsadd.component';
+import { MeetupsAddComponent } from './meetups-add.component';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 
+<<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
 describe('MeetupsaddComponent', () => {
+=======
+describe('MeetupsAddComponent', () => {
+  let component: MeetupsAddComponent;
+  let fixture: ComponentFixture<MeetupsAddComponent>;
+>>>>>>> f2f873c676c17685337806c2cc4ac914ff6fb48c:src/app/meetups/meetups-add.component.spec.ts
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpModule ],
-      declarations: [ MeetupsaddComponent ],
+      declarations: [ MeetupsAddComponent ],
       providers: [CouchService]
     })
     .compileComponents();
@@ -26,6 +32,7 @@ describe('MeetupsaddComponent', () => {
   let compiled;
 
   beforeEach(() => {
+<<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
     fixture = TestBed.createComponent(MeetupsaddComponent);
     component = fixture.debugElement.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
@@ -33,6 +40,11 @@ describe('MeetupsaddComponent', () => {
     de = fixture.debugElement;
     compiled = fixture.debugElement.nativeElement;
     statusElement = de.nativeElement.querySelector('p');
+=======
+    fixture = TestBed.createComponent(MeetupsAddComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+>>>>>>> f2f873c676c17685337806c2cc4ac914ff6fb48c:src/app/meetups/meetups-add.component.spec.ts
   });
 
   it('should be created', () => {

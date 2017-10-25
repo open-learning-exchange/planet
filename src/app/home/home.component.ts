@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
 @Component({
   template: `
     <planet-navigation></planet-navigation>
-    <main>
+    <main class="container">
       <router-outlet></router-outlet>
     </main>
   `,

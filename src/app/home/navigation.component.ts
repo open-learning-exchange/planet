@@ -22,7 +22,7 @@ export class NavigationComponent {
   components = [
     { link: '', name: 'Home' },
     { link: 'resources', name: 'Library' },
-    { link: '', name: 'Courses' },
+    { link: 'courses', name: 'Courses' },
     { link: 'meetups', name: 'Meetups' },
     { link: 'users', name: 'Members' },
     { link: '', name: 'Reports' },
