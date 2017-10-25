@@ -37,7 +37,7 @@ export class NationValidatorService {
         }
         return null;
       });
-    });;
+    });
   }
 
 }
