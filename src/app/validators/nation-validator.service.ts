@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import searchDocuments from '../courses/constants';
+import searchDocuments from '../nation/constant';
 import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()
