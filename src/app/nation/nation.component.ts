@@ -15,12 +15,32 @@ import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
-  selector: 'app-nation',
-  templateUrl: './nation.component.html',
-  styleUrls: ['./nation.component.scss']
+	selector: 'app-nation',
+	templateUrl: './nation.component.html',
+	styleUrls: ['./nation.component.scss'],
+	template: `<h1>Nation List</h1>
+				<p>{{message}}</p>
+				<table class="table table-bordered table-hover">
+					<thead>
+						<tr>
+							<th>Nation Name</th>
+							<th>Admin Name</th>
+							<th>Nation Url</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let nations of nation">
+							<td>{{nations.doc.name}}</td>
+							<td>{{nations.doc.admin_name}}</td>
+							<td>{{nations.doc.nationurl}}</td>
+						</tr>
+					</tbody>
+				</table>`
 })
+
 export class NationComponent{
   message = '';
+  nation = [];
   readonly dbName = 'nations';
   nationForm : FormGroup;
 
@@ -50,6 +70,13 @@ export class NationComponent{
     this.location.back();
   }
 
+  getNationList() {
+		this.couchService.get('nations/_all_docs?include_docs=true')
+			.then((data) => {
+				this.nation = data.rows;
+			}, (error) => this.message = 'There was a problem getting NationList');
+	}
+
   onSubmit(nation) {
     if(nation.nation_name !== "" && nation.nationurl !== "" && nation.type !=="") {
       this.couchService.post('nations', {'adminname':nation.adminName, 'nationname': nation.name,'nationurl':nation.nationUrl, 'type':nation.type}, )
@@ -60,7 +87,6 @@ export class NationComponent{
     }else{
       this.message = 'Please complete the form';
     }
+    this.getNationList();
   }
 }
-
-
