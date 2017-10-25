@@ -18,32 +18,14 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 	selector: 'app-nation',
 	templateUrl: './nation.component.html',
 	styleUrls: ['./nation.component.scss'],
-	template: `<h1>Nation List</h1>
-				<p>{{message}}</p>
-				<table class="table table-bordered table-hover">
-					<thead>
-						<tr>
-							<th>Nation Name</th>
-							<th>Admin Name</th>
-							<th>Nation Url</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr *ngFor="let nations of nation">
-							<td>{{nations.doc.name}}</td>
-							<td>{{nations.doc.admin_name}}</td>
-							<td>{{nations.doc.nationurl}}</td>
-						</tr>
-					</tbody>
-				</table>`
 })
 
-export class NationComponent{
+export class NationComponent implements OnInit{
   message = '';
   nation = [];
   readonly dbName = 'nations';
   nationForm : FormGroup;
-
+  i;
   constructor(
     private location: Location,
     private router: Router,
@@ -53,7 +35,12 @@ export class NationComponent{
   ) {
       this.createForm();
     }
-
+  ngOnInit() {
+    this.getNationList();
+  }
+  event(i){
+    this.i = i+1;
+  }
   createForm() {
     this.nationForm = this.fb.group({
       adminName: ['', Validators.required,
@@ -71,6 +58,7 @@ export class NationComponent{
   }
 
   getNationList() {
+    this.i=0;
 		this.couchService.get('nations/_all_docs?include_docs=true')
 			.then((data) => {
 				this.nation = data.rows;
@@ -78,15 +66,17 @@ export class NationComponent{
 	}
 
   onSubmit(nation) {
+    this.i=0;
     if(nation.nation_name !== "" && nation.nationurl !== "" && nation.type !=="") {
-      this.couchService.post('nations', {'adminname':nation.adminName, 'nationname': nation.name,'nationurl':nation.nationUrl, 'type':nation.type}, )
+      this.couchService.post('nations', {'admin_name':nation.adminName, 'nation_name': nation.name,'nationurl':nation.nationUrl, 'type':nation.type}, )
         .then((data) => {
         alert('Nation has been sucessfully created');
-        this.router.navigate(['']);
+        this.router.navigate(['nation']);
+        location.reload();
       }, (error) => this.message = 'Error');
+
     }else{
       this.message = 'Please complete the form';
     }
-    this.getNationList();
   }
 }

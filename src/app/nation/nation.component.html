@@ -1,3 +1,25 @@
+<div *ngIf="i===0; else falsyTemplate">
+<h1>Nation List</h1>
+<a class='btn btn-primary' (click)="event(i)">Add Nation</a>
+<p>{{message}}</p>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Nation Name</th>
+        <th>Admin Name</th>
+        <th>Nation Url</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let nations of nation">
+        <td>{{nations.doc.nation_name}}</td>
+        <td>{{nations.doc.admin_name}}</td>
+        <td>{{nations.doc.nationurl}}</td>
+      </tr>
+      </tbody>
+  </table>
+</div>
+<ng-template #falsyTemplate>
 <h1>Add Nation </h1>
 <!-- nvalidate - disable browser's default validators to use our validators -->
 <form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
@@ -11,7 +33,7 @@
   </div>
   <div class="row">
     <div class="form-group col-4">
-      <label>Name</label>
+      <label>Nation Name</label>
       <input type="text" class="form-control" formControlName="name" required>
       <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
     </div>
@@ -36,3 +58,4 @@
 
 <p>Form value: {{ nationForm.value | json }}</p>
 <p>{{ nationForm.valid }}</p>
+</ng-template>
