@@ -18,7 +18,7 @@ import { CouchService } from '../shared/couchdb.service';
   </form>
   `
 })
-export class MeetupsaddComponent implements OnInit {
+export class MeetupsAddComponent implements OnInit {
   message = '';
   obj = [];
   constructor(
