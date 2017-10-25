@@ -59,11 +59,11 @@ export class NationComponent implements OnInit{
 
   getNationList() {
     this.i=0;
-		this.couchService.get('nations/_all_docs?include_docs=true')
-			.then((data) => {
-				this.nation = data.rows;
-			}, (error) => this.message = 'There was a problem getting NationList');
-	}
+    this.couchService.get('nations/_all_docs?include_docs=true')
+      .then((data) => {
+        this.nation = data.rows;
+      }, (error) => this.message = 'There was a problem getting NationList');
+  }
 
   onSubmit(nation) {
     this.i=0;
