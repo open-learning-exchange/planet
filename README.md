@@ -8,13 +8,31 @@ The only prequisite is Vagrant.  After cloning the repository, run `vagrant up` 
 
 ## Unit & end-to-end tests
 
-To run testing you will have to first ssh into the virtual machine with `vagrant ssh`, then you can run one of the two commands:
+There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh` and `cd /vagrant`:
 
-`ng test` - Unit tests
+`npm run v-test` (from host) or `ng test` (from vagrant) - Unit tests
 Open `localhost:9876` once this is done compiling
 
-`ng e2e` - End-to-end tests
-Open `localhost:49152` once this is done compiling
+`npm run v-e2e` (from host) or `ng e2e` (from vagrant) - End-to-end tests
+Results will appear in the console
+
+### Additional commands
+
+Similarly, we have a few other npm commands that work from the host machine to run the `ng` commands from the [Angular CLI](https://cli.angular.io/)
+
+`npm run v-serve` = `ng serve`
+
+`npm run v-build` = `ng build`
+
+`npm run v-lint` = `ng lint`
+
+`npm run v-lint-fix` = `ng lint --fix` This will fix any lint errors that TSLint can automatically fix
+
+Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh` and `cd /vagrant`) and runs in the format:
+
+`LNG=es npm start`
+
+This would serve the app from the Spanish language files.
 
 ## Project guidelines
 

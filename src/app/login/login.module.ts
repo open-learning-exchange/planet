@@ -5,11 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login.component';
 
 
-import { LoginRouterModule } from './login-router.module'
+import { LoginRouterModule } from './login-router.module';
 
 @NgModule({
   imports: [
-    LoginRouterModule,FormsModule,CommonModule
+    LoginRouterModule, FormsModule, CommonModule
   ],
   declarations: [
     LoginComponent

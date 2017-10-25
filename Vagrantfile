@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ole/jessie64"
-  config.vm.box_version = "0.1.6"
+  config.vm.box_version = "0.2.2"
 
   config.vm.hostname = "planet"
 
@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-    vb.memory = "666"
+    vb.memory = "1111"
   end
   #
   # View the documentation for the provider you are using for more
@@ -85,16 +85,10 @@ Vagrant.configure(2) do |config|
 #    sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
 
     # Add CouchDB Docker
-    docker pull klaemo/couchdb
-    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb
-    # Set up Node.js
-    cd ~
-    curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
-    bash nodesource_setup.sh
-    apt-get -y install nodejs
+    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
     # Install Angular CLI
-    npm install -g @angular/cli
-    
+    sudo npm install -g @angular/cli
+
     # Add CORS to CouchDB so app has access to databases
     git clone https://github.com/pouchdb/add-cors-to-couchdb.git
     cd add-cors-to-couchdb
@@ -102,7 +96,7 @@ Vagrant.configure(2) do |config|
     node bin.js http://localhost:5984
     cd /vagrant
     # End add CORS to CouchDB
-    
+
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     echo "Preparing local node_modules folder…"
     mkdir -p /vagrant_node_modules
@@ -111,16 +105,14 @@ Vagrant.configure(2) do |config|
     mount --bind /vagrant_node_modules /vagrant/node_modules
     npm install
     # End node_modules fix
-    
+
     # Add initial Couch databases here
-    curl -X PUT http://127.0.0.1:5984/_users
-    curl -X PUT http://127.0.0.1:5984/_replicator
-    curl -X PUT http://127.0.0.1:5984/_global_changes
-    curl -X PUT http://127.0.0.1:5984/meetups
+    chmod +x couchdb-setup.sh
+    ./couchdb-setup.sh -p 5984
     # End Couch database addition
-    
+
   SHELL
-  
+
   # Run binding on each startup make sure the mount is available on VM restart
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     docker start planet
@@ -128,5 +120,5 @@ Vagrant.configure(2) do |config|
     # Starts the app in a screen (virtual terminal)
     sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'
   SHELL
-  
+
 end

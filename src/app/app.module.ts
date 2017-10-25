@@ -1,5 +1,7 @@
+import './shared/rxjs-imports';
+
 import { NgModule } from '@angular/core';
-import { BrowserModule }  from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
@@ -18,9 +20,9 @@ import { UserService } from './shared/user.service';
   declarations: [
     AppComponent, PageNotFoundComponent
   ],
-  providers: [ 
+  providers: [
     CouchService, AuthService, UserService
   ],
   bootstrap: [ AppComponent ]
 })
-export class AppModule { }
+export class AppModule {}

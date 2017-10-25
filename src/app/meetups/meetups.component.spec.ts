@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { CouchService } from '../shared/couchdb.service';
 import { MeetupsComponent } from './meetups.component';
+import { HttpModule } from '@angular/http';
 
 describe('MeetupsComponent', () => {
   let component: MeetupsComponent;
@@ -8,7 +9,11 @@ describe('MeetupsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MeetupsComponent ]
+      imports: [
+        HttpModule
+      ],
+      declarations: [ MeetupsComponent ],
+      providers: [CouchService]
     })
     .compileComponents();
   }));

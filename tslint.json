@@ -20,7 +20,13 @@
     "import-spacing": true,
     "indent": [
       true,
-      "spaces"
+      "spaces",
+      2
+    ],
+    "align": [
+      true,
+      "parameters",
+      "statements"
     ],
     "interface-over-type-literal": true,
     "label-position": true,
@@ -117,13 +123,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      "planet",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "app",
+      "planet",
       "kebab-case"
     ],
     "use-input-property-decorator": true,

@@ -1,0 +1,64 @@
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local sha1> <remote ref> <remote sha1>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+remote="$1"
+url="$2"
+
+pass=true
+RED='\033[1;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+# Get number of uncommitted changes
+CHANGES=$(git diff --numstat | wc -l)
+CHANGES_CACHED=$(git diff --cached --numstat | wc -l)
+TOTAL_CHANGES=$(($CHANGES + $CHANGES_CACHED))
+
+# Stash all uncommitted changes before running tests
+git stash -k
+# Run tslint and get the output and return code
+echo "Running Linters:"
+tslint=$(vagrant ssh -c 'cd /vagrant; ng lint')
+ret_code=$?
+
+# If the tests didn't pass, announce it failed and print the output
+if [ $ret_code != 0 ]; then
+  printf "${RED}tslint failed:${NC}\n"
+  echo "$tslint"
+  pass=false
+else
+  printf "${GREEN}tslint passed.${NC}\n"
+fi
+
+# If we stashed changes earlier, pop them back off the stack
+if [ $TOTAL_CHANGES -ne "0" ]
+then
+  echo "Popping" $TOTAL_CHANGES "changes off the stack..."
+  git stash pop -q
+fi
+
+# Keeping this to make it easy to add other linting tools if needed in the future
+# The 0 exit code will only be sent if pass=true
+if $pass; then
+  exit 0
+fi
+
+exit 1

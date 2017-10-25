@@ -1,0 +1,89 @@
+sudo: required
+#dist: trusty
+branches:
+  except:
+  #- l10n_dev
+language: node_js
+node_js:
+  - "8"
+addons:
+  ssh_known_hosts: docker.ole.org
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+      - google-chrome-beta
+env:
+  global:
+    # DOCKER_USER
+    - secure: "V/U6r8NEg46zbazfEyPJaSjMONaGRlzd5QeJQpqxnf+KSkC8rkkxTh8/LW7k3emGmXnqdSRtQ9keShKo1fb7qJpTxvFuK2YspEmSB69pAxxRj3C+3ikXSz5bM1VHtzC96T+eXzxug6/qAEgWR/OM3aD9GJC14R7sdv5dKxneFgJDZO2nB7pLsU19EYyPdsi4NQt11GQy/vCwYF2qEdWWo7SUmkI6DTQvdyu/dSulID0cfiBUvHcB4A3nMeewEjAY0KFKOr3zcKX6FJ5zKF47r/A/LYF25TtNRfJFvh5txkJFu3HlFSY7FEukB6eOdmqN5jm1omZd+yESzvp5Fm6qvpJb18j1zxKyJzQ3ZIhH4c8c7JNUL+nlKDTzU06Lmu+QypE4EXnlmj1v/4n56VtS8krJdefMlVDLl1Uod6/tVI+gGYj4UbSfV/yd2NS1Y0ksxUI74h2XBkUvs7pqySSob1ErkBkndvCQrEceyBEe9n+OzJ6fC9CKhaaTT0Dv7+pDl34G0FfbxESDvqSh5/aPUyZnIxwnb92iQfM5tIFl89kGyHhvkRf2es3Ga5Y35SwQ9+BT20jvPfcFfm3fHkzvZhYRS0Km+1uuyCPXuZXa53nlZkEee6StzGd6sO1sAAB3RgcH3UioiRh2yK0G+IDDv65N6ov1mMhGn1PXUT6pIIM="
+    # DOCKER_PASS
+    - secure: "GGxsb26T994fAPprzoGFEcUtQvXpZ7FLf3Vnsp2AQ/OeBUOpACPoB4CsYx8Zx168m7HEt3YDEnqEvCyNhD8Hpsls4g4rGT37r7j5nBd1jsxlKbP1F5CsHUXe41R2QrVGiL/dJ27JGdrTdySL4hfP2dvBUtYNBmMAvbI6PkBxO13lU/sjCherRHEpzgf5FUQj9sbWac5UWWbdLYmsErcoh6/+fhr4OHWZyk3DiELRC6WYceA8YfaYrBy/MKqOV2sBtQTBtSsjNmfQbMG1S7nrw28Gp+uFnfUfF4DC6EwBAZj9NBPwVlllqCIdC0CGm5RWEesaDA62krgzpT2EalSg0ADGj0wXA8dMd34QEzwulsEQWhmgy1fL/EEorC7arcOdoFMkyg1gx/Vg8S+hdjZuX1GmWlbs9oN6+00pJDfmubQw6lOsjipZDGjIiM9OpY1mWcowCxjMRWxO5HEzMLKRZXIEtLfEyrQG03gqsavL6SmpAFVXQj/nkm9DWx6QVOG9tpzsw8jESW4S1BTPjp9gWLCA56VdFaP3ECkSeNWUZJw/1hMh+nol+QjJZa8AvWG75n8tc/Qo6vI/mCoQZBQc5Yf1yc04BhEuqV+AtTMq2NNBW4/DI/CJVpyTnGUt4/0Vefn5cB+qvwVFKuaQL8Badcco7ecB8YJ+50I4IgrLLlc="
+    - TRAVIS_NODE_VERSION="7.9.0"
+cache:
+  directories:
+    - "$(npm root -g)"
+    - node_modules
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/063276d3941fa8443947
+    on_success: always  # options: [always|never|change] default: change
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: never
+services:
+  - docker
+before_install:
+  # Portainer
+  #- docker pull portainer/portainer
+  #- sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
+  # Add CouchDB Docker
+  - docker pull klaemo/couchdb:2.0.0
+  - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb
+    -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
+  - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
+  - cd add-cors-to-couchdb
+  - npm install
+  - node bin.js http://localhost:5984
+  - cd ..
+  # Add initial Couch databases here
+  - curl -X PUT http://127.0.0.1:5984/_users
+  - curl -X PUT http://127.0.0.1:5984/_replicator
+  - curl -X PUT http://127.0.0.1:5984/_global_changes
+  - curl -X PUT http://127.0.0.1:5984/meetups
+  # CHROME & xvfb stuff
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+install:
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
+    && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh
+    && nvm install $TRAVIS_NODE_VERSION
+before_script:
+  - travis_retry npm install
+  - travis_retry npm install -g @angular/cli
+  - travis_retry npm install -g karma
+  #- ng build
+script:
+  - export
+  - docker ps -a | grep planet
+  - curl -X GET http://127.0.0.1:5984/_all_dbs
+  - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 4 ];
+    then exit 1; fi
+  #- node -v
+  #- ng test
+  - ng e2e --environment test
+before_deploy:
+  # Decrypt ssh key to connect to docker builder
+  - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
+    -in ./deploy/deploy_rsa.enc -out ./deploy/deploy_rsa -d
+  - eval "$(ssh-agent -s)"
+  - chmod 600 ./deploy/deploy_rsa
+  - ssh-add ./deploy/deploy_rsa
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ./deploy/deploy.sh
+  on:
+    all_branches: true
