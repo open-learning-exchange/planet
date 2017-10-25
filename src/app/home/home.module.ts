@@ -29,6 +29,6 @@ import { NationComponent } from '../nation/nation.component';
     FormErrorMessagesComponent,
     NationComponent
   ],
-  providers: [CourseValidatorService,NationValidatorService]
+  providers: [CourseValidatorService, NationValidatorService]
 })
 export class HomeModule {}

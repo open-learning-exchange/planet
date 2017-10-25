@@ -16,7 +16,6 @@ const routes: Routes = [
       { path: 'nation', component: NationComponent},
       { path: 'courses', component: CoursesComponent },
       { path: 'community', component: CommunityComponent },
-      { path: 'nation', component: NationComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule'},
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule'}
     ]

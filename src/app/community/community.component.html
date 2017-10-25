@@ -2,14 +2,14 @@
 <br/>
 <div class="row">
   <div class="col-md-3">
-      <input (keyup)="filterCommunity()" class="form-control" [(ngModel)]="filter" placeholder="Search By Nation Name">
+      <input (keyup)="filterCommunity()" class="form-control" [(ngModel)]="filter" i18n-placeholder placeholder="Search By Nation Name">
   </div>
   <div class="col-md-3">
     <select  [(ngModel)]="selectedValue" (change)="filterCommunity()" class="form-control">
-        <option  value="">All</option>
-        <option  value="pending">Pending</option>
-        <option  value="accepted">Accepted</option>
-        <option  value="rejected">Rejected</option>
+        <option i18n value="">All</option>
+        <option i18n value="pending">Pending</option>
+        <option i18n value="accepted">Accepted</option>
+        <option i18n value="rejected">Rejected</option>
     </select>
   </div>
 </div>
@@ -17,18 +17,18 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Community</th>
-      <th>Last App Update</th>
-      <th>Version No.</th>
-      <th>Nation Name</th>
-      <th>Last Publications Sync</th>
-      <th>Last Activities Sync</th>
-      <th>Actions</th>
+      <th i18n>Community</th>
+      <th i18n>Last App Update</th>
+      <th i18n>Version No.</th>
+      <th i18n>Nation Name</th>
+      <th i18n>Last Publications Sync</th>
+      <th i18n>Last Activities Sync</th>
+      <th i18n>Actions</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let community of communities; let i = index">
-       <td>
+      <td>
         {{community.name}}
       </td>
       <td>
@@ -47,7 +47,7 @@
         {{community.lastActivitiesSyncDate}}
       </td>
       <td>
-        <button class="btn btn-danger" ngMOdel (click)="deleteCommunity(community._id,community._rev)">Delete</button>
+        <button i18n class="btn btn-danger" ngMOdel (click)="deleteCommunity(community._id,community._rev)">Delete</button>
       </td>
     </tr>
   </tbody>

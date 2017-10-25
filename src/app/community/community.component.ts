@@ -17,7 +17,7 @@ export class CommunityComponent implements OnInit {
     ) { }
 
   getcommunitylist() {
-    this.couchService.post('community/_find',{
+    this.couchService.post('communityregistrationrequests/_find',{
                   "selector": {
                       "$and": [
                         {
@@ -43,7 +43,7 @@ export class CommunityComponent implements OnInit {
   }
 
   deleteCommunity(communityId, communityRev) {
-    this.couchService.delete('community/' + communityId + '?rev=' + communityRev)
+    this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
       .then((data) => {
         this.getcommunitylist();
       }, (error) => this.message = 'There was a problem deleting this.communities');
