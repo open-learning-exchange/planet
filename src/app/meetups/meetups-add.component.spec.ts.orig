@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 
-<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
+<<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
+describe('MeetupsaddComponent', () => {
 =======
 describe('MeetupsAddComponent', () => {
   let component: MeetupsAddComponent;
@@ -21,7 +22,8 @@ describe('MeetupsAddComponent', () => {
     .compileComponents();
   }));
 
-  let component: MeetupsAddComponent;
+  let component: MeetupsaddComponent;
+  let fixture: ComponentFixture<MeetupsaddComponent>;
   let spy: any;
   let couchService;
   let testModel;
@@ -31,7 +33,7 @@ describe('MeetupsAddComponent', () => {
 
   beforeEach(() => {
 <<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
-    fixture = TestBed.createComponent(MeetupsAddComponent);
+    fixture = TestBed.createComponent(MeetupsaddComponent);
     component = fixture.debugElement.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
     testModel = { title: 'hangout', description: 'once a week' };
@@ -39,6 +41,9 @@ describe('MeetupsAddComponent', () => {
     compiled = fixture.debugElement.nativeElement;
     statusElement = de.nativeElement.querySelector('p');
 =======
+    fixture = TestBed.createComponent(MeetupsAddComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
 >>>>>>> f2f873c676c17685337806c2cc4ac914ff6fb48c:src/app/meetups/meetups-add.component.spec.ts
   });
 
