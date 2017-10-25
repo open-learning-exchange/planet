@@ -4,13 +4,7 @@ import { MeetupsAddComponent } from './meetups-add.component';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-
-<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
-=======
 describe('MeetupsAddComponent', () => {
-  let component: MeetupsAddComponent;
-  let fixture: ComponentFixture<MeetupsAddComponent>;
->>>>>>> f2f873c676c17685337806c2cc4ac914ff6fb48c:src/app/meetups/meetups-add.component.spec.ts
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -22,6 +16,7 @@ describe('MeetupsAddComponent', () => {
   }));
 
   let component: MeetupsAddComponent;
+  let fixture;
   let spy: any;
   let couchService;
   let testModel;
@@ -30,7 +25,6 @@ describe('MeetupsAddComponent', () => {
   let compiled;
 
   beforeEach(() => {
-<<<<<<< HEAD:src/app/meetups/meetupsadd.component.spec.ts
     fixture = TestBed.createComponent(MeetupsAddComponent);
     component = fixture.debugElement.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
@@ -38,8 +32,6 @@ describe('MeetupsAddComponent', () => {
     de = fixture.debugElement;
     compiled = fixture.debugElement.nativeElement;
     statusElement = de.nativeElement.querySelector('p');
-=======
->>>>>>> f2f873c676c17685337806c2cc4ac914ff6fb48c:src/app/meetups/meetups-add.component.spec.ts
   });
 
   it('should be created', () => {
