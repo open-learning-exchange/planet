@@ -1,4 +1,5 @@
 # Planet Style Guide
+Below is a brief summary of code standards we'd like to keep with this project.  For the most part this follows the [Angular Style Guide](https://angular.io/guide/styleguide), but in a more concise way so you have a quick to read reference guide.
 ## Editor Config
 If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files.  There's more info on specific IDE installations [here](http://www.editorconfig.org).
 
