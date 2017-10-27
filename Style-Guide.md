@@ -1,6 +1,8 @@
 # Planet Style Guide
 ## Editor Config
 If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files.  There's moer info on specific IDE installations [here](http://www.editorconfig.org).
+
+This will help with a few things: maintaining 2 space indentations, ensuring there is a newline at the end of each file, and removing unnecessary whitespace at the end of a line.
 ## Angular & TypeScript
 ### Template & Style
 If the HTML & CSS are fewer than 12 lines total, please keep the `template` and `style` in the `.component.ts` file.  Otherwise, you should move one or both to separate `.component.html` or `.component.scss` file(s).
@@ -26,15 +28,21 @@ Class name: CoursesComponent
 ```
 #### Resources Review Service
 ```
-File: resources.review.service.ts
+File: resources-review.service.ts
 Class name: ResourcesReviewService
 ```
-We suggest only having one sub-feature to keep file and class names from getting too long.
+We suggest using max one sub-feature word to keep file and class names from getting too long.
+### App Directory Structure
+Within the `src/app` directory, each feature should have its own directory.  Within that directory if, as we add sub-features, there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
+
+The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
 ## SCSS Style
 ### Naming
 This is a work in progress.  Please keep names descriptive and concise.  Feature or the role of the class should be a prefix separated with a dash from the rest of the name.
 ### Reusability
-We would like to make our classes reusable across components if possible.  When creating a new class, make sure to consider if this can be used across current or in development components.  If so, please create the class in the `styles.scss` file.
+We would like to make our classes reusable across components when possible.  When creating a new class, make sure to consider if this can be used across current or in development components.  If so, please create the class in the `styles.scss` file.
+
+If, in the future, the `styles.scss` file becomes so large it is difficult to manage, we will break it up into different files.
 ### Test classes
 For unit tests it is easier to locate tags with a specific unit test class that has a prefix `km-`.  These __should not be used for any CSS styling__.  By limiting these to unit test use it allows people working on testing to remove unused `km-` classes knowing that they are not affecting the site in any way.
 ### Variables
