@@ -1,6 +1,6 @@
 # Planet Style Guide
 ## Editor Config
-If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files.  There's moer info on specific IDE installations [here](http://www.editorconfig.org).
+If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files.  There's more info on specific IDE installations [here](http://www.editorconfig.org).
 
 This will help with a few things: maintaining 2 space indentations, ensuring there is a newline at the end of each file, and removing unnecessary whitespace at the end of a line.
 ## Angular & TypeScript
@@ -14,7 +14,7 @@ We have a git hook to run TSLint from the Vagrant before pushing code to the rep
 ```
 npm run install-hooks
 ```
-The only limitation with TSLint currently is that it is not very good at indendtation rules.  Please make sure to comply with 2 space indents and to indent the appropriate number of times.
+The only limitation with TSLint currently is that it is not very good at indentation rules.  Please make sure to comply with 2 space indents and to indent the appropriate number of times.
 ### Naming
 We follow the standard Angular naming and would like to stick to simple names for files and classes.  Each name should follow the format:
 ```
