@@ -48,3 +48,6 @@ curl -X PUT $COUCHURL/communityregistrationrequests
 
 # Add or update design docs
 upsert_design courses course-validators ./design/courses/course-validators.json
+
+# Adding nation dummy data
+curl -H 'Content-Type: application/json' -X POST $COUCHURL/nations/_bulk_docs  -d @design/nations/nationsDummyData.json
