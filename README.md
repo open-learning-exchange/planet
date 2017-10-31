@@ -37,6 +37,7 @@ This would serve the app from the Spanish language files.
 ## Project guidelines
 
 * Please check out [the project page](https://waffle.io/ole-vi/planet) for available tasks to work on.
+* Before contributing also be sure to read our [style guide](Style-Guide.md)
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
 * To work on an issue, create a new branch with a descriptive title.
 * Please wait for at least two positive reviews before merging a PR into the master branch
