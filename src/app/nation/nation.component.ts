@@ -63,6 +63,16 @@ export class NationComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
+  deleteNation(nationId, nationRev, index){
+    const delNation = confirm('Are you sure you want to delete this nation?');
+    if(delNation){
+      this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
+      .then((data) => {
+        this.getNationList();
+      }, (error) => this.message = 'There was a problem deleting this meetup');
+    }
+  }
+
   onSubmit(nation) {
     this.i = 0;
     if (nation.nation_name !== '' && nation.nationurl !== '' && nation.type !== '') {
