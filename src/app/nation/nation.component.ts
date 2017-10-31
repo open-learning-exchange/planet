@@ -13,17 +13,20 @@ import {
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
+import {ViewChild, ElementRef} from '@angular/core';
 
 @Component({
   templateUrl: './nation.component.html'
 })
 
 export class NationComponent implements OnInit {
+  @ViewChild('closeBtn') closeBtn: ElementRef;
   message = '';
   nation = [];
+  nationdata = [];
   readonly dbName = 'nations';
   nationForm: FormGroup;
-  i;
+
   constructor(
     private location: Location,
     private router: Router,
@@ -36,9 +39,7 @@ export class NationComponent implements OnInit {
   ngOnInit() {
     this.getNationList();
   }
-  event(i) {
-    this.i = i + 1;
-  }
+
   createForm() {
     this.nationForm = this.fb.group({
       adminName: ['', Validators.required,
@@ -46,37 +47,39 @@ export class NationComponent implements OnInit {
         ac => this.nationValidatorService.nationCheckerService$(ac)
       ],
       name: ['', Validators.required],
-      nationUrl: ['', Validators.required],
-      type: ['', Validators.required]
+      nationUrl: ['', Validators.required] 
     });
   }
 
   cancel() {
     this.location.back();
   }
+  //call this wherever you want to close modal
+  private closeModal(): void {
+    this.closeBtn.nativeElement.click();
+  }
 
   getNationList() {
-    this.i = 0;
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nation = data.rows;
       }, (error) => this.message = 'There was a problem getting NationList');
   }
-
   onSubmit(nation) {
-    this.i = 0;
-    if (nation.nation_name !== '' && nation.nationurl !== '' && nation.type !== '') {
-      this.couchService.post('nations', {
+    if (nation.nation_name !== '' && nation.nationurl !== '') {
+      let formdata = {
           'admin_name': nation.adminName,
           'nation_name': nation.name,
           'nationurl': nation.nationUrl,
-          'type': nation.type
-        })
+          'type': 'nation'
+        };
+      this.couchService.post('nations', formdata)
         .then((data) => {
-        alert('Nation has been sucessfully created');
-        this.router.navigate(['nation']);
-        location.reload();
-      }, (error) => this.message = 'Error');
+          console.log(formdata);
+          formdata['_id']= data.id;
+          formdata['_rev']= data.rev; 
+          console.log(formdata)
+      },(error) => this.message = 'Error');
     } else {
       this.message = 'Please complete the form';
     }
