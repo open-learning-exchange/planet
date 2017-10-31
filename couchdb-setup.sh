@@ -51,3 +51,5 @@ upsert_design courses course-validators ./design/courses/course-validators.json
 
 # Adding nation dummy data
 curl -H 'Content-Type: application/json' -X POST $COUCHURL/nations/_bulk_docs  -d @design/nations/nationsDummyData.json
+# Adding communityregistrationrequests dummy data/objects
+curl -H 'Content-Type: application/json' -X POST $COUCHURL/communityregistrationrequests/_bulk_docs -d @design/community/communitymockdata.json
