@@ -18,21 +18,20 @@ export class CommunityComponent implements OnInit {
 
   getcommunitylist() {
     this.couchService.post('communityregistrationrequests/_find',{
-                  "selector": {
-                      "$and": [
-                        {
-                          "_id": { "$gt": null }
-                        },
-                        {
-                          "nationName":  { $regex: '.*' + this.filter + '.*' }
-                        },
-                        {
-                          "registrationRequest": { $regex: '.*' + this.selectedValue + '.*' }
-                        }
-                      ]
-                    }
-                  }
-              )
+      "selector": {
+        "$and": [
+          {
+            "_id": { "$gt": null }
+          },
+          {
+            "nationName":  { $regex: '.*' + this.filter + '.*' }
+          },
+          {
+            "registrationRequest": { $regex: '.*' + this.selectedValue + '.*' }
+          }
+        ]
+      }
+    })
     .then((data) => {
       this.communities = data.docs;
     }, (error) => this.message = 'There was a problem getting community');
