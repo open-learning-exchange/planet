@@ -2,14 +2,14 @@
 <br/>
 <div class="row">
   <div class="col-md-3">
-      <input (keyup)="filterCommunity()" class="form-control" [(ngModel)]="filter" i18n-placeholder placeholder="Search By Nation Name">
+    <input (keyup)="filterCommunity()" class="form-control" [(ngModel)]="filter" i18n-placeholder placeholder="Search By Nation Name">
   </div>
   <div class="col-md-3">
     <select  [(ngModel)]="selectedValue" (change)="filterCommunity()" class="form-control">
-        <option i18n value="">All</option>
-        <option i18n value="pending">Pending</option>
-        <option i18n value="accepted">Accepted</option>
-        <option i18n value="rejected">Rejected</option>
+      <option i18n value="">All</option>
+      <option i18n value="pending">Pending</option>
+      <option i18n value="accepted">Accepted</option>
+      <option i18n value="rejected">Rejected</option>
     </select>
   </div>
 </div>
