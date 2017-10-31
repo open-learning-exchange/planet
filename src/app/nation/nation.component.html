@@ -1,0 +1,61 @@
+<div *ngIf="i===0; else falsyTemplate">
+<h1 i18n>Nation List</h1>
+<button class='btn btn-primary' (click)="event(i)" i18n>Add</button>
+<p>{{message}}</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th i18n>Nation Name</th>
+        <th i18n>Admin Name</th>
+        <th i18n>Nation Url</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let nations of nation">
+        <td>{{nations.doc.nation_name}}</td>
+        <td>{{nations.doc.admin_name}}</td>
+        <td>{{nations.doc.nationurl}}</td>
+      </tr>
+      </tbody>
+  </table>
+</div>
+<ng-template #falsyTemplate>
+<h1 i18n>Add Nation </h1>
+<!-- nvalidate - disable browser's default validators to use our validators -->
+<form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
+  <div class="row">
+    <div class="form-group col-4">
+      <label i18n>Admin Name</label>
+      <input type="text" class="form-control" formControlName="adminName" required>
+      <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
+    </div>
+    <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label i18n>Nation Name</label>
+      <input type="text" class="form-control" formControlName="name" required>
+      <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label i18n>Nationurl</label>
+      <input type="text" class="form-control" formControlName="nationUrl">
+      <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+   <div class="form-group col-4">
+      <label i18n>Type</label>
+      <input type="text" class="form-control" formControlName="type">
+      <planet-form-error-messages [control]="nationForm.controls.type"></planet-form-error-messages>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" i18n>Submit</button>
+  <button type="button" class="btn btn-danger" (click)="cancel()" i18n>Cancel</button>
+</form>
+
+<p>Form value: {{ nationForm.value | json }}</p>
+<p>{{ nationForm.valid }}</p>
+</ng-template>
