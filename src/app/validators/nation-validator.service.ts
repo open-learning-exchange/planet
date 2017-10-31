@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import searchDocuments from '../nation/constant';
+import findOneDocument from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class NationValidatorService {
   constructor(private couchService: CouchService) {}
     public nationCheckerService$(name: string): Observable<boolean> {
       const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, searchDocuments('name', name))
+      .post(`${this.dbName}/_find`, findOneDocument('name', name))
       .then(data => {
         if (data.docs.length > 0) {
           return true;

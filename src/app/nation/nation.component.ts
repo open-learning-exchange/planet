@@ -15,15 +15,14 @@ import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
-	selector: 'app-nation',
-	templateUrl: './nation.component.html'
+  templateUrl: './nation.component.html'
 })
 
-export class NationComponent implements OnInit{
+export class NationComponent implements OnInit {
   message = '';
   nation = [];
   readonly dbName = 'nations';
-  nationForm : FormGroup;
+  nationForm: FormGroup;
   i;
   constructor(
     private location: Location,
@@ -37,8 +36,8 @@ export class NationComponent implements OnInit{
   ngOnInit() {
     this.getNationList();
   }
-  event(i){
-    this.i = i+1;
+  event(i) {
+    this.i = i + 1;
   }
   createForm() {
     this.nationForm = this.fb.group({
@@ -48,7 +47,7 @@ export class NationComponent implements OnInit{
       ],
       name: ['', Validators.required],
       nationUrl: ['', Validators.required],
-      type:['', Validators.required]
+      type: ['', Validators.required]
     });
   }
 
@@ -57,7 +56,7 @@ export class NationComponent implements OnInit{
   }
 
   getNationList() {
-    this.i=0;
+    this.i = 0;
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nation = data.rows;
@@ -65,9 +64,14 @@ export class NationComponent implements OnInit{
   }
 
   onSubmit(nation) {
-    this.i=0;
-    if(nation.nation_name !== "" && nation.nationurl !== "" && nation.type !=="") {
-      this.couchService.post('nations', {'admin_name':nation.adminName, 'nation_name': nation.name,'nationurl':nation.nationUrl, 'type':nation.type}, )
+    this.i = 0;
+    if (nation.nation_name !== '' && nation.nationurl !== '' && nation.type !== '') {
+      this.couchService.post('nations', {
+          'admin_name': nation.adminName,
+          'nation_name': nation.name,
+          'nationurl': nation.nationUrl,
+          'type': nation.type
+        })
         .then((data) => {
         alert('Nation has been sucessfully created');
         this.router.navigate(['nation']);

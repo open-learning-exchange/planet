@@ -11,23 +11,23 @@ export class CommunityComponent implements OnInit {
   message = '';
   communities = [];
   filter = '';
-  selectedValue ='';
+  selectedValue = '';
   constructor(
     private couchService: CouchService
     ) { }
 
   getcommunitylist() {
-    this.couchService.post('communityregistrationrequests/_find',{
-                  "selector": {
-                      "$and": [
+    this.couchService.post('communityregistrationrequests/_find', {
+                  'selector': {
+                      '$and': [
                         {
-                          "_id": { "$gt": null }
+                          '_id': { '$gt': null }
                         },
                         {
-                          "nationName":  { $regex: '.*' + this.filter + '.*' }
+                          'nationName':  { $regex: '.*' + this.filter + '.*' }
                         },
                         {
-                          "registrationRequest": { $regex: '.*' + this.selectedValue + '.*' }
+                          'registrationRequest': { $regex: '.*' + this.selectedValue + '.*' }
                         }
                       ]
                     }
@@ -43,8 +43,8 @@ export class CommunityComponent implements OnInit {
   }
 
   deleteCommunity(communityId, communityRev) {
-    var val = confirm("Are you sure you want to delete it ?");
-    if(val)
+    const val = confirm('Are you sure you want to delete it ?');
+    if (val)
       this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
         .then((data) => {
           this.getcommunitylist();
