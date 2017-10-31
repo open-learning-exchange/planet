@@ -1,0 +1,38 @@
+<h1>Add Nation </h1>
+<!-- nvalidate - disable browser's default validators to use our validators -->
+<form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Admin Name</label>
+      <input type="text" class="form-control" formControlName="adminName" required>
+      <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
+    </div>
+    <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Name</label>
+      <input type="text" class="form-control" formControlName="name" required>
+      <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <label>Nationurl</label>
+      <input type="text" class="form-control" formControlName="nationUrl">
+      <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+   <div class="form-group col-4">
+      <label>Type</label>
+      <input type="text" class="form-control" formControlName="type">
+      <planet-form-error-messages [control]="nationForm.controls.type"></planet-form-error-messages>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+</form>
+
+<p>Form value: {{ nationForm.value | json }}</p>
+<p>{{ nationForm.valid }}</p>

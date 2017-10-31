@@ -5,13 +5,18 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { UsersComponent } from '../users/users.component';
 import { HomeComponent } from './home.component';
 import { CoursesComponent } from '../courses/courses.component';
+import { CommunityComponent } from '../community/community.component';
+import { NationComponent } from '../nation/nation.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
       { path: '', component: DashboardComponent},
       { path: 'users', component: UsersComponent},
+      { path: 'nation', component: NationComponent},
       { path: 'courses', component: CoursesComponent },
+      { path: 'community', component: CommunityComponent },
+      { path: 'nation', component: NationComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule'},
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule'}
     ]
