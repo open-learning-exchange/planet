@@ -77,8 +77,7 @@ export class NationComponent implements OnInit {
         this.router.navigate(['nation']);
         location.reload();
       }, (error) => this.message = 'Error');
-
-    }else{
+    } else {
       this.message = 'Please complete the form';
     }
   }
