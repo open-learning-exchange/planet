@@ -34,7 +34,7 @@ Class name: ResourcesReviewService
 ```
 We suggest using max one sub-feature word to keep file and class names from getting too long.
 ### App Directory Structure
-Within the `src/app` directory, each feature should have its own directory.  Within that directory if, as we add sub-features, there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
+Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
 ## SCSS Style
