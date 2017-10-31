@@ -64,13 +64,10 @@ export class NationComponent implements OnInit {
   }
 
   deleteNation(nationId, nationRev, index){
-    const delNation = confirm('Are you sure you want to delete this nation?');
-    if(delNation){
       this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
       .then((data) => {
-        this.getNationList();
+        this.nation.splice(index,1);
       }, (error) => this.message = 'There was a problem deleting this meetup');
-    }
   }
 
   onSubmit(nation) {
