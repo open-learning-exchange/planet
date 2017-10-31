@@ -23,6 +23,7 @@ insert_docs() {
   curl -H 'Content-Type: application/json' -X POST $COUCHURL/$DB/_bulk_docs  -d @$DOC_LOC
 }
 
+
 # Options are -u for username -w for passWord and -p for port number
 while getopts "u:w:p:" option; do
   case $option in
