@@ -25,7 +25,7 @@
       <!-- for this to work we need all the memberes' id from the members database which is not created yet -->
       <select multiple class="form-control" formControlName="courseLeader">
         <!-- i created this according to the entry in the old bell apps couch db members database -->
-        <option  *ngFor="let memb of members" value={{memb?.id}} i18n> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</option>
+        <option *ngFor="let memb of members" value={{memb?.id}} i18n> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</option>
       </select>
     </div>
   </div>
@@ -105,7 +105,7 @@
       <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
     </div>
     <div class="form-group col-2">
-      <label> i18nForeground Color</label>
+      <label i18n>Foreground Color</label>
       <input type="color" class="form-control" formControlName="foregroundColor">
       <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
 
