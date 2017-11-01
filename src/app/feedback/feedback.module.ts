@@ -8,4 +8,6 @@ import { FeedbackComponent } from './feedback.component';
   ],
   declarations: [FeedbackComponent]
 })
-export class FeedbackModule { }
+export class FeedbackModule() { 
+	console.log("feedback submitted")
+}

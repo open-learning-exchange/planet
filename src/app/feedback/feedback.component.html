@@ -1,4 +1,31 @@
-<p>
-  feedback works!
-  {{name}}
-</p>
+<form (ngSubmit)="submitfeedback()">
+	<div>
+		<label for="name">Is the feedback Urgent?</label>
+		<input type="radio" value="true" name="isUrgent" [(ngModel)]="isUrgent"> Yes
+		<input type="radio" value="false" name="isUrgent" [(ngModel)]="isUrgent"> No
+	</div>
+	<div>
+		<label for="name2">Type of Feedback</label>
+		<input type="radio" value="Suggestion" name="feedbackType" [(ngModel)]="feedbackType"> Suggestion	
+		<input type="radio" value="Bug" name="feedbackType" [(ngModel)]="feedbackType"> Bug
+		<input type="radio" value="Question" name="feedbackType" [(ngModel)]="feedbackType"> Questio	
+	</div>
+	<div>
+		<label> Feedback Message</label>
+		<br>
+		<textarea type="text" name="feedbackMessage" [(ngModel)]="feedbackMessage"	[rows]="6" [cols]="40"  required></textarea>
+		
+	</div>
+	<div>
+	<button  type="submit" class="btn btn-success">Submit</button>
+	</div>	
+</form>
+
+
+<!-- The following is just for testing purpose -->
+
+<h1> Feedback submitted by {{name}} </h1>
+<p>{{feedbackType}}</p>
+<p> {{feedbackMessage}}</p>
+
+

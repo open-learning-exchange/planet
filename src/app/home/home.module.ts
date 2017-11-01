@@ -20,9 +20,9 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     HomeComponent,
     DashboardComponent,
     NavigationComponent,
-    FeedbackComponent,
     UsersComponent,
     CoursesComponent,
+    FeedbackComponent,
     FormErrorMessagesComponent
   ],
   providers: [CourseValidatorService]
