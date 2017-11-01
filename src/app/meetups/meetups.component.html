@@ -5,9 +5,9 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Actions</th>
+      <th i18n>Title</th>
+      <th i18n>Description</th>
+      <th i18n>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -19,7 +19,7 @@
         {{meetup.doc.description}}
       </td>
       <td>
-        <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
+        <button i18n class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
       </td>
     </tr>
   </tbody>
