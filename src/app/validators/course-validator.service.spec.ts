@@ -5,8 +5,8 @@ import { HttpModule } from '@angular/http';
 describe('CourseValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports:[HttpModule],
-      providers: [CourseValidatorService, CouchService]
+      imports: [ HttpModule ],
+      providers: [ CourseValidatorService, CouchService ]
     });
   });
 
