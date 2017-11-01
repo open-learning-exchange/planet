@@ -59,7 +59,7 @@ export class NationComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
   onSubmit(nation) {
-    if (nation.nation_name !== '' && nation.nationurl !== '') {
+    if (nation.adminName !== '' && nation.name !== '' && nation.nationUrl !== "") {
       let formdata = {
         'admin_name': nation.adminName,
         'nation_name': nation.name,
