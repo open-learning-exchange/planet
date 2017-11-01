@@ -32,14 +32,11 @@ export class CommunityComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
-  deleteCommunity(communityId, communityRev) {
-    const val = confirm('Are you sure you want to delete it?');
-    if (val) {
-      this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
-        .then((data) => {
-          this.getcommunitylist();
-        }, (error) => this.message = 'There was a problem deleting this community');
-    }
+  deleteCommunity(communityId, communityRev, index) {
+    this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
+      .then((data) => {
+        this.communities.splice(index,1);
+      }, (error) => this.message = 'There was a problem deleting this community');
   }
 
   ngOnInit() {
