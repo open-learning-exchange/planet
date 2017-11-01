@@ -13,14 +13,12 @@ import {
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
-import {ViewChild, ElementRef} from '@angular/core';
 
 @Component({
   templateUrl: './nation.component.html'
 })
 
 export class NationComponent implements OnInit {
-  @ViewChild('closeBtn') closeBtn: ElementRef;
   readonly dbName = 'nations';
   message = '';
   nation = [];
