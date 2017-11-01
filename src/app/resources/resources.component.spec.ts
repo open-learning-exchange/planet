@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ResourcesComponent } from './resources.component';
-import {RouterModule} from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 
 describe('ResourcesComponent', () => {
