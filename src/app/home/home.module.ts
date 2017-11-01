@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
+import { FeedbackComponent } from '../feedback/feedback.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
 
@@ -19,6 +20,7 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     HomeComponent,
     DashboardComponent,
     NavigationComponent,
+    FeedbackComponent,
     UsersComponent,
     CoursesComponent,
     FormErrorMessagesComponent
