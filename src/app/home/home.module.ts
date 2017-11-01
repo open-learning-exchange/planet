@@ -8,6 +8,12 @@ import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
 
 import { HomeRouterModule } from './home-router.module';
+import { CommunityComponent } from '../community/community.component';
+
+import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
+
+import { NationValidatorService } from '../validators/nation-validator.service';
+import { NationComponent } from '../nation/nation.component';
 
 @NgModule({
   imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
@@ -15,7 +21,11 @@ import { HomeRouterModule } from './home-router.module';
     HomeComponent,
     DashboardComponent,
     NavigationComponent,
-    UsersComponent
-  ]
+    UsersComponent,
+    CommunityComponent,
+    FormErrorMessagesComponent,
+    NationComponent
+  ],
+  providers: [ NationValidatorService ]
 })
 export class HomeModule {}

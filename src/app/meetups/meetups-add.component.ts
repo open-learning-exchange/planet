@@ -18,7 +18,7 @@ import { CouchService } from '../shared/couchdb.service';
   </form>
   `
 })
-export class MeetupsaddComponent implements OnInit {
+export class MeetupsAddComponent implements OnInit {
   message = '';
   obj = [];
   constructor(
@@ -32,11 +32,11 @@ export class MeetupsaddComponent implements OnInit {
 
   onSubmit(meetup) {
     if (meetup.description !== '' && meetup.title !== '') {
-    console.log(meetup.description, meetup.title);
-    this.couchService.post('meetups', {'title': meetup.title, 'description': meetup.description})
-      .then((data) => {
-        this.message = 'Meetup created: ' + meetup.title;
-      }, (error) => this.message = 'There was a problem creating the meetup');
+      console.log(meetup.description, meetup.title);
+      this.couchService.post('meetups', {'title': meetup.title, 'description': meetup.description})
+        .then((data) => {
+          this.message = 'Meetup created: ' + meetup.title;
+        }, (error) => this.message = 'There was a problem creating the meetup');
     } else {
       this.message = 'Please complete the form';
     }

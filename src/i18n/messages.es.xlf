@@ -34,45 +34,201 @@
                     Sorry, an error has occured, Requested page not found!
                 </target>
       </trans-unit>
-      <trans-unit id="449f7ea7587fcb8b9e08d80ace41010e3881c499" datatype="html">
-        <source>Hi, <x id="INTERPOLATION"/></source>
+      <trans-unit id="a47b5a31688a38981eefeb7c9ba3aa3c10e281a2" datatype="html">
+        <source>Communities List</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app\dashboard\dashboard.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">1</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Hi, <x id="INTERPOLATION"/></target>
+        <target xml:lang="es-ES" state="needs-translation">Communities List</target>
       </trans-unit>
-      <trans-unit id="5bf6688ec0b312dac6d7cf96d57978548f0bc7b7" datatype="html">
-        <source>Add role to selected</source>
+      <trans-unit id="5378c200fd41aa0aadc46ed2506558bc90378692" datatype="html">
+        <source>Search By Nation Name</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app\users\users.component.ts</context>
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Search By Nation Name</target>
+      </trans-unit>
+      <trans-unit id="dfc3c34e182ea73c5d784ff7c8135f087992dac1" datatype="html">
+        <source>All</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Add role to selected</target>
+        <target xml:lang="es-ES" state="needs-translation">All</target>
       </trans-unit>
-      <trans-unit id="024886ca34a6f309e3e51c2ed849320592c3faaa" datatype="html">
-        <source>User name</source>
+      <trans-unit id="e6a27066251ca1e04c5be86ad758380856df2506" datatype="html">
+        <source>Pending</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app\users\users.component.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">User name</target>
+        <target xml:lang="es-ES" state="needs-translation">Pending</target>
       </trans-unit>
-      <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html">
-        <source>Roles</source>
+      <trans-unit id="7823909fb1d8d313382f6f4bd842f1a7ef6f08d1" datatype="html">
+        <source>Accepted</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app\users\users.component.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Roles</target>
+        <target xml:lang="es-ES" state="needs-translation">Accepted</target>
       </trans-unit>
-      <trans-unit id="afd707a7a917a96605804e92e66cb17e2bf5c7e2" datatype="html">
-        <source>LOGOUT</source>
+      <trans-unit id="820fe4d0d32e56284a97122940f50ee4e0af1799" datatype="html">
+        <source>Rejected</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app\home\navigation.component.ts</context>
-          <context context-type="linenumber">4</context>
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">LOGOUT</target>
+        <target xml:lang="es-ES" state="needs-translation">Rejected</target>
+      </trans-unit>
+      <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html">
+        <source>Community</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Community</target>
+      </trans-unit>
+      <trans-unit id="74c0af768aac7d048aa12a46c25d8403bef0e23a" datatype="html">
+        <source>Last App Update</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Last App Update</target>
+      </trans-unit>
+      <trans-unit id="0a5cc8c32eee3c91d79441a158c4a9c3513aca71" datatype="html">
+        <source>Version No.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Version No.</target>
+      </trans-unit>
+      <trans-unit id="3dd4d33ae8f598e6a0e9206df5356c524ff7a1f6" datatype="html">
+        <source>Nation Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Nation Name</target>
+      </trans-unit>
+      <trans-unit id="693fae9416295599c879a37616045d66c78e284a" datatype="html">
+        <source>Last Publications Sync</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Last Publications Sync</target>
+      </trans-unit>
+      <trans-unit id="eb3240fe1f2eb6fea259628655548655bd59bd68" datatype="html">
+        <source>Last Activities Sync</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Last Activities Sync</target>
+      </trans-unit>
+      <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
+        <source>Actions</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Actions</target>
+      </trans-unit>
+      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
+        <source>Delete</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\community\community.component.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Delete</target>
+      </trans-unit>
+      <trans-unit id="3f384a474f6473824411ffbd437db55c8a45dad6" datatype="html">
+        <source>Nation List</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Nation List</target>
+      </trans-unit>
+      <trans-unit id="f6755cff4957d5c3c89bafce5651f1b6fa2b1fd9" datatype="html">
+        <source>Add</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Add</target>
+      </trans-unit>
+      <trans-unit id="f52c393598018f819f1bbce79f00e5ab30712d51" datatype="html">
+        <source>Admin Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Admin Name</target>
+      </trans-unit>
+      <trans-unit id="f7d58549b1769da17ab438b66bd1fb11bb4a13c5" datatype="html">
+        <source>Nation Url</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Nation Url</target>
+      </trans-unit>
+      <trans-unit id="3f6458d2c055be1bfb42b36d7000017ef172893a" datatype="html">
+        <source>Add Nation </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Add Nation </target>
+      </trans-unit>
+      <trans-unit id="cbbdff8443381e0b85fc3bba29df522e572d4d04" datatype="html">
+        <source>Nationurl</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Nationurl</target>
+      </trans-unit>
+      <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html">
+        <source>Type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Type</target>
+      </trans-unit>
+      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
+        <source>Submit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Submit</target>
+      </trans-unit>
+      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\nation\nation.component.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+        <target xml:lang="es-ES" state="needs-translation">Cancel</target>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
         <source>Planet Learning</source>
@@ -114,22 +270,6 @@
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">Repeat Password</target>
       </trans-unit>
-      <trans-unit id="59e94e0b01b5636a2631d0f7fa3b6560993c8997" datatype="html">
-        <source>{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\login\login.component.ts</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">{VAR_SELECT, select, true {Create User} false {SIGN-IN} }</target>
-      </trans-unit>
-      <trans-unit id="7321f65ec54f11307a5c802dacf0dd9c3d2fed7c" datatype="html">
-        <source>{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\login\login.component.ts</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">{VAR_SELECT, select, true {Already have an account?} false {Are you new?} }</target>
-      </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
         <source>Meetups</source>
         <context-group purpose="location">
@@ -145,78 +285,6 @@
           <context context-type="linenumber">4</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">Meetup Add</target>
-      </trans-unit>
-      <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
-        <source>Title</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Title</target>
-      </trans-unit>
-      <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html">
-        <source>Description</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Description</target>
-      </trans-unit>
-      <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
-        <source>Actions</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Actions</target>
-      </trans-unit>
-      <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
-        <source>Delete</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetups.component.ts</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Delete</target>
-      </trans-unit>
-      <trans-unit id="c1120e39e6f0678a82b287bebdb34b05be575163" datatype="html">
-        <source>Start a New Meetup</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Start a New Meetup</target>
-      </trans-unit>
-      <trans-unit id="a817ef2e565053d06453d5b831a730da41223092" datatype="html">
-        <source>title</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">title</target>
-      </trans-unit>
-      <trans-unit id="f5fb76b5c7e146dc251edbfaa4847004a81af582" datatype="html">
-        <source>description</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">description</target>
-      </trans-unit>
-      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
-        <source>Save</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app\meetups\meetupsadd.component.ts</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Save</target>
       </trans-unit>
     </body>
   </file>
