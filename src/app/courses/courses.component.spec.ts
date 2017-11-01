@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 import { CoursesComponent } from './courses.component';
-import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpModule } from '@angular/http';
@@ -14,7 +13,7 @@ describe('CoursesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, FormsModule, RouterTestingModule, HttpModule],
-      declarations: [ CoursesComponent, FormErrorMessagesComponent],
+      declarations: [ CoursesComponent],
       providers: [CouchService, CourseValidatorService ]
 
     })

@@ -8,15 +8,14 @@ import { CoursesRequestComponent } from './request-courses/courses-request.compo
 import { CoursesRouterModule } from './courses-router.module';
 
 import { CourseValidatorService } from '../validators/course-validator.service';
-import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
+import { HomeModule } from '../home/home.module';
 
 @NgModule({
-    imports: [CoursesRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
+    imports: [CoursesRouterModule, CommonModule, FormsModule, ReactiveFormsModule, HomeModule],
     declarations: [
-        CoursesComponent,
-        CoursesAddComponent,
-        CoursesRequestComponent,
-        FormErrorMessagesComponent
+      CoursesComponent,
+      CoursesAddComponent,
+      CoursesRequestComponent
     ],
     providers: [CourseValidatorService]
 })

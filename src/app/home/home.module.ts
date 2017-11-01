@@ -26,6 +26,7 @@ import { NationComponent } from '../nation/nation.component';
     FormErrorMessagesComponent,
     NationComponent
   ],
-  providers: [ NationValidatorService ]
+  providers: [ NationValidatorService ],
+  exports: [ FormErrorMessagesComponent ]
 })
 export class HomeModule {}
