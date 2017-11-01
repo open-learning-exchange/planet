@@ -16,6 +16,13 @@ upsert_design() {
   fi
 }
 
+# Function for insert mock data docs
+insert_docs() {
+  DB=$1
+  DOC_LOC=$2
+  curl -H 'Content-Type: application/json' -X POST $COUCHURL/$DB/_bulk_docs  -d @$DOC_LOC
+}
+
 # Options are -u for username -w for passWord and -p for port number
 while getopts "u:w:p:" option; do
   case $option in
@@ -49,7 +56,6 @@ curl -X PUT $COUCHURL/communityregistrationrequests
 # Add or update design docs
 upsert_design courses course-validators ./design/courses/course-validators.json
 
-# Adding nation dummy data
-curl -H 'Content-Type: application/json' -X POST $COUCHURL/nations/_bulk_docs  -d @design/nations/nationsDummyData.json
-# Adding communityregistrationrequests dummy data/objects
-curl -H 'Content-Type: application/json' -X POST $COUCHURL/communityregistrationrequests/_bulk_docs -d @design/community/communitymockdata.json
+# Insert dummy data docs
+insert_docs communityregistrationrequests ./design/community/community-mockup.json
+insert_docs nations ./design/nations/nations-mockup.json
