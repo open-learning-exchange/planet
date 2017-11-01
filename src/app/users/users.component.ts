@@ -5,12 +5,12 @@ import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   template: `
-    <h1>Users</h1>
+    <h1 i18n>Users</h1>
     <div class="km-user-table" *ngIf="displayTable">
       <form (ngSubmit)="roleSubmit(allUsers,selectedRole)" #rolesForm="ngForm">
         <div>
           <select [(ngModel)]="selectedRole" name="role">
-            <option *ngFor="let role of roleList" [value]="role">{{role}}</option>
+            <option *ngFor="let role of roleList" [value]="role" i18n>{{role}}</option>
           </select>
           <button i18n class="ole-btn cursor-pointer" type="submit">Add role to selected</button>
         </div>
@@ -28,7 +28,7 @@ import { CouchService } from '../shared/couchdb.service';
           >
             <td>{{user.name}}</td>
             <td>
-              <span *ngFor="let role of user.roles; index as i" [ngClass]="{'ole-pill':user._id}">
+              <span *ngFor="let role of user.roles; index as i" [ngClass]="{'ole-pill':user._id}" i18n>
                 {{role}}
                 <i class="fa fa-times cursor-pointer" *ngIf="user._id" aria-hidden="true" (click)="deleteRole(user,i,$event)"></i>
               </span>
@@ -37,7 +37,7 @@ import { CouchService } from '../shared/couchdb.service';
         </tbody>
       </table>
     </div>
-    <div class="km-message">{{message}}</div>
+    <div class="km-message" i18n>{{message}}</div>
   `
 })
 export class UsersComponent implements OnInit {

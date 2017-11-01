@@ -79,7 +79,7 @@
   <div class="form-check form-check-inline" *ngIf="!showDaysCheckBox">
     <div i18n>Day</div>
     <label class="form-check-label" *ngFor="let day of days">
-      <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)"> {{day}}
+      <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)" i18n> {{day}}
     </label>
   </div>
   <div class="row">
