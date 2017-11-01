@@ -77,13 +77,17 @@ describe('Users', () => {
     });
 
     it('Should make two GET requests to CouchDB for admin', () => {
-      const { comp, userService, couchService } = setup(),
+      const { fixture, comp, userService, couchService } = setup(),
         couchSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({rows: []}));
       comp.ngOnInit();
-      expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
-      expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
+      comp.getUsers();
+      comp.getAdmins();
+      fixture.whenStable().then(() => {
+        fixture.detectChanges();
+        expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
+        expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
+      });
     });
-
   });
 
   describe('deleteRole', () => {
@@ -137,5 +141,4 @@ describe('Users', () => {
     });
   });
   */
-
 });
