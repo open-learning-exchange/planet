@@ -1,13 +1,14 @@
 <div class="container">
   <h1 i18n>Nation List</h1>
   <!-- Trigger the modal with a button -->
-  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add</button>
+  <button type="button" class="btn btn-info btn-lg" (click)="refresh()" data-toggle="modal" data-target="#myModal">Add</button>
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-body">
+          <h3>Add Nation</h3>
           <form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
             <div class="form-row">
                 <div class="col">
@@ -30,15 +31,14 @@
                 </div>
               </div>
               <div>
-                <button type="submit" class="btn btn-primary" #closeBtn i18n>Submit</button>
-                <button type="button" class="btn btn-danger" (click)="cancel()" i18n>Cancel</button>
+                <p>Form value: {{ nationForm.value | json }}</p>
+                <p>{{ nationForm.valid }}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" i18n>Submit</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" i18n>Cancel</button>
               </div>
           </form>
-          <p>Form value: {{ nationForm.value | json }}</p>
-          <p>{{ nationForm.valid }}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

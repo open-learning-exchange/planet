@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-
+declare var jQuery:any;
 import {
   FormBuilder,
   FormControl,
@@ -21,10 +21,10 @@ import {ViewChild, ElementRef} from '@angular/core';
 
 export class NationComponent implements OnInit {
   @ViewChild('closeBtn') closeBtn: ElementRef;
+  readonly dbName = 'nations';
   message = '';
   nation = [];
   nationdata = [];
-  readonly dbName = 'nations';
   nationForm: FormGroup;
 
   constructor(
@@ -51,37 +51,33 @@ export class NationComponent implements OnInit {
     });
   }
 
-  cancel() {
-    this.location.back();
-  }
-  //call this wherever you want to close modal
-  private closeModal(): void {
-    this.closeBtn.nativeElement.click();
-  }
-
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nation = data.rows;
+        console.log(this.nation)
       }, (error) => this.message = 'There was a problem getting NationList');
   }
   onSubmit(nation) {
     if (nation.nation_name !== '' && nation.nationurl !== '') {
       let formdata = {
-          'admin_name': nation.adminName,
-          'nation_name': nation.name,
-          'nationurl': nation.nationUrl,
-          'type': 'nation'
-        };
+        'admin_name': nation.adminName,
+        'nation_name': nation.name,
+        'nationurl': nation.nationUrl,
+        'type': 'nation'
+      };
       this.couchService.post('nations', formdata)
         .then((data) => {
-          console.log(formdata);
-          formdata['_id']= data.id;
-          formdata['_rev']= data.rev; 
-          console.log(formdata)
-      },(error) => this.message = 'Error');
+          formdata['_id'] = data.id;
+          formdata['_rev'] = data.rev;
+          this.nation.push({doc:formdata});
+          jQuery('#myModal').modal("hide");
+        },(error) => this.message = 'Error');
     } else {
       this.message = 'Please complete the form';
     }
+  }
+  refresh(){
+    jQuery(".form-control").val('').trigger("change");
   }
 }
