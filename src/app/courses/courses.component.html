@@ -1,30 +1,30 @@
 <div>
-    <p>{{message}}</p>
-    <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Add Course</a>
-    <a routerLink="request" class='btn btn-primary' routerLinkActive="active" i18n>Request Course</a>
-    <h2>Courses</h2>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let course of courses; let i = index">
-            <td>
-                {{course.doc.courseTitle}}
-            </td>
-            <td>
-                <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Open</a>
-                <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Resign</a>
-                <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Manage</a>
-                <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>View Course</a>
-                <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Credits</a>
-                <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Progress</a>
-                <button class="btn btn-danger" ngMOdel (click)="deleteCourse(course.doc._id,course.doc._rev)">Delete</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+  <p>{{message}}</p>
+  <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Add Course</a>
+  <a routerLink="request" class='btn btn-primary' routerLinkActive="active" i18n>Request Course</a>
+  <h2>Courses</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let course of courses; let i = index">
+        <td>
+          {{course.doc.courseTitle}}
+        </td>
+        <td>
+          <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Open</a>
+          <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Resign</a>
+          <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Manage</a>
+          <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>View Course</a>
+          <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Credits</a>
+          <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Progress</a>
+          <button class="btn btn-danger" ngMOdel (click)="deleteCourse(course.doc._id,course.doc._rev)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

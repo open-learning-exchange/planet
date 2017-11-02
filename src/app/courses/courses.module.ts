@@ -10,18 +10,18 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { CourseValidatorService } from '../validators/course-validator.service';
 
 @NgModule({
-    imports: [
-      CoursesRouterModule,
-      CommonModule,
-      FormsModule,
-      ReactiveFormsModule,
-      PlanetFormsModule
-    ],
-    declarations: [
-      CoursesComponent,
-      CoursesAddComponent,
-      CoursesRequestComponent
-    ],
-    providers: [CourseValidatorService]
+  imports: [
+    CoursesRouterModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule
+  ],
+  declarations: [
+    CoursesComponent,
+    CoursesAddComponent,
+    CoursesRequestComponent
+  ],
+  providers: [CourseValidatorService]
 })
 export class CoursesModule {}
