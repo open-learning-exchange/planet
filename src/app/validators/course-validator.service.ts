@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import searchDocuments from '../courses/constants';
+import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CourseValidatorService {
   // $ is used as a convention to indicate that return type will be an Observable
   public courseCheckerService$(title: string): Observable<boolean> {
     const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, searchDocuments('courseTitle', title))
+      .post(`${this.dbName}/_find`, findOneDocument('courseTitle', title))
       .then(data => {
         if (data.docs.length > 0) {
           return true;

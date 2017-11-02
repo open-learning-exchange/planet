@@ -12,11 +12,10 @@ import { Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CourseValidatorService } from '../../validators/course-validator.service';
-// searchDocuments is declared as a default export so we can import it like this
-import searchDocuments, * as constants from './constants';
+import * as constants from '../constants';
+
 
 @Component({
-  selector: 'planet-courses',
   templateUrl: 'courses-add.component.html',
   styleUrls: ['courses-add.component.scss']
 })
