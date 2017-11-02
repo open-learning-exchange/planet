@@ -6,7 +6,7 @@ import { CoursesComponent } from './courses.component';
 import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesRequestComponent } from './request-courses/courses-request.component';
 import { CoursesRouterModule } from './courses-router.module';
-import { PlanetFormsModule } from '../shared/planet-forms.module'
+import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { CourseValidatorService } from '../validators/course-validator.service';
 import { HomeModule } from '../home/home.module';
 
