@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 
 @Component({
-  selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.scss']
 })
