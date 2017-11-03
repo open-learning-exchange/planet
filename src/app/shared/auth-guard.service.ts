@@ -16,7 +16,7 @@ export class AuthService {
           this.userService.set(res.userCtx);
           return true;
         }
-        this.router.navigate(['/login'], {queryParams: {returnUrl: url}, replaceUrl: true});
+        this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
         return false;
       });
   }

@@ -10,7 +10,7 @@ describe('MeetupsAddComponent', () => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpModule ],
       declarations: [ MeetupsAddComponent ],
-      providers: [CouchService]
+      providers: [ CouchService ]
     })
     .compileComponents();
   }));

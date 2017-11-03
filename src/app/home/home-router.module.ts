@@ -11,19 +11,19 @@ import { NationComponent } from '../nation/nation.component';
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
-      { path: '', component: DashboardComponent},
-      { path: 'users', component: UsersComponent},
-      { path: 'nation', component: NationComponent},
+      { path: '', component: DashboardComponent },
+      { path: 'users', component: UsersComponent },
+      { path: 'nation', component: NationComponent },
       { path: 'courses', component: CoursesComponent },
       { path: 'community', component: CommunityComponent },
-      { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule'},
-      { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule'}
+      { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
+      { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' }
     ]
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  imports: [ RouterModule.forChild(routes) ],
+  exports: [ RouterModule ]
 })
 export class HomeRouterModule {}

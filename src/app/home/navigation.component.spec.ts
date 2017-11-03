@@ -20,8 +20,8 @@ describe('Navigation', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, CommonModule, HttpModule],
-      declarations: [NavigationComponent],
+      imports: [ RouterTestingModule, CommonModule, HttpModule ],
+      declarations: [ NavigationComponent ],
       providers: [
         CouchService,
         { provide: Router, useClass: RouterStub }
@@ -51,19 +51,19 @@ describe('Navigation', () => {
     };
 
     it('Should call CouchService delete to logout', () => {
-      const { logoutButton, fixture } = setupLogin({ok: true});
+      const { logoutButton, fixture } = setupLogin({ ok: true });
       expect(couchSpy).toHaveBeenCalled();
     });
 
     it('Should redirect when logout succeeds', () => {
-      const { logoutButton, fixture } = setupLogin({ok: true});
+      const { logoutButton, fixture } = setupLogin({ ok: true });
       fixture.whenStable().then(() => {
         expect(routerSpy).toHaveBeenCalled();
       });
     });
 
     it('Should not redirect when logout fails', () => {
-      const { logoutButton, fixture } = setupLogin({ok: false});
+      const { logoutButton, fixture } = setupLogin({ ok: false });
       fixture.whenStable().then(() => {
         expect(routerSpy).not.toHaveBeenCalled();
       });

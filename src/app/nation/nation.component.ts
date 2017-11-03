@@ -41,13 +41,13 @@ export class NationComponent implements OnInit {
   }
   createForm() {
     this.nationForm = this.fb.group({
-      adminName: ['', Validators.required,
+      adminName: [ '', Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         ac => this.nationValidatorService.nationCheckerService$(ac)
       ],
-      name: ['', Validators.required],
-      nationUrl: ['', Validators.required],
-      type: ['', Validators.required]
+      name: [ '', Validators.required ],
+      nationUrl: [ '', Validators.required ],
+      type: [ '', Validators.required ]
     });
   }
 
@@ -63,12 +63,12 @@ export class NationComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  deleteNation(nationId, nationRev, index){
-    const nationDelete = confirm('Are you sure you want to delete?')
-    if (nationDelete){
+  deleteNation(nationId, nationRev, index) {
+    const nationDelete = confirm('Are you sure you want to delete?');
+    if (nationDelete) {
       this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
       .then((data) => {
-        this.nation.splice(index,1);
+        this.nation.splice(index, 1);
       }, (error) => this.message = 'There was a problem deleting this meetup');
     }
   }
@@ -84,7 +84,7 @@ export class NationComponent implements OnInit {
         })
         .then((data) => {
         alert('Nation has been sucessfully created');
-        this.router.navigate(['nation']);
+        this.router.navigate([ 'nation' ]);
         location.reload();
       }, (error) => this.message = 'Error');
     } else {
