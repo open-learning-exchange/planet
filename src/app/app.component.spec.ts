@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-
+import './shared/rxjs-imports';
 import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
 
