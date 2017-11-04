@@ -2,17 +2,23 @@ import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import { environment } from '../../environments/environment';
 
+import * as PouchDB from 'pouchdb-browser';
+
 @Injectable()
 export class CouchService {
   private headers = new Headers({ 'Content-Type': 'application/json' });
   private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
 
+  private pouch;
+
   private setOpts(opts?: any) {
     return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
   }
 
-  constructor(private http: Http) {}
+  constructor(private http: Http) {
+    this.pouch = new PouchDB('bell-apps', { auto_compaction: true });
+  }
 
   put(db: string, data: any, opts?: any): Promise<any> {
     const url = this.baseUrl + db;
