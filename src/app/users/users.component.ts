@@ -80,8 +80,8 @@ export class UsersComponent implements OnInit {
   }
 
   getAdmins() {
-    // This is working for my locally setup couchdb instance, but may need to be changed once Vagrant or Docker is setup
-    return this.couchService.get('_node/couchdb@localhost/_config/admins');
+    // This nonode@nohost is working for couchdb as setup by Vagrant, but may need to be changed for other implementations
+    return this.couchService.get('_node/nonode@nohost/_config/admins');
   }
 
   initializeData() {
