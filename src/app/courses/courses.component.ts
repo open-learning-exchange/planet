@@ -111,7 +111,7 @@ export class CoursesComponent {
 
   async addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    await this.couchService.post(this.dbName, { ...courseInfo });
+    await this.couchService.put(this.dbName, { ...courseInfo });
     this.router.navigate(['/']);
   }
 
