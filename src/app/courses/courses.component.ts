@@ -115,6 +115,7 @@ export class CoursesComponent {
       await this.couchService.post(this.dbName, { ...courseInfo });
       this.router.navigate(['/']);
     } catch (err) {
+      // Connect to an error display component to show user that an error has occurred
       console.log(err);
     }
   }
