@@ -1,0 +1,54 @@
+<div id="greeting"><b>Hi, {{name}}</b></div>
+<br>
+<div class="row">
+    <div class="col-md-6 table-responsive">
+        <h3 i18n>Community List</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th i18n>Community</th>
+                <th i18n>Version No.</th>
+                <th i18n>Nation Name</th>
+                <th i18n>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let community of communities">
+                    <td>
+                        {{community.doc.name}}
+                    </td>
+                    <td>
+                        {{community.doc.version}}
+                    </td>
+                    <td>
+                        {{community.doc.nationName}}
+                    </td>
+                    <td i18n>
+                        {{community.doc.registrationRequest}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button i18n class="btn btn-primary" type="viewAll" (click)="viewCommunity()">View All</button>
+    </div>
+    <div class="col-md-6 table-responsive">
+        <h3 i18n>Nation List</h3>
+        <table class="table ">
+            <thead>
+            <tr>
+                <th i18n>Nation Name</th>
+                <th i18n>Admin Name</th>
+                <th i18n>Nation Url</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let nations of nation; let i = index">
+                <td>{{ nations.doc.name }}</td>
+                <td>{{ nations.doc.admin_name }}</td>
+                <td>{{ nations.doc.nationurl }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <button i18n class="btn btn-primary" type="viewAll" (click)="viewNation()">View All</button>
+    </div>
+</div>
