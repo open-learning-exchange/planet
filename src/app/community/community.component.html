@@ -1,0 +1,54 @@
+<h2 i18n>Communities List</h2>
+<br/>
+<div class="row">
+  <div class="col-md-3">
+    <input (keyup)="filterCommunity()" class="form-control" [(ngModel)]="filter" i18n-placeholder placeholder="Search By Nation Name">
+  </div>
+  <div class="col-md-3">
+    <select  [(ngModel)]="selectedValue" (change)="filterCommunity()" class="form-control">
+      <option i18n value="">All</option>
+      <option i18n value="pending">Pending</option>
+      <option i18n value="accepted">Accepted</option>
+      <option i18n value="rejected">Rejected</option>
+    </select>
+  </div>
+</div>
+<br/>
+<table class="table">
+  <thead>
+    <tr>
+      <th i18n>Community</th>
+      <th i18n>Last App Update</th>
+      <th i18n>Version No.</th>
+      <th i18n>Nation Name</th>
+      <th i18n>Last Publications Sync</th>
+      <th i18n>Last Activities Sync</th>
+      <th i18n>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let community of communities; let i = index">
+      <td>
+        {{community.name}}
+      </td>
+      <td>
+        {{community.lastAppUpdateDat}}
+      </td>
+      <td>
+        {{community.version}}
+      </td>
+      <td>
+        {{community.nationName}}
+      </td>
+      <td>
+        {{community.lastPublicationsSyncDate}}
+      </td>
+      <td>
+        {{community.lastActivitiesSyncDate}}
+      </td>
+      <td>
+        <button i18n class="btn btn-danger"  (click)="deleteCommunity(community._id,community._rev,i)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
