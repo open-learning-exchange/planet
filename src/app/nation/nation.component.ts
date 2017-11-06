@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-declare var jQuery:any;
+declare var jQuery: any;
 import {
   FormBuilder,
   FormControl,
@@ -32,8 +32,9 @@ export class NationComponent implements OnInit {
     private couchService: CouchService,
     private nationValidatorService: NationValidatorService
   ) {
-      this.createForm();
-    }
+    this.createForm();
+  }
+
   ngOnInit() {
     this.getNationList();
   }
@@ -45,7 +46,7 @@ export class NationComponent implements OnInit {
         ac => this.nationValidatorService.nationCheckerService$(ac)
       ],
       name: ['', Validators.required],
-      nationUrl: ['', Validators.required] 
+      nationUrl: ['', Validators.required]
     });
   }
 
@@ -53,12 +54,13 @@ export class NationComponent implements OnInit {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nation = data.rows;
-        console.log(this.nation)
+        console.log(this.nation);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
+
   onSubmit(nation) {
-     if (this.nationForm.valid) {
-      let formdata = {
+    if (this.nationForm.valid) {
+      const formdata = {
         'admin_name': nation.adminName,
         'nation_name': nation.name,
         'nationurl': nation.nationUrl,
@@ -68,17 +70,19 @@ export class NationComponent implements OnInit {
         .then((data) => {
           formdata['_id'] = data.id;
           formdata['_rev'] = data.rev;
-          this.nation.push({doc:formdata});
-          jQuery('#myModal').modal("hide");
-        },(error) => this.message = 'Error');
+          this.nation.push({doc: formdata});
+          jQuery('#myModal').modal('hide');
+        }, (error) => this.message = 'Error');
     } else {
-        Object.keys(this.nationForm.controls).forEach(field => {
+      Object.keys(this.nationForm.controls).forEach(field => {
         const control = this.nationForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
     }
   }
-  refresh(){
-    jQuery(".form-control").val('').trigger("change");
+
+  refresh() {
+    this.createForm();
   }
+
 }
