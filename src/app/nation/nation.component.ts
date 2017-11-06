@@ -21,8 +21,7 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 export class NationComponent implements OnInit {
   readonly dbName = 'nations';
   message = '';
-  nation = [];
-  nationdata = [];
+  nations = [];
   nationForm: FormGroup;
 
   constructor(
@@ -53,8 +52,8 @@ export class NationComponent implements OnInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nation = data.rows;
-        console.log(this.nation);
+        this.nations = data.rows;
+        console.log(this.nations);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -70,8 +69,8 @@ export class NationComponent implements OnInit {
         .then((data) => {
           formdata['_id'] = data.id;
           formdata['_rev'] = data.rev;
-          this.nation.push({doc: formdata});
-          jQuery('#myModal').modal('hide');
+          this.nations.push({doc: formdata});
+          jQuery('#nationAdd').modal('hide');
         }, (error) => this.message = 'Error');
     } else {
       Object.keys(this.nationForm.controls).forEach(field => {
@@ -81,7 +80,7 @@ export class NationComponent implements OnInit {
     }
   }
 
-  refresh() {
+  openNationAddForm() {
     this.createForm();
   }
 
