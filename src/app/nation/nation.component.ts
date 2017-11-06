@@ -57,7 +57,7 @@ export class NationComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
   onSubmit(nation) {
-    if (nation.adminName !== '' && nation.name !== '' && nation.nationUrl !== "") {
+     if (this.nationForm.valid) {
       let formdata = {
         'admin_name': nation.adminName,
         'nation_name': nation.name,
@@ -72,7 +72,10 @@ export class NationComponent implements OnInit {
           jQuery('#myModal').modal("hide");
         },(error) => this.message = 'Error');
     } else {
-      this.message = 'Please complete the form';
+        Object.keys(this.nationForm.controls).forEach(field => {
+        const control = this.nationForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
     }
   }
   refresh(){
