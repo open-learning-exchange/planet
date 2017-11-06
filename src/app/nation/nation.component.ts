@@ -73,8 +73,8 @@ export class NationComponent implements OnInit {
           jQuery('#nationAdd').modal('hide');
         }, (error) => this.message = 'Error');
     } else {
-      Object.keys(this.nationForm.controls).forEach(field => {
-        const control = this.nationForm.get(field);
+      // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
+      (<any>Object).values(this.nationForm.controls).forEach(control => {
         control.markAsTouched({ onlySelf: true });
       });
     }
