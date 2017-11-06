@@ -2,51 +2,9 @@
   <h1 i18n>Nation List</h1>
   <!-- Trigger the modal with a button -->
   <button type="button" class="btn btn-info btn-lg" (click)="refresh()" data-toggle="modal" data-target="#myModal">Add</button>
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog" data-backdrop="static">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-body">
-          <h3>Add Nation</h3>
-          <form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
-            <div class="form-row">
-                <div class="col">
-                    <label i18n>Admin Name</label>
-                    <input type="text" class="form-control" formControlName="adminName" required>
-                    <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
-                  <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
-                </div>
-                <div class="col">
-                    <label i18n>Nation Name</label>
-                    <input type="text" class="form-control" formControlName="name" required>
-                    <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
-                  </div>
-              </div>
-              <div class="form-row">
-                <div class="col">
-                    <label i18n>Nationurl</label>
-                    <input type="text" class="form-control" formControlName="nationUrl">
-                    <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
-                </div>
-              </div>
-              <div>
-                <p>Form value: {{ nationForm.value | json }}</p>
-                <p>{{ nationForm.valid }}</p>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" i18n>Submit</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" i18n>Cancel</button>
-              </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Data rendered for nation-->
-<div>
-  <p>{{message}}</p>
+  <!-- Data rendered for nation -->
+  <div>
+    <p>{{message}}</p>
     <table class="table">
       <thead>
         <tr>
@@ -63,4 +21,47 @@
         </tr>
         </tbody>
     </table>
+  </div>
+</div>
+
+<!-- Modal for adding nations -->
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="static">
+  <div class="modal-dialog">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3>Add Nation</h3>
+        <form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
+          <div class="form-row">
+            <div class="col">
+              <label i18n>Admin Name</label>
+              <input type="text" class="form-control" formControlName="adminName" required>
+              <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
+                <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+            </div>
+            <div class="col">
+              <label i18n>Nation Name</label>
+              <input type="text" class="form-control" formControlName="name" required>
+              <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label i18n>Nationurl</label>
+              <input type="text" class="form-control" formControlName="nationUrl">
+              <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
+            </div>
+          </div>
+          <div>
+            <p>Form value: {{ nationForm.value | json }}</p>
+            <p>{{ nationForm.valid }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" i18n>Submit</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" i18n>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
