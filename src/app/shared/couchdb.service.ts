@@ -4,8 +4,8 @@ import { environment } from '../../environments/environment';
 
 @Injectable()
 export class CouchService {
-  private headers = new Headers({'Content-Type': 'application/json'});
-  private defaultOpts = {headers: this.headers, withCredentials: true};
+  private headers = new Headers({ 'Content-Type': 'application/json' });
+  private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
 
   private setOpts(opts?: any) {

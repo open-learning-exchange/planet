@@ -33,7 +33,7 @@ require('./login.scss');
       <div id="login-status">{{message}}</div>
     </div>
   `,
-  styleUrls: ['./login.scss']
+  styleUrls: [ './login.scss' ]
 
 })
 export class LoginComponent {
@@ -63,12 +63,12 @@ export class LoginComponent {
   }
 
   reRoute() {
-    this.router.navigate([this.returnUrl]);
+    this.router.navigate([ this.returnUrl ]);
   }
 
-  createUser({name, password, repeatPassword}: {name: string, password: string, repeatPassword: string}) {
+  createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
     if (password === repeatPassword) {
-      this.couchService.put('_users/org.couchdb.user:' + name, {'name': name, 'password': password, 'roles': [], 'type': 'user'})
+      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
         .then((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.reRoute();
@@ -78,7 +78,7 @@ export class LoginComponent {
     }
   }
 
-  createAdmin({name, password, repeatPassword}: {name: string, password: string, repeatPassword: string}) {
+  createAdmin({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
     if (password === repeatPassword) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
         .then((data) => {
@@ -98,8 +98,8 @@ export class LoginComponent {
       });
   }
 
-  login({name, password}: {name: string, password: string}) {
-    this.couchService.post('_session', {'name': name, 'password': password}, { withCredentials: true })
+  login({ name, password }: {name: string, password: string}) {
+    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .then((data) => {
         this.reRoute();
       }, (error) => this.message = 'Username and/or password do not match');

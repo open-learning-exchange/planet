@@ -40,12 +40,12 @@ export class NationComponent implements OnInit {
 
   createForm() {
     this.nationForm = this.fb.group({
-      adminName: ['', Validators.required,
+      adminName: [ '', Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         ac => this.nationValidatorService.nationCheckerService$(ac)
       ],
-      name: ['', Validators.required],
-      nationUrl: ['', Validators.required]
+      name: [ '', Validators.required ],
+      nationUrl: [ '', Validators.required ],
     });
   }
 
@@ -77,9 +77,9 @@ export class NationComponent implements OnInit {
       };
       this.couchService.post('nations', formdata)
         .then((data) => {
-          formdata['_id'] = data.id;
-          formdata['_rev'] = data.rev;
-          this.nations.push({doc: formdata});
+          formdata[ '_id' ] = data.id;
+          formdata[ '_rev' ] = data.rev;
+          this.nations.push({ doc: formdata });
           jQuery('#nationAdd').modal('hide');
         }, (error) => this.message = 'Error');
     } else {

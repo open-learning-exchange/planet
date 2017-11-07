@@ -11,8 +11,8 @@ module.exports = function(timeStamp) {
       return rp({
         method: 'PUT',
         uri: 'http://127.0.0.1:5984/_users/org.couchdb.user:' + user,
-        headers: {'Content-Type': 'application/json'},
-        body: {name: user, password: 'e2e', roles: [], type: 'user'},
+        headers: { 'Content-Type': 'application/json' },
+        body: { name: user, password: 'e2e', roles: [], type: 'user' },
         json: true
       });
     },
@@ -22,7 +22,7 @@ module.exports = function(timeStamp) {
         return rp({
           method: 'DELETE',
           uri: 'http://127.0.0.1:5984/_users/org.couchdb.user:' + user + '?rev=' + rev,
-          headers: {'Content-Type': 'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           json: true
         });
       });

@@ -17,16 +17,16 @@ describe('Login', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule],
-      declarations: [LoginComponent],
-      providers: [CouchService]
+      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule ],
+      declarations: [ LoginComponent ],
+      providers: [ CouchService ]
     });
     const fixture = TestBed.createComponent(LoginComponent),
       comp = fixture.componentInstance,
       de = fixture.debugElement.query(By.css('#login-status')),
       statusElement = de.nativeElement,
       couchService = fixture.debugElement.injector.get(CouchService),
-      testModel = {name: 'test', password: 'password', repeatPassword: 'password'};
+      testModel = { name: 'test', password: 'password', repeatPassword: 'password' };
     return { fixture, comp, statusElement, couchService, testModel };
   };
 
@@ -42,7 +42,7 @@ describe('Login', () => {
 
   it('Should display create user message', () => {
     const { fixture, comp, statusElement, couchService, testModel } = setup();
-    spy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({id: 'org.couchdb.user:' + testModel.name}));
+    spy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({ id: 'org.couchdb.user:' + testModel.name }));
     comp.createUser(testModel);
     fixture.whenStable().then(() => {
       fixture.detectChanges();

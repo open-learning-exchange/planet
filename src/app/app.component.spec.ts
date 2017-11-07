@@ -7,8 +7,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 describe('App', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [AppComponent]
+      imports: [ RouterTestingModule ],
+      declarations: [ AppComponent ]
     });
   });
 

@@ -48,7 +48,7 @@ export class UsersComponent implements OnInit {
   displayTable = true;
 
   // List of all possible roles to add to users
-  roleList: string[] = ['intern', 'learner', 'teacher'];
+  roleList: string[] = [ 'intern', 'learner', 'teacher' ];
   selectedRole = '';
 
   constructor(
@@ -94,7 +94,7 @@ export class UsersComponent implements OnInit {
         adminData = data[1];
       for (const key in adminData) {
         if (adminData.hasOwnProperty(key)) {
-          admins.push({name: key, roles: ['admin'], admin: true});
+          admins.push({ name: key, roles: [ 'admin' ], admin: true });
         }
       }
 
