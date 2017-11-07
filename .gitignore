@@ -43,3 +43,6 @@ Thumbs.db
 
 # Virtual Machine
 .vagrant/
+
+# NPM/Yarn
+*.lock
