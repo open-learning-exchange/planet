@@ -24,7 +24,7 @@ insert_docs() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:" option; do
+while getopts "u:w:p:h:" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
