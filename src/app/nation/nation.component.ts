@@ -78,15 +78,15 @@ export class NationComponent implements OnInit {
     if (nation.nation_name !== '' && nation.nationurl !== '' && nation.type !== '') {
       this.couchService.post('nations', {
           'admin_name': nation.adminName,
-          'nation_name': nation.name,
+          'name': nation.name,
           'nationurl': nation.nationUrl,
           'type': nation.type
         })
         .then((data) => {
-        alert('Nation has been sucessfully created');
-        this.router.navigate(['nation']);
-        location.reload();
-      }, (error) => this.message = 'Error');
+          alert('Nation has been sucessfully created');
+          this.router.navigate(['nation']);
+          location.reload();
+        }, (error) => this.message = 'Error');
     } else {
       this.message = 'Please complete the form';
     }

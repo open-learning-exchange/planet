@@ -5,35 +5,35 @@
 		   	"type": "nation",
 		   	"region": "uganda",
 		   	"admin_name": "ugandabell",
-		   	"nation_name": "UgandaBeLL"
+		   	"name": "UgandaBeLL"
 		},
 		{
 		   	"nationurl": "madagascarbell.ole.org:5990",
 		   	"type": "nation",
 		   	"region": "madagascar",
 		   	"admin_name": "madagascarbell",
-		   	"nation_name": "MadagascarBeLL"
+		   	"name": "MadagascarBeLL"
 		},
 		{
 		   	"nationurl": "syriabell.ole.org:5992",
 		   	"type": "nation",
 		   	"region": "syria",
 		   	"admin_name": "syriabell",
-		   	"nation_name": "SyriaBeLL"
+		   	"name": "SyriaBeLL"
 		},
 		{
 		   	"nationurl": "kenyabell.ole.org:5991",
 		   	"type": "nation",
 		   	"region": "kenya",
 		   	"admin_name": "kenyabell",
-		   	"nation_name": "KenyaBeLL"
+		   	"name": "KenyaBeLL"
 		},
 		{
 		   	"nationurl": "somaliabell.ole.org:5987",
 		   	"type": "nation",
 		   	"region": "somalia",
 		   	"admin_name": "somaliabell",
-		   	"nation_name": "SomaliaBeLL"
+		   	"name": "SomaliaBeLL"
 		}
 	]
 }
