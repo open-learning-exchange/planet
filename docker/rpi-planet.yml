@@ -14,8 +14,6 @@ services:
     image: treehouses/planet:rpi-latest
     ports:
       - "3000:3000"
-    volumes:
-      - "../:/planet"
     depends_on:
       - couchdb
 version: "2"

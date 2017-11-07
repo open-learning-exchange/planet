@@ -18,8 +18,6 @@ services:
       - HOST_PROTOCOL=http
       - DB_HOST=127.0.0.1
       - DB_PORT=2200
-    volumes:
-      - "../:/planet"
     depends_on:
       - couchdb
 version: "2"
