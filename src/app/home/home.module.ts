@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
+import { FeedbackComponent } from '../feedback/feedback.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
 
@@ -25,6 +26,7 @@ import { NationComponent } from '../nation/nation.component';
     NavigationComponent,
     UsersComponent,
     CoursesComponent,
+    FeedbackComponent,
     CommunityComponent,
     FormErrorMessagesComponent,
     NationComponent
