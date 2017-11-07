@@ -1,6 +1,6 @@
 ### STAGE 1: Build ###
 # We label our stage as ‘builder’
-FROM arm32v7/node:6.11-slim as builder
+FROM arm32v7/node:6.11-stretch as builder
 MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
 COPY package.json ./
 ## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
