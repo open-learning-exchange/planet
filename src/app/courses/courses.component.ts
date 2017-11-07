@@ -1,19 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-// searchDocuments is declared as a default export so we can import it like this
-import searchDocuments, * as constants from './constants';
+import { Component, OnInit } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CourseValidatorService } from '../validators/course-validator.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -22,6 +9,7 @@ import { Router } from '@angular/router';
 export class CoursesComponent implements OnInit {
   message = '';
   courses = [];
+<<<<<<< HEAD
   constructor(private couchService: CouchService) {}
 
   getCourses() {
@@ -31,6 +19,70 @@ export class CoursesComponent implements OnInit {
         x => x.doc._id !== '_design/course-validators'
       );
     }, error => (this.message = 'There was a problem getting the courses'));
+=======
+  constructor(
+    private location: Location,
+    private router: Router,
+    private fb: FormBuilder,
+    private couchService: CouchService,
+    private courseValidatorService: CourseValidatorService
+  ) {
+    this.createForm();
+  }
+
+  createForm() {
+    this.courseForm = this.fb.group({
+      courseTitle: [
+        '',
+        Validators.required,
+        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
+        ac => this.courseValidatorService.checkCourseExists$(ac)
+      ],
+      description: ['', Validators.required],
+      languageOfInstruction: '',
+      memberLimit: [
+        '', // need to compose validators if we use more than one
+        Validators.compose([
+          CustomValidators.integerValidator,
+          Validators.min(1)
+        ])
+      ],
+      courseLeader: [''],
+      method: '',
+      gradeLevel: '',
+      subjectLevel: '',
+      startDate: ['', CustomValidators.dateValidator],
+      endDate: [
+        '',
+        Validators.compose([
+          // we are using a higher order function so we  need to call the validator function
+          CustomValidators.endDateValidator(),
+          CustomValidators.dateValidator
+        ])
+      ],
+      day: this.fb.array([]),
+      startTime: ['', CustomValidators.timeValidator],
+      endTime: [
+        '',
+        Validators.compose([
+          CustomValidators.endTimeValidator(),
+          CustomValidators.timeValidator
+        ])
+      ],
+      location: '',
+      backgroundColor: ['', CustomValidators.hexValidator],
+      foregroundColor: ['', CustomValidators.hexValidator]
+    });
+
+    // set default values
+    this.courseForm.patchValue({
+      gradeLevel: this.gradeLevels[0],
+      subjectLevel: this.subjectLevels[0],
+      memberLimit: 10,
+      backgroundColor: '#ffffff',
+      foregroundColor: '#000000'
+    });
+>>>>>>> Add courses list view (Fixes #83) (#107)
   }
 
   onSubmit() {
@@ -67,8 +119,27 @@ export class CoursesComponent implements OnInit {
       const index = dayFormArray.controls.findIndex(x => x.value === day);
       dayFormArray.removeAt(index);
     }
+    private couchService: CouchService
+  ) { }
+
+  getCourses() {
+    this.couchService.get('courses/_all_docs?include_docs=true')
+      .then((data) => {
+        // don't retrieve the course validator
+        this.courses = data.rows.filter(x => x.doc._id !== '_design/course-validators');
+      }, (error) => this.message = 'There was a problem getting the courses');
   }
 
+<<<<<<< HEAD
+=======
+  deleteCourse(courseId, courseRev) {
+    this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
+      .then((data) => {
+        this.getCourses();
+      }, (error) => this.message = 'There was a problem deleting this course');
+  }
+
+>>>>>>> Add courses list view (Fixes #83) (#107)
   ngOnInit() {
     this.getCourses();
   }
