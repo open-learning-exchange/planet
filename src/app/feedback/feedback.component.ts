@@ -11,13 +11,12 @@ export class Feedback{
   feedbackMsg:string;
 }
 
-
 @Component({
   selector: 'feedback',
   templateUrl: './feedback.component.html'
 })
-export class FeedbackComponent implements OnInit {
 
+export class FeedbackComponent implements OnInit {
   msgForUsr:string;
   isFeedbackMsg :boolean=true;
   feedback:Feedback= new Feedback();
@@ -30,7 +29,7 @@ export class FeedbackComponent implements OnInit {
    ) { }
 
   ngOnInit() {
-    this.feedback.name= this.userService.get().name;
+    this.feedback.name= this.userService.get().name;e
   }
 
   submitfeedback(){
