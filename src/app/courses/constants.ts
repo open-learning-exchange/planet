@@ -17,7 +17,7 @@ export const gradeLevels = [
   'Post-Graduate'
 ];
 
-export const subjectLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+export const subjectLevels = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
 
 export const days = [
   'Saturday',
@@ -28,15 +28,3 @@ export const days = [
   'Thursday',
   'Friday'
 ];
-
-export default function searchDocuments(selector, query) {
-  return JSON.parse(`
-    {
-      "selector": {
-        "${selector}": "${query}"
-      },
-      "fields": ["${selector}"],
-      "limit": 1
-    }
-    `);
-}

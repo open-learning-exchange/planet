@@ -48,7 +48,7 @@ export class UsersComponent implements OnInit {
   displayTable = true;
 
   // List of all possible roles to add to users
-  roleList: string[] = ['intern', 'learner', 'teacher'];
+  roleList: string[] = [ 'intern', 'learner', 'teacher' ];
   selectedRole = '';
 
   constructor(
@@ -80,8 +80,8 @@ export class UsersComponent implements OnInit {
   }
 
   getAdmins() {
-    // This is working for my locally setup couchdb instance, but may need to be changed once Vagrant or Docker is setup
-    return this.couchService.get('_node/couchdb@localhost/_config/admins');
+    // This nonode@nohost is working for couchdb as setup by Vagrant, but may need to be changed for other implementations
+    return this.couchService.get('_node/nonode@nohost/_config/admins');
   }
 
   initializeData() {
@@ -94,7 +94,7 @@ export class UsersComponent implements OnInit {
         adminData = data[1];
       for (const key in adminData) {
         if (adminData.hasOwnProperty(key)) {
-          admins.push({name: key, roles: ['admin'], admin: true});
+          admins.push({ name: key, roles: [ 'admin' ], admin: true });
         }
       }
 
