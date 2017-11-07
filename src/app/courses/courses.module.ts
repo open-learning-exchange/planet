@@ -22,6 +22,6 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     CoursesAddComponent,
     CoursesRequestComponent
   ],
-  providers: [CourseValidatorService]
+  providers: [ CourseValidatorService ]
 })
 export class CoursesModule {}

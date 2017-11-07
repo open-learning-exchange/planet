@@ -6,13 +6,13 @@ import { CoursesComponent } from './courses.component';
 import { CoursesRequestComponent } from './request-courses/courses-request.component';
 
 const routes: Routes = [
-  { path: '', component: CoursesComponent},
-  { path: 'add', component: CoursesAddComponent},
-  { path: 'request', component: CoursesRequestComponent}
+  { path: '', component: CoursesComponent },
+  { path: 'add', component: CoursesAddComponent },
+  { path: 'request', component: CoursesRequestComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  imports: [ RouterModule.forChild(routes) ],
+  exports: [ RouterModule ]
 })
 export class CoursesRouterModule {}
