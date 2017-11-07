@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   templateUrl: './courses.component.html',
-  styleUrls: ['./courses.component.scss']
+  styleUrls: [ './courses.component.scss' ]
 })
 export class CoursesComponent implements OnInit {
   message = '';

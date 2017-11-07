@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-
+declare var jQuery: any;
 import {
   FormBuilder,
   FormControl,
@@ -19,11 +19,11 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 })
 
 export class NationComponent implements OnInit {
-  message = '';
-  nation = [];
   readonly dbName = 'nations';
+  message = '';
+  nations = [];
   nationForm: FormGroup;
-  i;
+
   constructor(
     private location: Location,
     private router: Router,
@@ -31,54 +31,67 @@ export class NationComponent implements OnInit {
     private couchService: CouchService,
     private nationValidatorService: NationValidatorService
   ) {
-      this.createForm();
-    }
+    this.createForm();
+  }
+
   ngOnInit() {
     this.getNationList();
   }
-  event(i) {
-    this.i = i + 1;
-  }
+
   createForm() {
     this.nationForm = this.fb.group({
-      adminName: ['', Validators.required,
+      adminName: [ '', Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         ac => this.nationValidatorService.nationCheckerService$(ac)
       ],
-      name: ['', Validators.required],
-      nationUrl: ['', Validators.required],
-      type: ['', Validators.required]
+      name: [ '', Validators.required ],
+      nationUrl: [ '', Validators.required ],
     });
   }
 
-  cancel() {
-    this.location.back();
-  }
-
   getNationList() {
-    this.i = 0;
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nation = data.rows;
+        this.nations = data.rows;
+        console.log(this.nations);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  onSubmit(nation) {
-    this.i = 0;
-    if (nation.nation_name !== '' && nation.nationurl !== '' && nation.type !== '') {
-      this.couchService.post('nations', {
-          'admin_name': nation.adminName,
-          'nation_name': nation.name,
-          'nationurl': nation.nationUrl,
-          'type': nation.type
-        })
-        .then((data) => {
-        alert('Nation has been sucessfully created');
-        this.router.navigate(['nation']);
-        location.reload();
-      }, (error) => this.message = 'Error');
-    } else {
-      this.message = 'Please complete the form';
+  deleteNation(nationId, nationRev, index) {
+    const nationDelete = confirm('Are you sure you want to delete?');
+    if (nationDelete) {
+      this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
+      .then((data) => {
+        this.nation.splice(index, 1);
+      }, (error) => this.message = 'There was a problem deleting this meetup');
     }
   }
+
+  onSubmit(nation) {
+    if (this.nationForm.valid) {
+      const formdata = {
+        'admin_name': nation.adminName,
+        'nation_name': nation.name,
+        'nationurl': nation.nationUrl,
+        'type': 'nation'
+      };
+      this.couchService.post('nations', formdata)
+        .then((data) => {
+          formdata[ '_id' ] = data.id;
+          formdata[ '_rev' ] = data.rev;
+          this.nations.push({ doc: formdata });
+          jQuery('#nationAdd').modal('hide');
+        }, (error) => this.message = 'Error');
+    } else {
+      // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
+      (<any>Object).values(this.nationForm.controls).forEach(control => {
+        control.markAsTouched({ onlySelf: true });
+      });
+    }
+  }
+
+  openNationAddForm() {
+    this.createForm();
+  }
+
 }

@@ -5,11 +5,11 @@ import { NationValidatorService } from './nation-validator.service';
 describe('NationValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [NationValidatorService]
+      providers: [ NationValidatorService ]
     });
   });
 
-  it('should be created', inject([NationValidatorService], (service: NationValidatorService) => {
+  it('should be created', inject([ NationValidatorService ], (service: NationValidatorService) => {
     expect(service).toBeTruthy();
   }));
 });

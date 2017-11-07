@@ -34,10 +34,10 @@ export class ResourcesComponent implements OnInit {
     const fileData = reader.result.split(',')[1],
     attachments = {};
 
-    attachments[rComp.file.name] = {'content_type': rComp.file.type, 'data': fileData};
+    attachments[rComp.file.name] = { 'content_type': rComp.file.type, 'data': fileData };
 
     const resource = Object.assign({},
-      {'filename': rComp.file.name, '_id': rComp.file.name, '_attachments': attachments}, rComp.resource);
+      { 'filename': rComp.file.name, '_id': rComp.file.name, '_attachments': attachments }, rComp.resource);
 
     this.couchService.put('resources/' + rComp.file.name, resource)
       .then((data) => {
