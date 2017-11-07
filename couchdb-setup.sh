@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Function for upsert of design docs
 upsert_design() {
@@ -24,21 +24,27 @@ insert_docs() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:" option; do
+while getopts "u:w:p:h:" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
+    h) HOST=${OPTARG};;
   esac
 done
+
+if [ -z "$HOST" ]
+then
+  HOST=127.0.0.1
+fi
 
 # Default port for CouchDB accessed from host machine is 2200
 PORT=${PORT:-2200}
 if [ -z "$COUCHUSER" ]
 then
-  COUCHURL=http://127.0.0.1:$PORT
+  COUCHURL=http://$HOST:$PORT
 else
-  COUCHURL=http://$COUCHUSER:$COUCHPASSWORD@127.0.0.1:$PORT
+  COUCHURL=http://$COUCHUSER:$COUCHPASSWORD@$HOST:$PORT
 fi
 
 # Add CouchDB standard databases
