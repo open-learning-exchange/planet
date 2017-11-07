@@ -26,7 +26,7 @@ export class NavigationComponent {
     { link: 'meetups', name: 'Meetups' },
     { link: 'users', name: 'Members' },
     { link: '', name: 'Reports' },
-    { link: 'feedback', name: 'Feedback' },
+    { link: 'feedback', name: 'Feedback' }
   ];
 
   logoutClick() {

@@ -26,12 +26,10 @@ import { NationComponent } from '../nation/nation.component';
     NavigationComponent,
     UsersComponent,
     CoursesComponent,
-    FormErrorMessagesComponent,
     FeedbackComponent,
     CommunityComponent,
     FormErrorMessagesComponent,
     NationComponent
-
   ],
   providers: [CourseValidatorService, NationValidatorService]
 })
