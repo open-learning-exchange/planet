@@ -77,8 +77,8 @@ function (newDoc, oldDoc, userCtx, secObj) {
     }
     if (newDoc['endDate']) {
       require('startDate');
-      isTime('startDate');
-      isTime('endDate');
+      isDate('startDate');
+      isDate('endDate');
       endDateValidator();
     }
   }
