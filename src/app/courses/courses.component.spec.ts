@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {ReactiveFormsModule,FormsModule} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesComponent } from './courses.component';
 import { FormErrorMessagesComponent } from '../form-error-messages/form-error-messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -13,10 +13,10 @@ describe('CoursesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule,FormsModule,RouterTestingModule, HttpModule],
-      declarations: [ CoursesComponent,FormErrorMessagesComponent],
-      providers: [CouchService, CourseValidatorService ]
-      
+      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpModule ],
+      declarations: [ CoursesComponent, FormErrorMessagesComponent ],
+      providers: [ CouchService, CourseValidatorService ]
+
     })
     .compileComponents();
   }));

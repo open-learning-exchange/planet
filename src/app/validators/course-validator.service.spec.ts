@@ -10,7 +10,7 @@ describe('CourseValidatorService', () => {
     });
   });
 
-  it('should be created', inject([CourseValidatorService], (service: CourseValidatorService) => {
+  it('should be created', inject([ CourseValidatorService ], (service: CourseValidatorService) => {
     expect(service).toBeTruthy();
   }));
 });

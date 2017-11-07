@@ -23,15 +23,15 @@ describe('MeetupsComponent', () => {
         HttpModule
       ],
       declarations: [ MeetupsComponent ],
-      providers: [CouchService]
+      providers: [ CouchService ]
     });
     fixture = TestBed.createComponent(MeetupsComponent);
     component = fixture.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
     de = fixture.debugElement;
-    meetupdata1 = {id: '1', rev: 'qwrjksf', title: 'happyhangout', description: 'once a week'};
-    meetupdata2 = {id: '2', rev: 'ghjjdrt', title: 'angularhangout', description: 'twice a week'};
-    meetuparray = {rows: [{doc: meetupdata1}, {doc: meetupdata2}]};
+    meetupdata1 = { id: '1', rev: 'qwrjksf', title: 'happyhangout', description: 'once a week' };
+    meetupdata2 = { id: '2', rev: 'ghjjdrt', title: 'angularhangout', description: 'twice a week' };
+    meetuparray = { rows: [ { doc: meetupdata1 }, { doc: meetupdata2 } ] };
   });
 
   it('should be created', () => {
@@ -39,7 +39,7 @@ describe('MeetupsComponent', () => {
   });
 
   it('should make a get request to couchService', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({rows: []}));
+    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({ rows: [] }));
     fixture.detectChanges();
     expect(getSpy).toHaveBeenCalledWith('meetups/_all_docs?include_docs=true');
   });
