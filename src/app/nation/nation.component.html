@@ -1,7 +1,7 @@
 <div>
   <h1 i18n>Nation List</h1>
   <!-- Trigger the modal with a button -->
-  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
+  <button type="button" class="btn btn-info btn-lg" (click)="createForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
   <!-- Data rendered for nation -->
   <div>
     <p>{{message}}</p>
@@ -11,6 +11,7 @@
           <th i18n>Nation Name</th>
           <th i18n>Admin Name</th>
           <th i18n>Nation Url</th>
+          <th i18n>Community List</th>
         </tr>
       </thead>
       <tbody>
@@ -18,6 +19,7 @@
           <td>{{nation.doc.name}}</td>
           <td>{{nation.doc.admin_name}}</td>
           <td>{{nation.doc.nationurl}}</td>
+          <td><button class="btn btn btn-primary" (click) = "communitylist(nation.doc.name)" i18n>Community List</button></td>
         </tr>
         </tbody>
     </table>

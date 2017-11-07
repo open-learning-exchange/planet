@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
+import {LocationStrategy} from '@angular/common';
 
 @Component({
   templateUrl: './community.component.html'
@@ -11,8 +12,12 @@ export class CommunityComponent implements OnInit {
   communities = [];
   filter = '';
   selectedValue = '';
+  nationName = '';
+
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private url:LocationStrategy,
+    private router: Router
     ) { }
 
   getcommunitylist() {
@@ -51,7 +56,10 @@ export class CommunityComponent implements OnInit {
   }
 
   ngOnInit() {
+    var urlFragment = this.router.url.split('/')[2];
+    if(urlFragment != "" && urlFragment != undefined){
+       this.nationName = urlFragment;
+    }
     this.getcommunitylist();
   }
-
 }
