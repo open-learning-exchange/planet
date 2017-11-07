@@ -1,14 +1,38 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormArray,
+  Validators
+} from '@angular/forms';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { CourseValidatorService } from '../../validators/course-validator.service';
+import * as constants from '../constants';
+
 
 @Component({
-  templateUrl: './courses.component.html',
-  styleUrls: ['./courses.component.scss']
+  templateUrl: 'courses-add.component.html',
+  styleUrls: ['courses-add.component.scss']
 })
-export class CoursesComponent implements OnInit {
-  message = '';
-  courses = [];
+export class CoursesAddComponent {
+  // needs member document to implement
+  members = [];
+  readonly dbName = 'courses'; // make database name a constant
+
+  courseForm: FormGroup;
+
+  showDaysCheckBox = true; // for toggling the days checkbox
+
+  // from the constants import
+  gradeLevels = constants.gradeLevels;
+  subjectLevels = constants.subjectLevels;
+  days = constants.days;
+
   constructor(
     private location: Location,
     private router: Router,
@@ -87,7 +111,7 @@ export class CoursesComponent implements OnInit {
   async addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
     await this.couchService.post(this.dbName, { ...courseInfo });
-    this.router.navigate(['/']);
+    this.router.navigate(['/courses']);
   }
 
   cancel() {
@@ -107,25 +131,16 @@ export class CoursesComponent implements OnInit {
       const index = dayFormArray.controls.findIndex(x => x.value === day);
       dayFormArray.removeAt(index);
     }
-    private couchService: CouchService
-  ) { }
-
-  getCourses() {
-    this.couchService.get('courses/_all_docs?include_docs=true')
-      .then((data) => {
-        // don't retrieve the course validator
-        this.courses = data.rows.filter(x => x.doc._id !== '_design/course-validators');
-      }, (error) => this.message = 'There was a problem getting the courses');
   }
 
-  deleteCourse(courseId, courseRev) {
-    this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
-      .then((data) => {
-        this.getCourses();
-      }, (error) => this.message = 'There was a problem deleting this course');
-  }
-
-  ngOnInit() {
-    this.getCourses();
+  // remove old values from array on radio button change
+  toogleWeekly(val: boolean) {
+    // empty the array
+    this.courseForm.setControl('day', this.fb.array([]));
+    if (val) {
+      // add all days to the array if the course is daily
+      this.courseForm.setControl('day', this.fb.array(this.days));
+    }
+    this.showDaysCheckBox = val;
   }
 }
