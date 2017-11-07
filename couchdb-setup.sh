@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Function for upsert of design docs
 upsert_design() {

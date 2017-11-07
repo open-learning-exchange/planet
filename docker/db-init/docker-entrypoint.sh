@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #WAIT_TIME
 echo  "Waiting for couchdb to start"
