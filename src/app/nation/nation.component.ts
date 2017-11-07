@@ -62,7 +62,7 @@ export class NationComponent implements OnInit {
     if (nationDelete) {
       this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
       .then((data) => {
-        this.nation.splice(index, 1);
+        this.nations.splice(index, 1);
       }, (error) => this.message = 'There was a problem deleting this meetup');
     }
   }
@@ -71,7 +71,7 @@ export class NationComponent implements OnInit {
     if (this.nationForm.valid) {
       const formdata = {
         'admin_name': nation.adminName,
-        'nation_name': nation.name,
+        'name': nation.name,
         'nationurl': nation.nationUrl,
         'type': 'nation'
       };
