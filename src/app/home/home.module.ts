@@ -18,7 +18,7 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 
 @NgModule({
-  imports: [HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [ HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule ],
   declarations: [
     HomeComponent,
     DashboardComponent,
@@ -29,6 +29,6 @@ import { NationComponent } from '../nation/nation.component';
     FormErrorMessagesComponent,
     NationComponent
   ],
-  providers: [CourseValidatorService, NationValidatorService]
+  providers: [ CourseValidatorService, NationValidatorService ]
 })
 export class HomeModule {}

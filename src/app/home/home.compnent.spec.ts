@@ -11,9 +11,9 @@ describe('Home', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, CommonModule, HttpModule],
-      declarations: [HomeComponent, NavigationComponent],
-      providers: [CouchService]
+      imports: [ RouterTestingModule, CommonModule, HttpModule ],
+      declarations: [ HomeComponent, NavigationComponent ],
+      providers: [ CouchService ]
     });
     const fixture = TestBed.createComponent(HomeComponent),
       comp = fixture.componentInstance;

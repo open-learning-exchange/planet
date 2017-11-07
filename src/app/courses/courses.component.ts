@@ -18,7 +18,7 @@ import searchDocuments, * as constants from './constants';
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styleUrls: ['./courses.component.scss']
+  styleUrls: [ './courses.component.scss' ]
 })
 export class CoursesComponent {
   // needs member document to implement
@@ -52,7 +52,7 @@ export class CoursesComponent {
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         ac => this.courseValidatorService.checkCourseExists$(ac)
       ],
-      description: ['', Validators.required],
+      description: [ '', Validators.required ],
       languageOfInstruction: '',
       memberLimit: [
         '', // need to compose validators if we use more than one
@@ -61,11 +61,11 @@ export class CoursesComponent {
           Validators.min(1)
         ])
       ],
-      courseLeader: [''],
+      courseLeader: [ '' ],
       method: '',
       gradeLevel: '',
       subjectLevel: '',
-      startDate: ['', CustomValidators.dateValidator],
+      startDate: [ '', CustomValidators.dateValidator ],
       endDate: [
         '',
         Validators.compose([
@@ -75,7 +75,7 @@ export class CoursesComponent {
         ])
       ],
       day: this.fb.array([]),
-      startTime: ['', CustomValidators.timeValidator],
+      startTime: [ '', CustomValidators.timeValidator ],
       endTime: [
         '',
         Validators.compose([
@@ -84,8 +84,8 @@ export class CoursesComponent {
         ])
       ],
       location: '',
-      backgroundColor: ['', CustomValidators.hexValidator],
-      foregroundColor: ['', CustomValidators.hexValidator]
+      backgroundColor: [ '', CustomValidators.hexValidator ],
+      foregroundColor: [ '', CustomValidators.hexValidator ]
     });
 
     // set default values
@@ -112,7 +112,7 @@ export class CoursesComponent {
   async addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
     await this.couchService.post(this.dbName, { ...courseInfo });
-    this.router.navigate(['/']);
+    this.router.navigate([ '/' ]);
   }
 
   cancel() {
