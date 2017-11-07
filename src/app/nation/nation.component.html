@@ -57,7 +57,7 @@
             <td>{{nation.doc.name}}</td>
             <td>{{nation.doc.admin_name}}</td>
             <td>{{nation.doc.nationurl}}</td>
-            <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
+            <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button><button type="button" class="btn btn-primary" (click)="view(nation.doc._id)" data-toggle="modal" data-target="#view" i18n>View</button></td>
           </tr>
         </ng-container>
         </tbody>
@@ -107,3 +107,39 @@
     </div>
   </div>
 </div> -->
+
+<!-- Modal for view nations -->
+<div class="modal fade" id="view" role="dialog" *ngIf='view_data != ""'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3 i18n>View Details</h3>
+        <hr/>
+        <div class="row">
+          <div class="col-sm-6">
+            <p i18n>Name</p>
+          </div>
+          <div class="col-sm-6">
+            <p>{{ view_data.name }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <p i18n>Admin Name</p>
+          </div>
+          <div class="col-sm-6">
+            <p>{{ view_data.admin_name }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <p i18n>URL</p>
+          </div>
+          <div class="col-sm-6">
+            <p>{{ view_data.nationurl }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

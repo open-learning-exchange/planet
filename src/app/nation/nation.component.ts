@@ -35,6 +35,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   formDialog: any;
   valid_data: {};
   result: any;
+  view_data = [];
 
   constructor(
     private location: Location,
@@ -157,6 +158,17 @@ export class NationComponent implements OnInit, AfterViewInit {
         console.log('Res', res);
         this.onSubmit(res);
       });
+  }
+
+  view(id) {
+    if(id){
+      this.couchService.get('nations/' + id)
+      .then((data) => {
+        this.view_data = data;
+      }, (error) => this.message = 'There is a problem to connect.');
+    }else{
+      this.message = 'There is no data.';
+    }
   }
 
 }
