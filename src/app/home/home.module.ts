@@ -14,6 +14,7 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 
 @NgModule({
+<<<<<<< HEAD
   imports: [
     HomeRouterModule,
     CommonModule,
@@ -21,6 +22,9 @@ import { NationComponent } from '../nation/nation.component';
     ReactiveFormsModule,
     PlanetFormsModule
   ],
+=======
+  imports: [ HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule ],
+>>>>>>> Bracket spacing rule for linting (Fixes #150) (#153)
   declarations: [
     HomeComponent,
     DashboardComponent,
@@ -29,6 +33,10 @@ import { NationComponent } from '../nation/nation.component';
     CommunityComponent,
     NationComponent
   ],
+<<<<<<< HEAD
   providers: [ NationValidatorService ]
+=======
+  providers: [ CourseValidatorService, NationValidatorService ]
+>>>>>>> Bracket spacing rule for linting (Fixes #150) (#153)
 })
 export class HomeModule {}

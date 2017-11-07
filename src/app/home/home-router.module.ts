@@ -13,7 +13,11 @@ const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
       { path: 'nation', component: NationComponent },
+<<<<<<< HEAD
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
+=======
+      { path: 'courses', component: CoursesComponent },
+>>>>>>> Bracket spacing rule for linting (Fixes #150) (#153)
       { path: 'community', component: CommunityComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' }

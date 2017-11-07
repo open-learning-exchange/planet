@@ -62,7 +62,11 @@ export class NationComponent implements OnInit {
     if (nationDelete) {
       this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
       .then((data) => {
+<<<<<<< HEAD
         this.nations.splice(index, 1);
+=======
+        this.nation.splice(index, 1);
+>>>>>>> Bracket spacing rule for linting (Fixes #150) (#153)
       }, (error) => this.message = 'There was a problem deleting this meetup');
     }
   }

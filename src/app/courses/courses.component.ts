@@ -1,6 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+// searchDocuments is declared as a default export so we can import it like this
+import searchDocuments, * as constants from './constants';
 
 import { CouchService } from '../shared/couchdb.service';
+import { CourseValidatorService } from '../validators/course-validator.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -33,7 +46,7 @@ export class CoursesComponent implements OnInit {
 
   async addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    await this.couchService.put(this.dbName, { ...courseInfo });
+    await this.couchService.post(this.dbName, { ...courseInfo });
     this.router.navigate(['/']);
   }
 
