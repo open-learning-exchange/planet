@@ -47,8 +47,10 @@
         {{community.lastActivitiesSyncDate}}
       </td>
       <td>
-        <button i18n class="btn btn-danger"  (click)="deleteCommunity(community._id,community._rev,i)">Delete</button>
+        <button i18n class="btn btn-danger"  (click)="deleteClick(community,i)">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
+
+<planet-alerts-delete (okClick)="deleteCommunity($event)" [type]="'community'" [deleteItem]="deleteItem"></planet-alerts-delete>
