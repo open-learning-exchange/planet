@@ -8,6 +8,7 @@ import { CoursesRequestComponent } from './request-courses/courses-request.compo
 import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { CourseValidatorService } from '../validators/course-validator.service';
+import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    PlanetFormsModule
+    PlanetFormsModule,
+    PlanetAlertsModule
   ],
   declarations: [
     CoursesComponent,

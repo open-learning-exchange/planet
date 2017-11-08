@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+declare var jQuery: any;
 
 @Component({
   templateUrl: './courses.component.html',
@@ -8,6 +9,7 @@ import { CouchService } from '../shared/couchdb.service';
 export class CoursesComponent implements OnInit {
   message = '';
   courses = [];
+  deleteItem = {};
   constructor(
     private couchService: CouchService
   ) { }
@@ -20,10 +22,17 @@ export class CoursesComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting the courses');
   }
 
-  deleteCourse(courseId, courseRev) {
+  deleteClick(course, index) {
+    this.deleteItem = { ...course.doc, index: index };
+    jQuery('#planetDelete').modal('show');
+  }
+
+  deleteCourse(course) {
+    const { _id: courseId, _rev: courseRev, index } = course;
     this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
       .then((data) => {
         this.getCourses();
+        jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this course');
   }
 
