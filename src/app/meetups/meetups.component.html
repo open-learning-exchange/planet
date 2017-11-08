@@ -15,10 +15,12 @@
       <td class="km-meetup-title">{{meetup.doc.title}}</td>
       <td class="km-meetup-description">{{meetup.doc.description}}</td>
       <td>
-        <button class="btn btn-danger" ngModel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
+        <button class="btn btn-danger" (click)="deleteClick(meetup)">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
 <!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
 </div>
+
+<planet-alerts-delete (okClick)="deleteMeetup($event)" [type]="'meetup'" [deleteItem]="deleteItem" [message]="message"></planet-alerts-delete>
