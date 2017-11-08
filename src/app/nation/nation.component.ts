@@ -53,7 +53,6 @@ export class NationComponent implements OnInit {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nations = data.rows;
-        console.log(this.nations);
       }, (error) => {
         this.message = 'There was a problem getting NationList';
         jQuery("#alert").attr('class', 'alert alert-danger alert-dismissible fade show');
@@ -85,7 +84,6 @@ export class NationComponent implements OnInit {
       };
       this.couchService.post('nations', formdata)
         .then((data) => {
-          console.log(data)
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.push({ doc: formdata });
