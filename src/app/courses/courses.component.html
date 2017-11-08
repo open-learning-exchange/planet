@@ -29,4 +29,10 @@
   </table>
 </div>
 
-<planet-alerts-delete (okClick)="deleteCourse($event)" [type]="'course'" [deleteItem]="deleteItem" [message]="message"></planet-alerts-delete>
+<planet-alerts-delete
+  (okClick)="deleteCourse($event)"
+  [type]="'course'"
+  [deleteItem]="deleteItem"
+  [message]="message"
+  [displayName]="deleteItem.courseTitle">
+</planet-alerts-delete>

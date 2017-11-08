@@ -23,4 +23,10 @@
 <!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
 </div>
 
-<planet-alerts-delete (okClick)="deleteMeetup($event)" [type]="'meetup'" [deleteItem]="deleteItem" [message]="message"></planet-alerts-delete>
+<planet-alerts-delete
+  (okClick)="deleteMeetup($event)"
+  [type]="'meetup'"
+  [deleteItem]="deleteItem"
+  [message]="message"
+  [displayName]="deleteItem.title">
+</planet-alerts-delete>
