@@ -10,6 +10,7 @@
           resource {resource}}?
         </p>
         <p>{{deleteItem.name}}</p>
+        <p *ngIf="message" class="text-danger">{{message}}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="ok()" i18n>OK</button>

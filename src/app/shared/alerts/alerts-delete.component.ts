@@ -8,6 +8,7 @@ export class AlertsDeleteComponent {
 
   @Input() type: string;
   @Input() deleteItem: any;
+  @Input() message: string;
   @Output() okClick = new EventEmitter();
   @Output() cancelClick = new EventEmitter();
 
