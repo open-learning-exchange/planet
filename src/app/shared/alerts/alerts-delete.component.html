@@ -1,0 +1,20 @@
+<div class="modal fade" id="planetDelete" role="dialog" data-backdrop="static">
+  <div class="modal-dialog">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-body">
+        <p i18n>Are you sure you want to delete the following {type, select,
+          community {community}
+          nation {nation}
+          course {course}
+          resource {resource}}
+        ?</p>
+        <p>{{deleteItem.name}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="okClick()" i18n>OK</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="cancelClick()" i18n>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
