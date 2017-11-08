@@ -8,15 +8,15 @@ export class AlertsDeleteComponent {
 
   @Input() type: string;
   @Input() deleteItem: any;
-  @Output() okEmit = new EventEmitter();
-  @Output() cancelEmit = new EventEmitter();
+  @Output() okClick = new EventEmitter();
+  @Output() cancelClick = new EventEmitter();
 
-  okClick() {
-    this.okEmit.emit(this.deleteItem);
+  ok() {
+    this.okClick.emit(this.deleteItem);
   }
 
-  cancelClick() {
-    this.cancelEmit.emit();
+  cancel() {
+    this.cancelClick.emit();
   }
 
 }
