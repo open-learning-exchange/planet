@@ -6,10 +6,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class AlertsDeleteComponent {
 
-  @Input type: string;
-  @Input deleteItem: any;
-  @Output okEmit = new EventEmitter();
-  @Output cancelEmit = new EventEmitter();
+  @Input() type: string;
+  @Input() deleteItem: any;
+  @Output() okEmit = new EventEmitter();
+  @Output() cancelEmit = new EventEmitter();
 
   okClick() {
     this.okEmit.emit(this.deleteItem);
