@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import {LocationStrategy} from '@angular/common';
 
 @Component({
   templateUrl: './community.component.html'
