@@ -7,13 +7,14 @@ language: node_js
 node_js:
   - "8"
 addons:
-  ssh_known_hosts: docker.ole.org
+  ssh_known_hosts: kraken.ole.org
   apt:
     sources:
       - google-chrome
     packages:
       - google-chrome-stable
       - google-chrome-beta
+      - docker-ce
 env:
   global:
     # DOCKER_USER
