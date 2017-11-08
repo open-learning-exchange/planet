@@ -49,7 +49,7 @@ export class AlertsDeleteComponent implements OnChanges {
   }
 
   animationDone(event) {
-    if(event.toState === false) {
+    if (event.toState === false) {
       this.resetMessage.emit();
     }
   }
