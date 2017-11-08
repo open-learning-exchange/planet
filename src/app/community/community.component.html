@@ -53,4 +53,10 @@
   </tbody>
 </table>
 
-<planet-alerts-delete (okClick)="deleteCommunity($event)" [type]="'community'" [deleteItem]="deleteItem" [message]="message"></planet-alerts-delete>
+<planet-alerts-delete
+  (okClick)="deleteCommunity($event)"
+  (resetMessage)="message=''"
+  [type]="'community'"
+  [deleteItem]="deleteItem"
+  [message]="message">
+</planet-alerts-delete>

@@ -26,7 +26,13 @@
   </div>
 </div>
 
-<planet-alerts-delete (okClick)="deleteNation($event)" [type]="'nation'" [deleteItem]="deleteItem" [message]="message"></planet-alerts-delete>
+<planet-alerts-delete
+  (okClick)="deleteNation($event)"
+  (resetMessage)="message=''"
+  [type]="'nation'"
+  [deleteItem]="deleteItem"
+  [message]="message">
+</planet-alerts-delete>
 
 <!-- Modal for adding nations -->
 <div class="modal fade" id="nationAdd" role="dialog" data-backdrop="static">

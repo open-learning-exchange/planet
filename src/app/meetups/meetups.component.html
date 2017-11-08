@@ -25,6 +25,7 @@
 
 <planet-alerts-delete
   (okClick)="deleteMeetup($event)"
+  (resetMessage)="message=''"
   [type]="'meetup'"
   [deleteItem]="deleteItem"
   [message]="message"

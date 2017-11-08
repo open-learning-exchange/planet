@@ -31,6 +31,7 @@
 
 <planet-alerts-delete
   (okClick)="deleteCourse($event)"
+  (resetMessage)="message=''"
   [type]="'course'"
   [deleteItem]="deleteItem"
   [message]="message"
