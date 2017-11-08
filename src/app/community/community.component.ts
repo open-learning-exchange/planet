@@ -50,7 +50,7 @@ export class CommunityComponent implements OnInit {
 
   deleteCommunity(community) {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-    let { _id: id, _rev: rev, index } = community;
+    const { _id: id, _rev: rev, index } = community;
     this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
       .then((data) => {
         this.getcommunitylist();
