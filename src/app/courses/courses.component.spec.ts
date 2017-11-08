@@ -13,7 +13,7 @@ describe('CoursesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpModule ],
-      declarations: [ CoursesComponent, FormErrorMessagesComponent ],
+      declarations: [ CoursesComponent ],
       providers: [ CouchService, CourseValidatorService ]
 
     })
