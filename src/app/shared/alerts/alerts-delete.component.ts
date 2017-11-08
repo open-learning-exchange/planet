@@ -11,7 +11,6 @@ export class AlertsDeleteComponent {
   @Input() message: string;
   @Input() displayName: string;
   @Output() okClick = new EventEmitter();
-  @Output() cancelClick = new EventEmitter();
 
   name: string;
 
@@ -21,10 +20,6 @@ export class AlertsDeleteComponent {
 
   ok() {
     this.okClick.emit(this.deleteItem);
-  }
-
-  cancel() {
-    this.cancelClick.emit();
   }
 
 }
