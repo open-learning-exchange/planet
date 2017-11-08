@@ -58,7 +58,7 @@ export class NationComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  deleteClick(nation,index) {
+  deleteClick(nation, index) {
     this.deleteItem = { ...nation.doc, index: index };
     jQuery('#planetDelete').modal('show');
   }

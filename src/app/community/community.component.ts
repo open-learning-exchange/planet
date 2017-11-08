@@ -43,7 +43,7 @@ export class CommunityComponent implements OnInit {
     this.getcommunitylist();
   }
 
-  deleteClick(community,index) {
+  deleteClick(community, index) {
     this.deleteItem = { ...community, index: index };
     jQuery('#planetDelete').modal('show');
   }

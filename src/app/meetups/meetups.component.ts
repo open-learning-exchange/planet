@@ -21,7 +21,7 @@ export class MeetupsComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting meetups');
   }
 
-  deleteClick(meetup,index) {
+  deleteClick(meetup, index) {
     this.deleteItem = { ...meetup.doc, index: index };
     jQuery('#planetDelete').modal('show');
   }
