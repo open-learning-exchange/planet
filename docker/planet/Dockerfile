@@ -1,22 +1,23 @@
-FROM node:6.11-stretch
-
+### STAGE 1: Build ###
+# We label our stage as ‘builder’
+FROM node:6.11-alpine as builder
 MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
+COPY package.json ./
+## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
+RUN npm i && mkdir /ng-app && cp -R ./node_modules ./ng-app
+WORKDIR /ng-app
+COPY . .
+## Build the angular app in production mode and store the artifacts in dist folder
+RUN $(npm bin)/ng build --prod
 
-ENV APP planet
 
-# install required software before using nvm/node/npm/bower
-RUN apt-get update \
-  && apt-get install -y curl git python build-essential \
-  # install angular cli
-  && npm install -g @angular/cli
-
-# exposes port 3000 but your app may use any port specified in it
-EXPOSE 3000
-
-VOLUME ["/$APP"]
-WORKDIR /$APP
-
-#ADD ./docker-entrypoint.sh docker-entrypoint.sh
-
-#ENTRYPOINT ["/bin/bash", "-c"]
-CMD bash -c 'npm install && ng serve'
+### STAGE 2: Setup ###
+FROM nginx:1.13.3-alpine
+## Copy our default nginx config
+COPY docker/planet/default.conf /etc/nginx/conf.d/
+## Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+## From ‘builder’ stage copy over the artifacts in dist folder to default nginx public folder
+COPY --from=builder /ng-app/dist /usr/share/nginx/html
+COPY docker/planet/docker-entrypoint.sh ./
+CMD sh ./docker-entrypoint.sh

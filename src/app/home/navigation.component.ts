@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
       <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
     </ul>
   `,
-  styleUrls: ['./navigation.scss']
+  styleUrls: [ './navigation.scss' ]
 })
 export class NavigationComponent {
   constructor(
@@ -32,7 +32,7 @@ export class NavigationComponent {
   logoutClick() {
     this.couchService.delete('_session', { withCredentials: true }).then((data: any) => {
       if (data.ok === true) {
-        this.router.navigate(['/login'], {});
+        this.router.navigate([ '/login' ], {});
       }
     });
   }

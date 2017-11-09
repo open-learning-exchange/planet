@@ -1,10 +1,14 @@
 FROM node:6.11-alpine
 
+RUN apk update ;\
+    apk add --no-cache curl git ;\
+    #CORS DOWNLOAD
+    npm install -g add-cors-to-couchdb
+
 WORKDIR /root
 
-RUN apk update ;\
-    apk add --no-cache curl git
-
-COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
+COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
+COPY ./couchdb-setup.sh /root/couchdb-setup.sh
+ADD ./design /root/design
 
 CMD sh ./docker-entrypoint.sh

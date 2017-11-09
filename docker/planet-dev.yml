@@ -7,7 +7,7 @@ services:
       - "2200:5984"
       - "2201:5986"
   db-init:
-    image: treehouses/planet-dev:db-init-latest
+    image: treehouses/planet:db-init-latest
     depends_on:
       - couchdb
   planet:
