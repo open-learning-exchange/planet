@@ -12,6 +12,7 @@ import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
+import { FeedbackComponent } from '../feedback/feedback.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { NationComponent } from '../nation/nation.component';
     NavigationComponent,
     UsersComponent,
     CommunityComponent,
-    NationComponent
+    NationComponent,
+    FeedbackComponent
   ],
   providers: [ NationValidatorService ]
 })
