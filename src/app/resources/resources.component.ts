@@ -21,8 +21,8 @@ export class ResourcesComponent implements OnInit {
       language: 'English',
       Year: '2017',
       linkToLicense: '',
-      subject: ['Arts'],
-      Level: ['Professional'],
+      subject: [ 'Arts' ],
+      Level: [ 'Professional' ],
       Tag: null,
       Medium: 'Text',
       openWith: 'PDF.js',
@@ -49,7 +49,7 @@ export class ResourcesComponent implements OnInit {
       Year: '2016',
       linkToLicense:
         'https://raw.githubusercontent.com/gabrielecirulli/2048/master/LICENSE.txt',
-      subject: ['Arts', 'Learning', 'Math'],
+      subject: [ 'Arts', 'Learning', 'Math' ],
       Level: [
         'Early Education',
         'Lower Primary',
@@ -85,7 +85,7 @@ export class ResourcesComponent implements OnInit {
       Year: '2017',
       linkToLicense:
         'https://github.com/walterbender/turtleblocksjs/blob/master/Licence.txt',
-      subject: ['Technology'],
+      subject: [ 'Technology' ],
       Level: [
         'Early Education',
         'Lower Primary',
