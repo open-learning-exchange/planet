@@ -15,7 +15,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
-  templateUrl: './nation.component.html'
+  templateUrl: './nation.component.html',
+  styleUrls: [ './nation.component.scss' ]
 })
 
 export class NationComponent implements OnInit {
@@ -23,6 +24,7 @@ export class NationComponent implements OnInit {
   message = '';
   nations = [];
   nationForm: FormGroup;
+  searchText='';
 
   constructor(
     private location: Location,
