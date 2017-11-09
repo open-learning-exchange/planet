@@ -85,7 +85,7 @@ describe('Users', () => {
       fixture.whenStable().then(() => {
         fixture.detectChanges();
         expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
-        expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
+        expect(couchService.get).toHaveBeenCalledWith('_node/nonode@nohost/_config/admins');
       });
     });
   });

@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpModule } from '@angular/http';
 import { CourseValidatorService } from '../validators/course-validator.service';
+import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
