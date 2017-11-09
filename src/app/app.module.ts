@@ -14,6 +14,7 @@ import { ValidatorService } from './validators/validator.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+
 @NgModule({
   imports: [
     BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
