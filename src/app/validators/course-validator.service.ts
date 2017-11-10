@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 // Make sure not to import the entire rxjs library!!!
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { timer } from 'rxjs/observable/timer';
+import { fromPromise } from 'rxjs/observable/fromPromise';
+import { switchMap, map } from 'rxjs/operators';
 
 import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -23,7 +25,7 @@ export class CourseValidatorService {
         }
         return false;
       });
-    return Observable.fromPromise(isDuplicate);
+    return fromPromise(isDuplicate);
   }
 
   public checkCourseExists$(
@@ -33,14 +35,16 @@ export class CourseValidatorService {
       duplicateCourse: { message: 'Course already exists' }
     };
     // calls service every .5s for input change
-    return Observable.timer(500).switchMap(() => {
-      return this.courseCheckerService$(ac.value).map(res => {
-        if (res) {
-          return errMessage;
-        }
-        return null;
-      });
-    });
+    return timer(500).pipe(
+        switchMap(() => {
+          return this.courseCheckerService$(ac.value).pipe(map(res => {
+            if (res) {
+              return errMessage;
+            }
+            return null;
+          }));
+        })
+      );
 
     // another way of checking if course title is unique
     // this.courseForm.controls['courseTitle'].valueChanges
