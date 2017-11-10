@@ -13,7 +13,6 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 
-
 @NgModule({
   imports: [
     BrowserModule, AppRoutingModule, HttpModule
