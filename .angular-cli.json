@@ -7,9 +7,7 @@
     {
       "root": "src",
       "outDir": "dist",
-      "assets": [
-        "assets"
-      ],
+      "assets": ["assets", "manifest.json"],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
@@ -17,6 +15,7 @@
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
+      "serviceWorker": true,
       "styles": [
         "styles.scss",
         "../node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -24,7 +23,6 @@
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
-        "../node_modules/popper.js/dist/umd/popper.min.js",
         "../node_modules/bootstrap/dist/js/bootstrap.min.js"
       ],
       "environmentSource": "environments/environment.ts",
@@ -58,6 +56,7 @@
   },
   "defaults": {
     "styleExt": "scss",
+    "poll": 1,
     "class": {
       "spec": false
     },
@@ -66,10 +65,12 @@
       "inlineStyle": false,
       "inlineTemplate": false
     },
-    "serve": {
-        "port":3000,
-        "host":"0.0.0.0"
+    "build": {
+      "poll": 1
     },
-    "poll":true
+    "serve": {
+      "port": 3000,
+      "host": "0.0.0.0"
+    }
   }
 }

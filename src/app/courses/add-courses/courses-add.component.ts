@@ -17,7 +17,15 @@ import * as constants from '../constants';
 
 @Component({
   templateUrl: 'courses-add.component.html',
+<<<<<<< HEAD
+<<<<<<< HEAD
   styleUrls: [ 'courses-add.component.scss' ]
+=======
+  styleUrls: ['courses-add.component.scss']
+>>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+  styleUrls: [ 'courses-add.component.scss' ]
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
 })
 export class CoursesAddComponent {
   // needs member document to implement
@@ -51,7 +59,15 @@ export class CoursesAddComponent {
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         ac => this.courseValidatorService.checkCourseExists$(ac)
       ],
+<<<<<<< HEAD
+<<<<<<< HEAD
       description: [ '', Validators.required ],
+=======
+      description: ['', Validators.required],
+>>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+      description: [ '', Validators.required ],
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
       languageOfInstruction: '',
       memberLimit: [
         '', // need to compose validators if we use more than one
@@ -60,11 +76,25 @@ export class CoursesAddComponent {
           Validators.min(1)
         ])
       ],
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
       courseLeader: [ '' ],
       method: '',
       gradeLevel: '',
       subjectLevel: '',
       startDate: [ '', CustomValidators.dateValidator ],
+<<<<<<< HEAD
+=======
+      courseLeader: [''],
+      method: '',
+      gradeLevel: '',
+      subjectLevel: '',
+      startDate: ['', CustomValidators.dateValidator],
+>>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
       endDate: [
         '',
         Validators.compose([
@@ -74,7 +104,15 @@ export class CoursesAddComponent {
         ])
       ],
       day: this.fb.array([]),
+<<<<<<< HEAD
+<<<<<<< HEAD
       startTime: [ '', CustomValidators.timeValidator ],
+=======
+      startTime: ['', CustomValidators.timeValidator],
+>>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+      startTime: [ '', CustomValidators.timeValidator ],
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
       endTime: [
         '',
         Validators.compose([
@@ -83,8 +121,18 @@ export class CoursesAddComponent {
         ])
       ],
       location: '',
+<<<<<<< HEAD
+<<<<<<< HEAD
       backgroundColor: [ '', CustomValidators.hexValidator ],
       foregroundColor: [ '', CustomValidators.hexValidator ]
+=======
+      backgroundColor: ['', CustomValidators.hexValidator],
+      foregroundColor: ['', CustomValidators.hexValidator]
+>>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+      backgroundColor: [ '', CustomValidators.hexValidator ],
+      foregroundColor: [ '', CustomValidators.hexValidator ]
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
     });
 
     // set default values
@@ -110,6 +158,10 @@ export class CoursesAddComponent {
 
   async addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
     try {
       await this.couchService.post(this.dbName, { ...courseInfo });
       this.router.navigate([ '/' ]);
@@ -117,6 +169,13 @@ export class CoursesAddComponent {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     }
+<<<<<<< HEAD
+=======
+    await this.couchService.post(this.dbName, { ...courseInfo });
+    this.router.navigate(['/courses']);
+>>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
   }
 
   cancel() {
