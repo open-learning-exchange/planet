@@ -10,6 +10,7 @@ export class CoursesComponent implements OnInit {
   message = '';
   courses = [];
 <<<<<<< HEAD
+<<<<<<< HEAD
   constructor(private couchService: CouchService) {}
 
   getCourses() {
@@ -20,6 +21,8 @@ export class CoursesComponent implements OnInit {
       );
     }, error => (this.message = 'There was a problem getting the courses'));
 =======
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
   constructor(
     private location: Location,
     private router: Router,
@@ -131,7 +134,10 @@ export class CoursesComponent implements OnInit {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
   deleteCourse(courseId, courseRev) {
     this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
       .then((data) => {
@@ -139,7 +145,10 @@ export class CoursesComponent implements OnInit {
       }, (error) => this.message = 'There was a problem deleting this course');
   }
 
+<<<<<<< HEAD
 >>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
   ngOnInit() {
     this.getCourses();
   }

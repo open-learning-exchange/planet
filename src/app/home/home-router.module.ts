@@ -15,6 +15,7 @@ const routes: Routes = [
       { path: 'nation', component: NationComponent },
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
 =======
       { path: 'courses', component: CoursesComponent },
@@ -22,6 +23,9 @@ const routes: Routes = [
 =======
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
 >>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+      { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
       { path: 'community', component: CommunityComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' }

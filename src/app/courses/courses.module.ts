@@ -23,9 +23,13 @@ import { CourseValidatorService } from '../validators/course-validator.service';
     CoursesRequestComponent
   ],
 <<<<<<< HEAD
+<<<<<<< HEAD
   providers: [ CourseValidatorService ]
 =======
   providers: [CourseValidatorService]
 >>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+  providers: [ CourseValidatorService ]
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
 })
 export class CoursesModule {}

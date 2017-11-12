@@ -16,8 +16,11 @@ import { NationComponent } from '../nation/nation.component';
 @NgModule({
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
   imports: [
     HomeRouterModule,
     CommonModule,
@@ -26,11 +29,14 @@ import { NationComponent } from '../nation/nation.component';
     PlanetFormsModule
   ],
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   imports: [ HomeRouterModule, CommonModule, FormsModule, ReactiveFormsModule ],
 >>>>>>> Bracket spacing rule for linting (Fixes #150) (#153)
 =======
 >>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
   declarations: [
     HomeComponent,
     DashboardComponent,
@@ -41,6 +47,7 @@ import { NationComponent } from '../nation/nation.component';
   ],
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   providers: [ NationValidatorService ]
 =======
   providers: [ CourseValidatorService, NationValidatorService ]
@@ -48,5 +55,8 @@ import { NationComponent } from '../nation/nation.component';
 =======
   providers: [ NationValidatorService ]
 >>>>>>> Add courses list view (Fixes #83) (#107)
+=======
+  providers: [ NationValidatorService ]
+>>>>>>> 8ed5f702c96aa17fdbb1e54fe90cc1ed044c59eb
 })
 export class HomeModule {}
