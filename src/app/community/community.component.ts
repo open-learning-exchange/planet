@@ -57,7 +57,7 @@ export class CommunityComponent implements OnInit {
 
   ngOnInit() {
     const urlFragment = this.router.url.split('/')[2];
-    if(!!urlFragment){
+    if(!!urlFragment) {
        this.nationName = urlFragment;
     }
     this.getcommunitylist();
