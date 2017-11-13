@@ -44,6 +44,8 @@ export class CommunityComponent implements OnInit {
   }
 
   deleteClick(community, index) {
+    // The ... is the spread operator. The below sets deleteItem a copy of the community
+    // object with an additional index property that is the index within the communites array
     this.deleteItem = { ...community, index: index };
     jQuery('#planetDelete').modal('show');
   }

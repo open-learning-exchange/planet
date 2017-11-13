@@ -59,6 +59,8 @@ export class NationComponent implements OnInit {
   }
 
   deleteClick(nation, index) {
+    // The ... is the spread operator. The below sets deleteItem a copy of the nation.doc
+    // object with an additional index property that is the index within the nations array
     this.deleteItem = { ...nation.doc, index: index };
     jQuery('#planetDelete').modal('show');
   }
