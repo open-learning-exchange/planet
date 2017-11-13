@@ -11,11 +11,11 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let meetup of meetups" class="km-meetup-row">
+    <tr *ngFor="let meetup of meetups; let i = index" class="km-meetup-row">
       <td class="km-meetup-title">{{meetup.doc.title}}</td>
       <td class="km-meetup-description">{{meetup.doc.description}}</td>
       <td>
-        <button class="btn btn-danger" (click)="deleteClick(meetup)">Delete</button>
+        <button class="btn btn-danger" (click)="deleteClick(meetup, i)">Delete</button>
       </td>
     </tr>
   </tbody>
