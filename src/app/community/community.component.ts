@@ -15,7 +15,6 @@ export class CommunityComponent implements OnInit {
 
   constructor(
     private couchService: CouchService,
-    private url:LocationStrategy,
     private router: Router
     ) { }
 
