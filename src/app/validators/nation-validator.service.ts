@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 // Make sure not to import the entire rxjs library!!!
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { timer } from 'rxjs/observable/timer';
+import { fromPromise } from 'rxjs/observable/fromPromise';
 
 import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
+
+import { switchMap, map } from 'rxjs/operators';
 
 @Injectable()
 export class NationValidatorService {
@@ -21,7 +24,7 @@ export class NationValidatorService {
         }
         return false;
       });
-      return Observable.fromPromise(isDuplicate);
+      return fromPromise(isDuplicate);
     }
     public checkNationExists$(
     ac: AbstractControl
@@ -30,14 +33,16 @@ export class NationValidatorService {
       duplicateCourse: { message: 'Nation already exists' }
     };
     // calls service every .5s for input change
-    return Observable.timer(500).switchMap(() => {
-      return this.nationCheckerService$(ac.value).map(res => {
-        if (res) {
-          return errMessage;
-        }
-        return null;
-      });
-    });
+    return timer(500).pipe(
+      switchMap(() => {
+        return this.nationCheckerService$(ac.value).pipe(map(res => {
+          if (res) {
+            return errMessage;
+          }
+          return null;
+        }));
+      })
+    );
   }
 
 }

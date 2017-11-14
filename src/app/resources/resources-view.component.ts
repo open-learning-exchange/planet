@@ -1,4 +1,4 @@
-import 'rxjs/add/operator/switchMap';
+import { switchMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 
@@ -39,8 +39,7 @@ export class ResourcesViewComponent implements OnInit {
   urlPrefix = environment.couchAddress + 'resources/';
 
   ngOnInit() {
-    this.route.paramMap
-      .switchMap((params: ParamMap) => this.getResource(params.get('id')))
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
       .subscribe(resource => this.resource = resource);
   }
 
