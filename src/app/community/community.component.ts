@@ -29,7 +29,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: Router
   ) {}
 
   ngAfterViewInit() {
@@ -85,6 +86,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    const urlFragment = this.router.url.split('/')[2];
+    if(!!urlFragment) {
+      this.selectedNation = urlFragment;
+    }
     this.getCommunityList();
     this.getNationList();
   }
