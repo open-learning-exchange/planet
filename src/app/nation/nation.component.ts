@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { Jsonp, Response } from '@angular/http';
+declare var jQuery: any;
 
 import {
   FormBuilder,
@@ -44,7 +46,8 @@ export class NationComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private nationValidatorService: NationValidatorService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private jsonp: Jsonp
   ) {
     this.createForm();
   }
@@ -160,12 +163,12 @@ export class NationComponent implements OnInit, AfterViewInit {
       });
   }
 
-  view(id) {
-    if(id){
-      this.couchService.get('nations/' + id)
-      .then((data) => {
-        this.view_data = data;
-      }, (error) => this.message = 'There is a problem to connect.');
+  view(url) {
+    if(url){
+      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')  
+      .subscribe(res => {
+        this.view_data = res.json().rows.length > 0 ? res.json().rows[0].doc : [];
+      },(error) => console.log(error));
     }else{
       this.message = 'There is no data.';
     }

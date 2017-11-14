@@ -109,7 +109,7 @@
 </div> -->
 
 <!-- Modal for view nations -->
-<div class="modal fade" id="view" role="dialog" *ngIf='view_data != ""'>
+<div class="modal fade" id="view" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
@@ -125,10 +125,26 @@
         </div>
         <div class="row">
           <div class="col-sm-6">
-            <p i18n>Admin Name</p>
+            <p i18n>Nation Name</p>
           </div>
           <div class="col-sm-6">
-            <p>{{ view_data.admin_name }}</p>
+            <p>{{ view_data.nationName }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <p i18n>Code</p>
+          </div>
+          <div class="col-sm-6">
+            <p>{{ view_data.code }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <p i18n>Current Language</p>
+          </div>
+          <div class="col-sm-6">
+            <p>{{ view_data.currentLanguage }}</p>
           </div>
         </div>
         <div class="row">
@@ -136,15 +152,15 @@
             <p i18n>URL</p>
           </div>
           <div class="col-sm-6">
-            <p>{{ view_data.nationurl }}</p>
+            <p>{{ view_data.nationUrl }}</p>
           </div>
         </div>
         <div class="row">
           <div class="col-sm-6">
-            <p i18n>Region</p>
+            <p i18n>Version</p>
           </div>
           <div class="col-sm-6">
-            <p>{{ view_data.region }}</p>
+            <p>{{ view_data.version }}</p>
           </div>
         </div>
       </div>
