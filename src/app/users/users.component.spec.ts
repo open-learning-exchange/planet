@@ -16,9 +16,9 @@ describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule],
-      declarations: [UsersComponent],
-      providers: [CouchService, UserService]
+      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule ],
+      declarations: [ UsersComponent ],
+      providers: [ CouchService, UserService ]
     });
     const fixture = TestBed.createComponent(UsersComponent);
     const comp = fixture.componentInstance;
@@ -67,7 +67,7 @@ describe('Users', () => {
 
     it('Should display table for admin', () => {
       const { fixture, comp, userService } = setup(),
-        userSpy = spyOn(userService, 'get').and.returnValue({ roles: ['_admin'] });
+        userSpy = spyOn(userService, 'get').and.returnValue({ roles: [ '_admin' ] });
       comp.ngOnInit();
       fixture.whenStable().then(() => {
         fixture.detectChanges();
@@ -77,13 +77,17 @@ describe('Users', () => {
     });
 
     it('Should make two GET requests to CouchDB for admin', () => {
-      const { comp, userService, couchService } = setup(),
-        couchSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({rows: []}));
+      const { fixture, comp, userService, couchService } = setup(),
+        couchSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({ rows: [] }));
       comp.ngOnInit();
-      expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
-      expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
+      comp.getUsers();
+      comp.getAdmins();
+      fixture.whenStable().then(() => {
+        fixture.detectChanges();
+        expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
+        expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
+      });
     });
-
   });
 
   describe('deleteRole', () => {
@@ -93,8 +97,8 @@ describe('Users', () => {
         testEvent = { stopPropagation: () => { } },
         initSpy = spyOn(comp, 'initializeData').and.callFake(() => { } ),
         couchSpy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({}));
-      comp.deleteRole({name: 'Test', roles: ['one', 'two', 'three']}, 1, testEvent);
-      expect(couchService.put).toHaveBeenCalledWith('_users/org.couchdb.user:Test', {name: 'Test', roles: ['one', 'three']});
+      comp.deleteRole({ name: 'Test', roles: [ 'one', 'two', 'three' ] }, 1, testEvent);
+      expect(couchService.put).toHaveBeenCalledWith('_users/org.couchdb.user:Test', { name: 'Test', roles: [ 'one', 'three' ] });
     });
 
   });
@@ -137,5 +141,4 @@ describe('Users', () => {
     });
   });
   */
-
 });

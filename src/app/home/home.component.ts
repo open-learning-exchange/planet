@@ -10,6 +10,6 @@ import { UserService } from '../shared/user.service';
       <router-outlet></router-outlet>
     </main>
   `,
-  styleUrls: ['./home.scss']
+  styleUrls: [ './home.scss' ]
 })
 export class HomeComponent {}

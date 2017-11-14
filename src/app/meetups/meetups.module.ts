@@ -6,10 +6,11 @@ import { MeetupsComponent } from './meetups.component';
 import { MeetupsAddComponent } from './meetups-add.component';
 
 import { MeetupsRouterModule } from './meetups-router.module';
+import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 
 @NgModule({
   imports: [
-    MeetupsRouterModule, CommonModule, FormsModule
+    MeetupsRouterModule, CommonModule, FormsModule, PlanetAlertsModule
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent

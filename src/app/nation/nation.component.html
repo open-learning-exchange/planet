@@ -1,61 +1,77 @@
-<div *ngIf="i===0; else falsyTemplate">
-<h1 i18n>Nation List</h1>
-<button class='btn btn-primary' (click)="event(i)" i18n>Add</button>
-<p>{{message}}</p>
-  <table class="table">
-    <thead>
-      <tr>
-        <th i18n>Nation Name</th>
-        <th i18n>Admin Name</th>
-        <th i18n>Nation Url</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let nations of nation">
-        <td>{{nations.doc.nation_name}}</td>
-        <td>{{nations.doc.admin_name}}</td>
-        <td>{{nations.doc.nationurl}}</td>
-      </tr>
-      </tbody>
-  </table>
+<div>
+  <h1 i18n>Nation List</h1>
+  <!-- Trigger the modal with a button -->
+  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
+  <!-- Data rendered for nation -->
+  <div>
+    <p>{{message}}</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th i18n>Nation Name</th>
+          <th i18n>Admin Name</th>
+          <th i18n>Nation Url</th>
+          <th i18n>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let nation of nations; let i = index">
+          <td>{{nation.doc.name}}</td>
+          <td>{{nation.doc.admin_name}}</td>
+          <td>{{nation.doc.nationurl}}</td>
+          <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
+        </tr>
+        </tbody>
+    </table>
+  </div>
 </div>
-<ng-template #falsyTemplate>
-<h1 i18n>Add Nation </h1>
-<!-- nvalidate - disable browser's default validators to use our validators -->
-<form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
-  <div class="row">
-    <div class="form-group col-4">
-      <label i18n>Admin Name</label>
-      <input type="text" class="form-control" formControlName="adminName" required>
-      <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
-    </div>
-    <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label i18n>Nation Name</label>
-      <input type="text" class="form-control" formControlName="name" required>
-      <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label i18n>Nationurl</label>
-      <input type="text" class="form-control" formControlName="nationUrl">
-      <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
-    </div>
-  </div>
-  <div class="row">
-   <div class="form-group col-4">
-      <label i18n>Type</label>
-      <input type="text" class="form-control" formControlName="type">
-      <planet-form-error-messages [control]="nationForm.controls.type"></planet-form-error-messages>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary" i18n>Submit</button>
-  <button type="button" class="btn btn-danger" (click)="cancel()" i18n>Cancel</button>
-</form>
 
-<p>Form value: {{ nationForm.value | json }}</p>
-<p>{{ nationForm.valid }}</p>
-</ng-template>
+<planet-alerts-delete
+  (okClick)="deleteNation($event)"
+  (resetMessage)="message=''"
+  [type]="'nation'"
+  [deleteItem]="deleteItem"
+  [message]="message">
+</planet-alerts-delete>
+
+<!-- Modal for adding nations -->
+<div class="modal fade" id="nationAdd" role="dialog" data-backdrop="static">
+  <div class="modal-dialog">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3 i18n>Add Nation</h3>
+        <form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
+          <div class="form-row">
+            <div class="col">
+              <label i18n>Admin Name</label>
+              <input type="text" class="form-control" formControlName="adminName" required>
+              <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
+                <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+            </div>
+            <div class="col">
+              <label i18n>Nation Name</label>
+              <input type="text" class="form-control" formControlName="name" required>
+              <planet-form-error-messages [control]="nationForm.controls.name"></planet-form-error-messages>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <label i18n>Nationurl</label>
+              <input type="text" class="form-control" formControlName="nationUrl">
+              <planet-form-error-messages [control]="nationForm.controls.nationUrl"></planet-form-error-messages>
+            </div>
+          </div>
+          <div>
+            <p>Form value: {{ nationForm.value | json }}</p>
+            <p>{{ nationForm.valid }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" i18n>Submit</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" i18n>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 @Injectable()
 export class CouchService {
-  private headers = new Headers({'Content-Type': 'application/json'});
-  private defaultOpts = {headers: this.headers, withCredentials: true};
+  private headers = new HttpHeaders().set('Content-Type', 'application/json');
+  private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
 
   private setOpts(opts?: any) {
     return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
   }
 
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient) {}
 
   put(db: string, data: any, opts?: any): Promise<any> {
     const url = this.baseUrl + db;
@@ -60,9 +60,9 @@ export class CouchService {
       .catch(this.handleError);
   }
 
-  private handleRes = (res: any) => res.json();
+  private handleRes = (res: any) => res;
 
   private handleError(error: any): Promise<any> {
-    return Promise.reject(error.json());
+    return Promise.reject(error);
   }
 }

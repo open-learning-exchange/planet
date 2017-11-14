@@ -1,5 +1,5 @@
 <div class="container">
-<p>{{message}}</p>
+<p class="km-message">{{message}}</p>
 <h2 i18n>Meetups</h2>
 <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Meetup Add</a>
 <table class="table">
@@ -11,18 +11,23 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let meetup of meetups; let i = index">
+    <tr *ngFor="let meetup of meetups; let i = index" class="km-meetup-row">
+      <td class="km-meetup-title">{{meetup.doc.title}}</td>
+      <td class="km-meetup-description">{{meetup.doc.description}}</td>
       <td>
-        {{meetup.doc.title}}
-      </td>
-      <td>
-        {{meetup.doc.description}}
-      </td>
-      <td>
-        <button class="btn btn-danger" ngMOdel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
+        <button class="btn btn-danger" (click)="deleteClick(meetup, i)">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
 <!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
 </div>
+
+<planet-alerts-delete
+  (okClick)="deleteMeetup($event)"
+  (resetMessage)="message=''"
+  [type]="'meetup'"
+  [deleteItem]="deleteItem"
+  [message]="message"
+  [displayName]="deleteItem.title">
+</planet-alerts-delete>

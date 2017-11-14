@@ -55,9 +55,17 @@
           {{community.doc.registrationRequest}}
         </td>
         <td>
-          <button i18n class="btn btn-danger"  (click)="deleteCommunity(community.doc._id,community.doc._rev,i)">Delete</button>
+          <button i18n class="btn btn-danger" (click)="deleteClick(community,i)">Delete</button>
         </td>
       </tr>
     </ng-container>
   </tbody>
 </table>
+
+<planet-alerts-delete
+  (okClick)="deleteCommunity($event)"
+  (resetMessage)="message=''"
+  [type]="'community'"
+  [deleteItem]="deleteItem"
+  [message]="message">
+</planet-alerts-delete>

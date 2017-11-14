@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+declare var jQuery: any;
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -7,6 +8,8 @@ import { CouchService } from '../shared/couchdb.service';
 export class MeetupsComponent implements OnInit {
   message = '';
   meetups = [];
+  deleteItem = {};
+
   constructor(
     private couchService: CouchService
   ) { }
@@ -18,10 +21,19 @@ export class MeetupsComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting meetups');
   }
 
-  deleteMeetup(meetupId, meetupRev) {
+  deleteClick(meetup, index) {
+    // The ... is the spread operator. The below sets deleteItem a copy of the meetup.doc
+    // object with an additional index property that is the index within the meetups array
+    this.deleteItem = { ...meetup.doc, index };
+    jQuery('#planetDelete').modal('show');
+  }
+
+  deleteMeetup(meetup) {
+    const { _id: meetupId, _rev: meetupRev, index } = meetup;
     this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
       .then((data) => {
         this.getMeetups();
+        jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this meetup');
   }
 
