@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+declare var jQuery:any;
 
 @Component({
   template: `
-  <p>{{message}}</p>
+  <div class="alert alert-success alert-dismissible fade show" id ="alert" role="alert" style="display: none;">
+    <button type="button" class="close" onclick="$('.alert').hide()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>{{message}}</strong>
+  </div>
   <form class="form-horizontal" (ngSubmit)="onSubmit(meetupForm.value)" #meetupForm="ngForm">
     <legend>Start a New Meetup</legend>
     <div class="form-group col-md-4">
@@ -28,17 +32,27 @@ export class MeetupsAddComponent implements OnInit {
   model = { title: '', description: '' };
 
   ngOnInit() {
+    jQuery(".alert").hide();
   }
 
   onSubmit(meetup) {
+    jQuery(".alert").show();
     if (meetup.description !== '' && meetup.title !== '') {
       console.log(meetup.description, meetup.title);
       this.couchService.post('meetups', { 'title': meetup.title, 'description': meetup.description })
         .then((data) => {
           this.message = 'Meetup created: ' + meetup.title;
-        }, (error) => this.message = 'There was a problem creating the meetup');
+          jQuery("#alert").attr('class', 'alert alert-success alert-dismissible fade show');
+          jQuery("#alert").show(); 
+        }, (error) => {
+          this.message = 'There was a problem creating the meetup';
+          jQuery("#alert").attr('class', 'alert alert-danger alert-dismissible fade show');
+          jQuery("#alert").show();
+        });
     } else {
       this.message = 'Please complete the form';
+      jQuery("#alert").attr('class', 'alert alert-warning alert-dismissible fade show');
+      jQuery("#alert").show();
     }
   }
 

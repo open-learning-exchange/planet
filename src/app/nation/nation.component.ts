@@ -53,8 +53,11 @@ export class NationComponent implements OnInit {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nations = data.rows;
-        console.log(this.nations);
-      }, (error) => this.message = 'There was a problem getting NationList');
+      }, (error) => {
+        this.message = 'There was a problem getting NationList';
+        jQuery("#alert").attr('class', 'alert alert-danger alert-dismissible fade show');
+        jQuery("#alert").show(); 
+      });
   }
 
   deleteNation(nationId, nationRev, index) {
@@ -63,7 +66,11 @@ export class NationComponent implements OnInit {
       this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
       .then((data) => {
         this.nations.splice(index, 1);
-      }, (error) => this.message = 'There was a problem deleting this meetup');
+      }, (error) => {
+        this.message = 'There was a problem deleting this Nation';
+        jQuery("#alert").attr('class', 'alert alert-danger alert-dismissible fade show');
+        jQuery("#alert").show(); 
+      });
     }
   }
 
