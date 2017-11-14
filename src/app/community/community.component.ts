@@ -11,8 +11,11 @@ export class CommunityComponent implements OnInit {
   communities = [];
   filter = '';
   selectedValue = '';
+  nationName = '';
+
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private router: Router
     ) { }
 
   getcommunitylist() {
@@ -51,7 +54,10 @@ export class CommunityComponent implements OnInit {
   }
 
   ngOnInit() {
+    const urlFragment = this.router.url.split('/')[2];
+    if(!!urlFragment) {
+      this.nationName = urlFragment;
+    }
     this.getcommunitylist();
   }
-
 }

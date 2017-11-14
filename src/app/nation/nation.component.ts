@@ -90,8 +90,8 @@ export class NationComponent implements OnInit {
     }
   }
 
-  openNationAddForm() {
-    this.createForm();
+  communitylist(nationname){
+    this.router.navigate(['/community/'+ nationname]);
   }
 
 }
