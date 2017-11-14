@@ -11,9 +11,11 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent

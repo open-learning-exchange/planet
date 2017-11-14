@@ -23,6 +23,7 @@ export class NationComponent implements OnInit {
   message = '';
   nations = [];
   nationForm: FormGroup;
+  deleteItem = {};
 
   constructor(
     private location: Location,
@@ -57,14 +58,20 @@ export class NationComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  deleteNation(nationId, nationRev, index) {
-    const nationDelete = confirm('Are you sure you want to delete?');
-    if (nationDelete) {
-      this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
+  deleteClick(nation, index) {
+    // The ... is the spread operator. The below sets deleteItem a copy of the nation.doc
+    // object with an additional index property that is the index within the nations array
+    this.deleteItem = { ...nation.doc, index };
+    jQuery('#planetDelete').modal('show');
+  }
+
+  deleteNation(nation) {
+    const { _id: nationId, _rev: nationRev, index } = nation;
+    this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
       .then((data) => {
         this.nations.splice(index, 1);
-      }, (error) => this.message = 'There was a problem deleting this meetup');
-    }
+        jQuery('#planetDelete').modal('hide');
+      }, (error) => this.message = 'There was a problem deleting this nation');
   }
 
   onSubmit(nation) {
