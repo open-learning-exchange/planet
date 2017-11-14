@@ -1,6 +1,6 @@
 <div>
   <h1 i18n>Nation List</h1>
-  <input id="NationSearch" class="form-control col-md-3 " [(ngModel)]="search_text" i18n-placeholder placeholder="Search By Keyword">
+  <input id="NationSearch" class="form-control col-md-3 " [(ngModel)]="searchText"  i18n-placeholder placeholder="Search By Keyword">
   <!-- Trigger the modal with a button -->
   <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
   <!-- Data rendered for nation -->
@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         <ng-container *ngFor="let nation of nations; let i = index">
-          <tr *ngIf="nation.doc.name.toLowerCase().includes(search_text) || nation.doc.name.toUpperCase().includes(search_text) || nation.doc.name === search_text">
+          <tr *ngIf="nation.doc.name.toLowerCase().includes(searchText)">
             <td>{{nation.doc.name}}</td>
             <td>{{nation.doc.admin_name}}</td>
             <td>{{nation.doc.nationurl}}</td>
