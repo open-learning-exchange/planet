@@ -10,37 +10,28 @@ declare var jQuery: any;
 export class CommunityComponent implements OnInit {
   message = '';
   communities = [];
-  filter = '';
   selectedValue = '';
+  selectedNation = '';
+  nations = [];
   deleteItem = {};
 
   constructor(
     private couchService: CouchService
   ) { }
 
-  getcommunitylist() {
-    this.couchService.post('communityregistrationrequests/_find', {
-      'selector': {
-        '$and': [
-          {
-            '_id': { '$gt': null }
-          },
-          {
-            'nationName': { $regex: '.*' + this.filter + '.*' }
-          },
-          {
-            'registrationRequest': { $regex: '.*' + this.selectedValue + '.*' }
-          }
-        ]
-      }
-    })
-    .then((data) => {
-      this.communities = data.docs;
-    }, (error) => this.message = 'There was a problem getting community');
+  getnationlist() {
+    this.couchService.get('nations/_all_docs?include_docs=true')
+      .then((data) => {
+        this.nations = data.rows;
+      }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  filterCommunity() {
-    this.getcommunitylist();
+  getcommunitylist() {
+     this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
+      .then((data) => {
+        console.log(data)
+        this.communities = data.rows;
+      }, (error) => this.message = 'There was a problem getting Communities');
   }
 
   deleteClick(community, index) {
@@ -62,6 +53,7 @@ export class CommunityComponent implements OnInit {
 
   ngOnInit() {
     this.getcommunitylist();
+    this.getnationlist();
   }
 
 }
