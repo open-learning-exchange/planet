@@ -1,8 +1,6 @@
-import './shared/rxjs-imports';
-
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -15,7 +13,7 @@ import { UserService } from './shared/user.service';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpModule
+    BrowserModule, AppRoutingModule, HttpClientModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent
