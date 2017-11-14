@@ -24,7 +24,7 @@ export class NationComponent implements OnInit {
   message = '';
   nations = [];
   nationForm: FormGroup;
-  searchText='';
+  search_text='';
 
   constructor(
     private location: Location,
