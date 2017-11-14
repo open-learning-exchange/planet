@@ -6,12 +6,8 @@ import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
-
 import { HomeRouterModule } from './home-router.module';
-import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { NationValidatorService } from '../validators/nation-validator.service';
-import { NationComponent } from '../nation/nation.component';
 
 @NgModule({
   imports: [
@@ -26,9 +22,6 @@ import { NationComponent } from '../nation/nation.component';
     DashboardComponent,
     NavigationComponent,
     UsersComponent,
-    CommunityComponent,
-    NationComponent
-  ],
-  providers: [ NationValidatorService ]
+  ]
 })
 export class HomeModule {}

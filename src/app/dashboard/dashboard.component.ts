@@ -6,6 +6,7 @@ import { UserService } from '../shared/user.service';
 @Component({
   template: `
     <div id="greeting">Hi, {{name}}</div>
+    <div style="float:right"><a href="manager" i18n class="btn btn-primary" >Manager View</a></div>
   `
 })
 export class DashboardComponent implements OnInit {
