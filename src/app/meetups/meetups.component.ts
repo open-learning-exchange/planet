@@ -24,7 +24,7 @@ export class MeetupsComponent implements OnInit {
   deleteClick(meetup, index) {
     // The ... is the spread operator. The below sets deleteItem a copy of the meetup.doc
     // object with an additional index property that is the index within the meetups array
-    this.deleteItem = { ...meetup.doc, index: index };
+    this.deleteItem = { ...meetup.doc, index };
     jQuery('#planetDelete').modal('show');
   }
 

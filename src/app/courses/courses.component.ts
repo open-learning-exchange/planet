@@ -25,7 +25,7 @@ export class CoursesComponent implements OnInit {
   deleteClick(course, index) {
     // The ... is the spread operator. The below sets deleteItem a copy of the course.doc
     // object with an additional index property that is the index within the courses array
-    this.deleteItem = { ...course.doc, index: index };
+    this.deleteItem = { ...course.doc, index };
     jQuery('#planetDelete').modal('show');
   }
 
