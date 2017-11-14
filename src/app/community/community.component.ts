@@ -29,7 +29,6 @@ export class CommunityComponent implements OnInit {
   getcommunitylist() {
      this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
       .then((data) => {
-        console.log(data)
         this.communities = data.rows;
       }, (error) => this.message = 'There was a problem getting Communities');
   }
