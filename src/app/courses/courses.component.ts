@@ -33,7 +33,7 @@ export class CoursesComponent implements OnInit {
     const { _id: courseId, _rev: courseRev, index } = course;
     this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
       .then((data) => {
-        this.getCourses();
+        this.courses.splice(index, 1);
         jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this course');
   }

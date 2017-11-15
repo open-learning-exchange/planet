@@ -45,7 +45,7 @@ export class CommunityComponent implements OnInit {
     const { _id: id, _rev: rev, index } = community;
     this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
       .then((data) => {
-        this.getcommunitylist();
+        this.communities.splice(index, 1);
         jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this community');
   }
