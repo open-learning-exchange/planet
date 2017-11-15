@@ -16,7 +16,6 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
   templateUrl: './nation.component.html',
-  styleUrls: [ './nation.component.scss' ]
 })
 
 export class NationComponent implements OnInit {
