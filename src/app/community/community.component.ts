@@ -1,9 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { switchMap } from 'rxjs/operators';
+declare var jQuery: any;
 
 @Component({
   templateUrl: './community.component.html'
@@ -30,7 +32,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private route: Router
+    private route: ActivatedRoute
   ) {}
 
   ngAfterViewInit() {
@@ -90,6 +92,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     if(!!urlFragment) {
       this.selectedNation = urlFragment;
     }
+    this.selectedNation = this.route.snapshot.paramMap.get('nation') || '';
     this.getCommunityList();
     this.getNationList();
   }
