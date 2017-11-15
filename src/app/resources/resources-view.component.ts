@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   template: `
-    <div [ngSwitch]="mediaType">
+    <div class="km-resource-view" [ngSwitch]="mediaType">
       <img [src]="resourceSrc" *ngSwitchCase="'image'">
       <video controls *ngSwitchCase="'video'">
         <source [src]="resourceSrc" [type]="contentType" />

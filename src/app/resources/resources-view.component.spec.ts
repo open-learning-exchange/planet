@@ -13,29 +13,24 @@ describe('ResourcesViewComponent', () => {
     let id: string;
     let couchService;
     let statusElement;
-    let testdata;
     let testimage;
-    let testresource1;
-    //let resourceSrc;
     let de;
 
-    beforeEach(async(() => {
+    beforeEach((() => {
         TestBed.configureTestingModule({
           imports: [ FormsModule, RouterTestingModule, HttpModule ],
           declarations: [ ResourcesViewComponent ],
           providers: [ CouchService ]
-        })
-        .compileComponents();
+        });
     }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ResourcesViewComponent);
         component = fixture.componentInstance;
         de = fixture.debugElement;
+        statusElement = de.nativeElement.querySelector('.km-resource-view img');
         couchService = fixture.debugElement.injector.get(CouchService);
-        testdata = { digest: "md5", length: 456321, revpos:1, stub:true };
-        testimage = { filename:"scenery.png", id: "scenery.png", mediaType: 'img', attachments:{ content_type: "application/image", testdata }};
-        testresource1= Object.assign({ 'filename': testimage.filename, '_id': testimage.id, '_attachments':testimage.attachments, mediaType: testimage.mediaType });
+        testimage = { filename:"scenery.png", id: "scenery.png", mediaType: 'img', attachments:{ 'scenery.png': { content_type: "application/image" }} };
       });
     
       it('should be created', () => {
@@ -44,28 +39,26 @@ describe('ResourcesViewComponent', () => {
 
       //test getResource()
       it('should make a get request to couchService', () =>{
-        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testresource1._id));
-        component.getResource(testresource1._id);
+        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testimage.id));
+        component.getResource(testimage.id);
         fixture.whenStable().then(() =>{
           fixture.detectChanges();
-          expect(getSpy).toHaveBeenCalledWith('resources/' + testresource1._id);
+          expect(getSpy).toHaveBeenCalledWith('resources/' + testimage.id);
         });
       });
 
       it('should getResource', ()=>{
-        statusElement = de.nativeElement.querySelector('img');
-        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(component.resourceSrc));
-        component.getResource(testresource1._id);
+        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testimage));
+        component.getResource(testimage.id);
         fixture.whenStable().then(() =>{
           fixture.detectChanges();
-          expect(statusElement.textContext).toBe(component.resourceSrc);
+          expect(statusElement.textContext).toBe(testimage);
         });
       });
     
       it('should There was a problem getResource', () =>{
-        statusElement = de.nativeElement.querySelector('audio');
         getSpy = spyOn(couchService,'get').and.returnValue(Promise.reject({}));
-        component.getResource(testresource1._id);
+        component.getResource(testimage.id);
         fixture.whenStable().then(() =>{
           fixture.detectChanges();
           expect(statusElement.textContext).toBe('Error');
