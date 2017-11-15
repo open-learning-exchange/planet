@@ -87,7 +87,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     const urlFragment = this.router.url.split('/')[2];
-    if(!urlFragment) {
+    if(!!urlFragment) {
       this.selectedNation = urlFragment;
     }
     this.getCommunityList();
