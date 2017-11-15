@@ -32,7 +32,7 @@ export class MeetupsComponent implements OnInit {
     const { _id: meetupId, _rev: meetupRev, index } = meetup;
     this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
       .then((data) => {
-        this.getMeetups();
+        this.meetups.splice(index, 1);
         jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this meetup');
   }

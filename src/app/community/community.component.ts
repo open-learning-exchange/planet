@@ -29,15 +29,14 @@ export class CommunityComponent implements OnInit {
   getcommunitylist() {
      this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
       .then((data) => {
-        console.log(data)
         this.communities = data.rows;
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
   deleteClick(community, index) {
-    // The ... is the spread operator. The below sets deleteItem a copy of the community
+    // The ... is the spread operator. The below sets deleteItem a copy of the community.doc
     // object with an additional index property that is the index within the communites array
-    this.deleteItem = { ...community, index };
+    this.deleteItem = { ...community.doc, index };
     jQuery('#planetDelete').modal('show');
   }
 
@@ -46,7 +45,7 @@ export class CommunityComponent implements OnInit {
     const { _id: id, _rev: rev, index } = community;
     this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
       .then((data) => {
-        this.getcommunitylist();
+        this.communities.splice(index, 1);
         jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this community');
   }
