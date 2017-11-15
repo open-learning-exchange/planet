@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         <ng-container *ngFor="let nation of nations; let i = index">
-          <tr *ngIf="nation.doc.name.toLowerCase().includes(searchText)">
+          <tr *ngIf="nation.doc.name.toLowerCase().includes(searchText.toLowerCase())">
             <td>{{nation.doc.name}}</td>
             <td>{{nation.doc.admin_name}}</td>
             <td>{{nation.doc.nationurl}}</td>
