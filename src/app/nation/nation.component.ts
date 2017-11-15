@@ -168,7 +168,11 @@ export class NationComponent implements OnInit, AfterViewInit {
       this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')  
       .subscribe(res => {
         this.view_data = res.json().rows.length > 0 ? res.json().rows[0].doc : [];
-      },(error) => console.log(error));
+        jQuery('#view').modal('show');
+      },(error) => {
+        console.log(error);
+        jQuery('#view').modal('hide');
+      });
     }else{
       this.message = 'There is no data.';
     }
