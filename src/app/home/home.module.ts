@@ -6,6 +6,8 @@ import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
+import { RegisterComponent } from '../login/register/register.component';
+
 
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
@@ -29,7 +31,8 @@ import { NationComponent } from '../nation/nation.component';
     NavigationComponent,
     UsersComponent,
     CommunityComponent,
-    NationComponent
+    NationComponent,
+    RegisterComponent
   ],
   providers: [ NationValidatorService ]
 })
