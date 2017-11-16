@@ -1,0 +1,33 @@
+<h1>Users</h1>
+<div class="km-user-table" *ngIf="displayTable">
+  <form (ngSubmit)="roleSubmit(allUsers.data,selectedRole)" #rolesForm="ngForm">
+    <div>
+      <select [(ngModel)]="selectedRole" name="role">
+        <option *ngFor="let role of roleList" [value]="role">{{role}}</option>
+      </select>
+      <button class="ole-btn cursor-pointer" type="submit">Add role to selected</button>
+    </div>
+  </form>
+  <mat-table #table [dataSource]="allUsers">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>User Name</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="roles">
+      <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-chip-list>
+          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.admin" (remove)="deleteRole(element, i)">
+            {{role}}
+            <mat-icon matChipRemove *ngIf="!element.admin">x</mat-icon>
+          </mat-chip>
+      </mat-chip-list>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:row.selected}" (click)="select(row)"></mat-row>
+  </mat-table>
+</div>
+<div class="km-message">{{message}}</div>

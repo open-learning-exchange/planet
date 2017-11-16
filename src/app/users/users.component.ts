@@ -3,49 +3,18 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
+import { MatTableDataSource } from '@angular/material';
+
 @Component({
-  template: `
-    <h1>Users</h1>
-    <div class="km-user-table" *ngIf="displayTable">
-      <form (ngSubmit)="roleSubmit(allUsers,selectedRole)" #rolesForm="ngForm">
-        <div>
-          <select [(ngModel)]="selectedRole" name="role">
-            <option *ngFor="let role of roleList" [value]="role">{{role}}</option>
-          </select>
-          <button class="ole-btn cursor-pointer" type="submit">Add role to selected</button>
-        </div>
-      </form>
-      <table class="ole-table">
-        <thead>
-          <td>User name</td>
-          <td>Roles</td>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let user of allUsers"
-            [ngClass]="{'cursor-pointer':user._id,'hoverable':user._id,'selected':user.selected}"
-            (click)="select(user)"
-          >
-            <td>{{user.name}}</td>
-            <td>
-              <span *ngFor="let role of user.roles; index as i" [ngClass]="{'ole-pill':user._id}">
-                {{role}}
-                <i class="fa fa-times cursor-pointer" *ngIf="user._id" aria-hidden="true" (click)="deleteRole(user,i,$event)"></i>
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="km-message">{{message}}</div>
-  `
+  templateUrl: './users.component.html'
 })
 export class UsersComponent implements OnInit {
   name = '';
   roles: string[] = [];
-  allUsers: any[] = [];
+  allUsers = new MatTableDataSource();
   message = '';
   displayTable = true;
+  displayedColumns = [ 'name', 'roles' ];
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -98,10 +67,10 @@ export class UsersComponent implements OnInit {
         }
       }
 
-      this.allUsers = [].concat(
+      this.allUsers.data = [].concat(
         data[0].rows.reduce((users: any[], user: any) => {
           if (user.id !== '_design/_auth') {
-            users.push(user.doc);
+            users.push({ ...user.doc, admin: false });
           }
           return users;
         }, []),
@@ -115,8 +84,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  deleteRole(user: any, index: number, event: any) {
-    event.stopPropagation();
+  deleteRole(user: any, index: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
     const tempUser = Object.assign({}, user);
     tempUser.roles.splice(index, 1);
