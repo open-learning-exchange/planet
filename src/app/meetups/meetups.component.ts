@@ -1,11 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import {MatButtonModule} from '@angular/material/button';
 declare var jQuery: any;
 
 @Component({
   templateUrl: './meetups.component.html',
 })
 export class MeetupsComponent implements OnInit {
+  allMeetups = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.allMeetups.filter = filterValue;
+  }
+  title : string;
+  description : string;
+  displayedColumns = ['title', 'description','actions'];
   message = '';
   meetups = [];
   deleteItem = {};
@@ -14,17 +27,26 @@ export class MeetupsComponent implements OnInit {
     private couchService: CouchService
   ) { }
 
+  ngAfterViewInit() {
+    this.allMeetups.paginator = this.paginator;
+    this.allMeetups.sort = this.sort;
+  }
   getMeetups() {
     this.couchService.get('meetups/_all_docs?include_docs=true')
       .then((data) => {
-        this.meetups = data.rows;
+        this.allMeetups.data= [].concat(
+          data.rows.reduce((meetups: any[], meetup: any) => {
+            meetups.push({ ...meetup.doc });
+            return meetups;
+          },[])
+        );
       }, (error) => this.message = 'There was a problem getting meetups');
   }
 
-  deleteClick(meetup, index) {
+  deleteClick(meetup) {
     // The ... is the spread operator. The below sets deleteItem a copy of the meetup.doc
     // object with an additional index property that is the index within the meetups array
-    this.deleteItem = { ...meetup.doc, index };
+    this.deleteItem = { ...meetup };
     jQuery('#planetDelete').modal('show');
   }
 
