@@ -4,7 +4,7 @@
   <mat-form-field>
     <mat-select [(ngModel)]="selectedNation">
       <mat-option i18n value="">All</mat-option>
-      <mat-option *ngFor="let nationName of nations;" value= {{nationName.doc.admin_name}}> {{nationName.doc.name}} </mat-option>
+      <mat-option *ngFor="let nationName of nations;" value={{nationName.doc.admin_name}}> {{nationName.doc.name}} </mat-option>
     </mat-select>
   </mat-form-field> &nbsp;
   <mat-form-field>
@@ -20,9 +20,9 @@
       <mat-header-cell *matHeaderCellDef > Community </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="lastAppUpdateDat">
+    <ng-container matColumnDef="lastAppUpdateDate">
       <mat-header-cell *matHeaderCellDef i18n > Last App Update </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.lastAppUpdateDat}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.lastAppUpdateDate}} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="version">
       <mat-header-cell *matHeaderCellDef i18n > Version No. </mat-header-cell>

@@ -36,12 +36,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   getMeetups() {
     this.couchService.get('meetups/_all_docs?include_docs=true')
       .then((data) => {
-        this.allMeetups.data = [].concat(
-          data.rows.reduce((meetups: any[], meetup: any) => {
-            meetups.push({ ...meetup.doc });
-            return meetups;
-          }, [])
-        );
+        // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
+        // Map over data.rows to remove the 'doc' property layer
+        this.allMeetups.data = data.rows.map(meetup => meetup.doc);
       }, (error) => this.message = 'There was a problem getting meetups');
   }
 
