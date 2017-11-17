@@ -114,7 +114,7 @@ export class UsersComponent implements OnInit {
       return promises;
     }, [])).then((responses) => {
       users.map((user) => {
-        if(user.selected && user.roles.indexOf(role) === -1) {
+        if (user.selected && user.roles.indexOf(role) === -1) {
           // Add role to UI and update rev from CouchDB response
           user.roles.push(role);
           const res: any = responses.find((response: any) => response.id === user._id);

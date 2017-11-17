@@ -36,13 +36,18 @@ TOTAL_CHANGES=$(($CHANGES + $CHANGES_CACHED))
 git stash -k
 # Run tslint and get the output and return code
 echo "Running Linters:"
-tslint=$(vagrant ssh -c 'cd /vagrant; ng lint')
-ret_code=$?
+tslint=$(ng lint)
+ret_code_tslint=$?
+tslint_vagrant=$(vagrant ssh -c 'cd /vagrant; ng lint')
+ret_code_tslint_vagrant=$?
 
 # If the tests didn't pass, announce it failed and print the output
-if [ $ret_code != 0 ]; then
-  printf "${RED}tslint failed:${NC}\n"
+if [ $ret_code_tslint != 0 ] && [ $ret_code_tslint_vagrant != 0 ]; then
+  printf "${RED}tslint failed.${NC}\n"
   echo "$tslint"
+  echo "$tslint_vagrant"
+  echo "$ret_code_tslint"
+  echo "$ret_code_tslint_vagrant"
   pass=false
 else
   printf "${GREEN}tslint passed.${NC}\n"

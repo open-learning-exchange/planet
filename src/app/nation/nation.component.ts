@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl } from '@angular/material';
@@ -19,10 +19,10 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
   templateUrl: './nation.component.html',
-  styleUrls: ['./nation.scss']
+  styleUrls: [ './nation.scss' ]
 })
 
-export class NationComponent implements OnInit {
+export class NationComponent implements OnInit, AfterViewInit {
 
   allNations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -32,7 +32,7 @@ export class NationComponent implements OnInit {
   admin_name: string;
   nationurl: string;
   action: string;
-  displayedColumns = ['name', 'admin_name', 'nationurl', '_id'];
+  displayedColumns = [ 'name', 'admin_name', 'nationurl', '_id' ];
   readonly dbName = 'nations';
   message = '';
   nations = [];
@@ -80,7 +80,7 @@ export class NationComponent implements OnInit {
       .then((data) => {
         this.allNations.data = [].concat(
           data.rows.reduce((nations: any[], nation: any , i: any) => {
-            nations.push({ ...nation.doc, i});
+            nations.push({ ...nation.doc, i });
             return nations;
           }, []),
         );
@@ -130,7 +130,7 @@ export class NationComponent implements OnInit {
     this.createForm();
   }
 
-  
+
 
 
 }

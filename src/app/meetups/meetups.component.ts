@@ -1,24 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 declare var jQuery: any;
 
 @Component({
   templateUrl: './meetups.component.html',
 })
-export class MeetupsComponent implements OnInit {
+export class MeetupsComponent implements OnInit, AfterViewInit {
   allMeetups = new MatTableDataSource();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.allMeetups.filter = filterValue;
-  }
-  title : string;
-  description : string;
-  displayedColumns = ['title', 'description','actions'];
+  title: string;
+  description: string;
+  displayedColumns = [ 'title', 'description', 'actions' ];
   message = '';
   meetups = [];
   deleteItem = {};
@@ -27,18 +20,27 @@ export class MeetupsComponent implements OnInit {
     private couchService: CouchService
   ) { }
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
   ngAfterViewInit() {
     this.allMeetups.paginator = this.paginator;
     this.allMeetups.sort = this.sort;
   }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.allMeetups.filter = filterValue;
+  }
   getMeetups() {
     this.couchService.get('meetups/_all_docs?include_docs=true')
       .then((data) => {
-        this.allMeetups.data= [].concat(
+        this.allMeetups.data = [].concat(
           data.rows.reduce((meetups: any[], meetup: any) => {
             meetups.push({ ...meetup.doc });
             return meetups;
-          },[])
+          }, [])
         );
       }, (error) => this.message = 'There was a problem getting meetups');
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
@@ -9,7 +9,7 @@ declare var jQuery: any;
 @Component({
   templateUrl: './community.component.html'
 })
-export class CommunityComponent implements OnInit {
+export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
   communities = [];
   selectedValue = '';
@@ -17,7 +17,15 @@ export class CommunityComponent implements OnInit {
   nations = [];
   deleteItem = {};
   displayTable = true;
-  displayedColumns = ['name', 'lastAppUpdateDat', 'version', 'nationName', 'lastPublicationsSyncDate', 'lastActivitiesSyncDate', 'registrationRequest', 'action'];
+  displayedColumns = [ 'name',
+    'lastAppUpdateDate',
+    'version',
+    'nationName',
+    'lastPublicationsSyncDate',
+    'lastActivitiesSyncDate',
+    'registrationRequest',
+    'action'
+  ];
   allCommunity = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
