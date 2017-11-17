@@ -1,20 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { MatFormFieldModule, MatInputModule } from '@angular/material';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   template: `
   <p>{{message}}</p>
   <form class="form-horizontal" (ngSubmit)="onSubmit(meetupForm.value)" #meetupForm="ngForm">
     <legend>Start a New Meetup</legend>
-    <div class="form-group col-md-4">
-      <label class="control-label">Title</label>
-      <input name="title" type="text" ngModel placeholder="title" class="form-control input-md" required="" />
+    <div class="fields-container">
+      <mat-form-field>
+        <input matInput name="title" type="text" ngModel placeholder="title"  placeholder="Title" required=""  >
+      </mat-form-field>
     </div>
-    <div class="form-group">
-      <label class="col-md-4 control-label">Description</label>
-      <input name="description" type="text" ngModel placeholder="description" class="form-control input-md" required="" />
+    <div class="fields-container">
+      <mat-form-field>
+        <textarea matInput name="description" type="text" ngModel placeholder="Description" required=""></textarea>
+      </mat-form-field>
     </div>
-    <button name="singlebutton" class="btn btn-primary" type="submit">Save</button>
+    <button mat-raised-button type="submit" i18n>Save</button>
   </form>
   `
 })
