@@ -3,7 +3,7 @@
 .ole-login {
 
   height:100vh;
-  width:600px;
+  width:500px;
   margin: 0 auto;
   color:white;
   background: linear-gradient($ole-blue-light,$ole-blue-dark);
@@ -11,8 +11,8 @@
   overflow:hidden;
 
   .ole-logo {
-    margin-top:-200px;
-    height:600px;
+    margin-top:-100px;
+    height:500px;
     width:100%;
     background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
     * {
@@ -22,44 +22,15 @@
       text-shadow:1px 1px black;
     }
     img {
-      height:100px;
-      width:100px;
+      height:50px;
+      width:50px;
       display:block;
       margin:0 auto;
     }
 
   }
-
-
-  form {
-
-    width:300px;
-    margin:0 auto;
-
-    input {
-      width:300px;
-    }
-
-    div {
-      margin:8px 0;
-    }
-
-    .login-actions a {
-      display:inline-block;
-    }
-
+  .login-actions {
+    margin-top: 6%;
   }
-
-  input {
-    border:0px;
-    border-bottom:1px solid white;
-    color:white;
-    background:none;
-  }
-
-  input::-webkit-input-placeholder {
-    color: white;
-    opacity:1;
-  }
-
 }
+
