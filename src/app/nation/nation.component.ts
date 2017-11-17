@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+
 declare var jQuery: any;
 import {
   FormBuilder,
@@ -15,10 +18,21 @@ import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
-  templateUrl: './nation.component.html'
+  templateUrl: './nation.component.html',
+  styleUrls: ['./nation.scss']
 })
 
 export class NationComponent implements OnInit {
+
+  allNations = new MatTableDataSource();
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  _id: string;
+  name: string;
+  admin_name: string;
+  nationurl: string;
+  action: string;
+  displayedColumns = ['name', 'admin_name', 'nationurl', '_id'];
   readonly dbName = 'nations';
   message = '';
   nations = [];
@@ -39,6 +53,17 @@ export class NationComponent implements OnInit {
     this.getNationList();
   }
 
+  ngAfterViewInit() {
+    this.allNations.sort = this.sort;
+    this.allNations.paginator = this.paginator;
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.allNations.filter = filterValue;
+  }
+
   createForm() {
     this.nationForm = this.fb.group({
       adminName: [ '', Validators.required,
@@ -53,15 +78,19 @@ export class NationComponent implements OnInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nations = data.rows;
-        console.log(this.nations);
+        this.allNations.data = [].concat(
+          data.rows.reduce((nations: any[], nation: any , i: any) => {
+            nations.push({ ...nation.doc, i});
+            return nations;
+          }, []),
+        );
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
   deleteClick(nation, index) {
     // The ... is the spread operator. The below sets deleteItem a copy of the nation.doc
     // object with an additional index property that is the index within the nations array
-    this.deleteItem = { ...nation.doc, index };
+    this.deleteItem = { ...nation, index };
     jQuery('#planetDelete').modal('show');
   }
 
@@ -100,5 +129,8 @@ export class NationComponent implements OnInit {
   openNationAddForm() {
     this.createForm();
   }
+
+  
+
 
 }
