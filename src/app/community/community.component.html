@@ -1,66 +1,60 @@
 <h2 i18n>Communities List</h2>
 <br/>
-<div class="row">
-  <div class="col-md-3">
-    <select [(ngModel)]="selectedNation" class="form-control">
-      <option i18n value="">All</option>
-      <option *ngFor="let nationName of nations; let i = index" value= {{nationName.doc.admin_name}}> {{nationName.doc.name}} </option>
-    </select>
-  </div>
-  <div class="col-md-3">
-    <select  [(ngModel)]="selectedValue" class="form-control">
-      <option i18n value="">All</option>
-      <option i18n value="pending">pending</option>
-      <option i18n value="accepted">accepted</option>
-      <option i18n value="rejected">rejected</option>
-    </select>
-  </div>
-</div>
-<br/>
-<table class="table">
-  <thead>
-    <tr>
-      <th i18n>Community</th>
-      <th i18n>Last App Update</th>
-      <th i18n>Version No.</th>
-      <th i18n>Nation Name</th>
-      <th i18n>Last Publications Sync</th>
-      <th i18n>Last Activities Sync</th>
-      <th i18n>Status</th>
-      <th i18n>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <ng-container *ngFor="let community of communities; let i = index">
-      <tr *ngIf="(selectedValue == '' || community.doc.registrationRequest == selectedValue) && (selectedNation == '' || community.doc.nationName == selectedNation)"  >
-        <td>
-          {{community.doc.name}}
-        </td>
-        <td>
-          {{community.doc.lastAppUpdateDat}}
-        </td>
-        <td>
-          {{community.doc.version}}
-        </td>
-        <td>
-          {{community.doc.nationName}}
-        </td>
-        <td>
-          {{community.doc.lastPublicationsSyncDate}}
-        </td>
-        <td>
-          {{community.doc.lastActivitiesSyncDate}}
-        </td>
-        <td>
-          {{community.doc.registrationRequest}}
-        </td>
-        <td>
-          <button i18n class="btn btn-danger" (click)="deleteClick(community,i)">Delete</button>
-        </td>
-      </tr>
+<div class="example-container mat-elevation-z8">
+  <mat-form-field>
+    <mat-select [(ngModel)]="selectedNation">
+      <mat-option i18n value="">All</mat-option>
+      <mat-option *ngFor="let nationName of nations;" value= {{nationName.doc.admin_name}}> {{nationName.doc.name}} </mat-option>
+    </mat-select>
+  </mat-form-field> &nbsp;
+  <mat-form-field>
+    <mat-select [(ngModel)]="selectedValue">
+      <mat-option i18n value="">All</mat-option>
+      <mat-option i18n value="pending">pending</mat-option>
+      <mat-option i18n value="accepted">accepted</mat-option>
+      <mat-option i18n value="rejected">rejected</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-table #table [dataSource]="allCommunity">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef > Community </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
-  </tbody>
-</table>
+    <ng-container matColumnDef="lastAppUpdateDat">
+      <mat-header-cell *matHeaderCellDef i18n > Last App Update </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.lastAppUpdateDat}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="version">
+      <mat-header-cell *matHeaderCellDef i18n > Version No. </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.version}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="nationName">
+      <mat-header-cell *matHeaderCellDef i18n > Nation Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.nationName}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="lastPublicationsSyncDate">
+      <mat-header-cell *matHeaderCellDef i18n > Last Publications Sync </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.lastPublicationsSyncDate}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="lastActivitiesSyncDate">
+      <mat-header-cell *matHeaderCellDef i18n > Last Activities Sync </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.lastActivitiesSyncDate}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="registrationRequest">
+      <mat-header-cell *matHeaderCellDef i18n > Status </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.registrationRequest}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef i18n > Actions </mat-header-cell>
+      <mat-cell *matCellDef="let element"><button md-raised-button (click)="deleteClick(element)">Delete</button></mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]">
+  </mat-paginator>
 
 <planet-alerts-delete
   (okClick)="deleteCommunity($event)"

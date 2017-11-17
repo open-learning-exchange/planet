@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
+
 declare var jQuery: any;
 
 @Component({
@@ -14,10 +16,19 @@ export class CommunityComponent implements OnInit {
   selectedNation = '';
   nations = [];
   deleteItem = {};
+  displayTable = true;
+  displayedColumns = ['name', 'lastAppUpdateDat', 'version', 'nationName', 'lastPublicationsSyncDate', 'lastActivitiesSyncDate', 'registrationRequest', 'action'];
+  allCommunity = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private couchService: CouchService
-  ) { }
+
+  ) {}
+
+  ngAfterViewInit() {
+    this.allCommunity.paginator = this.paginator;
+  }
 
   getnationlist() {
     this.couchService.get('nations/_all_docs?include_docs=true')
@@ -29,8 +40,12 @@ export class CommunityComponent implements OnInit {
   getcommunitylist() {
      this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
       .then((data) => {
-        console.log(data)
-        this.communities = data.rows;
+        this.allCommunity.data = [].concat(
+          data.rows.reduce((communities: any[], community: any) => {
+            communities.push({ ...community.doc });
+            return communities;
+          }, []),
+        );
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
