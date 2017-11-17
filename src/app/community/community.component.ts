@@ -58,7 +58,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(community, index) {
-    // The ... is the spread operator. The below sets deleteItem a copy of the community
+    // The ... is the spread operator. The below sets deleteItem a copy of the community.doc
     // object with an additional index property that is the index within the communites array
     this.deleteItem = { ...community, index };
     jQuery('#planetDelete').modal('show');
@@ -69,7 +69,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     const { _id: id, _rev: rev, index } = community;
     this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
       .then((data) => {
-        this.getcommunitylist();
+        this.communities.splice(index, 1);
         jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this community');
   }

@@ -45,10 +45,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       }, (error) => this.message = 'There was a problem getting meetups');
   }
 
-  deleteClick(meetup) {
+  deleteClick(meetup, index) {
     // The ... is the spread operator. The below sets deleteItem a copy of the meetup.doc
     // object with an additional index property that is the index within the meetups array
-    this.deleteItem = { ...meetup };
+    this.deleteItem = { ...meetup, index };
     jQuery('#planetDelete').modal('show');
   }
 
@@ -56,7 +56,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     const { _id: meetupId, _rev: meetupRev, index } = meetup;
     this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
       .then((data) => {
-        this.getMeetups();
+        this.meetups.splice(index, 1);
         jQuery('#planetDelete').modal('hide');
       }, (error) => this.message = 'There was a problem deleting this meetup');
   }
