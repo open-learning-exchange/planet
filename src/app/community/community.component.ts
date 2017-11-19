@@ -36,14 +36,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     this.communities.paginator = this.paginator;
   }
 
-  getnationlist() {
+  getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
         this.nations = data.rows;
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  getcommunitylist() {
+  getCommunityList() {
      this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
@@ -77,8 +77,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.getcommunitylist();
-    this.getnationlist();
+    this.getCommunityList();
+    this.getNationList();
   }
 
 }
