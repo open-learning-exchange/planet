@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
+import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 
-declare var jQuery: any;
 import {
   FormBuilder,
   FormControl,
@@ -24,7 +24,7 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 
 export class NationComponent implements OnInit, AfterViewInit {
 
-  allNations = new MatTableDataSource();
+  nations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   _id: string;
@@ -35,16 +35,17 @@ export class NationComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'name', 'admin_name', 'nationurl', '_id' ];
   readonly dbName = 'nations';
   message = '';
-  nations = [];
   nationForm: FormGroup;
   deleteItem = {};
+  deleteDialog: any;
 
   constructor(
     private location: Location,
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private nationValidatorService: NationValidatorService
+    private nationValidatorService: NationValidatorService,
+    private dialog: MatDialog
   ) {
     this.createForm();
   }
@@ -54,14 +55,14 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.allNations.sort = this.sort;
-    this.allNations.paginator = this.paginator;
+    this.nations.sort = this.sort;
+    this.nations.paginator = this.paginator;
   }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
-    this.allNations.filter = filterValue;
+    this.nations.filter = filterValue;
   }
 
   createForm() {
@@ -80,24 +81,35 @@ export class NationComponent implements OnInit, AfterViewInit {
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.allNations.data = data.rows.map(nation => nation.doc);
+        this.nations.data = data.rows.map(nation => nation.doc);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  deleteClick(nation, index) {
-    // The ... is the spread operator. The below sets deleteItem a copy of the nation.doc
-    // object with an additional index property that is the index within the nations array
-    this.deleteItem = { ...nation, index };
-    jQuery('#planetDelete').modal('show');
+  deleteClick(nation) {
+    this.deleteDialog = this.dialog.open(AlertsDeleteComponent, {
+      data: {
+        okClick: this.deleteNation(nation),
+        type: 'nation',
+        displayName: nation.name
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.message = '';
+    });
   }
 
   deleteNation(nation) {
-    const { _id: nationId, _rev: nationRev, index } = nation;
-    this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
-      .then((data) => {
-        this.nations.splice(index, 1);
-        jQuery('#planetDelete').modal('hide');
-      }, (error) => this.message = 'There was a problem deleting this nation');
+    // Return a function with nation on its scope so it can be called from the dialog
+    return () => {
+      const { _id: nationId, _rev: nationRev } = nation;
+      this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
+        .then((data) => {
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.nations.data = this.nations.data.filter(nation => data.id !== nation._id);
+          this.deleteDialog.close();
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
+    }
   }
 
   onSubmit(nation) {
@@ -112,8 +124,8 @@ export class NationComponent implements OnInit, AfterViewInit {
         .then((data) => {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
-          this.nations.push({ doc: formdata });
-          jQuery('#nationAdd').modal('hide');
+          this.nations.data.push({ doc: formdata });
+          //jQuery('#nationAdd').modal('hide');
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript

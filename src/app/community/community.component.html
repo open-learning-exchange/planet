@@ -15,7 +15,7 @@
       <mat-option i18n value="rejected">rejected</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-table #table [dataSource]="allCommunity">
+  <mat-table #table [dataSource]="communities">
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef > Community </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
@@ -55,11 +55,4 @@
     [pageSize]="10"
     [pageSizeOptions]="[5, 10, 20]">
   </mat-paginator>
-
-<planet-alerts-delete
-  (okClick)="deleteCommunity($event)"
-  (resetMessage)="message=''"
-  [type]="'community'"
-  [deleteItem]="deleteItem"
-  [message]="message">
-</planet-alerts-delete>
+</div>

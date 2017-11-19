@@ -2,20 +2,18 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
-
-declare var jQuery: any;
+import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component'
+import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 
 @Component({
   templateUrl: './community.component.html'
 })
 export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
-  communities = [];
+  communities = new MatTableDataSource();
   selectedValue = '';
   selectedNation = '';
   nations = [];
-  deleteItem = {};
   displayTable = true;
   displayedColumns = [ 'name',
     'lastAppUpdateDate',
@@ -26,16 +24,17 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'registrationRequest',
     'action'
   ];
-  allCommunity = new MatTableDataSource();
+  deleteDialog: any;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
-    private couchService: CouchService
-
+    private couchService: CouchService,
+    private dialog: MatDialog
   ) {}
 
   ngAfterViewInit() {
-    this.allCommunity.paginator = this.paginator;
+    this.communities.paginator = this.paginator;
   }
 
   getnationlist() {
@@ -50,25 +49,32 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.allCommunity.data = data.rows.map(community => community.doc);
+        this.communities.data = data.rows.map(community => community.doc);
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
-  deleteClick(community, index) {
-    // The ... is the spread operator. The below sets deleteItem a copy of the community.doc
-    // object with an additional index property that is the index within the communites array
-    this.deleteItem = { ...community, index };
-    jQuery('#planetDelete').modal('show');
+  deleteClick(community) {
+    this.deleteDialog = this.dialog.open(AlertsDeleteComponent, {
+      data: {
+        okClick: this.deleteCommunity(community),
+        type: 'community',
+        displayName: community.name
+      }
+    });
   }
 
   deleteCommunity(community) {
+    // Return a function with community on its scope to pass to delete dialog
+    return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-    const { _id: id, _rev: rev, index } = community;
-    this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
-      .then((data) => {
-        this.communities.splice(index, 1);
-        jQuery('#planetDelete').modal('hide');
-      }, (error) => this.message = 'There was a problem deleting this community');
+      const { _id: id, _rev: rev } = community;
+      this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
+        .then((data) => {
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.communities.data = this.communities.data.filter(community => data.id !== community._id);
+          this.deleteDialog.close();
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this community');
+    }
   }
 
   ngOnInit() {
