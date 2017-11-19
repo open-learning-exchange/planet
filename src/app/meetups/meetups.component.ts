@@ -9,8 +9,6 @@ import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component'
 })
 export class MeetupsComponent implements OnInit, AfterViewInit {
   meetups = new MatTableDataSource();
-  title: string;
-  description: string;
   displayedColumns = [ 'title', 'description', 'actions' ];
   message = '';
   deleteDialog: any;
@@ -59,10 +57,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.meetups.data = this.meetups.data.filter(meetup => data.id !== meetup._id);
+          this.meetups.data = this.meetups.data.filter(meet => data.id !== meet._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
-    }
+    };
   }
 
   ngOnInit() {

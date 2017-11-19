@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component'
+import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 
 @Component({
@@ -14,7 +14,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   selectedValue = '';
   selectedNation = '';
   nations = [];
-  displayTable = true;
   displayedColumns = [ 'name',
     'lastAppUpdateDate',
     'version',
@@ -71,10 +70,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.communities.data = this.communities.data.filter(community => data.id !== community._id);
+          this.communities.data = this.communities.data.filter(comm => data.id !== comm._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this community');
-    }
+    };
   }
 
   ngOnInit() {

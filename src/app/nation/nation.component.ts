@@ -27,12 +27,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   nations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  _id: string;
-  name: string;
-  admin_name: string;
-  nationurl: string;
-  action: string;
-  displayedColumns = [ 'name', 'admin_name', 'nationurl', '_id' ];
+  displayedColumns = [ 'name', 'admin_name', 'nationurl', 'action' ];
   readonly dbName = 'nations';
   message = '';
   nationForm: FormGroup;
@@ -77,7 +72,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getNationList() {
-    this.couchService.get('nations/_all_docs?include_docs=true')
+    this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
@@ -103,13 +98,13 @@ export class NationComponent implements OnInit, AfterViewInit {
     // Return a function with nation on its scope so it can be called from the dialog
     return () => {
       const { _id: nationId, _rev: nationRev } = nation;
-      this.couchService.delete('nations/' + nationId + '?rev=' + nationRev)
+      this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.nations.data = this.nations.data.filter(nation => data.id !== nation._id);
+          this.nations.data = this.nations.data.filter(nat => data.id !== nat._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
-    }
+    };
   }
 
   onSubmit(nation) {
@@ -120,12 +115,11 @@ export class NationComponent implements OnInit, AfterViewInit {
         'nationurl': nation.nationUrl,
         'type': 'nation'
       };
-      this.couchService.post('nations', formdata)
+      this.couchService.post(this.dbName, formdata)
         .then((data) => {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push({ doc: formdata });
-          //jQuery('#nationAdd').modal('hide');
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript

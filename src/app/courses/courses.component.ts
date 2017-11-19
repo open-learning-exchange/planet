@@ -45,9 +45,9 @@ export class CoursesComponent implements OnInit {
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.courses = this.courses.filter(course => data.id !== course.doc._id);
+          this.courses = this.courses.filter(c => data.id !== c.doc._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
-  }
+  };
 
 }
