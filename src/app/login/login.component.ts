@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -7,8 +7,8 @@ require('./login.scss');
 
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: [ './login.scss' ]
-
+  styleUrls: [ './login.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent {
   constructor(

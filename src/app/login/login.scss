@@ -3,16 +3,34 @@
 .ole-login {
 
   height:100vh;
-  width:500px;
+  width:600px;
   margin: 0 auto;
-  color:white;
   background: linear-gradient($ole-blue-light,$ole-blue-dark);
   text-align:center;
+  color: white;
   overflow:hidden;
 
+  form, .login-actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  form {
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .login-actions * {
+    margin-bottom: 3px;
+  }
+
+  label {
+    color: white;
+  }
+
   .ole-logo {
-    margin-top:-100px;
-    height:500px;
+    margin-top:-200px;
+    height:600px;
     width:100%;
     background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
     * {
@@ -22,8 +40,8 @@
       text-shadow:1px 1px black;
     }
     img {
-      height:50px;
-      width:50px;
+      height:100px;
+      width:100px;
       display:block;
       margin:0 auto;
     }
@@ -33,7 +51,4 @@
     margin-top: 6%;
     margin-right: 5%;
   }
-}
-.form-class {
-  margin-top: -55px;
 }
