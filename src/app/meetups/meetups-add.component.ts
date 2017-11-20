@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   template: `

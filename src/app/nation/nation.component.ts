@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
-import { MatButtonModule } from '@angular/material/button';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 
 import {

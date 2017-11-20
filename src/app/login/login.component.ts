@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
 
 require('./login.scss');
 
