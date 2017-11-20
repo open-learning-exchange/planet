@@ -11,14 +11,23 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let meetup of meetups" class="km-meetup-row">
+    <tr *ngFor="let meetup of meetups; let i = index" class="km-meetup-row">
       <td class="km-meetup-title">{{meetup.doc.title}}</td>
       <td class="km-meetup-description">{{meetup.doc.description}}</td>
       <td>
-        <button class="btn btn-danger" ngModel (click)="deleteMeetup(meetup.doc._id,meetup.doc._rev)">Delete</button>
+        <button class="btn btn-danger" (click)="deleteClick(meetup, i)">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
 <!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
 </div>
+
+<planet-alerts-delete
+  (okClick)="deleteMeetup($event)"
+  (resetMessage)="message=''"
+  [type]="'meetup'"
+  [deleteItem]="deleteItem"
+  [message]="message"
+  [displayName]="deleteItem.title">
+</planet-alerts-delete>

@@ -1,3 +1,55 @@
+<!-- FOR DEMO ONLY -->
+<!-- use the async pipe when fetching for database -->
+<ng-template ngFor let-item [ngForOf]="items">
+  <!-- Used ng-template insted of spans or divs because I did not want any to add any element -->
+  <div class="list-item">
+    <div class="list-item-info">
+      <h3>{{ item.title }}</h3>
+      <div class="list-item-content">
+        Author {{item.author}}, Year {{item.year}}, Media {{item.Medium}}, Language {{item.language}}, Subject(s)
+        <!-- normal ng fors and ng ifs dont work with ng-template -->
+        <ng-template ngFor let-sub [ngForOf]="item.subject">{{sub}}, </ng-template> Level(s)
+        <ng-template ngFor let-lev [ngForOf]="item.Level">{{lev}}, </ng-template> Publisher/Attribution {{item.Publisher}},
+        <ng-template [ngIf]="item.linkToLicense">Link to License {{item.linkToLicense}},</ng-template> Resource {{item.resourceFor}}, Resource Type {{item.resourceType}}
+        <!-- there was a collection entry in the example picture but i didnt find it in the old couchdb -->
+        <ng-template [ngIf]="item.collection?.length > 0">Collection
+          <ng-template ngFor let-col [ngForOf]="item.collection">{{col}} / </ng-template>
+        </ng-template>
+      </div>
+      <div class="list-item-action">
+        <a class="btn btn-outline-primary" [routerLink]="['/resources/view', item._id]">View Details</a>
+        <a class="btn btn-outline-primary" [routerLink]="['/resources/wip']">Add To Library</a>
+        <a class="btn btn-outline-primary" [routerLink]="['/resources/wip']">Feedback</a>
+        <a class="btn btn-outline-danger" [routerLink]="['/resources/wip']">Delete</a>
+      </div>
+    </div>
+    <div class="list-item-rating">
+      <span class="stars">
+        <!-- used simple arithmetic to get 20 and converted into % -->
+        <span [ngStyle]="{'width': 20 * getRating(item.sum,item.timesRated) + '%'}"></span>
+      </span>
+      <div class="label">
+        <span class="small">Rating ({{rating}}) </span>
+        <span class="small">Female ({{fRating}}%)
+        </span>
+        <span class="small">Male ({{mRating}}%)
+        </span>
+      </div>
+      <div class="info">
+        <span> {{rating}}
+        </span>
+        <div class="rating-bar">
+          <!-- used ngStyle here to set the width of the bar dynamically -->
+          <div [ngStyle]="{ 'background-color': 'gold', 'height': '8px', 'width': fRating + '%'}"></div>
+        </div>
+        <div class="rating-bar">
+          <div [ngStyle]="{ 'background-color': 'gold', 'height': '8px', 'width': mRating + '%'}"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 <form (ngSubmit)="submitResource()" #resourcesForm="ngForm">
   <div class="form-group">
     <label>File Type:</label>
@@ -14,9 +66,11 @@
   </div>
   <button type="submit">Submit</button>
 </form>
-<div>
+<!-- <div>
   <span>{{message}}</span>
   <ol>
-    <li *ngFor="let resource of resources"><a [routerLink]="['/resources/view',resource.doc._id]">{{ resource.doc.filename }}</a></li>
+    <li *ngFor="let resource of resources">
+      <a [routerLink]="['/resources/view',resource.doc._id]">{{ resource.doc.filename }}</a>
+    </li>
   </ol>
-</div>
+</div> -->

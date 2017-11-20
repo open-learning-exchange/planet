@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
+declare var jQuery: any;
 
 @Component({
   templateUrl: './community.component.html'
@@ -9,49 +10,49 @@ import { CouchService } from '../shared/couchdb.service';
 export class CommunityComponent implements OnInit {
   message = '';
   communities = [];
-  filter = '';
   selectedValue = '';
+  selectedNation = '';
+  nations = [];
+  deleteItem = {};
+
   constructor(
     private couchService: CouchService
-    ) { }
+  ) { }
+
+  getnationlist() {
+    this.couchService.get('nations/_all_docs?include_docs=true')
+      .then((data) => {
+        this.nations = data.rows;
+      }, (error) => this.message = 'There was a problem getting NationList');
+  }
 
   getcommunitylist() {
-    this.couchService.post('communityregistrationrequests/_find', {
-      'selector': {
-        '$and': [
-          {
-            '_id': { '$gt': null }
-          },
-          {
-            'nationName': { $regex: '.*' + this.filter + '.*' }
-          },
-          {
-            'registrationRequest': { $regex: '.*' + this.selectedValue + '.*' }
-          }
-        ]
-      }
-    })
-    .then((data) => {
-      this.communities = data.docs;
-    }, (error) => this.message = 'There was a problem getting community');
+     this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
+      .then((data) => {
+        this.communities = data.rows;
+      }, (error) => this.message = 'There was a problem getting Communities');
   }
 
-  filterCommunity() {
-    this.getcommunitylist();
+  deleteClick(community, index) {
+    // The ... is the spread operator. The below sets deleteItem a copy of the community.doc
+    // object with an additional index property that is the index within the communites array
+    this.deleteItem = { ...community.doc, index };
+    jQuery('#planetDelete').modal('show');
   }
 
-  deleteCommunity(communityId, communityRev) {
-    const val = confirm('Are you sure you want to delete it?');
-    if (val) {
-      this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
-        .then((data) => {
-          this.getcommunitylist();
-        }, (error) => this.message = 'There was a problem deleting this community');
-    }
+  deleteCommunity(community) {
+    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+    const { _id: id, _rev: rev, index } = community;
+    this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
+      .then((data) => {
+        this.communities.splice(index, 1);
+        jQuery('#planetDelete').modal('hide');
+      }, (error) => this.message = 'There was a problem deleting this community');
   }
 
   ngOnInit() {
     this.getcommunitylist();
+    this.getnationlist();
   }
 
 }

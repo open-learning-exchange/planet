@@ -10,6 +10,7 @@ import { UsersComponent } from '../users/users.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
+import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 import { FeedbackComponent } from '../feedback/feedback.component';
@@ -20,7 +21,8 @@ import { FeedbackComponent } from '../feedback/feedback.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    PlanetFormsModule
+    PlanetFormsModule,
+    PlanetAlertsModule
   ],
   declarations: [
     HomeComponent,

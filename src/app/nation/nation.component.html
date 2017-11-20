@@ -11,18 +11,28 @@
           <th i18n>Nation Name</th>
           <th i18n>Admin Name</th>
           <th i18n>Nation Url</th>
+          <th i18n>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let nation of nations">
+        <tr *ngFor="let nation of nations; let i = index">
           <td>{{nation.doc.name}}</td>
           <td>{{nation.doc.admin_name}}</td>
           <td>{{nation.doc.nationurl}}</td>
+          <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
         </tr>
         </tbody>
     </table>
   </div>
 </div>
+
+<planet-alerts-delete
+  (okClick)="deleteNation($event)"
+  (resetMessage)="message=''"
+  [type]="'nation'"
+  [deleteItem]="deleteItem"
+  [message]="message">
+</planet-alerts-delete>
 
 <!-- Modal for adding nations -->
 <div class="modal fade" id="nationAdd" role="dialog" data-backdrop="static">
