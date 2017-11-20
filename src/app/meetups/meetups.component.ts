@@ -15,7 +15,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog;
+    private dialog: MatDialog
   ) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
