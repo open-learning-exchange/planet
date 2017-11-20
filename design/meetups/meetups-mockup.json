@@ -1,0 +1,79 @@
+{
+    "docs":[
+        {
+            "kind": "Meetup",
+            "title": "Happy Hacking Hangout",
+            "description": "this is our Team Meeting",
+            "startDate": "",
+            "endDate": "",
+            "recurring": "Weekly",
+            "Day": [
+            ],
+            "startTime": "3:00pm",
+            "endTime": "5:00pm",
+            "category": "ICT",
+            "meetupLocation": "virtual",
+            "creator": "a4b83bb5dc4426fd628c211170000c80"
+         },
+         {
+            "kind": "Meetup",
+            "title": "Angular Hangout",
+            "description": "this is our Angular Meeting",
+            "startDate": "",
+            "endDate": "",
+            "recurring": "Weekly",
+            "Day": [
+            ],
+            "startTime": "1:00pm",
+            "endTime": "6:00pm",
+            "category": "ICT",
+            "meetupLocation": "virtual",
+            "creator": "a4b83bb5dc4426fd628c211170000fs0"
+         },
+         {
+            "kind": "Meetup",
+            "title": "Social Awareness",
+            "description": "Social Awareness program",
+            "startDate": "",
+            "endDate": "",
+            "recurring": "Weekly",
+            "Day": [
+            ],
+            "startTime": "1:00pm",
+            "endTime": "5:00pm",
+            "category": "ICT",
+            "meetupLocation": "virtual",
+            "creator": "a4b83bb5dc4426fd628c21117ed00c80"
+         },
+         {
+            "kind": "Meetup",
+            "title": "Demo",
+            "description": "Demo about the projects",
+            "startDate": "",
+            "endDate": "",
+            "recurring": "Weekly",
+            "Day": [
+            ],
+            "startTime": "4:00pm",
+            "endTime": "5:00pm",
+            "category": "ICT",
+            "meetupLocation": "nepal",
+            "creator": "1283bb5dc4426fd628c21117ed00c80"
+         },
+         {
+            "kind": "Meetup",
+            "title": "Meeting",
+            "description": "To discuss about planet issue",
+            "startDate": "",
+            "endDate": "",
+            "recurring": "Weekly",
+            "Day": [
+            ],
+            "startTime": "2:00pm",
+            "endTime": "5:00pm",
+            "category": "ICT",
+            "meetupLocation": "nepal",
+            "creator": "1283bb5fffffffd628c21117ed00c80"
+         }
+    ]
+}
