@@ -4,12 +4,12 @@
     <label class="col-4" i18n>Is Your feedback Urgent?</label><br>
     <div class="form-check form-check-inline">
       <label class="form-check-label col-4" i18n>
-        <input class="form-check-input" type="radio" value="true" name="isUrgent"[(ngModel)]="this.feedback.isUrgent"> Yes
+        <input class="form-check-input" type="radio" value="true" name="isUrgent" [(ngModel)]="this.feedback.isUrgent"> Yes
       </label>
     </div>
     <div class="form-check form-check-inline">
       <label class="form-check-label col-4" i18n>
-        <input class="form-check-input" type="radio" value="false" name="isUrgent"[(ngModel)]="this.feedback.isUrgent"> No
+        <input class="form-check-input" type="radio" value="false" name="isUrgent" [(ngModel)]="this.feedback.isUrgent"> No
       </label>
     </div>
   </div>
@@ -21,12 +21,12 @@
       </label>
     </div>
     <div class="form-check form-check-inline">
-      <label i18n class="form-check-label col-3 ">
+      <label class="form-check-label col-3" i18n>
         <input class="form-check-input" type="radio" value="Bug" name="feedbackType" [(ngModel)]="feedback.feedbackType"> Bug
       </label>
     </div>
     <div class="form-check form-check-inline">
-      <label i18n class="form-check-label col-3 ">
+      <label class="form-check-label col-3" i18n>
        <input class="form-check-input" type="radio" value="Question" name="feedbackType" [(ngModel)]="feedback.feedbackType"> Question
      </label>
    </div>
@@ -34,9 +34,9 @@
  <div class="form-group">
     <h5 i18n>Feedback</h5>
     <textarea type="text" name="feedbackMsg"[(ngModel)]="feedback.feedbackMsg" [rows]="7" [cols]="50" required="true"></textarea>
-   <div i18n *ngIf="msgForUsr" class="alert alert-danger">{{msgForUsr}}</div>
-    <div i18n *ngIf="fedbkSubmitted" class="alert alert-success">{{fedbkSubmitted}}</div>
-    <div i18n *ngIf="message" class="alert alert-danger">{{message}}</div>
-</div>
-<button  type="submit" class="btn btn-success">Submit</button>
+    <div *ngIf="msgForUsr" class="alert alert-danger" i18n>{{msgForUsr}}</div>
+    <div *ngIf="fedbkSubmitted" class="alert alert-success" i18n>{{fedbkSubmitted}}</div>
+    <div *ngIf="message" class="alert alert-danger" i18n>{{message}}</div>
+  </div>
+  <button  type="submit" class="btn btn-success">Submit</button>
 </form>
