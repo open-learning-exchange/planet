@@ -48,7 +48,7 @@ export class CoursesComponent implements OnInit {
           this.courses = this.courses.filter(c => data.id !== c.doc._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
-  };
+    };
+  }
 
-}
 }
