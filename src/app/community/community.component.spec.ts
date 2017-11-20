@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule }   from '@angular/forms'; 
 import { CommunityComponent } from './community.component';
+import { CouchService } from '../shared/couchdb.service';
+import { HttpModule } from '@angular/http';
+import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CommunityComponent', () => {
   let component: CommunityComponent;
@@ -8,7 +13,9 @@ describe('CommunityComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CommunityComponent ]
+      imports: [ FormsModule, HttpModule, HttpClientModule, BrowserAnimationsModule ],
+      declarations: [ CommunityComponent, AlertsDeleteComponent ],
+      providers: [ CouchService ]
     })
     .compileComponents();
   }));
@@ -23,3 +30,4 @@ describe('CommunityComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

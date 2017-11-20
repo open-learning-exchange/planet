@@ -6,6 +6,7 @@ import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { UsersComponent } from './users.component';
 import { Router, RouterModule } from '@angular/router';
@@ -16,7 +17,7 @@ describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule ],
+      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule, HttpClientModule ],
       declarations: [ UsersComponent ],
       providers: [ CouchService, UserService ]
     });
@@ -85,7 +86,7 @@ describe('Users', () => {
       fixture.whenStable().then(() => {
         fixture.detectChanges();
         expect(couchService.get).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
-        expect(couchService.get).toHaveBeenCalledWith('_node/couchdb@localhost/_config/admins');
+        expect(couchService.get).toHaveBeenCalledWith('_node/nonode@nohost/_config/admins');
       });
     });
   });

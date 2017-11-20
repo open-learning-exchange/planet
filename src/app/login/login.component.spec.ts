@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { LoginComponent } from './login.component';
 import { Router, RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,7 +17,7 @@ describe('Login', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule ],
+      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpModule, HttpClientModule ],
       declarations: [ LoginComponent ],
       providers: [ CouchService ]
     });

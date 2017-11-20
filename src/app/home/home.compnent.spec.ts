@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
-
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { HomeComponent } from './home.component';
 import { NavigationComponent } from './navigation.component';
 import { CouchService } from '../shared/couchdb.service';
@@ -11,7 +11,7 @@ describe('Home', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, CommonModule, HttpModule ],
+      imports: [ RouterTestingModule, CommonModule, HttpModule, HttpModule, HttpClientModule ],
       declarations: [ HomeComponent, NavigationComponent ],
       providers: [ CouchService ]
     });

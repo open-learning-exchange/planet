@@ -4,7 +4,11 @@ import { CoursesComponent } from './courses.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CourseValidatorService } from '../validators/course-validator.service';
+import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
+import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -12,8 +16,8 @@ describe('CoursesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpModule ],
-      declarations: [ CoursesComponent ],
+      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpModule, HttpClientModule, BrowserAnimationsModule ],
+      declarations: [ CoursesComponent, FormErrorMessagesComponent, AlertsDeleteComponent ],
       providers: [ CouchService, CourseValidatorService ]
 
     })
