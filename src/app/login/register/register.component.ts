@@ -28,7 +28,6 @@ export class userData  {
 export class RegisterComponent implements OnInit {
  newUser:userData= new userData();
 
-
   constructor(
      private couchService: CouchService
     ) { }

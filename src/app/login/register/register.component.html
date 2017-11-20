@@ -5,79 +5,79 @@
       <form (ngSubmit)="createUser()" #loginForm="ngForm">
         <div class="form-row">
           <div class="col-4 form-group">
-            <label>First Name</label>
+            <label><strong>First Name</strong></label>
             <input class="form-control" [(ngModel)]="newUser.firstName" i18n-placeholder placeholder="First Name" name="name" />
           </div>
           <div class="col-4">
-            <label>Middle Name</label>
+            <label><strong>Middle Name</strong></label>
             <input class="form-control" [(ngModel)]="newUser.middleName" i18n-placeholder placeholder="Middle Name" name="name" />
           </div>
           <div class="col-4">
-              <label>Last Name</label>
-              <input class="form-control" [(ngModel)]="newUser.lastName" i18n-placeholder placeholder="Last Name" name="name" />
+            <label><strong>Last Name</strong></label>
+            <input class="form-control" [(ngModel)]="newUser.lastName" i18n-placeholder placeholder="Last Name" name="name" />
           </div>
         </div>
         <div class="row">
           <div class=" col-4 form-group">
-            <label>Login</label>
-             <input class="form-control" [(ngModel)]="newUser.login" i18n-placeholder placeholder="login" name="login" />
+            <label><strong>Login</strong></label>
+            <input class="form-control" [(ngModel)]="newUser.login" i18n-placeholder placeholder="login" name="login" />
           </div>
           <div class="col-4 form-group">
-              <label>Enter Password</label>
+            <label><strong>Enter Password</strong></label>
             <input class="form-control"[(ngModel)]="newUser.password" i18n-placeholder placeholder="Password" name="password" type="password" />
           </div>
           <div class=" col-4 form-group">
-              <label for="firstName">Re-Enter Password</label>
-              <input class="form-control"  [(ngModel)]="newUser.repeatPassword" i18n-placeholder placeholder=" Repeat Password" name="repeatPassword" type="password" />
+            <label for="firstName"><strong>Re-Enter Password</strong></label>
+            <input class="form-control"  [(ngModel)]="newUser.repeatPassword" i18n-placeholder placeholder=" Repeat Password" name="repeatPassword" type="password" />
 
           </div>
         </div>
-         <div class="form-row">
-            <div class="col-4 form-group">
-                 <label for="firstName">Email</label>
-              <input class="form-control" [(ngModel)]="newUser.email" i18n-placeholder placeholder="email" name="email" />
+        <div class="form-row">
+          <div class="col-4 form-group">
+           <label for="firstName"><strong>Email</strong></label>
+           <input class="form-control" [(ngModel)]="newUser.email" i18n-placeholder placeholder="email" name="email" />
 
-            </div>
-            <div class="col-4 form-group">
-                 <label for="firstName">Language</label>
-                 <input class="form-control" [(ngModel)]="newUser.language" i18n-placeholder placeholder="language" name="language"/>
+         </div>
+         <div class="col-4 form-group">
+           <label for="firstName"><strong>Language</strong></label>
+           <input class="form-control" [(ngModel)]="newUser.language" i18n-placeholder placeholder="language" name="language"/>
 
-            </div>
-            <div class="col-4 form-group">
-                 <label for="firstName">Phone Number</label>
-              <input class="form-control" [(ngModel)]="newUser.phone" i18n-placeholder placeholder=" Phone Number" name="phone"/>
-            </div>
-        </div>
+         </div>
+         <div class="col-4 form-group">
+           <label for="firstName"><strong>Phone Number</strong></label>
+           <input class="form-control" [(ngModel)]="newUser.phone" i18n-placeholder placeholder=" Phone Number" name="phone"/>
+         </div>
+       </div>
 
-         <div class="form-row">
-          <div class="form-group col-4">
-             <label for="firstName">Birthdate</label>
-            <input class="form-control" [(ngModel)]="newUser.birthdate" i18n-placeholder placeholder="birthdate" name="birthdate"  type="date" />
-          </div>
-          <div class="form-group col-4">
-              <label for="firstName">Gender</label>
-              <input class="form-control" [(ngModel)]="newUser.gender" i18n-placeholder placeholder="gender" name="gender"/>
-          </div>
-          <div class="form-group col-4">
-             <label for="firstName">Levels</label>
-             <input class="form-control" [(ngModel)]="newUser.levels" i18n-placeholder placeholder=" levels" name="levels"/>
-          </div>
-        </div>
-         <div class="form-row">
-          <div class="form-group col-4">
-            <label for="firstName">Community</label>
-             <input class="form-control" [(ngModel)]="newUser.community" i18n-placeholder placeholder="Community" name="community" />
-          </div>
-          <div class="form-group col-4">
-            <label for="firstName">Region</label>
-            <input class="form-control" [(ngModel)]="newUser.region" i18n-placeholder placeholder="Region" name="Region"/>
-          </div>
-            <div class="form-group col-4">
-                <label for="firstName">Nation</label>
-              <input class="form-control" [(ngModel)]="newUser.Nation" i18n-placeholder placeholder="Nation" name="Nation"/>
-            </div>
-        </div>
-          <div><button class="ole-btn cursor-pointer">Register</button></div>
-      </form>
-      <div id="login-status">{{message}}</div>
+       <div class="form-row">
+        <div class="form-group col-4">
+         <label for="firstName"><strong>Birthdate</strong></label>
+         <input class="form-control" [(ngModel)]="newUser.birthdate" i18n-placeholder placeholder="birthdate" name="birthdate"  type="date" />
+       </div>
+       <div class="form-group col-4">
+        <label for="firstName"><strong>Gender</strong></label>
+        <input class="form-control" [(ngModel)]="newUser.gender" i18n-placeholder placeholder="gender" name="gender"/>
+      </div>
+      <div class="form-group col-4">
+       <label for="firstName"><strong>Levels</strong></label>
+       <input class="form-control" [(ngModel)]="newUser.levels" i18n-placeholder placeholder=" levels" name="levels"/>
+     </div>
+   </div>
+   <div class="form-row">
+    <div class="form-group col-4">
+      <label for="firstName"><strong>Community</strong></label>
+      <input class="form-control" [(ngModel)]="newUser.community" i18n-placeholder placeholder="Community" name="community" />
     </div>
+    <div class="form-group col-4">
+      <label for="firstName"><strong>Region</strong></label>
+      <input class="form-control" [(ngModel)]="newUser.region" i18n-placeholder placeholder="Region" name="Region"/>
+    </div>
+    <div class="form-group col-4">
+      <label for="firstName"><strong>Nation</strong></label>
+      <input class="form-control" [(ngModel)]="newUser.Nation" i18n-placeholder placeholder="Nation" name="Nation"/>
+    </div>
+  </div>
+  <div><button class="ole-btn  btn-success"><strong>Register</strong></button></div>
+</form>
+<div id="login-status">{{message}}</div>
+</div>
