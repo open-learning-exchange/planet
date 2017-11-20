@@ -33,7 +33,7 @@ describe('ResourcesComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
     couchService = fixture.debugElement.injector.get(CouchService);
-    statusElement = de.nativeElement.querySelector('.km-resouces-title');
+    statusElement = de.nativeElement.querySelector('.km-resources-title');
     motoristshandbook = { filename:"motorists-handbook.pdf", id: "motorists-handbook.pdf", mediaType: 'pdf', attachments:{ 'motorists-handbook.pdf': { content_type: "application/pdf" }}, sum: 16, timesRated: 4 };
     motoristshandbook.Event = ({
        type : 'change',
