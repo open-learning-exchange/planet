@@ -18,10 +18,9 @@ export class Feedback{
 
 export class FeedbackComponent implements OnInit {
   msgForUsr:string;
-  isFeedbackMsg :boolean=true;
   feedback:Feedback= new Feedback();
   message:string;
-  fedbkSubmitted:boolean= false;
+  fedbkSubmitted:string;
 
   constructor(
     private userService: UserService,
@@ -34,22 +33,21 @@ export class FeedbackComponent implements OnInit {
 
   submitfeedback(){
     if (!this.feedback.feedbackMsg) {
-      this. msgForUsr="Feedback  cannot be empty";
-      this.isFeedbackMsg=false;
+      this.message='';
+      this.fedbkSubmitted='';
+      this.msgForUsr="Feedback cannot be empty!";
     }else
     {
-      this.isFeedbackMsg=true;
       this.couchService.post('feedback/', this.feedback)
       .then((data) => {
-        this. msgForUsr='';
-        this.isFeedbackMsg=false;
-        this.fedbkSubmitted=true;
-        this.message= "Thank you! We have received your feedback";
+        this.msgForUsr='';
+        this.message='';
+        this.fedbkSubmitted="Thank you! We have received your feedback.";
       },
       (error) => {
-        this.isFeedbackMsg=true;
-        this.fedbkSubmitted=true;
-        this.message = "Error with submitting your feedback";
+        this.msgForUsr='';
+        this.fedbkSubmitted='';
+        this.message = "Sorry, your feedback could not be submitted!";
       });
     }
   }
