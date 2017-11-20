@@ -76,11 +76,11 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
-  onChange(filterValue: string){
+  onChange(filterValue: string) {
     this.communities.filter = filterValue;
   }
 
-  onSelect(select: string){
+  onSelect(select: string) {
     this.communities.filter = select;
   }
 

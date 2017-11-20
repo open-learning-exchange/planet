@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 
 import { LoginComponent } from './login.component';
 
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { LoginRouterModule } from './login-router.module';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   imports: [
-    LoginRouterModule, FormsModule, CommonModule,MatInputModule,MatButtonModule
+    LoginRouterModule, FormsModule, CommonModule, MatInputModule, MatButtonModule
   ],
   declarations: [
     LoginComponent

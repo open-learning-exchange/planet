@@ -2,46 +2,12 @@ import { Component } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 
 require('./login.scss');
 
 @Component({
-  template: `
-    <div class="ole-login">
-      <div class="ole-logo">
-        <img src="assets/cropped-ole-ico-logo-180x180.png">
-        <h1 i18n>Planet Learning</h1>
-        <h3 i18n>Version 2.01</h3>
-      </div>
-      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-        <div class = "form-class">
-        <div>
-        <mat-form-field class="example-full-width">
-          <input matInput [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
-        </mat-form-field>
-        </div>
-        <div>
-        <mat-form-field class="example-full-width">
-          <input matInput [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
-        </mat-form-field>
-        </div>
-        <div *ngIf="createMode">
-        <mat-form-field class="example-full-width">
-          <input matInput [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
-        </mat-form-field>
-        </div>
-       </div>
-        <div class="login-actions">
-          <div><button mat-button>{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
-          <a  class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
-            {{ createMode ? 'Already have an account?' : 'Are you new?' }}
-          </a>
-        </div>
-      </form>
-      <div id="login-status">{{message}}</div>
-    </div>
-  `,
+  templateUrl: './login.component.html',
   styleUrls: [ './login.scss' ]
 
 })
