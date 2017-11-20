@@ -34,7 +34,8 @@
  <div class="form-group">
   <h5 i18n>Feedback</h5>
   <textarea type="text" name=" feedbackMsg" [(ngModel)]="feedback.feedbackMsg" [rows]="7" [cols]="50" required="true"></textarea>
-  <div *ngIf="! isFeedbackMsg" class="alert alert-success">{{msgForUsr}}</div>
+  <div *ngIf="!isFeedbackMsg" class="alert alert-danger">{{msgForUsr}}</div>
+  <div *ngIf="fedbkSubmitted" class="alert alert-success">{{message}}</div>
 </div>
 <button  type="submit" class="btn btn-success">Submit</button>
 </form>

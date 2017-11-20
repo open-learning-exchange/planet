@@ -33,7 +33,7 @@ export class FeedbackComponent implements OnInit {
   }
 
   submitfeedback(){
-    if (this.feedback.feedbackMsg===undefined|| this.feedback.feedbackMsg=="") {
+    if (!this.feedback.feedbackMsg) {
       this. msgForUsr="Feedback  cannot be empty";
       this.isFeedbackMsg=false;
     }else
@@ -44,12 +44,12 @@ export class FeedbackComponent implements OnInit {
         this. msgForUsr='';
         this.isFeedbackMsg=false;
         this.fedbkSubmitted=true;
-        this. msgForUsr= "Thank you! We have received your feedback";
+        this.message= "Thank you! We have received your feedback";
       },
       (error) => {
         this.isFeedbackMsg=true;
         this.fedbkSubmitted=true;
-        this.msgForUsr = "Error with submitting your feedback";
+        this.message = "Error with submitting your feedback";
       });
     }
   }
