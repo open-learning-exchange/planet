@@ -8,14 +8,14 @@
  *  display to the user what is being deleted.
  * okClick - Required.  Method from parent which is called to delete.
  */
-import { Component, OnChanges, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'planet-alerts-delete',
   templateUrl: './alerts-delete.component.html'
 })
-export class AlertsDeleteComponent implements OnChanges {
+export class AlertsDeleteComponent {
 
   message = '';
 

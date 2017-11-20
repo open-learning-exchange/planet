@@ -56,7 +56,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.meetups.data = this.meetups.data.filter(meet => data.id !== meet._id);
+          this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
     };
