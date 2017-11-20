@@ -1,9 +1,46 @@
-<div>
-  <h1 i18n>Nation List</h1>
+<div class="mat-elevation-z8">
+  <h3 class="header" i18n> Nation List </h3>
+  <button mat-button (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd" i18n>Add</button>
+  <div class="search-header">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
+    </mat-form-field>
+  </div>
+  <mat-table #table [dataSource]="nations" matSort>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Nation Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+    </ng-container>
+    <!-- Admin Name Column -->
+    <ng-container matColumnDef="admin_name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Admin Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.admin_name}} </mat-cell>
+    </ng-container>
+    <!-- URL Column -->
+    <ng-container matColumnDef="nationurl">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Nation URL </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.nationurl}} </mat-cell>
+    </ng-container>
+     <!-- URL Column -->
+     <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element"><button mat-button (click)="deleteClick(element)" i18n> Delete </button></mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+</div>
+
+<!-- Testing -->
+
+<!-- <div>
+  <h1 i18n>Nation List</h1> -->
   <!-- Trigger the modal with a button -->
-  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
+  <!-- <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button> -->
   <!-- Data rendered for nation -->
-  <div>
+  <!-- <div>
     <p>{{message}}</p>
     <table class="table">
       <thead>
@@ -25,20 +62,13 @@
     </table>
   </div>
 </div>
-
-<planet-alerts-delete
-  (okClick)="deleteNation($event)"
-  (resetMessage)="message=''"
-  [type]="'nation'"
-  [deleteItem]="deleteItem"
-  [message]="message">
-</planet-alerts-delete>
+ -->
 
 <!-- Modal for adding nations -->
-<div class="modal fade" id="nationAdd" role="dialog" data-backdrop="static">
-  <div class="modal-dialog">
+<!-- <div class="modal fade" id="nationAdd" role="dialog" data-backdrop="static">
+  <div class="modal-dialog"> -->
     <!-- Modal content -->
-    <div class="modal-content">
+    <!-- <div class="modal-content">
       <div class="modal-body">
         <h3 i18n>Add Nation</h3>
         <form [formGroup]="nationForm" (ngSubmit)="onSubmit(nationForm.value)" novalidate>
@@ -46,9 +76,9 @@
             <div class="col">
               <label i18n>Admin Name</label>
               <input type="text" class="form-control" formControlName="adminName" required>
-              <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages>
+              <planet-form-error-messages [control]="nationForm.controls.adminName"></planet-form-error-messages> -->
                 <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
-            </div>
+            <!-- </div>
             <div class="col">
               <label i18n>Nation Name</label>
               <input type="text" class="form-control" formControlName="name" required>
@@ -74,4 +104,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->

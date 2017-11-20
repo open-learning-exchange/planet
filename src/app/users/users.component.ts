@@ -86,11 +86,13 @@ export class UsersComponent implements OnInit {
 
   deleteRole(user: any, index: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
-    const tempUser = Object.assign({}, user);
+    const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
+    delete tempUser.selected;
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
       console.log('Success!');
-      this.initializeData();
+      user.roles.splice(index, 1);
+      user._rev = response.rev;
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
@@ -99,20 +101,26 @@ export class UsersComponent implements OnInit {
   }
 
   roleSubmit(users: any[], role: string) {
-    Promise.all(users.reduce((promises, user) => {
-      if (user.selected) {
-        // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = Object.assign({}, user);
+    Promise.all(users.reduce((promises, user, index) => {
+      // Do not add role if it already exists on user
+      if (user.selected && user.roles.indexOf(role) === -1) {
+        // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
+        const tempUser = { ...user, roles: [ ...user.roles ] };
         // Remove selected property so it doesn't get saved to DB
         delete tempUser.selected;
-        if (tempUser.roles.indexOf(role) === -1) {
-          tempUser.roles.push(role);
-        }
+        tempUser.roles.push(role);
         promises.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return promises;
     }, [])).then((responses) => {
-      this.initializeData();
+      users.map((user) => {
+        if (user.selected && user.roles.indexOf(role) === -1) {
+          // Add role to UI and update rev from CouchDB response
+          user.roles.push(role);
+          const res: any = responses.find((response: any) => response.id === user._id);
+          user._rev = res.rev;
+        }
+      });
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');

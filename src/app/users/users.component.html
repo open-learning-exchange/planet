@@ -1,12 +1,12 @@
 <h1>Users</h1>
 <div class="km-user-table" *ngIf="displayTable">
   <form (ngSubmit)="roleSubmit(allUsers.data,selectedRole)" #rolesForm="ngForm">
-    <div>
-      <select [(ngModel)]="selectedRole" name="role">
-        <option *ngFor="let role of roleList" [value]="role">{{role}}</option>
-      </select>
-      <button class="ole-btn cursor-pointer" type="submit">Add role to selected</button>
-    </div>
+    <mat-form-field>
+      <mat-select [(ngModel)]="selectedRole" name="role">
+        <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-button type="submit">Add role to selected</button>
   </form>
   <mat-table #table [dataSource]="allUsers">
     <ng-container matColumnDef="name">
@@ -18,9 +18,9 @@
       <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.admin" (remove)="deleteRole(element, i)">
+          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.admin" (remove)="deleteRole(element,i)">
             {{role}}
-            <mat-icon matChipRemove *ngIf="!element.admin">x</mat-icon>
+            <mat-icon matChipRemove *ngIf="!element.admin" (click)="$event.stopPropagation()">cancel</mat-icon>
           </mat-chip>
       </mat-chip-list>
       </mat-cell>
