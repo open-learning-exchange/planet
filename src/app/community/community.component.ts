@@ -76,6 +76,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
+  onChange(filterValue: string){
+    this.communities.filter = filterValue;
+  }
+
+  onSelect(select: string){
+    this.communities.filter = select;
+  }
+
   ngOnInit() {
     this.getCommunityList();
     this.getNationList();
