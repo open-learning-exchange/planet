@@ -13,6 +13,7 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
+import { MaterialModule } from '../shared/material.module';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { NationComponent } from '../nation/nation.component';
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    PlanetAlertsModule
+    PlanetAlertsModule,
+    MaterialModule
   ],
   declarations: [
     HomeComponent,
