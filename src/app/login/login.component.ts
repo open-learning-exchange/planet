@@ -19,13 +19,11 @@ require('./login.scss');
         <div>
         <mat-form-field class="example-full-width">
           <input matInput [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
-          <mat-hint>Enter your username!</mat-hint>
         </mat-form-field>
         </div>
         <div>
         <mat-form-field class="example-full-width">
           <input matInput [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
-          <mat-hint>Enter your password!</mat-hint>
         </mat-form-field>
         </div>
         <div *ngIf="createMode">
