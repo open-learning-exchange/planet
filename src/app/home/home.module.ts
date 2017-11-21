@@ -14,6 +14,7 @@ import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
+import { PlanetFormModule } from '../shared/form-dialog/planet-form-dialog.module';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { MaterialModule } from '../shared/material.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     PlanetAlertsModule,
-    MaterialModule
+    MaterialModule,
+    PlanetFormModule
   ],
   declarations: [
     HomeComponent,

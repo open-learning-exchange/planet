@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
+import { FormDialogService } from '../shared/form-dialog/form-dialog.service';
 
 import {
   FormBuilder,
@@ -33,6 +34,9 @@ export class NationComponent implements OnInit, AfterViewInit {
   nationForm: FormGroup;
   deleteItem = {};
   deleteDialog: any;
+  formDialog: any;
+  valid_data: {};
+  result: any;
 
   constructor(
     private location: Location,
@@ -40,7 +44,8 @@ export class NationComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private nationValidatorService: NationValidatorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private formDialogService: FormDialogService
   ) {
     this.createForm();
   }
@@ -130,10 +135,17 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   openNationAddForm() {
-    this.createForm();
+    let title = "Add Nation";
+    let formName = "nationForm";
+    let fields =
+      [
+        { "label": "Admin Name", "type": "textbox", "name": "adminName", 'placeholder': 'Admin Name', 'required': true},
+        { "label": "Nation Name", "type": "textbox", "name": "nationName", 'placeholder': 'Nation Name', 'required': true},
+        { "label": "Nation URL", "type": "textbox", "name": "nationURL", 'placeholder': 'Nation URL', 'required': true}
+      ];
+    this.formDialogService
+      .confirm(title, formName, fields,"")
+      .subscribe((res) => {this.result = res; console.log(res)});
   }
-
-
-
 
 }
