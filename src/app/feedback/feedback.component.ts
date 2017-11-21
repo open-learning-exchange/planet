@@ -44,9 +44,8 @@ export class FeedbackComponent implements OnInit {
       this.couchService.post('feedback/', this.feedback)
       .then((data) => {
         this.message="Success";
-         this.messageType.fail=false;
+        this.messageType.fail=false;
         this.messageType.pass=true;
-
       },
       (error) => {
        this.message="Error";
