@@ -1,5 +1,6 @@
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
+import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
@@ -108,7 +109,7 @@ export class CustomValidators {
         }
 
         // run validators again on when start date's value changes
-        startDate.valueChanges.takeUntil(ngUnsubscribe).subscribe(() => {
+        startDate.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
           endDate.updateValueAndValidity();
         });
       }
@@ -152,7 +153,7 @@ export class CustomValidators {
         }
 
         // run validators again on when start time's value changes
-        startTime.valueChanges.takeUntil(ngUnsubscribe).subscribe(() => {
+        startTime.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
           endTime.updateValueAndValidity();
         });
       }

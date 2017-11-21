@@ -2,7 +2,7 @@
   <h1 i18n>Nation List</h1>
   <input class="form-control col-md-3 pull-right " [(ngModel)]="searchText"  i18n-placeholder placeholder="Search By Keyword">
   <!-- Trigger the modal with a button -->
-  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
+  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd" i18n>Add</button>
   <!-- Data rendered for nation -->
   <div>
     <p>{{message}}</p>
@@ -12,6 +12,7 @@
           <th i18n>Nation Name</th>
           <th i18n>Admin Name</th>
           <th i18n>Nation Url</th>
+          <th i18n>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -20,12 +21,21 @@
             <td>{{nation.doc.name}}</td>
             <td>{{nation.doc.admin_name}}</td>
             <td>{{nation.doc.nationurl}}</td>
+            <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
           </tr>
         </ng-container>
         </tbody>
     </table>
   </div>
 </div>
+
+<planet-alerts-delete
+  (okClick)="deleteNation($event)"
+  (resetMessage)="message=''"
+  [type]="'nation'"
+  [deleteItem]="deleteItem"
+  [message]="message">
+</planet-alerts-delete>
 
 <!-- Modal for adding nations -->
 <div class="modal fade" id="nationAdd" role="dialog" data-backdrop="static">

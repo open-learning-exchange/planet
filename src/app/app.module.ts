@@ -1,8 +1,6 @@
-import './shared/rxjs-imports';
-
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -13,9 +11,11 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent

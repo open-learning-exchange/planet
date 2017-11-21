@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { MeetupsComponent } from './meetups.component';
 import { HttpModule } from '@angular/http';
+import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { By } from '@angular/platform-browser';
 
@@ -20,7 +22,7 @@ describe('MeetupsComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule
+        HttpModule, PlanetAlertsModule, BrowserAnimationsModule
       ],
       declarations: [ MeetupsComponent ],
       providers: [ CouchService ]
@@ -29,8 +31,8 @@ describe('MeetupsComponent', () => {
     component = fixture.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
     de = fixture.debugElement;
-    meetupdata1 = { id: '1', rev: 'qwrjksf', title: 'happyhangout', description: 'once a week' };
-    meetupdata2 = { id: '2', rev: 'ghjjdrt', title: 'angularhangout', description: 'twice a week' };
+    meetupdata1 = { _id: '1', _rev: 'qwrjksf', title: 'happyhangout', description: 'once a week' };
+    meetupdata2 = { _id: '2', _rev: 'ghjjdrt', title: 'angularhangout', description: 'twice a week' };
     meetuparray = { rows: [ { doc: meetupdata1 }, { doc: meetupdata2 } ] };
   });
 
@@ -71,7 +73,7 @@ describe('MeetupsComponent', () => {
   });
 
   it('should make a delete request to couchService', () => {
-    component.deleteMeetup(meetupdata1.id, meetupdata1.rev);
+    component.deleteMeetup(meetupdata1);
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(deleteSpy).toHaveBeenCalledWith('meetups/' + meetupdata1.id + '?rev=' + meetupdata1.rev);
@@ -81,7 +83,7 @@ describe('MeetupsComponent', () => {
   it('should There was a problem deleting this meetup', () => {
     const statusElement = de.query(By.css('.km-message')).nativeElement;
     deleteSpy = spyOn(couchService, 'delete').and.returnValue(Promise.reject({}));
-    component.deleteMeetup(meetupdata1.id, meetupdata1.rev);
+    component.deleteMeetup(meetupdata1);
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(statusElement.textContent).toBe('There was a problem deleting this meetup');
