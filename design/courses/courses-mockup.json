@@ -3,7 +3,7 @@
         {
             "kind": "Course",
             "languageOfInstruction": "English",
-            "CourseTitle": "OLE Test 1",
+            "courseTitle": "OLE Test 1",
             "memberLimit": "",
             "courseLeader": [
             ],
@@ -13,7 +13,7 @@
             "subjectLevel": "Beginner",
             "startDate": "",
             "endDate": "",
-            "Day": [
+            "day": [
             ],
             "startTime": "",
             "endTime": "",
@@ -30,7 +30,7 @@
          {
             "kind": "Course",
             "languageOfInstruction": "English",
-            "CourseTitle": "Git Quiz",
+            "courseTitle": "Git Quiz",
             "memberLimit": "",
             "courseLeader": [
                 "a4b83bb5dc4426fd628c211170000c80",
@@ -42,7 +42,7 @@
             "subjectLevel": "Beginner",
             "startDate": "",
             "endDate": "",
-            "Day": [
+            "day": [
             ],
             "startTime": "",
             "endTime": "",
@@ -61,7 +61,7 @@
          {
             "kind": "Course",
             "languageOfInstruction": "",
-            "CourseTitle": "Test 1",
+            "courseTitle": "Test 1",
             "memberLimit": "",
             "courseLeader": [
                 "29a46c43a6355d2596f6e3152602ff43"
@@ -72,7 +72,7 @@
             "subjectLevel": "Beginner",
             "startDate": "",
             "endDate": "",
-            "Day": [
+            "day": [
                 "Friday"
             ],
             "startTime": "9:00am",
@@ -88,7 +88,7 @@
          {
             "kind": "Course",
             "languageOfInstruction": "English",
-            "CourseTitle": "Computer Basics 01",
+            "courseTitle": "Computer Basics 01",
             "memberLimit": "20",
             "courseLeader": [
             ],
@@ -113,7 +113,7 @@
          {
             "kind": "Course",
             "languageOfInstruction": "English",
-            "CourseTitle": "BeLL-Apps",
+            "courseTitle": "BeLL-Apps",
             "memberLimit": "",
             "courseLeader": [
             ],
@@ -123,7 +123,7 @@
             "subjectLevel": "Beginner",
             "startDate": "",
             "endDate": "",
-            "Day": [
+            "day": [
             ],
             "startTime": "",
             "endTime": "",
