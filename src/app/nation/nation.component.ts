@@ -132,7 +132,4 @@ export class NationComponent implements OnInit, AfterViewInit {
     this.createForm();
   }
 
-
-
-
 }
