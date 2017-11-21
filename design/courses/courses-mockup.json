@@ -5,8 +5,7 @@
             "languageOfInstruction": "English",
             "courseTitle": "OLE Test 1",
             "memberLimit": "",
-            "courseLeader": [
-            ],
+            "courseLeader": [],
             "description": "First test for VIs",
             "method": "",
             "gradeLevel": "College",
@@ -20,11 +19,7 @@
             "location": "",
             "backgroundColor": "",
             "foregroundColor": "",
-            "members": [
-                "a4b83bb5dc4426fd628c211170000c80",
-                "29a46c43a6355d2596f6e31526011ab4",
-                "29a46c43a6355d2596f6e315260346f1"
-            ],
+            "members": [],
             "name": "OLE Test 1"
          },
          {
@@ -32,10 +27,7 @@
             "languageOfInstruction": "English",
             "courseTitle": "Git Quiz",
             "memberLimit": "",
-            "courseLeader": [
-                "a4b83bb5dc4426fd628c211170000c80",
-                "1c16f358f7748cb1eceb54575e0055b4"
-            ],
+            "courseLeader": [],
             "description": "Testing basic knowledge about GItHub",
             "method": "",
             "gradeLevel": "College",
@@ -49,13 +41,7 @@
             "location": "",
             "backgroundColor": "",
             "foregroundColor": "",
-            "members": [
-                "a4b83bb5dc4426fd628c211170000c80",
-                "29a46c43a6355d2596f6e3152602ff43",
-                "29a46c43a6355d2596f6e315260346f1",
-                "1c16f358f7748cb1eceb54575e0055b4",
-                "bd13ee4258650c89aa53e8849d01b9f2"
-            ],
+            "members": [],
             "name": "Git Quiz"
          },
          {
@@ -63,9 +49,7 @@
             "languageOfInstruction": "",
             "courseTitle": "Test 1",
             "memberLimit": "",
-            "courseLeader": [
-                "29a46c43a6355d2596f6e3152602ff43"
-            ],
+            "courseLeader": [],
             "description": "This is used to test skills of Aspiring Virtual Interns",
             "method": "",
             "gradeLevel": "College",
@@ -80,9 +64,7 @@
             "location": "",
             "backgroundColor": "#000000",
             "foregroundColor": "",
-            "members": [
-                "29a46c43a6355d2596f6e3152602ff43"
-            ],
+            "members": [],
             "name": "Test 1"
          },
          {
@@ -90,8 +72,7 @@
             "languageOfInstruction": "English",
             "courseTitle": "Computer Basics 01",
             "memberLimit": "20",
-            "courseLeader": [
-            ],
+            "courseLeader": [],
             "description": "Computer Basics 01 Sample Course  ",
             "method": "",
             "gradeLevel": "5",
@@ -105,9 +86,7 @@
             "location": "",
             "backgroundColor": "",
             "foregroundColor": "",
-            "members": [
-                "a4b83bb5dc4426fd628c211170000c80"
-            ],
+            "members": [],
             "name": "Computer Basics 01"
          },
          {
@@ -115,8 +94,7 @@
             "languageOfInstruction": "English",
             "courseTitle": "BeLL-Apps",
             "memberLimit": "",
-            "courseLeader": [
-            ],
+            "courseLeader": [],
             "description": "some Videos which will explain BeLL-Apps ...  ",
             "method": "",
             "gradeLevel": "Pre-Kindergarten",
@@ -130,11 +108,7 @@
             "location": "",
             "backgroundColor": "",
             "foregroundColor": "",
-            "members": [
-                "a4b83bb5dc4426fd628c211170000c80",
-                "4c6b60e4fa5af0fdaa8a1e42e80194c3",
-                "4c6b60e4fa5af0fdaa8a1e42e80181f9"
-            ],
+            "members": [],
             "name": "BeLL-Apps"
          }
     ]

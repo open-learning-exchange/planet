@@ -13,7 +13,7 @@
             "endTime": "5:00pm",
             "category": "ICT",
             "meetupLocation": "virtual",
-            "creator": "a4b83bb5dc4426fd628c211170000c80"
+            "creator": ""
          },
          {
             "kind": "Meetup",
@@ -28,7 +28,7 @@
             "endTime": "6:00pm",
             "category": "ICT",
             "meetupLocation": "virtual",
-            "creator": "a4b83bb5dc4426fd628c211170000fs0"
+            "creator": ""
          },
          {
             "kind": "Meetup",
@@ -43,7 +43,7 @@
             "endTime": "5:00pm",
             "category": "ICT",
             "meetupLocation": "virtual",
-            "creator": "a4b83bb5dc4426fd628c21117ed00c80"
+            "creator": ""
          },
          {
             "kind": "Meetup",
@@ -58,7 +58,7 @@
             "endTime": "5:00pm",
             "category": "ICT",
             "meetupLocation": "nepal",
-            "creator": "1283bb5dc4426fd628c21117ed00c80"
+            "creator": ""
          },
          {
             "kind": "Meetup",
@@ -73,7 +73,7 @@
             "endTime": "5:00pm",
             "category": "ICT",
             "meetupLocation": "nepal",
-            "creator": "1283bb5fffffffd628c21117ed00c80"
+            "creator": ""
          }
     ]
 }
