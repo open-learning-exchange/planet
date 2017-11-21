@@ -1,0 +1,141 @@
+{
+    "docs":[
+        {
+            "kind": "Course",
+            "languageOfInstruction": "English",
+            "CourseTitle": "OLE Test 1",
+            "memberLimit": "",
+            "courseLeader": [
+            ],
+            "description": "First test for VIs",
+            "method": "",
+            "gradeLevel": "College",
+            "subjectLevel": "Beginner",
+            "startDate": "",
+            "endDate": "",
+            "Day": [
+            ],
+            "startTime": "",
+            "endTime": "",
+            "location": "",
+            "backgroundColor": "",
+            "foregroundColor": "",
+            "members": [
+                "a4b83bb5dc4426fd628c211170000c80",
+                "29a46c43a6355d2596f6e31526011ab4",
+                "29a46c43a6355d2596f6e315260346f1"
+            ],
+            "name": "OLE Test 1"
+         },
+         {
+            "kind": "Course",
+            "languageOfInstruction": "English",
+            "CourseTitle": "Git Quiz",
+            "memberLimit": "",
+            "courseLeader": [
+                "a4b83bb5dc4426fd628c211170000c80",
+                "1c16f358f7748cb1eceb54575e0055b4"
+            ],
+            "description": "Testing basic knowledge about GItHub",
+            "method": "",
+            "gradeLevel": "College",
+            "subjectLevel": "Beginner",
+            "startDate": "",
+            "endDate": "",
+            "Day": [
+            ],
+            "startTime": "",
+            "endTime": "",
+            "location": "",
+            "backgroundColor": "",
+            "foregroundColor": "",
+            "members": [
+                "a4b83bb5dc4426fd628c211170000c80",
+                "29a46c43a6355d2596f6e3152602ff43",
+                "29a46c43a6355d2596f6e315260346f1",
+                "1c16f358f7748cb1eceb54575e0055b4",
+                "bd13ee4258650c89aa53e8849d01b9f2"
+            ],
+            "name": "Git Quiz"
+         },
+         {
+            "kind": "Course",
+            "languageOfInstruction": "",
+            "CourseTitle": "Test 1",
+            "memberLimit": "",
+            "courseLeader": [
+                "29a46c43a6355d2596f6e3152602ff43"
+            ],
+            "description": "This is used to test skills of Aspiring Virtual Interns",
+            "method": "",
+            "gradeLevel": "College",
+            "subjectLevel": "Beginner",
+            "startDate": "",
+            "endDate": "",
+            "Day": [
+                "Friday"
+            ],
+            "startTime": "9:00am",
+            "endTime": "9:30am",
+            "location": "",
+            "backgroundColor": "#000000",
+            "foregroundColor": "",
+            "members": [
+                "29a46c43a6355d2596f6e3152602ff43"
+            ],
+            "name": "Test 1"
+         },
+         {
+            "kind": "Course",
+            "languageOfInstruction": "English",
+            "CourseTitle": "Computer Basics 01",
+            "memberLimit": "20",
+            "courseLeader": [
+            ],
+            "description": "Computer Basics 01 Sample Course  ",
+            "method": "",
+            "gradeLevel": "5",
+            "subjectLevel": "Beginner",
+            "startDate": "11/03/2017",
+            "endDate": "",
+            "Day": [
+            ],
+            "startTime": "",
+            "endTime": "",
+            "location": "",
+            "backgroundColor": "",
+            "foregroundColor": "",
+            "members": [
+                "a4b83bb5dc4426fd628c211170000c80"
+            ],
+            "name": "Computer Basics 01"
+         },
+         {
+            "kind": "Course",
+            "languageOfInstruction": "English",
+            "CourseTitle": "BeLL-Apps",
+            "memberLimit": "",
+            "courseLeader": [
+            ],
+            "description": "some Videos which will explain BeLL-Apps ...  ",
+            "method": "",
+            "gradeLevel": "Pre-Kindergarten",
+            "subjectLevel": "Beginner",
+            "startDate": "",
+            "endDate": "",
+            "Day": [
+            ],
+            "startTime": "",
+            "endTime": "",
+            "location": "",
+            "backgroundColor": "",
+            "foregroundColor": "",
+            "members": [
+                "a4b83bb5dc4426fd628c211170000c80",
+                "4c6b60e4fa5af0fdaa8a1e42e80194c3",
+                "4c6b60e4fa5af0fdaa8a1e42e80181f9"
+            ],
+            "name": "BeLL-Apps"
+         }
+    ]
+}
