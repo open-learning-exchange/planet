@@ -21,6 +21,10 @@ export class FeedbackComponent implements OnInit {
   feedback: Feedback= new Feedback();
   message: string;
   fedbkSubmitted: string;
+  messageType={
+    'pass':false,
+    'fail':false
+  }
 
   constructor(
     private userService: UserService,
@@ -33,20 +37,21 @@ export class FeedbackComponent implements OnInit {
 
   submitfeedback() {
     if (!this.feedback.feedbackMsg) {
-      this.message = '';
-      this.fedbkSubmitted = '';
-      this. msgForUsr = 'Feedback cannot be empty!';
+      this.message = "Invalid";
+      this.messageType.pass=false;
+      this.messageType.fail=true;
     } else {
       this.couchService.post('feedback/', this.feedback)
       .then((data) => {
-        this.msgForUsr = '';
-        this.message = '';
-        this.fedbkSubmitted = 'Thank you! We have received your feedback.';
+        this.message="Success";
+         this.messageType.fail=false;
+        this.messageType.pass=true;
+
       },
       (error) => {
-        this.msgForUsr = '';
-        this.fedbkSubmitted = '';
-        this.message = 'Sorry, your feedback could not be submitted!';
+       this.message="Error";
+       this.messageType.pass=false;
+       this.messageType.fail=true;
       });
     }
   }
