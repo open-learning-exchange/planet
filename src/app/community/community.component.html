@@ -2,13 +2,13 @@
 <br/>
 <div class="example-container mat-elevation-z8">
   <mat-form-field>
-    <mat-select [(ngModel)]="selectedNation">
+    <mat-select [(ngModel)]="selectedNation" (change)="onChange($event.value)">
       <mat-option i18n value="">All</mat-option>
       <mat-option *ngFor="let nationName of nations;" value={{nationName.doc.admin_name}}> {{nationName.doc.name}} </mat-option>
     </mat-select>
   </mat-form-field> &nbsp;
   <mat-form-field>
-    <mat-select [(ngModel)]="selectedValue">
+    <mat-select [(ngModel)]="selectedValue" (change)="onSelect($event.value)">
       <mat-option i18n value="">All</mat-option>
       <mat-option i18n value="pending">pending</mat-option>
       <mat-option i18n value="accepted">accepted</mat-option>

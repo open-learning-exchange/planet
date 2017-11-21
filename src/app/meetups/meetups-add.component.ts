@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   template: `
@@ -10,12 +8,12 @@ import { MatButtonModule } from '@angular/material/button';
     <legend>Start a New Meetup</legend>
     <div class="fields-container">
       <mat-form-field>
-        <input matInput name="title" type="text" ngModel placeholder="title"  placeholder="Title" required=""  >
+        <input matInput name="title" type="text" ngModel i18n-placeholder placeholder="Title" required=""  >
       </mat-form-field>
     </div>
     <div class="fields-container">
       <mat-form-field>
-        <textarea matInput name="description" type="text" ngModel placeholder="Description" required=""></textarea>
+        <textarea matInput name="description" type="text" ngModel i18n-placeholder placeholder="Description" required=""></textarea>
       </mat-form-field>
     </div>
     <button mat-raised-button type="submit" i18n>Save</button>

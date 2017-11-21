@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
-import { MatButtonModule, MatDialog } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 
 @Component({
@@ -15,7 +14,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog;
+    private dialog: MatDialog
   ) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -57,7 +56,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.meetups.data = this.meetups.data.filter(meet => data.id !== meet._id);
+          this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
     };

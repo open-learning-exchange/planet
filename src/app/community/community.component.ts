@@ -70,10 +70,18 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.communities.data = this.communities.data.filter(comm => data.id !== comm._id);
+          this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this community');
     };
+  }
+
+  onChange(filterValue: string) {
+    this.communities.filter = filterValue;
+  }
+
+  onSelect(select: string) {
+    this.communities.filter = select;
   }
 
   ngOnInit() {

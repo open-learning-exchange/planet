@@ -1,0 +1,17 @@
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+@import './app/variables';
+
+$planet-app-primary: mat-palette($planet-primary);
+$planet-app-accent: mat-palette($planet-accent);
+
+$planet-app-warn: mat-palette($planet-warn);
+
+$planet-app-theme: mat-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
+
+@include angular-material-theme($planet-app-theme);

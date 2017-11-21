@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
-import { MatButtonModule } from '@angular/material/button';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 import { FormDialogService } from '../shared/form-dialog/form-dialog.service';
 
@@ -106,7 +105,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.nations.data = this.nations.data.filter(nat => data.id !== nat._id);
+          this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };

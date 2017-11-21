@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<mat-dialog-content>
+  <form *ngFor="let field of fields" [formGroup]="modalForm" novalidate>
+    <!-- textbox -->
+    <mat-form-field *ngIf="field.type == 'textbox'">
+      <input formControlName="{{field.name}}" matInput placeholder="{{field.placeholder}}" name="{{field.name}}" required="{{field.required}}" >
+    </mat-form-field>
+    <!-- selectbox -->
+    <mat-form-field *ngIf="field.type == 'selectbox'">
+      <mat-select *ngFor="let option of field.options">
+        <mat-option value="{{option.value}}">{{option.text}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="dialogRef.close(modalForm.value)" i18n>Submit</button>
+  <button mat-button mat-dialog-close i18n>Cancel</button>
+</mat-dialog-actions>
+    
