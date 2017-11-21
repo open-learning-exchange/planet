@@ -23,6 +23,7 @@ export class NationComponent implements OnInit {
   message = '';
   nations = [];
   nationForm: FormGroup;
+  searchText='';
   deleteItem = {};
 
   constructor(

@@ -1,7 +1,8 @@
 <div>
   <h1 i18n>Nation List</h1>
+  <input class="form-control col-md-3 pull-right " [(ngModel)]="searchText"  i18n-placeholder placeholder="Search By Keyword">
   <!-- Trigger the modal with a button -->
-  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd">Add</button>
+  <button type="button" class="btn btn-info btn-lg" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd" i18n>Add</button>
   <!-- Data rendered for nation -->
   <div>
     <p>{{message}}</p>
@@ -15,12 +16,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let nation of nations; let i = index">
-          <td>{{nation.doc.name}}</td>
-          <td>{{nation.doc.admin_name}}</td>
-          <td>{{nation.doc.nationurl}}</td>
-          <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
-        </tr>
+        <ng-container *ngFor="let nation of nations; let i = index">
+          <tr *ngIf="nation.doc.name.toLowerCase().includes(searchText.toLowerCase())">
+            <td>{{nation.doc.name}}</td>
+            <td>{{nation.doc.admin_name}}</td>
+            <td>{{nation.doc.nationurl}}</td>
+            <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
+          </tr>
+        </ng-container>
         </tbody>
     </table>
   </div>
