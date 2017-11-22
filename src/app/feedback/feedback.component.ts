@@ -37,18 +37,18 @@ export class FeedbackComponent implements OnInit {
 
   submitfeedback() {
     if (!this.feedback.feedbackMsg) {
-      this.message = "Invalid";
+      this.message = "feedbackInvalid";
       this.messageType.pass=false;
       this.messageType.fail=true;
     } else {
       this.couchService.post('feedback/', this.feedback)
       .then((data) => {
-        this.message="Success";
+        this.message="feedbackSuccess";
         this.messageType.fail=false;
         this.messageType.pass=true;
       },
       (error) => {
-       this.message="Error";
+       this.message="feedbackError";
        this.messageType.pass=false;
        this.messageType.fail=true;
       });
