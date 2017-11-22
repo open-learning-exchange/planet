@@ -31,7 +31,6 @@ export class NationComponent implements OnInit, AfterViewInit {
   readonly dbName = 'nations';
   message = '';
   nationForm: FormGroup;
-  deleteItem = {};
   deleteDialog: any;
   formDialog: any;
   valid_data: {};

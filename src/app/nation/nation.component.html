@@ -52,12 +52,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let nation of nations; let i = index">
-          <td>{{nation.doc.name}}</td>
-          <td>{{nation.doc.admin_name}}</td>
-          <td>{{nation.doc.nationurl}}</td>
-          <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
-        </tr>
+        <ng-container *ngFor="let nation of nations; let i = index">
+          <tr *ngIf="nation.doc.name.toLowerCase().includes(searchText.toLowerCase())">
+            <td>{{nation.doc.name}}</td>
+            <td>{{nation.doc.admin_name}}</td>
+            <td>{{nation.doc.nationurl}}</td>
+            <td><button class="btn btn-danger" i18n (click)="deleteClick(nation,i)">Delete</button></td>
+          </tr>
+        </ng-container>
         </tbody>
     </table>
   </div>
