@@ -1,4 +1,4 @@
 {
   "validate_doc_update":
-    "function (newDoc, oldDoc, userCtx, secObj) {\n  function require(field) {\n    var errMessage = field + ' is required';\n    if (!newDoc[field]) {\n      throw { forbidden: errMessage };\n    }\n  }\n }"
+    "function (newDoc, oldDoc, userCtx, secObj) {\n  function require(field) {\n   var errMessage = field + ' is required';\n    if (!newDoc[field]) {\n      throw { forbidden: errMessage };\n    }\n  }\n  function isHex(field) {\n    var val = newDoc[field];\n    var errMessage = field + ' is not a valid hex';\n\n    if (!/^#[A-F0-9]{6}$/i.test(val)) {\n     throw { forbidden: errMessage };\n    }\n  }\n    if (!newDoc) {\n      require('name');\n      require('adminName');\n      require('nationUrl');\n   }\n}"
 }
