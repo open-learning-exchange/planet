@@ -1,0 +1,25 @@
+<form novalidate (ngSubmit)="onSubmit(modalForm.value)" [formGroup]="modalForm">
+  <div>
+    <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
+  </div>
+  <div mat-dialog-content>
+    <div *ngFor="let field of fields">
+      <!-- textbox -->
+      <mat-input-container *ngIf="field.type == 'textbox'" class="modalForm-full-width">
+          <input matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
+          <planet-form-error-messages [control]="modalForm.controls.adminName"></planet-form-error-messages>
+      </mat-input-container>
+      <!-- selectbox -->
+      <mat-input-container *ngIf="field.type == 'selectbox'" class="modalForm-full-width">
+        <select mat-select *ngFor="let options of field.options">
+          <option value="{{option.value}}">{{option.text}}</option>
+        </select>
+        <planet-form-error-messages [control]="modalForm.controls.adminName"></planet-form-error-messages>
+      </mat-input-container>
+    </div>
+  </div>
+  <mat-dialog-actions>
+    <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>&nbsp;
+    <button type="button" color="primary" mat-raised-button (click)="dialogRef.close(modalForm.value)" i18n>Submit</button>
+  </mat-dialog-actions>
+</form>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-declare var jQuery: any;
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -9,10 +10,15 @@ declare var jQuery: any;
 export class CoursesComponent implements OnInit {
   message = '';
   courses = [];
-  deleteItem: any;
+  deleteDialog: any;
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialog: MatDialog
   ) { }
+
+  ngOnInit() {
+    this.getCourses();
+  }
 
   getCourses() {
     this.couchService.get('courses/_all_docs?include_docs=true')
@@ -22,23 +28,27 @@ export class CoursesComponent implements OnInit {
       }, (error) => this.message = 'There was a problem getting the courses');
   }
 
-  deleteClick(course, index) {
-    // The ... is the spread operator. The below sets deleteItem a copy of the course.doc
-    // object with an additional index property that is the index within the courses array
-    this.deleteItem = { ...course.doc, index };
-    jQuery('#planetDelete').modal('show');
+  deleteClick(course) {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+      data: {
+        okClick: this.deleteCourse(course.doc),
+        type: 'course',
+        displayName: course.doc.courseTitle
+      }
+    });
   }
 
   deleteCourse(course) {
-    const { _id: courseId, _rev: courseRev, index } = course;
-    this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
-      .then((data) => {
-        this.courses.splice(index, 1);
-        jQuery('#planetDelete').modal('hide');
-      }, (error) => this.message = 'There was a problem deleting this course');
+    // Return a function with course on its scope to pass to delete dialog
+    return () => {
+      const { _id: courseId, _rev: courseRev } = course;
+      this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
+        .then((data) => {
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.courses = this.courses.filter(c => data.id !== c.doc._id);
+          this.deleteDialog.close();
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
+    };
   }
 
-  ngOnInit() {
-    this.getCourses();
-  }
 }

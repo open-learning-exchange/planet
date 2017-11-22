@@ -137,4 +137,8 @@ body {
   .small {
     font-size: 0.625rem;
   }
+
+  mat-table .highlight {
+    background-color: $ole-grey-light;
+  }
 }
