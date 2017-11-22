@@ -112,7 +112,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(nation) {
-    console.log(this.nationForm.valid)
+    console.log(this.nationForm.valid);
     if (nation) {
       const formdata = {
         'admin_name': nation.adminName,
@@ -125,7 +125,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
-          console.log(this.nations.data)
+          console.log(this.nations.data);
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
@@ -136,15 +136,15 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   openNationAddForm() {
-    let title = "Add Nation";
-    let type = "nation";
-    let fields =
+    const title = 'Add Nation';
+    const type = 'nation';
+    const fields =
       [
-        { "label": "Admin Name", "type": "textbox", "name": "adminName", 'placeholder': 'Admin Name', 'required': true},
-        { "label": "Nation Name", "type": "textbox", "name": "name", 'placeholder': 'Nation Name', 'required': true},
-        { "label": "Nation URL", "type": "textbox", "name": "nationUrl", 'placeholder': 'Nation URL', 'required': true}
+        { 'label': 'Admin Name', 'type': 'textbox', 'name': 'adminName', 'placeholder': 'Admin Name', 'required': true },
+        { 'label': 'Nation Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Nation Name', 'required': true },
+        { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
       ];
-    let validation = {
+    const validation = {
       adminName: [ '', Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         ac => this.nationValidatorService.nationCheckerService$(ac)
@@ -153,9 +153,9 @@ export class NationComponent implements OnInit, AfterViewInit {
       nationUrl: [ '', Validators.required ],
     };
     this.formDialogService
-      .confirm(title, type, fields, validation, "")
+      .confirm(title, type, fields, validation, '')
       .subscribe((res) => {
-        console.log("Res",res);
+        console.log('Res', res);
         this.onSubmit(res);
       });
   }

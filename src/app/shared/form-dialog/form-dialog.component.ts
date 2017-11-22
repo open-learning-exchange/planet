@@ -9,11 +9,10 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'form-dialog',
   templateUrl: './form-dialog.component.html',
-  styleUrls: ['./form-dialog.scss']
+  styleUrls: [ './form-dialog.scss' ]
 })
-export class FormDialogComponent{
+export class FormDialogComponent {
 
   public title: string;
   public type: string;
@@ -21,7 +20,7 @@ export class FormDialogComponent{
   public validation: any;
   public message: string;
   public modalForm: FormGroup;
-  
+
   constructor(public dialogRef: MatDialogRef<FormDialogComponent>, public fb: FormBuilder) { }
 
 }

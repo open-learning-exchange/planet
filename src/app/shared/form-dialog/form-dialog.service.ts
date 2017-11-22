@@ -13,10 +13,10 @@ import {
 @Injectable()
 export class FormDialogService {
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
-  
+
   public confirm(title: string, type: string, fields: any, validation: any, message: string): Observable<boolean> {
     let dialogRef: MatDialogRef<FormDialogComponent>;
-    dialogRef = this.dialog.open(FormDialogComponent,{
+    dialogRef = this.dialog.open(FormDialogComponent, {
       width : '600px'
     });
     dialogRef.componentInstance.modalForm = this.fb.group(validation);

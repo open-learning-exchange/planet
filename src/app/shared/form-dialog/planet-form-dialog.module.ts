@@ -8,7 +8,7 @@ import { PlanetFormsModule } from '../planet-forms.module';
 
 @NgModule({
   imports: [
-    CommonModule,MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
+    CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
   ],
   exports: [
     FormDialogComponent
