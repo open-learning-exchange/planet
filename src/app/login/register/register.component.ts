@@ -27,10 +27,12 @@ export class userData  {
 })
 export class RegisterComponent implements OnInit {
  newUser:userData= new userData();
+ dates:Array<number>=[1,2,3,4,5,6,7,8,9]
+
 
   constructor(
      private couchService: CouchService
-    ) { }
+    ) {}
 
   ngOnInit() {
   }
