@@ -9,7 +9,6 @@ describe('NationValidatorService', () => {
     TestBed.configureTestingModule({
       imports: [ HttpModule, HttpClientModule ],
       providers: [ NationValidatorService, CouchService ]
-     
     });
   });
 

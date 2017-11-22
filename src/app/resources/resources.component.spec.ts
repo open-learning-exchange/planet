@@ -65,6 +65,7 @@ describe('ResourcesComponent', () => {
   });
 
   //test submitResources() 
+  /*
   it('should make a put request to couchService', () =>{
     putSpy =spyOn(couchService, 'put').and.returnValue(Promise.resolve({filename:fakeF.name, motoristshandbook}));
         component.file=fakeF;
@@ -73,8 +74,8 @@ describe('ResourcesComponent', () => {
           fixture.detectChanges();
           expect(putSpy).toHaveBeenCalled();
         });
-  });
-  /*
+  }));
+  
   it('should submitResources successfully', ()=>{
       putSpy =spyOn(couchService, 'put').and.returnValue(Promise.resolve(motoristshandbook));
         component.file = fakeF;
