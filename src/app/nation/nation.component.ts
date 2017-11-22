@@ -135,16 +135,24 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   openNationAddForm() {
     let title = "Add Nation";
-    let formName = "nationForm";
+    let type = "nation";
     let fields =
       [
         { "label": "Admin Name", "type": "textbox", "name": "adminName", 'placeholder': 'Admin Name', 'required': true},
-        { "label": "Nation Name", "type": "textbox", "name": "nationName", 'placeholder': 'Nation Name', 'required': true},
-        { "label": "Nation URL", "type": "textbox", "name": "nationURL", 'placeholder': 'Nation URL', 'required': true}
+        { "label": "Nation Name", "type": "textbox", "name": "name", 'placeholder': 'Nation Name', 'required': true},
+        { "label": "Nation URL", "type": "textbox", "name": "nationUrl", 'placeholder': 'Nation URL', 'required': true}
       ];
+    let validation = {
+      adminName: [ '', Validators.required,
+        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
+        ac => this.nationValidatorService.nationCheckerService$(ac)
+      ],
+      name: [ '', Validators.required ],
+      nationUrl: [ '', Validators.required ],
+    };
     this.formDialogService
-      .confirm(title, formName, fields,"")
-      .subscribe((res) => {this.result = res; console.log(res)});
+      .confirm(title, type, fields, validation, "")
+      .subscribe((res) => {console.log("Res",res);this.onSubmit(res);});
   }
 
 }
