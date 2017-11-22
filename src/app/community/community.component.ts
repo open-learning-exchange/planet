@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 
 @Component({
@@ -53,7 +53,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(community) {
-    this.deleteDialog = this.dialog.open(AlertsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick: this.deleteCommunity(community),
         type: 'community',

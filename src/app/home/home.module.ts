@@ -10,11 +10,10 @@ import { UsersComponent } from '../users/users.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
-import { PlanetFormDialogModule } from '../shared/form-dialog/planet-form-dialog.module';
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 
 @NgModule({
   imports: [
@@ -23,9 +22,8 @@ import { PlanetFormDialogModule } from '../shared/form-dialog/planet-form-dialog
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    PlanetAlertsModule,
     MaterialModule,
-    PlanetFormDialogModule
+    PlanetDialogsModule
   ],
   declarations: [
     HomeComponent,

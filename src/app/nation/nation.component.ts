@@ -2,8 +2,8 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
-import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
-import { FormDialogService } from '../shared/form-dialog/form-dialog.service';
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 import {
   FormBuilder,
@@ -44,7 +44,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private nationValidatorService: NationValidatorService,
     private dialog: MatDialog,
-    private formDialogService: FormDialogService
+    private dialogsFormService: DialogsFormService
   ) {
     this.createForm();
   }
@@ -85,7 +85,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(nation) {
-    this.deleteDialog = this.dialog.open(AlertsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick: this.deleteNation(nation),
         type: 'nation',
@@ -152,7 +152,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       name: [ '', Validators.required ],
       nationUrl: [ '', Validators.required ],
     };
-    this.formDialogService
+    this.dialogsFormService
       .confirm(title, type, fields, validation, '')
       .subscribe((res) => {
         console.log('Res', res);

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatDialog } from '@angular/material';
 
 @Component({
@@ -29,7 +29,7 @@ export class CoursesComponent implements OnInit {
   }
 
   deleteClick(course) {
-    this.deleteDialog = this.dialog.open(AlertsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick: this.deleteCourse(course.doc),
         type: 'course',

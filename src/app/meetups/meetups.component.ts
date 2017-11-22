@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
-import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -40,7 +40,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(meetup) {
-    this.deleteDialog = this.dialog.open(AlertsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick: this.deleteMeetup(meetup),
         type: 'meetup',
