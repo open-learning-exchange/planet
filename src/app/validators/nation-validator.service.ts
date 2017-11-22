@@ -15,18 +15,20 @@ export class NationValidatorService {
   readonly dbName = 'nations';
 
   constructor(private couchService: CouchService) {}
-    public nationCheckerService$(name: string, nationUrl: string): Observable<boolean> {
-      const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, findAllDocuments('name', name, 'nationUrl', nationUrl))
+
+  public nationCheckerService$(name: string, nationUrl: string): Observable<boolean> {
+    const isDuplicate = this.couchService
+    .post(`${this.dbName}/_find`, findAllDocuments('name', name, 'nationUrl', nationUrl))
       .then(data => {
-        if (data.docs.length > 0) {
-          return true;
-        }
-        return false;
-      });
-      return fromPromise(isDuplicate);
-    }
-    public checkNationExists$(
+      if (data.docs.length > 0) {
+        return true;
+      }
+      return false;
+    });
+    return fromPromise(isDuplicate);
+  }
+
+  public checkNationExists$(
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
     const errMessage = {
@@ -44,6 +46,7 @@ export class NationValidatorService {
       })
     );
   }
+
   public checkNationUrlExists$(
     nurl: AbstractControl
   ): Observable<ValidationErrors | null> {
