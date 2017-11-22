@@ -112,7 +112,8 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(nation) {
-    if (this.nationForm.valid) {
+    console.log(this.nationForm.valid)
+    if (nation) {
       const formdata = {
         'admin_name': nation.adminName,
         'name': nation.name,
@@ -123,7 +124,8 @@ export class NationComponent implements OnInit, AfterViewInit {
         .then((data) => {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
-          this.nations.data.push({ doc: formdata });
+          this.nations.data.push(formdata);
+          console.log(this.nations.data)
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
@@ -152,7 +154,10 @@ export class NationComponent implements OnInit, AfterViewInit {
     };
     this.formDialogService
       .confirm(title, type, fields, validation, "")
-      .subscribe((res) => {console.log("Res",res);this.onSubmit(res);});
+      .subscribe((res) => {
+        console.log("Res",res);
+        this.onSubmit(res);
+      });
   }
 
 }
