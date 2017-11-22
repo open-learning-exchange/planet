@@ -13,7 +13,7 @@ import {
   styles: [ `.modalForm-full-width {
       width: 28em;
     }
-  `]
+  ` ]
 })
 export class DialogsFormComponent {
 
