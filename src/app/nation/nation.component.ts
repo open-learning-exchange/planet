@@ -65,14 +65,13 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   createForm() {
     this.nationForm = this.fb.group({
-      adminName: [ '', Validators.required
-      ],
+      adminName: [ '', Validators.required ],
       name: [ '', Validators.required,
       // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.nationValidatorService.checkNationExists$(ac)
+      ac => this.nationValidatorService.checkNationExists$(ac)
       ],
-      nationUrl: [ '', Validators.required,
-        nurl => this.nationValidatorService.checkNationUrlExists$(nurl)
+      nationUrl: [ '', Validators.required, 
+      nurl => this.nationValidatorService.checkNationUrlExists$(nurl) 
       ],
     });
   }
