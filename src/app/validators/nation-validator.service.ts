@@ -15,9 +15,9 @@ export class NationValidatorService {
   readonly dbName = 'nations';
 
   constructor(private couchService: CouchService) {}
-    public nationCheckerService$(name: string): Observable<boolean> {
+    public nationCheckerService$(name: string, nationUrl:string): Observable<boolean> {
       const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, findOneDocument('name', name))
+      .post(`${this.dbName}/_find`, findOneDocument('name', name, 'nationUrl', nationUrl))
       .then(data => {
         if (data.docs.length > 0) {
           return true;
@@ -36,6 +36,25 @@ export class NationValidatorService {
     return timer(500).pipe(
       switchMap(() => {
         return this.nationCheckerService$(ac.value).pipe(map(res => {
+          if (res) {
+            return errMessage;
+          }
+          return null;
+        }));
+      })
+    );
+  }
+
+  public checkNationUrlExists$(
+    nurl: AbstractControl
+  ): Observable<ValidationErrors | null> {
+    const errMessage = {
+      duplicateCourse: { message: 'Nation Url already exists' }
+    };
+    // calls service every .5s for input change
+    return timer(500).pipe(
+      switchMap(() => {
+        return this.nationCheckerService$(nurl.value).pipe(map(res => {
           if (res) {
             return errMessage;
           }

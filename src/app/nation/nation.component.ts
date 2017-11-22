@@ -72,7 +72,7 @@ export class NationComponent implements OnInit, AfterViewInit {
         ac => this.nationValidatorService.checkNationExists$(ac)
       ],
       nationUrl: [ '', Validators.required,
-        ac => this.nationValidatorService.checkNationExists$(ac)
+        nurl => this.nationValidatorService.checkNationUrlExists$(nurl)
       ],
     });
   }
@@ -82,7 +82,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = data.rows.map(nation => nation.doc);
+        this.nations = data.rows.filter(x => x.doc._id !== '_design/nation-validators');
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
