@@ -8,7 +8,7 @@ declare var jQuery: any;
 export class MeetupsComponent implements OnInit {
   message = '';
   meetups = [];
-  deleteItem = {};
+  deleteItem: any;
 
   constructor(
     private couchService: CouchService

@@ -13,7 +13,7 @@ export class CommunityComponent implements OnInit {
   selectedValue = '';
   selectedNation = '';
   nations = [];
-  deleteItem = {};
+  deleteItem: any;
 
   constructor(
     private couchService: CouchService

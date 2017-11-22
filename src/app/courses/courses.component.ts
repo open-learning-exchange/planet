@@ -9,7 +9,7 @@ declare var jQuery: any;
 export class CoursesComponent implements OnInit {
   message = '';
   courses = [];
-  deleteItem = {};
+  deleteItem: any;
   constructor(
     private couchService: CouchService
   ) { }
