@@ -36,8 +36,8 @@
     <textarea type="text" name="feedbackMsg"[(ngModel)]="feedback.feedbackMsg" [rows]="7" [cols]="50" required="true"></textarea>
 
     <div *ngIf="message" [ngClass]="(messageType.pass===true)?'alert alert-success':'alert-danger'" i18n>
-      <span i18n >{message, select, Success { Your feedback is sucessfully submitted}
-        Invalid {Feedback cannot be empty}  Error {You feedback cannot be submitted }}
+      <span i18n >{message, select, feedbackSuccess { Your feedback is sucessfully submitted}
+        feedbackInvalid {Feedback cannot be empty}  feedbackError {You feedback cannot be submitted }}
       </span>
     </div>
   </div>
