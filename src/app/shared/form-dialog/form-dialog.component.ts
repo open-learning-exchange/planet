@@ -10,12 +10,15 @@ import {
 
 @Component({
   selector: 'form-dialog',
-  templateUrl: './form-dialog.component.html'
+  templateUrl: './form-dialog.component.html',
+  styleUrls: ['./form-dialog.scss']
 })
 export class FormDialogComponent{
 
   public title: string;
+  public type: string;
   public fields: any;
+  public validation: any;
   public message: string;
   public modalForm: FormGroup;
   

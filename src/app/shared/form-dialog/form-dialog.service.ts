@@ -14,23 +14,17 @@ import {
 export class FormDialogService {
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
   
-      public confirm(title: string, formName: string, fields: any, message: string): Observable<boolean> {
-        
-          let dialogRef: MatDialogRef<FormDialogComponent>;
-          dialogRef = this.dialog.open(FormDialogComponent);
-          dialogRef.componentInstance.modalForm = this.fb.group({
-            adminName: [ '', Validators.required,
-              // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-              //ac => this.nationValidatorService.nationCheckerService$(ac)
-            ],
-            nationName: [ '', Validators.required ],
-            nationURL: [ '', Validators.required ],
-          });
-          dialogRef.componentInstance.title = title;
-          dialogRef.componentInstance.fields = fields;
-          dialogRef.componentInstance.message = message;
-          
-          return dialogRef.afterClosed();
+  public confirm(title: string, type: string, fields: any, validation: any, message: string): Observable<boolean> {
+    let dialogRef: MatDialogRef<FormDialogComponent>;
+    dialogRef = this.dialog.open(FormDialogComponent,{
+      width : '600px'
+    });
+    dialogRef.componentInstance.modalForm = this.fb.group(validation);
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.type = type;
+    dialogRef.componentInstance.fields = fields;
+    dialogRef.componentInstance.message = message;
+    return dialogRef.afterClosed();
   }
 
 }
