@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 
-import { findOneDocument } from '../shared/mangoQueries';
+import { findAllDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 import { switchMap, map } from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class NationValidatorService {
   constructor(private couchService: CouchService) {}
     public nationCheckerService$(name: string, nationUrl:string): Observable<boolean> {
       const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, findOneDocument('name', name, 'nationUrl', nationUrl))
+      .post(`${this.dbName}/_find`, findAllDocuments('name', name, 'nationUrl', nationUrl))
       .then(data => {
         if (data.docs.length > 0) {
           return true;
@@ -30,7 +30,7 @@ export class NationValidatorService {
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
     const errMessage = {
-      duplicateCourse: { message: 'Nation already exists' }
+      duplicateNation: { message: 'Nation already exists' }
     };
     // calls service every .5s for input change
     return timer(500).pipe(
@@ -44,12 +44,11 @@ export class NationValidatorService {
       })
     );
   }
-
   public checkNationUrlExists$(
     nurl: AbstractControl
   ): Observable<ValidationErrors | null> {
     const errMessage = {
-      duplicateCourse: { message: 'Nation Url already exists' }
+      duplicateNation: { message: 'Nation Url already exists' }
     };
     // calls service every .5s for input change
     return timer(500).pipe(
