@@ -134,7 +134,6 @@ export class NationComponent implements OnInit, AfterViewInit {
     }
   }
 
-<<<<<<< HEAD
   openNationAddForm() {
     const title = 'Add Nation';
     const type = 'nation';
@@ -160,12 +159,8 @@ export class NationComponent implements OnInit, AfterViewInit {
       });
   }
 
-  communitylist(nationname){
+  communityList(nationname){
     this.router.navigate(['/community/'+ nationname]);
-=======
-  communitylist(nationname) {
-    this.router.navigate([ '/community/' + nationname ]);
->>>>>>> 442a3e4... Use paramMap and fix link with admin_name
   }
 
 }

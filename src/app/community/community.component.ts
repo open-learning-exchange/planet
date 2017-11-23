@@ -37,12 +37,13 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
+    this.communities.filter = this.selectedNation;
   }
 
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nations = data.rows;
+        this.nations = data.rows.map(function(nt){if(nt.doc.name == this.route.snapshot.paramMap.get('nation')) {this.selectedNation = nt.doc.nationurl;} return nt}, this);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -88,13 +89,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const urlFragment = this.router.url.split('/')[2];
-    if(!!urlFragment) {
-      this.selectedNation = urlFragment;
-    }
-    this.selectedNation = this.route.snapshot.paramMap.get('nation') || '';
-    this.getCommunityList();
     this.getNationList();
+    this.getCommunityList();
   }
 
 }
