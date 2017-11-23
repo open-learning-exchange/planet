@@ -14,6 +14,7 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     NavigationComponent,
     UsersComponent,
     CommunityComponent,
-    NationComponent
+    NationComponent,
+    ManagerDashboardComponent
   ],
   providers: [ NationValidatorService ]
 })
