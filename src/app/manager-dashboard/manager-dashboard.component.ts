@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
   template: `
-    <div><a routerLink="/community" i18n class="btn btn-primary">Communities</a> <a routerLink="/nation" i18n class="btn btn-primary">Nations</a></div>
+    <div><a mat-raised-button routerLink="/community" i18n>Communities</a> <a routerLink="/nation" i18n mat-raised-button>Nations</a></div>
   `,
   encapsulation: ViewEncapsulation.None
 })
