@@ -1,21 +1,31 @@
-    <div class="ole-register">
-      <div class="ole-logo">
-        <h1 i18n>Register New User</h1>
-      </div>
-      <form (ngSubmit)="createUser()" #loginForm="ngForm">
-        <div class="form-row">
+<div class="ole-register">
+  <h1 i18n>Register New User</h1>
+      <form (ngSubmit)="createUser(registerForm.value)" #registerForm="ngForm">
+        <div class="form-row ">
+
           <div class="col-4 form-group">
             <label>First Name</label>
-            <input class="form-control" [(ngModel)]="newUser.firstName" name="name" />
+            <input class="form-control" [(ngModel)]="newUser.firstName" name="firstName" required />
+
+            <div *ngIf="registerForm.controls.firstName?.required" class="error">
+  Name is required
+</div>
+
+            <!-- <div *ngIf="registerForm.invalid" class="alert alert-danger"> Name is required</div> -->
+
+
           </div>
           <div class="col-4">
             <label>Middle Name</label>
-            <input class="form-control" [(ngModel)]="newUser.middleName"  name="name" />
+            <input class="form-control" [(ngModel)]="newUser.middleName"  name="midd leName"
+            required />
           </div>
           <div class="col-4">
             <label>Last Name</label>
-            <input class="form-control" [(ngModel)]="newUser.lastName" name="name" />
+            <input class="form-control" [(ngModel)]="newUser.lastName" name="last Name"
+            required/>
           </div>
+
         </div>
         <div class="row">
           <div class=" col-4 form-group">
@@ -29,8 +39,9 @@
           <div class=" col-4 form-group">
             <label>Re-Enter Password</label>
             <input class="form-control"  [(ngModel)]="newUser.repeatPassword" name="repeatPassword" type="password" />
-
           </div>
+
+
         </div>
         <div class="form-row">
           <div class="col-4 form-group">
@@ -49,35 +60,70 @@
          </div>
        </div>
 
+
        <div class="form-row">
         <div class="form-group col-4">
          <label>Birthdate</label>
-         <input class="form-control" [(ngModel)]="newUser.birthdate" name="birthdate"  type="date" />
-       </div>
-       <div class="form-group col-4">
-        <label>Gender</label>
-        <input class="form-control" [(ngModel)]="newUser.gender" name="gender"/>
+         <div class="form-row">
+           <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday" name="birthdays" >
+            <label>Birthdate</label>
+
+            <option selected disabled>Date</option>
+            <option *ngFor="let day of birthdays" [ngValue]="day">{{day}}</option>
+          </select>
+
+
+          <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthmonth" name="level">
+             <option selected disabled>Month</option>
+           <option *ngFor="let month of birthmonths" [ngValue]="month">{{month}}</option>
+         </select>
+
+         <select class="form-control col-4" id="level" [(ngModel)]="newUser.birthyear" name="birthyears">
+           <option selected disabled>Year</option>
+          <option *ngFor="let year of birthyears" [ngValue]="year">{{year}}</option>
+        </select>
+
       </div>
-      <div class="form-group col-4">
-       <label>Levels</label>
-       <input class="form-control" [(ngModel)]="newUser.levels" name="levels"/>
-     </div>
+
+    </div>
+    <div class="form-group col-4">
+      <label for="gender">Gender</label>
+      <select class="form-control" id="gender" [(ngModel)]="newUser.gender" name="gender">
+       <option value="male" >Male</option>
+       <option value="female">Female</option>
+     </select>
    </div>
-   <div class="form-row">
-    <div class="form-group col-4">
-      <label>Community</label>
-      <input class="form-control" [(ngModel)]="newUser.community" name="community" />
-    </div>
-    <div class="form-group col-4">
-      <label>Region</label>
-      <input class="form-control" [(ngModel)]="newUser.region" name="Region"/>
-    </div>
-    <div class="form-group col-4">
-      <label>Nation</label>
-      <input class="form-control" [(ngModel)]="newUser.Nation" name="Nation"/>
-    </div>
-  </div>
-  <div><button class="ole-btn  btn-success"><strong>Register</strong></button></div>
-</form>
-<div id="login-status">{{message}}</div>
+   <div class="form-group col-4">
+    <label for="level">Level</label>
+    <select class="form-control" id="level" [(ngModel)]="newUser.level" name="level">
+     <option *ngFor="let level of educationLevels">{{level}}</option>
+   </select>
+
+ </div>
 </div>
+<div class="form-row">
+  <div class="form-group col-4">
+    <label>Community</label>
+    <input class="form-control" [(ngModel)]="newUser.community" name="community" />
+  </div>
+  <div class="form-group col-4">
+    <label>Region</label>
+    <input class="form-control" [(ngModel)]="newUser.region" name="Region"/>
+  </div>
+  <div class="form-group col-4">
+    <label>Nation</label>
+    <input class="form-control" [(ngModel)]="newUser.Nation" name="Nation"/>
+  </div>
+</div>
+<div *ngIf="RegisterErrorMessage" class="alert alert-danger">{{ RegisterErrorMessage}}</div>
+<div><button class="ole-btn  btn-success"><strong>Register</strong></button></div>
+</form>
+
+</div>
+
+
+
+
+
+
+

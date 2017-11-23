@@ -14,7 +14,9 @@ export class userData  {
   language:string;
   gender:string;
   levels:number;
-  birthdate:Date;
+  birthday:number;
+  birthmonth:number;
+  birthyear:number;
   community:string;
   region:string;
   nation:string;
@@ -27,18 +29,43 @@ export class userData  {
 })
 export class RegisterComponent implements OnInit {
  newUser:userData= new userData();
- dates:Array<number>=[1,2,3,4,5,6,7,8,9]
-
-
+ educationLevels:Array<any>=[1,2,3,4,5,6,7,8,9,11,12,"Higher"];
+ birthmonths:Array<any>=[1,2,3,4,5,6,7,8,9,11,12];
+ length:number= new Date().getFullYear();
+ birthyears:number[] = new Array(length);
+ birthdays:number[]= new Array();
+ RegisterErrorMessage:string;
   constructor(
      private couchService: CouchService
-    ) {}
+    ) {
+
+
+         for (var i = this.length; i >1900; i--) {
+      this.birthyears.push(i);
+    }
+       for (var j = 1; j < 32; j++) {
+      this.birthdays.push(j+0);
+    }
+  }
 
   ngOnInit() {
+
   }
-  createUser(){
-    console.log(this.newUser);
-    console.log("creating new user");
+  createUser(data){
+    console.log(data);
+    if (this.newUser.password!==this.newUser.repeatPassword) {
+      this.RegisterErrorMessage="Password doesn't Match";
+    }
+    else{
+      for(let propery in data){
+        if (!data[propery]) {
+          this.RegisterErrorMessage= propery + " is Required";
+          break;
+        }
+      }
+    }
+    //console.log(this.newUser);
+
   }
 
 }
