@@ -43,7 +43,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nations = data.rows.map(function(nt){if(nt.doc.name == this.route.snapshot.paramMap.get('nation')) {this.selectedNation = nt.doc.nationurl;} return nt}, this);
+        this.nations = data.rows.map(function(nt){
+          if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
+            this.selectedNation = nt.doc.nationurl;
+          }
+          return nt;
+        }, this);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 

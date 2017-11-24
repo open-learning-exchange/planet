@@ -159,8 +159,8 @@ export class NationComponent implements OnInit, AfterViewInit {
       });
   }
 
-  communityList(nationname){
-    this.router.navigate(['/community/'+ nationname]);
+  communityList(nationname) {
+    this.router.navigate([ '/community/' + nationname ]);
   }
 
 }
