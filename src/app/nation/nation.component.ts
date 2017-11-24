@@ -30,7 +30,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'name', 'admin_name', 'nationurl', 'action' ];
   readonly dbName = 'nations';
   message = '';
-  nationForm: FormGroup;
+  modalForm: any;
   deleteDialog: any;
   formDialog: any;
   valid_data: {};
@@ -45,7 +45,6 @@ export class NationComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService
   ) {
-    this.createForm();
   }
 
   ngOnInit() {
@@ -63,25 +62,18 @@ export class NationComponent implements OnInit, AfterViewInit {
     this.nations.filter = filterValue;
   }
 
-  createForm() {
-    this.nationForm = this.fb.group({
-      adminName: [ '', Validators.required ],
-      name: [ '', Validators.required,
-      // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-      ac => this.nationValidatorService.checkNationExists$(ac)
-      ],
-      nationUrl: [ '', Validators.required, 
-      nurl => this.nationValidatorService.checkNationUrlExists$(nurl) 
-      ],
-    });
-  }
-
   getNationList() {
     this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
       .then((data) => {
+        let datas = []
+        for(var i = 0; i < data.rows.length; i++){
+          if (data.rows[i].id !== "_design/nation-validators"){
+            datas.push(data.rows[i])
+          }
+        }
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations = data.rows.filter(x => x.doc._id !== '_design/nation-validators');
+        this.nations.data = datas.map(nation => nation.doc)
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -113,8 +105,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(nation) {
-    console.log(this.nationForm.valid);
-    if (nation) {
+    if (this.modalForm.valid) {
       const formdata = {
         'admin_name': nation.adminName,
         'name': nation.name,
@@ -130,7 +121,7 @@ export class NationComponent implements OnInit, AfterViewInit {
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
-      (<any>Object).values(this.nationForm.controls).forEach(control => {
+      (<any>Object).values(this.modalForm.controls).forEach(control => {
         control.markAsTouched({ onlySelf: true });
       });
     }
@@ -148,10 +139,9 @@ export class NationComponent implements OnInit, AfterViewInit {
     const validation = {
       adminName: [ '', Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.nationValidatorService.nationCheckerService$(ac)
       ],
-      name: [ '', Validators.required ],
-      nationUrl: [ '', Validators.required ],
+      name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$(ac) ],
+      nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationUrlExists$(nurl) ],
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')

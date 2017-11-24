@@ -16,9 +16,9 @@ export class NationValidatorService {
 
   constructor(private couchService: CouchService) {}
 
-  public nationCheckerService$(name: string, nationUrl: string): Observable<boolean> {
+  public nationCheckerService$(name: string): Observable<boolean> {
     const isDuplicate = this.couchService
-    .post(`${this.dbName}/_find`, findAllDocuments('name', name, 'nationUrl', nationUrl))
+    .post(`${this.dbName}/_find`, findAllDocuments('name', name))
       .then(data => {
       if (data.docs.length > 0) {
         return true;
