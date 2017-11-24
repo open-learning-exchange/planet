@@ -66,7 +66,6 @@ export class NationComponent implements OnInit, AfterViewInit {
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        console.log(data.rows.map(nation => nation.doc))
         this.nations.data = data.rows.map(nation => nation.doc);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
@@ -111,7 +110,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
-          this.getNationList();
+          this.nations._updateChangeSubscription();
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
