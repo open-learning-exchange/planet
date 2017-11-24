@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 
 import {
   FormBuilder,
@@ -105,7 +106,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(nation) {
-    if (this.modalForm.valid) {
+    if (nation !== '') {
       const formdata = {
         'admin_name': nation.adminName,
         'name': nation.name,
@@ -117,7 +118,6 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
-          console.log(this.nations.data);
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
