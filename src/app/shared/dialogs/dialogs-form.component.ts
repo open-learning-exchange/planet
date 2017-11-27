@@ -16,6 +16,7 @@ import {
   ` ]
 })
 export class DialogsFormComponent {
+  message = '';
 
   public title: string;
   public type: string;
@@ -23,7 +24,16 @@ export class DialogsFormComponent {
   public validation: any;
   public message: string;
   public modalForm: FormGroup;
+  readonly dbName = 'nations';
 
-  constructor(public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder) { }
+  constructor( public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder ) { }
+
+  onSubmit(mForm, dialog){
+     if(dialog.componentInstance.modalForm.valid){
+      dialog.close(mForm);
+     } else {
+      this.message = 'Please complete the form';
+     }
+  }
 
 }

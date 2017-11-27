@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
@@ -36,6 +36,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   formDialog: any;
   valid_data: {};
   result: any;
+  dialogRef: any;
 
   constructor(
     private location: Location,
@@ -106,7 +107,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(nation) {
-    if (nation !== '') {
+    if (nation) {
       const formdata = {
         'admin_name': nation.adminName,
         'name': nation.name,
@@ -118,12 +119,9 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
+          //this.formDialog.close();
+          this.nations.data = this.nations.data;
         }, (error) => this.message = 'Error');
-    } else {
-      // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
-      (<any>Object).values(this.modalForm.controls).forEach(control => {
-        control.markAsTouched({ onlySelf: true });
-      });
     }
   }
 
