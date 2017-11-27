@@ -1,4 +1,4 @@
-import { Component, OnChanges, Inject, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import {
   FormBuilder,
@@ -28,12 +28,18 @@ export class DialogsFormComponent {
 
   constructor( public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder ) { }
 
-  onSubmit(mForm, dialog){
-     if(dialog.componentInstance.modalForm.valid){
+  onSubmit(mForm, dialog) {
+    if (dialog.componentInstance.modalForm.valid) {
       dialog.close(mForm);
-     } else {
-      this.message = 'Please complete the form';
-     }
+    } else {
+    this.message = 'Please complete the form';
+    }
+  }
+
+  valueChange(event) {
+    if (event.key) {
+      this.message = '';
+    }
   }
 
 }

@@ -6,7 +6,7 @@
     <div *ngFor="let field of fields">
       <!-- textbox -->
       <mat-input-container *ngIf="field.type == 'textbox'" class="modalForm-full-width">
-          <input matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
+          <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
       </mat-input-container>
       <!-- selectbox -->
       <mat-input-container *ngIf="field.type == 'selectbox'" class="modalForm-full-width">
