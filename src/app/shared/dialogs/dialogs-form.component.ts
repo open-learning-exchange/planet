@@ -16,7 +16,7 @@ import {
   ` ]
 })
 export class DialogsFormComponent {
-  
+
   public title: string;
   public type: string;
   public fields: any;
