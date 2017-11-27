@@ -3,9 +3,9 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Jsonp, Response } from '@angular/http';
-declare var jQuery: any;
 
 import {
   FormBuilder,
@@ -34,6 +34,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   message = '';
   nationForm: FormGroup;
   deleteDialog: any;
+  ViewNationDetailDialog: any;
   formDialog: any;
   valid_data: {};
   result: any;
@@ -164,18 +165,18 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   view(url) {
-    if(url){
-      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')  
+    if (url) {
+      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')
       .subscribe(res => {
-        this.view_data = res.json().rows.length > 0 ? res.json().rows[0].doc : [];
-        jQuery('#view').modal('show');
-      },(error) => {
-        console.log(error);
-        jQuery('#view').modal('hide');
+        this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+          data: {
+            allData : res.json().rows.length > 0 ? res.json().rows[0].doc : [],
+            title : 'Nation Details'
+          }
+        });
       });
-    }else{
+    } else {
       this.message = 'There is no data.';
     }
   }
-
 }
