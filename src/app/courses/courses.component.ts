@@ -1,16 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
-import { MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 
 @Component({
   templateUrl: './courses.component.html',
   styleUrls: [ './courses.component.scss' ]
 })
-export class CoursesComponent implements OnInit {
+export class CoursesComponent implements OnInit, AfterViewInit {
+
+  coursesList = new MatTableDataSource();
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  displayedColumns = [ 'title', 'action' ];
   message = '';
   courses = [];
   deleteDialog: any;
+
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog
@@ -23,9 +29,24 @@ export class CoursesComponent implements OnInit {
   getCourses() {
     this.couchService.get('courses/_all_docs?include_docs=true')
       .then((data) => {
-        // don't retrieve the course validator
-        this.courses = data.rows.filter(x => x.doc._id !== '_design/course-validators');
-      }, (error) => this.message = 'There was a problem getting the courses');
+        this.coursesList.data = data.rows.reduce((courses: any[], course: any) => {
+          if (course.id !== '_design/course-validators') {
+            courses.push({ ...course.doc });
+          }
+          return courses;
+        }, []);
+      });
+  }
+
+  ngAfterViewInit() {
+    this.coursesList.sort = this.sort;
+    this.coursesList.paginator = this.paginator;
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.coursesList.filter = filterValue;
   }
 
   deleteClick(course) {
