@@ -1,22 +1,22 @@
-<h1>Add Courses</h1>
+<h1 i18n>Add Courses</h1>
 <!-- nvalidate - disable browser's default validators to use our validators -->
 <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
   <div class="row">
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput placeholder="Course Title" formControlName="courseTitle" required>
+        <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
       </mat-form-field>
       <planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput placeholder="Language of Instruction" formControlName="courseTitle" required>
+        <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="courseTitle" required>
       </mat-form-field>
     </div>
     <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput placeholder="Member Limit" type="number" class="example-right-align" formControlName="memberLimit">
+        <input matInput i18n-placeholder placeholder="Member Limit" type="number" class="example-right-align" formControlName="memberLimit">
       </mat-form-field>
       <planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages>
     </div>
@@ -24,7 +24,7 @@
   <div class="row">
     <div class="form-group col-4">
       <mat-form-field>
-        <mat-select placeholder="Course Leader" formControlName="courseLeader">
+        <mat-select i18n-placeholder placeholder="Course Leader" formControlName="courseLeader">
           <mat-option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -35,28 +35,28 @@
   </div>
   <div class="form-group">
     <mat-form-field>
-      <textarea matInput placeholder="Description" formControlName="description" required></textarea>
+      <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
     </mat-form-field>
     <planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages>
   </div>
   <div class="row">
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput placeholder="Method" formControlName="method">
+        <input matInput i18n-placeholder placeholder="Method" formControlName="method">
       </mat-form-field>
     </div>
   </div>
   <div class="row">
     <div class="form-group col-4">
       <mat-form-field>
-        <mat-select placeholder="Grade Level" formControlName="gradeLevel">
+        <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel">
           <mat-option *ngFor="let grade of gradeLevels" [value]="grade"> {{grade}} </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <div class="form-group col-4">
       <mat-form-field>
-        <mat-select placeholder="Subject Level" formControlName="subjectLevel">
+        <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel">
           <mat-option *ngFor="let sub of subjectLevels" [value]="sub"> {{sub}} </mat-option>
         </mat-select>
       </mat-form-field>
@@ -65,27 +65,27 @@
   <div class="row">
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput placeholder="Start Date" type="date" formControlName="startDate">
+        <input matInput i18n-placeholder placeholder="Start Date" type="date" formControlName="startDate">
       </mat-form-field>
       <planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput type="date" placeholder="End Date" formControlName="endDate">
+        <input matInput type="date" i18n-placeholder placeholder="End Date" formControlName="endDate">
       </mat-form-field>
       <planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages>
     </div>
     <div class="form-group radio col-4">
-      <div>Frequency</div>
+      <div i18n>Frequency</div>
       <!-- radio buttons need same name to allow only one value to be selected! -->
       <mat-radio-group>
-          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(true)"> Daily </mat-radio-button>
-          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(false)"> Weekly </mat-radio-button>
+          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(true)" i18n> Daily </mat-radio-button>
+          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(false)" i18n> Weekly </mat-radio-button>
       </mat-radio-group>
     </div>
   </div>
   <div class="form-check form-check-inline" *ngIf="!showDaysCheckBox">
-    <div>Day</div>
+    <div i18n>Day</div>
       <label class="form-check-label" *ngFor="let day of days">
         <mat-checkbox class="example-margin" (change)="onDayChange(day, $event.checked)"> {{day}} </mat-checkbox>
       </label>
@@ -93,152 +93,40 @@
   <div class="row">
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput type="time" placeholder="Start Date" formControlName="startTime">
+        <input matInput type="time" i18n-placeholder placeholder="Start Date" formControlName="startTime">
       </mat-form-field>
       <planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput type="time" placeholder="End Date" formControlName="endTime">
+        <input matInput type="time" i18n-placeholder placeholder="End Date" formControlName="endTime">
       </mat-form-field>
       <planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages>
     </div>
     <div class="form-group col-4">
       <mat-form-field>
-        <input matInput placeholder="Location" formControlName="location">
+        <input matInput i18n-placeholder placeholder="Location" formControlName="location">
       </mat-form-field>
     </div>
   </div>
   <div class="row">
     <div class="form-group col-2">
-      <label>Background Color</label>
-        <input type="color" placeholder="Background Color" formControlName="backgroundColor" mat-icon>
+      <label i18n>Background Color</label>
+        <input type="color" i18n-placeholder placeholder="Background Color" formControlName="backgroundColor" mat-icon>
       <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
     </div>
     <div class="form-group col-2">
-      <label>Foreground Color</label>
-        <input type="color" placeholder="Foreground Color" formControlName="foregroundColor" mat-icon >
+      <label i18n>Foreground Color</label>
+        <input type="color" i18n-placeholder placeholder="Foreground Color" formControlName="foregroundColor" mat-icon >
       <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
     </div>
   </div>
   <div class="button-row">
-    <button type="submit" mat-raised-button color="primary">Submit</button>
-    <button type="button" mat-raised-button color="warn" (click)="cancel()">Cancel</button>
+    <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
+    <button type="button" mat-raised-button color="warn" (click)="cancel()" i18n>Cancel</button>
   </div>
 </form>
 <div class="message">
   <p>Form value: {{ courseForm.value | json }}</p>
   <p>{{ courseForm.valid }}</p>
 </div>
-
-
-
-<!-- <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
-  <div class="row">
-    <div class="form-group col-4">
-      <label>Course Title</label>
-      <input type="text" class="form-control" formControlName="courseTitle" required>
-      <planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages>
-    </div>
-    <div class="form-group col-4">
-      <label>Language of Instruction</label>
-      <input type="text" class="form-control" formControlName="languageOfInstruction">
-    </div>
-    <div class="form-group col-4">
-      <label>Member Limit</label>
-      <input type="number" min="1" class="form-control" formControlName="memberLimit">
-      <planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages>
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label>Course Leader</label>
-      <select multiple class="form-control" formControlName="courseLeader">
-        <option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</option>
-      </select>
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Description</label>
-    <textarea class="form-control" formControlName="description" required></textarea>
-    <planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages>
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label>Method</label>
-      <input type="text" class="form-control" formControlName="method">
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label>Grade Level</label>
-      <select class="form-control" formControlName="gradeLevel">
-        <option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</option>
-      </select>
-    </div>
-    <div class="form-group col-4">
-      <label>Subject Level</label>
-      <select class="form-control" formControlName="subjectLevel">
-        <option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</option>
-      </select>
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label>Start Date</label>
-      <input type="date" class="form-control" formControlName="startDate">
-      <planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages>
-    </div>
-    <div class="form-group col-4">
-      <label>End Date</label>
-      <input type="date" class="form-control" formControlName="endDate">
-      <planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages>
-    </div>
-    <div class="form-group radio col-4">
-      <div>Frequency</div>
-      <label>
-        <input type="radio" name="daysToggler" (change)="toogleWeekly(true)"> Daily
-      </label>
-      <label>
-        <input type="radio" name="daysToggler" (change)="toogleWeekly(false)"> Weekly
-      </label>
-    </div>
-  </div>
-  <div class="form-check form-check-inline" *ngIf="!showDaysCheckBox">
-    <div>Day</div>
-      <label class="form-check-label" *ngFor="let day of days">
-        <input class="form-check-input" type="checkbox" (change)="onDayChange(day, $event.target.checked)"> {{day}}
-      </label>
-  </div>
-  <div class="row">
-    <div class="form-group col-4">
-      <label>Start Time</label>
-      <input type="time" class="form-control" formControlName="startTime">
-      <planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages>
-    </div>
-    <div class="form-group col-4">
-      <label>End Time</label>
-      <input type="time" class="form-control" formControlName="endTime">
-      <planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages>
-    </div>
-    <div class="form-group col-4">
-      <label>Location</label>
-      <input type="text" class="form-control" formControlName="location">
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-2">
-      <label for="backgroundCol">Background Color</label>
-      <input type="color" class="form-control" formControlName="backgroundColor">
-      <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
-    </div>
-    <div class="form-group col-2">
-      <label>Foreground Color</label>
-      <input type="color" class="form-control" formControlName="foregroundColor">
-      <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-  <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
-</form>
- -->

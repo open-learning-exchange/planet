@@ -43,7 +43,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.coursesList.paginator = this.paginator;
   }
 
-  applyFilter(filterValue: string) {
+  searchFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
     this.coursesList.filter = filterValue;

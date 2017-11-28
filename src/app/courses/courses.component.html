@@ -6,7 +6,7 @@
   <h2 class="header" i18n> Courses </h2>
   <div class="search-header">
     <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.value)" i18n-placeholder placeholder="Search">
+      <input matInput (keyup)="searchFilter($event.target.value)" i18n-placeholder placeholder="Search">
     </mat-form-field>
   </div>
   <mat-table #table [dataSource]="coursesList" matSort>
