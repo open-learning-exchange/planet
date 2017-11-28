@@ -137,8 +137,8 @@ export class NationComponent implements OnInit, AfterViewInit {
       adminName: [ '', Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
       ],
-      name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$(ac) ],
-      nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationUrlExists$(nurl) ],
+      name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$('name', ac) ],
+      nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationExists$('nationurl', nurl) ],
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
