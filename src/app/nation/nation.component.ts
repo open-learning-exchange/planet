@@ -67,15 +67,16 @@ export class NationComponent implements OnInit, AfterViewInit {
   getNationList() {
     this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
       .then((data) => {
-        const datas = [];
-        for (let i = 0; i < data.rows.length; i++) {
-          if (data.rows[i].id !== '_design/nation-validators') {
-            datas.push(data.rows[i]);
-          }
-        }
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = datas.map(nation => nation.doc);
+        this.nations.data = [].concat(
+          data.rows.reduce((nations: any[], nation: any) => {
+            if (nation.id !== '_design/nation-validators') {
+              nations.push({ ...nation.doc });
+            }
+            return nations;
+          }, [])
+        );
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
