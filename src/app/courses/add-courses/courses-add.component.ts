@@ -13,6 +13,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CourseValidatorService } from '../../validators/course-validator.service';
 import * as constants from '../constants';
+import { MatFormField, MatFormFieldControl } from '@angular/material';
 
 
 @Component({

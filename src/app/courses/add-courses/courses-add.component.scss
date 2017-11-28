@@ -9,7 +9,7 @@
 }
 
 .ng-dirty.ng-invalid:not(form) {
-  border-left: 5px solid $error-red;
+  border-left: 5px  $error-red;
   border-color: $error-red;
 }
 

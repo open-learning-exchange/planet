@@ -3,6 +3,141 @@
 <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
   <div class="row">
     <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput placeholder="Course Title" formControlName="courseTitle" required>
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages>
+    </div>
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput placeholder="Language of Instruction" formControlName="courseTitle" required>
+      </mat-form-field>
+    </div>
+    <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput placeholder="Member Limit" type="number" class="example-right-align" formControlName="memberLimit">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <mat-form-field>
+        <mat-select placeholder="Course Leader" formControlName="courseLeader">
+          <mat-option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- need to create a select with options from number of members available -->
+      <!-- for this to work we need all the memberes' id from the members database which is not created yet -->
+        <!-- i created this according to the entry in the old bell apps couch db members database -->
+    </div>
+  </div>
+  <div class="form-group">
+    <mat-form-field>
+      <textarea matInput placeholder="Description" formControlName="description" required></textarea>
+    </mat-form-field>
+    <planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput placeholder="Method" formControlName="method">
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <mat-form-field>
+        <mat-select placeholder="Grade Level" formControlName="gradeLevel">
+          <mat-option *ngFor="let grade of gradeLevels" [value]="grade"> {{grade}} </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="form-group col-4">
+      <mat-form-field>
+        <mat-select placeholder="Subject Level" formControlName="subjectLevel">
+          <mat-option *ngFor="let sub of subjectLevels" [value]="sub"> {{sub}} </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput placeholder="Start Date" type="date" formControlName="startDate">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages>
+    </div>
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput type="date" placeholder="End Date" formControlName="endDate">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages>
+    </div>
+    <div class="form-group radio col-4">
+      <div>Frequency</div>
+      <!-- radio buttons need same name to allow only one value to be selected! -->
+      <mat-radio-group>
+          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(true)"> Daily </mat-radio-button>
+          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(false)"> Weekly </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+  <div class="form-check form-check-inline" *ngIf="!showDaysCheckBox">
+    <div>Day</div>
+      <label class="form-check-label" *ngFor="let day of days">
+        <mat-checkbox class="example-margin" (change)="onDayChange(day, $event.checked)"> {{day}} </mat-checkbox>
+      </label>
+  </div>
+  <div class="row">
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput type="time" placeholder="Start Date" formControlName="startTime">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages>
+    </div>
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput type="time" placeholder="End Date" formControlName="endTime">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages>
+    </div>
+    <div class="form-group col-4">
+      <mat-form-field>
+        <input matInput placeholder="Location" formControlName="location">
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-2">
+      <mat-form-field>
+        <input matInput placeholder="Background Color" formControlName="backgroundColor">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
+    </div>
+    <div class="form-group col-2">
+      <mat-form-field>
+        <input matInput placeholder="Foreground Color" formControlName="foregroundColor">
+      </mat-form-field>
+      <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
+    </div>
+  </div>
+  <div class="button-row">
+    <button type="submit" mat-raised-button color="primary">Submit</button>
+    <button type="button" mat-raised-button color="warn" (click)="cancel()">Cancel</button>
+  </div>
+</form>
+<div class="message">
+  <p>Form value: {{ courseForm.value | json }}</p>
+  <p>{{ courseForm.valid }}</p>
+</div>
+
+
+
+<!-- <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+  <div class="row">
+    <div class="form-group col-4">
       <label>Course Title</label>
       <input type="text" class="form-control" formControlName="courseTitle" required>
       <planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages>
@@ -11,7 +146,6 @@
       <label>Language of Instruction</label>
       <input type="text" class="form-control" formControlName="languageOfInstruction">
     </div>
-    <!-- Firefox seems to accept non-numeric characters but it does not actually change the value of the DOM -->
     <div class="form-group col-4">
       <label>Member Limit</label>
       <input type="number" min="1" class="form-control" formControlName="memberLimit">
@@ -21,10 +155,7 @@
   <div class="row">
     <div class="form-group col-4">
       <label>Course Leader</label>
-      <!-- need to create a select with options from number of members available -->
-      <!-- for this to work we need all the memberes' id from the members database which is not created yet -->
       <select multiple class="form-control" formControlName="courseLeader">
-        <!-- i created this according to the entry in the old bell apps couch db members database -->
         <option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</option>
       </select>
     </div>
@@ -67,7 +198,6 @@
     </div>
     <div class="form-group radio col-4">
       <div>Frequency</div>
-      <!-- radio buttons need same name to allow only one value to be selected! -->
       <label>
         <input type="radio" name="daysToggler" (change)="toogleWeekly(true)"> Daily
       </label>
@@ -113,6 +243,4 @@
   <button type="submit" class="btn btn-primary">Submit</button>
   <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
 </form>
-
-<p>Form value: {{ courseForm.value | json }}</p>
-<p>{{ courseForm.valid }}</p>
+ -->
