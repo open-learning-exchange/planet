@@ -7,14 +7,14 @@
       <!-- textbox -->
       <mat-input-container *ngIf="field.type == 'textbox'" class="modalForm-full-width">
           <input matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
-          <planet-form-error-messages [control]="modalForm.controls.adminName"></planet-form-error-messages>
+          <planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages>
       </mat-input-container>
       <!-- selectbox -->
       <mat-input-container *ngIf="field.type == 'selectbox'" class="modalForm-full-width">
         <select mat-select *ngFor="let options of field.options">
           <option value="{{option.value}}">{{option.text}}</option>
         </select>
-        <planet-form-error-messages [control]="modalForm.controls.adminName"></planet-form-error-messages>
+        <planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages>
       </mat-input-container>
     </div>
   </div>

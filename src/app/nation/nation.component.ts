@@ -49,9 +49,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private jsonp: Jsonp
-  ) {
-    this.createForm();
-  }
+  ) {}
 
   ngOnInit() {
     this.getNationList();
@@ -66,17 +64,6 @@ export class NationComponent implements OnInit, AfterViewInit {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
     this.nations.filter = filterValue;
-  }
-
-  createForm() {
-    this.nationForm = this.fb.group({
-      adminName: [ '', Validators.required,
-        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.nationValidatorService.nationCheckerService$(ac)
-      ],
-      name: [ '', Validators.required ],
-      nationUrl: [ '', Validators.required ],
-    });
   }
 
   getNationList() {
@@ -116,7 +103,6 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(nation) {
-    console.log(this.nationForm.valid);
     if (nation) {
       const formdata = {
         'admin_name': nation.adminName,
@@ -129,7 +115,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
-          console.log(this.nations.data);
+          this.nations._updateChangeSubscription();
         }, (error) => this.message = 'Error');
     } else {
       // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
@@ -159,7 +145,6 @@ export class NationComponent implements OnInit, AfterViewInit {
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
       .subscribe((res) => {
-        console.log('Res', res);
         this.onSubmit(res);
       });
   }
