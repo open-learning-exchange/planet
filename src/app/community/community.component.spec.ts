@@ -30,4 +30,3 @@ describe('CommunityComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-
