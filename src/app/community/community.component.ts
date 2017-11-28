@@ -36,7 +36,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
-    this.communities.filter = this.selectedNation;
   }
 
   getNationList() {
