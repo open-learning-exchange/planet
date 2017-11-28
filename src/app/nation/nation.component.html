@@ -26,7 +26,7 @@
      <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button mat-raised-button (click)="communityList(element.name)" i18n> Communities </button>
+        <button mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
         <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
       </mat-cell>
     </ng-container>

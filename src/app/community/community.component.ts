@@ -45,6 +45,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         this.nations = data.rows.map(function(nt){
           if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
             this.selectedNation = nt.doc.nationurl;
+            this.communities.filter = this.selectedNation;
           }
           return nt;
         }, this);
