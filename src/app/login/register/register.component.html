@@ -54,42 +54,24 @@
 
 
        <div class="form-row">
-        <div class="form-group col-4">
-         <label>Birthdate</label>
-         <div class="form-row">
-
-
-            <div ngModelGroup="newUser.birthday" #nameCtrl="ngModelGroup">
-                 <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday.day" name="Birthday.Date" >
+          <div class="form-group col-4">
             <label>Birthdate</label>
-<!--         <input name="first" [ngModel]="name.first" minlength="2">
-        <input name="last" [ngModel]="name.last" required> -->
-      </div>
-
-
-
-            <option selected disabled>Date</option>
-            <option *ngFor="let day of birthdays" [ngValue]="day">{{day}}</option>
-          </select>
-
-
-          <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthmonth" name="Birthday Month">
-             <option selected disabled>Month</option>
-           <option *ngFor="let month of birthmonths" [ngValue]="month">{{month}}</option>
-         </select>
-
-         <select class="form-control col-4" id="level" [(ngModel)]="newUser.birthyear" name="Birthyear year">
-           <option selected disabled>Year</option>
-          <option *ngFor="let year of birthyears" [ngValue]="year">{{year}}</option>
-        </select>
-
-
-
-
-
-      </div>
-
-    </div>
+            <div class="form-row">
+                 <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday" name="Birth Date" >
+                <label>Birthdate</label>
+                    <option selected disabled>Date</option>
+                    <option *ngFor="let day of birthdays" [ngValue]="day">{{day}}</option>
+                </select>
+                <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthmonth" name="Birth Month">
+                   <option selected disabled>Month</option>
+                    <option *ngFor="let month of birthmonths" [ngValue]="month">{{month}}</option>
+                 </select>
+                <select class="form-control col-4" id="level" [(ngModel)]="newUser.birthyear" name="Birth year">
+                    <option selected disabled>Year</option>
+                     <option *ngFor="let year of birthyears" [ngValue]="year">{{year}}</option>
+              </select>
+            </div>
+        </div>
     <div class="form-group col-4">
       <label for="gender">Gender</label>
       <select class="form-control" id="gender" [(ngModel)]="newUser.gender" name="Gender">
@@ -101,10 +83,12 @@
     <label for="level">Level</label>
     <select class="form-control" id="level" [(ngModel)]="newUser.level" name="level">
      <option *ngFor="let level of educationLevels">{{level}}</option>
-   </select>
+     </select>
+    </div>
+  </div>
 
- </div>
-</div>
+
+
 <div class="form-row">
   <div class="form-group col-4">
     <label>Community</label>
