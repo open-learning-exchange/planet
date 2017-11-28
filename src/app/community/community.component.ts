@@ -5,7 +5,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
-declare var jQuery: any;
 
 @Component({
   templateUrl: './community.component.html'
