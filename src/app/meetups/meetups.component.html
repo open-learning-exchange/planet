@@ -1,33 +1,31 @@
 <div class="container">
 <p class="km-message">{{message}}</p>
 <h2 i18n>Meetups</h2>
-<a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Meetup Add</a>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let meetup of meetups; let i = index" class="km-meetup-row">
-      <td class="km-meetup-title">{{meetup.doc.title}}</td>
-      <td class="km-meetup-description">{{meetup.doc.description}}</td>
-      <td>
-        <button class="btn btn-danger" (click)="deleteClick(meetup, i)">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
+<button mat-raised-button routerLink="add" routerLinkActive="active" i18n>Meetup Add</button>
+<div class="example-container mat-elevation-z8">
+  <div class="example-header">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
+    </mat-form-field>
+  </div>
+  <mat-table #table [dataSource]="meetups" matSort>
+    <ng-container matColumnDef="title">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+      <mat-cell *matCellDef="let element" ><button mat-raised-button (click)="deleteClick(element)">Delete</button> </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]">
+  </mat-paginator>
 </div>
-
-<planet-alerts-delete
-  (okClick)="deleteMeetup($event)"
-  (resetMessage)="message=''"
-  [type]="'meetup'"
-  [deleteItem]="deleteItem"
-  [message]="message"
-  [displayName]="deleteItem.title">
-</planet-alerts-delete>

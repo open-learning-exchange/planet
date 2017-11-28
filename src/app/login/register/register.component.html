@@ -5,24 +5,16 @@
 
           <div class="col-4 form-group">
             <label>First Name</label>
-            <input class="form-control" [(ngModel)]="newUser.firstName" name="firstName" required />
-
-            <div *ngIf="registerForm.controls.firstName?.required" class="error">
-  Name is required
-</div>
-
-            <!-- <div *ngIf="registerForm.invalid" class="alert alert-danger"> Name is required</div> -->
-
-
+            <input class="form-control" [(ngModel)]="newUser.firstName" name="First Name" required />
           </div>
           <div class="col-4">
             <label>Middle Name</label>
-            <input class="form-control" [(ngModel)]="newUser.middleName"  name="midd leName"
+            <input class="form-control" [(ngModel)]="newUser.middleName"  name="Middle Name"
             required />
           </div>
           <div class="col-4">
             <label>Last Name</label>
-            <input class="form-control" [(ngModel)]="newUser.lastName" name="last Name"
+            <input class="form-control" [(ngModel)]="newUser.lastName" name="Last Name"
             required/>
           </div>
 
@@ -30,15 +22,15 @@
         <div class="row">
           <div class=" col-4 form-group">
             <label>Login</label>
-            <input class="form-control" [(ngModel)]="newUser.login" name="login" />
+            <input class="form-control" [(ngModel)]="newUser.login" name="Login" />
           </div>
           <div class="col-4 form-group">
             <label>Enter Password</label>
-            <input class="form-control"[(ngModel)]="newUser.password"  name="password" type="password" />
+            <input class="form-control"[(ngModel)]="newUser.password"  name="password" type="Password" />
           </div>
           <div class=" col-4 form-group">
             <label>Re-Enter Password</label>
-            <input class="form-control"  [(ngModel)]="newUser.repeatPassword" name="repeatPassword" type="password" />
+            <input class="form-control"  [(ngModel)]="newUser.repeatPassword" name="Repeat Password" type="password" />
           </div>
 
 
@@ -46,17 +38,17 @@
         <div class="form-row">
           <div class="col-4 form-group">
            <label>Email</label>
-           <input class="form-control" [(ngModel)]="newUser.email" name="email" />
+           <input class="form-control" [(ngModel)]="newUser.email" name="Email" />
 
          </div>
          <div class="col-4 form-group">
            <label>Language</label>
-           <input class="form-control" [(ngModel)]="newUser.language" name="language"/>
+           <input class="form-control" [(ngModel)]="newUser.language" name="Language"/>
 
          </div>
          <div class="col-4 form-group">
            <label>Phone Number</label>
-           <input class="form-control" [(ngModel)]="newUser.phone" name="phone"/>
+           <input class="form-control" [(ngModel)]="newUser.phone" name="Phone"/>
          </div>
        </div>
 
@@ -65,30 +57,42 @@
         <div class="form-group col-4">
          <label>Birthdate</label>
          <div class="form-row">
-           <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday" name="birthdays" >
+
+
+            <div ngModelGroup="newUser.birthday" #nameCtrl="ngModelGroup">
+                 <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday.day" name="Birthday.Date" >
             <label>Birthdate</label>
+<!--         <input name="first" [ngModel]="name.first" minlength="2">
+        <input name="last" [ngModel]="name.last" required> -->
+      </div>
+
+
 
             <option selected disabled>Date</option>
             <option *ngFor="let day of birthdays" [ngValue]="day">{{day}}</option>
           </select>
 
 
-          <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthmonth" name="level">
+          <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthmonth" name="Birthday Month">
              <option selected disabled>Month</option>
            <option *ngFor="let month of birthmonths" [ngValue]="month">{{month}}</option>
          </select>
 
-         <select class="form-control col-4" id="level" [(ngModel)]="newUser.birthyear" name="birthyears">
+         <select class="form-control col-4" id="level" [(ngModel)]="newUser.birthyear" name="Birthyear year">
            <option selected disabled>Year</option>
           <option *ngFor="let year of birthyears" [ngValue]="year">{{year}}</option>
         </select>
+
+
+
+
 
       </div>
 
     </div>
     <div class="form-group col-4">
       <label for="gender">Gender</label>
-      <select class="form-control" id="gender" [(ngModel)]="newUser.gender" name="gender">
+      <select class="form-control" id="gender" [(ngModel)]="newUser.gender" name="Gender">
        <option value="male" >Male</option>
        <option value="female">Female</option>
      </select>
@@ -104,7 +108,7 @@
 <div class="form-row">
   <div class="form-group col-4">
     <label>Community</label>
-    <input class="form-control" [(ngModel)]="newUser.community" name="community" />
+    <input class="form-control" [(ngModel)]="newUser.community" name="Community" />
   </div>
   <div class="form-group col-4">
     <label>Region</label>

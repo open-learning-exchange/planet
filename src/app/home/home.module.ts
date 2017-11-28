@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { JsonpModule, Jsonp, Response } from '@angular/http';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
@@ -12,9 +13,11 @@ import { RegisterComponent } from '../login/register/register.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
+import { MaterialModule } from '../shared/material.module';
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 
 @NgModule({
   imports: [
@@ -23,7 +26,9 @@ import { NationComponent } from '../nation/nation.component';
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    PlanetAlertsModule
+    MaterialModule,
+    PlanetDialogsModule,
+    JsonpModule
   ],
   declarations: [
     HomeComponent,
@@ -32,7 +37,9 @@ import { NationComponent } from '../nation/nation.component';
     UsersComponent,
     CommunityComponent,
     NationComponent,
+    ManagerDashboardComponent,
     RegisterComponent
+
   ],
   providers: [ NationValidatorService ]
 })

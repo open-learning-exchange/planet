@@ -8,7 +8,7 @@ import { CoursesRequestComponent } from './request-courses/courses-request.compo
 import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { CourseValidatorService } from '../validators/course-validator.service';
-import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 
 @NgModule({
   imports: [
@@ -17,7 +17,7 @@ import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    PlanetAlertsModule
+    PlanetDialogsModule
   ],
   declarations: [
     CoursesComponent,

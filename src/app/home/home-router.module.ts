@@ -6,6 +6,8 @@ import { UsersComponent } from '../users/users.component';
 import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
+
+import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { RegisterComponent } from '../login/register/register.component';
 
 const routes: Routes = [
@@ -14,7 +16,10 @@ const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
       { path: 'nation', component: NationComponent },
-      { path: 'register', component: RegisterComponent },
+
+      { path: 'manager', component: ManagerDashboardComponent },
+       { path: 'register', component: RegisterComponent },
+
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'community', component: CommunityComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },

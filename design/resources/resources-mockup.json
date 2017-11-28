@@ -1,0 +1,147 @@
+{
+    "docs":[
+        {
+            "need_optimization": false,
+            "resourceFor": "Learner",
+            "Publisher": "africanstorybook.org",
+            "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
+            "addedBy": "admin",
+            "uploadDate": "2014-08-26T04:00:00.000Z",
+            "openWith": "PDF.js",
+            "subject": [
+                "Literature"
+            ],
+            "articleDate": "2014-08-26T04:00:00.000Z",
+            "kind": "Resource",
+            "Medium": "Text",
+            "language": "English",
+            "author": "Ghanaian Folktale",
+            "sum": 0,
+            "Level": [
+                "Upper Primary"
+            ],
+            "languages": [
+                "English"
+            ],
+            "timesRated": 0,
+            "Tag": [],
+            "Year": "2014",
+            "title": "African Storybooks - Anansi Gives People Stories",
+            "averageRating": ""
+         },
+         {
+            "need_optimization": false,
+            "resourceFor": "Learner",
+            "Publisher": "African Storybooks",
+            "linkToLicense": "https://creativecommons.org/licenses/by-nc/4.0/",
+            "addedBy": "admin",
+            "uploadDate": "2014-08-26T04:00:00.000Z",
+            "openWith": "PDF.js",
+            "subject": [
+                "Literature"
+            ],
+            "articleDate": "2014-08-26T04:00:00.000Z",
+            "kind": "Resource",
+            "Medium": "Text",
+            "language": "English",
+            "author": "Reviva Schermbrucker, Sue Kramer",
+            "sum": 0,
+            "Level": [
+                "Early Education"
+            ],
+            "languages": [
+                "English"
+            ],
+            "timesRated": 0,
+            "Tag": [],
+            "Year": "2014",
+            "title": "African Storybooks - Brown",
+            "averageRating": ""
+         },
+         {
+            "need_optimization": false,
+            "resourceFor": "Learner",
+            "Publisher": "africanstorybook.org",
+            "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
+            "addedBy": "admin",
+            "uploadDate": "2014-08-26T04:00:00.000Z",
+            "openWith": "PDF.js",
+            "subject": [
+                "Literature"
+            ],
+            "articleDate": "2014-08-26T04:00:00.000Z",
+            "kind": "Resource",
+            "Medium": "Text",
+            "language": "English",
+            "author": "Little Zebra Books, Jeremiah Dube",
+            "sum": 0,
+            "Level": [
+                "Lower Primary"
+            ],
+            "languages": [
+                "English"
+            ],
+            "timesRated": 0,
+            "Tag": [],
+            "Year": "2014",
+            "title": "African Storybooks - Crocodile and Baboon",
+            "averageRating": ""
+         },
+         {
+            "need_optimization": false,
+            "resourceFor": "Learner",
+            "Publisher": "Africanstorybook.org",
+            "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
+            "addedBy": "admin",
+            "uploadDate": "2014-08-26T04:00:00.000Z",
+            "openWith": "PDF.js",
+            "subject": [
+                "Literature"
+            ],
+            "articleDate": "2014-08-26T04:00:00.000Z",
+            "kind": "Resource",
+            "Medium": "Text",
+            "language": "English",
+            "author": "Southern African Folk Tale, Catherine Groenewald",
+            "sum": 0,
+            "Level": [
+                "Lower Primary"
+            ],
+            "languages": [
+                "English"
+            ],
+            "timesRated": 0,
+            "Tag": [],
+            "Year": "2014",
+            "title": "African Storybooks - Grandmother and the Smelly Girl",
+            "averageRating": ""
+         },
+         {
+            "Publisher": "Phi Delta Kappa (permission received from PDK and author JSaphier)",
+            "need_optimization": false,
+            "addedBy": "teacher",
+            "uploadDate": "2014-07-22T04:00:00.000Z",
+            "openWith": "PDF.js",
+            "subject": [
+                "Learning"
+            ],
+            "articleDate": "2014-07-22T04:00:00.000Z",
+            "kind": "Resource",
+            "Medium": "Text",
+            "language": "English",
+            "author": "Jon Saphier and Lucy West",
+            "sum": 0,
+            "Level": [
+                "Professional"
+            ],
+            "languages": [
+                "English"
+            ],
+            "timesRated": 0,
+            "Tag": [],
+            "Year": "",
+            "title": "How Coaches Can Maximize Student Learning",
+            "averageRating": ""
+         }
+    ]
+}
