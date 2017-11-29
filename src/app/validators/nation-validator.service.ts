@@ -20,10 +20,7 @@ export class NationValidatorService {
     const isDuplicate = this.couchService
     .post(`${this.dbName}/_find`, findAllDocuments(header, name))
       .then(data => {
-      if (data.docs.length > 0) {
-        return true;
-      }
-      return false;
+      return (data.docs.length > 0);
     });
     return fromPromise(isDuplicate);
   }
@@ -47,6 +44,5 @@ export class NationValidatorService {
       })
     );
   }
-
 
 }

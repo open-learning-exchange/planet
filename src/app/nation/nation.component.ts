@@ -73,14 +73,11 @@ export class NationComponent implements OnInit, AfterViewInit {
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = [].concat(
-          data.rows.reduce((nations: any[], nation: any) => {
-            if (nation.id !== '_design/nation-validators') {
-              nations.push({ ...nation.doc });
-            }
-            return nations;
-          }, [])
-        );
+        this.nations.data = data.rows.map(function(nation) {
+          if (nation.doc.id !== '_design/nation-validators') {
+            return nation.doc;
+          }
+        });
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
