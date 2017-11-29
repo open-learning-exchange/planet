@@ -172,8 +172,11 @@ export class LoginComponent implements OnInit {
     this.loginMode=false;
   }
    setlogin(){
+     console.log("clicking");
+     console.log(this.createMode);
     this.createMode=false;
     this.loginMode=true;
+    console.log(this.createMode);
   }
 
   createUser(data){
@@ -198,8 +201,10 @@ export class LoginComponent implements OnInit {
 
       }
       else{
+        let temp= Object.assign({},data);
+        console.log(data);
 
-        this.createrecord();
+        this.createrecord(data);
       }
     }
 
@@ -211,12 +216,13 @@ export class LoginComponent implements OnInit {
 
   }
 
-  createrecord() {
+  createrecord(data:any) {
     console.log("creating new record");
 
-      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': this.newUser.firstName, 'password': this.newUser.password, 'roles': [], 'type': 'user' })
+      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': data.firstName, 'password': data.password, 'roles': [], 'type': 'user' })
         .then((data) => {
-          this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
+          console.log(data);
+           data.id.replace('org.couchdb.user:', '');
           this.setlogin();
         }
   }
