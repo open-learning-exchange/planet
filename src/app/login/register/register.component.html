@@ -1,8 +1,32 @@
-<div class="ole-register">
+
+<div *ngIf="loginMode" class="ole-login" color="primary">
+  <div class="ole-logo">
+    <img src="assets/cropped-ole-ico-logo-180x180.png">
+    <h1 i18n>Planet Learning</h1>
+    <h3 i18n>Version 2.01</h3>
+  </div>
+  <form (ngSubmit)="login(loginForm.value)" #loginForm="ngForm">
+    <div class=" form-group">
+      <label>UserName</label>
+      <input class="form-control" [(ngModel)]="loginData.username" name="username" required />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input class="form-control" [(ngModel)]="loginData.password"  name="password" type="password" required />
+    </div>
+    <button type="submit" class=" btn btn-success ">  Login</button>
+ </form>
+  <div *ngIf="loginMessage" class=" alert alert-danger">{{loginMessage}}</div>
+  <div style="margin-top:70px; margin-left: 120">
+       <button (click)="setregister($event)" type="button" class=" btn btn-outline-info ">  Become a member</button>
+  </div>
+
+</div>
+
+<div *ngIf="createMode" class="ole-register">
   <h1 i18n>Register New User</h1>
       <form (ngSubmit)="createUser(registerForm.value)" #registerForm="ngForm">
         <div class="form-row ">
-
           <div class="col-4 form-group">
             <label>First Name</label>
             <input class="form-control" [(ngModel)]="newUser.firstName" name="First Name" required />
@@ -104,8 +128,11 @@
   </div>
 </div>
 <div *ngIf="RegisterErrorMessage" class="alert alert-danger">{{ RegisterErrorMessage}}</div>
-<div><button class="ole-btn  btn-success"><strong>Register</strong></button></div>
+<div><button class="btn  btn-success"><strong>Register</strong></button></div>
 </form>
+  <div style="margin-top:70px; margin-left: 120">
+       <button (click)="setregister($event)" type="button" class=" btn btn-outline-info "> Alreadya member? Login Here</button>
+  </div>
 
 </div>
 

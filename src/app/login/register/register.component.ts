@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { CouchService } from '../../shared/couchdb.service';
 
@@ -28,6 +29,7 @@ export class userData  {
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+
  newUser:userData= new userData();
  educationLevels:Array<any>=[1,2,3,4,5,6,7,8,9,11,12,"Higher"];
  birthmonths:Array<any>=[1,2,3,4,5,6,7,8,9,11,12];
@@ -35,7 +37,14 @@ export class RegisterComponent implements OnInit {
  birthyears:number[] = new Array(length);
  birthdays:number[]= new Array();
  RegisterErrorMessage:string;
+ validated:boolean;
+ createMode:boolean=false;
+  loginMode:boolean=true;
+  loginData = { username: '', password: '' };
+  loginMessage:string;
+
   constructor(
+    private router: Router,
      private couchService: CouchService
     ) {
 
@@ -51,23 +60,97 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
 
   }
-  createUser(data){
-    console.log(data);
-    if (this.newUser.password!==this.newUser.repeatPassword) {
-      this.RegisterErrorMessage="Password doesn't Match";
+  reRoute() {
+    this.router.navigate([ this.returnUrl ]);
+  }
+
+
+  login(data){
+    if (!data.username||!data.password) {
+     this.loginMessage='Both Username and Password  are required';
     }
     else{
-      for(let propery in data){
+       this.couchService.post('_session', { 'name': data.username, 'password': data.password}, { withCredentials: true })
+      .then((data) => {
+       this.router.navigate(['/']);
+      }, (error) => this.loginMessage = 'Username and/or password do not match');
+    }
+  }
+    checkAdminExistence() {
+     return this.couchService.get('_users/_all_docs')
+      .then((data) => {
+        return true; // user can see data so there is no admin
+      }, (error) => {
+        return false; // user doesn't have permission so there is an admin
+      });
+  }
+
+
+    createAdmin() {
+     this.couchService.put('_node/nonode@nohost/_config/admins/' + this.newUser.firstName, this.newUser.password).then((data)=> {
+       this.setlogin();
+
+     });
+  }
+   setregister(){
+    this.createMode=true;
+    this.loginMode=false;
+  }
+   setlogin(){
+    this.createMode=false;
+    this.loginMode=true;
+  }
+
+  createUser(data){
+    this.validated=true;
+   for(let propery in data){
         if (!data[propery]) {
+          this.validated=false;
           this.RegisterErrorMessage= propery + " is Required";
           break;
-        }
+     }
+
+   }
+   if (this.validated) {
+         this.loginMode=false;
+     this.RegisterErrorMessage='';
+
+  if (data["password"]===data["Repeat Password"]) {
+
+    this.checkAdminExistence().then((noAdmin) => {
+      if (noAdmin) {
+         this.createAdmin()
+
+      }
+      else{
+
+        this.createrecord();
       }
     }
-    //console.log(this.newUser);
+
+  }
+  else{
+    this.RegisterErrorMessage='Password Does not Match!';
+  }
+   }
 
   }
 
+  createrecord() {
+    console.log("creating new record");
+
+      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': this.newUser.firstName, 'password': this.newUser.password, 'roles': [], 'type': 'user' })
+        .then((data) => {
+          this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
+          this.setlogin();
+        }
+  }
+
+
 }
+
+
+
+
 
 
