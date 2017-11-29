@@ -6,6 +6,7 @@ import { UsersComponent } from '../users/users.component';
 import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
+import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -13,6 +14,7 @@ const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
       { path: 'nation', component: NationComponent },
+      { path: 'manager', component: ManagerDashboardComponent },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'community', component: CommunityComponent },
       { path: 'community/:nation', component: CommunityComponent },

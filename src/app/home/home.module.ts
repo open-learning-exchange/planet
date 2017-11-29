@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { JsonpModule, Jsonp, Response } from '@angular/http';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
@@ -14,6 +15,7 @@ import { NationValidatorService } from '../validators/nation-validator.service';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 
 @NgModule({
   imports: [
@@ -23,7 +25,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     MaterialModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
+    JsonpModule
   ],
   declarations: [
     HomeComponent,
@@ -31,7 +34,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     NavigationComponent,
     UsersComponent,
     CommunityComponent,
-    NationComponent
+    NationComponent,
+    ManagerDashboardComponent
   ],
   providers: [ NationValidatorService ]
 })
