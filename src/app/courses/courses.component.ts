@@ -9,12 +9,11 @@ import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldCo
 })
 export class CoursesComponent implements OnInit, AfterViewInit {
 
-  coursesList = new MatTableDataSource();
+  courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'title', 'action' ];
   message = '';
-  courses = [];
   deleteDialog: any;
 
   constructor(
@@ -29,30 +28,29 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   getCourses() {
     this.couchService.get('courses/_all_docs?include_docs=true')
       .then((data) => {
-        this.coursesList.data = data.rows.reduce((courses: any[], course: any) => {
-          if (course.id !== '_design/course-validators') {
-            courses.push({ ...course.doc });
-          }
-          return courses;
-        }, []);
+        this.courses.data = data.rows.map((course: any) => {
+          return course.doc;
+        }).filter((c: any) => {
+          return c._id !== '_design/course-validators';
+        });
       });
   }
 
   ngAfterViewInit() {
-    this.coursesList.sort = this.sort;
-    this.coursesList.paginator = this.paginator;
+    this.courses.sort = this.sort;
+    this.courses.paginator = this.paginator;
   }
 
   searchFilter(filterValue: string) {
-    this.coursesList.filter = filterValue.trim().toLowerCase();
+    this.courses.filter = filterValue.trim().toLowerCase();
   }
 
   deleteClick(course) {
     this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
-        okClick: this.deleteCourse(course.doc),
+        okClick: this.deleteCourse(course),
         type: 'course',
-        displayName: course.doc.courseTitle
+        displayName: course.courseTitle
       }
     });
   }
@@ -64,7 +62,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
         .then((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.courses = this.courses.filter(c => data.id !== c.doc._id);
+          this.courses.data = this.courses.data.filter(c => data.id !== c._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
     };

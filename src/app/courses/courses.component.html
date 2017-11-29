@@ -8,7 +8,7 @@
       <input matInput (keyup)="searchFilter($event.target.value)" i18n-placeholder placeholder="Search">
     </mat-form-field>
   </div>
-  <mat-table #table [dataSource]="coursesList" matSort>
+  <mat-table #table [dataSource]="courses" matSort>
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.courseTitle}} </mat-cell>
