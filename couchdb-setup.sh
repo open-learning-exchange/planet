@@ -47,6 +47,24 @@ else
   COUCHURL=http://$COUCHUSER:$COUCHPASSWORD@$HOST:$PORT
 fi
 
+# Adding attachment to resource
+insert_attachment() {
+    python -c "
+import urllib, json, sys, subprocess
+data = json.load(open('./design/resources/attachment.json'))
+for key in data:
+ id=key['doc_id']
+ image=key['filename']
+ command = 'http://a:a@localhost:2200/resources/'+id
+ response = urllib.urlopen(command)
+ jsondata = json.loads(response.read())
+ rev=jsondata['_rev']
+ putAttachment='curl -v -X PUT http://a:a@localhost:2200/resources/'+id+'/'+image+'?rev='+rev+' --data-binary @'+image+' -H Content-Type:image/jpg'
+ p = subprocess.Popen(putAttachment, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+ out, err = p.communicate()
+ "
+}
+
 # Add CouchDB standard databases
 curl -X PUT $COUCHURL/_users
 curl -X PUT $COUCHURL/_replicator
@@ -68,3 +86,4 @@ insert_docs nations ./design/nations/nations-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
+insert_attachment

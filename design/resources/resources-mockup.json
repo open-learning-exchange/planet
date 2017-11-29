@@ -1,6 +1,7 @@
 {
     "docs":[
-        {
+        {   
+            "_id":"0216c7208a72e79b29997d0fd400be3c",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "africanstorybook.org",
@@ -30,6 +31,7 @@
             "averageRating": ""
          },
          {
+            "_id":"0216c7208a72e79b29997d0fd400beac",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "African Storybooks",
@@ -59,6 +61,7 @@
             "averageRating": ""
          },
          {
+            "_id":"0216c7208a72e79b29997ded400beac",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "africanstorybook.org",
@@ -88,6 +91,7 @@
             "averageRating": ""
          },
          {
+            "_id":"0216c7208a7ss79b29997d0fd400beac",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "Africanstorybook.org",
@@ -117,6 +121,7 @@
             "averageRating": ""
          },
          {
+            "_id":"0216s208a72e79b29997d0fd400beac",
             "Publisher": "Phi Delta Kappa (permission received from PDK and author JSaphier)",
             "need_optimization": false,
             "addedBy": "teacher",
