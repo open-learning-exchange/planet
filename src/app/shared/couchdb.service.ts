@@ -15,24 +15,18 @@ export class CouchService {
   constructor(private http: HttpClient) {}
 
   put(db: string, data: any, opts?: any): Promise<any> {
-    const url = this.baseUrl + db;
-    const putData = data ? JSON.stringify(data) : '';
-    opts = this.setOpts(opts);
 
     return this.http
-      .put(url, putData, opts)
+      .put(this.baseUrl + db, JSON.stringify(data) || '', this.setOpts(opts))
       .toPromise()
       .then(this.handleRes)
       .catch(this.handleError);
   }
 
   post(db: string, data: any, opts?: any): Promise<any> {
-    const url = this.baseUrl + db;
-    const postData = data ? JSON.stringify(data) : '';
-    opts = this.setOpts(opts);
 
     return this.http
-      .post(url, postData, opts)
+      .post(this.baseUrl + db, JSON.stringify(data) || '', this.setOpts(opts))
       .toPromise()
       .then(this.handleRes)
       .catch(this.handleError);
