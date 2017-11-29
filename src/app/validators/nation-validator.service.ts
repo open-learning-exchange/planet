@@ -33,7 +33,7 @@ export class NationValidatorService {
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
     const errMessage = {
-      duplicateNation: { message : header === 'name' ? 'Nation already exists' : 'Nation URL already exists'; }
+      duplicateNation: { message : header === 'name' ? 'Nation already exists' : 'Nation URL already exists' }
     };
     // calls service every .5s for input change
     return timer(500).pipe(
