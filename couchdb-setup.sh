@@ -55,7 +55,7 @@ data = json.load(open('./design/resources/attachment.json'))
 for key in data:
  id=key['doc_id']
  image=key['filename']
- command = 'http://a:a@localhost:2200/resources/'+id
+ command = '$COUCHURL/resources/'+id
  response = urllib.urlopen(command)
  jsondata = json.loads(response.read())
  rev=jsondata['_rev']
