@@ -30,7 +30,7 @@ export class DialogsFormComponent {
     if (dialog.componentInstance.modalForm.valid) {
       dialog.close(mForm);
     } else {
-    this.message = 'Please complete the form';
+      this.message = 'Please complete the form';
     }
   }
 

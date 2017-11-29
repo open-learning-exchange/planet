@@ -18,10 +18,10 @@ export class NationValidatorService {
 
   public nationCheckerService$(header: string, name: string): Observable<boolean> {
     const isDuplicate = this.couchService
-    .post(`${this.dbName}/_find`, findAllDocuments(header, name))
+      .post(`${this.dbName}/_find`, findAllDocuments(header, name))
       .then(data => {
-      return (data.docs.length > 0);
-    });
+        return (data.docs.length > 0);
+      });
     return fromPromise(isDuplicate);
   }
 
