@@ -3,8 +3,10 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
+import { Jsonp, Response } from '@angular/http';
 
 import {
   FormBuilder,
@@ -33,10 +35,12 @@ export class NationComponent implements OnInit, AfterViewInit {
   message = '';
   modalForm: any;
   deleteDialog: any;
+  ViewNationDetailDialog: any;
   formDialog: any;
   valid_data: {};
   result: any;
   dialogRef: any;
+  view_data = [];
 
   constructor(
     private location: Location,
@@ -45,9 +49,9 @@ export class NationComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private nationValidatorService: NationValidatorService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService
-  ) {
-  }
+    private dialogsFormService: DialogsFormService,
+    private jsonp: Jsonp
+  ) {}
 
   ngOnInit() {
     this.getNationList();
@@ -120,7 +124,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
-          this.nations.data = this.nations.data;
+          this.nations._updateChangeSubscription();
         }, (error) => this.message = 'Error');
     }
   }
@@ -150,4 +154,19 @@ export class NationComponent implements OnInit, AfterViewInit {
       });
   }
 
+  view(url) {
+    if (url) {
+      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')
+      .subscribe(res => {
+        this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+          data: {
+            allData : res.json().rows.length > 0 ? res.json().rows[0].doc : [],
+            title : 'Nation Details'
+          }
+        });
+      });
+    } else {
+      this.message = 'There is no data.';
+    }
+  }
 }
