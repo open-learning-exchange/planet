@@ -18,18 +18,14 @@ export class CouchService {
 
     return this.http
       .put(this.baseUrl + db, JSON.stringify(data) || '', this.setOpts(opts))
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+      .toPromise();
   }
 
   post(db: string, data: any, opts?: any): Promise<any> {
 
     return this.http
       .post(this.baseUrl + db, JSON.stringify(data) || '', this.setOpts(opts))
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+      .toPromise();
   }
 
   get(db: string, opts?: any): Promise<any> {
@@ -38,9 +34,7 @@ export class CouchService {
 
     return this.http
       .get(url, opts)
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+      .toPromise();
   }
 
   delete(db: string, opts?: any): Promise<any> {
@@ -49,14 +43,7 @@ export class CouchService {
 
     return this.http
       .delete(url, opts)
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+      .toPromise();
   }
 
-  private handleRes = (res: any) => res;
-
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error);
-  }
 }
