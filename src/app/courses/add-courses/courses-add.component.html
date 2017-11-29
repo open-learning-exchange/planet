@@ -79,8 +79,8 @@
       <div i18n>Frequency</div>
       <!-- radio buttons need same name to allow only one value to be selected! -->
       <mat-radio-group>
-          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(true)" i18n> Daily </mat-radio-button>
-          <mat-radio-button value = "" name="daysToggler" (change)="toogleWeekly(false)" i18n> Weekly </mat-radio-button>
+          <mat-radio-button value="true" name="daysToggler" (change)="toogleWeekly(true)" i18n> Daily </mat-radio-button>
+          <mat-radio-button value="false" name="daysToggler" (change)="toogleWeekly(false)" i18n> Weekly </mat-radio-button>
       </mat-radio-group>
     </div>
   </div>
@@ -112,12 +112,12 @@
   <div class="row">
     <div class="form-group col-2">
       <label i18n>Background Color</label>
-        <input type="color" i18n-placeholder placeholder="Background Color" formControlName="backgroundColor" mat-icon>
+      <input type="color" i18n-placeholder placeholder="Background Color" formControlName="backgroundColor" mat-icon>
       <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
     </div>
     <div class="form-group col-2">
       <label i18n>Foreground Color</label>
-        <input type="color" i18n-placeholder placeholder="Foreground Color" formControlName="foregroundColor" mat-icon >
+      <input type="color" i18n-placeholder placeholder="Foreground Color" formControlName="foregroundColor" mat-icon >
       <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
     </div>
   </div>
