@@ -44,9 +44,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   searchFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.coursesList.filter = filterValue;
+    this.coursesList.filter = filterValue.trim().toLowerCase();
   }
 
   deleteClick(course) {
