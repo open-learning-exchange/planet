@@ -59,7 +59,7 @@ for key in data:
  response = urllib.urlopen(command)
  jsondata = json.loads(response.read())
  rev=jsondata['_rev']
- putAttachment='curl -v -X PUT http://a:a@localhost:2200/resources/'+id+'/'+image+'?rev='+rev+' --data-binary @'+image+' -H Content-Type:image/jpg'
+ putAttachment='curl -v -X PUT $COUCHURL/resources/'+id+'/'+image+'?rev='+rev+' --data-binary @'+image+' -H Content-Type:image/jpg'
  p = subprocess.Popen(putAttachment, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
  out, err = p.communicate()
  "
