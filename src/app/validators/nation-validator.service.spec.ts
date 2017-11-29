@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NationValidatorService } from './nation-validator.service';
 import { HttpModule } from '@angular/http';
 

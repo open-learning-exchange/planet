@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpModule } from '@angular/http';
 import { ResourcesViewComponent } from './resources-view.component';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule }   from '@angular/forms'
 import { By } from '@angular/platform-browser';
 

@@ -6,7 +6,7 @@ import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { UsersComponent } from './users.component';
 import { Router, RouterModule } from '@angular/router';

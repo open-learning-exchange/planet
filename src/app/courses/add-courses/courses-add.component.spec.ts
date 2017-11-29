@@ -4,7 +4,7 @@ import { CoursesAddComponent } from './courses-add.component';
 import { FormErrorMessagesComponent } from '../../shared/form-error-messages.component';
 import { CourseValidatorService } from 'app/validators/course-validator.service';
 import { AlertsDeleteComponent } from '../../shared/alerts/alerts-delete.component';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../../shared/couchdb.service';
 import { HttpModule } from '@angular/http';

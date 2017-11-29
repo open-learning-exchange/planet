@@ -4,7 +4,7 @@ import { MeetupsComponent } from './meetups.component';
 import { HttpModule } from '@angular/http';
 import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { By } from '@angular/platform-browser';
 
 describe('MeetupsComponent', () => {

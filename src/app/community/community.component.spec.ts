@@ -4,7 +4,7 @@ import { CommunityComponent } from './community.component';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpModule } from '@angular/http';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CommunityComponent', () => {

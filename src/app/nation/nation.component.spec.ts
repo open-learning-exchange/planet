@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 import { NationComponent } from './nation.component';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
 import { CouchService } from '../shared/couchdb.service';
