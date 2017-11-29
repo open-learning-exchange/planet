@@ -149,19 +149,8 @@ export class NationComponent implements OnInit, AfterViewInit {
       });
   }
 
-  view(url) {
-    if (url) {
-      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')
-      .subscribe(res => {
-        this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
-          data: {
-            allData : res.json().rows.length > 0 ? res.json().rows[0].doc : [],
-            title : 'Nation Details'
-          }
-        });
-      });
-    } else {
-      this.message = 'There is no data.';
-    }
+  communityList(nationname) {
+    this.router.navigate([ '/community/' + nationname ]);
   }
+
 }

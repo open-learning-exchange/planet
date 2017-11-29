@@ -1,9 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './community.component.html'
@@ -29,7 +30,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
   ngAfterViewInit() {
@@ -39,7 +41,13 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nations = data.rows;
+        this.nations = data.rows.map(function(nt){
+          if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
+            this.selectedNation = nt.doc.nationurl;
+            this.communities.filter = this.selectedNation;
+          }
+          return nt;
+        }, this);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -85,8 +93,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.getCommunityList();
     this.getNationList();
+    this.getCommunityList();
   }
 
 }
