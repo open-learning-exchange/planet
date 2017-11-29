@@ -22,6 +22,7 @@ export class FormErrorMessagesComponent {
     required: () => 'This field is required',
     min: params => 'The number cannot be below ' + params.min,
     duplicateCourse: params => params.message,
+    duplicateNation: params => params.message,
     invalidInt: params => params.message,
     invalidHex: params => params.message,
     invalidTime: params => params.message,

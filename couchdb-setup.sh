@@ -61,7 +61,7 @@ curl -X PUT $COUCHURL/communityregistrationrequests
 
 # Add or update design docs
 upsert_design courses course-validators ./design/courses/course-validators.json
-
+upsert_design nations nation-validators ./design/nations/nation-validators.json
 # Insert dummy data docs
 insert_docs communityregistrationrequests ./design/community/community-mockup.json
 insert_docs nations ./design/nations/nations-mockup.json
