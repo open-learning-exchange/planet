@@ -139,9 +139,7 @@ export class NationComponent implements OnInit, AfterViewInit {
         { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
       ];
     const validation = {
-      adminName: [ '', Validators.required,
-        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-      ],
+      adminName: [ '', Validators.required ],
       name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$('name', ac) ],
       nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationExists$('nationurl', nurl) ],
     };

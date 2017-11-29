@@ -23,7 +23,6 @@ export class DialogsFormComponent {
   public validation: any;
   public message: string;
   public modalForm: FormGroup;
-  readonly dbName = 'nations';
 
   constructor( public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder ) { }
 
