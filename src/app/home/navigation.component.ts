@@ -7,23 +7,25 @@ import { Router } from '@angular/router';
   selector: 'planet-navigation',
   template: `
     <ul>
-      <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
-      <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
       <li>
         <mat-form-field>
-          <mat-select placeholder="Select Language">
-            <mat-option *ngFor="let language of languages" [value]="language.value" (click)="open()">
-              {{ language.viewValue }}
+          <mat-select [(ngModel)]="selectedLanguage">
+            <mat-option *ngFor="let language of languages" [value]="language.value" (click)="setDirection(selectedLanguage)">
+              {{ language.text }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </li>
+      <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
+      <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
     </ul>
   `,
   styleUrls: [ './navigation.scss' ]
 })
 export class NavigationComponent {
-  direction = 'ltr';
+
+  selectedLanguage: string;
+
   constructor(
     private couchService: CouchService,
     private router: Router
@@ -40,12 +42,18 @@ export class NavigationComponent {
   ];
 
   languages = [
-    { value: 'language-0', viewValue: 'English' },
-    { value: 'language-1', viewValue: 'Arabic' }
+    { text: 'English', value: 'en' },
+    { text: 'Arabic', value: 'ar' }
   ];
 
-  open() {
-    this.direction = this.direction === 'ltr' ? 'rtl' : 'ltr';
+  setDirection(selectedValue) {
+    if (selectedValue === 'ar') {
+      localStorage.setItem('direction', 'rtl');
+      localStorage.setItem('lang', selectedValue);
+    } else {
+      localStorage.setItem('direction', 'ltr');
+      localStorage.setItem('lang', selectedValue);
+    }
   }
 
   logoutClick() {

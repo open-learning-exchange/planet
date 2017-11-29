@@ -21,6 +21,7 @@ export class LoginComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
+  languageDirection: string = localStorage.getItem('direction');
 
   onSubmit() {
     if (this.createMode) {
