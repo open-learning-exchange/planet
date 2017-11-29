@@ -16,9 +16,6 @@
       </mat-input-container>
       <planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages>
     </div>
-    <div class="alert alert-danger" *ngIf="message">
-      {{message}}
-    </div>
   </div>
   <mat-dialog-actions>
     <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>&nbsp;
