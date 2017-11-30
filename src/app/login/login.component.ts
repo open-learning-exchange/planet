@@ -124,10 +124,10 @@ export class LoginComponent implements OnInit {
         .then((data) => {
          // this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.setlogin();
-        }, (error) => c
+        }, (error) => {
+          console.log(error);
+        });
   }
-
-
 }
 
 
