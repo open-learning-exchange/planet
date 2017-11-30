@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
       <li [ngStyle]="{'width': '10%'}">
         <i *ngIf="selectedIcon"><img [src]="selectedIcon" alt="selectedIcon" style="margin-bottom: -15px"></i>
         <mat-form-field [ngStyle]="{'width': '60%'}">
-          <mat-select [(ngModel)]="selectedLanguage" (change)="optionSelected($event)" [(value)]="selected">
+          <mat-select [(ngModel)]="selectedLanguage" [(value)]="selected">
             <mat-option *ngFor="let language of languages" value="{{language.value}}" (click)="setDirection(selectedLanguage)">
               <img src="{{language.icon}}" alt="{{language.value}}" title="{{language.text}}">
               {{language.text}}
@@ -49,17 +49,18 @@ export class NavigationComponent {
     { text: 'Arabic', value: 'ar', icon: '../../assets/flags/ar.png' }
   ];
 
-  optionSelected(event) {
-    this.selectedIcon = event.icon;
-  }
-
   setDirection(selected) {
-    if (selected.value === 'ar') {
+    const url = '../../assets/flags/';
+    if (selected === 'en') {
+      selected = 'us';
+    }
+    this.selectedIcon = url + selected + '.png';
+    if (selected === 'ar') {
       localStorage.setItem('direction', 'rtl');
-      localStorage.setItem('lang', selected.value);
+      localStorage.setItem('lang', selected);
     } else {
       localStorage.setItem('direction', 'ltr');
-      localStorage.setItem('lang', selected.value);
+      localStorage.setItem('lang', selected);
     }
     location.reload();
   }
@@ -71,5 +72,6 @@ export class NavigationComponent {
       }
     });
   }
+
 
 }
