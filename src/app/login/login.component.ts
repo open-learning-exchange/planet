@@ -1,8 +1,9 @@
-
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
+import { Router, ActivatedRoute } from '@angular/router';
+
+require('./login.scss');
 
 export class UserData  {
   firstName: string;
@@ -25,13 +26,14 @@ export class UserData  {
 }
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: [ './login.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class LoginComponent implements OnInit {
 
- newUser: UserData;
+ newUser: UserData = new UserData();
  educationLevels: Array<any>= [ 1, 2, 3, 4, 5, 6 , 7, 8, 9, 11, 12, 'Higher' ];
  birthmonths: Array<any>= [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12 ];
  length: number= new Date().getFullYear();
@@ -55,7 +57,6 @@ export class LoginComponent implements OnInit {
      this.birthdays.push(j);
    }
  }
-
   ngOnInit() {
 
   }
@@ -93,7 +94,7 @@ export class LoginComponent implements OnInit {
   }
   createUser(data) {
     this.validated = true;
-    for ( let property in data) {
+    for ( const property in data) {
       if (!data[property]) {
         this.validated = false;
         this.RegisterErrorMessage = property + 'is Required';
@@ -103,7 +104,10 @@ export class LoginComponent implements OnInit {
     if (this.validated) {
       this.loginMode = false;
       this.RegisterErrorMessage = '';
-      if (data[ 'password' ] === data[ ' Repeat Password']) {
+      console.log(data);
+      if (data['password'] === data['Repeat Password']) {
+          console.log("passoed matxh");
+           this.RegisterErrorMessage = '';
         this.checkAdminExistence().then((noAdmin) => {
           if (noAdmin) {
             this.createAdmin();
@@ -125,13 +129,8 @@ export class LoginComponent implements OnInit {
          // this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.setlogin();
         }, (error) => {
-          console.log(error);
+          this.RegisterErrorMessage = '';
         });
   }
 }
-
-
-
-
-
 

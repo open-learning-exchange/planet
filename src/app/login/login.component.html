@@ -5,75 +5,74 @@
     <h3 i18n>Version 2.01</h3>
   </div>
   <form (ngSubmit)="login(loginForm.value)" #loginForm="ngForm">
-    <div class=" form-group">
-      <label>UserName</label>
+    <div class="form-group">
+      <label i18n>UserName</label>
       <input class="form-control" [(ngModel)]="loginData.username" name="username"/>
     </div>
     <div class="form-group">
-      <label>Password</label>
-      <input class="form-control" [(ngModel)]="loginData.password"  name="password" type="password"/>
+      <label i18n>Password</label>
+      <input class="form-control" [(ngModel)]="loginData.password" name="password" type="password"/>
     </div>
-    <button type="submit" class=" btn btn-success ">  Login</button>
+    <button type="submit" class="btn btn-success">Login</button>
   </form>
-  <div *ngIf="loginMessage" class=" alert alert-danger">{{loginMessage}}</div>
-  <div style="margin-top:70px; margin-left: 120">
-   <button (click)="setregister($event)" type="button" class=" btn btn-outline-info ">  Become a member</button>
+  <div *ngIf="loginMessage" class="alert alert-danger" i18n>{{loginMessage}}</div>
+  <div class="redirect">
+   <button (click)="setregister()" type="button" class="btn btn-outline-info" i18n>New to Planet? Become a member</button>
  </div>
 </div>
-<div *ngIf="createMode" class="ole-register">
-  <h1 i18n>Register New User</h1>
+<div *ngIf="createMode">
+  <h1 i18n>Become a Member</h1>
   <form (ngSubmit)="createUser(registerForm.value)" #registerForm="ngForm">
-    <div class="form-row ">
+    <div class="form-row">
       <div class="col-4 form-group">
-        <label>First Name</label>
+        <label i18n>First Name</label>
         <input class="form-control" [(ngModel)]="newUser.firstName" name="First Name" required />
       </div>
-      <div class="col-4">
-        <label>Middle Name</label>
-        <input class="form-control" [(ngModel)]="newUser.middleName"  name="Middle Name"
-        required />
+      <div class="col-4 form-group">
+        <label i18n>Middle Name</label>
+        <input class="form-control" [(ngModel)]="newUser.middleName" name="Middle Name"/>
       </div>
-      <div class="col-4">
-        <label>Last Name</label>
+      <div class="col-4 form-group">
+        <label i18n>Last Name</label>
         <input class="form-control" [(ngModel)]="newUser.lastName" name="Last Name"
         required/>
       </div>
     </div>
-    <div class="row">
-      <div class=" col-4 form-group">
-        <label>Login</label>
+    <div class="form-row">
+      <div class="col-4 form-group">
+        <label i18n>Login</label>
         <input class="form-control" [(ngModel)]="newUser.login" name="Login" />
       </div>
       <div class="col-4 form-group">
-        <label>Enter Password</label>
-        <input class="form-control"[(ngModel)]="newUser.password"  name="password" type="Password" />
+        <label i18n>Enter Password</label>
+        <input class="form-control" [(ngModel)]="newUser.password" name="password" type="Password" />
       </div>
       <div class=" col-4 form-group">
-        <label>Re-Enter Password</label>
-        <input class="form-control"  [(ngModel)]="newUser.repeatPassword" name="Repeat Password" type="password" />
+        <label i18n>Re-Enter Password</label>
+        <input class="form-control" [(ngModel)]="newUser.repeatPassword" name="Repeat Password" type="password" />
       </div>
     </div>
     <div class="form-row">
       <div class="col-4 form-group">
-       <label>Email</label>
+       <label i18n>Email</label>
        <input class="form-control" [(ngModel)]="newUser.email" name="Email" />
      </div>
      <div class="col-4 form-group">
-       <label>Language</label>
+       <label i18n>Language</label>
        <input class="form-control" [(ngModel)]="newUser.language" name="Language"/>
 
      </div>
      <div class="col-4 form-group">
-       <label>Phone Number</label>
+       <label i18n>Phone Number</label>
        <input class="form-control" [(ngModel)]="newUser.phone" name="Phone"/>
      </div>
    </div>
    <div class="form-row">
     <div class="form-group col-4">
-      <label>Birthdate</label>
+      <label i18n>Birthdate</label>
       <div class="form-row">
        <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday" name="Birth Date" >
-        <label>Birthdate</label>
+        <label i18n>Birthdate</label>
         <option selected disabled>Date</option>
         <option *ngFor="let day of birthdays" [ngValue]="day">{{day}}</option>
       </select>
@@ -88,14 +87,14 @@
   </div>
 </div>
 <div class="form-group col-4">
-  <label for="gender">Gender</label>
+  <label for="gender" i18n>Gender</label>
   <select class="form-control" id="gender" [(ngModel)]="newUser.gender" name="Gender">
-   <option value="male" >Male</option>
-   <option value="female">Female</option>
+   <option value="male" i18n>Male</option>
+   <option value="female" i18n>Female</option>
  </select>
 </div>
 <div class="form-group col-4">
-  <label for="level">Level</label>
+  <label for="level" i18n>Level</label>
   <select class="form-control" id="level" [(ngModel)]="newUser.level" name="level">
    <option *ngFor="let level of educationLevels">{{level}}</option>
  </select>
@@ -103,29 +102,23 @@
 </div>
 <div class="form-row">
   <div class="form-group col-4">
-    <label>Community</label>
+    <label i18n>Community</label>
     <input class="form-control" [(ngModel)]="newUser.community" name="Community" />
   </div>
   <div class="form-group col-4">
-    <label>Region</label>
+    <label i18n>Region</label>
     <input class="form-control" [(ngModel)]="newUser.region" name="Region"/>
   </div>
   <div class="form-group col-4">
-    <label>Nation</label>
+    <label i18n>Nation</label>
     <input class="form-control" [(ngModel)]="newUser.Nation" name="Nation"/>
   </div>
 </div>
-<div *ngIf="RegisterErrorMessage" class="alert alert-danger">{{ RegisterErrorMessage}}</div>
-<div><button class="btn  btn-success">Register</button></div>
+<div *ngIf="RegisterErrorMessage" class="alert alert-danger" i18n>{{ RegisterErrorMessage}}</div>
+<div><button class="btn btn-success" i18n>Register</button></div>
 </form>
-<div style="margin-top:70px; margin-left: 120">
- <button (click)="setlogin($event)" type="button" class=" btn btn-outline-info "> Alreadya member? Login Here</button>
+<div class="redirect">
+  <button (click)="setlogin()" type="button" class=" btn btn-outline-info" i18n>Already a member? Login Here </button>
 </div>
 </div>
-
-
-
-
-
-
 
