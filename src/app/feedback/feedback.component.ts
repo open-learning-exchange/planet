@@ -12,7 +12,7 @@ export class Feedback {
 }
 
 @Component({
-  selector: 'feedback',
+  selector: 'feedack',
   templateUrl: './feedback.component.html'
 })
 
@@ -21,7 +21,7 @@ export class FeedbackComponent implements OnInit {
   feedback: Feedback= new Feedback();
   message: string;
   fedbkSubmitted: string;
-  messageType= {
+  messageType = {
     'pass': false,
     'fail': false
   };
@@ -48,9 +48,9 @@ export class FeedbackComponent implements OnInit {
         this.messageType.pass = true;
       },
       (error) => {
-       this.message = 'feedbackError';
-       this.messageType.pass = false;
-       this.messageType.fail = true;
+        this.message = 'feedbackError';
+        this.messageType.pass = false;
+        this.messageType.fail = true;
       });
     }
   }
