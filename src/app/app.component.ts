@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'planet-app',
-  template: '<router-outlet dir="rtl"></router-outlet>'
+  template: '<router-outlet></router-outlet>'
 })
 export class AppComponent implements OnInit {
 

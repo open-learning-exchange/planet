@@ -7,11 +7,13 @@ import { Router } from '@angular/router';
   selector: 'planet-navigation',
   template: `
     <ul>
-      <li>
-        <mat-form-field>
-          <mat-select [(ngModel)]="selectedLanguage">
-            <mat-option *ngFor="let language of languages" [value]="language.value" (click)="setDirection(selectedLanguage)">
-              {{ language.text }}
+      <li [ngStyle]="{'width': '10%'}">
+        <i *ngIf="selectedIcon"><img [src]="selectedIcon" alt="selectedIcon" style="margin-bottom: -15px"></i>
+        <mat-form-field [ngStyle]="{'width': '60%'}">
+          <mat-select [(ngModel)]="selectedLanguage" (change)="optionSelected($event)" [(value)]="selected">
+            <mat-option *ngFor="let language of languages" value="{{language.value}}" (click)="setDirection(selectedLanguage)">
+              <img src="{{language.icon}}" alt="{{language.value}}" title="{{language.text}}">
+              {{language.text}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -25,6 +27,7 @@ import { Router } from '@angular/router';
 export class NavigationComponent {
 
   selectedLanguage: string;
+  selectedIcon;
 
   constructor(
     private couchService: CouchService,
@@ -42,18 +45,23 @@ export class NavigationComponent {
   ];
 
   languages = [
-    { text: 'English', value: 'en' },
-    { text: 'Arabic', value: 'ar' }
+    { text: 'English', value: 'en', icon: '../../assets/flags/us.png' },
+    { text: 'Arabic', value: 'ar', icon: '../../assets/flags/ar.png' }
   ];
 
-  setDirection(selectedValue) {
-    if (selectedValue === 'ar') {
+  optionSelected(event) {
+    this.selectedIcon = event.icon;
+  }
+
+  setDirection(selected) {
+    if (selected.value === 'ar') {
       localStorage.setItem('direction', 'rtl');
-      localStorage.setItem('lang', selectedValue);
+      localStorage.setItem('lang', selected.value);
     } else {
       localStorage.setItem('direction', 'ltr');
-      localStorage.setItem('lang', selectedValue);
+      localStorage.setItem('lang', selected.value);
     }
+    location.reload();
   }
 
   logoutClick() {
