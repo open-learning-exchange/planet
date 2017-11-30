@@ -104,10 +104,8 @@ export class LoginComponent implements OnInit {
     if (this.validated) {
       this.loginMode = false;
       this.RegisterErrorMessage = '';
-      console.log(data);
       if (data['password'] === data['Repeat Password']) {
-          console.log("passoed matxh");
-           this.RegisterErrorMessage = '';
+        this.RegisterErrorMessage = '';
         this.checkAdminExistence().then((noAdmin) => {
           if (noAdmin) {
             this.createAdmin();
@@ -116,21 +114,20 @@ export class LoginComponent implements OnInit {
           }
         });
       } else {
-        this.RegisterErrorMessage = 'Password Does not Match!';
+        this.RegisterErrorMessage = 'Password does not match!';
       }
     }
   }
 
   createrecord() {
-   const nm: string = this.newUser.firstName;
-   const pw: string = this.newUser.password;
-      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': nm, 'password': pw, 'roles': [], 'type': 'user' })
-        .then((data) => {
-         // this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
-          this.setlogin();
-        }, (error) => {
-          this.RegisterErrorMessage = '';
-        });
+    const name: string = this.newUser.firstName;
+    const password: string = this.newUser.password;
+    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
+    .then((data) => {
+      this.setlogin();
+    }, (error) => {
+      this.RegisterErrorMessage = '';
+    });
   }
 }
 
