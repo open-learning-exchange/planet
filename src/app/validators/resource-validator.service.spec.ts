@@ -2,6 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { ResourceValidatorService } from './resource-validator.service';
 import { HttpModule } from '@angular/http';
+
 describe('ResourceValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({

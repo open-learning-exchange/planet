@@ -3,26 +3,27 @@
   <mat-grid-list cols="3" rowHeight="3:1">
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
+      <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput  i18n-placeholder placeholder="Author" formControlName="author" required>
+      <input matInput  i18n-placeholder placeholder="Author" formControlName="author">
     </mat-form-field>
     <mat-form-field>
-      <input matInput  i18n-placeholder placeholder="Year" formControlName="year" required>
+      <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
     </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Language" formControlName="language" [(value)]="selectedValue" (change)="onSelect($event.value)">
-      <mat-option i18n value="English">English</mat-option>
-      <mat-option i18n value="Spanish">Español</mat-option>
+        <mat-option i18n value="English">English</mat-option>
+        <mat-option i18n value="Spanish">Español</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <input matInput  i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher" required>
+      <input matInput  i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
     </mat-form-field>
     <mat-form-field>
-      <input matInput  i18n-placeholder placeholder="Link to License" formControlName="linkToLicense" required>
+      <input matInput  i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
     </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
@@ -30,11 +31,13 @@
       <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple>
         <mat-option *ngFor="let subject of subjectList" [value]="subject">{{subject}}</mat-option>
       </mat-select>
+      <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple>
         <mat-option *ngFor="let level of levelList" [value]="level">{{level}}</mat-option>
       </mat-select>
+      <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
@@ -47,9 +50,9 @@
   <mat-grid-list cols="3">
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" [(value)]="selectedValue" (change)="onSelect($event.value)">
-      <mat-option i18n value="default">Default</mat-option>
-      <mat-option i18n value="leader">Leader</mat-option>
-      <mat-option i18n value="learner">learner</mat-option>
+        <mat-option i18n value="default">Default</mat-option>
+        <mat-option i18n value="leader">Leader</mat-option>
+        <mat-option i18n value="learner">learner</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
@@ -60,8 +63,8 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-	  <input matInput [(ngModel)]="todaydate" formControlName="articleDate" i18n-placeholder placeholder="Article Date">
-	</mat-form-field>
+      <input matInput [(ngModel)]="todaydate" formControlName="articleDate" i18n-placeholder placeholder="Article Date">
+    </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
   	<mat-form-field>
