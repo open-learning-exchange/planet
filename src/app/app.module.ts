@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -21,7 +21,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService
+    CouchService, AuthService, UserService, { provide: LOCALE_ID, useValue: 'ne' }
   ],
   bootstrap: [ AppComponent ]
 })
