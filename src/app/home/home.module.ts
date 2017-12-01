@@ -8,7 +8,6 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
 
-
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
@@ -37,8 +36,6 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent
-
-
   ],
   providers: [ NationValidatorService ]
 })
