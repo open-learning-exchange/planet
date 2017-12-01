@@ -11,7 +11,8 @@ import {
   MatIconModule,
   MatSelectModule,
   MatRadioModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatGridListModule
 } from '@angular/material';
 
 @NgModule({
@@ -27,7 +28,8 @@ import {
     MatSortModule,
     MatDialogModule,
     MatRadioModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatGridListModule
   ]
 })
 export class MaterialModule {}
