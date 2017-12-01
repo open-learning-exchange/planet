@@ -72,6 +72,7 @@ export class LoginComponent implements OnInit {
       }, (error) => this.loginMessage = 'Username and/or password do not match');
     }
   }
+
   checkAdminExistence() {
     return this.couchService.get('_users/_all_docs')
     .then((data) => {
@@ -80,19 +81,23 @@ export class LoginComponent implements OnInit {
       return false; // user doesn't have permission so there is an admin
     });
   }
+
   createAdmin() {
     this.couchService.put('_node/nonode@nohost/_config/admins/' + this.newUser.firstName, this.newUser.password).then((data) => {
        this.setlogin(); // direct to the login page
      });
   }
+
   setregister() {
     this.createMode = true;
     this.loginMode = false;
   }
+
   setlogin() {
     this.createMode = false;
     this.loginMode = true;
   }
+
   createUser(data) {
     this.validated = true;
     for ( const property in data) {
@@ -123,7 +128,7 @@ export class LoginComponent implements OnInit {
   createrecord() {
     const name: string = this.newUser.firstName;
     const password: string = this.newUser.password;
-    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData ': this.newUser, 'roles': [], 'type': 'user' })
+    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData': this.newUser, 'roles': [], 'type': 'user' })
     .then((data) => {
       this.setlogin(); // user created, redirect to login page
     }, (error) => {

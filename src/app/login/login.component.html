@@ -13,15 +13,15 @@
       <label i18n>Password</label>
       <input class="form-control" [(ngModel)]="loginData.password" name="password" type="password"/>
     </div>
-    <button type="submit" class="btn btn-success">Login</button>
+    <button type="submit" class="btn btn-success" i18n>Login</button>
   </form>
   <div *ngIf="loginMessage" class="alert alert-danger" i18n>{{loginMessage}}</div>
   <div class="redirect">
    <button (click)="setregister()" type="button" class="btn btn-outline-info" i18n>New to Planet? Become a member</button>
  </div>
 </div>
-<div *ngIf="createMode">
-  <h1 i18n>Become a Member</h1>
+<div *ngIf="createMode" class="ole-register">
+  <h3 i18n>Become a member</h3>
   <form (ngSubmit)="createUser(registerForm.value)" #registerForm="ngForm">
     <div class="form-row">
       <div class="col-4 form-group">
@@ -40,21 +40,21 @@
     <div class="form-row">
       <div class="col-4 form-group">
         <label i18n>Login</label>
-        <input class="form-control" [(ngModel)]="newUser.login" name="Login"/>
+        <input class="form-control" [(ngModel)]="newUser.login" name="login"/>
       </div>
       <div class="col-4 form-group">
         <label i18n>Enter Password</label>
-        <input class="form-control" [(ngModel)]="newUser.password" name="password" type="Password" />
+        <input class="form-control" [(ngModel)]="newUser.password" name="password" type="Password"/>
       </div>
       <div class="col-4 form-group">
         <label i18n>Re-Enter Password</label>
-        <input class="form-control" [(ngModel)]="newUser.repeatPassword" name="Repeat Password" type="password" />
+        <input class="form-control" [(ngModel)]="newUser.repeatPassword" name="Repeat Password" type="password"/>
       </div>
     </div>
     <div class="form-row">
       <div class="col-4 form-group">
        <label i18n>Email</label>
-       <input class="form-control" [(ngModel)]="newUser.email" name="Email" type="email" />
+       <input class="form-control" [(ngModel)]="newUser.email" name="Email" type="email"/>
      </div>
      <div class="col-4 form-group">
        <label i18n>Language</label>
@@ -84,16 +84,16 @@
   </div>
 </div>
 <div class="form-group col-4">
-  <label for="gender" i18n>Gender</label>
-  <select class="form-control" id="gender" [(ngModel)]="newUser.gender" name="Gender">
+  <label i18n>Gender</label>
+  <select class="form-control" [(ngModel)]="newUser.gender" name="Gender">
    <option value="male" i18n>Male</option>
    <option value="female" i18n>Female</option>
  </select>
 </div>
 <div class="form-group col-4">
-  <label for="level" i18n>Level</label>
+  <label i18n>Level</label>
   <select class="form-control" id="level" [(ngModel)]="newUser.level" name="level">
-   <option *ngFor="let level of educationLevels">{{level}}</option>
+   <option *ngFor="let level of educationLevels" [ngValue]="level">{{level}}</option>
  </select>
 </div>
 </div>
