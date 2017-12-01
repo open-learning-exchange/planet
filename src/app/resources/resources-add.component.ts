@@ -78,7 +78,7 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
-      this.addCourse(this.resourceForm.value);
+      this.addResource(this.resourceForm.value);
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
@@ -87,7 +87,7 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  async addCourse(resourceInfo) {
+  async addResource(resourceInfo) {
     // ...is the rest syntax for object destructuring
     try {
       await this.couchService.post(this.dbName, { ...resourceInfo });
