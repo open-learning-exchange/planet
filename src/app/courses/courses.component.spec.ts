@@ -3,7 +3,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesComponent } from './courses.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { HttpModule } from '@angular/http';
+// import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { CourseValidatorService } from '../validators/course-validator.service';
 import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
@@ -16,7 +16,7 @@ describe('CoursesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpModule, HttpClientModule, BrowserAnimationsModule ],
+      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, BrowserAnimationsModule ],
       declarations: [ CoursesComponent, FormErrorMessagesComponent, AlertsDeleteComponent ],
       providers: [ CouchService, CourseValidatorService ]
 

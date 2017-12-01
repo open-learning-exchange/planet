@@ -2,12 +2,12 @@ import { TestBed, inject } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NationValidatorService } from './nation-validator.service';
-import { HttpModule } from '@angular/http';
+// import { HttpModule } from '@angular/http';
 
 describe('NationValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpModule, HttpClientModule ],
+      imports: [ HttpClientModule ],
       providers: [ NationValidatorService, CouchService ]
     });
   });

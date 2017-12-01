@@ -1,69 +1,65 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { HttpModule } from '@angular/http';
+// import { HttpModule } from '@angular/http';
 import { ResourcesViewComponent } from './resources-view.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule }   from '@angular/forms'
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 describe('ResourcesViewComponent', () => {
     let component: ResourcesViewComponent;
     let fixture: ComponentFixture<ResourcesViewComponent>;
-    let postSpy: any;
     let getSpy: any;
-    let id: string;
     let couchService;
     let statusElement;
     let testimage;
     let de;
 
-    beforeEach((() => {
+    beforeEach(() => {
         TestBed.configureTestingModule({
-          imports: [ FormsModule, RouterTestingModule, HttpModule, HttpClientModule ],
+          imports: [ FormsModule, RouterTestingModule, HttpClientModule ],
           declarations: [ ResourcesViewComponent ],
           providers: [ CouchService ]
         });
-    }));
-
-    beforeEach(() => {
         fixture = TestBed.createComponent(ResourcesViewComponent);
         component = fixture.componentInstance;
         de = fixture.debugElement;
         statusElement = de.nativeElement.querySelector('.km-resource-view img');
         couchService = fixture.debugElement.injector.get(CouchService);
-        testimage = { filename:"scenery.png", id: "scenery.png", mediaType: 'img', attachments:{ 'scenery.png': { content_type: "application/image" }} };
+        testimage = { filename: 'scenery.png', id: 'scenery.png', mediaType: 'img',
+                      attachments: { 'scenery.png': { content_type: 'application/image' } } };
       });
-    
-      it('should be created', () => {
+
+    it('should be created', () => {
         expect(component).toBeTruthy();
       });
 
-      //test getResource()
-      it('should make a get request to couchService', () =>{
+    // test getResource()
+    it('should make a get request to couchService', () => {
         getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testimage.id));
         component.getResource(testimage.id);
-        fixture.whenStable().then(() =>{
+        fixture.whenStable().then(() => {
           fixture.detectChanges();
           expect(getSpy).toHaveBeenCalledWith('resources/' + testimage.id);
         });
       });
 
-      it('should getResource', ()=>{
+    it('should getResource', () => {
         getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testimage));
         component.getResource(testimage.id);
-        fixture.whenStable().then(() =>{
+        fixture.whenStable().then(() => {
           fixture.detectChanges();
           expect(statusElement.textContext).toBe(testimage);
         });
       });
-    
-      it('should There was a problem getResource', () =>{
-        getSpy = spyOn(couchService,'get').and.returnValue(Promise.reject({}));
+
+    it('should There was a problem getResource', () => {
+        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.reject({}));
         component.getResource(testimage.id);
-        fixture.whenStable().then(() =>{
+        fixture.whenStable().then(() => {
           fixture.detectChanges();
           expect(statusElement.textContext).toBe('Error');
         });
       });
-})
+});
