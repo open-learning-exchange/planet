@@ -1,10 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { Jsonp, Response } from '@angular/http';
 
 import {
@@ -32,12 +33,13 @@ export class NationComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'name', 'admin_name', 'nationurl', 'action' ];
   readonly dbName = 'nations';
   message = '';
-  nationForm: FormGroup;
+  modalForm: any;
   deleteDialog: any;
   ViewNationDetailDialog: any;
   formDialog: any;
   valid_data: {};
   result: any;
+  dialogRef: any;
   view_data = [];
 
   constructor(
@@ -71,7 +73,11 @@ export class NationComponent implements OnInit, AfterViewInit {
       .then((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = data.rows.map(nation => nation.doc);
+        this.nations.data = data.rows.map(nations => {
+          return nations.doc;
+        }).filter(nt  => {
+          return nt['_id'].indexOf('_design') !== 0;
+        });
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -117,11 +123,6 @@ export class NationComponent implements OnInit, AfterViewInit {
           this.nations.data.push(formdata);
           this.nations._updateChangeSubscription();
         }, (error) => this.message = 'Error');
-    } else {
-      // Using (<any>Object) allows you to iterate over the actual object refs rather than the keys in TypeScript
-      (<any>Object).values(this.nationForm.controls).forEach(control => {
-        control.markAsTouched({ onlySelf: true });
-      });
     }
   }
 
@@ -135,18 +136,21 @@ export class NationComponent implements OnInit, AfterViewInit {
         { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
       ];
     const validation = {
-      adminName: [ '', Validators.required,
-        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.nationValidatorService.nationCheckerService$(ac)
-      ],
-      name: [ '', Validators.required ],
-      nationUrl: [ '', Validators.required ],
+      adminName: [ '', Validators.required ],
+      name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$('name', ac) ],
+      nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationExists$('nationurl', nurl) ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
       .subscribe((res) => {
-        this.onSubmit(res);
+        if (res !== undefined) {
+          this.onSubmit(res);
+        }
       });
+  }
+
+  communityList(nationname) {
+    this.router.navigate([ '/community/' + nationname ]);
   }
 
   view(url) {
@@ -164,4 +168,5 @@ export class NationComponent implements OnInit, AfterViewInit {
       this.message = 'There is no data.';
     }
   }
+
 }
