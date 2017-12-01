@@ -39,12 +39,12 @@ export class LoginComponent implements OnInit {
  length: number= new Date().getFullYear();
  birthyears: number[] = new Array(length);
  birthdays: number[]= new Array();
- RegisterErrorMessage: string;
  validated: boolean;
  createMode= false;
  loginMode= true;
  loginData = { username: '', password: '' };
  loginMessage: string;
+ RegisterErrorMessage: string;
 
  constructor(
    private router: Router,
@@ -98,14 +98,14 @@ export class LoginComponent implements OnInit {
     for ( const property in data) {
       if (!data[property]) {
         this.validated = false;
-        this.RegisterErrorMessage = property + 'is Required';
+        this.RegisterErrorMessage = property + ' is required';
         break;
       }
     }
     if (this.validated) {
       this.loginMode = false;
       this.RegisterErrorMessage = '';
-      if (data['password'] === data['Repeat Password']) {
+      if (this.newUser.password === this.newUser.repeatPassword) {
         this.RegisterErrorMessage = '';
         this.checkAdminExistence().then((noAdmin) => {
           if (noAdmin) {
@@ -123,9 +123,9 @@ export class LoginComponent implements OnInit {
   createrecord() {
     const name: string = this.newUser.firstName;
     const password: string = this.newUser.password;
-    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
+    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData ': this.newUser, 'roles': [], 'type': 'user' })
     .then((data) => {
-      this.setlogin();
+      this.setlogin(); // user created, redirect to login page
     }, (error) => {
       this.RegisterErrorMessage = '';
     });

@@ -26,7 +26,7 @@
     <div class="form-row">
       <div class="col-4 form-group">
         <label i18n>First Name</label>
-        <input class="form-control" [(ngModel)]="newUser.firstName" name="First Name" required />
+        <input class="form-control" [(ngModel)]="newUser.firstName" name="First Name"/>
       </div>
       <div class="col-4 form-group">
         <label i18n>Middle Name</label>
@@ -34,20 +34,19 @@
       </div>
       <div class="col-4 form-group">
         <label i18n>Last Name</label>
-        <input class="form-control" [(ngModel)]="newUser.lastName" name="Last Name"
-        required/>
+        <input class="form-control" [(ngModel)]="newUser.lastName" name="Last Name"/>
       </div>
     </div>
     <div class="form-row">
       <div class="col-4 form-group">
         <label i18n>Login</label>
-        <input class="form-control" [(ngModel)]="newUser.login" name="Login" />
+        <input class="form-control" [(ngModel)]="newUser.login" name="Login"/>
       </div>
       <div class="col-4 form-group">
         <label i18n>Enter Password</label>
         <input class="form-control" [(ngModel)]="newUser.password" name="password" type="Password" />
       </div>
-      <div class=" col-4 form-group">
+      <div class="col-4 form-group">
         <label i18n>Re-Enter Password</label>
         <input class="form-control" [(ngModel)]="newUser.repeatPassword" name="Repeat Password" type="password" />
       </div>
@@ -55,12 +54,11 @@
     <div class="form-row">
       <div class="col-4 form-group">
        <label i18n>Email</label>
-       <input class="form-control" [(ngModel)]="newUser.email" name="Email" />
+       <input class="form-control" [(ngModel)]="newUser.email" name="Email" type="email" />
      </div>
      <div class="col-4 form-group">
        <label i18n>Language</label>
        <input class="form-control" [(ngModel)]="newUser.language" name="Language"/>
-
      </div>
      <div class="col-4 form-group">
        <label i18n>Phone Number</label>
@@ -71,16 +69,15 @@
     <div class="form-group col-4">
       <label i18n>Birthdate</label>
       <div class="form-row">
-       <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthday" name="Birth Date" >
-        <label i18n>Birthdate</label>
+       <select class="form-control form-group col-4" [(ngModel)]="newUser.birthday" name="Birth Date">
         <option selected disabled>Date</option>
         <option *ngFor="let day of birthdays" [ngValue]="day">{{day}}</option>
       </select>
-      <select class="form-control form-group col-4" id="level" [(ngModel)]="newUser.birthmonth" name="Birth Month">
+      <select class="form-control form-group col-4" [(ngModel)]="newUser.birthmonth" name="Birth Month">
        <option selected disabled>Month</option>
        <option *ngFor="let month of birthmonths" [ngValue]="month">{{month}}</option>
      </select>
-     <select class="form-control col-4" id="level" [(ngModel)]="newUser.birthyear" name="Birth year">
+     <select class="form-control col-4" [(ngModel)]="newUser.birthyear" name="Birth year">
       <option selected disabled>Year</option>
       <option *ngFor="let year of birthyears" [ngValue]="year">{{year}}</option>
     </select>
@@ -103,7 +100,7 @@
 <div class="form-row">
   <div class="form-group col-4">
     <label i18n>Community</label>
-    <input class="form-control" [(ngModel)]="newUser.community" name="Community" />
+    <input class="form-control" [(ngModel)]="newUser.community" name="Community"/>
   </div>
   <div class="form-group col-4">
     <label i18n>Region</label>

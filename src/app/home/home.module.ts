@@ -7,7 +7,6 @@ import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
-import { RegisterComponent } from '../login/register/register.component';
 
 
 import { HomeRouterModule } from './home-router.module';
@@ -37,8 +36,8 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     UsersComponent,
     CommunityComponent,
     NationComponent,
-    ManagerDashboardComponent,
-    RegisterComponent
+    ManagerDashboardComponent
+
 
   ],
   providers: [ NationValidatorService ]
