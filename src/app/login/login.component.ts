@@ -61,12 +61,13 @@ export class LoginComponent implements OnInit {
 
   }
 
-  login(data) {
-    if (!data.username || !data.password) {
+  login() {
+    this.loginMessage = '';
+    if (!this.loginData.username || !this.loginData.password) {
       this.loginMessage = 'Both Username and Password  are required';
     } else {
-      this.couchService.post('_session', { 'name': data.username, 'password': data.password }, { withCredentials: true })
-      .then(( d ) => {
+      this.couchService.post('_session', { 'name': this.loginData.username, 'password': this.loginData.password }, { withCredentials: true })
+      .then((d) => {
         this.router.navigate([ '/' ]);
       }, (error) => this.loginMessage = 'Username and/or password do not match');
     }

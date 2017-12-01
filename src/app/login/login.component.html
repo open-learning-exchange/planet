@@ -4,7 +4,7 @@
     <h1 i18n>Planet Learning</h1>
     <h3 i18n>Version 2.01</h3>
   </div>
-  <form (ngSubmit)="login(loginForm.value)" #loginForm="ngForm">
+  <form (ngSubmit)="login()" #loginForm="ngForm">
     <div class="form-group">
       <label i18n>UserName</label>
       <input class="form-control" [(ngModel)]="loginData.username" name="username"/>
