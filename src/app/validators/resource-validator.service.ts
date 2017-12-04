@@ -20,7 +20,7 @@ export class ResourceValidatorService {
     const isDuplicate = this.couchService
       .post(`${this.dbName}/_find`, findOneDocument('title', title))
       .then(data => {
-        return data.docs.length > 0 ? true : false;
+        return data.docs.length > 0;
       });
     return fromPromise(isDuplicate);
   }

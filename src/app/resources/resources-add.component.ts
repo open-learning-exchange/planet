@@ -66,7 +66,7 @@ export class ResourcesAddComponent implements OnInit {
       subject: [ '', Validators.required ],
       level: [ '', Validators.required ],
       openWith: '',
-      resourceFor: '',
+      resourceFor: [],
       medium: '',
       articleDate: '',
       resourceType: '',
