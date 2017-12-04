@@ -9,7 +9,6 @@ export class ResourcesComponent implements OnInit {
   rating;
   mRating;
   fRating;
-
   resources = [];
   message = '';
   file: any;

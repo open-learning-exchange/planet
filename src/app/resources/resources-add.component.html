@@ -1,6 +1,6 @@
 <h2 i18n>New Resource</h2>
 <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
-  <mat-grid-list cols="3" rowHeight="3:1">
+  <mat-grid-list cols="3">
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
       <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
@@ -14,7 +14,7 @@
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Language" formControlName="language" [(value)]="selectedValue" (change)="onSelect($event.value)">
+      <mat-select i18n-placeholder placeholder="Language" formControlName="language">
         <mat-option i18n value="English">English</mat-option>
         <mat-option i18n value="Spanish">Español</mat-option>
       </mat-select>
@@ -49,7 +49,7 @@
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" [(value)]="selectedValue" (change)="onSelect($event.value)">
+      <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor">
         <mat-option i18n value="default">Default</mat-option>
         <mat-option i18n value="leader">Leader</mat-option>
         <mat-option i18n value="learner">learner</mat-option>

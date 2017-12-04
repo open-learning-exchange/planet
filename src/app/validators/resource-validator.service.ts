@@ -20,10 +20,7 @@ export class ResourceValidatorService {
     const isDuplicate = this.couchService
       .post(`${this.dbName}/_find`, findOneDocument('title', title))
       .then(data => {
-        if (data.docs.length > 0) {
-          return true;
-        }
-        return false;
+        return data.docs.length > 0 ? true : false;
       });
     return fromPromise(isDuplicate);
   }
@@ -38,10 +35,7 @@ export class ResourceValidatorService {
     return timer(500).pipe(
       switchMap(() => {
         return this.resourceCheckerService$(ac.value).pipe(map(res => {
-          if (res) {
-            return errMessage;
-          }
-          return null;
+          return res ? errMessage : null;
         }));
       })
     );

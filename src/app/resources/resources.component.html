@@ -7,14 +7,14 @@
     <div class="list-item-info">
       <h3>{{ item.doc.title }}</h3>
       <div class="list-item-content">
-        Author {{item.doc.author}}, Year {{item.doc.year}}, Media {{item.doc.Medium}}, Language {{item.doc.language}}, Subject(s)
+        Author {{ item.doc.author }}, Year {{ item.doc.year }}, Media {{ item.doc.Medium }}, Language {{ item.doc.language }}, Subject(s)
         <!-- normal ng fors and ng ifs dont work with ng-template -->
-        <ng-template ngFor let-sub [ngForOf]="item.doc.subject">{{sub}}, </ng-template> Level(s)
-        <ng-template ngFor let-lev [ngForOf]="item.doc.Level">{{lev}}, </ng-template> Publisher/Attribution {{item.doc.Publisher}},
-        <ng-template [ngIf]="item.doc.linkToLicense">Link to License {{item.doc.linkToLicense}},</ng-template> Resource {{item.doc.resourceFor}}, Resource Type {{item.doc.resourceType}}
+        <ng-template ngFor let-sub [ngForOf]="item.doc.subject">{{ sub }}, </ng-template> Level(s)
+        <ng-template ngFor let-lev [ngForOf]="item.doc.Level">{{ lev }}, </ng-template> Publisher/Attribution {{ item.doc.Publisher }},
+        <ng-template [ngIf]="item.doc.linkToLicense">Link to License {{item.doc.linkToLicense}},</ng-template> Resource {{ item.doc.resourceFor }}, Resource Type {{ item.doc.resourceType }}
         <!-- there was a collection entry in the example picture but i didnt find it in the old couchdb -->
         <ng-template [ngIf]="item.doc.collection?.length > 0">Collection
-          <ng-template ngFor let-col [ngForOf]="item.doc.collection">{{col}} / </ng-template>
+          <ng-template ngFor let-col [ngForOf]="item.doc.collection">{{ col }} / </ng-template>
         </ng-template>
       </div>
       <div class="list-item-action">
@@ -30,14 +30,14 @@
         <span [ngStyle]="{'width': 20 * getRating(item.doc.sum,item.doc.timesRated) + '%'}"></span>
       </span>
       <div class="label">
-        <span class="small">Rating ({{rating}}) </span>
-        <span class="small">Female ({{fRating}}%)
+        <span class="small">Rating ({{ rating }}) </span>
+        <span class="small">Female ({{ fRating }}%)
         </span>
-        <span class="small">Male ({{mRating}}%)
+        <span class="small">Male ({{ mRating }}%)
         </span>
       </div>
       <div class="info">
-        <span> {{rating}}
+        <span> {{ rating }}
         </span>
         <div class="rating-bar">
           <!-- used ngStyle here to set the width of the bar dynamically -->
