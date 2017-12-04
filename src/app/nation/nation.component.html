@@ -1,38 +1,45 @@
-<div class="mat-elevation-z8">
-  <h3 class="header" i18n> Nation List </h3>
-  <button class="header" mat-raised-button color="primary" (click)="openNationAddForm()" data-toggle="modal" data-target="#nationAdd" i18n>Add</button>
-  <div class="search-header">
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
-    </mat-form-field>
-  </div>
-  <mat-table #table [dataSource]="nations" matSort>
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Nation Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-    </ng-container>
-    <!-- Admin Name Column -->
-    <ng-container matColumnDef="admin_name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Admin Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.admin_name}} </mat-cell>
-    </ng-container>
-    <!-- URL Column -->
-    <ng-container matColumnDef="nationurl">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Nation URL </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.nationurl}} </mat-cell>
-    </ng-container>
-     <!-- Action Column -->
-     <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <button type="button" mat-raised-button color="primary" (click)="view(element.nationurl)" i18n>View</button>
-        <button mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
-        <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+<div>
+  <h3 class="header" i18n> <mat-icon>arrow_back</mat-icon> Nation List </h3>
+  <mat-form-field>
+      <mat-icon class = "matSearch">search</mat-icon>
+      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  </mat-form-field>
+</div>
+<hr/>
+<div class="mat-paginator-container">
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+</div>
+<div class="mat-elevation-z8">
+  <div class="add-nation">
+    <span class="labelNation">Your Current Lists of Nations</span>
+    <span class="addNation">Add a Nation <mat-icon class = "matAdd" (click)="openNationAddForm()">add</mat-icon></span>
+  </div>
+    <mat-table #table [dataSource]="nations" matSort>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Nation Name </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+      </ng-container>
+      <!-- Admin Name Column -->
+      <ng-container matColumnDef="admin_name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Admin Name </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.admin_name}} </mat-cell>
+      </ng-container>
+      <!-- URL Column -->
+      <ng-container matColumnDef="nationurl">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Nation URL </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.nationurl}} </mat-cell>
+      </ng-container>
+       <!-- Action Column -->
+       <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button type="button" mat-raised-button color="primary" (click)="view(element.nationurl)" i18n>View</button>
+          <button mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
+          <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
 </div>
