@@ -47,7 +47,7 @@ export class ResourcesViewComponent implements OnInit {
     return this.couchService.get('resources/' + id)
       .then((data) => {
         this.mediaType = data.mediaType;
-        this.contentType = data._attachments[id].content_type;
+        this.contentType = data._attachments[data.filename].content_type;
         this.resourceSrc = this.urlPrefix + data._id + '/' + data.filename;
         if (this.mediaType === 'pdf') {
           this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);

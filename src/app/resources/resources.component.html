@@ -1,33 +1,33 @@
 <!-- FOR DEMO ONLY -->
 <!-- use the async pipe when fetching for database -->
-<button mat-raised-button routerLink="add" routerLinkActive="active" i18n>Add Resource</button>
-<ng-template ngFor let-item [ngForOf]="items">
+<button mat-raised-button routerLink="add" color="primary" routerLinkActive="active" i18n>Add Resource</button>
+<ng-template ngFor let-item [ngForOf]="resources">
   <!-- Used ng-template insted of spans or divs because I did not want any to add any element -->
   <div class="list-item">
     <div class="list-item-info">
-      <h3 class="km-resources-title">{{ item.title }}</h3>
+      <h3>{{ item.doc.title }}</h3>
       <div class="list-item-content">
-        Author {{item.author}}, Year {{item.year}}, Media {{item.Medium}}, Language {{item.language}}, Subject(s)
+        Author {{item.doc.author}}, Year {{item.doc.year}}, Media {{item.doc.Medium}}, Language {{item.doc.language}}, Subject(s)
         <!-- normal ng fors and ng ifs dont work with ng-template -->
-        <ng-template ngFor let-sub [ngForOf]="item.subject">{{sub}}, </ng-template> Level(s)
-        <ng-template ngFor let-lev [ngForOf]="item.Level">{{lev}}, </ng-template> Publisher/Attribution {{item.Publisher}},
-        <ng-template [ngIf]="item.linkToLicense">Link to License {{item.linkToLicense}},</ng-template> Resource {{item.resourceFor}}, Resource Type {{item.resourceType}}
+        <ng-template ngFor let-sub [ngForOf]="item.doc.subject">{{sub}}, </ng-template> Level(s)
+        <ng-template ngFor let-lev [ngForOf]="item.doc.Level">{{lev}}, </ng-template> Publisher/Attribution {{item.doc.Publisher}},
+        <ng-template [ngIf]="item.doc.linkToLicense">Link to License {{item.doc.linkToLicense}},</ng-template> Resource {{item.doc.resourceFor}}, Resource Type {{item.doc.resourceType}}
         <!-- there was a collection entry in the example picture but i didnt find it in the old couchdb -->
-        <ng-template [ngIf]="item.collection?.length > 0">Collection
-          <ng-template ngFor let-col [ngForOf]="item.collection">{{col}} / </ng-template>
+        <ng-template [ngIf]="item.doc.collection?.length > 0">Collection
+          <ng-template ngFor let-col [ngForOf]="item.doc.collection">{{col}} / </ng-template>
         </ng-template>
       </div>
       <div class="list-item-action">
-        <a class="btn btn-outline-primary" [routerLink]="['/resources/view', item._id]">View Details</a>
-        <a class="btn btn-outline-primary" [routerLink]="['/resources/wip']">Add To Library</a>
-        <a class="btn btn-outline-primary" [routerLink]="['/resources/wip']">Feedback</a>
-        <a class="btn btn-outline-danger" [routerLink]="['/resources/wip']">Delete</a>
+        <a class="btn btn-outline-primary" i18n [routerLink]="['/resources/view', item.doc._id]">View Details</a>
+        <a class="btn btn-outline-primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
+        <a class="btn btn-outline-primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
+        <a class="btn btn-outline-danger" i18n [routerLink]="['/resources/wip']">Delete</a>
       </div>
     </div>
     <div class="list-item-rating">
       <span class="stars">
         <!-- used simple arithmetic to get 20 and converted into % -->
-        <span [ngStyle]="{'width': 20 * getRating(item.sum,item.timesRated) + '%'}"></span>
+        <span [ngStyle]="{'width': 20 * getRating(item.doc.sum,item.doc.timesRated) + '%'}"></span>
       </span>
       <div class="label">
         <span class="small">Rating ({{rating}}) </span>
@@ -50,28 +50,3 @@
     </div>
   </div>
 </ng-template>
-
-<form (ngSubmit)="submitResource()" #resourcesForm="ngForm">
-  <div class="form-group">
-    <label>File Type:</label>
-    <select [(ngModel)]="resource.mediaType" name="mediaType">
-      <option value="image">Image</option>
-      <option value="video">Video</option>
-      <option value="audio">Audio</option>
-      <option value="pdf">PDF</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label>File Upload:</label>
-    <input type="file" (change)="bindFile($event)" />
-  </div>
-  <button type="submit">Submit</button>
-</form>
-<!-- <div>
-  <span>{{message}}</span>
-  <ol>
-    <li *ngFor="let resource of resources">
-      <a [routerLink]="['/resources/view',resource.doc._id]">{{ resource.doc.filename }}</a>
-    </li>
-  </ol>
-</div> -->

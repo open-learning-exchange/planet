@@ -35,6 +35,7 @@ export class ResourcesAddComponent implements OnInit {
   resourceType = [ 'Textbook', 'Lesson Plan', 'Activities', 'Exercises', 'Discussion Questions' ];
   todaydate = new Date();
   file: any;
+  mediaType: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
 
@@ -78,6 +79,17 @@ export class ResourcesAddComponent implements OnInit {
   onSubmit() {
     if (this.resourceForm.valid) {
       if (this.file !== undefined) {
+        if ( this.file.type.indexOf('image') > -1 ) {
+          this.mediaType = 'image';
+        } else if (this.file.type.indexOf('pdf') > -1) {
+          this.mediaType = 'pdf';
+        } else if (this.file.type.indexOf('audio') > -1) {
+          this.mediaType = 'audio';
+        } else if (this.file.type.indexOf('video') > -1) {
+          this.mediaType = 'video';
+        } else {
+          this.mediaType = '';
+        }
         const reader = new FileReader(),
         rComp = this;
         reader.readAsDataURL(this.file);
@@ -92,7 +104,8 @@ export class ResourcesAddComponent implements OnInit {
           const resource = Object.assign({ },
             {
               filename: rComp.file.name,
-              _attachments: attachments
+              _attachments: attachments,
+              mediaType: rComp.mediaType
             }
           );
           this.addResource(Object.assign(this.resourceForm.value, resource));
