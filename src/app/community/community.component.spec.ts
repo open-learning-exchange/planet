@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { CommunityComponent } from './community.component';
 import { CouchService } from '../shared/couchdb.service';
-// import { HttpModule } from '@angular/http';
 import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

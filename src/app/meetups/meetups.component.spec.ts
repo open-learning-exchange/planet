@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { MeetupsComponent } from './meetups.component';
-// import { HttpModule } from '@angular/http';
 import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';

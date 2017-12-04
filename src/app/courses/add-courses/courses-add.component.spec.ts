@@ -7,7 +7,6 @@ import { AlertsDeleteComponent } from '../../shared/alerts/alerts-delete.compone
 import { HttpClientModule } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../../shared/couchdb.service';
-// import { HttpModule } from '@angular/http';
 
 describe('CoursesComponent', () => {
   let component: CoursesAddComponent;
