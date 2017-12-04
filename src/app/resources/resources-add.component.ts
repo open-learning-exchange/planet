@@ -37,7 +37,6 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
-  resource = { mediaType: '' };
 
   constructor(
     private location: Location,
@@ -47,7 +46,7 @@ export class ResourcesAddComponent implements OnInit {
     private resourceValidatorService: ResourceValidatorService,
     private userService: UserService
   ) {
-  this.createForm();
+    this.createForm();
   }
 
   createForm() {
@@ -68,9 +67,9 @@ export class ResourcesAddComponent implements OnInit {
       openWith: '',
       resourceFor: '',
       medium: '',
-      articleDate: new FormControl({ disabled: true }),
+      articleDate: '',
       resourceType: '',
-      addedBy: new FormControl({ value: 'admin', disabled: true }, Validators.required),
+      addedBy: '',
       openUrl: [],
       openWhichFile: ''
     });
@@ -78,7 +77,29 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
-      this.addResource(this.resourceForm.value);
+      if (this.file !== undefined) {
+        const reader = new FileReader(),
+        rComp = this;
+        reader.readAsDataURL(this.file);
+        reader.onload = () => {
+          // FileReader result has file type at start of string, need to remove for CouchDB
+          const fileData = reader.result.split(',')[1],
+          attachments = {};
+          attachments[rComp.file.name] = {
+            content_type: rComp.file.type,
+            data: fileData
+          };
+          const resource = Object.assign({ },
+            {
+              filename: rComp.file.name,
+              _attachments: attachments
+            }
+          );
+          this.addResource(Object.assign(this.resourceForm.value, resource));
+        };
+      } else {
+        this.addResource(this.resourceForm.value);
+      }
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
@@ -99,11 +120,15 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-  Object.assign(this, this.userService.get());
+    Object.assign(this, this.userService.get());
   }
 
   cancel() {
     this.location.back();
+  }
+
+  bindFile(event) {
+    this.file = event.target.files[0];
   }
 
 }

@@ -1,12 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { ResourceValidatorService } from './resource-validator.service';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('ResourceValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpModule ],
+      imports: [ HttpClientModule ],
       providers: [ ResourceValidatorService, CouchService ]
     });
   });
