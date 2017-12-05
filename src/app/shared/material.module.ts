@@ -10,7 +10,10 @@ import {
   MatDialogModule,
   MatIconModule,
   MatSelectModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatRadioModule,
+  MatCheckboxModule,
+  MatGridListModule
 } from '@angular/material';
 
 @NgModule({
@@ -25,7 +28,10 @@ import {
     MatInputModule,
     MatSortModule,
     MatDialogModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatGridListModule
   ]
 })
 export class MaterialModule {}

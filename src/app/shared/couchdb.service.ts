@@ -12,57 +12,30 @@ export class CouchService {
     return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
   }
 
+  private couchDBReq(type: string, db: string, opts: any, data?: any) {
+    const url = this.baseUrl + db;
+    if (type === 'post' || type === 'put') {
+      return this.http[type](url, data, opts).toPromise();
+    }
+    return this.http[type](url, opts).toPromise();
+  }
+
   constructor(private http: HttpClient) {}
 
   put(db: string, data: any, opts?: any): Promise<any> {
-    const url = this.baseUrl + db;
-    const putData = data ? JSON.stringify(data) : '';
-    opts = this.setOpts(opts);
-
-    return this.http
-      .put(url, putData, opts)
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+    return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');
   }
 
   post(db: string, data: any, opts?: any): Promise<any> {
-    const url = this.baseUrl + db;
-    const postData = data ? JSON.stringify(data) : '';
-    opts = this.setOpts(opts);
-
-    return this.http
-      .post(url, postData, opts)
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+    return this.couchDBReq('post', db, this.setOpts(opts), JSON.stringify(data) || '');
   }
 
   get(db: string, opts?: any): Promise<any> {
-    const url = this.baseUrl + db;
-    opts = this.setOpts(opts);
-
-    return this.http
-      .get(url, opts)
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+    return this.couchDBReq('get', db, this.setOpts(opts));
   }
 
   delete(db: string, opts?: any): Promise<any> {
-    const url = this.baseUrl + db;
-    opts = this.setOpts(opts);
-
-    return this.http
-      .delete(url, opts)
-      .toPromise()
-      .then(this.handleRes)
-      .catch(this.handleError);
+    return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
-  private handleRes = (res: any) => res;
-
-  private handleError(error: any): Promise<any> {
-    return Promise.reject(error);
-  }
 }
