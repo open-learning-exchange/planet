@@ -3,49 +3,18 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
+import { MatTableDataSource } from '@angular/material';
+
 @Component({
-  template: `
-    <h1>Users</h1>
-    <div class="km-user-table" *ngIf="displayTable">
-      <form (ngSubmit)="roleSubmit(allUsers,selectedRole)" #rolesForm="ngForm">
-        <div>
-          <select [(ngModel)]="selectedRole" name="role">
-            <option *ngFor="let role of roleList" [value]="role">{{role}}</option>
-          </select>
-          <button class="ole-btn cursor-pointer" type="submit">Add role to selected</button>
-        </div>
-      </form>
-      <table class="ole-table">
-        <thead>
-          <td>User name</td>
-          <td>Roles</td>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let user of allUsers"
-            [ngClass]="{'cursor-pointer':user._id,'hoverable':user._id,'selected':user.selected}"
-            (click)="select(user)"
-          >
-            <td>{{user.name}}</td>
-            <td>
-              <span *ngFor="let role of user.roles; index as i" [ngClass]="{'ole-pill':user._id}">
-                {{role}}
-                <i class="fa fa-times cursor-pointer" *ngIf="user._id" aria-hidden="true" (click)="deleteRole(user,i,$event)"></i>
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="km-message">{{message}}</div>
-  `
+  templateUrl: './users.component.html'
 })
 export class UsersComponent implements OnInit {
   name = '';
   roles: string[] = [];
-  allUsers: any[] = [];
+  allUsers = new MatTableDataSource();
   message = '';
   displayTable = true;
+  displayedColumns = [ 'name', 'roles' ];
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -98,10 +67,10 @@ export class UsersComponent implements OnInit {
         }
       }
 
-      this.allUsers = [].concat(
+      this.allUsers.data = [].concat(
         data[0].rows.reduce((users: any[], user: any) => {
           if (user.id !== '_design/_auth') {
-            users.push(user.doc);
+            users.push({ ...user.doc, admin: false });
           }
           return users;
         }, []),
@@ -115,14 +84,15 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  deleteRole(user: any, index: number, event: any) {
-    event.stopPropagation();
+  deleteRole(user: any, index: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
-    const tempUser = Object.assign({}, user);
+    const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
+    delete tempUser.selected;
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
       console.log('Success!');
-      this.initializeData();
+      user.roles.splice(index, 1);
+      user._rev = response.rev;
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
@@ -131,20 +101,26 @@ export class UsersComponent implements OnInit {
   }
 
   roleSubmit(users: any[], role: string) {
-    Promise.all(users.reduce((promises, user) => {
-      if (user.selected) {
-        // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = Object.assign({}, user);
+    Promise.all(users.reduce((promises, user, index) => {
+      // Do not add role if it already exists on user
+      if (user.selected && user.roles.indexOf(role) === -1) {
+        // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
+        const tempUser = { ...user, roles: [ ...user.roles ] };
         // Remove selected property so it doesn't get saved to DB
         delete tempUser.selected;
-        if (tempUser.roles.indexOf(role) === -1) {
-          tempUser.roles.push(role);
-        }
+        tempUser.roles.push(role);
         promises.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return promises;
     }, [])).then((responses) => {
-      this.initializeData();
+      users.map((user) => {
+        if (user.selected && user.roles.indexOf(role) === -1) {
+          // Add role to UI and update rev from CouchDB response
+          user.roles.push(role);
+          const res: any = responses.find((response: any) => response.id === user._id);
+          user._rev = res.rev;
+        }
+      });
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');

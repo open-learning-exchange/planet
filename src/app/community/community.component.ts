@@ -1,58 +1,100 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-declare var jQuery: any;
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './community.component.html'
 })
-export class CommunityComponent implements OnInit {
+export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
-  communities = [];
+  communities = new MatTableDataSource();
   selectedValue = '';
   selectedNation = '';
   nations = [];
-  deleteItem = {};
+  displayedColumns = [ 'name',
+    'lastAppUpdateDate',
+    'version',
+    'nationName',
+    'lastPublicationsSyncDate',
+    'lastActivitiesSyncDate',
+    'registrationRequest',
+    'action'
+  ];
+  deleteDialog: any;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
-    private couchService: CouchService
-  ) { }
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private route: ActivatedRoute
+  ) {}
 
-  getnationlist() {
+  ngAfterViewInit() {
+    this.communities.paginator = this.paginator;
+  }
+
+  getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .then((data) => {
-        this.nations = data.rows;
+        this.nations = data.rows.map(function(nt){
+          if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
+            this.selectedNation = nt.doc.nationurl;
+            this.communities.filter = this.selectedNation;
+          }
+          return nt;
+        }, this);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  getcommunitylist() {
+  getCommunityList() {
      this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
       .then((data) => {
-        this.communities = data.rows;
+        // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
+        // Map over data.rows to remove the 'doc' property layer
+        this.communities.data = data.rows.map(community => community.doc);
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
-  deleteClick(community, index) {
-    // The ... is the spread operator. The below sets deleteItem a copy of the community.doc
-    // object with an additional index property that is the index within the communites array
-    this.deleteItem = { ...community.doc, index };
-    jQuery('#planetDelete').modal('show');
+  deleteClick(community) {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+      data: {
+        okClick: this.deleteCommunity(community),
+        type: 'community',
+        displayName: community.name
+      }
+    });
   }
 
   deleteCommunity(community) {
+    // Return a function with community on its scope to pass to delete dialog
+    return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-    const { _id: id, _rev: rev, index } = community;
-    this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
-      .then((data) => {
-        this.communities.splice(index, 1);
-        jQuery('#planetDelete').modal('hide');
-      }, (error) => this.message = 'There was a problem deleting this community');
+      const { _id: id, _rev: rev } = community;
+      this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
+        .then((data) => {
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
+          this.deleteDialog.close();
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this community');
+    };
+  }
+
+  onChange(filterValue: string) {
+    this.communities.filter = filterValue;
+  }
+
+  onSelect(select: string) {
+    this.communities.filter = select;
   }
 
   ngOnInit() {
-    this.getcommunitylist();
-    this.getnationlist();
+    this.getNationList();
+    this.getCommunityList();
   }
 
 }

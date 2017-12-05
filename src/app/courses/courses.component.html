@@ -11,7 +11,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let course of courses; let i = index">
+      <tr *ngFor="let course of courses">
         <td>
           {{course.doc.courseTitle}}
         </td>
@@ -22,18 +22,9 @@
           <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>View Course</a>
           <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Credits</a>
           <a routerLink="add" class='btn btn-primary' routerLinkActive="active" i18n>Progress</a>
-          <button class="btn btn-danger" ngMOdel (click)="deleteClick(course,i)">Delete</button>
+          <button class="btn btn-danger" (click)="deleteClick(course)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-
-<planet-alerts-delete
-  (okClick)="deleteCourse($event)"
-  (resetMessage)="message=''"
-  [type]="'course'"
-  [deleteItem]="deleteItem"
-  [message]="message"
-  [displayName]="deleteItem.courseTitle">
-</planet-alerts-delete>

@@ -3,6 +3,8 @@ import { UserService } from '../shared/user.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
+import { MatCheckboxModule } from '@angular/material';
+
 
 export class Feedback {
   name: string;

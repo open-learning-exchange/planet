@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -6,35 +6,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 require('./login.scss');
 
 @Component({
-  template: `
-    <div class="ole-login">
-      <div class="ole-logo">
-        <img src="assets/cropped-ole-ico-logo-180x180.png">
-        <h1 i18n>Planet Learning</h1>
-        <h3 i18n>Version 2.01</h3>
-      </div>
-      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-        <div>
-          <input [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
-        </div>
-        <div>
-          <input [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
-        </div>
-        <div *ngIf="createMode">
-          <input [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
-        </div>
-        <div class="login-actions">
-          <div><button class="ole-btn cursor-pointer">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button></div>
-          <a [routerLink]="createMode ? ['/login'] : ['newuser']">
-            {{ createMode ? 'Already have an account?' : 'Are you new?' }}
-          </a>
-        </div>
-      </form>
-      <div id="login-status">{{message}}</div>
-    </div>
-  `,
-  styleUrls: [ './login.scss' ]
-
+  templateUrl: './login.component.html',
+  styleUrls: [ './login.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent {
   constructor(
