@@ -17,3 +17,23 @@
   border-left: 5px solid $pending;
   border-color: $pending;
 }
+
+.addCourse-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.addCourse-container > * {
+  width: 100%;
+}
+.mat-input-container {
+  width:300px;
+  padding:5px;
+}
+.selectColor {
+  margin-top:20px;
+}
+.form-check {
+  padding: 10px;
+  margin-bottom: -25px;
+}
