@@ -38,7 +38,6 @@ export class ResourcesViewComponent implements OnInit {
   pdfSrc: any;
   contentType = '';
   urlPrefix = environment.couchAddress + 'resources/';
-  url: any;
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
