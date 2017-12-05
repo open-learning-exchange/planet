@@ -6,10 +6,14 @@ import { UserService } from '../shared/user.service';
 @Component({
   template: `
     <planet-navigation></planet-navigation>
-    <main class="container">
+    <main class="container" dir="{{languageDirection}}">
       <router-outlet></router-outlet>
     </main>
   `,
   styleUrls: [ './home.scss' ]
 })
-export class HomeComponent {}
+export class HomeComponent {
+
+  languageDirection: string = localStorage.getItem('direction');
+
+}
