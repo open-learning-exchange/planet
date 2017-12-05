@@ -18,7 +18,7 @@ export class DialogsFormService {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
       width : '600px',
-      hasBackdrop: false
+      hasBackdrop: true
     });
     dialogRef.componentInstance.modalForm = this.fb.group(validation);
     dialogRef.componentInstance.title = title;
