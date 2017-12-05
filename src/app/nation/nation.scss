@@ -2,60 +2,49 @@
   min-height: 64px;
   padding: 8px 24px 0;
 }
-
 .header {
   padding: 8px 0 0;
   width :50%
 }
-
 mat-header-cell {
   text-align: center;
   font-weight: bold;
   color: #212121;
 }
-
-.mat-paginator {
-  float : left;
-}
-
 mat-form-field {
   float: right;
-  margin-top:-59px;
+  margin-top:-68px;
 }
-
-.mat-paginator-container {
-  margin-top: -11px;
-  padding-right: 708px;
-  margin-bottom: 18px;
+.matPaginator {
+  padding-right: 653px;
 }
-
 mat-table-layout {
   margin: auto;
 }
 .add-nation {
-  min-height: 60px;
+  min-height: 73px;
   background-color: #2196f3;
 }
-
 .labelNation {
   color: #FFFFFF;
-  position: fixed;
-  margin: 10px;
+  position: absolute;
+  margin: 23px;
 }
-
 .addNation{
   color: #FFFFFF;
   float: right;
-  margin: 10px;
+  margin: 9px;
 }
 .matSearch {
-  position: fixed;
   margin-left: -35px;
-  float:left;
 }
 .matAdd {
- width: 30px;
- height: 30px;
- background: #ffc107;
- border-radius: 50px;
+  color: white;
+}
+.mat-fab.mat-accent, .mat-mini-fab.mat-accent {
+  background-color: #ffc107;
+}
+.mat-delete {
+  background-color: #f44336;
+  color: white;
 }

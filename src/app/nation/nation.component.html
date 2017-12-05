@@ -1,5 +1,5 @@
 <div>
-  <h3 class="header" i18n> <mat-icon>arrow_back</mat-icon> Nation List </h3>
+  <h3 class="header" i18n> <button class = "btnBack" mat-icon-button (click)="back()" i18n><mat-icon>arrow_back</mat-icon></button>Nation List</h3>
   <mat-form-field>
       <mat-icon class = "matSearch">search</mat-icon>
       <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
@@ -7,12 +7,14 @@
 </div>
 <hr/>
 <div class="mat-paginator-container">
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+  <span class="matPaginator"><mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator></span>
+  <span class="matList"><mat-icon>list</mat-icon></span>
+  <span class=""><mat-icon>view_module</mat-icon></span>
 </div>
 <div class="mat-elevation-z8">
   <div class="add-nation">
     <span class="labelNation">Your Current Lists of Nations</span>
-    <span class="addNation">Add a Nation <mat-icon class = "matAdd" (click)="openNationAddForm()">add</mat-icon></span>
+    <span class="addNation">Add a Nation <button mat-mini-fab color="accent" (click)="openNationAddForm()" i18n> <mat-icon class = "matAdd" >add</mat-icon></button></span>
   </div>
     <mat-table #table [dataSource]="nations" matSort>
       <!-- Name Column -->
@@ -36,7 +38,7 @@
         <mat-cell *matCellDef="let element">
           <button type="button" mat-raised-button color="primary" (click)="view(element.nationurl)" i18n>View</button>
           <button mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
-          <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
+          <button mat-raised-button class = "mat-delete"(click)="deleteClick(element)" i18n> Delete </button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
