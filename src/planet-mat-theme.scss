@@ -7,6 +7,10 @@
 @include mat-core();
 @import './app/variables';
 
+$planet-primary: $mat-blue;
+$planet-accent: $mat-amber;
+$planet-warn: $mat-red;
+
 $planet-app-primary: mat-palette($planet-primary);
 $planet-app-accent: mat-palette($planet-accent);
 
