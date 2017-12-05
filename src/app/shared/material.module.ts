@@ -9,7 +9,10 @@ import {
   MatChipsModule,
   MatDialogModule,
   MatIconModule,
-  MatSelectModule
+  MatSelectModule,
+  MatRadioModule,
+  MatCheckboxModule,
+  MatGridListModule
 } from '@angular/material';
 
 @NgModule({
@@ -23,7 +26,10 @@ import {
     MatSelectModule,
     MatInputModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatGridListModule
   ]
 })
 export class MaterialModule {}
