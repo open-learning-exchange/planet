@@ -28,7 +28,8 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Anansi Gives People Stories",
-            "averageRating": "1"
+            "averageRating": "1",
+            "mediaType": "image"
          },
          {
             "_id":"0216c7208a72e79b29997d0fd400beac",
@@ -58,7 +59,8 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Brown",
-            "averageRating": "2"
+            "averageRating": "2",
+            "mediaType": "other"
          },
          {
             "_id":"0216c7208a72e79b29997ded400beac",
@@ -88,7 +90,8 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Crocodile and Baboon",
-            "averageRating": "3"
+            "averageRating": "3",
+            "mediaType": "pdf"
          },
          {
             "_id":"0216c7208a7ss79b29997d0fd400beac",
@@ -118,7 +121,8 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Grandmother and the Smelly Girl",
-            "averageRating": "5"
+            "averageRating": "5",
+            "mediaType": "other"
          },
          {
             "_id":"0216s208a72e79b29997d0fd400beac",
@@ -146,7 +150,8 @@
             "Tag": [],
             "Year": "",
             "title": "How Coaches Can Maximize Student Learning",
-            "averageRating": "4"
+            "averageRating": "4",
+            "mediaType": "other"
          }
     ]
 }
