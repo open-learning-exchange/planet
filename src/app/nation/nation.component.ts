@@ -168,4 +168,8 @@ export class NationComponent implements OnInit, AfterViewInit {
     }
   }
 
+  back() {
+    this.location.back();
+  }
+
 }
