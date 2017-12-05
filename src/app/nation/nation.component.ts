@@ -21,8 +21,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { NationValidatorService } from '../validators/nation-validator.service';
 
 @Component({
-  templateUrl: './nation.component.html',
-  styleUrls: [ './nation.scss' ]
+  templateUrl: './nation.component.html'
 })
 
 export class NationComponent implements OnInit, AfterViewInit {
