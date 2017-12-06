@@ -29,15 +29,12 @@ export class NationValidatorService {
     header: string,
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
-    const errMessage = {
-      duplicateNation: { message : header === 'name' ? 'Nation already exists' : 'Nation URL already exists' }
-    };
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => {
         return this.nationCheckerService$(header, ac.value).pipe(map(res => {
           if (res) {
-            return errMessage;
+            return { duplicate: true };
           }
           return null;
         }));

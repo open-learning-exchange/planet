@@ -13,8 +13,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
     <span *ngIf="shouldShowError()" i18n>{updateError(), select,
       required {This field is required}
       min {The number cannot be below {{number}}}
-      duplicateCourse {This course already exists}
-      duplicateNation {This nation already exists}
+      duplicate {Value already exists}
       invalidInt {Please enter a number}
       invalidHex {Hex is not valid}
       invalidTime {Time is invalid}
