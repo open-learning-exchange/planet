@@ -13,8 +13,10 @@ $pending: #ed9121; // Dogi's WIP label color
 $error-red: #a94442;
 // $body-margin: 8px; we won't need to use this if we use bootstrap's container class
 
-// Planet Material Colors
-
+/*
+ * Old Planet Material Colors
+ * Saved in case we want to revert
+ * We can delete once UX finalizes colors
 $planet-primary: (
   50 : #e5eff8,
   100 : #bfd7ef,
@@ -113,3 +115,5 @@ $planet-warn: (
       A700 : #000000,
   )
 );
+
+*/
