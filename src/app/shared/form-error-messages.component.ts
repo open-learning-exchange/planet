@@ -47,8 +47,4 @@ export class FormErrorMessagesComponent {
     return errorType;
   }
 
-  // calls the static method errorMessages
-  private getMessage(type: string, params: any) {
-    return FormErrorMessagesComponent.errorMessages[type](params);
-  }
 }
