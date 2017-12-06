@@ -11,6 +11,10 @@ $primary-hue: 500;
 $accent-hue: 500;
 $warn-hue: 500;
 
+$planet-primary: $mat-blue;
+$planet-accent: $mat-amber;
+$planet-warn: $mat-red;
+
 $planet-app-primary: mat-palette($planet-primary, $primary-hue);
 $planet-app-accent: mat-palette($planet-accent, $accent-hue);
 $planet-app-warn: mat-palette($planet-warn, $warn-hue);
