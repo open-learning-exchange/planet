@@ -14,7 +14,7 @@
     <span>Your Current Lists of Nations</span>
     <span class="toolbar-fill"></span>
     <span>Add a Nation</span>
-    <button mat-mini-fab><mat-icon (click)="openNationAddForm()">add</mat-icon></button>
+    <button mat-mini-fab (click)="openNationAddForm()"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-table #table [dataSource]="nations" matSort>
