@@ -17,7 +17,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
+        <target xml:lang="ar" state="translated">
     Oops!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html">
@@ -27,7 +27,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
+        <target xml:lang="ar" state="translated">
     404 Not Found</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html">
@@ -38,7 +38,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
+        <target xml:lang="ar" state="translated">
     Sorry, an error has occured, Requested page not found!
   </target>
       </trans-unit>
@@ -49,7 +49,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-delete.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Are you sure you want to delete the following <x id="ICU" equiv-text="{data.type, select, community {...} nation {...} course {...} resource {...} meetup {...}}"/>?
+        <target xml:lang="ar" state="translated">Are you sure you want to delete the following <x id="ICU" equiv-text="{data.type, select, community {...} nation {...} course {...} resource {...} meetup {...}}"/>?
   
   </target>
       </trans-unit>
@@ -59,7 +59,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-delete.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">{VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} }</target>
+        <target xml:lang="ar" state="translated">{VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} }</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
         <source>OK</source>
@@ -67,7 +67,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-delete.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">OK</target>
+        <target xml:lang="ar" state="translated">OK</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
