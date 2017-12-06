@@ -2,15 +2,15 @@
   <form class="addCourse-container" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
     <mat-grid-list cols="3">
       <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
-          <mat-hint><planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-hint>
+        <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Member Limit" type="number" class="example-right-align" formControlName="memberLimit">
-        <mat-hint><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-hint>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </mat-grid-list>
 
@@ -28,19 +28,19 @@
     <mat-grid-list cols="1">
       <mat-form-field>
         <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages>
     </mat-grid-list>
 
     <mat-grid-list cols="2">
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel">
-          <mat-option *ngFor="let grade of gradeLevels" [value]="grade"> {{grade}} </mat-option>
+          <mat-option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel">
-          <mat-option *ngFor="let sub of subjectLevels" [value]="sub"> {{sub}} </mat-option>
+          <mat-option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</mat-option>
         </mat-select>
       </mat-form-field>
     </mat-grid-list>
@@ -48,15 +48,11 @@
     <mat-grid-list cols="3">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Start Date" type="date" formControlName="startDate">
-        <mat-hint align="end">yyyy-mm-dd
-        <planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages>
-        </mat-hint>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput type="date" i18n-placeholder placeholder="End Date" formControlName="endDate">
-        <mat-hint align="end">yyyy-mm-dd
-        <planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages>
-        </mat-hint>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
       <label i18n>Frequency</label>
@@ -78,15 +74,11 @@
     <mat-grid-list cols="3">
       <mat-form-field>
         <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
-        <mat-hint align="end">hh:mm
-          <planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages>
-        </mat-hint>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
-        <mat-hint align="end">hh:mm
-          <planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages>
-        </mat-hint>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Location" formControlName="location">
@@ -96,10 +88,10 @@
     <mat-grid-list cols="2">
       <label class="selectColor" i18n>Background Color</label>
         <input type="color" i18n-placeholder placeholder="Background Color" formControlName="backgroundColor" mat-icon>
-        <planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages></mat-error>
       <label i18n>Foreground Color</label>
         <input type="color" i18n-placeholder placeholder="Foreground Color" formControlName="foregroundColor" mat-icon >
-        <planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages></mat-error>
     </mat-grid-list>
 
     <mat-grid-list cols="2">
