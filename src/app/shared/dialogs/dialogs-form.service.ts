@@ -17,8 +17,7 @@ export class DialogsFormService {
   public confirm(title: string, type: string, fields: any, validation: any, message: string): Observable<boolean> {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
-      width : '600px',
-      hasBackdrop: false
+      width: '600px'
     });
     dialogRef.componentInstance.modalForm = this.fb.group(validation);
     dialogRef.componentInstance.title = title;
