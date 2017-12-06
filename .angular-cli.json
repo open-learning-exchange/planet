@@ -22,6 +22,9 @@
         "styles.scss",
         "planet-mat-theme.scss"
       ],
+      "scripts": [
+        "../node_modules/jszip/dist/jszip.min.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
