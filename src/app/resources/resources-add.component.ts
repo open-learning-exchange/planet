@@ -15,6 +15,9 @@ import { ResourceValidatorService } from '../validators/resource-validator.servi
 import * as constants from 'constants';
 import JSZip from 'jszip';
 
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
+
 @Component({
   templateUrl: './resources-add.component.html'
 })
@@ -84,35 +87,44 @@ export class ResourcesAddComponent implements OnInit {
     return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
   }
 
-  onSubmit() {
-    if (this.resourceForm.valid) {
-      if (this.file !== undefined) {
-        this.mediaType = this.simpleMediaType(this.file.type);
-        if (this.file.type.indexOf('zip') === -1 ) {
-          const reader = new FileReader(),
-          rComp = this;
-          reader.readAsDataURL(this.file);
-          reader.onload = () => {
-          // FileReader result has file type at start of string, need to remove for CouchDB
-          const fileData = reader.result.split(',')[1],
+  // Creates an observer which reads one file then outputs its data
+  private fileReaderObs (file, mediaType) {
+    const reader = new FileReader();
+    const obs = Observable.create((observer) => {
+      reader.onload = () => {
+        // FileReader result has file type at start of string, need to remove for CouchDB
+        const fileData = reader.result.split(',')[1],
           attachments = {};
-          attachments[rComp.file.name] = {
-            content_type: rComp.file.type,
+          attachments[file.name] = {
+            content_type: file.type,
             data: fileData
           };
-          const resource = Object.assign({ },
-            {
-              filename: rComp.file.name,
-              _attachments: attachments,
-              mediaType: rComp.mediaType
-            }
-          );
-          this.addResource(Object.assign(this.resourceForm.value, resource));
-          };
-        }
+        const resource = {
+          filename: file.name,
+          _attachments: attachments,
+          mediaType: mediaType
+        };
+        observer.next(resource);
+        observer.complete();
+      };
+    });
+    reader.readAsDataURL(file);
+    return obs;
+  }
+
+  onSubmit() {
+    if (this.resourceForm.valid) {
+      let fileObs: Observable<any>;
+      if (this.file !== undefined) {
+        const mediaType = this.simpleMediaType(this.file.type);
+        fileObs = this.fileReaderObs(this.file, mediaType);
       } else {
-        this.addResource(this.resourceForm.value);
+        // Creates an observable that immediately returns an empty object
+        fileObs = of({});
       }
+      fileObs.subscribe((resource) => {
+        this.addResource(Object.assign(this.resourceForm.value, resource));
+      });
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
