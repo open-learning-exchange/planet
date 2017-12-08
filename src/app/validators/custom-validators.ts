@@ -5,22 +5,11 @@ import { takeUntil } from 'rxjs/operators';
 export class CustomValidators {
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl): ValidationErrors {
-    const errMessage = {
-      invalidInt: {
-        message: 'Please enter a valid number'
-      }
-    };
-
     const isValidInt = Number.isInteger(ac.value);
-    return isValidInt ? null : errMessage;
+    return isValidInt ? null : { invalidInt: true };
   }
 
   static hexValidator(ac: AbstractControl): ValidationErrors {
-    const errMessage = {
-      invalidHex: {
-        message: 'Hex is not valid'
-      }
-    };
 
     if (!ac.value) {
       return null;
@@ -28,15 +17,10 @@ export class CustomValidators {
 
     const isValidHex = /^#[A-F0-9]{6}$/i.test(ac.value);
 
-    return isValidHex ? null : errMessage;
+    return isValidHex ? null : { invalidHex: true };
   }
 
   static timeValidator(ac: AbstractControl): ValidationErrors {
-    const errMessage = {
-      invalidTime: {
-        message: 'Time must be in the form hh:mm'
-      }
-    };
 
     if (!ac.value) {
       return null;
@@ -45,15 +29,10 @@ export class CustomValidators {
     // the regex is for hh:mm because input type=time always evaluates to this form regardless of how it may appear to the user
     const isValidTime = /^([01]?[0-9]|2[0-3]):[0-5][0-9]?$/.test(ac.value);
 
-    return isValidTime ? null : errMessage;
+    return isValidTime ? null : { invalidTime: true };
   }
 
   static dateValidator(ac: AbstractControl): ValidationErrors {
-    const formErrMessage = {
-      invalidDateFormat: {
-        message: 'Date must be in the form of yyyy-mm-dd'
-      }
-    };
 
     if (!ac.value) {
       return null;
@@ -63,18 +42,13 @@ export class CustomValidators {
     const dateRegEx = /^\d{4}-\d{2}-\d{2}/;
 
     if (!ac.value.match(dateRegEx)) {
-      return formErrMessage;
+      return { invalidDateFormat: true };
     }
+
     const date = new Date(ac.value);
 
-    const errMessage = {
-      invalidDate: {
-        message: 'Date is invalid'
-      }
-    };
-
     if (!date.getTime()) {
-      return errMessage;
+      return { invalidDate: true };
     }
 
     return null;
@@ -87,12 +61,6 @@ export class CustomValidators {
 
     // for unsubscribing from Observables
     const ngUnsubscribe: Subject<void> = new Subject<void>();
-
-    const errMessage = {
-      invalidEndDate: {
-        message: 'The end date cannot be before the start date'
-      }
-    };
 
     return (ac: AbstractControl): ValidationErrors => {
       if (!ac.parent) {
@@ -123,7 +91,7 @@ export class CustomValidators {
       if (
         new Date(startDate.value).getTime() > new Date(endDate.value).getTime()
       ) {
-        return errMessage;
+        return { invalidEndDate: true };
       }
     };
   }
@@ -133,11 +101,7 @@ export class CustomValidators {
     let startTime: AbstractControl;
     let endTime: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
-    const errMessage = {
-      inavlidEndTime: {
-        message: 'The end time cannot be before the start time'
-      }
-    };
+
     return (ac: AbstractControl): { [key: string]: any } => {
       if (!ac.parent) {
         return null;
@@ -166,9 +130,9 @@ export class CustomValidators {
       // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
       if (
         new Date('1970-1-1 ' + startTime.value).getTime() >
-        new Date('1970-1-1 ' + endTime.value).getTime()
+        new Date(endTime.value && '1970-1-1 ' + endTime.value).getTime()
       ) {
-        return errMessage;
+        return { invalidEndTime: true };
       }
     };
   }
