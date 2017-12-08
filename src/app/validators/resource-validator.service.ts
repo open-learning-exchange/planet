@@ -28,14 +28,14 @@ export class ResourceValidatorService {
   public checkResourceExists$(
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
-    const errMessage = {
-      duplicateCourse: { message: 'Resource already exists' }
-    };
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => {
         return this.resourceCheckerService$(ac.value).pipe(map(res => {
-          return res ? errMessage : null;
+          if (res) {
+            return { duplicate: true };
+          }
+          return null;
         }));
       })
     );

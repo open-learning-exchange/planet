@@ -57,7 +57,7 @@ export class ResourcesViewComponent implements OnInit {
           this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
         }
         if (this.mediaType === 'zip') {
-          this.router.navigate([ '/resources']);
+          this.router.navigate([ '/resources' ]);
           window.open(this.resourceSrc);
         }
         return data;
