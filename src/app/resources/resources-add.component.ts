@@ -77,22 +77,17 @@ export class ResourcesAddComponent implements OnInit {
     });
   }
 
+  // Function which takes a MIME Type as a string and returns whether the file is an
+  // image, audio file, video, pdf, or zip.  If none of those five returns 'other'
+  private simpleMediaType (mimeType: string) {
+    const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
+    return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
+  }
+
   onSubmit() {
     if (this.resourceForm.valid) {
       if (this.file !== undefined) {
-        if (this.file.type.indexOf('image') > -1) {
-          this.mediaType = 'image';
-        } else if (this.file.type.indexOf('pdf') > -1) {
-          this.mediaType = 'pdf';
-        } else if (this.file.type.indexOf('audio') > -1) {
-          this.mediaType = 'audio';
-        } else if (this.file.type.indexOf('video') > -1) {
-          this.mediaType = 'video';
-        } else if (this.file.type.indexOf('zip') > -1) {
-          this.zipAttachment();
-        } else {
-          this.mediaType = 'other';
-        }
+        this.mediaType = this.simpleMediaType(this.file.type);
         if (this.file.type.indexOf('zip') === -1 ) {
           const reader = new FileReader(),
           rComp = this;
