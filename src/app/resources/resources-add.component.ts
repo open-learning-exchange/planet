@@ -91,10 +91,10 @@ export class ResourcesAddComponent implements OnInit {
         // FileReader result has file type at start of string, need to remove for CouchDB
         const fileData = reader.result.split(',')[1],
           attachments = {};
-          attachments[file.name] = {
-            content_type: file.type,
-            data: fileData
-          };
+        attachments[file.name] = {
+          content_type: file.type,
+          data: fileData
+        };
         const resource = {
           filename: file.name,
           _attachments: attachments,
@@ -116,7 +116,7 @@ export class ResourcesAddComponent implements OnInit {
       if (mediaType === undefined) {
         // Creates an observable that immediately returns an empty object
         fileObs = of({});
-      } else if(mediaType !== 'zip') {
+      } else if (mediaType !== 'zip') {
         fileObs = this.fileReaderObs(this.file, mediaType);
       } else {
         fileObs = this.zipObs(this.file);
