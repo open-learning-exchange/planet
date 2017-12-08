@@ -90,11 +90,10 @@ export class ResourcesAddComponent implements OnInit {
           this.mediaType = 'video';
         } else if (this.file.type.indexOf('zip') > -1) {
           this.zipAttachment();
-          // this.addResource(Object.assign(this.resourceForm.value,{ filename: this.file.name, _attachments: zipUpload }));
         } else {
-          this.mediaType = '';
+          this.mediaType = 'other';
         }
-        if (!this.file.type.indexOf('zip')) {
+        if (this.file.type.indexOf('zip') === -1 ) {
           const reader = new FileReader(),
           rComp = this;
           reader.readAsDataURL(this.file);
@@ -131,7 +130,7 @@ export class ResourcesAddComponent implements OnInit {
     // ...is the rest syntax for object destructuring
     try {
       await this.couchService.post(this.dbName, { ...resourceInfo });
-      // this.router.navigate([ '/resources' ]);
+        this.router.navigate([ '/resources' ]);
     } catch (err) {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -141,42 +140,44 @@ export class ResourcesAddComponent implements OnInit {
   zipAttachment() {
     const zip = new JSZip();
     // This loads an object with file information from the zip, but not the data of the files
-    zip.loadAsync(this.file).then(function(data) {
-        const fileNames = [];
-        // Add file names to array for mapping
-        for (const path in data.files) {
-            if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
-                fileNames.push(path);
-            }
-        }
-        const mime = require('mime-types');
-        const preProcessZip = function(zipFile) {
-          return function(fileName) {
-            return new Promise(function(resolve, reject) {
-              // When file was not read error block wasn't called from async so added try...catch block
-              try {
-                  zipFile.file(fileName).async('base64').then(function success(data) {
-                      resolve({ name: fileName, data: data });
-                  }, function error(e) {
-                      reject(e);
-                  });
-              } catch(e) {
-                  console.log(fileName + ' has caused error.');
+    const that = this;
+    const preProcessZip = function(zipFile) {
+      return function(fileName) {
+        return new Promise(function(resolve, reject) {
+          // When file was not read error block wasn't called from async so added try...catch block
+          try {
+              zipFile.file(fileName).async('base64').then(function success(data) {
+                  resolve({ name: fileName, data: data });
+              }, function error(e) {
                   reject(e);
-              }
-            });
-          };
-        };
-        // Since files are loaded async, use Promise all to ensure all data from the files are loaded before attempting upload
-        Promise.all(fileNames.map(preProcessZip(zip))).then(function(filesArray) {
-          // Create object in format for multiple attachment upload to CouchDB
-          const filesObj = filesArray.reduce(function(filesObj, file) {
-              filesObj[file['name']] = { data: file['data'], content_type: mime.contentType(file['name']) };
-              return filesObj;
-          }, { });
-        }, function(error) {
-            console.log(error);
+              });
+          } catch (e) {
+              console.log(fileName + ' has caused error.');
+              reject(e);
+          }
         });
+      };
+    };
+    const mime = require('mime-types');
+    zip.loadAsync(this.file).then(function(data) {
+      const fileNames = [];
+      // Add file names to array for mapping
+      for (const path in data.files) {
+          if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
+              fileNames.push(path);
+          }
+      }
+      // Since files are loaded async, use Promise all to ensure all data from the files are loaded before attempting upload
+      Promise.all(fileNames.map(preProcessZip(zip))).then(function(filesArray) {
+        // Create object in format for multiple attachment upload to CouchDB
+        const filesObj = filesArray.reduce(function(filesObj, file) {
+            filesObj[file['name']] = { data: file['data'], content_type: mime.contentType(file['name']) };
+            return filesObj;
+        }, { });
+        that.addResource(Object.assign(that.resourceForm.value, { filename: that.file.name, mediaType: 'zip', _attachments: filesObj }));
+      }, function(error) {
+          console.log(error);
+      });
     });
   }
 

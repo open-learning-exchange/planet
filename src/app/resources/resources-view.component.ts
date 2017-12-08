@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -29,7 +29,8 @@ export class ResourcesViewComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) { }
 
   resource = {};
@@ -54,6 +55,10 @@ export class ResourcesViewComponent implements OnInit {
         this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
         if (this.mediaType === 'pdf') {
           this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+        }
+        if (this.mediaType === 'zip') {
+          this.router.navigate([ '/resources']);
+          window.open(this.urlPrefix + data._id + '/' + filename);
         }
         return data;
       }, (error) => console.log('Error'));
