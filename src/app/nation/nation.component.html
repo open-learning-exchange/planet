@@ -1,4 +1,3 @@
-
 <mat-toolbar>
   <mat-toolbar-row>
     <button class="btnBack" mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
@@ -9,7 +8,6 @@
       <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
     </mat-form-field>
   </mat-toolbar-row>
-
   <mat-toolbar-row class="primary-color font-size-1">
     <span i18n>Your Current Lists of Nations</span>
     <span class="toolbar-fill"></span>
@@ -17,6 +15,7 @@
     <button mat-mini-fab (click)="openNationAddForm()"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
+
 <mat-table #table [dataSource]="nations" matSort>
   <!-- Name Column -->
   <ng-container matColumnDef="name">
@@ -34,7 +33,7 @@
     <mat-cell *matCellDef="let element">{{element.nationurl}}</mat-cell>
   </ng-container>
     <!-- Action Column -->
-    <ng-container matColumnDef="action">
+  <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
     <mat-cell *matCellDef="let element">
       <button type="button" mat-raised-button color="primary" (click)="view(element.nationurl)" i18n>View</button>
@@ -45,4 +44,5 @@
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>
+
 <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
