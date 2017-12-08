@@ -25,13 +25,11 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 })
 export class ResourcesAddComponent implements OnInit {
   name = '';
-  message = '';
   subjects = new FormControl();
   levels = new FormControl();
 
-  todaydate = new Date();
+  currentDate = new Date();
   file: any;
-  mediaType: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
 
@@ -46,6 +44,10 @@ export class ResourcesAddComponent implements OnInit {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
     this.createForm();
+  }
+
+  ngOnInit() {
+    Object.assign(this, this.userService.get());
   }
 
   createForm() {
@@ -193,10 +195,6 @@ export class ResourcesAddComponent implements OnInit {
         });
       });
     });
-  }
-
-  ngOnInit() {
-    Object.assign(this, this.userService.get());
   }
 
   cancel() {
