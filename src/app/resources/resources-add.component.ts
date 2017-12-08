@@ -12,10 +12,10 @@ import {
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ResourceValidatorService } from '../validators/resource-validator.service';
-import * as constants from 'constants';
+import * as constants from './resources-constants';
+
 import * as JSZip from 'jszip';
 import * as mime from 'mime-types';
-
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
@@ -27,17 +27,8 @@ export class ResourcesAddComponent implements OnInit {
   name = '';
   message = '';
   subjects = new FormControl();
-  subjectList = [ 'Agriculture', 'Arts', 'Business and Finance',
-  'Environment', 'Food and Nutrition', 'Geography', 'Health and Medicine',
-  'History', 'Human Development', 'Languages', 'Law', 'Learning',
-  'Literature', 'Math', 'Music', 'Politics and Government', 'Reference',
-  'Religion', 'Science', 'Social Sciences', 'Sports', 'Technology' ];
   levels = new FormControl();
-  levelList = [ 'Early Education', 'Lower Primary', 'Upper Primary',
-  'Lower Secondary', 'Upper Secondary', 'Undergraduate', 'Graduate', 'Professional' ];
-  mediums = [ 'Text', 'Graphic/Pictures', 'Audio/Music/Book', 'Video' ];
-  openWith = [ 'Just download', 'HTML', 'PDF.js', 'Bell-Reader', 'MP3', 'Flow Video Player', 'BeLL Video Book Player', 'Native Video' ];
-  resourceType = [ 'Textbook', 'Lesson Plan', 'Activities', 'Exercises', 'Discussion Questions' ];
+
   todaydate = new Date();
   file: any;
   mediaType: any;
@@ -52,6 +43,8 @@ export class ResourcesAddComponent implements OnInit {
     private resourceValidatorService: ResourceValidatorService,
     private userService: UserService
   ) {
+    // Adds the dropdown lists to this component
+    Object.assign(this, constants);
     this.createForm();
   }
 
