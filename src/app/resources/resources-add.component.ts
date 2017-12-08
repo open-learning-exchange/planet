@@ -27,7 +27,11 @@ export class ResourcesAddComponent implements OnInit {
   name = '';
   subjects = new FormControl();
   levels = new FormControl();
-
+  subjectList: string[];
+  levelList: string[];
+  media: string[];
+  openWith: string[];
+  resourceType: string[];
   currentDate = new Date();
   file: any;
   resourceForm: FormGroup;
