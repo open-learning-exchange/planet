@@ -80,7 +80,7 @@ export class ResourcesAddComponent implements OnInit {
   onSubmit() {
     if (this.resourceForm.valid) {
       if (this.file !== undefined) {
-        if ( this.file.type.indexOf('image') > -1 ) {
+        if (this.file.type.indexOf('image') > -1) {
           this.mediaType = 'image';
         } else if (this.file.type.indexOf('pdf') > -1) {
           this.mediaType = 'pdf';

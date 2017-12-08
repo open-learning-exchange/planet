@@ -58,7 +58,7 @@ export class ResourcesViewComponent implements OnInit {
         }
         if (this.mediaType === 'zip') {
           this.router.navigate([ '/resources']);
-          window.open(this.urlPrefix + data._id + '/' + filename);
+          window.open(this.resourceSrc);
         }
         return data;
       }, (error) => console.log('Error'));
