@@ -13,15 +13,16 @@ import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ResourceValidatorService } from '../validators/resource-validator.service';
 import * as constants from 'constants';
-import JSZip from 'jszip';
+import * as JSZip from 'jszip';
+import * as mime from 'mime-types';
 
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './resources-add.component.html'
 })
-
 export class ResourcesAddComponent implements OnInit {
   name = '';
   message = '';
@@ -115,15 +116,19 @@ export class ResourcesAddComponent implements OnInit {
   onSubmit() {
     if (this.resourceForm.valid) {
       let fileObs: Observable<any>;
-      if (this.file !== undefined) {
-        const mediaType = this.simpleMediaType(this.file.type);
-        fileObs = this.fileReaderObs(this.file, mediaType);
-      } else {
+      // If file doesn't exist, mediaType will be undefined
+      const mediaType = this.file && this.simpleMediaType(this.file.type);
+      if (mediaType === undefined) {
         // Creates an observable that immediately returns an empty object
         fileObs = of({});
+      } else if(mediaType !== 'zip') {
+        fileObs = this.fileReaderObs(this.file, mediaType);
+      } else {
+        fileObs = this.zipObs(this.file);
       }
       fileObs.subscribe((resource) => {
-        this.addResource(Object.assign(this.resourceForm.value, resource));
+        // Start with empty object so this.resourceForm.value does not change
+        this.addResource(Object.assign({}, this.resourceForm.value, resource));
       });
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
@@ -144,46 +149,55 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  zipAttachment() {
-    const zip = new JSZip();
-    // This loads an object with file information from the zip, but not the data of the files
-    const that = this;
-    const preProcessZip = function(zipFile) {
-      return function(fileName) {
-        return new Promise(function(resolve, reject) {
-          // When file was not read error block wasn't called from async so added try...catch block
-          try {
-              zipFile.file(fileName).async('base64').then(function success(data) {
-                  resolve({ name: fileName, data: data });
-              }, function error(e) {
-                  reject(e);
-              });
-          } catch (e) {
-              console.log(fileName + ' has caused error.');
-              reject(e);
-          }
-        });
-      };
+  // Returns a function which takes a file name located in the zip file and returns an observer
+  // which resolves with the file's data
+  private processZip (zipFile) {
+    return function(fileName) {
+      return Observable.create((observer) => {
+        // When file was not read error block wasn't called from async so added try...catch block
+        try {
+          zipFile.file(fileName).async('base64').then(function success(data) {
+            observer.next({ name: fileName, data: data });
+            observer.complete();
+          }, function error(e) {
+            observer.error(e);
+          });
+        } catch (e) {
+          console.log(fileName + ' has caused error.');
+          observer.error(e);
+        }
+      });
     };
-    const mime = require('mime-types');
-    zip.loadAsync(this.file).then(function(data) {
-      const fileNames = [];
-      // Add file names to array for mapping
-      for (const path in data.files) {
+  }
+
+  zipObs(zipFile) {
+    const zip = new JSZip();
+    return Observable.create((observer) => {
+      // This loads an object with file information from the zip, but not the data of the files
+      zip.loadAsync(zipFile).then((data) => {
+        const fileNames = [];
+        // Add file names to array for mapping
+        for (const path in data.files) {
           if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
-              fileNames.push(path);
+            fileNames.push(path);
           }
-      }
-      // Since files are loaded async, use Promise all to ensure all data from the files are loaded before attempting upload
-      Promise.all(fileNames.map(preProcessZip(zip))).then(function(filesArray) {
-        // Create object in format for multiple attachment upload to CouchDB
-        const filesObj = filesArray.reduce(function(filesObj, file) {
-            filesObj[file['name']] = { data: file['data'], content_type: mime.contentType(file['name']) };
-            return filesObj;
-        }, { });
-        that.addResource(Object.assign(that.resourceForm.value, { filename: that.file.name, mediaType: 'zip', _attachments: filesObj }));
-      }, function(error) {
+        }
+        // Since files are loaded async, use Promise all to ensure all data from the files are loaded before attempting upload
+        forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
+          // Create object in format for multiple attachment upload to CouchDB
+          const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
+            // Default to text/plain if no mime type found
+            const fileType = mime.lookup(file.name) || 'text/plain';
+            newFilesObj[file.name] = { data: file.data, content_type: fileType };
+            return newFilesObj;
+          }, {});
+          // Leave filename blank (since it is many files) and call mediaType 'HTML'
+          observer.next({ filename: '', mediaType: 'HTML', _attachments: filesObj });
+          observer.complete();
+        }, (error) => {
           console.log(error);
+          observer.error(error);
+        });
       });
     });
   }
