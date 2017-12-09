@@ -1,67 +1,24 @@
-<!-- <h1 i18n>Add Feedback</h1>
-<form (ngSubmit)="submitfeedback()">
-  <div class="row form-group">
-    <label class="col-4" i18n>Is Your feedback Urgent?</label><br>
-    <div class="form-check form-check-inline">
-      <label class="form-check-label col-4" i18n>
-        <input class="form-check-input" type="radio" value="true" name="isUrgent" [(ngModel)]="this.feedback.isUrgent"> Yes
-      </label>
-    </div>
-    <div class="form-check form-check-inline">
-      <label class="form-check-label col-4" i18n>
-        <input class="form-check-input" type="radio" value="false" name="isUrgent" [(ngModel)]="this.feedback.isUrgent"> No
-      </label>
-    </div>
-  </div>
-  <div class="row form-group">
-    <label class="col-3" i18n>Type of Feedback</label><br>
-    <div class="form-check form-check-inline">
-      <label class="form-check-label col-4" i18n>
-        <input class="form-check-input" type="radio" value="Suggestion" name="feedbackType" [(ngModel)]="feedback.feedbackType"> Suggestion
-      </label>
-    </div>
-    <div class="form-check form-check-inline">
-      <label class="form-check-label col-3" i18n>
-        <input class="form-check-input" type="radio" value="Bug" name="feedbackType" [(ngModel)]="feedback.feedbackType"> Bug
-      </label>
-    </div>
-    <div class="form-check form-check-inline">
-      <label class="form-check-label col-3" i18n>
-        <input class="form-check-input" type="radio" value="Question" name="feedbackType" [(ngModel)]="feedback.feedbackType"> Question
-      </label>
-    </div>
-  </div>
-  <div class="form-group">
-    <h5 i18n>Feedback</h5>
-    <textarea type="text" name="feedbackMsg"[(ngModel)]="feedback.feedbackMsg" [rows]="7" [cols]="50" required="true"></textarea>
 
-    <div *ngIf="message" [ngClass]="(messageType.pass===true)?'alert alert-success':'alert-danger'" i18n>
-      <span i18n >{message, select, feedbackSuccess { Your feedback is sucessfully submitted}
-        feedbackInvalid {Feedback cannot be empty}  feedbackError {You feedback cannot be submitted }}
-      </span>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-success">Submit</button>
-</form> -->
 <form [formGroup] ="feedbackForm" (ngSubmit)="onSubmit(feedbackForm)">
   <div>
     <section>
      <label>Is your feedback Urgent?</label>
      <mat-radio-group >
-     <mat-radio-button value="true" FormControlName="feedback.isUrgent">Yes</mat-radio-button>
-     <mat-radio-button value="false" FormControlName="feedback.isUrgent"> no</mat-radio-button>
+     <mat-radio-button value="true"  formControlName ="isUrgent">Yes</mat-radio-button>
+     <mat-radio-button value="false" formControlName="isUrgent"> no</mat-radio-button>
    </mat-radio-group>
    </section>
    <section>
      <label>Feedback Type </label>
      <mat-radio-group >
-     <mat-radio-button [value]="Question"  FormControlName="feedback.feedbackType"> Question </mat-radio-button>
-     <mat-radio-button [value]="Bug" FormControlName="feedback.feedbackType"> Bug </mat-radio-button>
-     <mat-radio-button [value]="Suggestion" FormControlName="feedback.feedbackType"> Suggestion </mat-radio-button>
+     <mat-radio-button [value]="Question"  formControlName="feedback.feedbackType"> Question </mat-radio-button>
+     <mat-radio-button [value]="Bug" formControlName="feedback.feedbackType"> Bug </mat-radio-button>
+     <mat-radio-button [value]="Suggestion" formControlName="feedback.feedbackType"> Suggestion </mat-radio-button>
    </mat-radio-group>
    </section>
+
     <mat-form-field>
-       <textarea matInput placeholder="Your Feedback" FormControlName="feedback.feedbackMsg">
+       <textarea matInput placeholder="Your Feedback"  formControlName="feedbackMsg">
        </textarea>
      </mat-form-field>
    <section>
