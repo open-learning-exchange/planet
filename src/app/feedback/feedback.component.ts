@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { MatCheckboxModule, MatRadioModule , MatFormFieldModule, MatButtonModule } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 
 export class Feedback {
   name: string;
@@ -35,9 +35,9 @@ export class FeedbackComponent implements OnInit {
     private fg: FormBuilder
     ) {
       this.feedbackForm = fg.group({
-         'feedback.feedbackMsg' : [ null, Validators.required ],
-         'feedback.feedbackType' : [ null ],
-         'feedback.isUrgent' : [ null ]
+         feedbackMsg : [ '', Validators.required ],
+         feedbackType : [ '' ],
+         isUrgent : [ '' ]
       });
     }
 
@@ -46,8 +46,8 @@ export class FeedbackComponent implements OnInit {
   }
 
   addfeedback(post) {
-    console.log('in pos');
     console.log(post);
+    console.log(this.feedbackForm.value);
     this.feedback.feedbackMsg = post.feedbackMsg;
     this.feedback.feedbackType = post.feedbackType;
     this.feedback.isUrgent = post.isUrgent;
@@ -65,8 +65,9 @@ export class FeedbackComponent implements OnInit {
     });
 
   }
-   onSubmit({ value, valid }: { value: Feedback, valid: boolean }) {
-    console.log(value, valid);
+   onSubmit(val) {
+    console.log(val.value);
+    console.log(this.feedbackForm.value);
   }
   submitfeedback() {
     if (!this.feedback.feedbackMsg) {
