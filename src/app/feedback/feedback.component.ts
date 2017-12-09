@@ -19,14 +19,9 @@ export class Feedback {
 })
 
 export class FeedbackComponent implements OnInit {
-  msgForUsr: string;
   feedback: Feedback= new Feedback();
   message: string;
-  fedbkSubmitted: string;
-  messageType = {
-    'pass': false,
-    'fail': false
-  };
+  fedbkSubmitted: boolean;
   feedbackForm: FormGroup;
 
   constructor(
@@ -37,7 +32,7 @@ export class FeedbackComponent implements OnInit {
       this.feedbackForm = fg.group({
          feedbackMsg : [ '', Validators.required ],
          isUrgent :  [ '' ],
-         feedbackType : [ '' ];
+         feedbackType : [ '' ]
       });
     }
 
@@ -46,46 +41,18 @@ export class FeedbackComponent implements OnInit {
   }
 
   addfeedback(post) {
-    console.log(post);
-    console.log(this.feedbackForm.value);
     this.feedback.feedbackMsg = post.feedbackMsg;
     this.feedback.feedbackType = post.feedbackType;
     this.feedback.isUrgent = post.isUrgent;
-    this.couchService.post('feedback/', this.feedback)
+    this.couchService.post('feedback', this.feedback)
     .then((data) => {
-      console.log(data);
+     // console.log(data);
       this.message = 'feedbackSuccess';
-      this.messageType.fail = false;
-      this.messageType.pass = true;
     },
     (error) => {
+      console.log('failure');
+      console.log(error);
       this.message = 'feedbackError';
-      this.messageType.pass = false;
-      this.messageType.fail = true;
     });
-
-  }
-   onSubmit(val) {
-    console.log(val.value);
-    console.log(this.feedbackForm.value);
-  }
-  submitfeedback() {
-    if (!this.feedback.feedbackMsg) {
-      this.message = 'feedbackInvalid';
-      this.messageType.pass = false;
-      this.messageType.fail = true;
-    } else {
-      this.couchService.post('feedback/', this.feedback)
-      .then((data) => {
-        this.message = 'feedbackSuccess';
-        this.messageType.fail = false;
-        this.messageType.pass = true;
-      },
-      (error) => {
-        this.message = 'feedbackError';
-        this.messageType.pass = false;
-        this.messageType.fail = true;
-      });
-    }
   }
 }

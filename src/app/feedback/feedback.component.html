@@ -1,29 +1,39 @@
 
-<form [formGroup] ="feedbackForm" (ngSubmit)="onSubmit(feedbackForm.value)">
-  <div>
-    <section>
+<form [formGroup] ="feedbackForm" (ngSubmit)="addfeedback(feedbackForm.value)">
+  <div layout="row">
+    <div class="flex-30">
      <label>Is your feedback Urgent?</label>
      <mat-radio-group formControlName ="isUrgent" >
-     <mat-radio-button  value= true >Yes</mat-radio-button>
-     <mat-radio-button  value= false > no</mat-radio-button>
-   </mat-radio-group>
-   </section>
-   <section>
+       <mat-radio-button  value= true >Yes</mat-radio-button>
+       <mat-radio-button  value= false > no</mat-radio-button>
+     </mat-radio-group>
+   </div>
+   <div class="flex-30" >
      <label>Feedback Type </label>
      <mat-radio-group  formControlName="feedbackType">
-     <mat-radio-button value ="Question"> Question </mat-radio-button>
-     <mat-radio-button value ="Bug"> Bug </mat-radio-button>
-     <mat-radio-button value ="Suggestion"> Suggestion </mat-radio-button>
-   </mat-radio-group>
-   </section>
-
-    <mat-form-field>
-       <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg">
-       </textarea>
-     </mat-form-field>
-   <section>
-     <button type="submit" mat-button>Submit</button>
-   </section>
+       <mat-radio-button value ="Question"> Question </mat-radio-button>
+       <mat-radio-button value ="Bug"> Bug </mat-radio-button>
+       <mat-radio-button value ="Suggestion"> Suggestion </mat-radio-button>
+     </mat-radio-group>
    </div>
+   <div class="flex-30">
+    <mat-form-field >
+     <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg">
+     </textarea>
+   </mat-form-field>
+   <div class="error" *ngIf="feedbackForm.get('feedbackMsg').hasError('required') && feedbackForm.get('feedbackMsg').touched">
+    Feedback is required
+ </div>
+</div>
+<div *ngIf="message" [ngClass]="(fedbkSubmitted===true)?'alert alert-success':'alert-danger'" i18n>
+  <span i18n >{message, select, feedbackSuccess { Your feedback is sucessfully submitted}
+     feedbackError { Sorry, You feedback cannot be submitted }}
+  </span>
+</div>
+<div class="flex-10">
+  <button   type="submit" mat-button>Submit</button>
+</div>
+</div>
 </form>
-<p>Form value: {{ feedbackForm.value | json }}</p>
+
+
