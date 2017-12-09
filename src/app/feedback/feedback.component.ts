@@ -3,7 +3,7 @@ import { UserService } from '../shared/user.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
-import { MatCheckboxModule, MatRadioModule , MatFormFieldModule, MatButtonModule } from '@angular/material';
+import { MatCheckboxModule, MatRadioModule , MatFormFieldModule, MatButtonModule, MatSelectModule } from '@angular/material';
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 
 
@@ -37,8 +37,8 @@ export class FeedbackComponent implements OnInit {
     ) {
       this.feedbackForm = fg.group({
          feedbackMsg : [ '', Validators.required ],
-         feedbackType : [ '' ],
-         isUrgent : [ '' ]
+         isUrgent :  [ '' ],
+         feedbackType : [ '' ];
       });
     }
 
