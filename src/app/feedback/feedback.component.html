@@ -1,4 +1,4 @@
-<h1 i18n>Add Feedback</h1>
+<!-- <h1 i18n>Add Feedback</h1>
 <form (ngSubmit)="submitfeedback()">
   <div class="row form-group">
     <label class="col-4" i18n>Is Your feedback Urgent?</label><br>
@@ -42,5 +42,31 @@
     </div>
   </div>
   <button type="submit" class="btn btn-success">Submit</button>
+</form> -->
+<form [formGroup] ="feedbackForm" (ngSubmit)="onSubmit(feedbackForm)">
+  <div>
+    <section>
+     <label>Is your feedback Urgent?</label>
+     <mat-radio-group >
+     <mat-radio-button value="true" FormControlName="feedback.isUrgent">Yes</mat-radio-button>
+     <mat-radio-button value="false" FormControlName="feedback.isUrgent"> no</mat-radio-button>
+   </mat-radio-group>
+   </section>
+   <section>
+     <label>Feedback Type </label>
+     <mat-radio-group >
+     <mat-radio-button [value]="Question"  FormControlName="feedback.feedbackType"> Question </mat-radio-button>
+     <mat-radio-button [value]="Bug" FormControlName="feedback.feedbackType"> Bug </mat-radio-button>
+     <mat-radio-button [value]="Suggestion" FormControlName="feedback.feedbackType"> Suggestion </mat-radio-button>
+   </mat-radio-group>
+   </section>
+    <mat-form-field>
+       <textarea matInput placeholder="Your Feedback" FormControlName="feedback.feedbackMsg">
+       </textarea>
+     </mat-form-field>
+   <section>
+     <button type="submit" mat-button>Submit</button>
+   </section>
+   </div>
 </form>
-
+<p>Form value: {{ feedbackForm.value | json }}</p>
