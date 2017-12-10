@@ -12,11 +12,11 @@ import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatCheckboxModule , MatButtonModule } from '@angular/material';
+import { MatCheckboxModule , MatButtonModule, MatInputModule, MatCardModule } from '@angular/material';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, MatCheckboxModule,
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, MatCheckboxModule, MatInputModule, MatCardModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent
