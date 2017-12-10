@@ -3,7 +3,7 @@ import { UserService } from '../shared/user.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
-import { MatCheckboxModule, MatRadioModule , MatFormFieldModule, MatButtonModule, MatSelectModule } from '@angular/material';
+import { MatRadioModule , MatFormFieldModule, MatButtonModule, } from '@angular/material';
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 
 export class Feedback {
@@ -21,7 +21,7 @@ export class Feedback {
 export class FeedbackComponent implements OnInit {
   feedback: Feedback= new Feedback();
   message: string;
-  fedbkSubmitted: boolean;
+  fedksuccess: boolean;
   feedbackForm: FormGroup;
 
   constructor(
@@ -29,30 +29,30 @@ export class FeedbackComponent implements OnInit {
     private couchService: CouchService,
     private fg: FormBuilder
     ) {
-      this.feedbackForm = fg.group({
-         feedbackMsg : [ '', Validators.required ],
-         isUrgent :  [ '' ],
-         feedbackType : [ '' ]
-      });
-    }
+    this.feedbackForm = fg.group({
+      feedbackMsg : [ '', Validators.required ],
+      isUrgent :  [ '' ],
+      feedbackType : [ '' ]
+    });
+  }
 
   ngOnInit() {
     this.feedback.name = this.userService.get().name;
   }
 
   addfeedback(post) {
+    this.message = '';
     this.feedback.feedbackMsg = post.feedbackMsg;
     this.feedback.feedbackType = post.feedbackType;
     this.feedback.isUrgent = post.isUrgent;
-    this.couchService.post('feedback', this.feedback)
+    this.couchService.post('feedback/', this.feedback)
     .then((data) => {
-     // console.log(data);
       this.message = 'feedbackSuccess';
+      this.fedksuccess = true;
     },
     (error) => {
-      console.log('failure');
-      console.log(error);
       this.message = 'feedbackError';
+      this.fedksuccess  = false;
     });
   }
 }
