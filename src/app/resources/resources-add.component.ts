@@ -117,13 +117,16 @@ export class ResourcesAddComponent implements OnInit {
       let fileObs: Observable<any>;
       // If file doesn't exist, mediaType will be undefined
       const mediaType = this.file && this.simpleMediaType(this.file.type);
-      if (mediaType === undefined) {
-        // Creates an observable that immediately returns an empty object
-        fileObs = of({});
-      } else if (mediaType !== 'zip') {
-        fileObs = this.fileReaderObs(this.file, mediaType);
-      } else {
-        fileObs = this.zipObs(this.file);
+      switch (mediaType) {
+        case undefined:
+          // Creates an observable that immediately returns an empty object
+          fileObs = of({});
+          break;
+        case 'zip':
+          fileObs = this.zipObs(this.file);
+          break;
+        default:
+          fileObs = this.fileReaderObs(this.file, mediaType);
       }
       fileObs.subscribe((resource) => {
         // Start with empty object so this.resourceForm.value does not change
@@ -181,7 +184,7 @@ export class ResourcesAddComponent implements OnInit {
             fileNames.push(path);
           }
         }
-        // Since files are loaded async, use Promise all to ensure all data from the files are loaded before attempting upload
+        // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
         forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
           // Create object in format for multiple attachment upload to CouchDB
           const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
