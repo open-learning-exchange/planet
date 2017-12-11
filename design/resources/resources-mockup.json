@@ -1,6 +1,7 @@
 {
     "docs":[
-        {
+        {   
+            "_id":"0216c7208a72e79b29997d0fd400be3c",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "africanstorybook.org",
@@ -27,9 +28,11 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Anansi Gives People Stories",
-            "averageRating": ""
+            "averageRating": "1",
+            "mediaType": "image"
          },
          {
+            "_id":"0216c7208a72e79b29997d0fd400beac",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "African Storybooks",
@@ -56,9 +59,11 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Brown",
-            "averageRating": ""
+            "averageRating": "2",
+            "mediaType": "other"
          },
          {
+            "_id":"0216c7208a72e79b29997ded400beac",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "africanstorybook.org",
@@ -85,9 +90,11 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Crocodile and Baboon",
-            "averageRating": ""
+            "averageRating": "3",
+            "mediaType": "pdf"
          },
          {
+            "_id":"0216c7208a7ss79b29997d0fd400beac",
             "need_optimization": false,
             "resourceFor": "Learner",
             "Publisher": "Africanstorybook.org",
@@ -114,9 +121,11 @@
             "Tag": [],
             "Year": "2014",
             "title": "African Storybooks - Grandmother and the Smelly Girl",
-            "averageRating": ""
+            "averageRating": "5",
+            "mediaType": "other"
          },
          {
+            "_id":"0216s208a72e79b29997d0fd400beac",
             "Publisher": "Phi Delta Kappa (permission received from PDK and author JSaphier)",
             "need_optimization": false,
             "addedBy": "teacher",
@@ -141,7 +150,8 @@
             "Tag": [],
             "Year": "",
             "title": "How Coaches Can Maximize Student Learning",
-            "averageRating": ""
+            "averageRating": "4",
+            "mediaType": "other"
          }
     ]
 }

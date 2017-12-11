@@ -9,11 +9,7 @@ import {
 } from '@angular/forms';
 
 @Component({
-  templateUrl: './dialogs-form.component.html',
-  styles: [ `.modalForm-full-width {
-      width: 28em;
-    }
-  ` ]
+  templateUrl: './dialogs-form.component.html'
 })
 export class DialogsFormComponent {
 

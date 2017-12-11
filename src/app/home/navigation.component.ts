@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
     <ul>
       <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
       <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
-      <li><a routerLink="/manager"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+      <li><a routerLink="/manager"><mat-icon>person</mat-icon></a></li>
     </ul>
   `,
   styleUrls: [ './navigation.scss' ]

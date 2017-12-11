@@ -1,0 +1,27 @@
+[
+	{
+		"doc_id": "0216c7208a72e79b29997d0fd400be3c",
+		"file_name": "./src/assets/image.png",
+		"file_type": "image/jpg"
+	},
+	{
+		"doc_id": "0216c7208a72e79b29997d0fd400beac",
+		"file_name": "./src/assets/github.txt",
+		"file_type": "text/plain"
+	},
+	{
+		"doc_id": "0216c7208a72e79b29997ded400beac",
+		"file_name": "./src/assets/tenses.pdf",
+		"file_type": "application/pdf"
+	},
+	{
+		"doc_id": "0216c7208a7ss79b29997d0fd400beac",
+		"file_name": "./src/assets/sample_document.doc",
+		"file_type": "application/msword"
+	},
+	{
+		"doc_id": "0216s208a72e79b29997d0fd400beac",
+		"file_name":  "./src/assets/sample_csv.csv",
+		"file_type": "application/vnd.ms-excel"
+	}
+]
