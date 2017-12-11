@@ -1,35 +1,31 @@
 <h1 i18n>Add feedback</h1>
-<form [formGroup] ="feedbackForm" (ngSubmit)="addfeedback(feedbackForm.value)">
- <div layout="row">
-  <label i18n>Is your feedback Urgent?</label>
-  <mat-radio-group formControlName ="isUrgent">
-   <mat-radio-button value="true" i18n>Yes</mat-radio-button>
-   <mat-radio-button value="false" i18n>no</mat-radio-button>
- </mat-radio-group>
-</div>
-<div>
- <label i18n>Feedback Type: </label>
- <mat-radio-group formControlName="feedbackType">
-   <mat-radio-button value ="Question" i18n> Question </mat-radio-button>
-   <mat-radio-button value ="Bug" i18n> Bug </mat-radio-button>
-   <mat-radio-button value ="Suggestion" i18n> Suggestion </mat-radio-button>
- </mat-radio-group>
-</div>
-<div>
- <label i18n>Comment: </label>
- <mat-form-field >
-   <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg">
-   </textarea>
- </mat-form-field>
- <div class="error" *ngIf="feedbackForm.get('feedbackMsg').hasError('required') && feedbackForm.get('feedbackMsg').touched" i18n>
-   Your comment is required
- </div>
-</div>
-<div *ngIf="message" [ngClass]="(fedksuccess===true)?'alert alert-success':'alert-danger'" i18n>
-  <span i18n >{message, select, feedbackSuccess { Thank you! Your feedback is successfully submitted!}
-   feedbackError { Sorry, You feedback cannot be submitted }}
- </span>
-</div>
-<button type="submit" mat-button [disabled]="feedbackForm.invalid" i18n>Submit</button>
+<form [formGroup]="feedbackForm" (ngSubmit)="addfeedback(feedbackForm.value)">
+  <div>
+    <label i18n>Is your feedback Urgent?</label>
+    <mat-radio-group  formControlName ="isUrgent">
+      <mat-radio-button value="true" i18n>Yes</mat-radio-button>
+      <mat-radio-button value="false" i18n>no</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <label i18n>Feedback Type:</label>
+    <mat-radio-group formControlName="feedbackType">
+      <mat-radio-button value ="Question" i18n>Question</mat-radio-button>
+      <mat-radio-button value ="Bug" i18n>Bug</mat-radio-button>
+      <mat-radio-button value ="Suggestion" i18n>Suggestion</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <label i18n>Comment:</label>
+    <mat-form-field>
+      <textarea matInput placeholder="Your Feedback *" formControlName="feedbackMsg"></textarea>
+    </mat-form-field>
+    <div class="error" *ngIf="feedbackForm.get('feedbackMsg').hasError('required') && feedbackForm.get('feedbackMsg').touched" i18n>Your comment is required</div>
+  </div>
+  <div *ngIf="message"[ngClass]="(fedksuccess===true)?'alert alert-success':'alert-danger'" i18n>
+    <span i18n>{message, select,feedbackSuccess { Thank you! Your feedback is successfully submitted!}
+    feedbackError { Sorry, You feedback cannot be submitted }}
+    </span>
+  </div>
+  <button type="submit" mat-button [disabled]="feedbackForm.invalid" i18n>Submit</button>
 </form>
-
