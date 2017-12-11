@@ -1,5 +1,5 @@
 <h1 i18n>Add Courses</h1>
-  <form class="addCourse-container" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+  <form class="display-flex" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
     <mat-grid-list cols="3">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
