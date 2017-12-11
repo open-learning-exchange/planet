@@ -1,39 +1,37 @@
+/**
+ * Centralized component for all form error messages
+ * MUST BE WRAPPED IN A mat-error ELEMENT
+ * Takes a form control as input and outputs a span element with the error message
+ */
+
 import { Component, Input } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 
 @Component({
   selector: 'planet-form-error-messages',
   template: `
-    <ul class="text-danger" *ngIf="shouldShowErrors()">
-      <li *ngFor="let error of listOfErrors()">{{error}}</li>
-    </ul>
-  `,
-  styles: [
-    `ul {
-      list-style-type: none;
-      font-size: .8rem;
-      padding-left: .2em;
-    }`
-  ]
+    <span *ngIf="shouldShowError()" i18n>{updateError(), select,
+      required {This field is required}
+      min {The number cannot be below {{number}}}
+      duplicate {Value already exists}
+      invalidInt {Please enter a number}
+      invalidHex {Hex is not valid}
+      invalidTime {Time is invalid}
+      invalidDateFormat {Date is in incorrect format}
+      invalidDate {Date is invalid}
+      invalidEndDate {End date cannot be before start date}
+      invalidEndTime {End time cannot be before start time}
+    }</span>
+  `
 })
 export class FormErrorMessagesComponent {
-  private static readonly errorMessages = {
-    // even though they have the same return type, different names are used since it's more clear & easier to understand/debug
-    required: () => 'This field is required',
-    min: params => 'The number cannot be below ' + params.min,
-    duplicateCourse: params => params.message,
-    duplicateNation: params => params.message,
-    invalidInt: params => params.message,
-    invalidHex: params => params.message,
-    invalidTime: params => params.message,
-    invalidDateFormat: params => params.message,
-    invalidDate: params => params.message,
-    invalidEndDate: params => params.message,
-    inavlidEndTime: params => params.message
-  };
+
   @Input() private control: AbstractControlDirective | AbstractControl;
 
-  shouldShowErrors(): boolean {
+  error = '';
+  number = 0;
+
+  shouldShowError(): boolean {
     return (
       this.control &&
       this.control.errors &&
@@ -41,15 +39,11 @@ export class FormErrorMessagesComponent {
     );
   }
 
-  // loops through the keys of the error objectt
-  listOfErrors(): string[] {
-    return Object.keys(this.control.errors).map(field =>
-      this.getMessage(field, this.control.errors[field])
-    );
+  // Show one error at a time
+  updateError(): string {
+    const errorType = Object.keys(this.control.errors)[0];
+    this.number = this.control.errors[errorType].min || this.control.errors[errorType].max || 0;
+    return errorType;
   }
 
-  // calls the statuc method errorMessages
-  private getMessage(type: string, params: any) {
-    return FormErrorMessagesComponent.errorMessages[type](params);
-  }
 }
