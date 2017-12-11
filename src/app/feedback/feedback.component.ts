@@ -14,7 +14,6 @@ export class Feedback {
 }
 
 @Component({
-  selector: 'feedback',
   templateUrl: './feedback.component.html'
 })
 
