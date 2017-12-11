@@ -19,13 +19,13 @@
     <label i18n>Comment:</label>
     <mat-form-field>
       <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg" required></textarea>
+      <mat-error><planet-form-error-messages [control]="feedbackForm.controls.feedbackMsg"></planet-form-error-messages></mat-error>
     </mat-form-field>
-    <div class="error" *ngIf="feedbackForm.get('feedbackMsg').hasError('required') && feedbackForm.get('feedbackMsg').touched" i18n>Your comment is required</div>
   </div>
   <div *ngIf="message"[ngClass]="(fedksuccess===true)?'alert alert-success':'alert-danger'" i18n>
     <span i18n>{message, select,feedbackSuccess { Thank you! Your feedback is successfully submitted!}
     feedbackError { Sorry, You feedback cannot be submitted }}
     </span>
   </div>
-  <button type="submit" mat-button [disabled]="feedbackForm.invalid" i18n>Submit</button>
+  <button type="submit" mat-button [disabled]="feedbackForm.invalid" color="primary" i18n>Submit</button>
 </form>
