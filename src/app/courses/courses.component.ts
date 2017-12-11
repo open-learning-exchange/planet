@@ -4,8 +4,7 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 
 @Component({
-  templateUrl: './courses.component.html',
-  styleUrls: [ './courses.component.scss' ]
+  templateUrl: './courses.component.html'
 })
 export class CoursesComponent implements OnInit, AfterViewInit {
 
