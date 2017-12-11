@@ -65,10 +65,8 @@
     <mat-grid-list cols="1">
       <div class="form-check" *ngIf="!showDaysCheckBox">
         <label i18n>Day</label>
-          <label class="form-check-label" *ngFor="let day of days">
-            <mat-checkbox class="example-margin" (change)="onDayChange(day, $event.checked)"> {{day}} </mat-checkbox>
-          </label>
-        </div>
+        <mat-checkbox class="example-margin" (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"> {{day}} </mat-checkbox>
+      </div>
     </mat-grid-list>
 
     <mat-grid-list cols="3">
