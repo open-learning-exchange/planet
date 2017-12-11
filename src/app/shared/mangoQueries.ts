@@ -22,21 +22,13 @@ export function findAllDocuments(selector, query) {
   `);
 }
 
-export function findMultiDocuments(selectors) {
-  const fields = [];
-  for (const key in selectors) {
-    if (key) {
-      for (const key1 in selectors[key]) {
-        if (key1) {
-          fields.push(selectors[key][key1]);
-        }
-      }
-    }
-  }
+export function findMultiDocuments(selectors, fields, limit, skip) {
   return JSON.parse(`
     {
-      "selector": { "$and": ${JSON.stringify(selectors)} },
-      "fields": ${JSON.stringify(fields)}
+      "selector": ${JSON.stringify(selectors[0])},
+      "fields": ${JSON.stringify(fields)},
+      "limit": ${limit},
+      "skip": ${skip}
     }
   `);
 }
