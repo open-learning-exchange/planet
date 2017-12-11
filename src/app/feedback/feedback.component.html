@@ -2,7 +2,7 @@
 <form [formGroup]="feedbackForm" (ngSubmit)="addfeedback(feedbackForm.value)">
   <div>
     <label i18n>Is your feedback Urgent?</label>
-    <mat-radio-group  formControlName ="isUrgent">
+    <mat-radio-group formControlName ="isUrgent">
       <mat-radio-button value="true" i18n>Yes</mat-radio-button>
       <mat-radio-button value="false" i18n>no</mat-radio-button>
     </mat-radio-group>
@@ -18,7 +18,7 @@
   <div>
     <label i18n>Comment:</label>
     <mat-form-field>
-      <textarea matInput placeholder="Your Feedback *" formControlName="feedbackMsg"></textarea>
+      <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg" required></textarea>
     </mat-form-field>
     <div class="error" *ngIf="feedbackForm.get('feedbackMsg').hasError('required') && feedbackForm.get('feedbackMsg').touched" i18n>Your comment is required</div>
   </div>

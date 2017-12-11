@@ -19,7 +19,7 @@ export class Feedback {
 })
 
 export class FeedbackComponent implements OnInit {
-  feedback: Feedback= new Feedback();
+  feedback = new Feedback();
   message: string;
   fedksuccess: boolean;
   feedbackForm: FormGroup;

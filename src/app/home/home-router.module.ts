@@ -17,10 +17,8 @@ const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
       { path: 'nation', component: NationComponent },
-
       { path: 'manager', component: ManagerDashboardComponent },
-       { path: 'feedback', component: FeedbackComponent },
-
+      { path: 'feedback', component: FeedbackComponent },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'community', component: CommunityComponent },
       { path: 'community/:nation', component: CommunityComponent },
