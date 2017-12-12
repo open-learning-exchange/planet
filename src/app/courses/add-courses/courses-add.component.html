@@ -3,7 +3,7 @@
     <mat-grid-list cols="3">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
-        <mat-error><planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
+        <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
@@ -65,7 +65,7 @@
     <mat-grid-list cols="1">
       <div *ngIf="!showDaysCheckBox">
         <label i18n>Day</label>
-        <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"> {{day}} </mat-checkbox>
+        <mat-checkbox class="km-day" (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"> {{day}} </mat-checkbox>
       </div>
     </mat-grid-list>
 
@@ -100,5 +100,5 @@
 
 <div>
   <p>Form value: {{ courseForm.value | json }}</p>
-  <p>{{ courseForm.valid }}</p>
+  <p class='km-course-valid'>{{ courseForm.valid }}</p>
 </div>

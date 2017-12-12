@@ -2,9 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { CommunityComponent } from './community.component';
 import { CouchService } from '../shared/couchdb.service';
-import { AlertsDeleteComponent } from '../shared/alerts/alerts-delete.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '../shared/material.module';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('CommunityComponent', () => {
   let component: CommunityComponent;
@@ -12,8 +13,8 @@ describe('CommunityComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpClientModule, BrowserAnimationsModule ],
-      declarations: [ CommunityComponent, AlertsDeleteComponent ],
+      imports: [ FormsModule, HttpClientModule, BrowserAnimationsModule, MaterialModule, RouterTestingModule ],
+      declarations: [ CommunityComponent ],
       providers: [ CouchService ]
     })
     .compileComponents();

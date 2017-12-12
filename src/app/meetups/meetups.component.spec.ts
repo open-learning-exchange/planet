@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { MeetupsComponent } from './meetups.component';
-import { PlanetAlertsModule } from '../shared/alerts/planet-alerts.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { By } from '@angular/platform-browser';
+import { MaterialModule } from '../shared/material.module';
 
 describe('MeetupsComponent', () => {
 
@@ -21,7 +21,7 @@ describe('MeetupsComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-         PlanetAlertsModule, BrowserAnimationsModule, HttpClientModule
+         BrowserAnimationsModule, HttpClientModule, MaterialModule
       ],
       declarations: [ MeetupsComponent ],
       providers: [ CouchService ]
@@ -85,7 +85,7 @@ describe('MeetupsComponent', () => {
     component.deleteMeetup(meetupdata1);
     fixture.whenStable().then(() => {
       fixture.detectChanges();
-      expect(statusElement.textContent).toBe('There was a problem deleting this meetup');
+      expect(component.deleteDialog.componentInstance.message).toBe('There was a problem deleting this meetup');
     });
   });
 

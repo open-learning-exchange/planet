@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { MaterialModule } from '../shared/material.module';
 import { NavigationComponent } from './navigation.component';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
@@ -19,11 +20,10 @@ describe('Navigation', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, CommonModule, HttpClientModule ],
+      imports: [ RouterTestingModule, CommonModule, HttpClientModule, MaterialModule ],
       declarations: [ NavigationComponent ],
       providers: [
-        CouchService,
-        { provide: Router, useClass: RouterStub }
+        CouchService
       ]
     });
     const fixture = TestBed.createComponent(NavigationComponent),

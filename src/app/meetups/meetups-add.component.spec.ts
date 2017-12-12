@@ -3,12 +3,13 @@ import { CouchService } from '../shared/couchdb.service';
 import { MeetupsAddComponent } from './meetups-add.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { MaterialModule } from '../shared/material.module';
 
 describe('MeetupsAddComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, HttpClientModule ],
+      imports: [ FormsModule, HttpClientModule, MaterialModule ],
       declarations: [ MeetupsAddComponent ],
       providers: [ CouchService ]
     })
