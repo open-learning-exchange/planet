@@ -7,7 +7,7 @@ import { ResourcesViewComponent } from './resources-view.component';
 import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
-import { ResourceValidatorService } from '../validators/resource-validator.service';
+import { ValidatorService } from '../shared/validator.service';
 
 @NgModule({
   imports: [
@@ -19,6 +19,6 @@ import { ResourceValidatorService } from '../validators/resource-validator.servi
     MaterialModule
   ],
   declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent ],
-  providers: [ ResourceValidatorService ]
+  providers: [ ValidatorService ]
 })
 export class ResourcesModule {}

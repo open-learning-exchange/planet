@@ -10,8 +10,8 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { ResourceValidatorService } from '../validators/resource-validator.service';
+import { CustomValidators } from '../shared/custom-validators';
+import { ValidatorService } from '../shared/validator.service';
 import * as constants from './resources-constants';
 
 import * as JSZip from 'jszip';
@@ -42,7 +42,7 @@ export class ResourcesAddComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private resourceValidatorService: ResourceValidatorService,
+    private ValidatorService: ValidatorService,
     private userService: UserService
   ) {
     // Adds the dropdown lists to this component
@@ -60,7 +60,7 @@ export class ResourcesAddComponent implements OnInit {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.resourceValidatorService.checkResourceExists$(ac)
+        ac => this.ValidatorService.checkResourceExists$(ac)
       ],
       author: '',
       year: '',

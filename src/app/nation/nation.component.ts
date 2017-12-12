@@ -17,8 +17,8 @@ import {
 } from '@angular/forms';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { NationValidatorService } from '../validators/nation-validator.service';
+import { CustomValidators } from '../shared/custom-validators';
+import { ValidatorService } from '../shared/validator.service';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -46,7 +46,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private nationValidatorService: NationValidatorService,
+    private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private jsonp: Jsonp
@@ -136,8 +136,12 @@ export class NationComponent implements OnInit, AfterViewInit {
       ];
     const validation = {
       adminName: [ '', Validators.required ],
-      name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$('name', ac) ],
-      nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationExists$('nationurl', nurl) ]
+      name: [ '', Validators.required,
+       // ac => this.nationValidatorService.checkNationExists$('name', ac) 
+       ],
+      nationUrl: [ '', Validators.required, 
+      // nurl => this.nationValidatorService.checkNationExists$('nationurl', nurl) 
+      ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
