@@ -1,5 +1,5 @@
 <h1 i18n>Add Courses</h1>
-  <form class="addCourse-container" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+  <form class="display-flex" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
     <mat-grid-list cols="3">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
@@ -9,7 +9,7 @@
         <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Member Limit" type="number" class="example-right-align" formControlName="memberLimit">
+        <input matInput i18n-placeholder placeholder="Member Limit" type="number" formControlName="memberLimit">
         <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </mat-grid-list>
@@ -63,12 +63,10 @@
     </mat-grid-list>
 
     <mat-grid-list cols="1">
-      <div class="form-check" *ngIf="!showDaysCheckBox">
+      <div *ngIf="!showDaysCheckBox">
         <label i18n>Day</label>
-          <label class="form-check-label" *ngFor="let day of days">
-            <mat-checkbox class="example-margin" (change)="onDayChange(day, $event.checked)"> {{day}} </mat-checkbox>
-          </label>
-        </div>
+        <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"> {{day}} </mat-checkbox>
+      </div>
     </mat-grid-list>
 
     <mat-grid-list cols="3">
@@ -86,7 +84,7 @@
     </mat-grid-list>
 
     <mat-grid-list cols="2">
-      <label class="selectColor" i18n>Background Color</label>
+      <label i18n>Background Color</label>
         <input type="color" i18n-placeholder placeholder="Background Color" formControlName="backgroundColor" mat-icon>
         <mat-error><planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages></mat-error>
       <label i18n>Foreground Color</label>
@@ -100,7 +98,7 @@
     </mat-grid-list>
   </form>
 
-<div class="message">
+<div>
   <p>Form value: {{ courseForm.value | json }}</p>
   <p>{{ courseForm.valid }}</p>
 </div>
