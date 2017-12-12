@@ -68,4 +68,5 @@ export class ResourcesComponent implements OnInit {
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
   }
+
 }
