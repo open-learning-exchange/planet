@@ -10,6 +10,7 @@ import {
   MatDialogModule,
   MatIconModule,
   MatSelectModule,
+  MatToolbarModule,
   MatRadioModule,
   MatCheckboxModule,
   MatGridListModule
@@ -27,6 +28,7 @@ import {
     MatInputModule,
     MatSortModule,
     MatDialogModule,
+    MatToolbarModule,
     MatRadioModule,
     MatCheckboxModule,
     MatGridListModule
