@@ -1,14 +1,6 @@
 // Creates a Mango query to find one document with search based on one field
 export function findOneDocument(selector, query) {
-  return JSON.parse(`
-    {
-      "selector": {
-        "${selector}": "${query}"
-      },
-      "fields": ["${selector}"],
-      "limit": 1
-    }
-  `);
+  return Object.assign(findAllDocuments(selector, query), { limit: 1 });
 }
 
 // Creates a Mango query to find all documents with search based on one field
