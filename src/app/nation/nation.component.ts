@@ -145,6 +145,10 @@ export class NationComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/community/' + nationname ]);
   }
 
+  viewResources(nationname) {
+    this.router.navigate([ '/resources/' + nationname ]);
+  }
+
   view(url) {
     if (url) {
       this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
