@@ -46,6 +46,7 @@ before_install:
   - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
   - cd add-cors-to-couchdb
   - npm install
+  - curl -X GET http://127.0.0.1:5984/_all_dbs
   - node bin.js http://localhost:5984
   - cd ..
   # Add initial Couch databases here
