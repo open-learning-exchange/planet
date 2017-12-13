@@ -15,25 +15,34 @@ export class ValidatorService {
 
 constructor(private couchService: CouchService, private mongoQueries: MongoQueries) {}
 
-  public CheckService$(db: string, field: string, value: string): Observable<boolean> {
-    const isDuplicate = this.couchService
+  public CheckService$(findType: string, db: string, field: string, value: any): Observable<boolean> {
+    if (findType === 'findOneDocument') {
+      const isDuplicate = this.couchService
       .post(`${db}/_find`, this.mongoQueries.findOneDocument(field, value))
       .then(data => {
         return (data.docs.length > 0);
       });
+    } else if (findType === 'findAllDocuments') {
+      const isDuplicate = this.couchService
+      .post(`${db}/_find`, this.mongoQueries.findAllDocuments(field, value))
+      .then(data => {
+        return (data.docs.length > 0);
+      });
+    }
     return fromPromise(isDuplicate);
   }
 
   public isExists$(
+    findType: string,
     dbName: string,
     fieldName: string,
-    ac: AbstractControl
+    ac
   ): Observable<ValidationErrors | null> {
-    // mangoQueries.findOneDocument(1, 2)
+       // mangoQueries.findOneDocument(1, 2)
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => {
-        return this.CheckService$(dbName, fieldName, ac.value).pipe(map(res => {
+        return this.CheckService$(findType, dbName, fieldName, ac).pipe(map(res => {
           if (res) {
             return { duplicate: true };
           }

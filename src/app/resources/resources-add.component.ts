@@ -60,7 +60,7 @@ export class ResourcesAddComponent implements OnInit {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.isExists$(this.dbName, 'title', ac)
+        ac => this.validatorService.isExists$('findOneDocument', this.dbName, 'title', ac.value)
       ],
       author: '',
       year: '',
