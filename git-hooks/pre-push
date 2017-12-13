@@ -63,16 +63,6 @@ fi
 ret_code_tslint=$?
 output_result $ret_code_tslint "tslint" $tslint
 
-echo "Running Build:"
-if [ "$vagrant_status" = "" ]; then
-  ngbuild=$(ng build --prod)
-else
-  ngbuild=$(vagrant ssh -c 'cd /vagrant; ng build --prod')
-fi
-
-ret_code_build=$?
-output_result $ret_code_build "build" $ngbuild
-
 # If we stashed changes earlier, pop them back off the stack
 if [ $TOTAL_CHANGES -ne "0" ]
 then
