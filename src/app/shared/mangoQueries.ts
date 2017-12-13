@@ -1,4 +1,4 @@
-
+// Creates a Mango query to find one document with search based on one field
 export function findOneDocument(selector, query) {
   return JSON.parse(`
     {
@@ -11,6 +11,7 @@ export function findOneDocument(selector, query) {
   `);
 }
 
+// Creates a Mango query to find all documents with search based on one field
 export function findAllDocuments(selector, query) {
   return JSON.parse(`
     {
@@ -22,13 +23,12 @@ export function findAllDocuments(selector, query) {
   `);
 }
 
-export function findMultiDocuments(selectors, fields, limit=1, skip=0) {
-  return JSON.parse(`
-    {
-      "selector": ${JSON.stringify(selectors)},
-      "fields": ${JSON.stringify(fields)},
-      "limit": ${limit},
-      "skip": ${skip}
-    }
-  `);
+// Creates more general find query that can search with multiple selectors & fields
+export function findDocuments(selectors, fields, limit = 1, skip = 0) {
+  return {
+    'selector': selectors,
+    'fields': fields,
+    'limit': limit,
+    'skip': skip
+  };
 }
