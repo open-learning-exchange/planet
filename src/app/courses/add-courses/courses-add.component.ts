@@ -49,7 +49,7 @@ export class CoursesAddComponent {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.checkCourseExists$(ac)
+        ac => this.validatorService.isExists$(this.dbName, 'courseTitle', ac)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',

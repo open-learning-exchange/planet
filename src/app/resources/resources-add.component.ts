@@ -42,7 +42,7 @@ export class ResourcesAddComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private ValidatorService: ValidatorService,
+    private validatorService: ValidatorService,
     private userService: UserService
   ) {
     // Adds the dropdown lists to this component
@@ -60,7 +60,7 @@ export class ResourcesAddComponent implements OnInit {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.ValidatorService.checkResourceExists$(ac)
+        ac => this.validatorService.isExists$(this.dbName, 'title', ac)
       ],
       author: '',
       year: '',
