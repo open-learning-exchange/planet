@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Headers } from '@angular/http';
+import { PageEvent } from '@angular/material';
 
 @Component({
   templateUrl: './resources.component.html'
 })
+
 export class ResourcesComponent implements OnInit {
   rating;
   mRating;
@@ -13,6 +15,12 @@ export class ResourcesComponent implements OnInit {
   message = '';
   file: any;
   resource = { mediaType: '' };
+  searchResource = '';
+  pageSize = 10;
+  pageSizeOptions = [ 5, 10, 25, 100 ];
+
+  // MatPaginator Output
+  pageEvent: PageEvent;
 
   getRating(sum, timesRated) {
     this.rating = 0;
@@ -40,4 +48,5 @@ export class ResourcesComponent implements OnInit {
         this.resources = data.rows;
       }, error => (this.message = 'Error'));
   }
+
 }

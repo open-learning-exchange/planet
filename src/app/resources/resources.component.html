@@ -1,9 +1,21 @@
 <!-- FOR DEMO ONLY -->
 <!-- use the async pipe when fetching for database -->
-<button mat-raised-button routerLink="add" color="primary" routerLinkActive="active" i18n>Add Resource</button>
+<div>
+  <button mat-raised-button routerLink="add" color="primary" routerLinkActive="active" i18n>Add Resource</button>
+  <span class="search" [ngStyle]="{'float': 'right'}">
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input matInput [(ngModel)]="searchResource" i18n-placeholder placeholder="Type text to search...">
+    </mat-form-field></span>
+</div>
+
+<div class="mat-paginator-container" [ngStyle]="{'justify-content': 'flex-start'}">
+ <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="pageEvent = $event"></mat-paginator>
+</div>
+
 <ng-template ngFor let-item [ngForOf]="resources">
   <!-- Used ng-template insted of spans or divs because I did not want any to add any element -->
-  <div class="list-item">
+  <div class="list-item" *ngIf="item.doc.title.toLowerCase().includes(searchResource.toLowerCase())" >
     <div class="list-item-info">
       <h3>{{ item.doc.title }}</h3>
       <div class="list-item-content">
@@ -18,10 +30,10 @@
         </ng-template>
       </div>
       <div class="list-item-action">
-        <a mat-raised-button i18n [routerLink]="['/resources/view', item.doc._id]">View Details</a>
-        <a mat-raised-button i18n [routerLink]="['/resources/wip']">Add To Library</a>
-        <a mat-raised-button i18n [routerLink]="['/resources/wip']">Feedback</a>
-        <a mat-raised-button i18n [routerLink]="['/resources/wip']">Delete</a>
+        <a mat-raised-button color = "primary" i18n [routerLink]="['/resources/view', item.doc._id]">View Details</a>
+        <a mat-raised-button color = "primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
+        <a mat-raised-button color = "primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
+        <a mat-raised-button color = "warn" i18n [routerLink]="['/resources/wip']">Delete</a>
       </div>
     </div>
     <div class="list-item-rating">
