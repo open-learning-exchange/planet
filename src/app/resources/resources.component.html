@@ -10,7 +10,7 @@
 </div>
 
 <div class="mat-paginator-container" [ngStyle]="{'justify-content': 'flex-start'}">
- <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="pageEvent = $event"></mat-paginator>
+  <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="pageEvent = $event"></mat-paginator>
 </div>
 
 <ng-template ngFor let-item [ngForOf]="resources">
