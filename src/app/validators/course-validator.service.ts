@@ -6,7 +6,7 @@ import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { switchMap, map } from 'rxjs/operators';
 
-import { findOneDocument } from '../shared/mangoQueries';
+import { findOneDocument } from '../shared/mongoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()

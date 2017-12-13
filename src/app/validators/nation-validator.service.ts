@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 
-import { findAllDocuments } from '../shared/mangoQueries';
+import { findAllDocuments } from '../shared/maogoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 import { switchMap, map } from 'rxjs/operators';
