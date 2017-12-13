@@ -21,3 +21,14 @@ export function findAllDocuments(selector, query) {
     }
   `);
 }
+
+export function findMultiDocuments(selectors, fields, limit=1, skip=0) {
+  return JSON.parse(`
+    {
+      "selector": ${JSON.stringify(selectors)},
+      "fields": ${JSON.stringify(fields)},
+      "limit": ${limit},
+      "skip": ${skip}
+    }
+  `);
+}
