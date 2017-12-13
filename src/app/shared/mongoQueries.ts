@@ -17,15 +17,15 @@ export class MongoQueries {
     `);
   }
 
- public findAllDocuments(selector, query) {
-  return JSON.parse(`
-    {
-      "selector": {
-        "${selector}": "${query}"
-      },
-      "fields": ["${selector}"]
-    }
-  `);
+  public findAllDocuments(selector, query) {
+    return JSON.parse(`
+      {
+        "selector": {
+          "${selector}": "${query}"
+        },
+        "fields": ["${selector}"]
+      }
+    `);
   }
 
 }
