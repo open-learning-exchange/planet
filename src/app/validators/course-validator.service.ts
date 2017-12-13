@@ -31,15 +31,12 @@ export class CourseValidatorService {
   public checkCourseExists$(
     ac: AbstractControl
   ): Observable<ValidationErrors | null> {
-    const errMessage = {
-      duplicateCourse: { message: 'Course already exists' }
-    };
     // calls service every .5s for input change
     return timer(500).pipe(
         switchMap(() => {
           return this.courseCheckerService$(ac.value).pipe(map(res => {
             if (res) {
-              return errMessage;
+              return { duplicate: true };
             }
             return null;
           }));

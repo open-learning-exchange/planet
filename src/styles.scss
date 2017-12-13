@@ -1,4 +1,5 @@
 @import './app/variables';
+@import './planet-mat-theme.scss';
 
 body {
   font-family: $font-family;
@@ -8,6 +9,34 @@ body {
   a:hover {
     text-decoration: none;
     color: inherit;
+  }
+
+  .primary-color {
+    background-color: $primary;
+    color: $primary-text;
+  }
+
+  .accent-color {
+    background-color: $accent;
+    color: $accent-text;
+  }
+
+  .display-flex {
+    display: flex;
+  }
+
+  // Add an empty span within a mat-toolbar-row to separate left & right aligned content
+  .toolbar-fill {
+    flex: 1 1 auto;
+  }
+
+  // Use to reset font size to base
+  .font-size-1 {
+    font-size: 1rem;
+  }
+  
+  .full-width {
+    width: 100%;
   }
 
   // STYLING FOR TABLE LIST ENTRIES

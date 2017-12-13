@@ -17,8 +17,7 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 
 
 @Component({
-  templateUrl: 'courses-add.component.html',
-  styleUrls: [ 'courses-add.component.scss' ]
+  templateUrl: 'courses-add.component.html'
 })
 export class CoursesAddComponent {
   // needs member document to implement

@@ -47,6 +47,30 @@ else
   COUCHURL=http://$COUCHUSER:$COUCHPASSWORD@$HOST:$PORT
 fi
 
+# Adding attachment to database documents
+# To add attachment added two file (resources-mock.json and resources-attachment-mockup.json)
+# Ids are static
+# python Indent needs to follow.
+insert_attachment() {
+  DB=$1
+  DOC_LOC=$2
+  python -c "
+import urllib, json, sys, subprocess
+data=json.load(open('$DOC_LOC'))
+for key in data:
+ id=key['doc_id']
+ file_location=key['file_name']
+ file_type=key['file_type']
+ url = '$COUCHURL/$DB/'+id
+ response = urllib.urlopen(url)
+ jsondata = json.loads(response.read())
+ rev=jsondata['_rev']
+ putAttachment='curl -v -X PUT $COUCHURL/$DB/'+id+'/'+file_location+'?rev='+rev+' --data-binary @'+file_location+' -H Content-Type:'+file_type
+ p = subprocess.Popen(putAttachment, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+ out, err = p.communicate()
+ "
+}
+
 # Add CouchDB standard databases
 curl -X PUT $COUCHURL/_users
 curl -X PUT $COUCHURL/_replicator
@@ -65,6 +89,7 @@ upsert_design nations nation-validators ./design/nations/nation-validators.json
 # Insert dummy data docs
 insert_docs communityregistrationrequests ./design/community/community-mockup.json
 insert_docs nations ./design/nations/nations-mockup.json
-insert_docs resources ./design/resources/resources-mockup.json
 insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
+insert_docs resources ./design/resources/resources-mockup.json
+insert_attachment resources ./design/resources/resources-attachment-mockup.json

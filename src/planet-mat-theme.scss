@@ -7,15 +7,23 @@
 @include mat-core();
 @import './app/variables';
 
+$primary-hue: 500;
+$accent-hue: 500;
+$warn-hue: 500;
+
 $planet-primary: $mat-blue;
 $planet-accent: $mat-amber;
 $planet-warn: $mat-red;
 
-$planet-app-primary: mat-palette($planet-primary);
-$planet-app-accent: mat-palette($planet-accent);
-
-$planet-app-warn: mat-palette($planet-warn);
+$planet-app-primary: mat-palette($planet-primary, $primary-hue);
+$planet-app-accent: mat-palette($planet-accent, $accent-hue);
+$planet-app-warn: mat-palette($planet-warn, $warn-hue);
 
 $planet-app-theme: mat-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
+
+$primary: mat-color($planet-app-primary, $primary-hue);
+$accent: mat-color($planet-app-accent, $accent-hue);
+$primary-text: mat-contrast($planet-primary, $primary-hue);
+$accent-text: mat-contrast($planet-accent, $accent-hue);
 
 @include angular-material-theme($planet-app-theme);

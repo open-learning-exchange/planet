@@ -1,22 +1,21 @@
 <form novalidate (ngSubmit)="onSubmit(modalForm.value, dialogRef)" [formGroup]="modalForm">
-  <div>
-    <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
-  </div>
-  <div mat-dialog-content>
+  <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
+  <mat-dialog-content>
     <div *ngFor="let field of fields">
-      <!-- textbox -->
-      <mat-input-container *ngIf="field.type == 'textbox'" class="modalForm-full-width">
-          <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
-      </mat-input-container>
+      <!-- input field -->
+      <mat-form-field *ngIf="field.type == 'textbox'" class="full-width">
+        <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
       <!-- selectbox -->
-      <mat-input-container *ngIf="field.type == 'selectbox'" class="modalForm-full-width">
+      <mat-form-field *ngIf="field.type == 'selectbox'" class="full-width">
         <select mat-select *ngFor="let options of field.options">
           <option value="{{option.value}}">{{option.text}}</option>
         </select>
-      </mat-input-container>
-      <planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
     </div>
-  </div>
+  </mat-dialog-content>
   <mat-dialog-actions>
     <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>&nbsp;
     <button type="submit" color="primary" mat-raised-button i18n>Submit</button>

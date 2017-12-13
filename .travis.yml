@@ -46,6 +46,7 @@ before_install:
   - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
   - cd add-cors-to-couchdb
   - npm install
+  - while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do sleep 1; done
   - node bin.js http://localhost:5984
   - cd ..
   # Add initial Couch databases here
@@ -65,7 +66,6 @@ before_script:
   - travis_retry npm install
   - travis_retry npm install -g @angular/cli
   - travis_retry npm install -g karma
-  #- ng build
 script:
   - export
   - docker ps -a | grep planet
@@ -75,6 +75,7 @@ script:
   #- node -v
   #- ng test
   - ng e2e --environment test
+  - ng build --prod
 before_deploy:
   # Decrypt ssh key to connect to docker builder
   - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv

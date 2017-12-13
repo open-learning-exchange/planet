@@ -433,13 +433,6 @@
           <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="09c7662baad5004986ecfc943e9e5602f946cd50" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{data.title}}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3dd4d33ae8f598e6a0e9206df5356c524ff7a1f6" datatype="html">
         <source>Nation Name</source>
         <context-group purpose="location">
