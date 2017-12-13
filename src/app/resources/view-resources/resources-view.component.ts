@@ -25,7 +25,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private jsonp: Jsonp
   ) { }
 
   private dbName = 'resources';
@@ -41,6 +42,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   subscription;
 
   ngOnInit() {
+
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
@@ -65,6 +67,46 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
       this.couchSrc = environment.couchAddress + this.dbName + '/' + resource._id + '/' + filename;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
   }
 
