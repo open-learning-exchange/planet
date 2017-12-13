@@ -38,7 +38,7 @@ export class CoursesAddComponent {
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private ValidatorService: ValidatorService
+    private validatorService: ValidatorService
   ) {
     this.createForm();
   }
@@ -49,7 +49,7 @@ export class CoursesAddComponent {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        //ac => this.courseValidatorService.checkCourseExists$(ac)
+        ac => this.validatorService.checkCourseExists$(ac)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',
