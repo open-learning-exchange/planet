@@ -10,10 +10,13 @@ import {
   MatDialogModule,
   MatIconModule,
   MatSelectModule,
+  MatToolbarModule,
   MatRadioModule,
   MatCheckboxModule,
-  MatGridListModule
+  MatGridListModule,
+  MatNativeDateModule
 } from '@angular/material';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   exports: [
@@ -27,9 +30,12 @@ import {
     MatInputModule,
     MatSortModule,
     MatDialogModule,
+    MatToolbarModule,
     MatRadioModule,
     MatCheckboxModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ]
 })
 export class MaterialModule {}
