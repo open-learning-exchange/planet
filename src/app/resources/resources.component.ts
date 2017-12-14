@@ -1,26 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Headers } from '@angular/http';
-import { PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   templateUrl: './resources.component.html'
 })
 
-export class ResourcesComponent implements OnInit {
+export class ResourcesComponent implements OnInit, AfterViewInit {
+
+  resources = new MatTableDataSource();
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  displayedColumns = [ 'title', 'rating' ];
+  readonly dbName = 'resources';
   rating;
   mRating;
   fRating;
-  resources = [];
   message = '';
   file: any;
   resource = { mediaType: '' };
   searchResource = '';
-  pageSize = 10;
-  pageSizeOptions = [ 5, 10, 25, 100 ];
-
-  // MatPaginator Output
-  pageEvent: PageEvent;
 
   getRating(sum, timesRated) {
     this.rating = 0;
@@ -41,11 +41,22 @@ export class ResourcesComponent implements OnInit {
     this.mRating = 100 - this.fRating;
   }
 
+  ngAfterViewInit() {
+    this.resources.sort = this.sort;
+    this.resources.paginator = this.paginator;
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.resources.filter = filterValue;
+  }
+
   getResources() {
     this.couchService
-      .get('resources/_all_docs?include_docs=true')
+      .get(this.dbName + '/_all_docs?include_docs=true')
       .then(data => {
-        this.resources = data.rows;
+        this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
   }
 
