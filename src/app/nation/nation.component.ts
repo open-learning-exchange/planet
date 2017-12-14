@@ -158,7 +158,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       .subscribe(res => {
         this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {
-            allData : res['rows'].length > 0 ? res['rows'][0].doc : [];
+            allData : res['rows'].length > 0 ? res['rows'][0].doc : [],
             title : 'Nation Details'
           }
         });
