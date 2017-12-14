@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Headers } from '@angular/http';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
-import { MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   templateUrl: './resources.component.html'
 })
-export class ResourcesComponent implements OnInit {
+export class ResourcesComponent implements OnInit, AfterViewInit {
+  resources = new MatTableDataSource();
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  displayedColumns = [ 'title', 'rating' ];
+  readonly dbName = 'resources';
   rating;
   mRating;
   fRating;
-  resources = [];
   message = '';
   file: any;
   resource = { mediaType: '' };
@@ -36,11 +40,22 @@ export class ResourcesComponent implements OnInit {
     this.mRating = 100 - this.fRating;
   }
 
+  ngAfterViewInit() {
+    this.resources.sort = this.sort;
+    this.resources.paginator = this.paginator;
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.resources.filter = filterValue;
+  }
+
   getResources() {
     this.couchService
-      .get('resources/_all_docs?include_docs=true')
+      .get(this.dbName + '/_all_docs?include_docs=true')
       .then(data => {
-        this.resources = data.rows;
+        this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
   }
 
@@ -63,7 +78,7 @@ export class ResourcesComponent implements OnInit {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
         .then((data) => {
-          this.resources = this.resources.filter((res: any) => data.id !== res.id);
+          this.resources.data = this.resources.data.filter((res: any) => data.id !== res.id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };

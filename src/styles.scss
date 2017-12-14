@@ -170,4 +170,77 @@ body {
   mat-table .highlight {
     background-color: $ole-grey-light;
   }
+      .stars {
+      display: inline-block;
+      font-size: 1.5rem;
+      color: #ccc;
+      position: relative;
+      grid-area: stars;
+
+      &::before,
+      span::before {
+        content: '\2605\2605\2605\2605\2605';
+        display: block;
+      }
+
+      span {
+        color: gold;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+      }
+    }
+
+    .list-item-rating {
+      display: grid;
+      grid-template-areas: 'stars stars' 'label info';
+      grid-template-columns: 1fr 1fr;
+      align-content: baseline;
+      grid-gap: 0.4em;
+
+      .small {
+        color: rgba($color: #000000, $alpha: 0.8);
+      }
+      .label {
+        grid-area: label;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .small:first-of-type {
+          // the rating box's height is 32px, margin-bottom is .3em and font-size .5rem
+          // i used those numbers to center the ratings text
+          margin: calc(16px - 0.5rem) 0;
+        }
+      }
+
+      .info {
+        grid-area: info;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        span {
+          // for centering the number
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: bold;
+          // creating the box around it
+          width: 67px;
+          height: 32px;
+          background-color: gold;
+          border-radius: 0.3em;
+        }
+      }
+
+      // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
+      .rating-bar {
+        display: block;
+        height: 10px;
+        border: 1px solid gold;
+        margin-top: 0.5em;
+      }
+    }
 }
