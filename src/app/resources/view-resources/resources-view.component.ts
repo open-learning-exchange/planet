@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -26,7 +27,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private jsonp: Jsonp
+    private http: HttpClient
   ) { }
 
   private dbName = 'resources';
@@ -108,6 +109,25 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
 
     }
+  }
+
+  resourceData(data) {
+    const filename = data.openWhichFile || Object.keys(data._attachments)[0];
+    this.mediaType = data.mediaType;
+    this.contentType = data._attachments[filename].content_type;
+    if (!this.mediaType) {
+      const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
+      this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
+    }
+    this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
+    if (this.mediaType === 'pdf') {
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+    }
+    if (this.mediaType === 'HTML') {
+      this.router.navigate([ '/resources' ]);
+      window.open(this.resourceSrc);
+    }
+    return data;
   }
 
 }

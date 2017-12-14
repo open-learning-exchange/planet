@@ -4,7 +4,7 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { Jsonp, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   templateUrl: './resources.component.html'
@@ -33,8 +33,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
+<<<<<<< HEAD
     private dialog: MatDialog,
     private jsonp: Jsonp
+=======
+    private httpclient: HttpClient
+>>>>>>> d52de39... [#234] Import httpclientjsopmodule
   ) {}
 
   ngOnInit() {
@@ -91,12 +95,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       { 'selector': { 'name':  this.route.snapshot.paramMap.get('nationname') },
       'fields': [ 'name', 'nationurl' ] })
         .then(data => {
-          this.nationname = this.route.snapshot.paramMap.get('nationname');
+          this.nationname = data.docs[0].name;
           const nationUrl = data.docs[0].nationurl;
           if (nationUrl) {
-            this.jsonp.request('http://' + nationUrl + '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK&limit=5')
+            this.httpclient.jsonp('http://' + nationUrl +
+              '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK&limit=5',
+              'callback'
+            )
             .subscribe(res => {
-              this.resources = res.json().rows.length > 0 ? res.json().rows : [];
+              this.resources = res['rows'].length > 0 ? res['rows'] : [];
             });
           }
         }, error => (this.message = 'Error'));
