@@ -4,7 +4,7 @@
     <label i18n>Is your feedback Urgent?</label>
     <mat-radio-group formControlName="isUrgent">
       <mat-radio-button value="true" i18n>Yes</mat-radio-button>
-      <mat-radio-button value="false" i18n>no</mat-radio-button>
+      <mat-radio-button value="false" i18n>No</mat-radio-button>
     </mat-radio-group>
   </div>
   <div>
@@ -18,14 +18,10 @@
   <div>
     <label i18n>Comment:</label>
     <mat-form-field>
-      <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg" required></textarea>
+      <textarea matInput placeholder="Your Feedback" formControlName="feedbackMsg"required></textarea>
       <mat-error><planet-form-error-messages [control]="feedbackForm.controls.feedbackMsg"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </div>
-  <div *ngIf="message"[ngClass]="(fedksuccess===true)?'alert alert-success':'alert-danger'" i18n>
-    <span i18n>{message, select,feedbackSuccess { Thank you! Your feedback is successfully submitted!}
-    feedbackError { Sorry, You feedback cannot be submitted }}
-    </span>
-  </div>
+  <div *ngIf="message">{{message}}</div>
   <button type="submit" mat-button [disabled]="feedbackForm.invalid" color="primary" i18n>Submit</button>
 </form>

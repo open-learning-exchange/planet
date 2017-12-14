@@ -13,11 +13,10 @@ import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatCheckboxModule , MatButtonModule, MatInputModule, MatCardModule } from '@angular/material';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, MatCheckboxModule, MatInputModule, MatCardModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule,
   ],
   declarations: [
     AppComponent, PageNotFoundComponent
