@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Headers } from '@angular/http';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 
 @Component({
   templateUrl: './resources.component.html'
@@ -20,7 +21,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   message = '';
   file: any;
   resource = { mediaType: '' };
-  searchResource = '';
+  deleteDialog: any;
 
   getRating(sum, timesRated) {
     this.rating = 0;
@@ -32,7 +33,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return this.rating;
   }
 
-  constructor(private couchService: CouchService) {}
+  constructor(private couchService: CouchService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.getResources();
@@ -58,6 +59,31 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       .then(data => {
         this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
+  }
+
+  deleteClick(resource) {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+      data: {
+        okClick: this.deleteResource(resource),
+        type: 'resource',
+        displayName: resource.title
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.message = '';
+    });
+  }
+
+  deleteResource(resource) {
+    return () => {
+      const { _id: resourceId, _rev: resourceRev } = resource;
+      this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
+        .then((data) => {
+          this.resources = this.resources.filter((res: any) => data.id !== res.id);
+          this.deleteDialog.close();
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
+    };
   }
 
 }
