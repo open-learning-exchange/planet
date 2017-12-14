@@ -34,9 +34,14 @@ body {
   .font-size-1 {
     font-size: 1rem;
   }
-  
+
   .full-width {
     width: 100%;
+  }
+
+  // Use to give elements horizontal space
+  .margin-lr {
+    margin: 0 5px;
   }
 
   // STYLING FOR TABLE LIST ENTRIES
