@@ -40,7 +40,7 @@ export class FeedbackComponent implements OnInit {
 
   addfeedback(post: any) {
     this.message = '';
-    Object.assign(this.feedback, post);
+    (<any>Object).assign(this.feedback, post);
     this.couchService.post('feedback/', this.feedback)
     .then((data) => {
       this.message = 'Thank you, your feedback is submitted!';
