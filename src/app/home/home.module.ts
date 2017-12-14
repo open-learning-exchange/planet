@@ -16,7 +16,6 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
-import { MongoQueries } from '../shared/mongoQueries';
 
 @NgModule({
   imports: [
@@ -38,6 +37,6 @@ import { MongoQueries } from '../shared/mongoQueries';
     NationComponent,
     ManagerDashboardComponent
   ],
-  providers: [ ValidatorService, MongoQueries ]
+  providers: [ ValidatorService ]
 })
 export class HomeModule {}

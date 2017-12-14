@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 
-import { MongoQueries } from './mongoQueries';
+import { findOneDocument } from './mangoQueries';
 import { CouchService } from './couchdb.service';
 
 import { switchMap, map } from 'rxjs/operators';
@@ -13,36 +13,26 @@ import { switchMap, map } from 'rxjs/operators';
 @Injectable()
 export class ValidatorService {
 
-constructor(private couchService: CouchService, private mongoQueries: MongoQueries) {}
+constructor(private couchService: CouchService) {}
 
-  public CheckService$(findType: string, db: string, field: string, value: any): Observable<boolean> {
-    if (findType === 'findOneDocument') {
+  public CheckService$(db: string, field: string, value: any): Observable<boolean> {
       const isDuplicate = this.couchService
-      .post(`${db}/_find`, this.mongoQueries.findOneDocument(field, value))
+      .post(`${db}/_find`, findOneDocument(field, value))
       .then(data => {
         return (data.docs.length > 0);
       });
-    } else if (findType === 'findAllDocuments') {
-      const isDuplicate = this.couchService
-      .post(`${db}/_find`, this.mongoQueries.findAllDocuments(field, value))
-      .then(data => {
-        return (data.docs.length > 0);
-      });
-    }
-    return fromPromise(isDuplicate);
+      return fromPromise(isDuplicate);
   }
 
-  public isExists$(
-    findType: string,
+  public CheckValidationsExists$(
     dbName: string,
     fieldName: string,
-    ac
+    ac: AbstractControl,
   ): Observable<ValidationErrors | null> {
-       // mangoQueries.findOneDocument(1, 2)
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => {
-        return this.CheckService$(findType, dbName, fieldName, ac).pipe(map(res => {
+        return this.CheckService$(dbName, fieldName, ac.value).pipe(map(res => {
           if (res) {
             return { duplicate: true };
           }
