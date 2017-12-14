@@ -21,7 +21,7 @@
         <a mat-raised-button i18n [routerLink]="['/resources/view', item.doc._id]">View Details</a>
         <a mat-raised-button i18n [routerLink]="['/resources/wip']">Add To Library</a>
         <a mat-raised-button i18n [routerLink]="['/resources/wip']">Feedback</a>
-        <a mat-raised-button i18n [routerLink]="['/resources/wip']">Delete</a>
+        <button mat-raised-button color="warn" (click)="deleteClick(item.doc)" i18n>Delete</button>
       </div>
     </div>
     <div class="list-item-rating">
