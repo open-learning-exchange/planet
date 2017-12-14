@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -62,10 +61,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           const nationUrl = data.docs[0].nationurl;
           if (nationUrl) {
             this.httpclient.jsonp('http://' + nationUrl +
-              '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK&limit=5',
+              '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK',
               'callback'
             ).subscribe(res => {
-              this.resources = res['rows'].length > 0 ? res['rows'] : [];
+              this.resources.data = res['rows'].length > 0 ? res['rows'].map(res => res.doc) : [];
             });
           }
         }, error => (this.message = 'Error'));
