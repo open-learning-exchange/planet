@@ -20,7 +20,6 @@ export class Feedback {
 export class FeedbackComponent implements OnInit {
   feedback = new Feedback();
   message: string;
-  fedksuccess: boolean;
   feedbackForm: FormGroup;
 
   constructor(
@@ -39,19 +38,15 @@ export class FeedbackComponent implements OnInit {
     this.feedback.name = this.userService.get().name;
   }
 
-  addfeedback(post) {
+  addfeedback(post: any) {
     this.message = '';
-    this.feedback.feedbackMsg = post.feedbackMsg;
-    this.feedback.feedbackType = post.feedbackType;
-    this.feedback.isUrgent = post.isUrgent;
+    Object.assign(this.feedback, post);
     this.couchService.post('feedback/', this.feedback)
     .then((data) => {
-      this.message = 'feedbackSuccess';
-      this.fedksuccess = true;
+      this.message = 'Thank you, your feedback is submitted!';
     },
     (error) => {
-      this.message = 'feedbackError';
-      this.fedksuccess  = false;
+      this.message = 'Error, your  feedback cannot be submitted';
     });
   }
 }
