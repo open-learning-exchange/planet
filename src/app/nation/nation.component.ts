@@ -155,10 +155,10 @@ export class NationComponent implements OnInit, AfterViewInit {
   view(url) {
     if (url) {
       this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
-      .subscribe(res => {
+      .subscribe((res: any) => {
         this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {
-            allData : res['rows'].length > 0 ? res['rows'][0].doc : [],
+            allData : res.rows.length > 0 ? res.rows[0].doc : [],
             title : 'Nation Details'
           }
         });
