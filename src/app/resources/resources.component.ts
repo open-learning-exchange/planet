@@ -33,12 +33,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-<<<<<<< HEAD
     private dialog: MatDialog,
-    private jsonp: Jsonp
-=======
     private httpclient: HttpClient
->>>>>>> d52de39... [#234] Import httpclientjsopmodule
   ) {}
 
   ngOnInit() {
@@ -57,11 +53,29 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   getResources() {
-    this.couchService
-      .get('resources/_all_docs?include_docs=true')
-      .subscribe(data => {
-        this.resources.data = data.rows.map(res => res.doc);
-      }, error => (this.message = 'Error'));
+    if (this.route.snapshot.paramMap.get('nationname') !== null) {
+      this.couchService.post(`nations/_find`,
+      { 'selector': { 'name':  this.route.snapshot.paramMap.get('nationname') },
+      'fields': [ 'name', 'nationurl' ] })
+        .then(data => {
+          this.nationname = data.docs[0].name;
+          const nationUrl = data.docs[0].nationurl;
+          if (nationUrl) {
+            this.httpclient.jsonp('http://' + nationUrl +
+              '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK&limit=5',
+              'callback'
+            ).subscribe(res => {
+              this.resources = res['rows'].length > 0 ? res['rows'] : [];
+            });
+          }
+        }, error => (this.message = 'Error'));
+    } else {
+      this.couchService
+        .get('resources/_all_docs?include_docs=true')
+        .subscribe(data => {
+	  this.resources.data = data.rows.map(res => res.doc);
+	}, error => (this.message = 'Error'));
+    }
   }
 
   deleteClick(resource) {
@@ -87,27 +101,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
-  }
-
-  getNationResources() {
-    if (this.route.snapshot.paramMap.get('nationname') !== null) {
-      this.couchService.post(`nations/_find`,
-      { 'selector': { 'name':  this.route.snapshot.paramMap.get('nationname') },
-      'fields': [ 'name', 'nationurl' ] })
-        .then(data => {
-          this.nationname = data.docs[0].name;
-          const nationUrl = data.docs[0].nationurl;
-          if (nationUrl) {
-            this.httpclient.jsonp('http://' + nationUrl +
-              '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK&limit=5',
-              'callback'
-            )
-            .subscribe(res => {
-              this.resources = res['rows'].length > 0 ? res['rows'] : [];
-            });
-          }
-        }, error => (this.message = 'Error'));
-    }
   }
 
 }
