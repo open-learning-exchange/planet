@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { JsonpModule, Jsonp, Response } from '@angular/http';
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
@@ -17,6 +17,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 
+
 @NgModule({
   imports: [
     HomeRouterModule,
@@ -26,7 +27,8 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     PlanetFormsModule,
     MaterialModule,
     PlanetDialogsModule,
-    JsonpModule
+    HttpClientModule,
+    HttpClientJsonpModule
   ],
   declarations: [
     HomeComponent,
