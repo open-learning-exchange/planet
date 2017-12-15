@@ -63,8 +63,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             this.httpclient.jsonp('http://' + nationUrl +
               '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK',
               'callback'
-            ).subscribe(res => {
-              this.resources.data = res['rows'].length > 0 ? res['rows'].map(res => res.doc) : [];
+            ).subscribe((res: any) => {
+              this.resources.data = res.rows.length > 0 ? res.rows.map(res => res.doc) : [];
             });
           }
         }, error => (this.message = 'Error'));
