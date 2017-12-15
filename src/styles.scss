@@ -65,7 +65,7 @@ body {
     .stars {
       display: inline-block;
       font-size: 1.5rem;
-      color: #ccc;
+      color: $grey;
       position: relative;
       grid-area: stars;
       // Each mat-icon star is 24x24.  Will need to change if star sizes change
@@ -138,27 +138,12 @@ body {
     }
   }
 
-  // swap bootstrap's default color with oles
-  .btn-outline-primary {
-    border-color: $ole-blue;
-    color: $ole-blue;
-
-    &:focus {
-      box-shadow: 0 0 0 3px $ole-blue-light;
-    }
-
-    &:hover {
-      background-color: $ole-blue;
-      border-color: $ole-blue;
-    }
-  }
-
   .small {
     font-size: 0.625rem;
   }
 
   mat-table .highlight {
-    background-color: $ole-grey-light;
+    background-color: $grey;
   }
 
 }
