@@ -5,8 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 
-import { findOneDocument } from './mangoQueries';
-import { CouchService } from './couchdb.service';
+import { findOneDocument } from '../shared/mangoQueries';
+import { CouchService } from '../shared/couchdb.service';
 
 import { switchMap, map } from 'rxjs/operators';
 

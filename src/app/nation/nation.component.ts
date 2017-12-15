@@ -17,8 +17,8 @@ import {
 } from '@angular/forms';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../shared/custom-validators';
-import { ValidatorService } from '../shared/validator.service';
+import { CustomValidators } from '../validators/custom-validators';
+import { ValidatorService } from '../validators/validator.service';
 
 @Component({
   templateUrl: './nation.component.html'

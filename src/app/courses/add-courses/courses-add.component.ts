@@ -10,8 +10,8 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { CouchService } from '../../shared/couchdb.service';
-import { CustomValidators } from '../../shared/custom-validators';
-import { ValidatorService } from '../../shared/validator.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 

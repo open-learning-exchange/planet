@@ -7,7 +7,7 @@ import { ResourcesViewComponent } from './resources-view.component';
 import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
-import { ValidatorService } from '../shared/validator.service';
+import { ValidatorService } from '../validators/validator.service';
 
 @NgModule({
   imports: [

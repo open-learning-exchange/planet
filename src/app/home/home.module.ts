@@ -11,7 +11,7 @@ import { UsersComponent } from '../users/users.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { ValidatorService } from '../shared/validator.service';
+import { ValidatorService } from '../validators/validator.service';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
