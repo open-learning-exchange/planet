@@ -6,7 +6,7 @@
     <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Search">
   </mat-form-field>
 </div>
-<mat-table #table [dataSource]="resources" matSort>
+<mat-table #table [dataSource]="resources">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let element" class="list-item-info">
@@ -36,8 +36,7 @@
           <span class="small">Male ({{ mRating }}%)</span>
         </div>
         <div class="info">
-          <span> {{ rating }}
-          </span>
+          <span>{{ rating }}</span>
           <div class="rating-bar">
             <!-- used ngStyle here to set the width of the bar dynamically -->
             <div [ngStyle]="{ 'width': fRating + '%'}"></div>

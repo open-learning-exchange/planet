@@ -72,7 +72,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteResource(resource) {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
-      this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
+      this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .then((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
