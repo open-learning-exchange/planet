@@ -42,26 +42,25 @@ export class ResourcesViewComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
-      .subscribe(resource => this.resource = resource);
+      .subscribe(resource => this.setResource(resource), error => console.log(error));
   }
 
   getResource(id: string) {
-    return this.couchService.get('resources/' + id)
-      .subscribe((data) => {
-        // openWhichFile is used to label which file to start with for HTML resources
-        const filename = data.openWhichFile || Object.keys(data._attachments)[0];
-        this.mediaType = data.mediaType;
-        this.contentType = data._attachments[filename].content_type;
-        this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
-        if (this.mediaType === 'pdf') {
-          this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-        }
-        if (this.mediaType === 'zip') {
-          this.router.navigate([ '/resources' ]);
-          window.open(this.resourceSrc);
-        }
-        return data;
-      }, (error) => console.log('Error'));
+    return this.couchService.get('resources/' + id);
+  }
+
+  setResource(resource: any) {
+    const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+    this.mediaType = resource.mediaType;
+    this.contentType = resource._attachments[filename].content_type;
+    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
+    if (this.mediaType === 'pdf') {
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+    }
+    if (this.mediaType === 'zip') {
+      this.router.navigate([ '/resources' ]);
+      window.open(this.resourceSrc);
+    }
   }
 
 }

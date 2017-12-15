@@ -33,8 +33,8 @@ export class CourseValidatorService {
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => this.courseCheckerService$(ac.value)),
-      map(length => {
-        if (length > 0) {
+      map(exists => {
+        if (exists) {
           return { duplicate: true };
         }
         return null;

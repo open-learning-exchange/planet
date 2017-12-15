@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { UserService } from './user.service';
+import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
@@ -10,7 +11,7 @@ export class AuthService {
 
   constructor(private couchService: CouchService, private userService: UserService, private router: Router) {}
 
-  private checkUser(url: any): Promise<any> {
+  private checkUser(url: any): Observable<boolean> {
     return this.couchService
       .get('_session', { withCredentials: true })
       .pipe(map((res: any) => {
@@ -23,7 +24,7 @@ export class AuthService {
       }));
   }
 
-  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<any> {
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.checkUser(state.url);
   }
 
