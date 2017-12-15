@@ -15,7 +15,7 @@ export class ValidatorService {
 
 constructor(private couchService: CouchService) {}
 
-  public CheckService$(db: string, field: string, value: any): Observable<boolean> {
+  public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
       const isDuplicate = this.couchService
       .post(`${db}/_find`, findOneDocument(field, value))
       .then(data => {
@@ -24,7 +24,7 @@ constructor(private couchService: CouchService) {}
       return fromPromise(isDuplicate);
   }
 
-  public CheckValidationsExists$(
+  public isUnique$(
     dbName: string,
     fieldName: string,
     ac: AbstractControl,
@@ -32,7 +32,7 @@ constructor(private couchService: CouchService) {}
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => {
-        return this.CheckService$(dbName, fieldName, ac.value).pipe(map(res => {
+        return this.checkUnique$(dbName, fieldName, ac.value).pipe(map(res => {
           if (res) {
             return { duplicate: true };
           }

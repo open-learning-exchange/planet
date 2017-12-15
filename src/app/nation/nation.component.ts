@@ -136,9 +136,9 @@ export class NationComponent implements OnInit, AfterViewInit {
       ];
     const validation = {
       adminName: [ '', Validators.required ],
-      name: [ '', Validators.required, ac => this.validatorService.CheckValidationsExists$(this.dbName, 'name', ac) ],
+      name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
       nationUrl: [ '', Validators.required,
-      nurl => this.validatorService.CheckValidationsExists$(this.dbName, 'nationurl', nurl) ]
+      nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
