@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { UserService } from './user.service';
+import { map } from 'rxjs/operators';
 
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
@@ -11,14 +12,15 @@ export class AuthService {
 
   private checkUser(url: any): Promise<any> {
     return this.couchService
-      .get('_session', { withCredentials: true }).then((res: any) => {
+      .get('_session', { withCredentials: true })
+      .pipe(map((res: any) => {
         if (res.userCtx.name) {
           this.userService.set(res.userCtx);
           return true;
         }
         this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
         return false;
-      });
+      }));
   }
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<any> {
