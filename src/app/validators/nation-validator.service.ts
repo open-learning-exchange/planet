@@ -17,12 +17,11 @@ export class NationValidatorService {
   constructor(private couchService: CouchService) {}
 
   public nationCheckerService$(header: string, name: string): Observable<boolean> {
-    const isDuplicate = this.couchService
+    return this.couchService
       .post(`${this.dbName}/_find`, findAllDocuments(header, name))
-      .then(data => {
-        return (data.docs.length > 0);
-      });
-    return fromPromise(isDuplicate);
+      .pipe(map(data => {
+        return data.docs.length > 0;
+      }));
   }
 
   public checkNationExists$(
@@ -31,15 +30,13 @@ export class NationValidatorService {
   ): Observable<ValidationErrors | null> {
     // calls service every .5s for input change
     return timer(500).pipe(
-      switchMap(() => {
-        return this.nationCheckerService$(header, ac.value).pipe(map(res => {
-          if (res) {
-            return { duplicate: true };
-          }
-          return null;
-        }));
-      })
-    );
+      switchMap(() => this.nationCheckerService$(header, ac.value)),
+      map(length => {
+        if (length > 0) {
+          return { duplicate: true };
+        }
+        return null;
+      }));
   }
 
 }
