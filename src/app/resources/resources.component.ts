@@ -12,22 +12,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'title', 'rating' ];
   readonly dbName = 'resources';
-  rating;
   mRating;
   fRating;
   message = '';
   file: any;
-  resource = { mediaType: '' };
   deleteDialog: any;
 
   getRating(sum, timesRated) {
-    this.rating = 0;
-
+    let rating = 0;
     if (sum > 0 && timesRated > 0) {
-      const temp = (sum / timesRated).toFixed(1);
-      this.rating = parseFloat(temp);
+      rating = sum / timesRated;
     }
-    return this.rating;
+    // Multiply by 20 to convert rating out of 5 to percent for width
+    return (rating * 20) + '%';
   }
 
   constructor(private couchService: CouchService, private dialog: MatDialog) {}
