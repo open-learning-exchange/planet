@@ -39,7 +39,7 @@ export class ResourcesComponent implements OnInit {
   getResources() {
     this.couchService
       .get('resources/_all_docs?include_docs=true')
-      .then(data => {
+      .subscribe(data => {
         this.resources = data.rows;
       }, error => (this.message = 'Error'));
   }
@@ -62,7 +62,7 @@ export class ResourcesComponent implements OnInit {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
-        .then((data) => {
+        .subscribe((data) => {
           this.resources = this.resources.filter((res: any) => data.id !== res.id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');

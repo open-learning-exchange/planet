@@ -47,7 +47,7 @@ export class ResourcesViewComponent implements OnInit {
 
   getResource(id: string) {
     return this.couchService.get('resources/' + id)
-      .then((data) => {
+      .subscribe((data) => {
         // openWhichFile is used to label which file to start with for HTML resources
         const filename = data.openWhichFile || Object.keys(data._attachments)[0];
         this.mediaType = data.mediaType;

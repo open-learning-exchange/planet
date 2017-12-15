@@ -140,15 +140,14 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  async addResource(resourceInfo) {
+  addResource(resourceInfo) {
     // ...is the rest syntax for object destructuring
-    try {
-      await this.couchService.post(this.dbName, { ...resourceInfo });
+    this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {;
       this.router.navigate([ '/resources' ]);
-    } catch (err) {
+    }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
-    }
+    });
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
