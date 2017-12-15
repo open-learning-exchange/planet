@@ -16,12 +16,12 @@ export class ValidatorService {
 constructor(private couchService: CouchService) {}
 
   public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
-      const isDuplicate = this.couchService
+    const isDuplicate = this.couchService
       .post(`${db}/_find`, findOneDocument(field, value))
       .then(data => {
         return (data.docs.length > 0);
       });
-      return fromPromise(isDuplicate);
+    return fromPromise(isDuplicate);
   }
 
   public isUnique$(
