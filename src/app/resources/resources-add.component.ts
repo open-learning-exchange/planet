@@ -142,7 +142,7 @@ export class ResourcesAddComponent implements OnInit {
 
   addResource(resourceInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {;
+    this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
