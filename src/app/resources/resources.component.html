@@ -27,8 +27,11 @@
     <mat-cell *matCellDef="let element">
       <div class="list-item-rating">
         <span class="stars">
+          <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
           <!-- used simple arithmetic to get 20 and converted into % -->
-          <span [ngStyle]="{'width': 20 * getRating(element.sum, element.timesRated) + '%'}"></span>
+          <span [ngStyle]="{'width': 20 * getRating(element.sum, element.timesRated) + '%'}">
+            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+          </span>
         </span>
         <div class="label">
           <span class="small">Rating ({{ rating }})</span>

@@ -68,19 +68,18 @@ body {
       color: #ccc;
       position: relative;
       grid-area: stars;
-
-      &::before,
-      span::before {
-        content: '\2605\2605\2605\2605\2605';
-        display: block;
-      }
+      // Each mat-icon star is 24x24.  Will need to change if star sizes change
+      width: 120px;
 
       span {
-        color: gold;
+        color: $accent;
         position: absolute;
         top: 0;
         left: 0;
         overflow: hidden;
+        * {
+          display:inline;
+        }
       }
     }
 
@@ -119,7 +118,7 @@ body {
           // creating the box around it
           width: 67px;
           height: 32px;
-          background-color: gold;
+          background-color: $accent;
           border-radius: 0.3em;
         }
       }
@@ -128,11 +127,11 @@ body {
       .rating-bar {
         display: block;
         height: 10px;
-        border: 1px solid gold;
+        border: 1px solid $accent;
         margin-top: 0.5em;
 
         div {
-          background-color: gold;
+          background-color: $accent;
           height: 100%;
         }
       }
