@@ -108,15 +108,14 @@ export class CoursesAddComponent {
     }
   }
 
-  async addCourse(courseInfo) {
+  addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    try {
-      await this.couchService.post(this.dbName, { ...courseInfo });
+    this.couchService.post(this.dbName, { ...courseInfo }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
-    } catch (err) {
+    }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
-    }
+    });
   }
 
   cancel() {

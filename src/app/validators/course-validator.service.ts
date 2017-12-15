@@ -17,15 +17,14 @@ export class CourseValidatorService {
 
   // $ is used as a convention to indicate that return type will be an Observable
   public courseCheckerService$(title: string): Observable<boolean> {
-    const isDuplicate = this.couchService
+    return this.couchService
       .post(`${this.dbName}/_find`, findOneDocument('courseTitle', title))
-      .then(data => {
+      .pipe(map(data => {
         if (data.docs.length > 0) {
           return true;
         }
         return false;
-      });
-    return fromPromise(isDuplicate);
+      }));
   }
 
   public checkCourseExists$(
@@ -33,29 +32,13 @@ export class CourseValidatorService {
   ): Observable<ValidationErrors | null> {
     // calls service every .5s for input change
     return timer(500).pipe(
-        switchMap(() => {
-          return this.courseCheckerService$(ac.value).pipe(map(res => {
-            if (res) {
-              return { duplicate: true };
-            }
-            return null;
-          }));
-        })
-      );
+      switchMap(() => this.courseCheckerService$(ac.value)),
+      map(length => {
+        if (length > 0) {
+          return { duplicate: true };
+        }
+        return null;
+      }));
 
-    // another way of checking if course title is unique
-    // this.courseForm.controls['courseTitle'].valueChanges
-    //   .debounceTime(500)
-    //   .subscribe(title => {
-    //     this.couchService
-    //       .post(`courses/_find`, this.searchQuery(title))
-    //       .then(data => {
-    //         if (data.docs.length === 0) {
-    //           this.isUnique = true;
-    //           return;
-    //         }
-    //         this.isUnique = false;
-    //       });
-    //   });
   }
 }
