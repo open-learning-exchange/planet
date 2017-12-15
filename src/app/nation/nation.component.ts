@@ -1,23 +1,16 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { Jsonp, Response } from '@angular/http';
 
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
-  Validators
-} from '@angular/forms';
+import { Validators } from '@angular/forms';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 
 @Component({
@@ -38,13 +31,11 @@ export class NationComponent implements OnInit, AfterViewInit {
   formDialog: any;
   valid_data: {};
   result: any;
-  dialogRef: any;
   view_data = [];
 
   constructor(
     private location: Location,
     private router: Router,
-    private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private dialog: MatDialog,
