@@ -34,7 +34,7 @@ body {
   .font-size-1 {
     font-size: 1rem;
   }
-  
+
   .full-width {
     width: 100%;
   }
@@ -44,9 +44,6 @@ body {
     display: grid;
     grid-template-columns: auto 140px;
     grid-gap: 2em;
-    border-bottom: 2px solid #ccc;
-    margin-top: 1em;
-    padding-bottom: 0.5em;
 
     .list-item-info {
       display: flex;
@@ -56,18 +53,10 @@ body {
       h3 {
         text-transform: uppercase;
         font-size: 1.25rem;
-        letter-spacing: 0.05em;
       }
 
       .list-item-content {
-        font-size: 0.975rem;
         margin-bottom: 0.5em;
-      }
-
-      .list-item-action {
-        .btn {
-          margin-right: 0.5em;
-        }
       }
     }
 
@@ -102,9 +91,6 @@ body {
       align-content: baseline;
       grid-gap: 0.4em;
 
-      .small {
-        color: rgba($color: #000000, $alpha: 0.8);
-      }
       .label {
         grid-area: label;
         display: flex;
@@ -144,6 +130,11 @@ body {
         height: 10px;
         border: 1px solid gold;
         margin-top: 0.5em;
+
+        div {
+          background-color: gold;
+          height: 100%;
+        }
       }
     }
   }
@@ -170,77 +161,5 @@ body {
   mat-table .highlight {
     background-color: $ole-grey-light;
   }
-      .stars {
-      display: inline-block;
-      font-size: 1.5rem;
-      color: #ccc;
-      position: relative;
-      grid-area: stars;
 
-      &::before,
-      span::before {
-        content: '\2605\2605\2605\2605\2605';
-        display: block;
-      }
-
-      span {
-        color: gold;
-        position: absolute;
-        top: 0;
-        left: 0;
-        overflow: hidden;
-      }
-    }
-
-    .list-item-rating {
-      display: grid;
-      grid-template-areas: 'stars stars' 'label info';
-      grid-template-columns: 1fr 1fr;
-      align-content: baseline;
-      grid-gap: 0.4em;
-
-      .small {
-        color: rgba($color: #000000, $alpha: 0.8);
-      }
-      .label {
-        grid-area: label;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        .small:first-of-type {
-          // the rating box's height is 32px, margin-bottom is .3em and font-size .5rem
-          // i used those numbers to center the ratings text
-          margin: calc(16px - 0.5rem) 0;
-        }
-      }
-
-      .info {
-        grid-area: info;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        span {
-          // for centering the number
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-weight: bold;
-          // creating the box around it
-          width: 67px;
-          height: 32px;
-          background-color: gold;
-          border-radius: 0.3em;
-        }
-      }
-
-      // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
-      .rating-bar {
-        display: block;
-        height: 10px;
-        border: 1px solid gold;
-        margin-top: 0.5em;
-      }
-    }
 }

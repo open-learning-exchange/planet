@@ -1,21 +1,20 @@
-<div class="mat-elevation-z8 resources">
-  <div>
-    <button mat-raised-button routerLink="add" color="primary" routerLinkActive="active" i18n>Add Resource</button>
-  </div>
-  <div>
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
-    </mat-form-field>
-  </div>
-  <mat-table #table [dataSource]="resources" matSort>
+<div>
+  <button mat-raised-button routerLink="add" color="primary" routerLinkActive="active" i18n>Add Resource</button>
+</div>
+<div>
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
+  </mat-form-field>
+</div>
+<mat-table #table [dataSource]="resources" matSort>
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element">
+    <mat-cell *matCellDef="let element" class="list-item-info">
       <h3>{{element.title}}</h3>
-      <div>
+      <div class="list-item-content">
         Author: {{ element.author }},Year: {{ element.year }}, Media: {{ element.Medium }}, Language: {{ element.language }}, Subject/s: {{element.subject}}, Publisher/Attribution: {{ element.Publisher }}, Link to License: {{element.linkToLicense}}, Resource: {{ element.resourceFor }}, Resource Type: {{ element.resourceType }}
       </div>
-      <div>
+      <div class="list-item-content">
         <a mat-raised-button color = "primary" i18n [routerLink]="['/resources/view', element._id]">View Details</a>
         <a mat-raised-button color = "primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
         <a mat-raised-button color = "primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
@@ -25,35 +24,33 @@
   </ng-container>
   <ng-container matColumnDef="rating">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element" [style.flex]="'0 0 175px'">
-    <div class="list-item-rating">
-      <span class="stars">
-        <!-- used simple arithmetic to get 20 and converted into % -->
-        <span [ngStyle]="{'width': 20 * getRating(element.sum,element.timesRated) + '%'}"></span>
-      </span>
-      <div class="label">
-        <span class="small">Rating ({{ rating }}) </span>
-        <span class="small">Female ({{ fRating }}%)
+    <mat-cell *matCellDef="let element">
+      <div class="list-item-rating">
+        <span class="stars">
+          <!-- used simple arithmetic to get 20 and converted into % -->
+          <span [ngStyle]="{'width': 20 * getRating(element.sum, element.timesRated) + '%'}"></span>
         </span>
-        <span class="small">Male ({{ mRating }}%)
-        </span>
-      </div>
-      <div class="info">
-        <span> {{ rating }}
-        </span>
-        <div class="rating-bar">
-          <!-- used ngStyle here to set the width of the bar dynamically -->
-          <div [ngStyle]="{ 'background-color': 'gold', 'height': '8px', 'width': fRating + '%'}"></div>
+        <div class="label">
+          <span class="small">Rating ({{ rating }})</span>
+          <span class="small">Female ({{ fRating }}%)</span>
+          <span class="small">Male ({{ mRating }}%)</span>
         </div>
-        <div class="rating-bar">
-          <div [ngStyle]="{ 'background-color': 'gold', 'height': '8px', 'width': mRating + '%'}"></div>
+        <div class="info">
+          <span> {{ rating }}
+          </span>
+          <div class="rating-bar">
+            <!-- used ngStyle here to set the width of the bar dynamically -->
+            <div [ngStyle]="{ 'width': fRating + '%'}"></div>
+          </div>
+          <div class="rating-bar">
+            <div [ngStyle]="{ 'width': mRating + '%'}"></div>
+          </div>
         </div>
       </div>
-    </div>
     </mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
-</div>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" class="list-item"></mat-row>
+</mat-table>
+<mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+
