@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class CouchService {
@@ -15,26 +16,26 @@ export class CouchService {
   private couchDBReq(type: string, db: string, opts: any, data?: any) {
     const url = this.baseUrl + db;
     if (type === 'post' || type === 'put') {
-      return this.http[type](url, data, opts).toPromise();
+      return this.http[type](url, data, opts);
     }
-    return this.http[type](url, opts).toPromise();
+    return this.http[type](url, opts);
   }
 
   constructor(private http: HttpClient) {}
 
-  put(db: string, data: any, opts?: any): Promise<any> {
+  put(db: string, data: any, opts?: any): Observable<any> {
     return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');
   }
 
-  post(db: string, data: any, opts?: any): Promise<any> {
+  post(db: string, data: any, opts?: any): Observable<any> {
     return this.couchDBReq('post', db, this.setOpts(opts), JSON.stringify(data) || '');
   }
 
-  get(db: string, opts?: any): Promise<any> {
+  get(db: string, opts?: any): Observable<any> {
     return this.couchDBReq('get', db, this.setOpts(opts));
   }
 
-  delete(db: string, opts?: any): Promise<any> {
+  delete(db: string, opts?: any): Observable<any> {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
