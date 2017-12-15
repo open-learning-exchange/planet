@@ -11,10 +11,10 @@ import { environment } from '../../../environments/environment';
   templateUrl: './resources-view.component.html',
   styles: [ `
     :host iframe {
-      width: 80vw,
-      height: 80vh
+      width: 80vw;
+      height: 80vh;
     }
-  `
+  ` ]
 })
 export class ResourcesViewComponent implements OnInit {
 
