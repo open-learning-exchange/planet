@@ -78,7 +78,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
         .then((data) => {
-          this.resources.data = this.resources.data.filter((res: any) => data.id !== res.id);
+          this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
