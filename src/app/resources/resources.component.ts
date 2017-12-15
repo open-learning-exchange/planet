@@ -45,10 +45,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.resources.paginator = this.paginator;
   }
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.resources.filter = filterValue;
+  applyResFilter(filterResValue: string) {
+    this.resources.filter = filterResValue.trim().toLowerCase();
   }
 
   getResources() {
