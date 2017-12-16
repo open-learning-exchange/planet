@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CoursesComponent } from './courses.component';
 import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CourseOpenComponent } from './open-course/course-open.component';
-import { CourseResignComponent } from './resign-course/course-resign.component';
 import { CourseManageComponent } from './manage-course/course-manage.component';
 import { CourseViewComponent } from './view-course/course-view.component';
 import { CourseCreditsComponent } from './credits-course/course-credits.component';
@@ -32,7 +31,6 @@ import { MaterialModule } from '../shared/material.module';
     CoursesAddComponent,
     CoursesRequestComponent,
     CourseOpenComponent,
-    CourseResignComponent,
     CourseManageComponent,
     CourseViewComponent,
     CourseCreditsComponent,
