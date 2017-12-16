@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
     :host iframe {
       width: 80vw;
       height: 80vh;
+      border: none;
     }
   ` ]
 })
