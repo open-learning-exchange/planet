@@ -12,3 +12,4 @@
   <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
   <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
 </div>
+<a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>

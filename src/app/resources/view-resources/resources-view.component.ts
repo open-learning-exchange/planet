@@ -26,12 +26,15 @@ export class ResourcesViewComponent implements OnInit {
     private router: Router
   ) { }
 
+  private dbName = 'resources';
+
   resource = {};
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
-  urlPrefix = environment.couchAddress + 'resources/';
+  urlPrefix = environment.couchAddress + this.dbName + '/';
+  couchSrc = '';
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
@@ -39,7 +42,7 @@ export class ResourcesViewComponent implements OnInit {
   }
 
   getResource(id: string) {
-    return this.couchService.get('resources/' + id)
+    return this.couchService.get(this.dbName + '/' + id)
       .then((data) => {
         // openWhichFile is used to label which file to start with for HTML resources
         const filename = data.openWhichFile || Object.keys(data._attachments)[0];
@@ -48,6 +51,7 @@ export class ResourcesViewComponent implements OnInit {
         this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
         if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
           this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+          this.couchSrc = environment.couchAddress + this.dbName + '/' + data._id + '/' + filename;
         }
         return data;
       }, (error) => console.log('Error'));
