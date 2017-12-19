@@ -1,9 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesAddComponent } from './courses-add.component';
 import { FormErrorMessagesComponent } from '../../shared/form-error-messages.component';
 import { ValidatorService } from 'app/validators/validator.service';
-import { AlertsDeleteComponent } from '../../shared/alerts/alerts-delete.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../../shared/couchdb.service';
@@ -14,7 +13,7 @@ describe('CoursesComponent', () => {
   let component: CoursesAddComponent;
   let fixture: ComponentFixture<CoursesAddComponent>;
   let couchService;
-  // let testCourseForm;
+  let testCourseForm;
   let statusElement1;
   let statusElement2;
   let statusElement3;
@@ -24,13 +23,9 @@ describe('CoursesComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ CoursesAddComponent, FormErrorMessagesComponent, AlertsDeleteComponent ],
+      declarations: [ CoursesAddComponent, FormErrorMessagesComponent ],
       providers: [ CouchService, ValidatorService ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
+    });
     fixture = TestBed.createComponent(CoursesAddComponent);
     component = fixture.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
@@ -39,7 +34,7 @@ describe('CoursesComponent', () => {
     statusElement2 = de.nativeElement.querySelector('.km-coursetitle-errormessage');
     statusElement3 = de.nativeElement.querySelector('.km-day');
     postSpy = fixture.debugElement.injector.get(CouchService);
-      // testCourseForm ={ courseTitle: 'OLE Test 1', description: 'First test for VIs' };
+    testCourseForm = { courseTitle: 'OLE Test 1', description: 'First test for VIs' };
   });
 
   it('should create', () => {
@@ -67,10 +62,11 @@ describe('CoursesComponent', () => {
   // test addCourse()
   /*
   it('should make a post request to CouchDB', async(() =>{
-    postSpy = spyOn(couchService,'post').and.returnValue(testCourseForm);
+    postSpy = spyOn(couchService,'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
+    fixture.detectChanges();
     component.addCourse(testCourseForm);
+    fixture.detectChanges();
     fixture.whenStable().then(() => {
-      fixture.detectChanges();
       expect(statusElement2.textContent).toBe('Course already exists');
     });
   }));

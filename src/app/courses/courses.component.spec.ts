@@ -13,16 +13,12 @@ import { By } from '@angular/platform-browser';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
-  // let component1: DialogsDeleteComponent;
   let fixture: ComponentFixture<CoursesComponent>;
-  // let fixture1: ComponentFixture<DialogsDeleteComponent>;
   let statusElement;
-  // let statusElement1;
   let couchService;
   let getSpy: any;
   let deleteSpy: any;
   let de;
-  // let de1;
   let coursedata1;
   let coursedata2;
   let coursearray;
@@ -30,15 +26,12 @@ describe('CoursesComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ CoursesComponent, FormErrorMessagesComponent, AlertsDeleteComponent ],
+      declarations: [ CoursesComponent, FormErrorMessagesComponent ],
       providers: [ CouchService ]
-
+    });
     fixture = TestBed.createComponent(CoursesComponent);
     component = fixture.componentInstance;
-      // fixture1 = TestBed.createComponent(DialogsDeleteComponent);
-      // component1 = fixture1.componentInstance;
     de = fixture.debugElement;
-      // de1 = fixture1.debugElement;
     couchService = fixture.debugElement.injector.get(CouchService);
     statusElement = de.nativeElement.querySelector('.km-course-title');
     coursedata1 = { _id: '1', _rev: 'd5857e866c', title: 'OLE Test 1', description: 'English Language Test' };
@@ -82,18 +75,6 @@ describe('CoursesComponent', () => {
     expect(component.courses.filter).toEqual('OLE'.trim().toLowerCase());
   });
 
-  // deleteClick()
-  /*
-  it('should deleteClick', () =>{
-    //try to add a tag to <p class="km-course-name'>{{data.displayName}}</p> in dialogs-delete.component.html
-    const statusElement1=de1.nativeElement.querySelector('.km-course-name');
-    component.deleteClick(coursedata1);
-    fixture.whenStable().then(() =>{
-      fixture.detectChanges();
-      expect(statusElement1.textContent).toEqual('OLE Test 1');
-    });
-  });
-  */
   // deleteCourse()
   it('should make a delete request to couchService', () => {
     component.deleteCourse(coursedata1);
