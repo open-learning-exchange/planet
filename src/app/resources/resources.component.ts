@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Headers } from '@angular/http';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatDialog } from '@angular/material';
 

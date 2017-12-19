@@ -6,7 +6,7 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
-import { Jsonp, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import {
   FormBuilder,
@@ -49,7 +49,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     private nationValidatorService: NationValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private jsonp: Jsonp
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -154,11 +154,11 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   view(url) {
     if (url) {
-      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')
-      .subscribe(res => {
+      this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
+      .subscribe((res: any) => {
         this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {
-            allData : res.json().rows.length > 0 ? res.json().rows[0].doc : [],
+            allData : res.rows.length > 0 ? res.rows[0].doc : [],
             title : 'Nation Details'
           }
         });
