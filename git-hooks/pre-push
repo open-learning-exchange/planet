@@ -27,6 +27,21 @@ RED='\033[1;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+# Function to output result of tests
+output_result() {
+  ret_code=$1
+  message=$2
+  output=$3
+
+  if [ $ret_code != 0 ]; then
+    printf "${RED}${message} failed.${NC}\n"
+    echo "$output"
+    pass=false
+  else
+    printf "${GREEN}$message passed.${NC}\n"
+  fi
+}
+
 # Get number of uncommitted changes
 CHANGES=$(git diff --numstat | wc -l)
 CHANGES_CACHED=$(git diff --cached --numstat | wc -l)
@@ -34,24 +49,19 @@ TOTAL_CHANGES=$(($CHANGES + $CHANGES_CACHED))
 
 # Stash all uncommitted changes before running tests
 git stash -k
-# Run tslint and get the output and return code
-echo "Running Linters:"
-tslint=$(ng lint)
-ret_code_tslint=$?
-tslint_vagrant=$(vagrant ssh -c 'cd /vagrant; ng lint')
-ret_code_tslint_vagrant=$?
 
-# If the tests didn't pass, announce it failed and print the output
-if [ $ret_code_tslint != 0 ] && [ $ret_code_tslint_vagrant != 0 ]; then
-  printf "${RED}tslint failed.${NC}\n"
-  echo "$tslint"
-  echo "$tslint_vagrant"
-  echo "$ret_code_tslint"
-  echo "$ret_code_tslint_vagrant"
-  pass=false
+# Check if vagrant is running
+vagrant_status=$(vagrant status --machine-readable | grep state,running)
+
+echo "Running Linters:"
+if [ "$vagrant_status" = "" ]; then
+  tslint=$(ng lint)
 else
-  printf "${GREEN}tslint passed.${NC}\n"
+  tslint=$(vagrant ssh -c 'cd /vagrant; ng lint')
 fi
+
+ret_code_tslint=$?
+output_result $ret_code_tslint "tslint" $tslint
 
 # If we stashed changes earlier, pop them back off the stack
 if [ $TOTAL_CHANGES -ne "0" ]
@@ -60,8 +70,8 @@ then
   git stash pop -q
 fi
 
-# Keeping this to make it easy to add other linting tools if needed in the future
 # The 0 exit code will only be sent if pass=true
+# Any failure will set pass=false
 if $pass; then
   exit 0
 fi

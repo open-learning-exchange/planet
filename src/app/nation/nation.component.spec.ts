@@ -7,7 +7,7 @@ import { FormErrorMessagesComponent } from '../shared/form-error-messages.compon
 import { Jsonp, JsonpModule } from '@angular/http';
 import { CouchService } from '../shared/couchdb.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NationValidatorService } from '../validators/nation-validator.service';
+import { ValidatorService } from '../validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
@@ -17,10 +17,9 @@ describe('NationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, HttpClientModule, RouterTestingModule,
-                 BrowserAnimationsModule, MaterialModule, JsonpModule ],
-      declarations: [ NationComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService, NationValidatorService, DialogsFormService ]
+      imports: [ ReactiveFormsModule, FormsModule, HttpClientModule, RouterTestingModule, BrowserAnimationsModule, MaterialModule, JsonpModule ],
+      declarations: [ NationComponent, AlertsDeleteComponent, FormErrorMessagesComponent ],
+      providers: [ CouchService, ValidatorService, DialogsFormService ]
     })
     .compileComponents();
   }));

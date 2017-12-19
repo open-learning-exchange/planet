@@ -4,34 +4,35 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
-import { switchMap, map } from 'rxjs/operators';
 
 import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
+import { switchMap, map } from 'rxjs/operators';
+
 @Injectable()
-export class ResourceValidatorService {
-  readonly dbName = 'resources';
+export class ValidatorService {
 
-  constructor(private couchService: CouchService) {}
+constructor(private couchService: CouchService) {}
 
-  // $ is used as a convention to indicate that return type will be an Observable
-  public resourceCheckerService$(title: string): Observable<boolean> {
+  public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
     const isDuplicate = this.couchService
-      .post(`${this.dbName}/_find`, findOneDocument('title', title))
+      .post(`${db}/_find`, findOneDocument(field, value))
       .then(data => {
-        return data.docs.length > 0;
+        return (data.docs.length > 0);
       });
     return fromPromise(isDuplicate);
   }
 
-  public checkResourceExists$(
-    ac: AbstractControl
+  public isUnique$(
+    dbName: string,
+    fieldName: string,
+    ac: AbstractControl,
   ): Observable<ValidationErrors | null> {
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => {
-        return this.resourceCheckerService$(ac.value).pipe(map(res => {
+        return this.checkUnique$(dbName, fieldName, ac.value).pipe(map(res => {
           if (res) {
             return { duplicate: true };
           }

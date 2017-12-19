@@ -2,7 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesAddComponent } from './courses-add.component';
 import { FormErrorMessagesComponent } from '../../shared/form-error-messages.component';
-import { CourseValidatorService } from 'app/validators/course-validator.service';
+import { ValidatorService } from 'app/validators/validator.service';
+import { AlertsDeleteComponent } from '../../shared/alerts/alerts-delete.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../../shared/couchdb.service';
@@ -23,9 +24,13 @@ describe('CoursesComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ CoursesAddComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService, CourseValidatorService ]
-    });
+      declarations: [ CoursesAddComponent, FormErrorMessagesComponent, AlertsDeleteComponent ],
+      providers: [ CouchService, ValidatorService ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(CoursesAddComponent);
     component = fixture.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);

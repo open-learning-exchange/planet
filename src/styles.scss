@@ -34,9 +34,14 @@ body {
   .font-size-1 {
     font-size: 1rem;
   }
-  
+
   .full-width {
     width: 100%;
+  }
+
+  // Use to give elements horizontal space
+  .margin-lr {
+    margin: 0 5px;
   }
 
   // STYLING FOR TABLE LIST ENTRIES
@@ -44,9 +49,6 @@ body {
     display: grid;
     grid-template-columns: auto 140px;
     grid-gap: 2em;
-    border-bottom: 2px solid #ccc;
-    margin-top: 1em;
-    padding-bottom: 0.5em;
 
     .list-item-info {
       display: flex;
@@ -56,18 +58,10 @@ body {
       h3 {
         text-transform: uppercase;
         font-size: 1.25rem;
-        letter-spacing: 0.05em;
       }
 
       .list-item-content {
-        font-size: 0.975rem;
         margin-bottom: 0.5em;
-      }
-
-      .list-item-action {
-        .btn {
-          margin-right: 0.5em;
-        }
       }
     }
 
@@ -76,22 +70,21 @@ body {
     .stars {
       display: inline-block;
       font-size: 1.5rem;
-      color: #ccc;
+      color: $grey;
       position: relative;
       grid-area: stars;
-
-      &::before,
-      span::before {
-        content: '\2605\2605\2605\2605\2605';
-        display: block;
-      }
+      // Each mat-icon star is 24x24.  Will need to change if star sizes change
+      width: 120px;
 
       span {
-        color: gold;
+        color: $accent;
         position: absolute;
         top: 0;
         left: 0;
         overflow: hidden;
+        * {
+          display:inline;
+        }
       }
     }
 
@@ -102,9 +95,6 @@ body {
       align-content: baseline;
       grid-gap: 0.4em;
 
-      .small {
-        color: rgba($color: #000000, $alpha: 0.8);
-      }
       .label {
         grid-area: label;
         display: flex;
@@ -133,7 +123,7 @@ body {
           // creating the box around it
           width: 67px;
           height: 32px;
-          background-color: gold;
+          background-color: $accent;
           border-radius: 0.3em;
         }
       }
@@ -142,24 +132,14 @@ body {
       .rating-bar {
         display: block;
         height: 10px;
-        border: 1px solid gold;
+        border: 1px solid $accent;
         margin-top: 0.5em;
+
+        div {
+          background-color: $accent;
+          height: 100%;
+        }
       }
-    }
-  }
-
-  // swap bootstrap's default color with oles
-  .btn-outline-primary {
-    border-color: $ole-blue;
-    color: $ole-blue;
-
-    &:focus {
-      box-shadow: 0 0 0 3px $ole-blue-light;
-    }
-
-    &:hover {
-      background-color: $ole-blue;
-      border-color: $ole-blue;
     }
   }
 
@@ -168,6 +148,7 @@ body {
   }
 
   mat-table .highlight {
-    background-color: $ole-grey-light;
+    background-color: $grey;
   }
+
 }

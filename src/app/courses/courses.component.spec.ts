@@ -5,7 +5,7 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
-import { CourseValidatorService } from '../validators/course-validator.service';
+
 import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
@@ -29,10 +29,9 @@ describe('CoursesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule ],
-      declarations: [ CoursesComponent, FormErrorMessagesComponent, DialogsDeleteComponent ],
-      providers: [ CouchService, CourseValidatorService ]
-      });
+      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
+      declarations: [ CoursesComponent, FormErrorMessagesComponent, AlertsDeleteComponent ],
+      providers: [ CouchService ]
 
     fixture = TestBed.createComponent(CoursesComponent);
     component = fixture.componentInstance;
