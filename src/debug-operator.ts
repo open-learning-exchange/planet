@@ -6,7 +6,7 @@ const debuggerOn = !environment.production;
 
 export const debugOperator = function<T> (message: string) {
   const source = this;
-  if(debuggerOn) {
+  if (debuggerOn) {
     return source.pipe(tap(
       function (next) {
         console.log(message, next);
