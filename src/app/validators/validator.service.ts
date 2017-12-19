@@ -17,7 +17,7 @@ constructor(private couchService: CouchService) {}
 
   public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
     return this.couchService
-      .post(`${db}/_find`, findAllDocuments(field, value))
+      .post(`${db}/_find`, findOneDocument(field, value))
       .pipe(map(data => {
         return data.docs.length > 0;
       }));

@@ -47,7 +47,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.couchService
       .get('resources/_all_docs?include_docs=true')
       .subscribe(data => {
-        this.resources = data.rows.map(res => res.doc);
+        this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
   }
 

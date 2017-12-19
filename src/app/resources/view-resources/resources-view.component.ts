@@ -55,7 +55,6 @@ export class ResourcesViewComponent implements OnInit {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
       this.couchSrc = environment.couchAddress + this.dbName + '/' + resource._id + '/' + filename;
     }
-    return data;
   }
 
 }
