@@ -12,7 +12,6 @@ import { CourseProgressComponent } from './progress-course/course-progress.compo
 import { CoursesRequestComponent } from './request-courses/courses-request.component';
 import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { CourseValidatorService } from '../validators/course-validator.service';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 
