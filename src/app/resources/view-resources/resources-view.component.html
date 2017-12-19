@@ -1,0 +1,15 @@
+<div class="km-resource-view" [ngSwitch]="mediaType">
+  <img [src]="resourceSrc" *ngSwitchCase="'image'">
+  <video controls *ngSwitchCase="'video'">
+    <source [src]="resourceSrc" [type]="contentType" />
+    Browser not supported
+  </video>
+  <audio controls *ngSwitchCase="'audio'">
+    <source [src]="resourceSrc" [type]="contentType" />
+    Browser not supported
+  </audio>
+  <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
+  <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
+  <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
+</div>
+<a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
