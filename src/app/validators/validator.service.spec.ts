@@ -1,17 +1,17 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { ResourceValidatorService } from './resource-validator.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ValidatorService } from './validator.service';
 
-describe('ResourceValidatorService', () => {
+describe('ValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientModule ],
-      providers: [ ResourceValidatorService, CouchService ]
+      providers: [ ValidatorService, CouchService ]
     });
   });
 
-  it('should be created', inject([ ResourceValidatorService ], (service: ResourceValidatorService) => {
+  it('should be created', inject([ ValidatorService ], (service: ValidatorService) => {
     expect(service).toBeTruthy();
   }));
 });

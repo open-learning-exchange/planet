@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { CourseValidatorService } from '../../validators/course-validator.service';
+import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 
@@ -38,7 +38,7 @@ export class CoursesAddComponent {
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private courseValidatorService: CourseValidatorService
+    private validatorService: ValidatorService
   ) {
     this.createForm();
   }
@@ -49,7 +49,7 @@ export class CoursesAddComponent {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.courseValidatorService.checkCourseExists$(ac)
+        ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',

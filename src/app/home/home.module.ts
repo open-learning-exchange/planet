@@ -11,7 +11,7 @@ import { UsersComponent } from '../users/users.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { NationValidatorService } from '../validators/nation-validator.service';
+
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
@@ -37,7 +37,6 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent
-  ],
-  providers: [ NationValidatorService ]
+  ]
 })
 export class HomeModule {}
