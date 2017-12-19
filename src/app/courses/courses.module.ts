@@ -33,7 +33,7 @@ import { MaterialModule } from '../shared/material.module';
     CourseManageComponent,
     CourseViewComponent,
     CourseCreditsComponent,
-    CourseProgressComponent,
+    CourseProgressComponent
   ],
   providers: [ CourseValidatorService ]
 })
