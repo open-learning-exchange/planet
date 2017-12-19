@@ -1,29 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
-import { MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   templateUrl: './resources.component.html'
 })
-export class ResourcesComponent implements OnInit {
-  rating;
+export class ResourcesComponent implements OnInit, AfterViewInit {
+  resources = new MatTableDataSource();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  displayedColumns = [ 'title', 'rating' ];
+  readonly dbName = 'resources';
   mRating;
   fRating;
-  resources = [];
   message = '';
   file: any;
-  resource = { mediaType: '' };
   deleteDialog: any;
 
   getRating(sum, timesRated) {
-    this.rating = 0;
-
+    let rating = 0;
     if (sum > 0 && timesRated > 0) {
-      const temp = (sum / timesRated).toFixed(1);
-      this.rating = parseFloat(temp);
+      rating = sum / timesRated;
     }
-    return this.rating;
+    // Multiply by 20 to convert rating out of 5 to percent for width
+    return (rating * 20) + '%';
   }
 
   constructor(private couchService: CouchService, private dialog: MatDialog) {}
@@ -35,11 +35,19 @@ export class ResourcesComponent implements OnInit {
     this.mRating = 100 - this.fRating;
   }
 
+  ngAfterViewInit() {
+    this.resources.paginator = this.paginator;
+  }
+
+  applyResFilter(filterResValue: string) {
+    this.resources.filter = filterResValue.trim().toLowerCase();
+  }
+
   getResources() {
     this.couchService
-      .get('resources/_all_docs?include_docs=true')
+      .get(this.dbName + '/_all_docs?include_docs=true')
       .then(data => {
-        this.resources = data.rows;
+        this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
   }
 
@@ -60,9 +68,9 @@ export class ResourcesComponent implements OnInit {
   deleteResource(resource) {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
-      this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
+      this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .then((data) => {
-          this.resources = this.resources.filter((res: any) => data.id !== res.id);
+          this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };

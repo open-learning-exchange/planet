@@ -1,52 +1,58 @@
-<!-- FOR DEMO ONLY -->
-<!-- use the async pipe when fetching for database -->
-<button mat-raised-button routerLink="add" color="primary" routerLinkActive="active" i18n>Add Resource</button>
-<ng-template ngFor let-item [ngForOf]="resources">
-  <!-- Used ng-template insted of spans or divs because I did not want any to add any element -->
-  <div class="list-item">
-    <div class="list-item-info">
-      <h3>{{ item.doc.title }}</h3>
+<div>
+  <button mat-raised-button routerLink="add" color="primary" i18n>Add Resource</button>
+</div>
+<div>
+  <mat-form-field>
+    <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Search">
+  </mat-form-field>
+</div>
+<mat-table #table [dataSource]="resources">
+  <ng-container matColumnDef="title">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let element" class="list-item-info">
+      <h3>{{element.title}}</h3>
       <div class="list-item-content">
-        Author {{ item.doc.author }}, Year {{ item.doc.year }}, Media {{ item.doc.Medium }}, Language {{ item.doc.language }}, Subject(s)
-        <!-- normal ng fors and ng ifs dont work with ng-template -->
-        <ng-template ngFor let-sub [ngForOf]="item.doc.subject">{{ sub }}, </ng-template> Level(s)
-        <ng-template ngFor let-lev [ngForOf]="item.doc.Level">{{ lev }}, </ng-template> Publisher/Attribution {{ item.doc.Publisher }},
-        <ng-template [ngIf]="item.doc.linkToLicense">Link to License {{item.doc.linkToLicense}},</ng-template> Resource {{ item.doc.resourceFor }}, Resource Type {{ item.doc.resourceType }}
-        <!-- there was a collection entry in the example picture but i didnt find it in the old couchdb -->
-        <ng-template [ngIf]="item.doc.collection?.length > 0">Collection
-          <ng-template ngFor let-col [ngForOf]="item.doc.collection">{{ col }} / </ng-template>
-        </ng-template>
+        Author: {{ element.author }},Year: {{ element.year }}, Media: {{ element.Medium }}, Language: {{ element.language }}, Subject/s: {{element.subject}}, Publisher/Attribution: {{ element.Publisher }}, Link to License: {{element.linkToLicense}}, Resource: {{ element.resourceFor }}, Resource Type: {{ element.resourceType }}
       </div>
-      <div class="list-item-action">
-        <a mat-raised-button i18n [routerLink]="['/resources/view', item.doc._id]">View Details</a>
-        <a mat-raised-button i18n [routerLink]="['/resources/wip']">Add To Library</a>
-        <a mat-raised-button i18n [routerLink]="['/resources/wip']">Feedback</a>
-        <button mat-raised-button color="warn" (click)="deleteClick(item.doc)" i18n>Delete</button>
+      <div class="list-item-content">
+        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/view', element._id]">View Details</a>
+        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
+        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
+        <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>Delete</button>
       </div>
-    </div>
-    <div class="list-item-rating">
-      <span class="stars">
-        <!-- used simple arithmetic to get 20 and converted into % -->
-        <span [ngStyle]="{'width': 20 * getRating(item.doc.sum,item.doc.timesRated) + '%'}"></span>
-      </span>
-      <div class="label">
-        <span class="small">Rating ({{ rating }}) </span>
-        <span class="small">Female ({{ fRating }}%)
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="rating">
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <div class="list-item-rating">
+        <span class="stars">
+          <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+          <!-- used simple arithmetic to get 20 and converted into % -->
+          <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
+            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+          </span>
         </span>
-        <span class="small">Male ({{ mRating }}%)
-        </span>
-      </div>
-      <div class="info">
-        <span> {{ rating }}
-        </span>
-        <div class="rating-bar">
-          <!-- used ngStyle here to set the width of the bar dynamically -->
-          <div [ngStyle]="{ 'background-color': 'gold', 'height': '8px', 'width': fRating + '%'}"></div>
+        <div class="label">
+          <span class="small">Rating ({{ rating }})</span>
+          <span class="small">Female ({{ fRating }}%)</span>
+          <span class="small">Male ({{ mRating }}%)</span>
         </div>
-        <div class="rating-bar">
-          <div [ngStyle]="{ 'background-color': 'gold', 'height': '8px', 'width': mRating + '%'}"></div>
+        <div class="info">
+          <span>{{ rating }}</span>
+          <div class="rating-bar">
+            <!-- used ngStyle here to set the width of the bar dynamically -->
+            <div [ngStyle]="{ 'width': fRating + '%'}"></div>
+          </div>
+          <div class="rating-bar">
+            <div [ngStyle]="{ 'width': mRating + '%'}"></div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</ng-template>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" class="list-item"></mat-row>
+</mat-table>
+<mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+
