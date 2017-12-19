@@ -58,7 +58,7 @@ export class UsersComponent implements OnInit {
     forkJoin([
       this.getUsers(),
       this.getAdmins()
-    ]).subscribe((data) => {
+    ]).debug('Getting user list').subscribe((data) => {
 
       const admins = [],
         adminData = data[1];
@@ -113,7 +113,9 @@ export class UsersComponent implements OnInit {
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
-    }, [])).subscribe((responses) => {
+    }, []))
+    .debug('Adding role to users')
+    .subscribe((responses) => {
       users.map((user) => {
         if (user.selected && user.roles.indexOf(role) === -1) {
           // Add role to UI and update rev from CouchDB response

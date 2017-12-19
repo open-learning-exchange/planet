@@ -80,7 +80,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
   }
@@ -133,6 +133,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
+      .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
           this.onSubmit(res);
@@ -147,6 +148,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   view(url) {
     if (url) {
       this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
+      .debug('jsonp request to external nation')
       .subscribe((res: any) => {
         this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {

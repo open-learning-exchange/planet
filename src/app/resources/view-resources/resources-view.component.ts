@@ -38,6 +38,7 @@ export class ResourcesViewComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
+      .debug('Getting resource id from parameters')
       .subscribe(resource => this.setResource(resource), error => console.log(error));
   }
 

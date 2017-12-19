@@ -37,7 +37,7 @@ constructor(private couchService: CouchService) {}
         }
         return null;
       })
-    );
+    ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
   }
 
 }

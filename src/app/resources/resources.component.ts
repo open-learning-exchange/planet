@@ -60,7 +60,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
   }
