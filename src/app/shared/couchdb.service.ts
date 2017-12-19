@@ -8,6 +8,7 @@ export class CouchService {
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
+  private reqNum = 0;
 
   private setOpts(opts?: any) {
     return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
@@ -15,10 +16,14 @@ export class CouchService {
 
   private couchDBReq(type: string, db: string, opts: any, data?: any) {
     const url = this.baseUrl + db;
+    let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
-      return this.http[type](url, data, opts);
+      httpReq = this.http[type](url, data, opts);
+    } else {
+      httpReq = this.http[type](url, opts);
     }
-    return this.http[type](url, opts);
+    this.reqNum++;
+    return httpReq.debug('Http ' + type + ' ' + this.reqNum + ' request');
   }
 
   constructor(private http: HttpClient) {}
