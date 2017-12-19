@@ -37,7 +37,7 @@ import { MaterialModule } from '../shared/material.module';
     CourseManageComponent,
     CourseViewComponent,
     CourseCreditsComponent,
-    CourseProgressComponent,
+    CourseProgressComponent
   ],
   providers: [ CourseValidatorService ]
 >>>>>>> #248 moved to main repository
