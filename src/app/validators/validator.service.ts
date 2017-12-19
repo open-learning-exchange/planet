@@ -5,38 +5,39 @@ import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 
-import { findAllDocuments } from '../shared/mangoQueries';
+import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 import { switchMap, map } from 'rxjs/operators';
 
 @Injectable()
-export class NationValidatorService {
-  readonly dbName = 'nations';
+export class ValidatorService {
 
-  constructor(private couchService: CouchService) {}
+constructor(private couchService: CouchService) {}
 
-  public nationCheckerService$(header: string, name: string): Observable<boolean> {
+  public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
     return this.couchService
-      .post(`${this.dbName}/_find`, findAllDocuments(header, name))
+      .post(`${db}/_find`, findAllDocuments(field, value))
       .pipe(map(data => {
         return data.docs.length > 0;
       }));
   }
 
-  public checkNationExists$(
-    header: string,
-    ac: AbstractControl
+  public isUnique$(
+    dbName: string,
+    fieldName: string,
+    ac: AbstractControl,
   ): Observable<ValidationErrors | null> {
     // calls service every .5s for input change
     return timer(500).pipe(
-      switchMap(() => this.nationCheckerService$(header, ac.value)),
+      switchMap(() => this.checkUnique$(dbName, fieldName, ac.value)),
       map(exists => {
         if (exists) {
           return { duplicate: true };
         }
         return null;
-      }));
+      })
+    );
   }
 
 }

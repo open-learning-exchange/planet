@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
 import { CouchService } from '../shared/couchdb.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NationValidatorService } from '../validators/nation-validator.service';
+import { ValidatorService } from '../validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('NationComponent', () => {
@@ -17,7 +17,7 @@ describe('NationComponent', () => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule, FormsModule, HttpClientModule, RouterTestingModule, BrowserAnimationsModule ],
       declarations: [ NationComponent, AlertsDeleteComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService, NationValidatorService ]
+      providers: [ CouchService, ValidatorService ]
     })
     .compileComponents();
   }));

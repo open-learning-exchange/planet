@@ -1,24 +1,17 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
-import { Jsonp, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
-  Validators
-} from '@angular/forms';
+import { Validators } from '@angular/forms';
 
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { NationValidatorService } from '../validators/nation-validator.service';
+import { ValidatorService } from '../validators/validator.service';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -38,18 +31,16 @@ export class NationComponent implements OnInit, AfterViewInit {
   formDialog: any;
   valid_data: {};
   result: any;
-  dialogRef: any;
   view_data = [];
 
   constructor(
     private location: Location,
     private router: Router,
-    private fb: FormBuilder,
     private couchService: CouchService,
-    private nationValidatorService: NationValidatorService,
+    private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private jsonp: Jsonp
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -136,8 +127,9 @@ export class NationComponent implements OnInit, AfterViewInit {
       ];
     const validation = {
       adminName: [ '', Validators.required ],
-      name: [ '', Validators.required, ac => this.nationValidatorService.checkNationExists$('name', ac) ],
-      nationUrl: [ '', Validators.required, nurl => this.nationValidatorService.checkNationExists$('nationurl', nurl) ]
+      name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
+      nationUrl: [ '', Validators.required,
+      nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
@@ -154,11 +146,11 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   view(url) {
     if (url) {
-      this.jsonp.request('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK')
-      .subscribe(res => {
+      this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
+      .subscribe((res: any) => {
         this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {
-            allData : res.json().rows.length > 0 ? res.json().rows[0].doc : [],
+            allData : res.rows.length > 0 ? res.rows[0].doc : [],
             title : 'Nation Details'
           }
         });

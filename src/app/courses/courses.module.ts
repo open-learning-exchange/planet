@@ -7,7 +7,6 @@ import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesRequestComponent } from './request-courses/courses-request.component';
 import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
-import { CourseValidatorService } from '../validators/course-validator.service';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 
@@ -25,7 +24,6 @@ import { MaterialModule } from '../shared/material.module';
     CoursesComponent,
     CoursesAddComponent,
     CoursesRequestComponent
-  ],
-  providers: [ CourseValidatorService ]
+  ]
 })
 export class CoursesModule {}
