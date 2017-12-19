@@ -1,11 +1,13 @@
 import { switchMap } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -17,7 +19,7 @@ import { environment } from '../../../environments/environment';
     }
   ` ]
 })
-export class ResourcesViewComponent implements OnInit {
+export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private couchService: CouchService,
@@ -27,6 +29,7 @@ export class ResourcesViewComponent implements OnInit {
   ) { }
 
   private dbName = 'resources';
+  private onDestroy$ = new Subject<void>();
 
   resource = {};
   mediaType = '';
@@ -35,11 +38,18 @@ export class ResourcesViewComponent implements OnInit {
   contentType = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
+  subscription;
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
       .debug('Getting resource id from parameters')
-      .subscribe(resource => this.setResource(resource), error => console.log(error));
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(resource => this.setResource(resource), error => console.log(error), () => console.log('complete getting resource id'));
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getResource(id: string) {
