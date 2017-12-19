@@ -16,12 +16,12 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
       <mat-cell *matCellDef="let element">
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Open</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Resign</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Manage</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>View Course</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Credits</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Progress</a>
+          <a mat-raised-button color="primary" routerLink="open/{{element._id}}" routerLinkActive="active" i18n>Open</a>
+          <a mat-raised-button color="primary" (click)="resignCourse(element)" i18n>Resign</a>
+          <a mat-raised-button color="primary" routerLink="manage/{{element._id}}" routerLinkActive="active" i18n>Manage</a>
+          <a mat-raised-button color="primary" routerLink="view/{{element._id}}" routerLinkActive="active" i18n>View Course</a>
+          <a mat-raised-button color="primary" routerLink="credits/{{element._id}}" routerLinkActive="active" i18n>Credits</a>
+          <a mat-raised-button color="primary" routerLink="progress/{{element._id}}" routerLinkActive="active" i18n>Progress</a>
           <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
       </mat-cell>
     </ng-container>
