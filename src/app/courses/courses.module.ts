@@ -14,7 +14,6 @@ import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
-import { ValidatorService } from '../validators/validator.service';
 
 @NgModule({
   imports: [
@@ -36,6 +35,6 @@ import { ValidatorService } from '../validators/validator.service';
     CourseCreditsComponent,
     CourseProgressComponent
   ],
-  providers: [ ValidatorService ]
+  providers: []
 })
 export class CoursesModule {}
