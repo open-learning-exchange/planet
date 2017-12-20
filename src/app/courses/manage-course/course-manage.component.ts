@@ -7,7 +7,7 @@ import { CouchService } from '../../shared/couchdb.service';
 })
 export class CourseManageComponent implements OnInit, OnDestroy {
   id: string;
-  courses: any;
+  course: any;
   private sub: any;
 
   constructor(
@@ -21,7 +21,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
     });
     this.couchService.get('courses/' + this.id)
       .then((data) => {
-        this.courses = data.courseTitle;
+        this.course = data.courseTitle;
       });
   }
 
