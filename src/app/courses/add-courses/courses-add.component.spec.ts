@@ -59,8 +59,8 @@ describe('CoursesAddComponent', () => {
   });
 
 
-  it('should make a post request to CouchDB', () =>{
-    postSpy = spyOn(couchService,'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
+  it('should make a post request to CouchDB', () => {
+    postSpy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
     fixture.detectChanges();
     component.addCourse(testCourseForm);
     fixture.detectChanges();
