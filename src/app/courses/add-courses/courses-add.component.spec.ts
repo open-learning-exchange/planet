@@ -9,13 +9,12 @@ import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-describe('CoursesComponent', () => {
+describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
   let fixture: ComponentFixture<CoursesAddComponent>;
   let couchService;
   let testCourseForm;
   let statusElement1;
-  let statusElement2;
   let statusElement3;
   let de;
   let postSpy: any;
@@ -31,7 +30,6 @@ describe('CoursesComponent', () => {
     couchService = fixture.debugElement.injector.get(CouchService);
     de = fixture.debugElement;
     statusElement1 = de.nativeElement.querySelector('.km-course-valid');
-    statusElement2 = de.nativeElement.querySelector('.km-coursetitle-errormessage');
     statusElement3 = de.nativeElement.querySelector('.km-day');
     postSpy = fixture.debugElement.injector.get(CouchService);
     testCourseForm = { courseTitle: 'OLE Test 1', description: 'First test for VIs' };
@@ -55,26 +53,27 @@ describe('CoursesComponent', () => {
     component.onSubmit();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
-      expect(statusElement2.textContent).toBe('This field is required');
+      const errorMessage = de.nativeElement.querySelector('.km-coursetitle-errormessage span');
+      expect(errorMessage.textContent).toBe('This field is required');
     });
   });
 
-  /*
-  it('should make a post request to CouchDB', async(() =>{
+
+  it('should make a post request to CouchDB', () =>{
     postSpy = spyOn(couchService,'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
     fixture.detectChanges();
     component.addCourse(testCourseForm);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
-      expect(statusElement2.textContent).toBe('Course already exists');
+      expect(postSpy).toHaveBeenCalled();
     });
-  }));
-  */
+  });
+
 
   // test cancel()
   it('should cancel', () => {
-      expect(component.cancel()).toBe(undefined);
- });
+    expect(component.cancel()).toBe(undefined);
+  });
 
   // test onDayChange()
   it('should onDayChange', () => {
