@@ -59,7 +59,6 @@ describe('CoursesComponent', () => {
     });
   });
 
-  // test addCourse()
   /*
   it('should make a post request to CouchDB', async(() =>{
     postSpy = spyOn(couchService,'post').and.returnValue(Promise.resolve({ ...testCourseForm }));

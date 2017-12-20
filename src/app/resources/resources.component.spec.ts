@@ -49,14 +49,13 @@ describe('ResourcesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // test getRating()
   /*
   it('should getRating', () => {
     component.getRating(motoristshandbook.sum, motoristshandbook.timesRated);
     expect(component.rating).toEqual(4.0);
   });
   */
-  // test bindFile(event)
+
   /*
   it('should bindFile', () => {
     component.bindFile(motoristshandbook.Event);
@@ -64,7 +63,6 @@ describe('ResourcesComponent', () => {
   });
   */
 
-  // test submitResources()
   /*
   it('should make a put request to couchService', () =>{
     putSpy =spyOn(couchService, 'put').and.returnValue(Promise.resolve({filename:fakeF.name, motoristshandbook}));

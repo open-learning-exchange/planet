@@ -96,7 +96,7 @@ describe('Users', () => {
       const { comp, couchService } = setup(),
         initSpy = spyOn(comp, 'initializeData').and.callFake(() => { } ),
         couchSpy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({}));
-      comp.deleteRole({ name: 'Test', roles: [ 'one', 'two', 'three' ] }, 1 );
+      comp.deleteRole({ name: 'Test', roles: [ 'one', 'two', 'three' ] }, 1);
       expect(couchService.put).toHaveBeenCalledWith('_users/org.couchdb.user:Test', { name: 'Test', roles: [ 'one', 'three' ] });
     });
 
