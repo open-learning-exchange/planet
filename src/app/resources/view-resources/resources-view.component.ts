@@ -122,7 +122,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
     if (this.mediaType === 'pdf'  || this.mediaType === 'HTML') {
        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-       this.couchSrc = this.urlPrefix + '/' + data._id + '/' + filename;
+       this.couchSrc = this.urlPrefix + data._id + '/' + filename;
     }
     return data;
   }
