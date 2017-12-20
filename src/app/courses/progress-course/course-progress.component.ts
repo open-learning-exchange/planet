@@ -22,11 +22,11 @@ export class CourseProgressComponent implements OnInit, OnDestroy {
     this.couchService.get('courses/' + this.id)
       .then((data) => {
         this.courses = data.courseTitle;
-      }); 
+      });
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
-    
+
 }

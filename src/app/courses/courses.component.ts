@@ -55,7 +55,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   resignCourse(course) {
-    console.log(course.courseTitle + " resigned");
+    console.log(course.courseTitle + ' resigned');
   }
 
   deleteCourse(course) {
