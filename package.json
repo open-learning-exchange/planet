@@ -9,11 +9,19 @@
     "build": "ng build",
     "v-build": "vagrant ssh -- -t 'cd /vagrant;ng build --prod'",
     "test": "ng test",
+<<<<<<< 305f16c0aa883e83b28aca5d1307a97973ad6d1a
     "v-test": "vagrant ssh -- -t 'cd /vagrant;ng test'",
-    "saas-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
-    "lint": "npm run saas-lint && npm run v-lint",
+    "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
+    "lint": "npm run sass-lint && ng lint",
     "v-lint": "vagrant ssh -- -t 'cd /vagrant;ng lint'",
     "v-lint-fix": "vagrant ssh -- -t 'cd /vagrant;ng lint --fix'",
+=======
+    "v-test": "vagrant ssh -c 'cd /vagrant;ng test'",
+    "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
+    "lint": "npm run sass-lint && ng lint",
+    "v-lint": "vagrant ssh -c 'cd /vagrant;ng lint;npm run sass-lint'",
+    "v-lint-fix": "vagrant ssh -c 'cd /vagrant;ng lint --fix'",
+>>>>>>> Update npm scripts and include files
     "e2e": "ng e2e --environment test",
     "v-e2e": "vagrant ssh -- -t 'cd /vagrant;ng e2e --environment test'",
     "install-hooks": "cp -a git-hooks/. .git/hooks/"
