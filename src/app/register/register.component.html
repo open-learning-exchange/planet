@@ -2,60 +2,60 @@
 <form [formGroup]="registerForm" (ngSubmit)="registerUser(registerForm.value)">
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput placeholder="First Name" formControlName="firstName"required>
+      <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName"required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.firstName"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Middle Name" formControlName="middleName" required>
+      <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.middleName"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Last Name" formControlName="lastName" required>
+      <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.LastName"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput placeholder="Login" formControlName="login" required>
+      <input matInput i18n-placeholder placeholder="Login" formControlName="login" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.login"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input type="password" matInput placeholder="Password" formControlName="password" required>
+      <input type="password" matInput i18n-placeholder placeholder="Password" formControlName="password" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.password"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input  type="password" matInput placeholder="Re-enter password" formControlName="repeatPassword" required>
+      <input  type="password" matInput i18n-placeholder placeholder="Re-enter password" formControlName="repeatPassword" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.repeatPassword"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput placeholder="Email" formControlName="email" required>
+      <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.email"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Language" formControlName="language">
+      <input matInput i18n-placeholder placeholder="Language" formControlName="language">
       <mat-error><planet-form-error-messages [control]="registerForm.controls.required"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Phone Number" formControlName="phoneNumber">
+      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber">
       <mat-error><planet-form-error-messages [control]="registerForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput type="date" placeholder="Birthday" formControlName="birthDay" required>
+      <input matInput type="date" i18n-placeholder placeholder="Birthday" formControlName="birthDay" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.birthDay"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <mat-select placeholder="Gender" formControlName="gender" required>
+      <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
         <mat-option value="male">Male</mat-option>
         <mat-option value="female">Female</mat-option>
         <mat-error><planet-form-error-messages [control]="registerForm.controls.gender"></planet-form-error-messages></mat-error>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-select placeholder="level" formControlName="level">
+      <mat-select i18n-placeholder placeholder="level" formControlName="level">
         <mat-option *ngFor="let level of educationLevel" [value]="level">
           {{level}}
         </mat-option>
@@ -65,15 +65,15 @@
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput placeholder="Community" formControlName="community" required>
+      <input matInput i18n-placeholder placeholder="Community" formControlName="community" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.community"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Region" formControlName="region" required>
+      <input matInput i18n-placeholder placeholder="Region" formControlName="region" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.region"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Nation" formControlName="nation" required>
+      <input matInput i18n-placeholder placeholder="Nation" formControlName="nation" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.nation"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </mat-grid-list>
