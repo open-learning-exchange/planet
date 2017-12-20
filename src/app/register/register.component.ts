@@ -3,6 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 import { MatRadioModule , MatFormFieldModule, MatButtonModule, MatInputModule } from '@angular/material';
+import { UserData } from './UserData';
+
 
 @Component({
   selector: 'app-register',
@@ -34,7 +36,7 @@ export class RegisterComponent implements OnInit {
       });
   }
 
-  createrecord(useInfo: any) {
+  createrecord(userInfo: UserData) {
     const name = userInfo.login;
     const password = userInfo.password;
     this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
@@ -47,15 +49,30 @@ export class RegisterComponent implements OnInit {
 
 
 
-  createAdmin(userInfo: any) {
-    this.couchService.put('_node/nonode@nohost/_config/admins/' + UserInfo.login, UserInfo.password).then((data) => {
+  createAdmin(userInfo: UserData) {
+    this.couchService.put('_node/nonode@nohost/_config/admins/' + userInfo.login, userInfo.password).then((data) => {
       this.RegistrationMsg = 'Your registration is successful';
     }, (error) => {
       this.RegistrationMsg = 'Sorry, something went wrong';
     });
   }
 
-  createform() {
+   registerUser(userInfo: UserData ) {
+    this.RegistrationMsg = '';
+    if (userInfo.password === userInfo.repeatPassword) {
+      this.RegistrationMsg = '';
+      this.checkAdminExistence().then((noAdmin) => {
+        if (noAdmin) {
+          this.createAdmin(userInfo);
+        } else {
+          this.createrecord(userInfo);
+        }
+      });
+    }else {
+      this.RegistrationMsg = 'Passwords do not Match!';
+    }
+  }
+    createform() {
     this.registerForm = this.fg.group({
       firstName: [ '', Validators.required ],
       middleName: [ '', Validators.required ],
@@ -76,21 +93,4 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-   registerUser(userInfo: any ) {
-    this.RegistrationMsg = '';
-    if (userInfo.password === userInfo.repeatPassword) {
-      this.RegistrationMsg = '';
-      this.checkAdminExistence().then((noAdmin) => {
-        if (noAdmin) {
-          console.log('admin');
-          this.createAdmin(userInfo);
-        } else {
-          console.log('not admin');
-          this.createrecord(userInfo);
-        }
-      });
-    }else {
-      this.RegistrationMsg = 'Passwords do not Match!';
-    }
-  }
 }
