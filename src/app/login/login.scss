@@ -29,18 +29,18 @@
   }
 
   .ole-logo {
-    margin-top:-200px;
-    height:600px;
-    width:100%;
-    background:radial-gradient(rgba(255, 255, 255, 0.8) 5%, rgba(255, 255, 255, 0) 55%);
+    margin-top: -200px;
+    height: 600px;
+    width: 100%;
+    background: radial-gradient(rgba(255, 255, 255, 0.8) 5%, rgba(255, 255, 255, 0) 55%);
     * {
       position: relative;
-      top:50%;
+      top: 50%;
       transform: translate(0, -50%);
       text-shadow: 1px 1px #000000;
     }
     img {
-      height:100px;
+      height: 100px;
       width: 100px;
       display: block;
       margin: 0 auto;
