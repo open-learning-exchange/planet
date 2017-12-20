@@ -2,13 +2,13 @@
 
 .ole-login {
 
-  height:100vh;
-  width:600px;
+  height: 100vh;
+  width: 600px;
   margin: 0 auto;
-  background: linear-gradient($ole-blue-light,$ole-blue-dark);
-  text-align:center;
-  color: white;
-  overflow:hidden;
+  background: linear-gradient($ole-blue-light, $ole-blue-dark);
+  text-align: center;
+  color: #ffffff;
+  overflow: hidden;
 
   form, .login-actions {
     display: flex;
@@ -25,30 +25,29 @@
   }
 
   label {
-    color: white;
+    color: #ffffff;
   }
 
   .ole-logo {
     margin-top:-200px;
     height:600px;
     width:100%;
-    background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
+    background:radial-gradient(rgba(255, 255, 255, 0.8) 5%, rgba(255, 255, 255, 0) 55%);
     * {
-      position:relative;
+      position: relative;
       top:50%;
-      transform:translate(0,-50%);
-      text-shadow:1px 1px black;
+      transform: translate(0, -50%);
+      text-shadow: 1px 1px #000000;
     }
     img {
       height:100px;
-      width:100px;
-      display:block;
-      margin:0 auto;
+      width: 100px;
+      display: block;
+      margin: 0 auto;
     }
 
   }
   .login-actions {
-    margin-top: 6%;
-    margin-right: 5%;
+    margin: 6% 5%;
   }
 }
