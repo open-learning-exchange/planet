@@ -14,17 +14,14 @@ import { UserData } from './UserData';
 export class RegisterComponent implements OnInit {
 
   registerForm: FormGroup;
-  educationLevel = [ 1, 2, 3, 4, 5, 6 , 7, 8, 9, 11, 12, 'Higher' ];
+  educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   RegistrationMsg: String;
 
   constructor(
     private couchService: CouchService,
     private fg: FormBuilder
     ) {
-    this.createform();
-  }
-
-  ngOnInit() {
+      this.createform();
   }
 
   registerUser(userInfo: UserData ) {
