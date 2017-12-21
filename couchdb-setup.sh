@@ -71,6 +71,24 @@ for key in data:
  "
 }
 
+# Adding _security documents to our databases.
+security_update() {
+  DOC_LOC=$1
+  python -c "
+import urllib, json, sys, subprocess
+data=json.load(open('$DOC_LOC'))
+for key in data:
+ databaseName=key['dbName']
+ jsonDoc=key['json']
+ docStr = repr(jsonDoc)
+ docStr = docStr.replace('u\'', '\"').replace('\'', '\"')
+ print(databaseName)
+ updateSecurity='curl -X PUT $COUCHURL/'+databaseName+'/_security -H Accept:application/json -H Content-Type:application/json -d \''+docStr+'\''
+ p = subprocess.Popen(updateSecurity, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+ out, err = p.communicate()
+ "
+}
+
 # Add CouchDB standard databases
 curl -X PUT $COUCHURL/_users
 curl -X PUT $COUCHURL/_replicator
@@ -93,3 +111,5 @@ insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachment resources ./design/resources/resources-attachment-mockup.json
+# Add permission in databases
+security_update ./design/security-update/security-update.json
