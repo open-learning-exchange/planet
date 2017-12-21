@@ -30,15 +30,14 @@
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
-      <mat-error><planet-form-error-messages [control]="registerForm.controls.email"></planet-form-error-messages></mat-error>
+      <input matInput i18n-placeholder placeholder="Email" formControlName="Emails" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.Emails"></planet-form-error-messages></mat-error>
+      <mat-error *ngIf="registerForm.get('Emails').touched &&registerForm.get('Emails').hasError('pattern')"> Please enter a valid email</mat-error>
     </mat-form-field>
-    <mat-error *ngIf="email.hasError('email') && !email.hasError('required')">
-      Please enter a valid email address
-    </mat-error>
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.required"></planet-form-error-messages></mat-error>
+
     </mat-form-field>
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
