@@ -3,6 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 import { MatRadioModule , MatFormFieldModule, MatButtonModule, MatInputModule } from '@angular/material';
+import { ValidatorService } from '../validators/validator.service';
+
 import { UserData } from './UserData';
 
 
@@ -16,16 +18,18 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   RegistrationMsg: String;
+  uniqueUser: String;
+  dbName = '_users';
 
   constructor(
     private couchService: CouchService,
+    private validatorService: ValidatorService,
     private fg: FormBuilder
     ) {
       this.createform();
   }
 
   registerUser(userInfo: UserData ) {
-    console.log(this.registerForm.controls);
     this.RegistrationMsg = '';
     if (userInfo.password === userInfo.repeatPassword) {
       this.checkAdminExistence().then((noAdmin) => {
@@ -67,13 +71,16 @@ export class RegisterComponent implements OnInit {
       this.RegistrationMsg = 'Error, Could not register';
     });
   }
+  isUserNameUnique(UserInfo: UserData) {
+    return this.ValidatorService.checkUnique('_users', UserInfo.login);
+  }
 
   createform() {
     this.registerForm = this.fg.group({
       firstName: [ '', Validators.required ],
       middleName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
-      login: [ '', Validators.required ],
+      login: [ '', Validators.required,  ac => this.validatorService.isUnique$(this.dbName, 'name', ac ],
       Emails: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       password: [ '', Validators.required ],
       repeatPassword: [ '', Validators.required ],
