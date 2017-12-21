@@ -1,18 +1,18 @@
 #!/bin/sh
 
-# Function for upsert of design docs
-upsert_design() {
+# Function for upsert of design & other configuration docs
+upsert_doc() {
   DB=$1
   DOC_NAME=$2
   DOC_LOC=$3
-  DOC=$(curl $COUCHURL/$DB/_design/$DOC_NAME)
+  DOC=$(curl $COUCHURL/$DB/$DOC_NAME)
   # If DOC includes a rev then it exists so we need to update
   # Otherwise we simply insert
   if [[ $DOC == *rev* ]]; then
     DOC_REV=$(echo $DOC | python -c "import sys, json; print json.load(sys.stdin)['_rev']")
-    curl -X PUT $COUCHURL/$DB/_design/$DOC_NAME?rev=$DOC_REV -d @$DOC_LOC
+    curl -X PUT $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
   else
-    curl -X PUT $COUCHURL/$DB/_design/$DOC_NAME -d @$DOC_LOC
+    curl -X PUT $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
   fi
 }
 
@@ -71,22 +71,28 @@ for key in data:
  "
 }
 
-# Adding _security documents to our databases.
-security_update() {
+# Reads one JSON file to update multiple databases
+# JSON file needs a 'dbName' field with a string and
+# a 'json' field with the JSON to be updated
+multi_db_update() {
   DOC_LOC=$1
-  python -c "
-import urllib, json, sys, subprocess
+  # Python re
+  INPUTS=$(python -c "
+import sys, json
 data=json.load(open('$DOC_LOC'))
+output=''
 for key in data:
- databaseName=key['dbName']
- jsonDoc=key['json']
- docStr = repr(jsonDoc)
- docStr = docStr.replace('u\'', '\"').replace('\'', '\"')
- print(databaseName)
- updateSecurity='curl -X PUT $COUCHURL/'+databaseName+'/_security -H Accept:application/json -H Content-Type:application/json -d \''+docStr+'\''
- p = subprocess.Popen(updateSecurity, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
- out, err = p.communicate()
- "
+  databaseName=key['dbName']
+  docStr = repr(key['json']).replace('u\'', '\"').replace('\'', '\"')
+  output = output + databaseName + '|' + docStr + '|'
+print(output)")
+  # Remove spaces (json will not be passed into upsert_doc function correctly with spaces)
+  INPUTS=${INPUTS//[[:blank:]]/}
+  while [ ${#INPUTS} -gt 1 ]; do
+    IFS="|" read -r DB_NAME INPUTS <<< "$INPUTS"
+    IFS="|" read -r JSON INPUTS <<< "$INPUTS"
+    upsert_doc $DB_NAME _security $JSON
+  done
 }
 
 # Add CouchDB standard databases
@@ -102,8 +108,8 @@ curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/communityregistrationrequests
 
 # Add or update design docs
-upsert_design courses course-validators ./design/courses/course-validators.json
-upsert_design nations nation-validators ./design/nations/nation-validators.json
+upsert_doc courses _design/course-validators @./design/courses/course-validators.json
+upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert dummy data docs
 insert_docs communityregistrationrequests ./design/community/community-mockup.json
 insert_docs nations ./design/nations/nations-mockup.json
@@ -112,4 +118,4 @@ insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachment resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
-security_update ./design/security-update/security-update.json
+multi_db_update ./design/security-update/security-update.json
