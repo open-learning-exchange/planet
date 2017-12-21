@@ -1,8 +1,8 @@
-<h3>Become a member</h3>
+<h3 i18n>Become a member</h3>
 <form [formGroup]="registerForm" (ngSubmit)="registerUser(registerForm.value)">
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName"required>
+      <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.firstName"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
@@ -34,11 +34,11 @@
       <mat-error><planet-form-error-messages [control]="registerForm.controls.email"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Language" formControlName="language">
+      <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.required"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber">
+      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </mat-grid-list>
@@ -55,7 +55,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="level" formControlName="level">
+      <mat-select i18n-placeholder placeholder="level" formControlName="level" required>
         <mat-option *ngFor="let level of educationLevel" [value]="level">
           {{level}}
         </mat-option>
@@ -78,5 +78,5 @@
     </mat-form-field>
   </mat-grid-list>
   <div *ngIf="RegistrationMsg">{{RegistrationMsg}}</div>
-  <button type="submit"  mat-button [disabled]="registerForm.invalid" color="primary" i18n>Register</button>
+  <button type="submit" mat-button [disabled]="registerForm.invalid" color="primary" i18n>Register</button>
 </form>
