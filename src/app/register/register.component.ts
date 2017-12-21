@@ -9,11 +9,12 @@ import { UserData } from './UserData';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: [ './register.component.scss' ]
 })
 export class RegisterComponent implements OnInit {
+
   registerForm: FormGroup;
-  educationLevel: Array<any>= [ 1, 2, 3, 4, 5, 6 , 7, 8, 9, 11, 12, 'Higher' ];
+  educationLevel = [ 1, 2, 3, 4, 5, 6 , 7, 8, 9, 11, 12, 'Higher' ];
   RegistrationMsg: String;
 
   constructor(
@@ -26,53 +27,50 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
   }
 
-
-  checkAdminExistence() {
-    return this.couchService.get('_users/_all_docs')
-      .then((data) => {
-        return true;
-      }, (error) => {
-        return false;
-      });
-  }
-
-  createrecord(userInfo: UserData) {
-    const name = userInfo.login;
-    const password = userInfo.password;
-    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
-    .then((data) => {
-      this.RegistrationMsg = 'Your registration is successful';
-    }, (error) => {
-      this.RegistrationMsg = 'Sorry, something went wrong';
-    });
-  }
-
-
-
-  createAdmin(userInfo: UserData) {
-    this.couchService.put('_node/nonode@nohost/_config/admins/' + userInfo.login, userInfo.password).then((data) => {
-      this.RegistrationMsg = 'Your registration is successful';
-    }, (error) => {
-      this.RegistrationMsg = 'Sorry, something went wrong';
-    });
-  }
-
-   registerUser(userInfo: UserData ) {
+  registerUser(userInfo: UserData ) {
     this.RegistrationMsg = '';
     if (userInfo.password === userInfo.repeatPassword) {
-      this.RegistrationMsg = '';
       this.checkAdminExistence().then((noAdmin) => {
         if (noAdmin) {
           this.createAdmin(userInfo);
         } else {
-          this.createrecord(userInfo);
+          this.createNonAdmin(userInfo);
         }
       });
     }else {
       this.RegistrationMsg = 'Passwords do not Match!';
     }
   }
-    createform() {
+
+  createNonAdmin(userInfo: UserData) {
+    const name = userInfo.login;
+    const password = userInfo.password;
+    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
+    .then((data) => {
+      this.RegistrationMsg = 'Your registration is successful';
+    }, (error) => {
+      this.RegistrationMsg = 'Error, Could not register';
+    });
+  }
+
+  checkAdminExistence() {
+    return this.couchService.get('_users/_all_docs')
+    .then((data) => {
+      return true;
+    }, (error) => {
+      return false;
+    });
+  }
+
+  createAdmin(userInfo: UserData) {
+    this.couchService.put('_node/nonode@nohost/_config/admins/' + userInfo.login, userInfo.password).then((data) => {
+      this.RegistrationMsg = 'Your registration is successful';
+    }, (error) => {
+      this.RegistrationMsg = 'Error, Could not register';
+    });
+  }
+
+  createform() {
     this.registerForm = this.fg.group({
       firstName: [ '', Validators.required ],
       middleName: [ '', Validators.required ],
@@ -89,8 +87,6 @@ export class RegisterComponent implements OnInit {
       community: [ '', Validators.required ],
       region: [ '', Validators.required ],
       nation: [ '', Validators.required ],
-
     });
   }
-
 }
