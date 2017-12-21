@@ -17,6 +17,7 @@
     "v-lint-fix": "vagrant ssh -- -t 'cd /vagrant;ng lint --fix'",
 =======
     "v-test": "vagrant ssh -c 'cd /vagrant;ng test'",
+    "html-lint": "htmllint ./src/**/*.html",
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
     "lint": "npm run sass-lint && ng lint",
     "v-lint": "vagrant ssh -c 'cd /vagrant;ng lint;npm run sass-lint'",
@@ -55,6 +56,7 @@
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
     "codelyzer": "~3.2.0",
+    "htmllint": "^0.7.0",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",
