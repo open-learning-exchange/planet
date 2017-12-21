@@ -33,6 +33,9 @@
       <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.email"></planet-form-error-messages></mat-error>
     </mat-form-field>
+    <mat-error *ngIf="email.hasError('email') && !email.hasError('required')">
+      Please enter a valid email address
+    </mat-error>
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
       <mat-error><planet-form-error-messages [control]="registerForm.controls.required"></planet-form-error-messages></mat-error>
