@@ -25,6 +25,7 @@ export class RegisterComponent implements OnInit {
   }
 
   registerUser(userInfo: UserData ) {
+    console.log(this.registerForm.controls);
     this.RegistrationMsg = '';
     if (userInfo.password === userInfo.repeatPassword) {
       this.checkAdminExistence().then((noAdmin) => {
@@ -73,7 +74,7 @@ export class RegisterComponent implements OnInit {
       middleName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
       login: [ '', Validators.required ],
-      email: [ '', Validators.required ],
+      Emails: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       password: [ '', Validators.required ],
       repeatPassword: [ '', Validators.required ],
       language: [ '', Validators.required ],
