@@ -88,7 +88,7 @@ export class RegisterComponent {
       firstName: [ '', Validators.required ],
       middleName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
-      login: [ '', Validators.required ],
+      login: [ '', Validators.required,  ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
       Emails: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       password: [ '', Validators.required ],
       repeatPassword: [ '', Validators.required ],
