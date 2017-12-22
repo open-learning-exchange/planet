@@ -1,1 +1,103 @@
-<h1>Manage Course {{course}}</h1>
+<h1 i18n>Manage Course</h1>
+  <form class="display-flex" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+    <mat-grid-list cols="3">
+      <mat-form-field>
+        <input matInput i18n-placeholder [(ngModel)]="courseTitle" placeholder="Course Title" formControlName="courseTitle" required>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder [(ngModel)]="languageOfInstruction" placeholder="Language of Instruction" formControlName="languageOfInstruction">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder [(ngModel)]="memberLimit" placeholder="Member Limit" type="number" formControlName="memberLimit">
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+    </mat-grid-list>
+
+    <mat-grid-list cols="2">
+      <mat-form-field>
+        <mat-select i18n-placeholder [(ngModel)]="courseLeader" placeholder="Course Leader" formControlName="courseLeader">
+          <mat-option *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder [(ngModel)]="method" placeholder="Method" formControlName="method">
+      </mat-form-field>
+    </mat-grid-list>
+
+    <mat-grid-list cols="1">
+      <mat-form-field>
+        <textarea matInput i18n-placeholder [(ngModel)]="description" placeholder="Description" formControlName="description" required></textarea>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+    </mat-grid-list>
+
+    <mat-grid-list cols="2">
+      <mat-form-field>
+        <mat-select i18n-placeholder [(ngModel)]="gradeLevel" placeholder="Grade Level" formControlName="gradeLevel">
+          <mat-option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder [(ngModel)]="subjectLevel" placeholder="Subject Level" formControlName="subjectLevel">
+          <mat-option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-list>
+
+    <mat-grid-list cols="3">
+      <mat-form-field>
+        <input matInput i18n-placeholder [(ngModel)]="startDate" placeholder="Start Date" type="date" formControlName="startDate">
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.startDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="date" i18n-placeholder [(ngModel)]="endDate" placeholder="End Date" formControlName="endDate">
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.endDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <label i18n>Frequency</label>
+        <mat-radio-group>
+          <mat-radio-button value="true" name="daysToggler" (change)="toogleWeekly(true)" i18n> Daily </mat-radio-button>
+          <mat-radio-button value="false" name="daysToggler" (change)="toogleWeekly(false)" i18n> Weekly </mat-radio-button>
+        </mat-radio-group>
+    </mat-grid-list>
+
+    <mat-grid-list cols="1">
+      <div *ngIf="!showDaysCheckBox">
+        <label i18n>Day</label>
+        <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"> {{day}} </mat-checkbox>
+      </div>
+    </mat-grid-list>
+
+    <mat-grid-list cols="3">
+      <mat-form-field>
+        <input matInput type="time" i18n-placeholder [(ngModel)]="startTime" placeholder="Start Time" formControlName="startTime">
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.startTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="time" i18n-placeholder [(ngModel)]="endTime" placeholder="End Time" formControlName="endTime">
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.endTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder [(ngModel)]="location" placeholder="Location" formControlName="location">
+      </mat-form-field>
+    </mat-grid-list>
+
+    <mat-grid-list cols="2">
+      <label i18n>Background Color</label>
+        <input type="color" i18n-placeholder [(ngModel)]="backgroundColor" placeholder="Background Color" formControlName="backgroundColor" mat-icon>
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.backgroundColor"></planet-form-error-messages></mat-error>
+      <label i18n>Foreground Color</label>
+        <input type="color" i18n-placeholder [(ngModel)]="foregroundColor" placeholder="Foreground Color" formControlName="foregroundColor" mat-icon >
+        <mat-error><planet-form-error-messages [control]="courseForm.controls.foregroundColor"></planet-form-error-messages></mat-error>
+    </mat-grid-list>
+
+    <mat-grid-list cols="2">
+      <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
+      <button type="button" mat-raised-button color="warn" (click)="cancel()" i18n>Cancel</button>
+    </mat-grid-list>
+  </form>
+
+<div>
+  <p>Form value: {{ courseForm.value | json }}</p>
+</div>
