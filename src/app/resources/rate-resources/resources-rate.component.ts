@@ -47,7 +47,6 @@ export class ResourcesRateComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => {
         this.getResource(params.get('id'));
-        this.id = params.get('id');
     }))
       .subscribe(resource => {
           this.resource = resource;
