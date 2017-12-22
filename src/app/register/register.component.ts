@@ -9,9 +9,7 @@ import { UserData } from './UserData';
 
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: [ './register.component.scss' ]
+  templateUrl: './register.component.html'
 })
 export class RegisterComponent {
 
@@ -47,7 +45,8 @@ export class RegisterComponent {
   createNonAdmin(userInfo: UserData) {
     const name = userInfo.login;
     const password = userInfo.password;
-    this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
+    this.couchService.put('_users/org.couchdb.user:' + name,
+    { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
     .then((data) => {
       this.RegistrationMsg = 'Your registration is successful';
     }, (error) => {
