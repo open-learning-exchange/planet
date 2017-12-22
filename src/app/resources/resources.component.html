@@ -17,6 +17,7 @@
       <div class="list-item-content">
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/view', element._id]">View Details</a>
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
+        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/rate', element._id]">Rate</a>
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
         <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>Delete</button>
       </div>
