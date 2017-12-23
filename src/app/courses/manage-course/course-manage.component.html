@@ -57,15 +57,15 @@
 
       <label i18n>Frequency</label>
         <mat-radio-group>
-          <mat-radio-button value="true" name="daysToggler" (change)="toogleWeekly(true)" i18n> Daily </mat-radio-button>
-          <mat-radio-button value="false" name="daysToggler" (change)="toogleWeekly(false)" i18n> Weekly </mat-radio-button>
+          <mat-radio-button value="true" name="daysToggler" (change)="toogleWeekly(true)" [checked]="this.classday.length == 7" i18n> Daily </mat-radio-button>
+          <mat-radio-button value="false" name="daysToggler" (change)="toogleWeekly(false)" [checked]="this.classday.length < 7" i18n> Weekly </mat-radio-button>
         </mat-radio-group>
     </mat-grid-list>
 
     <mat-grid-list cols="1">
-      <div *ngIf="!showDaysCheckBox">
+      <div *ngIf="!showDaysCheckBox || this.classday.length < 7">
         <label i18n>Day</label>
-        <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"> {{day}} </mat-checkbox>
+        <mat-checkbox (change)="onDayChange(day, $event.checked)" [checked]="this.classday.indexOf(day) !== -1" *ngFor="let day of days"> {{day}} </mat-checkbox>
       </div>
     </mat-grid-list>
 
