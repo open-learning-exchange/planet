@@ -37,6 +37,9 @@ export class CourseManageComponent implements OnInit, OnDestroy {
   backgroundColor: string;
   foregroundColor: string;
 
+  _rev: string;
+  _id: string;
+
   private sub: any;
 
   // needs member document to implement
@@ -68,6 +71,8 @@ export class CourseManageComponent implements OnInit, OnDestroy {
     });
     this.couchService.get('courses/' + this.id)
       .then((data) => {
+        this._id = data._id;
+        this._rev = data._rev;
         this.courseTitle = data.courseTitle;
         this.description = data.description;
         this.languageOfInstruction = data.languageOfInstruction;
@@ -93,7 +98,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
+        // ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',
@@ -155,7 +160,9 @@ export class CourseManageComponent implements OnInit, OnDestroy {
   async updateCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
     try {
-      await this.couchService.put(this.dbName, { ...courseInfo });
+      courseInfo['_id'] = this.id;
+      courseInfo['_rev'] = this._rev;
+      await this.couchService.put(this.dbName + '/' + this.id, { ...courseInfo });
       this.router.navigate([ '/courses' ]);
     } catch (err) {
       // Connect to an error display component to show user that an error has occurred
