@@ -171,7 +171,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-
+    this.router.navigate([ '/courses' ]);
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
