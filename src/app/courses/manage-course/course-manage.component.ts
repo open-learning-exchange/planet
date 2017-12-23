@@ -32,7 +32,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
   endDate: string;
   startTime: string;
   endTime: string;
-  days: any;
+  classday: any;
   location: string;
   backgroundColor: string;
   foregroundColor: string;
@@ -53,7 +53,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
-
+  days = constants.days;
 
   constructor(
     private route: ActivatedRoute,
@@ -85,7 +85,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
         this.endDate = data.endDate;
         this.startTime = data.startTime;
         this.endTime = data.endTime;
-        this.days = data.day;
+        this.classday = data.day;
         this.location = data.location;
         this.backgroundColor = data.backgroundColor;
         this.foregroundColor = data.foregroundColor;
