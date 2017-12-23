@@ -1,6 +1,7 @@
 import { switchMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
+import { UserService } from '../../shared/user.service';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -23,14 +24,20 @@ export class ResourcesRateComponent implements OnInit {
 
   ratingForm: FormGroup;
   id: string;
+  user: string;
+
+  _id: string;
+  _rev: string;
 
   constructor(
     private couchService: CouchService,
+    private userService: UserService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private router: Router,
     private fb: FormBuilder
   ) {
+    this.user = this.userService.get().name;
     this.createForm();
   }
 
@@ -45,14 +52,19 @@ export class ResourcesRateComponent implements OnInit {
   couchSrc = '';
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
-      .subscribe(resource => this.resource = resource);
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => {
+      this.getResource(params.get('id'));
+      this.id = params.get('id');
+    }))
+    .subscribe(resource => this.resource = resource);
   }
 
   getResource(id: string) {
     return this.couchService.get(this.dbName + '/' + id)
       .then((data) => {
         // openWhichFile is used to label which file to start with for HTML resources
+        this._rev = data._rev;
+        this._id = data._id;
         const filename = data.openWhichFile || Object.keys(data._attachments)[0];
         this.mediaType = data.mediaType;
         this.contentType = data._attachments[filename].content_type;
@@ -68,6 +80,7 @@ export class ResourcesRateComponent implements OnInit {
   createForm() {
     this.ratingForm = this.fb.group({
         id: '',
+        user: '',
         rating: [ '',
         Validators.compose([
             // we are using a higher order function so we  need to call the validator function
@@ -75,10 +88,12 @@ export class ResourcesRateComponent implements OnInit {
             Validators.max(100)
           ])
         ],
+        comment: '',
         gender: this.fb.array([])
     });
     this.ratingForm.patchValue({
-        id: this.id
+        id: this.id,
+        user: this.user
     });
   }
 
@@ -96,7 +111,9 @@ export class ResourcesRateComponent implements OnInit {
   async addRating(ratingInfo) {
     // ...is the rest syntax for object destructuring
     try {
-      await this.couchService.post(this.dbName, { ...ratingInfo });
+      ratingInfo['_id'] = this._id;
+      ratingInfo['_rev'] = this._rev;
+      await this.couchService.put(this.dbName + '/' + this.id, { ...ratingInfo });
       this.router.navigate([ '/resources' ]);
     } catch (err) {
       // Connect to an error display component to show user that an error has occurred
@@ -108,7 +125,7 @@ export class ResourcesRateComponent implements OnInit {
       if (!val) {
           this.ratingForm.setControl('gender', this.fb.array([ 'female' ]));
       } else {
-        this.ratingForm.setControl('gender', this.fb.array([ 'male' ]));
+          this.ratingForm.setControl('gender', this.fb.array([ 'male' ]));
       }
   }
 

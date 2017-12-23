@@ -8,6 +8,13 @@
         </mat-form-field>
     </div>
 
+    <div hidden>
+        <mat-form-field>
+            <input matInput i18n-placeholder [(ngModel)]="this.user" type="text" formControlName="user">
+            <mat-error><planet-form-error-messages [control]="ratingForm.controls.user"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+    </div>
+
     <div>
         <mat-radio-group>
             <label i18n>Gender:</label>
@@ -17,8 +24,13 @@
     </div>
 
     <div>
-        <textarea matInput i18n-placeholder placeholder="Type your rating: (0-100)" formControlName="rating" required></textarea>
+        <textarea matInput i18n-placeholder placeholder="Type your rating: (0-100)" formControlName="rating"></textarea>
         <mat-error><planet-form-error-messages [control]="ratingForm.controls.rating"></planet-form-error-messages></mat-error>
+    </div>
+
+    <div>
+        <textarea matInput i18n-placeholder placeholder="Type your comment: (optional)" formControlName="comment"></textarea>
+        <mat-error><planet-form-error-messages [control]="ratingForm.controls.comment"></planet-form-error-messages></mat-error>
     </div>
 
     <div>
