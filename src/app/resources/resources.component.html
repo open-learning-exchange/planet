@@ -35,18 +35,18 @@
           </span>
         </span>
         <div class="label">
-          <span class="small">Rating ({{ rating }})</span>
-          <span class="small">Female ({{ fRating }}%)</span>
-          <span class="small">Male ({{ mRating }}%)</span>
+          <span class="small">Rating ({{ element.timesRated }})</span>
+          <span class="small">Female ({{ element.fRating }}%)</span>
+          <span class="small">Male ({{ element.mRating }}%)</span>
         </div>
         <div class="info">
           <span>{{ rating }}</span>
           <div class="rating-bar">
             <!-- used ngStyle here to set the width of the bar dynamically -->
-            <div [ngStyle]="{ 'width': fRating + '%'}"></div>
+            <div [ngStyle]="{ 'width': element.fRating + '%'}"></div>
           </div>
           <div class="rating-bar">
-            <div [ngStyle]="{ 'width': mRating + '%'}"></div>
+            <div [ngStyle]="{ 'width': element.mRating + '%'}"></div>
           </div>
         </div>
       </div>

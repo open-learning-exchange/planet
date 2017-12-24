@@ -17,9 +17,6 @@ import {
     Validators
   } from '@angular/forms';
 
-declare var _id: string;
-declare var _rev: string;
-
 @Component({
   templateUrl: './resources-rate.component.html'
 })

@@ -10,7 +10,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'title', 'rating' ];
-  readonly dbName = 'resources';
+  readonly resourceDb = 'resources';
+  readonly ratingDb = 'rating';
+  ratingTable = [];
+  rating;
   mRating;
   fRating;
   message = '';
@@ -29,10 +32,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   constructor(private couchService: CouchService, private dialog: MatDialog) {}
 
   ngOnInit() {
-    this.getResources();
-    // Temp fields to fill in for male and female rating
-    this.fRating = Math.floor(Math.random() * 101);
-    this.mRating = 100 - this.fRating;
+    this.getRatings();
   }
 
   ngAfterViewInit() {
@@ -45,9 +45,36 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   getResources() {
     this.couchService
-      .get(this.dbName + '/_all_docs?include_docs=true')
+      .get(this.resourceDb + '/_all_docs?include_docs=true')
       .then(data => {
         this.resources.data = data.rows.map(res => res.doc);
+        this.resources.data.forEach(element => {
+          element.fRating = 0;
+          element.mRating = 0;
+          element.sum = 0;
+          element.timesRated = 0;
+          this.ratingTable.forEach(e => {
+            if (e.id === element._id) {
+              if (e['gender'][0] === 'male') {
+                element.mRating++;
+              } else {
+                element.fRating++;
+              }
+              element.timesRated++;
+              element.sum += parseInt(e['rating'], 10);
+            }
+          });
+        });
+      }, error => (this.message = 'Error'));
+  }
+
+  getRatings() {
+    this.couchService
+      .get(this.ratingDb + '/_all_docs?include_docs=true')
+      .then(data => {
+        this.ratingTable = data.rows.map(res => res.doc);
+        console.log(JSON.stringify(this.ratingTable));
+        this.getResources();
       }, error => (this.message = 'Error'));
   }
 
@@ -68,7 +95,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteResource(resource) {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
-      this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
+      this.couchService.delete(this.resourceDb + '/' + resourceId + '?rev=' + resourceRev)
         .then((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
