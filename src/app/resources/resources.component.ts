@@ -61,7 +61,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
                 element.fRating++;
               }
               element.timesRated++;
-              element.sum += parseInt(e['rating'], 10);
+              element.sum += parseFloat(e['rating']);
             }
           });
         });
