@@ -17,6 +17,9 @@ import {
     Validators
   } from '@angular/forms';
 
+declare var _id: string;
+declare var _rev: string;
+
 @Component({
   templateUrl: './resources-rate.component.html'
 })
@@ -29,11 +32,11 @@ export class ResourcesRateComponent implements OnInit {
   _id: string;
   _rev: string;
 
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
     private router: Router,
     private fb: FormBuilder
   ) {
@@ -41,15 +44,10 @@ export class ResourcesRateComponent implements OnInit {
     this.createForm();
   }
 
-  private dbName = 'rating';
+  private ratingDb = 'rating';
+  private resourceDb = 'resources';
 
   resource = {};
-  mediaType = '';
-  resourceSrc = '';
-  pdfSrc: any;
-  contentType = '';
-  urlPrefix = environment.couchAddress + this.dbName + '/';
-  couchSrc = '';
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
@@ -57,20 +55,10 @@ export class ResourcesRateComponent implements OnInit {
   }
 
   getResource(id: string) {
-    return this.couchService.get(this.dbName + '/' + id)
+    return this.couchService.get(this.resourceDb + '/' + id)
       .then((data) => {
         // openWhichFile is used to label which file to start with for HTML resources
-        this._rev = data._rev;
-        this._id = data._id;
         this.id = data._id;
-        const filename = data.openWhichFile || Object.keys(data._attachments)[0];
-        this.mediaType = data.mediaType;
-        this.contentType = data._attachments[filename].content_type;
-        this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
-        if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
-          this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-          this.couchSrc = environment.couchAddress + this.dbName + '/' + data._id + '/' + filename;
-        }
         return data;
       }, (error) => console.log('Error'));
   }
@@ -109,15 +97,31 @@ export class ResourcesRateComponent implements OnInit {
   async addRating(ratingInfo) {
     // ...is the rest syntax for object destructuring
     try {
-      ratingInfo['_id'] = this._id;
-      ratingInfo['_rev'] = this._rev;
-      await this.couchService.put(this.dbName + '/' + this.id, { ...ratingInfo });
+      this.couchService.post(this.ratingDb + '/_find', {
+        'selector': {
+            'user': this.user,
+            'id': this.id
+        },
+        'fields': [ '_id', '_rev', 'rating' ],
+        'limit': 1,
+        'skip': 0
+      })
+      .then((data) => {
+        if (data.docs.length === 0) {
+          this.couchService.post(this.ratingDb, { ...ratingInfo });
+        } else {
+          ratingInfo['_id'] = data.docs[0]._id;
+          ratingInfo['_rev'] = data.docs[0]._rev;
+          this.couchService.put(this.ratingDb + '/' + data.docs[0]._id, { ...ratingInfo });
+        }
+      }, (err) => console.log(err));
       this.router.navigate([ '/resources' ]);
     } catch (err) {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     }
   }
+
 
   isMale(val: boolean) {
       if (!val) {
