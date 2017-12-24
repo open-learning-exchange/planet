@@ -1,50 +1,61 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 import { MatRadioModule , MatFormFieldModule, MatButtonModule, MatInputModule } from '@angular/material';
 import { ValidatorService } from '../validators/validator.service';
-
 import { UserData } from './UserData';
 
-
 @Component({
-  selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: [ './register.component.scss' ]
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
 
   registerForm: FormGroup;
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   RegistrationMsg: String;
   uniqueUser: String;
-  dbName = '_users';
 
   constructor(
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private fg: FormBuilder
     ) {
-      this.createform();
+    this.createform();
   }
 
   registerUser(userInfo: UserData ) {
-    this.RegistrationMsg = '';
-    if (userInfo.password === userInfo.repeatPassword) {
-      this.checkAdminExistence().then((noAdmin) => {
-        if (noAdmin) {
-          this.createAdmin(userInfo);
-        } else {
-          this.createNonAdmin(userInfo);
+    if (userInfo.password !== userInfo.repeatPassword) {
+      this.RegistrationMsg = 'Passwords do not Match!';
+    }else {
+      this.RegistrationMsg = '';
+      this.checkifUniqueUsrName(userInfo.login).then((uniqUsr) => {
+        if (uniqUsr) {
+          this.uniqueUser = '';
+          this.checkAdminExistence().then((noAdmin) => {
+            if (noAdmin) {
+              this.createAdminUser(userInfo);
+            } else {
+              this.createNonAdminUser(userInfo);
+            }
+          });
+        }else {
+          this.uniqueUser = 'The login is already taken, please try another one.';
         }
       });
-    }else {
-      this.RegistrationMsg = 'Passwords do not Match!';
     }
   }
 
-  createNonAdmin(userInfo: UserData) {
+  checkifUniqueUsrName(login: string) {
+    return this.couchService.put('_users/org.couchdb.user:' + login, { 'name': login, 'password': ' ', 'roles': [], 'type': 'user' })
+    .then((data) => {
+      return true;
+    }, (error) =>  {
+      return false;
+    });
+  }
+
+  createNonAdminUser(userInfo: UserData) {
     const name = userInfo.login;
     const password = userInfo.password;
     this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
@@ -64,15 +75,12 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  createAdmin(userInfo: UserData) {
+  createAdminUser(userInfo: UserData) {
     this.couchService.put('_node/nonode@nohost/_config/admins/' + userInfo.login, userInfo.password).then((data) => {
       this.RegistrationMsg = 'Your registration is successful';
     }, (error) => {
       this.RegistrationMsg = 'Error, Could not register';
     });
-  }
-  isUserNameUnique(UserInfo: UserData) {
-    return this.ValidatorService.checkUnique('_users', UserInfo.login);
   }
 
   createform() {
@@ -80,7 +88,7 @@ export class RegisterComponent implements OnInit {
       firstName: [ '', Validators.required ],
       middleName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
-      login: [ '', Validators.required,  ac => this.validatorService.isUnique$(this.dbName, 'name', ac ],
+      login: [ '', Validators.required ],
       Emails: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       password: [ '', Validators.required ],
       repeatPassword: [ '', Validators.required ],
