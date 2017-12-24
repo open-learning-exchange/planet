@@ -79,6 +79,7 @@
       <mat-error><planet-form-error-messages [control]="registerForm.controls.nation"></planet-form-error-messages></mat-error>
     </mat-form-field>
   </mat-grid-list>
-  <div *ngIf="RegistrationMsg">{{RegistrationMsg}}</div>
-  <button type="submit" mat-button  color="primary" i18n>Register</button>
+  <h5 *ngIf="RegistrationMsg">{{RegistrationMsg}}</h5>
+  <h5 *ngIf="uniqueUser">{{uniqueUser}}</h5>
+  <button type="submit" mat-button [disabled]="registerForm.invalid"  color="primary" i18n>Register</button>
 </form>
