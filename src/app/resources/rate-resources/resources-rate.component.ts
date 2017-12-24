@@ -52,10 +52,7 @@ export class ResourcesRateComponent implements OnInit {
   couchSrc = '';
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => {
-      this.getResource(params.get('id'));
-      this.id = params.get('id');
-    }))
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
     .subscribe(resource => this.resource = resource);
   }
 
@@ -65,6 +62,7 @@ export class ResourcesRateComponent implements OnInit {
         // openWhichFile is used to label which file to start with for HTML resources
         this._rev = data._rev;
         this._id = data._id;
+        this.id = data._id;
         const filename = data.openWhichFile || Object.keys(data._attachments)[0];
         this.mediaType = data.mediaType;
         this.contentType = data._attachments[filename].content_type;
