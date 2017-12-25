@@ -56,12 +56,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.ratingTable.forEach(e => {
             if (e['id'] === element['_id']) {
               if (e['gender'][0] === 'male') {
-                element.mRating++;
+                element['mRating']++;
               } else {
-                element.fRating++;
+                element['fRating']++;
               }
-              element.timesRated++;
-              element.sum += parseFloat(e['rating']);
+              element['timesRated']++;
+              element['sum'] += parseFloat(e['rating']);
             }
           });
         });
