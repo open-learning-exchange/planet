@@ -55,7 +55,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           element['timesRated'] = 0;
           this.ratingTable.forEach(e => {
             if (e['id'] === element['_id']) {
-              if (e['gender'][0] === 'male') {
+              if (e['gender'] === 'male') {
                 element['mRating']++;
               } else {
                 element['fRating']++;

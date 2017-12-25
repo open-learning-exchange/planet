@@ -14,14 +14,14 @@
     </div>
     <div>
         <mat-radio-group>
-            <label i18n>Gender:</label>
-            <mat-radio-button value="true" name="genderToggler" (change)="isMale(true)" i18n>Male</mat-radio-button>
-            <mat-radio-button value="false" name="genderToggler" (change)="isMale(false)" i18n>Female</mat-radio-button>
+            <label i18n>Rating:</label>
+            <mat-radio-button value="0" name="ratingToggler" (change)="rating(0)" i18n>0</mat-radio-button>
+            <mat-radio-button value="1" name="ratingToggler" (change)="rating(1)" i18n>1</mat-radio-button>
+            <mat-radio-button value="2" name="ratingToggler" (change)="rating(2)" i18n>2</mat-radio-button>
+            <mat-radio-button value="3" name="ratingToggler" (change)="rating(3)" i18n>3</mat-radio-button>
+            <mat-radio-button value="4" name="ratingToggler" (change)="rating(4)" i18n>4</mat-radio-button>
+            <mat-radio-button value="5" name="ratingToggler" (change)="rating(5)" i18n>5</mat-radio-button>
           </mat-radio-group>
-    </div>
-    <div>
-        <textarea matInput i18n-placeholder placeholder="Type your rating: (0-5)" formControlName="rating"></textarea>
-        <mat-error><planet-form-error-messages [control]="ratingForm.controls.rating"></planet-form-error-messages></mat-error>
     </div>
     <div>
         <textarea matInput i18n-placeholder placeholder="Type your comment: (optional)" formControlName="comment"></textarea>

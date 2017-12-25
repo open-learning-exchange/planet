@@ -3,9 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 import { MatFormField, MatFormFieldControl } from '@angular/material';
@@ -24,6 +23,7 @@ export class ResourcesRateComponent implements OnInit {
   ratingForm: FormGroup;
   id: string;
   user: string;
+  gender: string;
   _id: string;
   _rev: string;
   resource = {};
@@ -36,6 +36,7 @@ export class ResourcesRateComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.user = this.userService.get().name;
+    this.gender = this.userService.get().gender;
     this.createForm();
   }
 
@@ -60,19 +61,14 @@ export class ResourcesRateComponent implements OnInit {
     this.ratingForm = this.fb.group({
         id: '',
         user: '',
-        rating: [ '',
-        Validators.compose([
-            // we are using a higher order function so we  need to call the validator function
-            Validators.min(0),
-            Validators.max(100)
-          ])
-        ],
+        rating: '',
         comment: '',
-        gender: this.fb.array([])
+        gender: ''
     });
     this.ratingForm.patchValue({
         id: this.id,
-        user: this.user
+        user: this.user,
+        gender: this.gender || 'male'
     });
   }
 
@@ -115,12 +111,27 @@ export class ResourcesRateComponent implements OnInit {
     }
   }
 
-  isMale(val: boolean) {
-      if (!val) {
-          this.ratingForm.setControl('gender', this.fb.array([ 'female' ]));
-      } else {
-          this.ratingForm.setControl('gender', this.fb.array([ 'male' ]));
-      }
+  rating(val: number) {
+    switch (val) {
+      case 0:
+        this.ratingForm.patchValue({ rating: '0' });
+        break;
+      case 1:
+        this.ratingForm.patchValue({ rating: '1' });
+        break;
+      case 2:
+        this.ratingForm.patchValue({ rating: '2' });
+        break;
+      case 3:
+        this.ratingForm.patchValue({ rating: '3' });
+        break;
+      case 4:
+        this.ratingForm.patchValue({ rating: '4' });
+        break;
+      case 5:
+        this.ratingForm.patchValue({ rating: '5' });
+        break;
+    }
   }
 
 }
