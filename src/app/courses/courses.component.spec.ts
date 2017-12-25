@@ -61,7 +61,7 @@ describe('CoursesComponent', () => {
       expect(statusElement.textContent).toBe('OLE Test 1');
     });
   });
-  
+
   // test ngAfterViewInit()
   it('should ngAfterViewInit', () => {
     component.ngAfterViewInit();

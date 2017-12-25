@@ -21,7 +21,7 @@ describe('CoursesAddComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule, FormsModule,  RouterTestingModule.withRoutes([
-        { path: 'courses', component: CoursesAddComponent}]), HttpClientModule, MaterialModule, BrowserAnimationsModule ],
+        { path: 'courses', component: CoursesAddComponent } ]), HttpClientModule, MaterialModule, BrowserAnimationsModule ],
       declarations: [ CoursesAddComponent, FormErrorMessagesComponent ],
       providers: [ CouchService, ValidatorService ],
     });
@@ -32,7 +32,7 @@ describe('CoursesAddComponent', () => {
     statusElement1 = de.nativeElement.querySelector('.km-course-valid');
     postSpy = fixture.debugElement.injector.get(CouchService);
     testCourseForm = { courseTitle: 'OLE Test 1', description: 'First test for VIs' };
-   
+
   });
 
   it('should create', () => {
@@ -58,7 +58,7 @@ describe('CoursesAddComponent', () => {
     });
   });
 
-  //test addCourse()
+  // test addCourse()
   it('should make a post request to CouchDB', () => {
     postSpy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
     component.addCourse(testCourseForm);
