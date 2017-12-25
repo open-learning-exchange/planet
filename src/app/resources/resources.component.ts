@@ -4,12 +4,22 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
-  templateUrl: './resources.component.html'
+  templateUrl: './resources.component.html',
+  styles: [ `
+    .mat-cell, .mat-header-cell {
+      flex: auto;
+      overflow: hidden;
+      word-wrap: break-word;
+    }
+    .mat-header-row {
+      min-height: 4px;
+    }
+  ` ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'title', 'rating' ];
+  displayedColumns = [ 'select', 'title', 'menu', 'rating' ];
   readonly dbName = 'resources';
   mRating;
   fRating;
