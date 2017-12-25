@@ -102,14 +102,23 @@ export class UsersComponent implements OnInit {
   }
 
   addRole(user) {
-    const tempUser = { ...user, roles: [ ] };
-    console.log(tempUser)
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser)
+    const tempUser = { ...user, roles: [ 'learner' ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   removeRole(user) {
-    const tempUser = { ...user, roles: [ 'leaner' ] };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser)
+    const tempUser = { ...user, roles: [ ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   roleSubmit(users: any[], role: string) {
