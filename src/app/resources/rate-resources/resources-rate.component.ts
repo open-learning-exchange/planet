@@ -21,14 +21,12 @@ import {
   templateUrl: './resources-rate.component.html'
 })
 export class ResourcesRateComponent implements OnInit {
-
   ratingForm: FormGroup;
   id: string;
   user: string;
-
   _id: string;
   _rev: string;
-
+  resource = {};
 
   constructor(
     private couchService: CouchService,
@@ -43,8 +41,6 @@ export class ResourcesRateComponent implements OnInit {
 
   private ratingDb = 'rating';
   private resourceDb = 'resources';
-
-  resource = {};
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
@@ -118,7 +114,6 @@ export class ResourcesRateComponent implements OnInit {
       console.log(err);
     }
   }
-
 
   isMale(val: boolean) {
       if (!val) {
