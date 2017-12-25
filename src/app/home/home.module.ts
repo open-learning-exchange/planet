@@ -7,6 +7,7 @@ import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
 import { UsersComponent } from '../users/users.component';
+import { UserProfileComponent } from '../users/user-profile/user-profile.component';
 
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
@@ -36,7 +37,8 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     UsersComponent,
     CommunityComponent,
     NationComponent,
-    ManagerDashboardComponent
+    ManagerDashboardComponent,
+    UserProfileComponent
   ]
 })
 export class HomeModule {}
