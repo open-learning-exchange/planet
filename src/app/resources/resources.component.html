@@ -36,17 +36,17 @@
         </span>
         <div class="label">
           <span class="small">Rating ({{ element.timesRated }})</span>
-          <span class="small">Female ({{ element.fRating }}%)</span>
-          <span class="small">Male ({{ element.mRating }}%)</span>
+          <span class="small">Female ({{ element.fRating / element.timesRated * 100 }}%)</span>
+          <span class="small">Male ({{ element.mRating / element.timesRated * 100 }}%)</span>
         </div>
         <div class="info">
           <span>{{ rating }}</span>
           <div class="rating-bar">
             <!-- used ngStyle here to set the width of the bar dynamically -->
-            <div [ngStyle]="{ 'width': element.fRating + '%'}"></div>
+            <div [ngStyle]="{ 'width': element.fRating / element.timesRated * 100 + '%'}"></div>
           </div>
           <div class="rating-bar">
-            <div [ngStyle]="{ 'width': element.mRating + '%'}"></div>
+            <div [ngStyle]="{ 'width': element.mRating / element.timesRated * 100 + '%'}"></div>
           </div>
         </div>
       </div>

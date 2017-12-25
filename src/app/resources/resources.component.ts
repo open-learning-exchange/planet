@@ -49,12 +49,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       .then(data => {
         this.resources.data = data.rows.map(res => res.doc);
         this.resources.data.forEach(element => {
-          element.fRating = 0;
-          element.mRating = 0;
-          element.sum = 0;
-          element.timesRated = 0;
+          element['fRating'] = 0;
+          element['mRating'] = 0;
+          element['sum'] = 0;
+          element['timesRated'] = 0;
           this.ratingTable.forEach(e => {
-            if (e.id === element._id) {
+            if (e['id'] === element['_id']) {
               if (e['gender'][0] === 'male') {
                 element.mRating++;
               } else {
