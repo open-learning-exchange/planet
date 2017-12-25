@@ -63,7 +63,7 @@
 
   <div *ngIf="!showDaysCheckBox">
     <label i18n>Day</label>
-    <mat-checkbox class="km-day" (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr">{{day}}</mat-checkbox>
+    <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr">{{day}}</mat-checkbox>
   </div>
 
   <div>

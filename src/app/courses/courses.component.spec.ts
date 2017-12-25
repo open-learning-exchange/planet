@@ -45,7 +45,7 @@ describe('CoursesComponent', () => {
 
   // test getCourses()
   it('should make a get request to couchService', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve());
+    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(coursedata1));
     component.getCourses();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -61,7 +61,7 @@ describe('CoursesComponent', () => {
       expect(statusElement.textContent).toBe('OLE Test 1');
     });
   });
-
+  
   // test ngAfterViewInit()
   it('should ngAfterViewInit', () => {
     component.ngAfterViewInit();

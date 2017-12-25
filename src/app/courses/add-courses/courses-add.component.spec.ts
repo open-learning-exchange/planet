@@ -15,24 +15,24 @@ describe('CoursesAddComponent', () => {
   let couchService;
   let testCourseForm;
   let statusElement1;
-  let statusElement3;
   let de;
   let postSpy: any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
+      imports: [ ReactiveFormsModule, FormsModule,  RouterTestingModule.withRoutes([
+        { path: 'courses', component: CoursesAddComponent}]), HttpClientModule, MaterialModule, BrowserAnimationsModule ],
       declarations: [ CoursesAddComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService, ValidatorService ]
+      providers: [ CouchService, ValidatorService ],
     });
     fixture = TestBed.createComponent(CoursesAddComponent);
     component = fixture.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
     de = fixture.debugElement;
     statusElement1 = de.nativeElement.querySelector('.km-course-valid');
-    statusElement3 = de.nativeElement.querySelector('.km-day');
     postSpy = fixture.debugElement.injector.get(CouchService);
     testCourseForm = { courseTitle: 'OLE Test 1', description: 'First test for VIs' };
+   
   });
 
   it('should create', () => {
@@ -58,17 +58,15 @@ describe('CoursesAddComponent', () => {
     });
   });
 
-
+  //test addCourse()
   it('should make a post request to CouchDB', () => {
     postSpy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
-    fixture.detectChanges();
     component.addCourse(testCourseForm);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
       expect(postSpy).toHaveBeenCalled();
     });
   });
-
 
   // test cancel()
   it('should cancel', () => {
@@ -77,11 +75,7 @@ describe('CoursesAddComponent', () => {
 
   // test onDayChange()
   it('should onDayChange', () => {
-    component.onDayChange('Monday', true);
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement3.textContent).toBe('Monday');
-    });
+      expect(component.onDayChange('Monday', true)).toBe(undefined);
   });
 
   // test toogleWeekly()
