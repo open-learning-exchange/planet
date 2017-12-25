@@ -1,20 +1,17 @@
 <h1 i18n>Submit your rating</h1>
 <form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
-
     <div hidden>
         <mat-form-field>
             <input matInput i18n-placeholder [(ngModel)]="this.id" type="text" formControlName="id">
             <mat-error><planet-form-error-messages [control]="ratingForm.controls.id"></planet-form-error-messages></mat-error>
         </mat-form-field>
     </div>
-
     <div hidden>
         <mat-form-field>
             <input matInput i18n-placeholder [(ngModel)]="this.user" type="text" formControlName="user">
             <mat-error><planet-form-error-messages [control]="ratingForm.controls.user"></planet-form-error-messages></mat-error>
         </mat-form-field>
     </div>
-
     <div>
         <mat-radio-group>
             <label i18n>Gender:</label>
@@ -22,17 +19,14 @@
             <mat-radio-button value="false" name="genderToggler" (change)="isMale(false)" i18n>Female</mat-radio-button>
           </mat-radio-group>
     </div>
-
     <div>
         <textarea matInput i18n-placeholder placeholder="Type your rating: (0-5)" formControlName="rating"></textarea>
         <mat-error><planet-form-error-messages [control]="ratingForm.controls.rating"></planet-form-error-messages></mat-error>
     </div>
-
     <div>
         <textarea matInput i18n-placeholder placeholder="Type your comment: (optional)" formControlName="comment"></textarea>
         <mat-error><planet-form-error-messages [control]="ratingForm.controls.comment"></planet-form-error-messages></mat-error>
     </div>
-
     <div>
         <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
       </div>
@@ -42,4 +36,4 @@
 <div>
     <p>Form value: {{ ratingForm.value | json }}</p>
     <p>{{ ratingForm.valid }}</p>
-  </div>
+</div>
