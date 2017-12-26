@@ -128,7 +128,7 @@ export class ResourcesAddComponent implements OnInit {
         default:
           fileObs = this.fileReaderObs(this.file, mediaType);
       }
-      fileObs.subscribe((resource) => {
+      fileObs.debug('Preparing file for upload').subscribe((resource) => {
         // Start with empty object so this.resourceForm.value does not change
         this.addResource(Object.assign({}, this.resourceForm.value, resource));
       });
@@ -140,15 +140,14 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  async addResource(resourceInfo) {
+  addResource(resourceInfo) {
     // ...is the rest syntax for object destructuring
-    try {
-      await this.couchService.post(this.dbName, { ...resourceInfo });
+    this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
-    } catch (err) {
+    }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
-    }
+    });
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
@@ -185,7 +184,7 @@ export class ResourcesAddComponent implements OnInit {
           }
         }
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
-        forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
+        forkJoin(fileNames.map(this.processZip(zip))).debug('Unpacking zip file').subscribe((filesArray) => {
           // Create object in format for multiple attachment upload to CouchDB
           const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
             // Default to text/plain if no mime type found
