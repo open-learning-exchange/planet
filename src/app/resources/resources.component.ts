@@ -3,6 +3,9 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { findDocuments } from '../shared/mangoQueries';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './resources.component.html'
@@ -29,19 +32,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   constructor(private couchService: CouchService, private dialog: MatDialog) {}
 
-  async ngOnInit() {
-    try {
-      const resourcesRes = await this.getResources();
-      const ratingsRes = await this.getRatings();
+  ngOnInit() {
+    forkJoin(this.getResources(), this.getRatings()).subscribe((results) => {
+      const resourcesRes = results[0],
+        ratingsRes = results[1];
       this.setupList(resourcesRes, ratingsRes.docs);
-    } catch (err) {
-      console.log(err);
-      // If the error was from the ratings, still setup the list
-      if (err.url.indexOf('ratings') > -1) {
-        this.setupList(resourcesRes, []);
-      }
-    }
-
+    }, (err) => console.log(err));
   }
 
   ngAfterViewInit() {
@@ -65,7 +61,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }, 0, [
       // Sort by
       { 'parentId': 'desc' }
-    ], 100));
+    ], 1000)).pipe(catchError(err => {
+      console.log(err);
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }
   }
 
   addRatingToResource = (id, index, ratings, ratingInfo) => {
@@ -112,7 +113,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
   }
@@ -121,7 +122,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete(this.resourceDb + '/' + resourceId + '?rev=' + resourceRev)
-        .then((data) => {
+        .subscribe((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');

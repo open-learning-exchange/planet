@@ -1,11 +1,13 @@
 import { switchMap } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -17,7 +19,7 @@ import { environment } from '../../../environments/environment';
     }
   ` ]
 })
-export class ResourcesViewComponent implements OnInit {
+export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private couchService: CouchService,
@@ -27,6 +29,7 @@ export class ResourcesViewComponent implements OnInit {
   ) { }
 
   private dbName = 'resources';
+  private onDestroy$ = new Subject<void>();
 
   resource = {};
   mediaType = '';
@@ -35,26 +38,34 @@ export class ResourcesViewComponent implements OnInit {
   contentType = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
+  subscription;
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
-      .subscribe(resource => this.resource = resource);
+      .debug('Getting resource id from parameters')
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(resource => this.setResource(resource), error => console.log(error), () => console.log('complete getting resource id'));
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getResource(id: string) {
-    return this.couchService.get(this.dbName + '/' + id)
-      .then((data) => {
-        // openWhichFile is used to label which file to start with for HTML resources
-        const filename = data.openWhichFile || Object.keys(data._attachments)[0];
-        this.mediaType = data.mediaType;
-        this.contentType = data._attachments[filename].content_type;
-        this.resourceSrc = this.urlPrefix + data._id + '/' + filename;
-        if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
-          this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-          this.couchSrc = environment.couchAddress + this.dbName + '/' + data._id + '/' + filename;
-        }
-        return data;
-      }, (error) => console.log('Error'));
+    return this.couchService.get('resources/' + id);
+  }
+
+  setResource(resource: any) {
+    // openWhichFile is used to label which file to start with for HTML resources
+    const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+    this.mediaType = resource.mediaType;
+    this.contentType = resource._attachments[filename].content_type;
+    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
+    if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+      this.couchSrc = environment.couchAddress + this.dbName + '/' + resource._id + '/' + filename;
+    }
   }
 
 }

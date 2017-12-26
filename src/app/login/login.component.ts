@@ -2,6 +2,9 @@ import { Component, ViewEncapsulation } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { tap, catchError } from 'rxjs/operators';
+
+import { of } from 'rxjs/observable/of';
 
 require('./login.scss');
 
@@ -24,7 +27,7 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.createMode) {
-      this.checkAdminExistence().then((noAdmin) => {
+      this.checkAdminExistence().subscribe((noAdmin) => {
         if (noAdmin) {
           this.createAdmin(this.model);
         } else {
@@ -43,7 +46,7 @@ export class LoginComponent {
   createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
     if (password === repeatPassword) {
       this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
-        .then((data) => {
+        .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.reRoute();
         }, (error) => this.message = '');
@@ -55,7 +58,7 @@ export class LoginComponent {
   createAdmin({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
     if (password === repeatPassword) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
-        .then((data) => {
+        .subscribe((data) => {
           this.reRoute();
         }, (error) => this.message = '');
     } else {
@@ -64,17 +67,19 @@ export class LoginComponent {
   }
 
   checkAdminExistence() {
-    return this.couchService.get('_users/_all_docs')
-      .then((data) => {
+    return this.couchService.get('_users/_all_docs').pipe(
+      tap((data) => {
         return true; // user can see data so there is no admin
-      }, (error) => {
-        return false; // user doesn't have permission so there is an admin
-      });
+      }),
+      catchError((error) => {
+        return of(false); // user doesn't have permission so there is an admin
+      })
+    );
   }
 
   login({ name, password }: {name: string, password: string}) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
-      .then((data) => {
+      .subscribe((data) => {
         this.reRoute();
       }, (error) => this.message = 'Username and/or password do not match');
   }
