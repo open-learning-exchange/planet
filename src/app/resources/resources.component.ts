@@ -11,7 +11,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'title', 'rating' ];
   readonly resourceDb = 'resources';
-  readonly ratingDb = 'rating';
+  readonly ratingDb = 'ratings';
   ratingTable = [];
   rating;
   mRating;

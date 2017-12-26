@@ -40,7 +40,7 @@ export class ResourcesRateComponent implements OnInit {
     this.createForm();
   }
 
-  private ratingDb = 'rating';
+  private ratingDb = 'ratings';
   private resourceDb = 'resources';
 
   ngOnInit() {
