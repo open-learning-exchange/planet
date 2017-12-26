@@ -37,7 +37,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     } catch (err) {
       console.log(err);
       // If the error was from the ratings, still setup the list
-      if(err.url.indexOf('ratings') > -1) {
+      if (err.url.indexOf('ratings') > -1) {
         this.setupList(resourcesRes, []);
       }
     }
@@ -72,10 +72,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     const rating = ratings[index];
     ratingInfo.totalRating = ratingInfo.totalRating + rating.rating;
     ratingInfo.timesRated++;
-    if(rating.user.gender) {
+    if (rating.user.gender) {
       ratingInfo.genderCount[rating.user.gender]++;
     }
-    if(ratings.length > index + 1 && ratings[index + 1].parentId === id) {
+    if (ratings.length > index + 1 && ratings[index + 1].parentId === id) {
       // Ratings are sorted by resource id,
       // so this recursion will add all ratings to resource
       return this.addRatingToResource(id, index + 1, ratings, ratingInfo);
@@ -90,7 +90,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       const ratingIndex = ratings.findIndex(rating => {
         return resource._id === rating.parentId;
       });
-      if(ratingIndex > -1) {
+      if (ratingIndex > -1) {
         const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, {
           totalRating: 0,
           timesRated: 0,
@@ -99,7 +99,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         return { ...resource, ...ratingInfo };
       }
       return resource;
-    })
+    });
 
   }
 

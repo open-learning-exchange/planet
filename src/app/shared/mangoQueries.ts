@@ -17,15 +17,15 @@ export function findAllDocuments(selector, query) {
 
 // Creates more general find query that can search with multiple selectors & fields
 export function findDocuments(selectors, fields: any = 0, sort: any = 0, limit = 1, skip = 0) {
-  let query: any = {
+  const query: any = {
     'selector': selectors,
     'limit': limit,
     'skip': skip
   };
-  if(fields !== 0) {
+  if (fields !== 0) {
     query.fields = fields;
   }
-  if(sort !== 0) {
+  if (sort !== 0) {
     query.sort = sort;
   }
   return query;
