@@ -1,38 +1,24 @@
 <h1 i18n>Submit your rating</h1>
 <form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
-    <div hidden>
-        <mat-form-field>
-            <input matInput i18n-placeholder [(ngModel)]="this.id" type="text" formControlName="id">
-            <mat-error><planet-form-error-messages [control]="ratingForm.controls.id"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-    </div>
-    <div hidden>
-        <mat-form-field>
-            <input matInput i18n-placeholder [(ngModel)]="this.user" type="text" formControlName="user">
-            <mat-error><planet-form-error-messages [control]="ratingForm.controls.user"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-radio-group>
-            <label i18n>Rating:</label>
-            <mat-radio-button value="0" name="ratingToggler" (change)="rating(0)" i18n>0</mat-radio-button>
-            <mat-radio-button value="1" name="ratingToggler" (change)="rating(1)" i18n>1</mat-radio-button>
-            <mat-radio-button value="2" name="ratingToggler" (change)="rating(2)" i18n>2</mat-radio-button>
-            <mat-radio-button value="3" name="ratingToggler" (change)="rating(3)" i18n>3</mat-radio-button>
-            <mat-radio-button value="4" name="ratingToggler" (change)="rating(4)" i18n>4</mat-radio-button>
-            <mat-radio-button value="5" name="ratingToggler" (change)="rating(5)" i18n>5</mat-radio-button>
-          </mat-radio-group>
-    </div>
-    <div>
-        <textarea matInput i18n-placeholder placeholder="Type your comment: (optional)" formControlName="comment"></textarea>
-        <mat-error><planet-form-error-messages [control]="ratingForm.controls.comment"></planet-form-error-messages></mat-error>
-    </div>
-    <div>
-        <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
-      </div>
-  </form>
+  <div>
+    <mat-radio-group>
+      <label i18n>Rating:</label>
+      <mat-radio-button value="0" name="ratingToggler" (change)="rating(0)" i18n>0</mat-radio-button>
+      <mat-radio-button value="1" name="ratingToggler" (change)="rating(1)" i18n>1</mat-radio-button>
+      <mat-radio-button value="2" name="ratingToggler" (change)="rating(2)" i18n>2</mat-radio-button>
+      <mat-radio-button value="3" name="ratingToggler" (change)="rating(3)" i18n>3</mat-radio-button>
+      <mat-radio-button value="4" name="ratingToggler" (change)="rating(4)" i18n>4</mat-radio-button>
+      <mat-radio-button value="5" name="ratingToggler" (change)="rating(5)" i18n>5</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <textarea matInput i18n-placeholder placeholder="Type your comment: (optional)" formControlName="comment"></textarea>
+    <mat-error><planet-form-error-messages [control]="ratingForm.controls.comment"></planet-form-error-messages></mat-error>
+  </div>
+  <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
+</form>
 
-  <!--FOR DEBUGGING (remove once view is final)-->
+<!--FOR DEBUGGING (remove once view is final)-->
 <div>
     <p>Form value: {{ ratingForm.value | json }}</p>
     <p>{{ ratingForm.valid }}</p>
