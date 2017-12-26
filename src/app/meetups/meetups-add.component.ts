@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 
 @Component({
@@ -20,7 +20,7 @@ import { CouchService } from '../shared/couchdb.service';
   </form>
   `
 })
-export class MeetupsAddComponent implements OnInit {
+export class MeetupsAddComponent {
   message = '';
   obj = [];
   constructor(
@@ -29,14 +29,11 @@ export class MeetupsAddComponent implements OnInit {
 
   model = { title: '', description: '' };
 
-  ngOnInit() {
-  }
-
   onSubmit(meetup) {
     if (meetup.description !== '' && meetup.title !== '') {
       console.log(meetup.description, meetup.title);
       this.couchService.post('meetups', { 'title': meetup.title, 'description': meetup.description })
-        .then((data) => {
+        .subscribe((data) => {
           this.message = 'Meetup created: ' + meetup.title;
         }, (error) => this.message = 'There was a problem creating the meetup');
     } else {

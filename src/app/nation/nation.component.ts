@@ -60,7 +60,7 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   getNationList() {
     this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
-      .then((data) => {
+      .subscribe((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
         this.nations.data = data.rows.map(nations => {
@@ -80,7 +80,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
   }
@@ -90,7 +90,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     return () => {
       const { _id: nationId, _rev: nationRev } = nation;
       this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev)
-        .then((data) => {
+        .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
           this.deleteDialog.close();
@@ -107,7 +107,7 @@ export class NationComponent implements OnInit, AfterViewInit {
         'type': 'nation'
       };
       this.couchService.post(this.dbName, formdata)
-        .then((data) => {
+        .subscribe((data) => {
           formdata[ '_id' ] = data.id;
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
@@ -133,6 +133,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
+      .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
           this.onSubmit(res);
@@ -147,6 +148,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   view(url) {
     if (url) {
       this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
+      .debug('jsonp request to external nation')
       .subscribe((res: any) => {
         this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {

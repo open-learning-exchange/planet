@@ -16,12 +16,11 @@ export class ValidatorService {
 constructor(private couchService: CouchService) {}
 
   public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
-    const isDuplicate = this.couchService
+    return this.couchService
       .post(`${db}/_find`, findOneDocument(field, value))
-      .then(data => {
-        return (data.docs.length > 0);
-      });
-    return fromPromise(isDuplicate);
+      .pipe(map(data => {
+        return data.docs.length > 0;
+      }));
   }
 
   public isUnique$(
@@ -31,15 +30,14 @@ constructor(private couchService: CouchService) {}
   ): Observable<ValidationErrors | null> {
     // calls service every .5s for input change
     return timer(500).pipe(
-      switchMap(() => {
-        return this.checkUnique$(dbName, fieldName, ac.value).pipe(map(res => {
-          if (res) {
-            return { duplicate: true };
-          }
-          return null;
-        }));
+      switchMap(() => this.checkUnique$(dbName, fieldName, ac.value)),
+      map(exists => {
+        if (exists) {
+          return { duplicate: true };
+        }
+        return null;
       })
-    );
+    ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
   }
 
 }

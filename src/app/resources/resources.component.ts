@@ -55,8 +55,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   getResources() {
     this.couchService
-      .get(this.dbName + '/_all_docs?include_docs=true')
-      .then(data => {
+      .get('resources/_all_docs?include_docs=true')
+      .subscribe(data => {
         this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
   }
@@ -70,7 +70,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().subscribe(() => {
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
   }
@@ -78,8 +78,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteResource(resource) {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
-      this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
-        .then((data) => {
+      this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
+        .subscribe((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
