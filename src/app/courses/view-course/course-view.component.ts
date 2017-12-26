@@ -20,7 +20,7 @@ export class CourseViewComponent implements OnInit, OnDestroy {
       this.id = params['id'];
     });
     this.couchService.get('courses/' + this.id)
-      .then((data) => {
+      .subscribe((data) => {
         this.course = data.courseTitle;
       });
   }

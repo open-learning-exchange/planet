@@ -70,7 +70,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
       this.id = params['id'];
     });
     this.couchService.get('courses/' + this.id)
-      .then((data) => {
+      .subscribe((data) => {
         this._id = data._id;
         this._rev = data._rev;
         this.courseTitle = data.courseTitle;
@@ -162,7 +162,8 @@ export class CourseManageComponent implements OnInit, OnDestroy {
     try {
       courseInfo['_id'] = this.id;
       courseInfo['_rev'] = this._rev;
-      await this.couchService.put(this.dbName + '/' + this.id, { ...courseInfo });
+      await this.couchService.put(this.dbName + '/' + this.id, { ...courseInfo })
+      .subscribe((data) => console.log("Data: " + JSON.stringify(data)));
       this.router.navigate([ '/courses' ]);
     } catch (err) {
       // Connect to an error display component to show user that an error has occurred

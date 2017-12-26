@@ -57,8 +57,8 @@
 
       <label i18n>Frequency</label>
         <mat-radio-group>
-          <mat-radio-button value="true" name="daysToggler" (change)="toogleWeekly(true)" [checked]="this.classday.length == 7" i18n> Daily </mat-radio-button>
-          <mat-radio-button value="false" name="daysToggler" (change)="toogleWeekly(false)" [checked]="this.classday.length < 7" i18n> Weekly </mat-radio-button>
+          <mat-radio-button value="true" name="daysToggler" (change)="toogleWeekly(true)" [checked]="this.classday !== null && this.classday.length == 7" i18n> Daily </mat-radio-button>
+          <mat-radio-button value="false" name="daysToggler" (change)="toogleWeekly(false)" [checked]="this.classday !== null && this.classday.length < 7" i18n> Weekly </mat-radio-button>
         </mat-radio-group>
     </mat-grid-list>
 

@@ -14,6 +14,7 @@ import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
+import { ValidatorService }  from '../validators/validator.service'
 
 @NgModule({
   imports: [
@@ -28,13 +29,6 @@ import { MaterialModule } from '../shared/material.module';
   declarations: [
     CoursesComponent,
     CoursesAddComponent,
-<<<<<<< HEAD
-<<<<<<< HEAD
-    CoursesRequestComponent
-  ]
-=======
-=======
->>>>>>> 13ffd8afaa9c11dde1d69b35f23a2981943349ca
     CoursesRequestComponent,
     CourseOpenComponent,
     CourseManageComponent,
@@ -42,19 +36,6 @@ import { MaterialModule } from '../shared/material.module';
     CourseCreditsComponent,
     CourseProgressComponent
   ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  providers: [ CourseValidatorService ]
->>>>>>> #248 moved to main repository
-=======
   providers: [ ValidatorService ]
->>>>>>> Changed coursevalidatorservice to validatorservice
-=======
-  providers: []
->>>>>>> Removed CourseValidator in course module
-=======
-  providers: []
->>>>>>> 13ffd8afaa9c11dde1d69b35f23a2981943349ca
 })
 export class CoursesModule {}
