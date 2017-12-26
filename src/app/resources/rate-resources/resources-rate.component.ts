@@ -2,6 +2,7 @@ import { switchMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -21,12 +22,9 @@ import {
 })
 export class ResourcesRateComponent implements OnInit {
   ratingForm: FormGroup;
-  id: string;
-  user: string;
-  gender: string;
+  addInfo: { parentId: string, user: any };
   _id: string;
   _rev: string;
-  resource = {};
 
   constructor(
     private couchService: CouchService,
@@ -35,8 +33,6 @@ export class ResourcesRateComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder
   ) {
-    this.user = this.userService.get().name;
-    this.gender = this.userService.get().gender;
     this.createForm();
   }
 
@@ -44,66 +40,45 @@ export class ResourcesRateComponent implements OnInit {
   private resourceDb = 'resources';
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
-    .subscribe(resource => this.resource = resource);
-  }
-
-  getResource(id: string) {
-    return this.couchService.get(this.resourceDb + '/' + id)
-      .then((data) => {
-        // openWhichFile is used to label which file to start with for HTML resources
-        this.id = data._id;
-        return data;
-      }, (error) => console.log('Error'));
+    this.addInfo.user = this.userService.get();
+    this.addInfo.parentId = this.route.snapshot.paramMap.get('id');
   }
 
   createForm() {
     this.ratingForm = this.fb.group({
-        id: '',
-        user: '',
-        rating: '',
-        comment: '',
-        gender: ''
-    });
-    this.ratingForm.patchValue({
-        id: this.id,
-        user: this.user,
-        gender: this.gender || 'male'
+        rating: 0,
+        comment: ''
     });
   }
 
   onSubmit() {
     if (this.ratingForm.valid) {
         this.addRating(this.ratingForm.value);
-      } else {
-        Object.keys(this.ratingForm.controls).forEach(field => {
-          const control = this.ratingForm.get(field);
+    } else {
+      Object.keys(this.ratingForm.controls).forEach(field => {
+        const control = this.ratingForm.get(field);
           control.markAsTouched({ onlySelf: true });
         });
-      }
+    }
   }
 
   async addRating(ratingInfo) {
-    // ...is the rest syntax for object destructuring
     try {
-      this.couchService.post(this.ratingDb + '/_find', {
-        'selector': {
-            'user': this.user,
-            'id': this.id
+      const result = await this.couchService.post(this.ratingDb + '/_find', findDocuments({
+          // Selector
+          'user._id': this.addInfo.user._id,
+          'parentId': this.addInfo.parentId
         },
-        'fields': [ '_id', '_rev', 'rating' ],
-        'limit': 1,
-        'skip': 0
-      })
-      .then((data) => {
-        if (data.docs.length === 0) {
-          this.couchService.post(this.ratingDb, { ...ratingInfo });
-        } else {
-          ratingInfo['_id'] = data.docs[0]._id;
-          ratingInfo['_rev'] = data.docs[0]._rev;
-          this.couchService.put(this.ratingDb + '/' + data.docs[0]._id, { ...ratingInfo });
-        }
-      }, (err) => console.log(err));
+        // Fields
+        [ '_id', '_rev' ]
+      ));
+      const uploadDoc = { ...ratingInfo, ...this.addInfo };
+      if (result.docs.length === 0) {
+        await this.couchService.post(this.ratingDb, uploadDoc);
+      } else {
+        const docInfo = result.docs[0];
+        await this.couchService.put(this.ratingDb + '/' + docInfo._id + '?rev=' + docInfo._rev, uploadDoc);
+      }
       this.router.navigate([ '/resources' ]);
     } catch (err) {
       // Connect to an error display component to show user that an error has occurred
