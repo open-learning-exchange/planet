@@ -4,6 +4,7 @@ import { UserService } from '../../shared/user.service';
 import { findDocuments } from '../../shared/mangoQueries';
 
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 import {
   FormBuilder,
@@ -48,28 +49,29 @@ export class ResourcesRateComponent implements OnInit {
     this.addRating(this.ratingForm.value);
   }
 
-  async addRating(ratingInfo) {
-    try {
-      const result = await this.couchService.post(this.ratingDb + '/_find', findDocuments({
-          // Selector
-          'user.name': this.addInfo.user.name,
-          'parentId': this.addInfo.parentId
-        },
-        // Fields
-        [ '_id', '_rev' ]
-      ));
+  getExistingRating() {
+    return this.couchService.post(this.ratingDb + '/_find', findDocuments({
+      // Selector
+      'user.name': this.addInfo.user.name,
+      'parentId': this.addInfo.parentId
+    },
+      // Fields
+      [ '_id', '_rev' ]
+    ));
+  }
+
+  addRating(ratingInfo) {
+    this.getExistingRating().pipe(switchMap((result: any) => {
       const uploadDoc = { ...ratingInfo, ...this.addInfo, type: 'resource' };
       if (result.docs.length === 0) {
-        await this.couchService.post(this.ratingDb, uploadDoc);
+        return this.couchService.post(this.ratingDb, uploadDoc);
       } else {
         const docInfo = result.docs[0];
-        await this.couchService.put(this.ratingDb + '/' + docInfo._id + '?rev=' + docInfo._rev, uploadDoc);
+        return this.couchService.put(this.ratingDb + '/' + docInfo._id + '?rev=' + docInfo._rev, uploadDoc);
       }
+    })).subscribe(res => {
       this.router.navigate([ '/resources' ]);
-    } catch (err) {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    }
+    }, err => console.log(err));
   }
 
 }

@@ -66,7 +66,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
       return of({ docs: [] });
-    }
+    }));
   }
 
   addRatingToResource = (id, index, ratings, ratingInfo) => {
