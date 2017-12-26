@@ -15,21 +15,19 @@
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Login" formControlName="login" required>
     </mat-form-field>
-  </mat-grid-list>
-  <mat-grid-list cols="3">
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
     </mat-form-field>
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
     </mat-form-field>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
-    </mat-form-field>
   </mat-grid-list>
   <mat-grid-list cols="3">
     <mat-form-field>
-      <input matInput type="date" i18n-placeholder placeholder="Birthday" formControlName="birthDate" required>
+      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="date" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" required>
     </mat-form-field>
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
@@ -37,6 +35,8 @@
         <mat-option value="female">Female</mat-option>
       </mat-select>
     </mat-form-field>
+  </mat-grid-list>
+  <mat-grid-list cols="3">
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="level" formControlName="level" required>
         <mat-option *ngFor="let level of educationLevel" [value]="level">
@@ -44,6 +44,8 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <label>File Upload:</label>
+    <input type="file" (change)="bindFile($event)" />
   </mat-grid-list>
   <div>
     <button type="submit" mat-raised-button color="primary" i18n>Update</button>

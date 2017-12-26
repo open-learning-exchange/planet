@@ -10,6 +10,8 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   templateUrl: './user-profile.component.html'
@@ -19,6 +21,7 @@ export class UserProfileComponent implements OnInit {
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
+  file: any;
 
   constructor(
     private location: Location,
@@ -58,9 +61,40 @@ export class UserProfileComponent implements OnInit {
       });
   }
 
+  // Creates an observer which reads one file then outputs its data
+  private fileReaderObs (file) {
+    const reader = new FileReader();
+    const obs = Observable.create((observer) => {
+      reader.onload = () => {
+        // FileReader result has file type at start of string, need to remove for CouchDB
+        const fileData = reader.result.split(',')[1],
+        attachments = {};
+        attachments[file.name] = {
+          content_type: file.type,
+          data: fileData
+        };
+        const memberImage = {
+          _attachments: attachments
+        };
+        observer.next(memberImage);
+        observer.complete();
+      };
+    });
+    reader.readAsDataURL(file);
+    return obs;
+  }
+
   onSubmit() {
     if (this.editForm.valid) {
-      this.updateUser(Object.assign({}, this.user, this.editForm.value));
+      let fileObs: Observable<any>;
+      if(this.file && this.file.type.indexOf('image') > -1) {
+        fileObs = this.fileReaderObs(this.file);
+      } else {
+        fileObs = of({});
+      }
+      fileObs.subscribe((memberImage) => {
+        this.updateUser(Object.assign({}, this.user, this.editForm.value, memberImage));
+      });
     } else {
         Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
@@ -82,5 +116,9 @@ export class UserProfileComponent implements OnInit {
 
   cancel() {
     this.location.back();
+  }
+
+  bindFile(event) {
+    this.file = event.target.files[0];
   }
 }
