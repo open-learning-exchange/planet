@@ -8,6 +8,6 @@ bell() {
 }
 
 bell &
-ng build --prod #--aot
+ng build --prod
 kill %1
 
