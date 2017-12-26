@@ -29,9 +29,12 @@ import { MaterialModule } from '../shared/material.module';
     CoursesComponent,
     CoursesAddComponent,
 <<<<<<< HEAD
+<<<<<<< HEAD
     CoursesRequestComponent
   ]
 =======
+=======
+>>>>>>> 13ffd8afaa9c11dde1d69b35f23a2981943349ca
     CoursesRequestComponent,
     CourseOpenComponent,
     CourseManageComponent,
@@ -39,6 +42,7 @@ import { MaterialModule } from '../shared/material.module';
     CourseCreditsComponent,
     CourseProgressComponent
   ],
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   providers: [ CourseValidatorService ]
@@ -49,5 +53,8 @@ import { MaterialModule } from '../shared/material.module';
 =======
   providers: []
 >>>>>>> Removed CourseValidator in course module
+=======
+  providers: []
+>>>>>>> 13ffd8afaa9c11dde1d69b35f23a2981943349ca
 })
 export class CoursesModule {}
