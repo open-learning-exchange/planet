@@ -55,7 +55,19 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getResource(id: string) {
+  getResource(id: string, nationName: string) {
+    if (nationName) {
+      return this.couchService.post(`nations/_find`,
+      { 'selector': { 'name': nationName },
+      'fields': [ 'name', 'nationurl' ] })
+        .pipe(switchMap(data => {
+          const nationUrl = data.docs[0].nationurl;
+          if (nationUrl) {
+            this.urlPrefix = 'http://' + nationUrl + '/' + this.dbName + '/';
+            return this.http.jsonp(this.urlPrefix + id + '?include_docs=true&callback=JSONP_CALLBACK', 'callback');
+          }
+        }));
+    }
     return this.couchService.get('resources/' + id);
   }
 

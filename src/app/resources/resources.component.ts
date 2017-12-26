@@ -67,7 +67,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         // If there is no url, return an observable of an empty array
         return of([]);
       })).subscribe((res: any) => {
-        this.resources.data = res.rows.map(res => res.doc);
+        this.resources.data = res.rows.map(r => r.doc);
       }, error => (this.message = 'Error'));
   }
 
