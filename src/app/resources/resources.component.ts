@@ -4,6 +4,8 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   templateUrl: './resources.component.html'
@@ -18,7 +20,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   message = '';
   file: any;
   deleteDialog: any;
-  nationname = '';
+  nationName = '';
 
   getRating(sum, timesRated) {
     let rating = 0;
@@ -72,28 +74,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   getResources() {
-    if (this.route.snapshot.paramMap.get('nationname') !== null) {
-      this.couchService.post(`nations/_find`,
-      { 'selector': { 'name':  this.route.snapshot.paramMap.get('nationname') },
-      'fields': [ 'name', 'nationurl' ] })
-        .then(data => {
-          this.nationname = data.docs[0].name;
-          const nationUrl = data.docs[0].nationurl;
-          if (nationUrl) {
-            this.httpclient.jsonp('http://' + nationUrl +
-              '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK',
-              'callback'
-            ).subscribe((res: any) => {
-              this.resources.data = res.rows.length > 0 ? res.rows.map(res => res.doc) : [];
-            });
-          }
-        }, error => (this.message = 'Error'));
+    this.nationName = this.route.snapshot.paramMap.get('nationname');
+    if (this.nationName !== null) {
+      this.getExternalResources();
     } else {
       this.couchService
         .get('resources/_all_docs?include_docs=true')
         .subscribe(data => {
-	  this.resources.data = data.rows.map(res => res.doc);
-	}, error => (this.message = 'Error'));
+          this.resources.data = data.rows.map(res => res.doc);
+        }, error => (this.message = 'Error'));
     }
   }
 
