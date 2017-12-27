@@ -10,27 +10,33 @@
   </mat-toolbar-row>
 
   <mat-toolbar-row class="primary-color font-size-1">
-    <mat-checkbox i18n>Click to select all</mat-checkbox>
+    <mat-checkbox (change)="$event ? masterToggle() : null"
+      [checked]="selection.hasValue() && isAllSelected()"
+      [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
+    </mat-checkbox>
     <span class="toolbar-fill"></span>
     <mat-icon>folder</mat-icon><span i18n>View Details</span>&nbsp;&nbsp;
     <mat-icon>library_add</mat-icon><span i18n>Add to Library</span>&nbsp;&nbsp;
     <mat-icon>feedback</mat-icon><span i18n>Feedback</span>&nbsp;&nbsp;
-    <mat-icon>delete_forever</mat-icon><span i18n>Delete</span> &nbsp;&nbsp;
-    <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+    <mat-icon>delete_forever</mat-icon><button mat-button (click)="deleteSelected(selection)"><span i18n>Delete</span></button>&nbsp;&nbsp;
+    <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
 
-<mat-table #table [dataSource]="resources">
+<mat-table #table [dataSource]="resources" class="example-table">
   <ng-container matColumnDef="select">
     <mat-header-cell *matHeaderCellDef>
     </mat-header-cell>
-    <mat-cell *matCellDef="let row" class="list-item-select">
-      <mat-checkbox></mat-checkbox>
+    <mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element" class="list-item-info">
+    <mat-cell *matCellDef="let element">
       <h3>{{element.title}}</h3>
       <div class="list-item-content">
         Author: {{ element.author }},Year: {{ element.year }}, Media: {{ element.Medium }}, Language: {{ element.language }}, Subject/s: {{element.subject}}, Publisher/Attribution: {{ element.Publisher }}, Link to License: {{element.linkToLicense}}, Resource: {{ element.resourceFor }}, Resource Type: {{ element.resourceType }}
@@ -39,7 +45,7 @@
   </ng-container>
   <ng-container matColumnDef="menu">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element" class="list-item-menu">
+    <mat-cell *matCellDef="let element">
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>
@@ -92,7 +98,7 @@
       </div>
     </mat-cell>
   </ng-container>
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-header-row *matHeaderRowDef="displayedColumns" class="example-header"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" class="list-item" ></mat-row>
 </mat-table>
 <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>

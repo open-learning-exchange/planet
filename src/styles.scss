@@ -46,15 +46,14 @@ body {
 
   // STYLING FOR TABLE LIST ENTRIES
   .list-item {
-    display: flex;
+    display: grid;
     grid-template-columns: auto 140px;
     grid-gap: 2em;
 
     .list-item-info {
-      display: flex;
+      display: grid;
       flex-direction: column;
       justify-content: space-around;
-      width:900px;
 
       h3 {
         text-transform: uppercase;
@@ -95,7 +94,6 @@ body {
       grid-template-columns: 1fr 1fr;
       align-content: baseline;
       grid-gap: 0.4em;
-      width: 160px;
 
       .label {
         grid-area: label;

@@ -2,18 +2,30 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-    .mat-cell, .mat-header-cell {
-      flex: auto;
-      overflow: hidden;
-      word-wrap: break-word;
-    }
-    .mat-header-row {
-      min-height: 4px;
-    }
+  .example-header {
+  display:none;
+  }
+  .list-item{
+    display:flex;
+  }
+  /* Column Widths */
+  .mat-column-select {
+    max-width: 120px;
+  }
+  .mat-column-title {
+    max-width:900px;
+  }
+  .mat-column-menu {
+    max-width: 120px;
+  }
+  .mat-column-rating {
+    max-width: 200px;
+  }
   ` ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit {
@@ -26,6 +38,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   message = '';
   file: any;
   deleteDialog: any;
+  selection = new SelectionModel(true, []);
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.resources.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+    this.selection.clear() :
+    this.resources.data.forEach(row => this.selection.select(row));
+  }
 
   getRating(sum, timesRated) {
     let rating = 0;
@@ -84,6 +110,29 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
+  }
+
+  deleteSelected() {
+    const resid = [];
+    const rev = [];
+    // this.a = this.resources.data.filter(_ => _.selected);
+    // for (var row in this.selected){
+    //   this.couchService.delete(this.selected[a].id)
+    //   .suscribe(data =>{
+    //     console.log(data)
+    //   })
+    // }
+    for (let i = 0; i < this.resources.data.length; i++) {
+      resid.push(this.resources.data[i]._id);
+      rev.push(this.resources.data[i]._rev);
+    }
+    const docs = {
+      'id': resid
+    };
+    this.couchService.delete('resources/' + resid + '?rev=' + rev)
+    .subscribe((data) => {
+      console.log(data);
+    });
   }
 
 }
