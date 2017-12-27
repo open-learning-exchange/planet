@@ -1,0 +1,50 @@
+<div *ngIf="!viewTemplate;else templateFeedback">
+  <a routerLink="/community" i18n mat-raised-button>Communities</a>
+  <a routerLink="/nation" i18n mat-raised-button>Nations</a>
+  <a routerLink="/manager/feedback" i18n mat-raised-button>Feedbacks</a>
+</div>
+<!-- Feedback Template -->
+<ng-template #templateFeedback>
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <button class="btnBack" mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+      <span i18n>Feedback List</span>
+      <span class="toolbar-fill"></span>
+      <mat-icon>search</mat-icon>
+      <mat-form-field class="font-size-1">
+        <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+      </mat-form-field>
+    </mat-toolbar-row>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>Your Current Lists of Feedback</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+      
+  <mat-table #table [dataSource]="feedback">
+    <!-- IsUrgent or Not Column -->
+    <ng-container matColumnDef="isUrgent">
+      <mat-header-cell *matHeaderCellDef i18n>Urgent</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.isUrgent === true ? "Yes" : "No"}}</mat-cell>
+    </ng-container>
+    <!-- Feedback Type Column -->
+    <ng-container matColumnDef="feedback_type">
+      <mat-header-cell *matHeaderCellDef i18n>Feedback Type</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.feedback_type}}</mat-cell>
+    </ng-container>
+    <!-- Comment Column -->
+    <ng-container matColumnDef="comment">
+      <mat-header-cell *matHeaderCellDef i18n>Comment</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.comment}}</mat-cell>
+    </ng-container>
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button type="button" mat-raised-button color="primary" (click)="reply(element)" i18n> Reply </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>  
+</ng-template>

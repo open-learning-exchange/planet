@@ -2,9 +2,13 @@
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
     <div *ngFor="let field of fields">
+      <!-- hidden field -->
+      <!-- <mat-form-field *ngIf="field.type == 'hidden'" class="full-width">
+        <input formControlName="{{field.name}}" value="{{field.value}}" type="hidden">
+      </mat-form-field> -->
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
-        <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}" readonly="{{field.readonly}}" value="{{field.value}}">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
