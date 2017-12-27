@@ -103,7 +103,7 @@ export class UsersComponent implements OnInit {
 
   addRole(user) {
     const tempUser = { ...user, roles: [ 'learner' ] };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
     }, (error) => {
@@ -113,7 +113,7 @@ export class UsersComponent implements OnInit {
 
   removeRole(user) {
     const tempUser = { ...user, roles: [ ] };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
     }, (error) => {
