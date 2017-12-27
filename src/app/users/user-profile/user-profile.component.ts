@@ -53,7 +53,7 @@ export class UserProfileComponent implements OnInit {
     this.editForm.setValue({firstName: '', middleName: '', lastName: '', login: '', email: '', language: ''
       , phoneNumber: '', birthDate: '', gender: '', level: ''});
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.userService.get().name)
-      .then((data) => {
+      .subscribe((data) => {
         this.user = data;
         this.editForm.patchValue(data);
       }, (error) => {
@@ -103,15 +103,14 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  async updateUser(userInfo) {
+  updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    try {
-      await this.couchService.put(this.dbName + '/org.couchdb.user:' + this.userService.get().name, { ...userInfo });
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.userService.get().name, { ...userInfo }).subscribe(() => {
       this.router.navigate([ '' ]);
-    } catch (err) {
+    },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
-    }
+    });
   }
 
   cancel() {
