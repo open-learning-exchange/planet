@@ -9,6 +9,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { of } from 'rxjs/observable/of';
+
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
   let fixture: ComponentFixture<CoursesAddComponent>;
@@ -60,7 +62,7 @@ describe('CoursesAddComponent', () => {
 
   // test addCourse()
   it('should make a post request to CouchDB', () => {
-    postSpy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({ ...testCourseForm }));
+    postSpy = spyOn(couchService, 'post').and.returnValue(of({ ...testCourseForm }));
     component.addCourse(testCourseForm);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
