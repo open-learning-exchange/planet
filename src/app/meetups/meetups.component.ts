@@ -32,7 +32,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   }
   getMeetups() {
     this.couchService.get('meetups/_all_docs?include_docs=true')
-      .then((data) => {
+      .subscribe((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
         this.meetups.data = data.rows.map(meetup => meetup.doc);
@@ -54,7 +54,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     return () => {
       const { _id: meetupId, _rev: meetupRev } = meetup;
       this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
-        .then((data) => {
+        .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
           this.deleteDialog.close();

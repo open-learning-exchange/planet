@@ -31,7 +31,7 @@ export class NavigationComponent {
   ];
 
   logoutClick() {
-    this.couchService.delete('_session', { withCredentials: true }).then((data: any) => {
+    this.couchService.delete('_session', { withCredentials: true }).subscribe((data: any) => {
       if (data.ok === true) {
         this.router.navigate([ '/login' ], {});
       }
