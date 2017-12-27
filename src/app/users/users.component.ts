@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 import { MatTableDataSource } from '@angular/material';
 
@@ -54,10 +55,10 @@ export class UsersComponent implements OnInit {
   }
 
   initializeData() {
-    Promise.all([
+    forkJoin([
       this.getUsers(),
       this.getAdmins()
-    ]).then((data) => {
+    ]).debug('Getting user list').subscribe((data) => {
 
       const admins = [],
         adminData = data[1];
@@ -89,7 +90,7 @@ export class UsersComponent implements OnInit {
     const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     delete tempUser.selected;
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).then((response) => {
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       user.roles.splice(index, 1);
       user._rev = response.rev;
@@ -101,7 +102,7 @@ export class UsersComponent implements OnInit {
   }
 
   roleSubmit(users: any[], role: string) {
-    Promise.all(users.reduce((promises, user, index) => {
+    forkJoin(users.reduce((observers, user, index) => {
       // Do not add role if it already exists on user
       if (user.selected && user.roles.indexOf(role) === -1) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
@@ -109,10 +110,12 @@ export class UsersComponent implements OnInit {
         // Remove selected property so it doesn't get saved to DB
         delete tempUser.selected;
         tempUser.roles.push(role);
-        promises.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
+        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
-      return promises;
-    }, [])).then((responses) => {
+      return observers;
+    }, []))
+    .debug('Adding role to users')
+    .subscribe((responses) => {
       users.map((user) => {
         if (user.selected && user.roles.indexOf(role) === -1) {
           // Add role to UI and update rev from CouchDB response

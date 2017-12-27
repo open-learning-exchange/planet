@@ -26,7 +26,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   getCourses() {
     this.couchService.get('courses/_all_docs?include_docs=true')
-      .then((data) => {
+      .subscribe((data) => {
         this.courses.data = data.rows.map((course: any) => {
           return course.doc;
         }).filter((c: any) => {
@@ -59,7 +59,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     return () => {
       const { _id: courseId, _rev: courseRev } = course;
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
-        .then((data) => {
+        .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();

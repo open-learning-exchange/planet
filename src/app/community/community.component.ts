@@ -40,7 +40,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
-      .then((data) => {
+      .subscribe((data) => {
         this.nations = data.rows.map(function(nt){
           if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
             this.selectedNation = nt.doc.nationurl;
@@ -53,7 +53,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   getCommunityList() {
      this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
-      .then((data) => {
+      .subscribe((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
         this.communities.data = data.rows.map(community => community.doc);
@@ -76,7 +76,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       const { _id: id, _rev: rev } = community;
       this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
-        .then((data) => {
+        .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
           this.deleteDialog.close();
