@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from
 import { MatRadioModule , MatFormFieldModule, MatButtonModule, MatInputModule } from '@angular/material';
 import { ValidatorService } from '../validators/validator.service';
 import { UserData } from './UserData';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   templateUrl: './register.component.html'
@@ -39,7 +40,7 @@ export class RegisterComponent {
               this.createNonAdminUser(userInfo);
             }
           });
-        }else {
+        } else {
           this.uniqueUser = 'The login is already taken, please try another one.';
         }
       });
@@ -47,12 +48,14 @@ export class RegisterComponent {
   }
 
   checkifUniqueUsrName(login: string) {
-    return this.couchService.put('_users/org.couchdb.user:' + login, { 'name': login, 'password': ' ', 'roles': [], 'type': 'user' })
-    .then((data) => {
-      return true;
-    }, (error) =>  {
-      return false;
-    });
+    return new Promise(dt =>
+      this.couchService.put('_users/org.couchdb.user:' + login, { 'name': login, 'password': ' ', 'roles': [], 'type': 'user' })
+      .subscribe((data) => {
+        dt(true);
+      }, (error) =>  {
+        dt(false);
+      })
+    );
   }
 
   createNonAdminUser(userInfo: UserData) {
@@ -60,7 +63,7 @@ export class RegisterComponent {
     const password = userInfo.password;
     this.couchService.put('_users/org.couchdb.user:' + name,
     { 'name': name, 'password': password, 'userData': userInfo, 'roles': [], 'type': 'user' })
-    .then((data) => {
+    .subscribe((data) => {
       this.RegistrationMsg = 'Your registration is successful';
     }, (error) => {
       this.RegistrationMsg = 'Error, Could not register';
@@ -68,16 +71,19 @@ export class RegisterComponent {
   }
 
   checkAdminExistence() {
-    return this.couchService.get('_users/_all_docs')
-    .then((data) => {
-      return true;
-    }, (error) => {
-      return false;
-    });
+    return new Promise(dt =>
+      this.couchService.get('_users/_all_docs')
+      .subscribe((data) => {
+        dt(true);
+      }, (error) => {
+        dt(false);
+      })
+    );
   }
 
   createAdminUser(userInfo: UserData) {
-    this.couchService.put('_node/nonode@nohost/_config/admins/' + userInfo.login, userInfo.password).then((data) => {
+    this.couchService.put('_node/nonode@nohost/_config/admins/' + userInfo.login, userInfo.password)
+    .subscribe((data) => {
       this.RegistrationMsg = 'Your registration is successful';
     }, (error) => {
       this.RegistrationMsg = 'Error, Could not register';
@@ -89,7 +95,7 @@ export class RegisterComponent {
       firstName: [ '', Validators.required ],
       middleName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
-      login: [ '', Validators.required,  ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
+      login: [ '', Validators.required ],
       Emails: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       password: [ '', Validators.required ],
       repeatPassword: [ '', Validators.required ],
