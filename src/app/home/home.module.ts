@@ -39,7 +39,6 @@ import { FeedbackComponent } from '../feedback/feedback.component';
     NationComponent,
     ManagerDashboardComponent,
     FeedbackComponent
-  ],
-  providers: [ NationValidatorService ]
+  ]
 })
 export class HomeModule {}
