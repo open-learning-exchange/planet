@@ -63,7 +63,7 @@
     </mat-grid-list>
 
     <mat-grid-list cols="1">
-      <div>
+      <div *ngIf="this.classday.length < 7 || showDaysCheckBox">
         <label i18n>Day</label>
         <mat-checkbox (change)="onDayChange(day, $event.checked)" [checked]="this.classday.indexOf(day) !== -1" *ngFor="let day of days"> {{day}} </mat-checkbox>
       </div>

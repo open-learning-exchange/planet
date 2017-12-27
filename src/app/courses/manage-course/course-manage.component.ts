@@ -89,6 +89,7 @@ export class CourseManageComponent implements OnInit, OnDestroy {
         this.location = data.location;
         this.backgroundColor = data.backgroundColor;
         this.foregroundColor = data.foregroundColor;
+        this.courseForm.setControl('day', this.fb.array(this.classday));
       });
   }
 
@@ -196,8 +197,11 @@ export class CourseManageComponent implements OnInit, OnDestroy {
     if (!val) {
       // add all days to the array if the course is daily
       this.courseForm.setControl('day', this.fb.array(this.classday));
+      this.showDaysCheckBox = true;
     } else {
       this.courseForm.setControl('day', this.fb.array(this.days));
+      this.showDaysCheckBox = false;
+
     }
     
   }
