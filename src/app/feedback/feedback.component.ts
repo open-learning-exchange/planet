@@ -42,7 +42,7 @@ export class FeedbackComponent implements OnInit {
     this.message = '';
     (<any>Object).assign(this.feedback, post);
     this.couchService.post('feedback/', this.feedback)
-    .then((data) => {
+    .subscribe((data) => {
       this.message = 'Thank you, your feedback is submitted!';
     },
     (error) => {
