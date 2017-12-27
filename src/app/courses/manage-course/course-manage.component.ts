@@ -193,12 +193,13 @@ export class CourseManageComponent implements OnInit, OnDestroy {
   // remove old values from array on radio button change
   toogleWeekly(val: boolean) {
     // empty the array
-    this.courseForm.setControl('day', this.fb.array([]));
-    if (val) {
+    if (!val) {
       // add all days to the array if the course is daily
+      this.courseForm.setControl('day', this.fb.array(this.classday));
+    } else {
       this.courseForm.setControl('day', this.fb.array(this.days));
     }
-    this.showDaysCheckBox = val;
+    
   }
 
   ngOnDestroy() {
