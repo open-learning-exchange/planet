@@ -9,22 +9,26 @@ export class FilterService {
 
     constructor(private couchService: CouchService) { }
 
-    filter(data: any, filters: string[]): any {
+    filter(filters: string[]): any {
         this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
-            .subscribe((data) => {
-                this.resources = data.rows.map((resource: any) => {
+            .subscribe((datas) => {
+                this.resources = datas.rows.map((resource: any) => {
                     let resc: string;
-                    for(let filter of filters) {
-                        if(!resource.doc[filter]) resc += resource.doc[filter];
+                    for (const filter of filters) {
+                        if (!resource.doc[filter]) {
+                            resc += resource.doc[filter];
+                        }
                     }
                     return resc;
                   });
-                  return (data: any, filter: string) : boolean => {
-                      for(let rec of this.resources) {
-                        if(rec.indexOf(filter) >= 0) return true;
+                return (data: any, filter: string): boolean => {
+                      for (const rec of this.resources) {
+                        if (rec.indexOf(filter) >= 0) {
+                            return true;
+                        }
                       }
                       return false;
-                  }
+                  };
             });
 
     }
