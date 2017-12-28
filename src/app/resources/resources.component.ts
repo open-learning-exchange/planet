@@ -99,7 +99,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       okClick = this.deleteResources(this.selection.selected),
       displayName = '';
     if (this.selection.selected.length === 1) {
-      let resource = this.selection.selected[0];
+      const resource = this.selection.selected[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
       displayName = resource.title;
@@ -107,7 +107,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.openDeleteDialog(okClick, amount, displayName);
   }
 
-  openDeleteDialog(okClick, amount, displayName ='') {
+  openDeleteDialog(okClick, amount, displayName = '') {
     this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick,
@@ -136,7 +136,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteResources(resources) {
     return () => {
       const deleteArray = resources.map((resource) => {
-        return { _id: resource._id, _rev: resource._rev, _deleted: true }
+        return { _id: resource._id, _rev: resource._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
@@ -144,7 +144,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.selection.clear();
           this.deleteDialog.close();
         }, (error) => this.message = 'There was a problem deleting these resources.');
-    }
+    };
   }
 
   goBack() {
