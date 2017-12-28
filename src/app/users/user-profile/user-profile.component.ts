@@ -43,7 +43,7 @@ export class UserProfileComponent implements OnInit {
       firstName: [ '', Validators.required ],
       middleName: '',
       lastName: [ '', Validators.required ],
-      login: [ {value: '', disabled: true}, Validators.required ],
+      login: [ { value: '', disabled: true }, Validators.required ],
       email: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
@@ -88,7 +88,7 @@ export class UserProfileComponent implements OnInit {
   onSubmit() {
     if (this.editForm.valid) {
       let fileObs: Observable<any>;
-      if(this.file && this.file.type.indexOf('image') > -1) {
+      if (this.file && this.file.type.indexOf('image') > -1) {
         fileObs = this.fileReaderObs(this.file);
       } else {
         fileObs = of({});
