@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
 
@@ -61,11 +62,35 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(community) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
       data: {
         okClick: this.deleteCommunity(community),
         type: 'community',
         displayName: community.name
+      }
+    });
+  }
+
+  acceptClick(community) {
+    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+      data: {
+        
+      }
+    });
+  }
+
+  rejectClick(community) {
+    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+      data: {
+        
+      }
+    });
+  }
+
+  unlinkClick(community) {
+    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+      data: {
+        
       }
     });
   }
