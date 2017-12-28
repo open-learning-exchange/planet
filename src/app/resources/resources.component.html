@@ -1,6 +1,6 @@
 <mat-toolbar>
   <mat-toolbar-row>
-    <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
     <span i18n>Library</span>
     <span class="toolbar-fill"></span>
     <mat-icon>search</mat-icon>
@@ -15,10 +15,10 @@
       [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
     </mat-checkbox>
     <span class="toolbar-fill"></span>
-    <mat-icon>folder</mat-icon><span i18n>View Details</span>&nbsp;&nbsp;
-    <mat-icon>library_add</mat-icon><span i18n>Add to Library</span>&nbsp;&nbsp;
-    <mat-icon>feedback</mat-icon><span i18n>Feedback</span>&nbsp;&nbsp;
-    <mat-icon>delete_forever</mat-icon><button mat-button (click)="deleteSelected(selection)"><span i18n>Delete</span></button>&nbsp;&nbsp;
+    <mat-icon>folder</mat-icon>&nbsp;<span i18n>View Details</span>&nbsp;&nbsp;
+    <mat-icon>library_add</mat-icon>&nbsp;<span i18n>Add to Library</span>&nbsp;&nbsp;
+    <mat-icon>feedback</mat-icon><span i18n>Feedback</span>
+    <button mat-button (click)="deleteSelected(selection)"><mat-icon>delete_forever</mat-icon><span i18n>Delete</span></button>&nbsp;&nbsp;
     <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>

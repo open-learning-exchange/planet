@@ -3,6 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
+import { Location } from '@angular/common';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -62,7 +63,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return (rating * 20) + '%';
   }
 
-  constructor(private couchService: CouchService, private dialog: MatDialog) {}
+  constructor(
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private location: Location
+  ) {}
 
   ngOnInit() {
     this.getResources();
@@ -113,26 +118,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelected() {
-    const resid = [];
-    const rev = [];
-    // this.a = this.resources.data.filter(_ => _.selected);
-    // for (var row in this.selected){
-    //   this.couchService.delete(this.selected[a].id)
-    //   .suscribe(data =>{
-    //     console.log(data)
-    //   })
-    // }
-    for (let i = 0; i < this.resources.data.length; i++) {
-      resid.push(this.resources.data[i]._id);
-      rev.push(this.resources.data[i]._rev);
+    const DeleteAll = confirm('Are you sure you want to delete?');
+    if (DeleteAll) {
+      for (let i = 0; i < this.selection.selected.length; i ++) {
+      const id = this.selection.selected[i]._id;
+      const rev_id = this.selection.selected[i]._rev;
+      this.couchService.delete('resources/' + id + '?rev=' + rev_id)
+     .subscribe((data) => {
+        this.getResources();
+        this.selection.clear();
+        }, (error) => this.message = 'There was a problem deleting this resource.');
+      }
     }
-    const docs = {
-      'id': resid
-    };
-    this.couchService.delete('resources/' + resid + '?rev=' + rev)
-    .subscribe((data) => {
-      console.log(data);
-    });
+  }
+
+  goBack() {
+    this.location.back();
   }
 
 }
