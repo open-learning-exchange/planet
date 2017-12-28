@@ -8,28 +8,19 @@ import { Location } from '@angular/common';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-  .list-item{
-    display:flex;
-  }
-  /* Column Widths */
-  .mat-column-select {
-    max-width: 120px;
-  }
-  .mat-column-title {
-    max-width:900px;
-  }
-  .mat-column-menu {
-    max-width: 120px;
-  }
-  .mat-column-rating {
-    max-width: 200px;
-  }
+    /* Column Widths */
+    .mat-column-select {
+      max-width: 120px;
+    }
+    .mat-column-rating {
+      max-width: 225px;
+    }
   ` ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'select', 'title', 'menu', 'rating' ];
+  displayedColumns = [ 'select', 'info', 'rating' ];
   readonly dbName = 'resources';
   mRating;
   fRating;
@@ -73,9 +64,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     let rating = 0;
     if (sum > 0 && timesRated > 0) {
       rating = sum / timesRated;
+      // Multiply by 20 to convert rating out of 5 to percent for width
+      return (rating * 20) + '%';
     }
-    // Multiply by 20 to convert rating out of 5 to percent for width
-    return (rating * 20) + '%';
+    return 'N/A';
   }
 
   applyResFilter(filterResValue: string) {

@@ -49,102 +49,101 @@ body {
     visibility: hidden;
   }
 
-  // STYLING FOR TABLE LIST ENTRIES
-  .list-item {
+  // Style which places menu icon in upper right corner of table cell
+  .list-content-menu {
     display: grid;
-    grid-template-columns: auto 140px;
-    grid-gap: 2em;
+    grid-template-areas:
+      'hd mn'
+      'cn mn';
+    grid-template-columns: auto 50px;
 
-    .list-item-info {
-      display: grid;
-      flex-direction: column;
-      justify-content: space-around;
-
-      h3 {
-        text-transform: uppercase;
-        font-size: 1.25rem;
-      }
-
-      .list-item-content {
-        margin-bottom: 0.5em;
-      }
+    .header {
+      grid-area: hd;
+      margin: 8px 0;
     }
 
-    // the colored stars are placed on top of the uncolored ones
-    // the width is set dynamically with JS
+    .content {
+      grid-area: cn;
+    }
+
+    .menu {
+      grid-area: mn;
+    }
+
+  }
+
+  // the colored stars are placed on top of the uncolored ones
+  // the width is set dynamically with JS
+  .stars {
+    display: inline-block;
+    color: $grey;
+    position: relative;
+    // Each mat-icon star is 24x24.  Will need to change if star sizes change
+    width: 120px;
+
+    span {
+      color: $accent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      * {
+        display:inline;
+      }
+    }
+  }
+
+  .list-item-rating {
+    display: grid;
+    grid-template-areas:
+      'stats-t rating'
+      'stats-f rating'
+      'stats-m stars';
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    align-items: center;
+
     .stars {
-      display: inline-block;
-      font-size: 1.5rem;
-      color: $grey;
-      position: relative;
       grid-area: stars;
-      // Each mat-icon star is 24x24.  Will need to change if star sizes change
-      width: 120px;
-
-      span {
-        color: $accent;
-        position: absolute;
-        top: 0;
-        left: 0;
-        overflow: hidden;
-        * {
-          display:inline;
-        }
-      }
+      justify-self: end;
     }
 
-    .list-item-rating {
-      display: grid;
-      grid-template-areas: 'stars stars' 'label info';
-      grid-template-columns: 1fr 1fr;
-      align-content: baseline;
-      grid-gap: 0.4em;
+    .stats-total {
+      grid-area: stats-t;
+    }
 
-      .label {
-        grid-area: label;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+    .stats-male {
+      grid-area: stats-m;
+    }
 
-        .small:first-of-type {
-          // the rating box's height is 32px, margin-bottom is .3em and font-size .5rem
-          // i used those numbers to center the ratings text
-          margin: calc(16px - 0.5rem) 0;
-        }
-      }
+    .stats-female {
+      grid-area: stats-f;
+    }
 
-      .info {
-        grid-area: info;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+    .rating {
+      grid-area: rating;
+      text-align: right;
 
-        span {
-          // for centering the number
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-weight: bold;
-          // creating the box around it
-          width: 67px;
-          height: 32px;
-          background-color: $accent;
-          border-radius: 0.3em;
-        }
-      }
-
-      // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
-      .rating-bar {
+      .rating-number {
+        font-size: 2rem;
         display: block;
-        height: 10px;
-        border: 1px solid $accent;
-        margin-top: 0.5em;
-
-        div {
-          background-color: $accent;
-          height: 100%;
-        }
       }
+
+    }
+
+
+  }
+
+  // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
+  .rating-bar {
+    display: block;
+    height: 10px;
+    border: 1px solid $accent;
+    margin-top: 0.5em;
+
+    div {
+      background-color: $accent;
+      height: 100%;
     }
   }
 
