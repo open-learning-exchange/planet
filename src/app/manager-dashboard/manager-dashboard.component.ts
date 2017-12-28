@@ -5,10 +5,9 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/m
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { Location } from '@angular/common';
 import { Validators } from '@angular/forms';
-import { ValidatorService } from '../validators/validator.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
-import { HttpClient } from '@angular/common/http';
+import { UserService } from '../shared/user.service';
 
 
 @Component({
@@ -22,9 +21,8 @@ export class ManagerDashboardComponent implements OnInit, AfterViewInit {
     private router: Router,
     private dialog: MatDialog,
     private location: Location,
-    private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
-    private http: HttpClient
+    private userService: UserService
   ) { }
 
   currentUrl = this.router.url;
@@ -33,7 +31,7 @@ export class ManagerDashboardComponent implements OnInit, AfterViewInit {
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
-  displayedColumns = [ 'isUrgent', 'feedback_type', 'comment', 'action' ];
+  displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngOnInit() {
@@ -96,28 +94,42 @@ export class ManagerDashboardComponent implements OnInit, AfterViewInit {
   }
 
   reply(feedback) {
-    console.log(feedback);
     const title = 'Reply';
     const type = 'feedback';
     const fields =
       [
-        { 'label': '', 'type': 'hidden', 'name': 'nationUrl', 'value': 'ht.np' },
-        { 'label': 'To', 'type': 'textbox', 'name': 'replyTo', 'readonly': true, 'value': 'nirojdyola@gmail.com' },
-        { 'label': 'Reply', 'type': 'textarea', 'name': 'reply_message', 'placeholder': 'Leave a comment', 'required': true }
+        { 'label': 'To', 'type': 'textbox', 'name': 'replyTo', 'readonly': true, 'value': 'nirojdyola@gmail.com', 'required': false },
+        { 'label': 'Message', 'type': 'textarea', 'name': 'message', 'placeholder': 'Leave a comment', 'required': true }
       ];
     const validation = {
-      nationUrl: [ '', Validators.required ],
-      replyTo: [ '', Validators.required ],
-      reply_message: [ '', Validators.required ]
+      id: [ feedback._id ],
+      replyTo: [ feedback.owner ],
+      message: [ '', Validators.required ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
-          // this.onSubmit(res);
+          this.onSubmit(res);
         }
       });
+  }
+
+  onSubmit(feedback) {
+    const messages = [];
+    this.couchService.get(this.dbName + '/' + feedback.id)
+      .subscribe((data) => {
+        data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.userService.get().name });
+        this.couchService.put(this.dbName + '/' + data._id, {  ...data })
+        .subscribe(() => {
+          this.message = 'Reply success.';
+        }, (error) => this.message = '');
+      }, (error) => this.message = 'There is a problem of getting data.');
+  }
+
+  openFeedback(feedback: any) {
+    feedback.selected = feedback.selected ? false : true;
   }
 
 }

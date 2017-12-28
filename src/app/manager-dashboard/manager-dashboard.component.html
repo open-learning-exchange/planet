@@ -15,27 +15,53 @@
         <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
       </mat-form-field>
     </mat-toolbar-row>
+    {{message}}
     <mat-toolbar-row class="primary-color font-size-1">
       <span i18n>Your Current Lists of Feedback</span>
     </mat-toolbar-row>
   </mat-toolbar>
       
   <mat-table #table [dataSource]="feedback">
-    <!-- IsUrgent or Not Column -->
-    <ng-container matColumnDef="isUrgent">
-      <mat-header-cell *matHeaderCellDef i18n>Urgent</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.isUrgent === true ? "Yes" : "No"}}</mat-cell>
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+        <mat-header-cell *matHeaderCellDef i18n>Type</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.type}}</mat-cell>
+      </ng-container>
+    <!-- Priorty Column -->
+    <ng-container matColumnDef="priority">
+      <mat-header-cell *matHeaderCellDef i18n>Priority</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.priority === true ? "Yes" : "No"}}</mat-cell>
     </ng-container>
-    <!-- Feedback Type Column -->
-    <ng-container matColumnDef="feedback_type">
-      <mat-header-cell *matHeaderCellDef i18n>Feedback Type</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.feedback_type}}</mat-cell>
+    <!-- Owner Column -->
+    <ng-container matColumnDef="owner">
+      <mat-header-cell *matHeaderCellDef i18n>Owner</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.owner}}</mat-cell>
     </ng-container>
-    <!-- Comment Column -->
-    <ng-container matColumnDef="comment">
-      <mat-header-cell *matHeaderCellDef i18n>Comment</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.comment}}</mat-cell>
+    <!-- Title Column -->
+    <ng-container matColumnDef="title">
+      <mat-header-cell *matHeaderCellDef i18n>Title</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
     </ng-container>
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+    </ng-container>
+    <!-- OpenTime Column -->
+    <ng-container matColumnDef="openTime">
+      <mat-header-cell *matHeaderCellDef i18n>Open Time</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.openTime}}</mat-cell>
+    </ng-container>
+    <!-- CloseTime Column -->
+    <ng-container matColumnDef="closeTime">
+      <mat-header-cell *matHeaderCellDef i18n>Close Time</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.closeTime}}</mat-cell>
+    </ng-container>
+    <!-- Source Column -->
+    <ng-container matColumnDef="source">
+        <mat-header-cell *matHeaderCellDef i18n>Source</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
+      </ng-container>
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
@@ -44,7 +70,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:row.selected}" (click)="openFeedback(row)"></mat-row>
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>  
 </ng-template>
