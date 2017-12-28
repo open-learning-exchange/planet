@@ -15,10 +15,18 @@
       [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
     </mat-checkbox>
     <span class="toolbar-fill"></span>
-    <mat-icon>folder</mat-icon>&nbsp;<span i18n>View Details</span>&nbsp;&nbsp;
-    <mat-icon>library_add</mat-icon>&nbsp;<span i18n>Add to Library</span>&nbsp;&nbsp;
-    <mat-icon>feedback</mat-icon><span i18n>Feedback</span>
-    <button mat-button (click)="deleteSelected(selection)"><mat-icon>delete_forever</mat-icon><span i18n>Delete</span></button>&nbsp;&nbsp;
+    <button mat-button>
+      <mat-icon aria-hidden="true" class="margin-lr-3">folder</mat-icon><span i18n>View Details</span>
+    </button>
+    <button mat-button>
+      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+    </button>
+    <button mat-button>
+      <mat-icon aria-hidden="true" class="margin-lr-3">feedback</mat-icon><span i18n>Feedback</span>
+    </button>
+    <button mat-button (click)="deleteSelected(selection)" [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+    </button>
     <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>

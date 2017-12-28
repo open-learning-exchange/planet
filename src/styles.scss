@@ -44,9 +44,24 @@ body {
     margin: 0 5px;
   }
 
+  // Creates helper classes for smaller and larger horizontal spacing
+  @mixin margin-lr {
+    @for $i from 1 through 10 {
+      .margin-lr-#{$i} {
+        margin: 0 #{$i}px;
+      }
+    }
+  }
+
+  @include margin-lr;
+
   .hide {
     display: none;
     visibility: hidden;
+  }
+
+  .button-icon-text mat-icon {
+    margin: 0 3px;
   }
 
   // Style which places menu icon in upper right corner of table cell
