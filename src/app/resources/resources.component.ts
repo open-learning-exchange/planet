@@ -40,6 +40,24 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   file: any;
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+
+  constructor(
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private location: Location
+  ) {}
+
+  ngOnInit() {
+    this.getResources();
+    // Temp fields to fill in for male and female rating
+    this.fRating = Math.floor(Math.random() * 101);
+    this.mRating = 100 - this.fRating;
+  }
+
+  ngAfterViewInit() {
+    this.resources.paginator = this.paginator;
+  }
+
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -61,23 +79,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
     // Multiply by 20 to convert rating out of 5 to percent for width
     return (rating * 20) + '%';
-  }
-
-  constructor(
-    private couchService: CouchService,
-    private dialog: MatDialog,
-    private location: Location
-  ) {}
-
-  ngOnInit() {
-    this.getResources();
-    // Temp fields to fill in for male and female rating
-    this.fRating = Math.floor(Math.random() * 101);
-    this.mRating = 100 - this.fRating;
-  }
-
-  ngAfterViewInit() {
-    this.resources.paginator = this.paginator;
   }
 
   applyResFilter(filterResValue: string) {
