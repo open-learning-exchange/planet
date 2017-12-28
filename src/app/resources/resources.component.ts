@@ -8,9 +8,24 @@ import { Location } from '@angular/common';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
+    /* The background & space-container styles are used to approximate the design.  Should be replaced or changed before merging */
+    .background {
+      /* Hard coded $primary for end of gradient.  Should use variable if we decide on this background */
+      background: linear-gradient(to bottom, #000000, #2196f3);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+    .space-container {
+      margin: 64px 30px;
+      background: none;
+    }
     /* Column Widths */
     .mat-column-select {
-      max-width: 120px;
+      max-width: 44px;
     }
     .mat-column-rating {
       max-width: 225px;

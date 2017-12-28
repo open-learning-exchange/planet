@@ -1,3 +1,6 @@
+<!--Used to approximate design.  Should be replaced before merging"-->
+<div class="background"></div>
+
 <mat-toolbar>
   <mat-toolbar-row>
     <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
@@ -8,92 +11,94 @@
       <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
     </mat-form-field>
   </mat-toolbar-row>
-
-  <mat-toolbar-row class="primary-color font-size-1">
-    <mat-checkbox (change)="$event ? masterToggle() : null"
-      [checked]="selection.hasValue() && isAllSelected()"
-      [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
-    </mat-checkbox>
-    <span class="toolbar-fill"></span>
-    <button mat-button>
-      <mat-icon aria-hidden="true" class="margin-lr-3">folder</mat-icon><span i18n>View Details</span>
-    </button>
-    <button mat-button>
-      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
-    </button>
-    <button mat-button>
-      <mat-icon aria-hidden="true" class="margin-lr-3">feedback</mat-icon><span i18n>Feedback</span>
-    </button>
-    <button mat-button (click)="deleteSelected(selection)" [disabled]="!selection.selected.length">
-      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-    </button>
-    <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
-  </mat-toolbar-row>
 </mat-toolbar>
 
-<mat-table #table [dataSource]="resources">
-  <ng-container matColumnDef="select">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-          (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
-        </mat-checkbox>
-    </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="info">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element" class="list-content-menu">
-      <h3 class="header">{{element.title}}</h3>
-      <div class="content">
-        Author: {{ element.author }},Year: {{ element.year }}, Media: {{ element.Medium }}, Language: {{ element.language }}, Subject/s: {{element.subject}}, Publisher/Attribution: {{ element.Publisher }}, Link to License: {{element.linkToLicense}}, Resource: {{ element.resourceFor }}, Resource Type: {{ element.resourceType }}
-      </div>
-      <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-        <mat-icon>more_vert</mat-icon>
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <mat-checkbox (change)="$event ? masterToggle() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
+      </mat-checkbox>
+      <span class="toolbar-fill"></span>
+      <button mat-button>
+        <mat-icon aria-hidden="true" class="margin-lr-3">folder</mat-icon><span i18n>View Details</span>
       </button>
-      <mat-menu #resourceMenu="matMenu">
-        <a mat-menu-item [routerLink]="['/resources/view', element._id]">
-          <mat-icon>folder</mat-icon>
-          <span i18n>View Details</span>
-        </a>
-        <a mat-menu-item [routerLink]="['/resources/wip']">
-          <mat-icon>library_add</mat-icon>
-          <span i18n>Add to Library</span>
-        </a>
-        <a mat-menu-item [routerLink]="['/resources/wip']">
-          <mat-icon>feedback</mat-icon>
-          <span i18n>Feedback</span>
-        </a>
-        <button mat-menu-item (click)="deleteClick(element)">
-          <mat-icon>delete_forever</mat-icon>
-          <span i18n>Delete</span>
+      <button mat-button>
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+      </button>
+      <button mat-button>
+        <mat-icon aria-hidden="true" class="margin-lr-3">feedback</mat-icon><span i18n>Feedback</span>
+      </button>
+      <button mat-button (click)="deleteSelected(selection)" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+      </button>
+      <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-table #table [dataSource]="resources">
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="info">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let element" class="list-content-menu">
+        <h3 class="header">{{element.title}}</h3>
+        <div class="content">{{ element.description }}</div>
+        <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+          <mat-icon>more_vert</mat-icon>
         </button>
-      </mat-menu>
-    </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="rating">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element">
-      <div class="list-item-rating">
-        <span class="stars">
-          <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-          <!-- used simple arithmetic to get 20 and converted into % -->
-          <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
+        <mat-menu #resourceMenu="matMenu">
+          <a mat-menu-item [routerLink]="['/resources/view', element._id]">
+            <mat-icon>folder</mat-icon>
+            <span i18n>View Details</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/resources/wip']">
+            <mat-icon>library_add</mat-icon>
+            <span i18n>Add to Library</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/resources/wip']">
+            <mat-icon>feedback</mat-icon>
+            <span i18n>Feedback</span>
+          </a>
+          <button mat-menu-item (click)="deleteClick(element)">
+            <mat-icon>delete_forever</mat-icon>
+            <span i18n>Delete</span>
+          </button>
+        </mat-menu>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="rating">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <div class="list-item-rating">
+          <span class="stars">
             <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            <!-- used simple arithmetic to get 20 and converted into % -->
+            <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
+              <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            </span>
           </span>
-        </span>
-        <div class="stats stats-total">{{ element.timesRated }} Total</div>
-        <div class="stats stats-female">{{ fRating }}% Female</div>
-        <div class="stats stats-male">{{ mRating }}% Male</div>
-        <div class="rating">
-          <span class="rating-number">{{ element.sum / element.timesRated }}</span>
-          <span>RATING</span>
+          <div class="stats stats-total">{{ element.timesRated }} Total</div>
+          <div class="stats stats-female">{{ fRating }}% Female</div>
+          <div class="stats stats-male">{{ mRating }}% Male</div>
+          <div class="rating">
+            <span class="rating-number">{{ element.sum / element.timesRated }}</span>
+            <span>RATING</span>
+          </div>
         </div>
-      </div>
-    </mat-cell>
-  </ng-container>
-  <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
-<mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+</div>
 
