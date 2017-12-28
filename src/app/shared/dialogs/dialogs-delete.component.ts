@@ -18,7 +18,12 @@ export class DialogsDeleteComponent {
 
   message = '';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    // Support dialogs created before the amount field was added
+    if(!this.data.amount) {
+      this.data.amount = 'single';
+    }
+  }
 
   ok() {
     this.data.okClick();
