@@ -64,10 +64,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     let rating = 0;
     if (sum > 0 && timesRated > 0) {
       rating = sum / timesRated;
-      // Multiply by 20 to convert rating out of 5 to percent for width
-      return (rating * 20) + '%';
     }
-    return 'N/A';
+    // Multiply by 20 to convert rating out of 5 to percent for width
+    return (rating * 20) + '%';
   }
 
   applyResFilter(filterResValue: string) {
