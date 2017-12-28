@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
-import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
+import { DialogsEditComponent } from '../shared/dialogs/dialogs-edit.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
 
@@ -26,6 +26,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'action'
   ];
   deleteDialog: any;
+  editDialog: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -62,7 +63,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(community) {
-    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick: this.deleteCommunity(community),
         type: 'community',
@@ -72,25 +73,31 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   acceptClick(community) {
-    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+    this.editDialog = this.dialog.open(DialogsEditComponent, {
       data: {
-        
+        okClick: this.acceptCommunity(community),
+        type: 'community',
+        displayName: community.name
       }
     });
   }
 
   rejectClick(community) {
-    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+    this.editDialog = this.dialog.open(DialogsEditComponent, {
       data: {
-        
+        okClick: this.rejectCommunity(community),
+        type: 'community',
+        displayName: community.name
       }
     });
   }
 
   unlinkClick(community) {
-    this.deleteDialog = this.dialog.open(DialogsFormComponent, {
+    this.editDialog = this.dialog.open(DialogsEditComponent, {
       data: {
-        
+        okClick: this.unlinkCommunity(community),
+        type: 'community',
+        displayName: community.name
       }
     });
   }
@@ -106,6 +113,45 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this community');
+    };
+  }
+
+  acceptCommunity(community) {
+    // Return a function with community on its scope to pass to delete dialog
+    return () => {
+    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+      const { _id: id, _rev: rev } = community;
+      community['registrationRequest'] = 'accepted';
+      this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
+        .subscribe((data) => {
+          this.editDialog.close();
+        }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+    };
+  }
+
+  rejectCommunity(community) {
+    // Return a function with community on its scope to pass to delete dialog
+    return () => {
+    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+      const { _id: id, _rev: rev } = community;
+      community['registrationRequest'] = 'rejected';
+      this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
+        .subscribe((data) => {
+          this.editDialog.close();
+        }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
+    };
+  }
+
+  unlinkCommunity(community) {
+    // Return a function with community on its scope to pass to delete dialog
+    return () => {
+    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+      const { _id: id, _rev: rev } = community;
+      community['registrationRequest'] = 'unlinked';
+      this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
+        .subscribe((data) => {
+          this.editDialog.close();
+        }, (error) => this.editDialog.componentInstance.message = 'There was a problem unlinking this community');
     };
   }
 
