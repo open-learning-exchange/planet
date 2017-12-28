@@ -44,6 +44,11 @@ body {
     margin: 0 5px;
   }
 
+  .hide {
+    display: none;
+    visibility: hidden;
+  }
+
   // STYLING FOR TABLE LIST ENTRIES
   .list-item {
     display: grid;

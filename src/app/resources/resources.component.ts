@@ -8,9 +8,6 @@ import { Location } from '@angular/common';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-  .resources-header {
-    display:none;
-  }
   .list-item{
     display:flex;
   }
