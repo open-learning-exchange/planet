@@ -8,8 +8,8 @@ import { Location } from '@angular/common';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-  .example-header {
-  display:none;
+  .resources-header {
+    display:none;
   }
   .list-item{
     display:flex;
@@ -118,16 +118,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelected() {
-    const DeleteAll = confirm('Are you sure you want to delete?');
-    if (DeleteAll) {
-      for (let i = 0; i < this.selection.selected.length; i ++) {
-      const id = this.selection.selected[i]._id;
-      const rev_id = this.selection.selected[i]._rev;
-      this.couchService.delete('resources/' + id + '?rev=' + rev_id)
-     .subscribe((data) => {
-        this.getResources();
-        this.selection.clear();
-        }, (error) => this.message = 'There was a problem deleting this resource.');
+    if (this.selection.selected.length === 1) {
+      this.deleteClick(this.selection.selected[0]);
+    } else {
+      const DeleteAll = confirm('Are you sure you want to delete?');
+      if (DeleteAll) {
+        for (let i = 0; i < this.selection.selected.length; i ++) {
+          const id = this.selection.selected[i]._id;
+          const rev_id = this.selection.selected[i]._rev;
+          this.couchService.delete('resources/' + id + '?rev=' + rev_id)
+          .subscribe((data) => {
+            this.getResources();
+            this.selection.clear();
+          }, (error) => this.message = 'There was a problem deleting this resource.');
+        }
       }
     }
   }
