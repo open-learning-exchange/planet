@@ -12,6 +12,7 @@ import {
 import { CouchService } from '../../shared/couchdb.service';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { MatFormField, MatFormFieldControl } from '@angular/material';
 
 @Component({
   templateUrl: './user-profile.component.html'
@@ -42,7 +43,7 @@ export class UserProfileComponent implements OnInit {
       firstName: [ '', Validators.required ],
       middleName: '',
       lastName: [ '', Validators.required ],
-      login: [ '', Validators.required ],
+      login: '',
       email: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
