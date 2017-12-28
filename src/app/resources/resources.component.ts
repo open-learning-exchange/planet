@@ -84,7 +84,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   getResources() {
     this.couchService
-      .get('resources/_all_docs?include_docs=true')
+      .get(this.dbName + '/_all_docs?include_docs=true')
       .subscribe(data => {
         this.resources.data = data.rows.map(res => res.doc);
       }, error => (this.message = 'Error'));
@@ -125,7 +125,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteResource(resource) {
     return () => {
       const { _id: resourceId, _rev: resourceRev } = resource;
-      this.couchService.delete('resources/' + resourceId + '?rev=' + resourceRev)
+      this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .subscribe((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
@@ -135,15 +135,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   deleteResources(resources) {
     return () => {
-      for (let i = 0; i < resources.length; i ++) {
-        const id = resources[i]._id;
-        const rev_id = resources[i]._rev;
-        this.couchService.delete('resources/' + id + '?rev=' + rev_id)
+      const deleteArray = resources.map((resource) => {
+        return { _id: resource._id, _rev: resource._rev, _deleted: true }
+      });
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
           this.getResources();
           this.selection.clear();
-        }, (error) => this.message = 'There was a problem deleting this resource.');
-      }
+          this.deleteDialog.close();
+        }, (error) => this.message = 'There was a problem deleting these resources.');
     }
   }
 
