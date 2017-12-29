@@ -1,6 +1,26 @@
-# Docker for your development environment
+# Planet & Docker
+We decide to package our application in a docker container. We believe that with small standalone containerized application, we can ship more educational app to our Rasbperry Pi Package. We also have a plan to put container management integration as part of our planet app.
 
 ## Description
+This folder contains most of our docker secret sauce and recipe.
+
+### Components
+We have several docker components in our application there are
+* Planet. There are two version, one is for production and one is for development.
+  * Planet for production. It basically our production optimized Planet that served via Nginx.
+  * Planet for development. It basically a runtime that make it possible for Planet to run (mostly node.js)
+* CouchDB. It basically a CouchDB container and it developed in the different project. You can access it here in [ole-vi/rpi-couchdb](https://github.com/ole-vi/rpi-couchdb)
+* CouchDB initialization data a.k.a. `db-init`. It contains all the schema necessary for our Planet to run.
+
+### Target Architecture
+Because we want to run our production Planet mostly in Raspberry Pi, the target architecture of our app are
+* ARM (for production app run in the field running in Raspberry Pi, mostly for community)
+* x86 (for production Nation)
+
+### Docker-related files
+* Docker file (`Dockerfile`)
+* Docker compose file (`docker-compose.yml`)
+
 This docker compose can be use for your development environment and very handy, you can spawn the development environment in a matter of seconds and start your development. Your code changes in host folder are automatically reflected to docker and ready to test in your browser.
 
 ## How to use
