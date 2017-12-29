@@ -1,62 +1,45 @@
-<h3 i18n>Member Profile</h3>
-<form [formGroup]="editForm" (ngSubmit)="onSubmit()">
-  <div>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Login" [(ngModel)]="name" formControlName="login">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput type="date" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" required>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
-        <mat-option value="male">Male</mat-option>
-        <mat-option value="female">Female</mat-option>
-      </mat-select>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field>
-      <mat-select i18n-placeholder placeholder="level" formControlName="level" required>
-        <mat-option *ngFor="let level of educationLevel" [value]="level">
-          {{level}}
-        </mat-option>
-      </mat-select>
-      <mat-error><planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <label>File Upload:</label>
-    <input type="file" (change)="bindFile($event)" />
-  </div>
-  <div>
-    <button type="submit" mat-raised-button color="primary" i18n>Update</button>
-    <button type="button" mat-raised-button color="warn" (click)="cancel()" i18n>Cancel</button>
-  </div>
-</form>
+<h2 i18n>Profile</h2>
+<div>
+  <table>
+    <tr>
+      <td>First Name</td>
+      <td>{{userDetail.firstName}}</td>
+    </tr>
+    <tr>
+      <td>Middle Name</td>
+      <td>{{userDetail.middleName}}</td>
+    </tr>
+    <tr>
+      <td>Last Name</td>
+      <td>{{userDetail.lastName}}</td>
+    </tr>
+    <tr>
+      <td>Login</td>
+      <td>{{userDetail.login}}</td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td>{{userDetail.email}}</td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>{{userDetail.language}}</td>
+    </tr>
+    <tr>
+      <td>Phone Number</td>
+      <td>{{userDetail.phoneNumber}}</td>
+    </tr>
+    <tr>
+      <td>BirthDate</td>
+      <td>{{userDetail.birthDate}}</td>
+    </tr>
+    <tr>
+      <td>Gender</td>
+      <td>{{userDetail.gender}}</td>
+    </tr>
+    <tr>
+      <td>Level</td>
+      <td>{{userDetail.level}}</td>
+    </tr>
+  </table>
+</div>
