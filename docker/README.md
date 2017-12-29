@@ -4,6 +4,9 @@ We decide to package our application in a docker container. We believe that with
 ## Description
 This folder contains most of our docker secret sauce and recipe.
 
+### What is Docker
+Docker means many things to many people. In simplest form we can say that docker is a way to containerized or put into a box (mental box) our app. So that when we run our app it is isolated to some degree from the host. It is basically a next level of VM, docker container basically can answer many problem that we want to achieve with VM, but with docker container it is more simple and resource-friendly. A docker container can run in Raspberry Pi, but VM in Raspberry Pi is insane. Docker helps us to have different isolated environment (deploying some apps) without polluting our host machine.
+
 ### Components
 We have several docker components in our application there are
 * Planet. There are two version, one is for production and one is for development.
@@ -24,6 +27,11 @@ Because we want to run our production Planet mostly in Raspberry Pi, the target 
 This docker compose can be use for your development environment and very handy, you can spawn the development environment in a matter of seconds and start your development. Your code changes in host folder are automatically reflected to docker and ready to test in your browser.
 
 ## How to use
+I will divide this how to use into two sections, for development and for production. It is interesting to run our development environment on top of isolated docker container.
+
+### For Development
+
+### For Production
 
 1. Move to `docker` folder
 2. Run the following command to spawn your environment for the first time
