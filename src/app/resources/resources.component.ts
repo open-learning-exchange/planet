@@ -4,6 +4,8 @@ import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.compone
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 @Component({
   templateUrl: './resources.component.html',
@@ -47,7 +49,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private location: Location
+    private location: Location,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -149,12 +152,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.getResources();
           this.selection.clear();
           this.deleteDialog.close();
-        }, (error) => this.message = 'There was a problem deleting these resources.');
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
   }
 
   goBack() {
     this.location.back();
+  }
+
+  viewDetails() {
+    this.router.navigate([ 'resources/view/' + this.selection.selected[0]._id ]);
   }
 
 }

@@ -21,13 +21,13 @@
         [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
       </mat-checkbox>
       <span class="toolbar-fill"></span>
-      <button mat-button>
+      <button mat-button (click)="viewDetails()" [disabled]="selection.selected.length>1">
         <mat-icon aria-hidden="true" class="margin-lr-3">folder</mat-icon><span i18n>View Details</span>
       </button>
       <button mat-button>
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
       </button>
-      <button mat-button>
+      <button mat-button [disabled]="selection.selected.length>1">
         <mat-icon aria-hidden="true" class="margin-lr-3">feedback</mat-icon><span i18n>Feedback</span>
       </button>
       <button mat-button (click)="deleteSelected(selection)" [disabled]="!selection.selected.length">
