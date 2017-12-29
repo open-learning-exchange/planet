@@ -12,9 +12,9 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  templateUrl: './dialogs-edit.component.html'
+  templateUrl: './dialogs-prompt.component.html'
 })
-export class DialogsEditComponent {
+export class DialogsPromptComponent {
 
   message = '';
 

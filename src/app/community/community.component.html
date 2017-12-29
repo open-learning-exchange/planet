@@ -47,10 +47,10 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n > Actions </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button md-raised-button (click)="updateClick(element, 'delete')">Delete</button>
-        <button md-raised-button (click)="updateClick(element, 'unlinked')" *ngIf="element.registrationRequest === 'accepted'">Unlink</button>
-        <button md-raised-button (click)="updateClick(element, 'accepted')" *ngIf="element.registrationRequest === 'pending'">Accept</button>
-        <button md-raised-button (click)="updateClick(element, 'rejected')" *ngIf="element.registrationRequest === 'pending'">Reject</button>
+        <button mat-raised-button (click)="updateClick(element, 'delete')">Delete</button>
+        <button mat-raised-button (click)="updateClick(element, 'unlinked')" *ngIf="element.registrationRequest === 'accepted'">Unlink</button>
+        <button mat-raised-button (click)="updateClick(element, 'accepted')" *ngIf="element.registrationRequest === 'pending'">Accept</button>
+        <button mat-raised-button (click)="updateClick(element, 'rejected')" *ngIf="element.registrationRequest === 'pending'">Reject</button>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
