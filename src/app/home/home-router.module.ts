@@ -16,7 +16,7 @@ const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
       { path: 'users/profile/:name', component: UserProfileComponent },
-      { path: 'users/update', component: UserProfileUpdateComponent },
+      { path: 'users/update/:name', component: UserProfileUpdateComponent },
       { path: 'nation', component: NationComponent },
       { path: 'manager', component: ManagerDashboardComponent },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },

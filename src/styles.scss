@@ -45,7 +45,7 @@ body {
   }
 
   // STYLING FOR TABLE LIST ENTRIES
-  .list-item {
+  .c {
     display: grid;
     grid-template-columns: auto 140px;
     grid-gap: 2em;
@@ -149,6 +149,11 @@ body {
 
   mat-table .highlight {
     background-color: $grey;
+  }
+
+  .user-profile {
+    border-radius: 40px;
+    width: 40px;
   }
 
 }

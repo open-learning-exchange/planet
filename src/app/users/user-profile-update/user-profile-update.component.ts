@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { Location } from '@angular/common';
 import {
@@ -13,6 +12,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   templateUrl: './user-profile-update.component.html'
@@ -26,10 +26,10 @@ export class UserProfileUpdateComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {
     this.userData();
   }
@@ -53,7 +53,7 @@ export class UserProfileUpdateComponent implements OnInit {
     });
     this.editForm.setValue({firstName: '', middleName: '', lastName: '', login: '', email: '', language: ''
       , phoneNumber: '', birthDate: '', gender: '', level: ''});
-    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.userService.get().name)
+    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
       .subscribe((data) => {
         this.user = data;
         this.editForm.patchValue(data);
@@ -106,8 +106,8 @@ export class UserProfileUpdateComponent implements OnInit {
 
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.userService.get().name, { ...userInfo }).subscribe(() => {
-      this.router.navigate([ '' ]);
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'), { ...userInfo }).subscribe(() => {
+      this.location.back();
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
