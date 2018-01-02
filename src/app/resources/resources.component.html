@@ -90,9 +90,7 @@
           <div class="stats stats-female">{{ fRating }}% Female</div>
           <div class="stats stats-male">{{ mRating }}% Male</div>
           <div class="rating">
-            <span class="rating-number">{{ element.timesRated > 0 ? (element.sum / element.timesRated) : element.sum }}</span>
-            <!-- <span class="rating-number" *ngIf="!rating; else rate">{{ element.sum / element.timesRated }}</span>
-            <span class="rating-number" #rate>{{ element.sum}}</span> -->
+            <span class="rating-number">{{ element.timesRated > 0 ? (element.sum / element.timesRated).toFixed(1) : element.sum }}</span>
             <span>RATING</span>
           </div>
         </div>
