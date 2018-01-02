@@ -10,13 +10,14 @@ import { Router } from '@angular/router';
       <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
       <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
       <li><a routerLink="/manager"><i class="material-icons">settings</i></a></li>
-      <li><a routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></a></li>
+      <li *ngIf="roles.indexOf('_admin') === -1"><a routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></a></li>
     </ul>
   `,
   styleUrls: [ './navigation.scss' ]
 })
 export class NavigationComponent implements OnInit {
   name = '';
+  roles: string[] = [];
   constructor(
     private couchService: CouchService,
     private router: Router,
