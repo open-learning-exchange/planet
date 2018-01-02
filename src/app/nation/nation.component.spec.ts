@@ -9,6 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ValidatorService } from '../validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { of } from 'rxjs/observable/of';
 
 describe('NationComponent', () => {
   let component: NationComponent;

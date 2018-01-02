@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs/observable/of';
 
 describe('CommunityComponent', () => {
   let component: CommunityComponent;

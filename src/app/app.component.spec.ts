@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs/observable/of';
 import { debugOperator } from './debug-operator';
 import { Observable } from 'rxjs/Observable';
 

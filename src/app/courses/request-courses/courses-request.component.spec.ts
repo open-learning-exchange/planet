@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CoursesRequestComponent } from './courses-request.component';
+import { of } from 'rxjs/observable/of';
 
 describe('CoursesComponent', () => {
   let component: CoursesRequestComponent;

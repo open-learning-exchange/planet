@@ -6,6 +6,7 @@ import { MaterialModule } from '../shared/material.module';
 import { HomeComponent } from './home.component';
 import { NavigationComponent } from './navigation.component';
 import { CouchService } from '../shared/couchdb.service';
+import { of } from 'rxjs/observable/of';
 
 describe('Home', () => {
 

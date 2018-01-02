@@ -10,6 +10,10 @@ import { FormErrorMessagesComponent } from '../shared/form-error-messages.compon
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { By } from '@angular/platform-browser';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/observable/throw';
+import * as Rx from 'rxjs/Rx';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -45,7 +49,7 @@ describe('CoursesComponent', () => {
 
   // test getCourses()
   it('should make a get request to couchService', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(coursedata1));
+    getSpy = spyOn(couchService, 'get').and.returnValue(of(coursedata1).map).and.callThrough();
     component.getCourses();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -54,7 +58,7 @@ describe('CoursesComponent', () => {
   });
 
   it('should show getCourses', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(coursedata1));
+    getSpy = spyOn(couchService, 'get').and.returnValue(of(coursedata1).map).and.callThrough();
     component.getCourses();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -85,7 +89,7 @@ describe('CoursesComponent', () => {
   });
 
   it('should deleteCourse', () => {
-    deleteSpy = spyOn(couchService, 'delete').and.returnValue(Promise.resolve(coursearray));
+    deleteSpy = spyOn(couchService, 'delete').and.returnValue(of(coursearray));
     component.deleteCourse(coursedata1);
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -94,7 +98,7 @@ describe('CoursesComponent', () => {
   });
 
   it('should show There was an error message deleting course', () => {
-    deleteSpy = spyOn(couchService, 'delete').and.returnValue(Promise.reject({}));
+    deleteSpy = spyOn(couchService, 'delete').and.returnValue(Rx.Observable.throw({ Error }));
     component.deleteCourse(coursedata1);
     fixture.whenStable().then(() => {
       fixture.detectChanges();

@@ -6,6 +6,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from '../shared/material.module';
 import { RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/observable/throw';
+import * as Rx from 'rxjs/Rx';
 
 describe('ResourcesComponent', () => {
   let component: ResourcesComponent;
@@ -21,7 +25,7 @@ describe('ResourcesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, RouterModule, HttpClientModule, RouterTestingModule, MaterialModule ],
+      imports: [ FormsModule, RouterModule, HttpClientModule, RouterTestingModule, MaterialModule, BrowserAnimationsModule ],
       declarations: [ ResourcesComponent ],
       providers: [ CouchService ]
     });
@@ -96,7 +100,7 @@ describe('ResourcesComponent', () => {
 
   // test getResources()
   it('should make a get request to couchService', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve());
+    getSpy = spyOn(couchService, 'get').and.returnValue(of().map).and.callThrough();
     component.getResources();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -105,7 +109,7 @@ describe('ResourcesComponent', () => {
   });
 
   it('should getResources', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(motoristshandbook));
+    getSpy = spyOn(couchService, 'get').and.returnValue(of(motoristshandbook).map).and.callThrough();
     component.getResources();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -114,7 +118,7 @@ describe('ResourcesComponent', () => {
   });
 
   it('should There was a problem getResource', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Promise.reject({}));
+    getSpy = spyOn(couchService, 'get').and.returnValue(Rx.Observable.throw({ Error }));
     component.getResources();
     fixture.whenStable().then(() => {
       fixture.detectChanges();

@@ -8,6 +8,7 @@ import { MaterialModule } from '../shared/material.module';
 import { NavigationComponent } from './navigation.component';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
+import { of } from 'rxjs/observable/of';
 
 describe('Navigation', () => {
 
@@ -43,7 +44,7 @@ describe('Navigation', () => {
 
     const setupLogin = (returnValue: {ok: boolean}) => {
       const { comp, fixture, logoutButton, couchService, router } = setup();
-      couchSpy = spyOn(couchService, 'delete').and.returnValue(Promise.resolve(returnValue));
+      couchSpy = spyOn(couchService, 'delete').and.returnValue(of(returnValue));
       routerSpy = spyOn(router, 'navigate');
       logoutButton.click();
       return { comp, fixture, logoutButton, couchService, router };
