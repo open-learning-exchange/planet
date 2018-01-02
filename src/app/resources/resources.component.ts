@@ -161,9 +161,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   viewDetails() {
-    if (!this.selection.selected[0]) {
-      disable = true;
-    }
     this.router.navigate([ 'resources/view/' + this.selection.selected[0]._id ]);
   }
 
