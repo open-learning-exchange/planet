@@ -51,20 +51,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   nationName = '';
   selection = new SelectionModel(true, []);
 
-  getRating(sum, timesRated) {
-    let rating = 0;
-    if (sum > 0 && timesRated > 0) {
-      rating = sum / timesRated;
-    }
-    // Multiply by 20 to convert rating out of 5 to percent for width
-    return (rating * 20) + '%';
-  }
-
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private location: Location,
     private router: Router,
+    private route: ActivatedRoute,
     private httpclient: HttpClient
   ) {}
 
