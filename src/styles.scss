@@ -91,10 +91,8 @@ body {
   // the width is set dynamically with JS
   .stars {
     display: inline-block;
-    font-size: 1.5rem;
-    color: gray;
+    color: $grey;
     position: relative;
-    grid-area: stars;
     // Each mat-icon star is 24x24.  Will need to change if star sizes change
     width: 120px;
 
