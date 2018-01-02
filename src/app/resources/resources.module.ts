@@ -7,6 +7,7 @@ import { ResourcesViewComponent } from './view-resources/resources-view.componen
 import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
@@ -15,8 +16,10 @@ import { MaterialModule } from '../shared/material.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     ResourcesRouterModule,
-    MaterialModule
+    MaterialModule,
+    HttpClientModule,
+    HttpClientJsonpModule
   ],
-  declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent ],
+  declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent ]
 })
 export class ResourcesModule {}

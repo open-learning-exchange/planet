@@ -33,7 +33,7 @@
       <button mat-button (click)="deleteSelected(selection)" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
       </button>
-      <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
+      <button mat-mini-fab routerLink="add" *ngIf="!nationName"><mat-icon>add</mat-icon></button>
     </mat-toolbar-row>
   </mat-toolbar>
 
@@ -101,4 +101,3 @@
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
 </div>
-

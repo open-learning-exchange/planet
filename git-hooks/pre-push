@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # An example hook script to verify what is about to be pushed.  Called by "git
 # push" after it has checked the remote status, but before anything has been
@@ -57,7 +57,7 @@ echo "Running Linters:"
 if [ "$vagrant_status" = "" ]; then
   tslint=$(ng lint)
 else
-  tslint=$(vagrant ssh -c 'cd /vagrant; ng lint')
+  tslint=$(vagrant ssh -- -t 'cd /vagrant;ng lint')
 fi
 
 ret_code_tslint=$?
