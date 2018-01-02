@@ -1,6 +1,9 @@
-<div>
+<div *ngIf="!nationName; else remoteNationName">
   <button mat-raised-button routerLink="add" color="primary" i18n>Add Resource</button>
 </div>
+<ng-template #remoteNationName>
+  <h1 i18n>Resources: {{nationName}}</h1>
+</ng-template>
 <div>
   <mat-form-field>
     <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Search">
@@ -14,12 +17,15 @@
       <div class="list-item-content">
         Author: {{ element.author }},Year: {{ element.year }}, Media: {{ element.Medium }}, Language: {{ element.language }}, Subject/s: {{element.subject}}, Publisher/Attribution: {{ element.Publisher }}, Link to License: {{element.linkToLicense}}, Resource: {{ element.resourceFor }}, Resource Type: {{ element.resourceType }}
       </div>
-      <div class="list-item-content">
+      <div *ngIf="!nationName; else isNation" class="list-item-content">
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/view', element._id]">View Details</a>
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
         <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>Delete</button>
       </div>
+      <ng-template #isNation>
+        <div class="list-item-content"><a mat-raised-button color="primary" i18n [routerLink]="['/resources/view/', nationName, element._id]">View Details</a></div>
+      </ng-template>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="rating">
