@@ -1,4 +1,4 @@
-import { Component,} from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -51,14 +51,10 @@ export class FeedbackComponent {
     this.feedback.priority = post.isUrgent;
     this.feedback.type = post.feedbackType;
     this.feedback.openTime = Date.now();
-
     this.msg.feedbackMsg = post.feedbackMsg;
     this.msg.time = Date.now();
-    this.feedback.messages = [{
-      message = post.feedbackMsg,
-      time= Date.now(),
-      user= this.userService.get().name,
-    }];
+    this.msg.user = this.userService.get().name;
+    this.feedback.messages[0] = this.msg;
 
     this.couchService.post('feedback/', this.feedback)
     .subscribe((data) => {
