@@ -3,7 +3,8 @@
     <img class="user-profile" [src]="imageSrc">
 </div>
 <div *ngIf="name === urlName">
-	<a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', name]">Edit</a>
+  <a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', name]">Edit</a>
+  <a mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
 </div>
 <mat-list>
   <mat-list-item *ngIf="userDetail.firstName">
