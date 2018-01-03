@@ -1,10 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { ResourcesViewComponent } from './resources-view.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/observable/throw';
+import * as Rx from 'rxjs/Rx';
 
 describe('ResourcesViewComponent', () => {
     let component: ResourcesViewComponent;
@@ -36,7 +39,7 @@ describe('ResourcesViewComponent', () => {
 
     // test getResource()
     it('should make a get request to couchService', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testimage.id));
+        getSpy = spyOn(couchService, 'get').and.returnValue(of(testimage.id));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -45,7 +48,7 @@ describe('ResourcesViewComponent', () => {
       });
 
     it('should getResource', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve(testimage));
+        getSpy = spyOn(couchService, 'get').and.returnValue(of(testimage));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -54,7 +57,7 @@ describe('ResourcesViewComponent', () => {
       });
 
     it('should There was a problem getResource', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(Promise.reject({}));
+        getSpy = spyOn(couchService, 'get').and.returnValue(Rx.Observable.throw({ Error }));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();

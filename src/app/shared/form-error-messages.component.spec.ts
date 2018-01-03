@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormErrorMessagesComponent } from './form-error-messages.component';
+import { of } from 'rxjs/observable/of';
 
 describe('FormErrorMessagesComponent', () => {
   let component: FormErrorMessagesComponent;
