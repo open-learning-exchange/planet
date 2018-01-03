@@ -21,14 +21,8 @@
         [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
       </mat-checkbox>
       <span class="toolbar-fill"></span>
-      <button mat-button (click)="viewDetails()" [disabled]="selection.selected.length>1 || !selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">folder</mat-icon><span i18n>View Details</span>
-      </button>
       <button mat-button [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
-      </button>
-      <button mat-button [disabled]="selection.selected.length>1 || !selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">feedback</mat-icon><span i18n>Feedback</span>
       </button>
       <button mat-button (click)="deleteSelected(selection)" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
@@ -50,17 +44,14 @@
     <ng-container matColumnDef="info">
       <mat-header-cell *matHeaderCellDef></mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
-        <h3 class="header">{{element.title}}</h3>
+        <h3 class="header"><a *ngIf="!nationName" [routerLink]="['/resources/view', element._id]">{{element.title}}</a>
+          <a *ngIf="nationName" [routerLink]="['/resources/view', nationName, element._id]">{{element.title}}</a>
+        </h3>
         <div class="content">{{ element.description }}</div>
-        <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button  *ngIf="!nationName" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
           <mat-menu #resourceMenu="matMenu">
-            <div *ngIf="!nationName">
-              <a mat-menu-item [routerLink]="['/resources/view', element._id]">
-                <mat-icon>folder</mat-icon>
-                <span i18n>View Details</span>
-              </a>
               <a mat-menu-item [routerLink]="['/resources/wip']">
                 <mat-icon>library_add</mat-icon>
                 <span i18n>Add to Library</span>
@@ -73,13 +64,6 @@
                 <mat-icon>delete_forever</mat-icon>
                 <span i18n>Delete</span>
               </button>
-            </div>
-            <div *ngIf="nationName">
-              <a mat-menu-item [routerLink]="['/resources/view', nationName, element._id]">
-                <mat-icon>folder</mat-icon>
-                <span i18n>View Details</span>
-              </a>
-            </div>
         </mat-menu>
       </mat-cell>
     </ng-container>

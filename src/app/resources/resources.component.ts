@@ -36,6 +36,9 @@ import { of } from 'rxjs/observable/of';
     .mat-column-rating {
       max-width: 225px;
     }
+    a:hover {
+      color: #2196f3;
+    }
   ` ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit {
@@ -190,10 +193,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.location.back();
-  }
-
-  viewDetails() {
-    this.router.navigate([ 'resources/view/' + this.selection.selected[0]._id ]);
   }
 
 }
