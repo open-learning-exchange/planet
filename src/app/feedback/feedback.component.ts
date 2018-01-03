@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component,} from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -6,19 +6,30 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatRadioModule , MatFormFieldModule, MatButtonModule, } from '@angular/material';
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 
-export class Feedback {
-  name: string;
-  isUrgent: boolean;
-  feedbackType: string;
+export class Message {
   feedbackMsg: string;
+  user: string;
+  time: Number;
+}
+export class Feedback {
+  type: string;
+  priority: boolean;
+  owner: string;
+  title: string;
+  openTime: Number;
+  closeTime: Number;
+  source: string;
+  url: string;
+  messages: Array<Message>;
 }
 
 @Component({
   templateUrl: './feedback.component.html'
 })
 
-export class FeedbackComponent implements OnInit {
+export class FeedbackComponent {
   feedback = new Feedback();
+  msg = new Message();
   message: string;
   feedbackForm: FormGroup;
 
@@ -34,13 +45,21 @@ export class FeedbackComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.feedback.name = this.userService.get().name;
-  }
-
-  addfeedback(post: any) {
+  addFeedback(post: any) {
     this.message = '';
-    (<any>Object).assign(this.feedback, post);
+    this.feedback.owner = this.userService.get().name;
+    this.feedback.priority = post.isUrgent;
+    this.feedback.type = post.feedbackType;
+    this.feedback.openTime = Date.now();
+
+    this.msg.feedbackMsg = post.feedbackMsg;
+    this.msg.time = Date.now();
+    this.feedback.messages = [{
+      message = post.feedbackMsg,
+      time= Date.now(),
+      user= this.userService.get().name,
+    }];
+
     this.couchService.post('feedback/', this.feedback)
     .subscribe((data) => {
       this.message = 'Thank you, your feedback is submitted!';

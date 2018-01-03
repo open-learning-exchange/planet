@@ -1,5 +1,5 @@
 <h1 i18n>Add feedback</h1>
-<form [formGroup]="feedbackForm" (ngSubmit)="addfeedback(feedbackForm.value)">
+<form [formGroup]="feedbackForm" (ngSubmit)="addFeedback(feedbackForm.value)">
   <div>
     <label i18n>Is your feedback Urgent?</label>
     <mat-radio-group formControlName="isUrgent">
