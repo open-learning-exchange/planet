@@ -27,7 +27,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Anansi Gives People Stories",
+            "title": "Image Resource",
             "averageRating": "1",
             "mediaType": "image"
          },
@@ -58,7 +58,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Brown",
+            "title": "Text Resource",
             "averageRating": "2",
             "mediaType": "other"
          },
@@ -89,7 +89,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Crocodile and Baboon",
+            "title": "PDF Resource",
             "averageRating": "3",
             "mediaType": "pdf"
          },
@@ -109,7 +109,7 @@
             "kind": "Resource",
             "Medium": "Text",
             "language": "English",
-            "author": "Southern African Folk Tale, Catherine Groenewald",
+            "author": "Word File Resource",
             "sum": 0,
             "Level": [
                 "Lower Primary"
@@ -149,7 +149,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "",
-            "title": "How Coaches Can Maximize Student Learning",
+            "title": "CSV Resource",
             "averageRating": "4",
             "mediaType": "other"
          }
