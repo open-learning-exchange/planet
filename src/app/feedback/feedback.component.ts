@@ -51,11 +51,9 @@ export class FeedbackComponent {
     this.feedback.priority = post.isUrgent;
     this.feedback.type = post.feedbackType;
     this.feedback.openTime = Date.now();
-    this.msg.feedbackMsg = post.feedbackMsg;
-    this.msg.time = Date.now();
-    this.msg.user = this.userService.get().name;
-    this.feedback.messages[0] = this.msg;
-
+    this.feedback.messages[0].feedbackMsg = post.feedbackMsg;
+    this.feedback.messages[0].time = Date.now();
+    this.feedback.messages[0].user = this.userService.get().name;
     this.couchService.post('feedback/', this.feedback)
     .subscribe((data) => {
       this.message = 'Thank you, your feedback is submitted!';
