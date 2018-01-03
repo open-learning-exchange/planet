@@ -58,7 +58,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "Text Resource",
+            "title": "Text Resource (Open File)",
             "averageRating": "2",
             "mediaType": "other"
          },
@@ -89,7 +89,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "PDF Resource",
+            "title": "PDF Resource (PDF Reader)",
             "averageRating": "3",
             "mediaType": "pdf"
          },
@@ -109,7 +109,7 @@
             "kind": "Resource",
             "Medium": "Text",
             "language": "English",
-            "author": "Word File Resource",
+            "author": "Jon Author",
             "sum": 0,
             "Level": [
                 "Lower Primary"
@@ -120,7 +120,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Grandmother and the Smelly Girl",
+            "title": "Word File Resource (Download)",
             "averageRating": "5",
             "mediaType": "other"
          },
@@ -149,7 +149,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "",
-            "title": "CSV Resource",
+            "title": "CSV Resource (Download)",
             "averageRating": "4",
             "mediaType": "other"
          }
