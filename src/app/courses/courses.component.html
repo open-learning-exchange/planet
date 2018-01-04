@@ -11,7 +11,7 @@
   <mat-table #table [dataSource]="courses" matSort>
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.courseTitle}} </mat-cell>
+      <mat-cell class="km-course-title" *matCellDef="let element"> {{element.courseTitle}} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>

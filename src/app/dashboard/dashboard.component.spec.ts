@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { DashboardComponent } from './dashboard.component';
 import { UserService } from '../shared/user.service';
-
+import { of } from 'rxjs/observable/of';
 
 describe('Dashboard', () => {
 
