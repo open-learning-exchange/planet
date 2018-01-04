@@ -1,7 +1,10 @@
 <h2 i18n>Profile</h2>
-<div mat-card-avatar>
+<div mat-card-avatar *ngIf="userDetail._attachments; else noAttachment">
     <img class="user-profile" [src]="imageSrc">
 </div>
+<ng-template #noAttachment>
+  <div mat-card-avatar><i class="material-icons">person</i></div>
+</ng-template>
 <div *ngIf="name === urlName">
 	<a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', name]">Edit</a>
 </div>
