@@ -70,6 +70,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   setResource(resource: any) {
+    this.resource = resource;
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
     this.mediaType = resource.mediaType;

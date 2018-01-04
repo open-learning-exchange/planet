@@ -1,15 +1,51 @@
-<div class="km-resource-view" [ngSwitch]="mediaType">
-  <img [src]="resourceSrc" *ngSwitchCase="'image'">
-  <video controls *ngSwitchCase="'video'">
-    <source [src]="resourceSrc" [type]="contentType" />
-    Browser not supported
-  </video>
-  <audio controls *ngSwitchCase="'audio'">
-    <source [src]="resourceSrc" [type]="contentType" />
-    Browser not supported
-  </audio>
-  <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
-  <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
-  <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
-</div>
-<a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
+    <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.Year}} </mat-card-subtitle>
+  </mat-card-header>
+  <div [ngSwitch]="mediaType">
+    <img [src]="resourceSrc" *ngSwitchCase="'image'">
+    <video controls *ngSwitchCase="'video'">
+      <source [src]="resourceSrc" [type]="contentType" />
+      Browser not supported
+    </video>
+    <audio controls *ngSwitchCase="'audio'">
+      <source [src]="resourceSrc" [type]="contentType" />
+      Browser not supported
+    </audio>
+    <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
+    <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
+    <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
+  </div>
+  <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+  <mat-card-content *ngIf="resource.Medium">
+    <p>
+      Media: {{ resource.Medium }}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.language">
+    <p>
+      Language: {{ resource.language }}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.subject">
+    <p>
+      Subject/s: {{resource.subject}}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.linkToLicense">
+    <p>
+      Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a>
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.resourceFor">
+    <p>
+      Resource: {{ resource.resourceFor }}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.resourceType">
+    <p>
+      Resource Type: {{ resource.resourceType }}
+    </p>
+  </mat-card-content>
+</mat-card>
