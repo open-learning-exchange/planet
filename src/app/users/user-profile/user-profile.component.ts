@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
-import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { useAnimation } from '@angular/core/src/animation/dsl';
@@ -23,7 +23,8 @@ export class UserProfileComponent implements OnInit {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private validatorService: ValidatorService
   ) { }
 
   ngOnInit() {
@@ -51,7 +52,7 @@ export class UserProfileComponent implements OnInit {
         'password': data.password,
         '_rev': userDetail._rev,
         'name': userDetail.name,
-        'type':'user',
+        'type': 'user',
         'roles': userDetail.roles,
         'firstName': userDetail.firstName,
         'middleName': userDetail.middleName,
@@ -62,9 +63,9 @@ export class UserProfileComponent implements OnInit {
         'birthDate': userDetail.birthDate,
         'gender': userDetail.gender,
         'level': userDetail.level,
-        '_attachments':userDetail._attachments
+        '_attachments': userDetail._attachments
       };
-      this.couchService.put(this.dbName+'/org.couchdb.user:'+userDetail.name, formdata)
+      this.couchService.put(this.dbName + '/org.couchdb.user: ' + userDetail.name, formdata)
         .subscribe((res) => {
           console.log('Success');
         }, (error) => (error));
@@ -75,12 +76,12 @@ export class UserProfileComponent implements OnInit {
     const type = 'user';
     const fields =
       [
-        { 'label': 'Password', 'type': 'textbox', 'name': 'password', 'placeholder': 'Password', 'required': true },
-        { 'label': 'Repeat Password', 'type': 'textbox', 'name': 'repeatPassword', 'placeholder': 'Repeat Password', 'required': true }
+        { 'label': 'Password', 'type': 'password', 'name': 'password', 'placeholder': 'Password', 'required': true },
+        { 'label': 'Confirm Password', 'type': 'password', 'name': 'confirmPassword', 'placeholder': 'Confirm Password', 'required': true }
       ];
     const validation = {
       password: [ '', Validators.required ],
-      repeatPassword: [ '', Validators.required ]
+      confirmPassword: [ '', Validators.required, ac => this.validatorService.MatchPassword$(ac, ac.parent.get('password')) ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
