@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ require('./login.scss');
   styleUrls: [ './login.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private router: Router,
@@ -24,6 +24,16 @@ export class LoginComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
+
+  ngOnInit() {
+    // check admin exist or not
+    this.checkAdminExistence().subscribe((noAdmin) => {
+      // false means there is admin
+      if (noAdmin) {
+        this.router.navigate(['/login/newuser']);
+      }
+    });
+  }
 
   onSubmit() {
     if (this.createMode) {
