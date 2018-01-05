@@ -1,0 +1,32 @@
+{
+    "docs":[
+        {   
+            "_id":"0216c7208a72e79b29997d0fd400been",
+            "short_code": "en",
+            "name": "English",
+            "served_url": "",
+            "active": "Y"
+        },
+        {   
+            "_id":"0216c7208a72e79b29997d0fd400benp",
+            "short_code": "ne-NP",
+            "name": "Nepali",
+            "served_url": "",
+            "active": "N"
+        },
+        {   
+            "_id":"0216c7208a72e79b29997d0fd400befr",
+            "short_code": "fr",
+            "name": "French",
+            "served_url": "",
+            "active": "N"
+        },
+        {   
+            "_id":"0216c7208a72e79b29997d0fd400besp",
+            "short_code": "es-ES",
+            "name": "Spanish",
+            "served_url": "",
+            "active": "N"
+        }
+    ]
+}
