@@ -11,15 +11,18 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from './shared/material.module';
+import { ConfigurationComponent } from './configuration/configuration.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MaterialModule
   ],
   declarations: [
-    AppComponent, PageNotFoundComponent
+    AppComponent, PageNotFoundComponent, ConfigurationComponent
   ],
   providers: [
     CouchService, AuthService, UserService, ValidatorService
