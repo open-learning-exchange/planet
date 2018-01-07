@@ -27,11 +27,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     // If not e2e tests, route to create user if there is no admin
-    if(!environment.test) {
+    if (!environment.test) {
       this.checkAdminExistence().subscribe((noAdmin) => {
         // false means there is admin
         if (noAdmin) {
-          this.router.navigate(['/login/newuser']);
+          this.router.navigate([ '/login/newuser' ]);
         }
       });
     }
