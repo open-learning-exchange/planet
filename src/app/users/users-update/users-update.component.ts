@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../shared/user.service';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -28,14 +27,19 @@ export class UsersUpdateComponent implements OnInit {
     private location: Location,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private userService: UserService,
     private route: ActivatedRoute
   ) {
     this.userData();
   }
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
+    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
+      .subscribe((data) => {
+        this.user = data;
+        this.editForm.patchValue(data);
+      }, (error) => {
+        console.log(error);
+      });
   }
 
   userData() {
@@ -43,6 +47,7 @@ export class UsersUpdateComponent implements OnInit {
       firstName: [ '', Validators.required ],
       middleName: '',
       lastName: [ '', Validators.required ],
+      name: '',
       login: [ { value: '', disabled: true }, Validators.required ],
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
@@ -51,13 +56,6 @@ export class UsersUpdateComponent implements OnInit {
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]
     });
-    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
-      .subscribe((data) => {
-        this.user = data;
-        this.editForm.patchValue(data);
-      }, (error) => {
-        console.log(error);
-      });
   }
 
   onSubmit() {
@@ -85,7 +83,7 @@ export class UsersUpdateComponent implements OnInit {
 
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'), { ...userInfo }).subscribe(() => {
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe(() => {
       this.location.back();
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
