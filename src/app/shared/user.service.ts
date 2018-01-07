@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 export class UserService {
 
   private user: any;
-  private logsDb: string = 'login_activities';
+  private logsDb = 'login_activities';
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
