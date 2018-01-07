@@ -15,9 +15,9 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
-  templateUrl: './user-profile-update.component.html'
+  templateUrl: './users-update.component.html'
 })
-export class UserProfileUpdateComponent implements OnInit {
+export class UsersUpdateComponent implements OnInit {
   user: any;
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
@@ -62,21 +62,25 @@ export class UserProfileUpdateComponent implements OnInit {
 
   onSubmit() {
     if (this.editForm.valid) {
-      let fileObs: Observable<any>;
-      if (this.file && this.file.type.indexOf('image') > -1) {
-        fileObs = this.couchService.prepAttachment(this.file);
-      } else {
-        fileObs = of({});
-      }
-      fileObs.subscribe((memberImage) => {
-        this.updateUser(Object.assign({}, this.user, this.editForm.value, memberImage));
-      });
+      this.handleAttachment(this.user, this.editForm.value);
     } else {
         Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
     }
+  }
+
+  handleAttachment(user, formValue) {
+    let fileObs: Observable<any>;
+    if (this.file && this.file.type.indexOf('image') > -1) {
+      fileObs = this.couchService.prepAttachment(this.file);
+    } else {
+      fileObs = of({});
+    }
+    fileObs.subscribe((memberImage) => {
+      this.updateUser(Object.assign({}, user, formValue, memberImage));
+    });
   }
 
   updateUser(userInfo) {

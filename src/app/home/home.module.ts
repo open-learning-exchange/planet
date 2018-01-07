@@ -6,9 +6,6 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { NavigationComponent } from './navigation.component';
-import { UsersComponent } from '../users/users.component';
-import { UserProfileUpdateComponent } from '../users/user-profile-update/user-profile-update.component';
-import { UserProfileComponent } from '../users/user-profile/user-profile.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
@@ -34,12 +31,9 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     HomeComponent,
     DashboardComponent,
     NavigationComponent,
-    UsersComponent,
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent,
-    UserProfileUpdateComponent,
-    UserProfileComponent
   ]
 })
 export class HomeModule {}

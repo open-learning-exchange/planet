@@ -5,9 +5,9 @@ import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 
 @Component({
-  templateUrl: './user-profile.component.html'
+  templateUrl: './users-profile.component.html'
 })
-export class UserProfileComponent implements OnInit {
+export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
   userDetail = [];
   imageSrc = '';
