@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, OnInit } from '@angular/core';
-
+import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { tap, catchError } from 'rxjs/operators';
@@ -26,13 +26,15 @@ export class LoginComponent implements OnInit {
   message = '';
 
   ngOnInit() {
-    // check admin exist or not
-    this.checkAdminExistence().subscribe((noAdmin) => {
-      // false means there is admin
-      if (noAdmin) {
-        this.router.navigate(['/login/newuser']);
-      }
-    });
+    // If not e2e tests, route to create user if there is no admin
+    if(!environment.test) {
+      this.checkAdminExistence().subscribe((noAdmin) => {
+        // false means there is admin
+        if (noAdmin) {
+          this.router.navigate(['/login/newuser']);
+        }
+      });
+    }
   }
 
   onSubmit() {
