@@ -14,6 +14,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       required {This field is required}
       min {The number cannot be below {{number}}}
       duplicate {Value already exists}
+      email {Please enter a valid email}
       invalidInt {Please enter a number}
       invalidHex {Hex is not valid}
       invalidTime {Time is invalid}

@@ -44,15 +44,13 @@ export class UserProfileUpdateComponent implements OnInit {
       middleName: '',
       lastName: [ '', Validators.required ],
       login: [ { value: '', disabled: true }, Validators.required ],
-      email: [ '', [ Validators.required,  Validators.pattern ('[^ @]*@[^ @]*') ] ],
+      email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
       birthDate: [ '', Validators.required ],
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]
     });
-    this.editForm.setValue({firstName: '', middleName: '', lastName: '', login: '', email: '', language: ''
-      , phoneNumber: '', birthDate: '', gender: '', level: ''});
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
       .subscribe((data) => {
         this.user = data;
@@ -62,34 +60,11 @@ export class UserProfileUpdateComponent implements OnInit {
       });
   }
 
-  // Creates an observer which reads one file then outputs its data
-  private fileReaderObs (file) {
-    const reader = new FileReader();
-    const obs = Observable.create((observer) => {
-      reader.onload = () => {
-        // FileReader result has file type at start of string, need to remove for CouchDB
-        const fileData = reader.result.split(',')[1],
-        attachments = {};
-        attachments[file.name] = {
-          content_type: file.type,
-          data: fileData
-        };
-        const memberImage = {
-          _attachments: attachments
-        };
-        observer.next(memberImage);
-        observer.complete();
-      };
-    });
-    reader.readAsDataURL(file);
-    return obs;
-  }
-
   onSubmit() {
     if (this.editForm.valid) {
       let fileObs: Observable<any>;
       if (this.file && this.file.type.indexOf('image') > -1) {
-        fileObs = this.fileReaderObs(this.file);
+        fileObs = this.couchService.prepAttachment(this.file);
       } else {
         fileObs = of({});
       }
