@@ -21,8 +21,6 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
     HttpClientModule,
     HttpClientJsonpModule
   ],
-
   declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesRateComponent, ResourcesAddComponent ],
-
 })
 export class ResourcesModule {}

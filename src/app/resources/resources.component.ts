@@ -1,19 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
-
 import { findDocuments } from '../shared/mangoQueries';
-
-import { catchError } from 'rxjs/operators';
-
+import { catchError, switchMap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-
+import { of } from 'rxjs/observable/of';
 import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-
 
 @Component({
   templateUrl: './resources.component.html'
@@ -62,8 +56,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.resources.filter = filterResValue.trim().toLowerCase();
   }
 
-
   getResources() {
+    this.nationName = this.route.snapshot.paramMap.get('nationname');
+    if (this.nationName !== null) {
+      return this.getExternalResources();
+    }
     return this.couchService.get(this.resourceDb + '/_all_docs?include_docs=true');
   }
 
@@ -116,10 +113,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       }
       return resource;
     });
-
+  }
 
   getExternalResources() {
-    this.couchService.post('nations/_find',
+    return this.couchService.post('nations/_find',
     { 'selector': { 'name': this.nationName },
     'fields': [ 'name', 'nationurl' ] })
       .pipe(switchMap(data => {
@@ -133,23 +130,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         }
         // If there is no url, return an observable of an empty array
         return of([]);
-      })).subscribe((res: any) => {
-        this.resources.data = res.rows.map(r => r.doc);
-      }, error => (this.message = 'Error'));
-
-  }
-
-  getResources() {
-    this.nationName = this.route.snapshot.paramMap.get('nationname');
-    if (this.nationName !== null) {
-      this.getExternalResources();
-    } else {
-      this.couchService
-        .get('resources/_all_docs?include_docs=true')
-        .subscribe(data => {
-          this.resources.data = data.rows.map(res => res.doc);
-        }, error => (this.message = 'Error'));
-    }
+      }));
   }
 
   deleteClick(resource) {
