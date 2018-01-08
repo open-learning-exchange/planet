@@ -65,7 +65,7 @@ export class ConfigurationComponent implements OnInit {
     if (this.select === 'community') {
       this.configurationFormGroup = this._formBuilder.group({
         planet_type: [ 'community', Validators.required ],
-        local_domain: [ 'localhost:3000/configurations', Validators.required ],
+        local_domain: [ document.baseURI, Validators.required ],
         parent_domain: [ '', Validators.required ],
         name: [ '', Validators.required ],
         preferred_lang: [ '', Validators.required ],
@@ -76,7 +76,7 @@ export class ConfigurationComponent implements OnInit {
         planet_type: [ 'nation', Validators.required ],
         name: [ '', Validators.required ],
         parent_domain: [ 'nbs.ole.org:5997', Validators.required ],
-        local_domain: [ '', Validators.required ],
+        local_domain: [ document.baseURI, Validators.required ],
         preferred_lang: [ '', Validators.required ],
         code: [ '', Validators.required ]
       });
