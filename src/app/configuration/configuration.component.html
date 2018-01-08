@@ -1,7 +1,7 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
-  <mat-step [stepControl]="firstFormGroup">
-    <ng-template matStepLabel>Create Admin</ng-template>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+  <mat-step [stepControl]="loginForm">
+    <ng-template matStepLabel i18n>Create Admin</ng-template>
+    <form [formGroup]="loginForm">
       <mat-grid-list cols="1">
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Username" formControlName="username" required>
@@ -17,20 +17,19 @@
           <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
         </mat-form-field>
       </mat-grid-list>
-      <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
+      <button mat-raised-button color="primary" (click)="checkPassword()" i18n>Next</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </form>
     <div id="login-status">{{message}}</div>
-    <button mat-button matStepperNext>Next</button>
   </mat-step>
 
   <mat-step [stepControl]="configurationFormGroup">
     <form [formGroup]="configurationFormGroup">
-      <ng-template matStepLabel>Set Up Configuration</ng-template>
+      <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
       <mat-form-field>
-        <mat-select placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planet_type" required>
-          <mat-option value="nation">Nation</mat-option>
-          <mat-option value="community">Community</mat-option>
+        <mat-select i18n-placeholder placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planet_type" required>
+          <mat-option value="nation" i18n>Nation</mat-option>
+          <mat-option value="community" i18n>Community</mat-option>
         </mat-select>
       </mat-form-field>
       <div>
@@ -63,14 +62,15 @@
         </mat-form-field>
       </div>
       <div>
-        <button mat-button matStepperNext>Next</button>
+        <button mat-raised-button color="primary" matStepperPrevious i18n>Back</button>
+        <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
       </div>
     </form>
   </mat-step>
 
   <mat-step [stepControl]="contactFormGroup">
     <form [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
-      <ng-template matStepLabel>Contact Details</ng-template>
+      <ng-template matStepLabel i18n>Contact Details</ng-template>
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
@@ -91,6 +91,7 @@
         </mat-form-field>
       </div>
       <div>
+        <button mat-raised-button color="primary" matStepperPrevious i18n>Back</button>
         <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
         <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
       </div>

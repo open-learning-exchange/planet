@@ -1,12 +1,11 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { tap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
+
 @Component({
   templateUrl: './configuration.component.html'
 })
@@ -24,16 +23,8 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private router: Router
-  ) {
-   }
+  ) { }
 
-  ngAfterViewInit() {
-    this.checkAdminExistence().subscribe((noAdmin) => {
-      if (noAdmin) {
-        this.stepper.selectedIndex = 1;
-      }
-    });
-  }
   ngOnInit() {
     this.loginForm = this._formBuilder.group({
       username: [ '', Validators.required ],
@@ -56,30 +47,6 @@ export class ConfigurationComponent implements OnInit {
       phoneNumber: [ '', Validators.required ]
     });
     this.getNationList();
-  }
-
-  checkAdminExistence() {
-    return this.couchService.get('_users/_all_docs').pipe(
-      tap((data) => {
-        return true; // user can see data so there is no admin
-      }),
-      catchError((error) => {
-        return of(false); // user doesn't have permission so there is an admin
-      })
-    );
-  }
-
-  onSubmit() {
-    if (this.loginForm.valid) {
-      if (this.loginForm.value.password === this.loginForm.value.confirmPassword) {
-        this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password)
-          .subscribe((data) => {
-            this.message = 'User created please click Next button';
-          }, (error) => this.message = 'user not created');
-      } else {
-        this.message = 'Passwords do not match';
-      }
-    }
   }
 
   getNationList() {
@@ -116,16 +83,32 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  onSubmitConfiguration() {
-    if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const data = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
-      this.couchService.post('configurations', data).subscribe(() => {
-      this.router.navigate([ 'login' ]);
-      }, (err) => {
-        // Connect to an error display component to show user that an error has occurred
-        console.log(err);
-      });
+  checkPassword() {
+    if (this.loginForm.value.password === this.loginForm.value.confirmPassword) {
+      this.stepper.selectedIndex = 1;
+      this.message = '';
+    } else {
+      this.message = 'Passwords do not match';
     }
+  }
+
+  onSubmitConfiguration() {
+    if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+      this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password)
+        .subscribe((data) => {
+          const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
+          this.couchService.post('configurations', config).subscribe(() => {
+          this.router.navigate([ 'login' ]);
+          }, (err) => {
+            // Connect to an error display component to show user that an error has occurred
+            console.log(err);
+          });
+        }, (error) => (error));
+    }
+  }
+
+  cancel() {
+    this.router.navigate([ 'login' ]);
   }
 
 }
