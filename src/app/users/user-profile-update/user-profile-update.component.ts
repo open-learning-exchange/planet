@@ -51,8 +51,6 @@ export class UserProfileUpdateComponent implements OnInit {
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]
     });
-    this.editForm.setValue({firstName: '', middleName: '', lastName: '', login: '', email: '', language: ''
-      , phoneNumber: '', birthDate: '', gender: '', level: ''});
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
       .subscribe((data) => {
         this.user = data;
