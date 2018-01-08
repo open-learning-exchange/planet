@@ -68,7 +68,11 @@ export class LoginComponent implements OnInit {
     if (password === repeatPassword) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
         .subscribe((data) => {
+<<<<<<< 65086fef99055347d01b9aa6c9c99586b1fc9fa2
           this.login(this.model);
+=======
+          this.reRoute();
+>>>>>>> [#274] Removed comments
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';
