@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Function for upsert of design & other configuration docs
 upsert_doc() {
@@ -9,7 +9,7 @@ upsert_doc() {
   # If DOC includes a rev then it exists so we need to update
   # Otherwise we simply insert
   if [[ $DOC == *rev* ]]; then
-    DOC_REV=$(echo $DOC | python -c "import sys, json; print json.load(sys.stdin)['_rev']")
+    DOC_REV=$(echo $DOC | jq -r '. | ._rev')
     curl -X PUT $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
   else
     curl -X PUT $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
@@ -76,22 +76,14 @@ for key in data:
 # a 'json' field with the JSON to be updated
 multi_db_update() {
   DOC_LOC=$1
-  # Python re
-  INPUTS=$(python -c "
-import sys, json
-data=json.load(open('$DOC_LOC'))
-output=''
-for key in data:
-  databaseName=key['dbName']
-  docStr = repr(key['json']).replace('u\'', '\"').replace('\'', '\"')
-  output = output + databaseName + '|' + docStr + '|'
-print(output)")
-  # Remove spaces (json will not be passed into upsert_doc function correctly with spaces)
-  INPUTS=${INPUTS//[[:blank:]]/}
-  while [ ${#INPUTS} -gt 1 ]; do
-    IFS="|" read -r DB_NAME INPUTS <<< "$INPUTS"
-    IFS="|" read -r JSON INPUTS <<< "$INPUTS"
-    upsert_doc $DB_NAME _security $JSON
+  DOC_NAME=$2
+  # Use echo $(<$DOC_LOC) to be able to run in Windows
+  INPUTS=$(echo $(<$DOC_LOC) | jq -c '.[]')
+  for i in $INPUTS
+  do
+    JSON=$(echo $i | jq -c '. | .json' )
+    DB_NAME=$(echo $i | jq -r '. | .dbName')
+    upsert_doc $DB_NAME $DOC_NAME $JSON
   done
 }
 
@@ -118,4 +110,4 @@ insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachment resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
-multi_db_update ./design/security-update/security-update.json
+multi_db_update ./design/security-update/security-update.json _security
