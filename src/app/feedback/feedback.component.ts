@@ -7,7 +7,7 @@ import { MatRadioModule , MatFormFieldModule, MatButtonModule, } from '@angular/
 import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 
 export class Message {
-  feedbackMsg: string;
+  message: string;
   user: string;
   time: Number;
 }
@@ -28,8 +28,6 @@ export class Feedback {
 })
 
 export class FeedbackComponent {
-  feedback = new Feedback();
-  msg = new Message();
   message: string;
   feedbackForm: FormGroup;
 
@@ -37,24 +35,21 @@ export class FeedbackComponent {
     private userService: UserService,
     private couchService: CouchService,
     private fg: FormBuilder
-    ) {
+  ) {
     this.feedbackForm = fg.group({
-      feedbackMsg : [ '', Validators.required ],
-      isUrgent :  [ '' ],
-      feedbackType : [ '' ]
+      message: [ '', Validators.required ],
+      priority:  [ '' ],
+      type: [ '' ]
     });
   }
 
   addFeedback(post: any) {
     this.message = '';
-    this.feedback.owner = this.userService.get().name;
-    this.feedback.priority = post.isUrgent;
-    this.feedback.type = post.feedbackType;
-    this.feedback.openTime = Date.now();
-    this.feedback.messages[0].feedbackMsg = post.feedbackMsg;
-    this.feedback.messages[0].time = Date.now();
-    this.feedback.messages[0].user = this.userService.get().name;
-    this.couchService.post('feedback/', this.feedback)
+    const user = this.userService.get().name,
+      { message, ...feedbackInfo } = post,
+      startingMessage: Message = { message, time: Date.now(), user },
+      newFeedback: Feedback = { owner: user, ...feedbackInfo, openTime: Date.now(), messages: [ startingMessage ] };
+    this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
       this.message = 'Thank you, your feedback is submitted!';
     },
