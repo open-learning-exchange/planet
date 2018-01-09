@@ -33,7 +33,7 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
     NavigationComponent,
     CommunityComponent,
     NationComponent,
-    ManagerDashboardComponent,
+    ManagerDashboardComponent
   ]
 })
 export class HomeModule {}
