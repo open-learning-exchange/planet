@@ -18,7 +18,7 @@ import { of } from 'rxjs/observable/of';
     .background {
       /* Hard coded $primary for end of gradient.  Should use variable if we decide on this background */
       background: linear-gradient(to bottom, #000000, #2196f3);
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100vw;

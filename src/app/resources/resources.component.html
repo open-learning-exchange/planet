@@ -35,10 +35,10 @@
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef></mat-header-cell>
       <mat-cell *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()"
-            (change)="$event ? selection.toggle(row) : null"
-            [checked]="selection.isSelected(row)">
-          </mat-checkbox>
+        <mat-checkbox (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="info">
@@ -51,19 +51,19 @@
         <button  *ngIf="!nationName" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
-          <mat-menu #resourceMenu="matMenu">
-              <a mat-menu-item [routerLink]="['/resources/wip']">
-                <mat-icon>library_add</mat-icon>
-                <span i18n>Add to Library</span>
-              </a>
-              <a mat-menu-item [routerLink]="['/resources/wip']">
-                <mat-icon>feedback</mat-icon>
-                <span i18n>Feedback</span>
-              </a>
-              <button mat-menu-item (click)="deleteClick(element)">
-                <mat-icon>delete_forever</mat-icon>
-                <span i18n>Delete</span>
-              </button>
+        <mat-menu #resourceMenu="matMenu">
+          <a mat-menu-item [routerLink]="['/resources/wip']">
+            <mat-icon>library_add</mat-icon>
+            <span i18n>Add to Library</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/resources/wip']">
+            <mat-icon>feedback</mat-icon>
+            <span i18n>Feedback</span>
+          </a>
+          <button mat-menu-item (click)="deleteClick(element)">
+            <mat-icon>delete_forever</mat-icon>
+            <span i18n>Delete</span>
+          </button>
         </mat-menu>
       </mat-cell>
     </ng-container>
