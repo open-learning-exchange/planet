@@ -46,7 +46,6 @@ export class UsersProfileComponent implements OnInit {
   }
 
   onSubmit(data, userDetail) {
-    console.log(data,userDetail)
     const formdata = {
       'password': data.password,
       '_rev': userDetail._rev,
