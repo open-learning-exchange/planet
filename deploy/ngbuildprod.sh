@@ -8,6 +8,7 @@ bell() {
 }
 
 bell &
-BUILD_CODE=$(ng build --prod)
+ng build --prod
+BUILD_CODE=$?
 kill %1
 exit $BUILD_CODE

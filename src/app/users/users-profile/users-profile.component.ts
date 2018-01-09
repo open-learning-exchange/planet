@@ -9,7 +9,7 @@ import { UserService } from '../../shared/user.service';
 })
 export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
-  userDetail: any;
+  userDetail = [];
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   name = '';
