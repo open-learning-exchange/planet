@@ -6,7 +6,8 @@
   <div mat-card-avatar><i class="material-icons">person</i></div>
 </ng-template>
 <div *ngIf="name === urlName">
-	<a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', name]">Edit</a>
+  <a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', name]">Edit</a>
+  <a mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
 </div>
 <mat-list>
   <mat-list-item *ngIf="userDetail.firstName">
