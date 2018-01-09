@@ -13,7 +13,7 @@
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
     "lint": "npm run sass-lint && ng lint && npm run htmlhint",
-    "v-lint": "vagrant ssh -- -t 'cd /vagrant;npm run lint'",
+    "v-lint": "vagrant ssh -- -t 'cd /vagrant;npm run lint -s'",
     "v-lint-fix": "vagrant ssh -- -t 'cd /vagrant;ng lint --fix'",
     "e2e": "ng e2e --environment test",
     "v-e2e": "vagrant ssh -- -t 'cd /vagrant;ng e2e --environment test'",
