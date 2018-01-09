@@ -3,7 +3,7 @@
   "attr-lowercase": false,
   "attr-no-duplication": true,
   "attr-unsafe-chars": true,
-  "attr-value-double-quotes": true,
+  "attr-value-double-quotes": false,
   "attr-value-not-empty": false,
   "doctype-first": false,
   "doctype-html5": true,
@@ -15,10 +15,10 @@
   "inline-script-disabled": true,
   "inline-style-disabled": true,
   "space-tab-mixed-disabled": "space2",
-  "spec-char-escape": true,
+  "spec-char-escape": false,
   "src-not-empty": true,
   "style-disabled": true,
-  "tag-pair": true,
+  "tag-pair": false,
   "tag-self-close": false,
   "tagname-lowercase": true
 }
