@@ -3,6 +3,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import * as languages from '../../../design/languages/languages-mockup.json';
 
 @Component({
   selector: 'planet-navigation',
@@ -18,7 +19,7 @@ import { environment } from '../../environments/environment';
         </button>
         <mat-menu #language_menu="matMenu">
           <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language)">
-            <img src="{{language.imgSrc}}" i18n-title title="{{language.name}}" i18n-alt alt="{{language.name}}" />
+            <img src="{{language.flag}}" i18n-title title="{{language.name}}" i18n-alt alt="{{language.name}}" />
             <span>{{language.short_code}}</span>
           </button>
         </mat-menu>
@@ -55,18 +56,12 @@ export class NavigationComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.couchService.get('languages/_all_docs?include_docs=true')
-      .subscribe((data) => {
-        data.rows.map((language) => {
-          const filename = Object.keys(language.doc._attachments)[0];
-          const imgSrc = environment.couchAddress + 'languages/' + language.doc._id + '/' + filename;
-          this.languages.push({ ...language.doc, imgSrc });
-        });
-      }, (error) => console.log('There is a problem of getting languages'));
+    Object.assign(this, this.userService.get());
+    this.languages = (<any>languages);
   }
 
   switchLanguage(lang) {
-    this.selected_flag = lang.imgSrc;
+    this.selected_flag = lang.flag;
     this.selected_lang = lang.name;
   }
 
@@ -76,10 +71,6 @@ export class NavigationComponent implements OnInit {
         this.router.navigate([ '/login' ], {});
       }
     });
-  }
-
-  ngOnInit() {
-    Object.assign(this, this.userService.get());
   }
 
 }

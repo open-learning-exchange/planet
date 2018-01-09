@@ -82,7 +82,6 @@ curl -X PUT $COUCHURL/resources
 curl -X PUT $COUCHURL/courses
 curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/communityregistrationrequests
-curl -X PUT $COUCHURL/languages
 
 # Add or update design docs
 upsert_design courses course-validators ./design/courses/course-validators.json
@@ -94,5 +93,3 @@ insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachment resources ./design/resources/resources-attachment-mockup.json
-insert_docs languages ./design/languages/languages-mockup.json
-insert_attachment languages ./design/languages/languages-attachment-mockup.json
