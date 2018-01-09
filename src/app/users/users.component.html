@@ -26,6 +26,11 @@
       </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+      <mat-cell *matCellDef="let element"><a *ngIf="!element.admin" routerLink="/users/profile/{{element.name}}" i18n mat-raised-button color="primary">View Profile</a></mat-cell>
+    </ng-container>
+
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:row.selected}" (click)="select(row)"></mat-row>
   </mat-table>
