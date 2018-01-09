@@ -21,6 +21,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidDate {Date is invalid}
       invalidEndDate {End date cannot be before start date}
       invalidEndTime {End time cannot be before start time}
+      passwordNotMatch { Password and Confirm password doesnot match }
     }</span>
   `
 })

@@ -7,12 +7,16 @@ import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
+import { UserProfileUpdateComponent } from '../users/user-profile-update/user-profile-update.component';
+import { UserProfileComponent } from '../users/user-profile/user-profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
       { path: '', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
+      { path: 'users/profile/:name', component: UserProfileComponent },
+      { path: 'users/update/:name', component: UserProfileUpdateComponent },
       { path: 'nation', component: NationComponent },
       { path: 'manager', component: ManagerDashboardComponent },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
