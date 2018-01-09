@@ -52,11 +52,11 @@ export class ConfigurationComponent implements OnInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .subscribe((data) => {
-        for (let i = 0; i < data.rows.length; i++) {
-          if (data.rows[i].doc['_id'].indexOf('_design') === -1) {
-            this.nations.push(data.rows[i].doc);
-          }
-        }
+        this.nations = data.rows.map(nations => {
+          return nations.doc;
+        }).filter(nt  => {
+          return nt['_id'].indexOf('_design') !== 0;
+        });
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -105,10 +105,6 @@ export class ConfigurationComponent implements OnInit {
           });
         }, (error) => (error));
     }
-  }
-
-  cancel() {
-    this.router.navigate([ 'login' ]);
   }
 
 }

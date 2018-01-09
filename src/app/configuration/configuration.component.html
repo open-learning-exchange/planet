@@ -18,7 +18,6 @@
         </mat-form-field>
       </mat-grid-list>
       <button mat-raised-button color="primary" (click)="checkPassword()" i18n>Next</button>
-      <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </form>
     <div id="login-status">{{message}}</div>
   </mat-step>
@@ -93,7 +92,6 @@
       <div>
         <button mat-raised-button color="primary" matStepperPrevious i18n>Back</button>
         <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
-        <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
       </div>
     </form>
   </mat-step>
