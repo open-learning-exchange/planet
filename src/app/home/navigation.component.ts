@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -23,6 +23,8 @@ import { environment } from '../../environments/environment';
           </button>
         </mat-menu>
       </li>
+      <li><a routerLink="/manager"><i class="material-icons">settings</i></a></li>
+      <li *ngIf="roles.indexOf('_admin') === -1"><a routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></a></li>
     </ul>
   `,
   styleUrls: [ './navigation.scss' ]
@@ -33,10 +35,13 @@ export class NavigationComponent implements OnInit {
   languages = [];
   selected_flag = '';
   selected_lang = '';
+  name = '';
+  roles: string[] = [];
 
   constructor(
     private couchService: CouchService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   components = [
@@ -71,6 +76,10 @@ export class NavigationComponent implements OnInit {
         this.router.navigate([ '/login' ], {});
       }
     });
+  }
+
+  ngOnInit() {
+    Object.assign(this, this.userService.get());
   }
 
 }
