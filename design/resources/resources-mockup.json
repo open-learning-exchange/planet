@@ -27,7 +27,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Anansi Gives People Stories",
+            "title": "Image Resource",
             "averageRating": "1",
             "mediaType": "image",
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
@@ -59,7 +59,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Brown",
+            "title": "Text Resource (Open File)",
             "averageRating": "2",
             "mediaType": "other",
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
@@ -91,7 +91,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Crocodile and Baboon",
+            "title": "PDF Resource (PDF Reader)",
             "averageRating": "3",
             "mediaType": "pdf",
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
@@ -112,7 +112,7 @@
             "kind": "Resource",
             "Medium": "Text",
             "language": "English",
-            "author": "Southern African Folk Tale, Catherine Groenewald",
+            "author": "Jon Author",
             "sum": 0,
             "Level": [
                 "Lower Primary"
@@ -123,7 +123,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "2014",
-            "title": "African Storybooks - Grandmother and the Smelly Girl",
+            "title": "Word File Resource (Download)",
             "averageRating": "5",
             "mediaType": "other",
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
@@ -153,7 +153,7 @@
             "timesRated": 0,
             "Tag": [],
             "Year": "",
-            "title": "How Coaches Can Maximize Student Learning",
+            "title": "CSV Resource (Download)",
             "averageRating": "4",
             "mediaType": "other",
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."

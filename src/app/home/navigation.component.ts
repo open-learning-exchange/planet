@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 
@@ -9,15 +9,19 @@ import { Router } from '@angular/router';
     <ul>
       <li *ngFor="let comp of components"><a [routerLink]="'/' + comp.link">{{comp.name.toUpperCase()}}</a></li>
       <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
-      <li><a routerLink="/manager"><mat-icon>person</mat-icon></a></li>
+      <li><a routerLink="/manager"><i class="material-icons">settings</i></a></li>
+      <li *ngIf="roles.indexOf('_admin') === -1"><a routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></a></li>
     </ul>
   `,
   styleUrls: [ './navigation.scss' ]
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit {
+  name = '';
+  roles: string[] = [];
   constructor(
     private couchService: CouchService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   components = [
@@ -36,6 +40,10 @@ export class NavigationComponent {
         this.router.navigate([ '/login' ], {});
       }
     });
+  }
+
+  ngOnInit() {
+    Object.assign(this, this.userService.get());
   }
 
 }

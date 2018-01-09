@@ -1,5 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { tap, catchError } from 'rxjs/operators';
@@ -13,7 +13,7 @@ require('./login.scss');
   styleUrls: [ './login.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private router: Router,
@@ -24,6 +24,18 @@ export class LoginComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
+
+  ngOnInit() {
+    // If not e2e tests, route to create user if there is no admin
+    if (!environment.test) {
+      this.checkAdminExistence().subscribe((noAdmin) => {
+        // false means there is admin
+        if (noAdmin) {
+          this.router.navigate([ '/login/newuser' ]);
+        }
+      });
+    }
+  }
 
   onSubmit() {
     if (this.createMode) {
