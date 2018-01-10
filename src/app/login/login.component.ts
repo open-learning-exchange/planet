@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
       this.checkAdminExistence().subscribe((noAdmin) => {
         // false means there is admin
         if (noAdmin) {
-          this.router.navigate([ '/login/newuser' ]);
+          this.router.navigate([ '/configuration' ]);
         }
       });
     }
