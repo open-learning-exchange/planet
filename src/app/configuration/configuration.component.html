@@ -18,7 +18,7 @@
           <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </mat-grid-list>
-      <button mat-raised-button color="primary" (click)="checkPassword()" i18n>Next</button>
+      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
     </form>
     <div id="login-status">{{message}}</div>
   </mat-step>
@@ -91,7 +91,7 @@
         </mat-form-field>
       </div>
       <div>
-        <button mat-raised-button type="button" "primary" matStepperPrevious i18n>Back</button>
+        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
         <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
       </div>
     </form>

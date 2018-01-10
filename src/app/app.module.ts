@@ -17,11 +17,7 @@ import { PlanetFormsModule } from './shared/planet-forms.module';
 
 @NgModule({
   imports: [
-<<<<<<< 938979cecf00e8387d1cfa9f3b0d2a53c616f195
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FormsModule, PlanetFormsModule, ReactiveFormsModule, MaterialModule
-=======
     BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
->>>>>>> [#274] Added separate module
   ],
   declarations: [
     AppComponent, PageNotFoundComponent

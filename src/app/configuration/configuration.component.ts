@@ -13,7 +13,6 @@ import { Observable } from 'rxjs/Observable';
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
   message = '';
-  select = '';
   loginForm: FormGroup;
   configurationFormGroup: FormGroup;
   contactFormGroup: FormGroup;
@@ -74,26 +73,6 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onChange(selectedValue: string) {
-    this.select = selectedValue;
-<<<<<<< 6b32876bacff7b0226f4616040d86a0915455d21
-    if (this.select === 'community') {
-      this.configurationFormGroup = this.formBuilder.group({
-        planet_type: [ 'community', Validators.required ],
-        local_domain: [ document.baseURI, Validators.required ],
-        parent_domain: [ '', Validators.required ],
-        name: [ '', Validators.required ],
-        preferred_lang: [ '', Validators.required ],
-        code: [ '', Validators.required ]
-      });
-    } else {
-      this.configurationFormGroup = this.formBuilder.group({
-        planet_type: [ 'nation', Validators.required ],
-        name: [ '', Validators.required ],
-        parent_domain: [ 'nbs.ole.org:5997', Validators.required ],
-        local_domain: [ document.baseURI, Validators.required ],
-        preferred_lang: [ '', Validators.required ],
-        code: [ '', Validators.required ]
-=======
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
         planet_type: selectedValue,
@@ -101,8 +80,8 @@ export class ConfigurationComponent implements OnInit {
       });
     } else {
       this.configurationFormGroup.patchValue({
-        planet_type: selectedValue
->>>>>>> [#274] Implemented patchvalue
+        planet_type: selectedValue,
+        parent_domain: ''
       });
     }
   }
