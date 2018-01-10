@@ -1,7 +1,7 @@
 {
   "name": "ang-bell-app",
-  "version": "0.0.0",
-  "license": "MIT",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
     "start": "LNG=${LNG:-en};ng serve --aot --i18n-file=src/i18n/messages.$LNG.xlf --locale=$LNG --i18n-format=xlf",
