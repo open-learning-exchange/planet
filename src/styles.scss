@@ -55,11 +55,6 @@ body {
 
   @include margin-lr;
 
-  .hide {
-    display: none;
-    visibility: hidden;
-  }
-
   .button-icon-text mat-icon {
     margin: 0 3px;
   }
@@ -79,6 +74,8 @@ body {
 
     .content {
       grid-area: cn;
+      text-align: justify;
+      text-justify: inter-word;
     }
 
     .menu {
@@ -137,7 +134,7 @@ body {
 
     .rating {
       grid-area: rating;
-      text-align: right;
+      text-align: center;
 
       .rating-number {
         font-size: 2rem;

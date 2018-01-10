@@ -16,10 +16,6 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <mat-checkbox (change)="$event ? masterToggle() : null"
-        [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>Click to select all
-      </mat-checkbox>
       <span class="toolbar-fill"></span>
       <button mat-button [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
@@ -31,9 +27,14 @@
     </mat-toolbar-row>
   </mat-toolbar>
 
-  <mat-table #table [dataSource]="resources">
+  <mat-table #table [dataSource]="resources" matSort>
     <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
+      </mat-checkbox>
+      </mat-header-cell>
       <mat-cell *matCellDef="let row">
         <mat-checkbox (click)="$event.stopPropagation()"
           (change)="$event ? selection.toggle(row) : null"
@@ -42,12 +43,12 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="info">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
         <h3 class="header"><a *ngIf="!nationName" [routerLink]="['/resources/view', element._id]">{{element.title}}</a>
           <a *ngIf="nationName" [routerLink]="['/resources/view', nationName, element._id]">{{element.title}}</a>
         </h3>
-        <div class="content">{{ element.description }}</div>
+        <div class="content"><p>{{ element.description }}</p></div>
         <button  *ngIf="!nationName" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -68,7 +69,7 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="rating">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div class="list-item-rating">
           <span class="stars">

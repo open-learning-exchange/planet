@@ -14,19 +14,19 @@
             ],
             "articleDate": "2014-08-26T04:00:00.000Z",
             "kind": "Resource",
-            "Medium": "Text",
+            "": "Text",
             "language": "English",
             "author": "Ghanaian Folktale",
             "sum": 0,
-            "Level": [
+            "level": [
                 "Upper Primary"
             ],
             "languages": [
                 "English"
             ],
             "timesRated": 0,
-            "Tag": [],
-            "Year": "2014",
+            "tag": [],
+            "year": "2014",
             "title": "Image Resource",
             "averageRating": "1",
             "mediaType": "image",
@@ -46,19 +46,19 @@
             ],
             "articleDate": "2014-08-26T04:00:00.000Z",
             "kind": "Resource",
-            "Medium": "Text",
+            "medium": "Text",
             "language": "English",
             "author": "Reviva Schermbrucker, Sue Kramer",
             "sum": 0,
-            "Level": [
+            "level": [
                 "Early Education"
             ],
             "languages": [
                 "English"
             ],
             "timesRated": 0,
-            "Tag": [],
-            "Year": "2014",
+            "tag": [],
+            "year": "2014",
             "title": "Text Resource (Open File)",
             "averageRating": "2",
             "mediaType": "other",
@@ -78,19 +78,19 @@
             ],
             "articleDate": "2014-08-26T04:00:00.000Z",
             "kind": "Resource",
-            "Medium": "Text",
+            "medium": "Text",
             "language": "English",
             "author": "Little Zebra Books, Jeremiah Dube",
             "sum": 0,
-            "Level": [
+            "level": [
                 "Lower Primary"
             ],
             "languages": [
                 "English"
             ],
             "timesRated": 0,
-            "Tag": [],
-            "Year": "2014",
+            "tag": [],
+            "year": "2014",
             "title": "PDF Resource (PDF Reader)",
             "averageRating": "3",
             "mediaType": "pdf",
@@ -110,19 +110,19 @@
             ],
             "articleDate": "2014-08-26T04:00:00.000Z",
             "kind": "Resource",
-            "Medium": "Text",
+            "medium": "Text",
             "language": "English",
             "author": "Jon Author",
             "sum": 0,
-            "Level": [
+            "level": [
                 "Lower Primary"
             ],
             "languages": [
                 "English"
             ],
             "timesRated": 0,
-            "Tag": [],
-            "Year": "2014",
+            "tag": [],
+            "year": "2014",
             "title": "Word File Resource (Download)",
             "averageRating": "5",
             "mediaType": "other",
@@ -140,19 +140,19 @@
             ],
             "articleDate": "2014-07-22T04:00:00.000Z",
             "kind": "Resource",
-            "Medium": "Text",
+            "medium": "Text",
             "language": "English",
             "author": "Jon Saphier and Lucy West",
             "sum": 0,
-            "Level": [
+            "level": [
                 "Professional"
             ],
             "languages": [
                 "English"
             ],
             "timesRated": 0,
-            "Tag": [],
-            "Year": "",
+            "tag": [],
+            "year": "",
             "title": "CSV Resource (Download)",
             "averageRating": "4",
             "mediaType": "other",

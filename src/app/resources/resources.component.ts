@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
-import { MatTableDataSource, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -44,6 +44,7 @@ import { of } from 'rxjs/observable/of';
 export class ResourcesComponent implements OnInit, AfterViewInit {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'select', 'info', 'rating' ];
   readonly dbName = 'resources';
   mRating;
@@ -71,6 +72,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
   }
 
