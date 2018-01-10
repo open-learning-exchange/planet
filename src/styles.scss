@@ -134,7 +134,7 @@ body {
 
     .rating {
       grid-area: rating;
-      text-align: center;
+      text-align: right;
 
       .rating-number {
         font-size: 2rem;
@@ -164,7 +164,7 @@ body {
   }
 
   mat-table .highlight {
-    background-color: $ole-grey-light;
+    background-color: $primary-light;
   }
 
   // Fix for checkboxes changing vertical alignment in cells when clicked as of Dec 28, 2017
