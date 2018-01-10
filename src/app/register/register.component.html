@@ -1,0 +1,85 @@
+<h3 i18n>Become a member</h3>
+<form [formGroup]="registerForm" (ngSubmit)="registerUser(registerForm.value)">
+  <mat-grid-list cols="3">
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.firstName"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.middleName"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.LastName"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+  </mat-grid-list>
+  <mat-grid-list cols="3">
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Login" formControlName="login" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.login"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="password" matInput i18n-placeholder placeholder="Password" formControlName="password" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.password"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input  type="password" matInput i18n-placeholder placeholder="Re-enter password" formControlName="repeatPassword" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.repeatPassword"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+  </mat-grid-list>
+  <mat-grid-list cols="3">
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Email" formControlName="Emails" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.Emails"></planet-form-error-messages></mat-error>
+      <mat-error *ngIf="registerForm.get('Emails').touched &&registerForm.get('Emails').hasError('pattern')"> Please enter a valid email</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.required"></planet-form-error-messages></mat-error>
+
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+  </mat-grid-list>
+  <mat-grid-list cols="3">
+    <mat-form-field>
+      <input matInput type="date" i18n-placeholder placeholder="Birthday" formControlName="birthDay" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.birthDay"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
+        <mat-option value="male">Male</mat-option>
+        <mat-option value="female">Female</mat-option>
+        <mat-error><planet-form-error-messages [control]="registerForm.controls.gender"></planet-form-error-messages></mat-error>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select i18n-placeholder placeholder="level" formControlName="level" required>
+        <mat-option *ngFor="let level of educationLevel" [value]="level">
+          {{level}}
+        </mat-option>
+        <mat-error><planet-form-error-messages [control]="registerForm.controls.level"></planet-form-error-messages></mat-error>
+      </mat-select>
+    </mat-form-field>
+  </mat-grid-list>
+  <mat-grid-list cols="3">
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Community" formControlName="community" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.community"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Region" formControlName="region" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.region"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Nation" formControlName="nation" required>
+      <mat-error><planet-form-error-messages [control]="registerForm.controls.nation"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+  </mat-grid-list>
+  <h5 *ngIf="RegistrationMsg">{{RegistrationMsg}}</h5>
+  <h5 *ngIf="uniqueUser">{{uniqueUser}}</h5>
+  <button type="submit" mat-button [disabled]="registerForm.invalid"  color="primary" i18n>Register</button>
+</form>
