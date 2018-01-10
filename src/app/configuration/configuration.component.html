@@ -33,7 +33,7 @@
         </mat-select>
       </mat-form-field>
       <div>
-        <div *ngIf="select === 'community'">
+        <div *ngIf="nationOrCommunity === 'community'">
           <mat-form-field>
               <input matInput i18n-placeholder placeholder="Local Url" formControlName="local_domain" readonly required>
           </mat-form-field>
@@ -43,7 +43,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div *ngIf="select === 'nation'">
+        <div *ngIf="nationOrCommunity === 'nation'">
           <mat-form-field>
               <input matInput i18n-placeholder placeholder="Local Url" formControlName="local_domain" required>
           </mat-form-field>

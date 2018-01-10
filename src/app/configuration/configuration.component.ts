@@ -12,6 +12,7 @@ import { Observable } from 'rxjs/Observable';
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
+  nationOrCommunity = 'community';
   message = '';
   loginForm: FormGroup;
   configurationFormGroup: FormGroup;
@@ -73,6 +74,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onChange(selectedValue: string) {
+    this.nationOrCommunity = selectedValue;
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
         planet_type: selectedValue,
