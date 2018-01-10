@@ -15,6 +15,7 @@
       <mat-grid-list cols="1">
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
+          <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </mat-grid-list>
       <button mat-raised-button color="primary" (click)="checkPassword()" i18n>Next</button>

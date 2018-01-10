@@ -16,10 +16,11 @@ import { MaterialModule } from './shared/material.module';
 import { ConfigurationComponent } from './configuration/configuration.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlanetFormsModule } from './shared/planet-forms.module';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MaterialModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FormsModule, PlanetFormsModule, ReactiveFormsModule, MaterialModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent, ConfigurationComponent

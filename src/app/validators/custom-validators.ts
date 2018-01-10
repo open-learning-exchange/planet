@@ -136,4 +136,34 @@ export class CustomValidators {
       }
     };
   }
+
+  // Set this on both password and confirmation fields so it runs when either changes
+  // confirm should be true for the confirmation field validator
+  static matchPassword(match: string, confirm: boolean): ValidatorFn {
+
+    return (ac: AbstractControl) => {
+      if(!ac.parent) {
+        return null;
+      }
+
+      const matchControl = ac.parent.get(match),
+        val1 = ac.value,
+        val2 = matchControl.value,
+        confirmControl: AbstractControl = confirm ? ac : matchControl;
+
+      // If passwords do not match, set error for confirmation field
+      if(val1 !== val2) {
+        confirmControl.setErrors({ matchPassword: false });
+        // If this is set on the confirmation field, also return match password error
+        if(confirm) {
+          return { matchPassword: false };
+        }
+      } else {
+        // Remove error if passwords match
+        confirmControl.setErrors(null);
+      }
+      return null;
+    }
+  }
+
 }

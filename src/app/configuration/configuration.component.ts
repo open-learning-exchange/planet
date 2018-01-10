@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
+import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -19,19 +20,31 @@ export class ConfigurationComponent implements OnInit {
   nations = [];
 
   constructor(
-    private _formBuilder: FormBuilder,
+    private formBuilder: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private router: Router
   ) { }
 
   ngOnInit() {
-    this.loginForm = this._formBuilder.group({
+    this.loginForm = this.formBuilder.group({
       username: [ '', Validators.required ],
-      password: [ '', Validators.required ],
-      confirmPassword: [ '', Validators.required ]
+      password: [
+        '',
+        Validators.compose([
+          Validators.required,
+          CustomValidators.matchPassword('confirmPassword', false)
+        ])
+      ],
+      confirmPassword: [
+        '',
+        Validators.compose([
+          Validators.required,
+          CustomValidators.matchPassword('password', true)
+        ])
+      ]
     });
-    this.configurationFormGroup = this._formBuilder.group({
+    this.configurationFormGroup = this.formBuilder.group({
       planet_type: [ '', Validators.required ],
       local_domain: [ '', Validators.required ],
       name: [ '', Validators.required ],
@@ -39,7 +52,7 @@ export class ConfigurationComponent implements OnInit {
       preferred_lang: [ '', Validators.required ],
       code: [ '', Validators.required ]
     });
-    this.contactFormGroup = this._formBuilder.group({
+    this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
       middleName: [ '' ],
@@ -63,7 +76,7 @@ export class ConfigurationComponent implements OnInit {
   onChange(selectedValue: string) {
     this.select = selectedValue;
     if (this.select === 'community') {
-      this.configurationFormGroup = this._formBuilder.group({
+      this.configurationFormGroup = this.formBuilder.group({
         planet_type: [ 'community', Validators.required ],
         local_domain: [ document.baseURI, Validators.required ],
         parent_domain: [ '', Validators.required ],
@@ -72,7 +85,7 @@ export class ConfigurationComponent implements OnInit {
         code: [ '', Validators.required ]
       });
     } else {
-      this.configurationFormGroup = this._formBuilder.group({
+      this.configurationFormGroup = this.formBuilder.group({
         planet_type: [ 'nation', Validators.required ],
         name: [ '', Validators.required ],
         parent_domain: [ 'nbs.ole.org:5997', Validators.required ],
@@ -80,15 +93,6 @@ export class ConfigurationComponent implements OnInit {
         preferred_lang: [ '', Validators.required ],
         code: [ '', Validators.required ]
       });
-    }
-  }
-
-  checkPassword() {
-    if (this.loginForm.value.password === this.loginForm.value.confirmPassword) {
-      this.stepper.selectedIndex = 1;
-      this.message = '';
-    } else {
-      this.message = 'Passwords do not match';
     }
   }
 
