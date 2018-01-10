@@ -142,7 +142,7 @@ export class CustomValidators {
   static matchPassword(match: string, confirm: boolean): ValidatorFn {
 
     return (ac: AbstractControl) => {
-      if(!ac.parent) {
+      if (!ac.parent) {
         return null;
       }
 
@@ -152,10 +152,10 @@ export class CustomValidators {
         confirmControl: AbstractControl = confirm ? ac : matchControl;
 
       // If passwords do not match, set error for confirmation field
-      if(val1 !== val2) {
+      if (val1 !== val2) {
         confirmControl.setErrors({ matchPassword: false });
         // If this is set on the confirmation field, also return match password error
-        if(confirm) {
+        if (confirm) {
           return { matchPassword: false };
         }
       } else {
@@ -163,7 +163,7 @@ export class CustomValidators {
         confirmControl.setErrors(null);
       }
       return null;
-    }
+    };
   }
 
 }
