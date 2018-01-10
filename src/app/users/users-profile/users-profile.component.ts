@@ -13,6 +13,7 @@ export class UsersProfileComponent implements OnInit {
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   name = '';
+  roles = [];
   urlName = '';
 
   constructor(
