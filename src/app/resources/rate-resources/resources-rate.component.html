@@ -1,0 +1,26 @@
+<h1 i18n>Submit your rating</h1>
+<form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
+  <div>
+    <mat-radio-group formControlName="rating">
+      <label i18n>Rating:</label>
+      <mat-radio-button [value]="0" i18n>0</mat-radio-button>
+      <mat-radio-button [value]="1" i18n>1</mat-radio-button>
+      <mat-radio-button [value]="2" i18n>2</mat-radio-button>
+      <mat-radio-button [value]="3" i18n>3</mat-radio-button>
+      <mat-radio-button [value]="4" i18n>4</mat-radio-button>
+      <mat-radio-button [value]="5" i18n>5</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <mat-form-field>
+      <textarea matInput i18n-placeholder placeholder="Type your comment: (optional)" formControlName="comment"></textarea>
+    </mat-form-field>
+  </div>
+  <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
+</form>
+
+<!--FOR DEBUGGING (remove once view is final)-->
+<div>
+    <p>Form value: {{ ratingForm.value | json }}</p>
+    <p>{{ ratingForm.valid }}</p>
+</div>

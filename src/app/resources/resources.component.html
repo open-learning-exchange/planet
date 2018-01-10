@@ -20,6 +20,7 @@
       <div *ngIf="!nationName; else isNation" class="list-item-content">
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/view', element._id]">View Details</a>
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
+        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/rate', element._id]">Rate</a>
         <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
         <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>Delete</button>
       </div>
@@ -35,23 +36,23 @@
         <span class="stars">
           <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
           <!-- used simple arithmetic to get 20 and converted into % -->
-          <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
+          <span [ngStyle]="{'width': getRating(element.totalRating, element.timesRated)}">
             <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
           </span>
         </span>
         <div class="label">
-          <span class="small">Rating ({{ rating }})</span>
-          <span class="small">Female ({{ fRating }}%)</span>
-          <span class="small">Male ({{ mRating }}%)</span>
+          <span class="small">Rating ({{ element.totalRating / element.timesRated }})</span>
+          <span class="small">Female ({{ element.fRating / element.timesRated * 100 }}%)</span>
+          <span class="small">Male ({{ element.mRating / element.timesRated * 100 }}%)</span>
         </div>
         <div class="info">
           <span>{{ rating }}</span>
           <div class="rating-bar">
             <!-- used ngStyle here to set the width of the bar dynamically -->
-            <div [ngStyle]="{ 'width': fRating + '%'}"></div>
+            <div [ngStyle]="{ 'width': element.fRating / element.timesRated * 100 + '%'}"></div>
           </div>
           <div class="rating-bar">
-            <div [ngStyle]="{ 'width': mRating + '%'}"></div>
+            <div [ngStyle]="{ 'width': element.mRating / element.timesRated * 100 + '%'}"></div>
           </div>
         </div>
       </div>
