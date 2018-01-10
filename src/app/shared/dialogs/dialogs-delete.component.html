@@ -1,10 +1,20 @@
 <mat-dialog-content>
-  <p i18n>Are you sure you want to delete the following {data.type, select,
-    community {community}
-    nation {nation}
-    course {course}
-    resource {resource}
-    meetup {meetup}}?
+  <p i18n>{data.amount, select,
+      single {Are you sure you want to delete the following {data.type, select,
+        community {community}
+        nation {nation}
+        course {course}
+        resource {resource}
+        meetup {meetup}}?
+      }
+      many {Are you sure you want to delete the selected {data.type, select,
+        community {communities}
+        nation {nations}
+        course {courses}
+        resource {resources}
+        meetup {meetups}}?
+      }
+    }
   </p>
   <p>{{data.displayName}}</p>
   <div class="alert alert-danger" *ngIf="message">

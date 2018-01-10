@@ -1,64 +1,96 @@
-<div *ngIf="!nationName; else remoteNationName">
-  <button mat-raised-button routerLink="add" color="primary" i18n>Add Resource</button>
-</div>
-<ng-template #remoteNationName>
-  <h1 i18n>Resources: {{nationName}}</h1>
-</ng-template>
-<div>
-  <mat-form-field>
-    <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Search">
-  </mat-form-field>
-</div>
-<mat-table #table [dataSource]="resources">
-  <ng-container matColumnDef="title">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element" class="list-item-info">
-      <h3>{{element.title}}</h3>
-      <div class="list-item-content">
-        Author: {{ element.author }},Year: {{ element.year }}, Media: {{ element.Medium }}, Language: {{ element.language }}, Subject/s: {{element.subject}}, Publisher/Attribution: {{ element.Publisher }}, Link to License: {{element.linkToLicense}}, Resource: {{ element.resourceFor }}, Resource Type: {{ element.resourceType }}
-      </div>
-      <div *ngIf="!nationName; else isNation" class="list-item-content">
-        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/view', element._id]">View Details</a>
-        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Add To Library</a>
-        <a mat-raised-button color="primary" i18n [routerLink]="['/resources/wip']">Feedback</a>
-        <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>Delete</button>
-      </div>
-      <ng-template #isNation>
-        <div class="list-item-content"><a mat-raised-button color="primary" i18n [routerLink]="['/resources/view/', nationName, element._id]">View Details</a></div>
-      </ng-template>
-    </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="rating">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element">
-      <div class="list-item-rating">
-        <span class="stars">
-          <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-          <!-- used simple arithmetic to get 20 and converted into % -->
-          <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
-            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-          </span>
-        </span>
-        <div class="label">
-          <span class="small">Rating ({{ rating }})</span>
-          <span class="small">Female ({{ fRating }}%)</span>
-          <span class="small">Male ({{ mRating }}%)</span>
-        </div>
-        <div class="info">
-          <span>{{ rating }}</span>
-          <div class="rating-bar">
-            <!-- used ngStyle here to set the width of the bar dynamically -->
-            <div [ngStyle]="{ 'width': fRating + '%'}"></div>
-          </div>
-          <div class="rating-bar">
-            <div [ngStyle]="{ 'width': mRating + '%'}"></div>
-          </div>
-        </div>
-      </div>
-    </mat-cell>
-  </ng-container>
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;" class="list-item"></mat-row>
-</mat-table>
-<mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+<!--Used to approximate design.  Should be replaced before merging"-->
+<div class="background"></div>
 
+<mat-toolbar>
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>Library</span>
+    <span class="toolbar-fill"></span>
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+    </mat-form-field>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span class="toolbar-fill"></span>
+      <button mat-button [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+      </button>
+      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+      </button>
+      <button mat-mini-fab routerLink="add" *ngIf="!nationName"><mat-icon>add</mat-icon></button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-table #table [dataSource]="resources" matSort>
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
+      </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="info">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+      <mat-cell *matCellDef="let element" class="list-content-menu">
+        <h3 class="header"><a *ngIf="!nationName" [routerLink]="['/resources/view', element._id]">{{element.title}}</a>
+          <a *ngIf="nationName" [routerLink]="['/resources/view', nationName, element._id]">{{element.title}}</a>
+        </h3>
+        <div class="content"><p>{{ element.description }}</p></div>
+        <button  *ngIf="!nationName" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #resourceMenu="matMenu">
+          <a mat-menu-item [routerLink]="['/resources/wip']">
+            <mat-icon>library_add</mat-icon>
+            <span i18n>Add to Library</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/resources/wip']">
+            <mat-icon>feedback</mat-icon>
+            <span i18n>Feedback</span>
+          </a>
+          <button mat-menu-item (click)="deleteClick(element)">
+            <mat-icon>delete_forever</mat-icon>
+            <span i18n>Delete</span>
+          </button>
+        </mat-menu>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="rating">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <div class="list-item-rating">
+          <span class="stars">
+            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            <!-- used simple arithmetic to get 20 and converted into % -->
+            <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
+              <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            </span>
+          </span>
+          <div class="stats stats-total">{{ element.timesRated }} Total</div>
+          <div class="stats stats-female">{{ fRating }}% Female</div>
+          <div class="stats stats-male">{{ mRating }}% Male</div>
+          <div class="rating">
+            <span class="rating-number">{{ element.timesRated > 0 ? (element.sum / element.timesRated).toFixed(1) : element.sum }}</span>
+            <span>RATING</span>
+          </div>
+        </div>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+</div>
