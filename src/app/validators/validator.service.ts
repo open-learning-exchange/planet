@@ -59,7 +59,6 @@ constructor(private couchService: CouchService) {}
         }
       })
     );
-
-}
+  }
 
 }

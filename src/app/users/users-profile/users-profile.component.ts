@@ -46,9 +46,9 @@ export class UsersProfileComponent implements OnInit {
     });
   }
 
-  onSubmit(data, userDetail) {
+  onSubmit(credentialData, userDetail) {
     const formdata = {
-      'password': data.password,
+      'password': credentialData.password,
       '_rev': userDetail._rev,
       'name': userDetail.name,
       'type': 'user',
@@ -66,33 +66,41 @@ export class UsersProfileComponent implements OnInit {
     };
     this.couchService.put(this.dbName + '/' + userDetail._id, formdata)
       .subscribe((res) => {
-        this.couchService.delete('_session', { withCredentials: true }).subscribe((data: any) => {
-          if (data.ok === true) {
-            this.router.navigate([ '/login' ], {});
+        console.log(res)
+        this.couchService.delete('_session', { withCredentials: true }).subscribe((info: any) => {
+          console.log()
+          if (info.ok === true) {
+            this.couchService.post('_session', { 'name': userDetail.name, 'password': credentialData.password }, { withCredentials: true })
+              .subscribe((data) => {
+
+          this.profileView()
+                console.log(data)
+                this.router.navigate([ 'users/profile/' + userDetail.name ], {});
+            }, (error) => (error));
           }
         });
       }, (error) => (error));
-}
+  }
 
-changePasswordForm(userDetail) {
-  const title = 'Change Password';
-  const type = 'user';
-  const fields =
-    [
-      { 'label': 'Password', 'type': 'password', 'name': 'password', 'placeholder': 'Password', 'required': true },
-      { 'label': 'Confirm Password', 'type': 'password', 'name': 'confirmPassword', 'placeholder': 'Confirm Password', 'required': true }
-    ];
-  const validation = {
-    password: [ '', Validators.required ],
-    confirmPassword: [ '', Validators.required, ac => this.validatorService.MatchPassword$(ac, ac.parent.get('password')) ]
-  };
-  this.dialogsFormService
-    .confirm(title, type, fields, validation, '')
-    .debug('Dialog confirm')
-    .subscribe((res) => {
-      if (res !== undefined) {
-        this.onSubmit(res, userDetail);
-      }
-    });
-}
+  changePasswordForm(userDetail) {
+    const title = 'Change Password';
+    const type = 'user';
+    const fields =
+      [
+        { 'label': 'Password', 'type': 'password', 'name': 'password', 'placeholder': 'Password', 'required': true },
+        { 'label': 'Confirm Password', 'type': 'password', 'name': 'confirmPassword', 'placeholder': 'Confirm Password', 'required': true }
+      ];
+    const validation = {
+      password: [ '', Validators.required ],
+      confirmPassword: [ '', Validators.required, ac => this.validatorService.MatchPassword$(ac, ac.parent.get('password')) ]
+    };
+    this.dialogsFormService
+      .confirm(title, type, fields, validation, '')
+      .debug('Dialog confirm')
+      .subscribe((res) => {
+        if (res !== undefined) {
+          this.onSubmit(res, userDetail);
+        }
+      });
+  }
 }
