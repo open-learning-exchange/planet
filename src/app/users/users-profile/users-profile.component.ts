@@ -12,10 +12,11 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 })
 export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
-  userDetail = [];
+  userDetail: any;
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   name = '';
+  roles = [];
   urlName = '';
 
   constructor(

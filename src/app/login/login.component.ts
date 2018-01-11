@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
       this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
-          this.reRoute();
+          this.login(this.model);
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
     if (password === repeatPassword) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
         .subscribe((data) => {
-          this.reRoute();
+          this.login(this.model);
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';
