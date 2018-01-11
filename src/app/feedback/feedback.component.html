@@ -1,0 +1,27 @@
+<h1 i18n>Add feedback</h1>
+<form [formGroup]="feedbackForm" (ngSubmit)="addFeedback(feedbackForm.value)">
+  <div>
+    <label i18n>Is your feedback Urgent?</label>
+    <mat-radio-group formControlName="priority">
+      <mat-radio-button value="true" i18n>Yes</mat-radio-button>
+      <mat-radio-button value="false" i18n>No</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <label i18n>Feedback Type:</label>
+    <mat-radio-group formControlName="type">
+      <mat-radio-button value="Question" i18n>Question</mat-radio-button>
+      <mat-radio-button value="Bug" i18n>Bug</mat-radio-button>
+      <mat-radio-button value="Suggestion" i18n>Suggestion</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <label i18n>Comment:</label>
+    <mat-form-field>
+      <textarea matInput placeholder="Your Feedback" formControlName="message" required></textarea>
+      <mat-error><planet-form-error-messages [control]="feedbackForm.controls.message"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+  </div>
+  <div *ngIf="message">{{message}}</div>
+  <button type="submit" mat-raised-button [disabled]="feedbackForm.invalid" color="primary" i18n>Submit</button>
+</form>

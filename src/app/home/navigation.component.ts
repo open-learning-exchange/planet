@@ -51,7 +51,7 @@ export class NavigationComponent implements OnInit {
     { link: 'meetups', name: 'Meetups' },
     { link: 'users', name: 'Members' },
     { link: '', name: 'Reports' },
-    { link: '', name: 'Feedback' },
+    { link: 'feedback', name: 'Feedback' },
   ];
 
   ngOnInit() {

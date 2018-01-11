@@ -64,6 +64,7 @@ export class ResourcesAddComponent implements OnInit {
       ],
       author: '',
       year: '',
+      description: [ '', Validators.required ],
       language: '',
       publisher: '',
       linkToLicense: '',

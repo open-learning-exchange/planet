@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
-    <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.Year}} </mat-card-subtitle>
+    <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.year}} </mat-card-subtitle>
   </mat-card-header>
   <div [ngSwitch]="mediaType">
     <img [src]="resourceSrc" *ngSwitchCase="'image'">
@@ -18,9 +18,9 @@
     <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
   </div>
   <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
-  <mat-card-content *ngIf="resource.Medium">
+  <mat-card-content *ngIf="resource.medium">
     <p>
-      Media: {{ resource.Medium }}
+      Media: {{ resource.medium }}
     </p>
   </mat-card-content>
   <mat-card-content *ngIf="resource.language">
