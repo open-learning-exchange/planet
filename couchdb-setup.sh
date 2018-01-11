@@ -47,28 +47,22 @@ else
   COUCHURL=http://$COUCHUSER:$COUCHPASSWORD@$HOST:$PORT
 fi
 
-# Adding attachment to database documents
+# Adding attachments to database documents
 # To add attachment added two file (resources-mock.json and resources-attachment-mockup.json)
-# Ids are static
-# python Indent needs to follow.
-insert_attachment() {
+# Ids must match between two files
+insert_attachments() {
   DB=$1
   DOC_LOC=$2
-  python -c "
-import urllib, json, sys, subprocess
-data=json.load(open('$DOC_LOC'))
-for key in data:
- id=key['doc_id']
- file_location=key['file_name']
- file_type=key['file_type']
- url = '$COUCHURL/$DB/'+id
- response = urllib.urlopen(url)
- jsondata = json.loads(response.read())
- rev=jsondata['_rev']
- putAttachment='curl -v -X PUT $COUCHURL/$DB/'+id+'/'+file_location+'?rev='+rev+' --data-binary @'+file_location+' -H Content-Type:'+file_type
- p = subprocess.Popen(putAttachment, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
- out, err = p.communicate()
- "
+  # Use echo $(<$DOC_LOC) to be able to run in Windows
+  INPUTS=$(echo $(<$DOC_LOC) | jq -c '.[]')
+  for i in $INPUTS
+  do
+    ID=$(echo $i | jq -r '.doc_id' )
+    FILE_LOCATION=$(echo $i | jq -r '.file_name')
+    FILE_TYPE=$(echo $i | jq -r '.file_type')
+    REV=$(curl $COUCHURL/$DB/$ID | jq -r '._rev')
+    curl -X PUT $COUCHURL/$DB/$ID/$FILE_LOCATION?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE
+  done
 }
 
 # Reads one JSON file to update multiple databases
@@ -108,6 +102,6 @@ insert_docs nations ./design/nations/nations-mockup.json
 insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
-insert_attachment resources ./design/resources/resources-attachment-mockup.json
+insert_attachments resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
 multi_db_update ./design/security-update/security-update.json _security
