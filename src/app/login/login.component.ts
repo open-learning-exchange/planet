@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
+  configurationView = false;
 
   ngOnInit() {
     // If not e2e tests, route to create user if there is no admin
@@ -28,7 +29,7 @@ export class LoginComponent implements OnInit {
       this.checkAdminExistence().subscribe((noAdmin) => {
         // false means there is admin
         if (noAdmin) {
-          this.router.navigate([ '/configuration' ]);
+          this.configurationView = true;
         }
       });
     }
@@ -68,11 +69,7 @@ export class LoginComponent implements OnInit {
     if (password === repeatPassword) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
         .subscribe((data) => {
-<<<<<<< 65086fef99055347d01b9aa6c9c99586b1fc9fa2
           this.login(this.model);
-=======
-          this.reRoute();
->>>>>>> [#274] Removed comments
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';

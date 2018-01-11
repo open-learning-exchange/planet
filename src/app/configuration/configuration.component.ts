@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
+  selector: 'configuration-view',
   templateUrl: './configuration.component.html'
 })
 export class ConfigurationComponent implements OnInit {
@@ -94,7 +95,7 @@ export class ConfigurationComponent implements OnInit {
         .subscribe((data) => {
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
           this.couchService.post('configurations', config).subscribe(() => {
-          this.router.navigate([ 'login' ]);
+            window.location.reload();
           }, (err) => {
             // Connect to an error display component to show user that an error has occurred
             console.log(err);
