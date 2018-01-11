@@ -66,15 +66,11 @@ export class UsersProfileComponent implements OnInit {
     };
     this.couchService.put(this.dbName + '/' + userDetail._id, formdata)
       .subscribe((res) => {
-        console.log(res)
         this.couchService.delete('_session', { withCredentials: true }).subscribe((info: any) => {
-          console.log()
           if (info.ok === true) {
             this.couchService.post('_session', { 'name': userDetail.name, 'password': credentialData.password }, { withCredentials: true })
               .subscribe((data) => {
-
-          this.profileView()
-                console.log(data)
+                this.profileView();
                 this.router.navigate([ 'users/profile/' + userDetail.name ], {});
             }, (error) => (error));
           }
