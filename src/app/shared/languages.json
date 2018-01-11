@@ -2,29 +2,25 @@
     {
         "short_code": "en",
         "name": "English",
-        "flag": "assets/flags/en.png",
-        "served_url": "",
+        "served_url": "http://localhost:3000",
         "active": "Y"
     },
     {
         "short_code": "ne-NP",
         "name": "Nepali",
-        "flag": "assets/flags/np.png",
-        "served_url": "",
-        "active": "N"
+        "served_url": "http://np.localhost:3000",
+        "active": "Y"
     },
     {
         "short_code": "fr",
         "name": "French",
-        "flag": "assets/flags/fr.png",
-        "served_url": "",
+        "served_url": "http://fr.localhost:3000",
         "active": "N"
     },
     {
         "short_code": "es-ES",
         "name": "Spanish",
-        "flag": "assets/flags/es.png",
-        "served_url": "",
-        "active": "N"
+        "served_url": "http://es.localhost:3000",
+        "active": "Y"
     }
 ]
