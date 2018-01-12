@@ -1,5 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { tap, catchError } from 'rxjs/operators';
@@ -13,7 +13,7 @@ require('./login.scss');
   styleUrls: [ './login.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private router: Router,
@@ -24,6 +24,18 @@ export class LoginComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
+
+  ngOnInit() {
+    // If not e2e tests, route to create user if there is no admin
+    if (!environment.test) {
+      this.checkAdminExistence().subscribe((noAdmin) => {
+        // false means there is admin
+        if (noAdmin) {
+          this.router.navigate([ '/login/newuser' ]);
+        }
+      });
+    }
+  }
 
   onSubmit() {
     if (this.createMode) {
@@ -48,7 +60,7 @@ export class LoginComponent {
       this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
-          this.reRoute();
+          this.login(this.model);
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';
@@ -59,7 +71,7 @@ export class LoginComponent {
     if (password === repeatPassword) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + name, password)
         .subscribe((data) => {
-          this.reRoute();
+          this.login(this.model);
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';

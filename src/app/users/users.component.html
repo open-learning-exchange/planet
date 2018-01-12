@@ -25,13 +25,13 @@
       </mat-chip-list>
       </mat-cell>
     </ng-container>
-
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
       <mat-cell  *matCellDef="let element">
         <div *ngIf="!element.admin">
           <mat-icon  *ngIf="element.roles.length === 0" (click)="addRole(element)">lock</mat-icon>
           <mat-icon *ngIf="element.roles.length > 0" (click)="removeRole(element)">lock_open</mat-icon>
+          <a routerLink="/users/profile/{{element.name}}" i18n mat-raised-button color="primary">View Profile</a>
         </div>
       </mat-cell>
     </ng-container>

@@ -1,0 +1,52 @@
+<h2 i18n>Profile</h2>
+<div mat-card-avatar *ngIf="userDetail._attachments; else noAttachment">
+    <img class="user-profile" [src]="imageSrc">
+</div>
+<ng-template #noAttachment>
+  <div mat-card-avatar><i class="material-icons">person</i></div>
+</ng-template>
+<div *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)">
+	<a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', urlName]">Edit</a>
+</div>
+<mat-list>
+  <mat-list-item *ngIf="userDetail.firstName">
+    <label matLine i18n>Full Name</label>
+    <p matLine>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.name" >
+    <label matLine i18n>Login</label>
+    <p matLine>{{userDetail.name}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.email">
+    <label matLine i18n>Email</label>
+    <p matLine>{{userDetail.email}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.language" >
+    <label matLine i18n>Language</label>
+    <p matLine>{{userDetail.language}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.phoneNumber">
+    <label matLine i18n>Phone Number</label>
+    <p matLine>{{userDetail.phoneNumber}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.birthDate">
+    <label matLine i18n>BirthDate</label>
+    <p matLine>{{userDetail.birthDate}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.gender">
+    <label matLine i18n>Gender</label>
+    <p matLine>{{userDetail.gender}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item *ngIf="userDetail.level">
+    <label matLine i18n>Level</label>
+    <p matLine>{{userDetail.level}}</p>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+</mat-list>

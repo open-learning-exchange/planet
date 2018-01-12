@@ -3,7 +3,7 @@
   <div>
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
-      <mat-error><planet-form-error-messages [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
+      <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
@@ -98,5 +98,5 @@
 <!--FOR DEBUGGING (remove once view is final)-->
 <div>
   <p>Form value: {{ courseForm.value | json }}</p>
-  <p>{{ courseForm.valid }}</p>
+  <p class='km-course-valid'>{{ courseForm.valid }}</p>
 </div>

@@ -6,17 +6,19 @@ import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '../shared/material.module';
 import { UsersComponent } from './users.component';
 import { Router, RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
+import { of } from 'rxjs/observable/of';
 
 describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpClientModule ],
+      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
       declarations: [ UsersComponent ],
       providers: [ CouchService, UserService ]
     });
@@ -78,7 +80,7 @@ describe('Users', () => {
 
     it('Should make two GET requests to CouchDB for admin', () => {
       const { fixture, comp, userService, couchService } = setup(),
-        couchSpy = spyOn(couchService, 'get').and.returnValue(Promise.resolve({ rows: [] }));
+        couchSpy = spyOn(couchService, 'get').and.returnValue(of({ rows: [] }));
       comp.ngOnInit();
       comp.getUsers();
       comp.getAdmins();
@@ -94,10 +96,9 @@ describe('Users', () => {
 
     it('Should make a PUT request to CouchDB with role deleted', () => {
       const { comp, couchService } = setup(),
-        testEvent = { stopPropagation: () => { } },
         initSpy = spyOn(comp, 'initializeData').and.callFake(() => { } ),
-        couchSpy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({}));
-      comp.deleteRole({ name: 'Test', roles: [ 'one', 'two', 'three' ] }, 1, testEvent);
+        couchSpy = spyOn(couchService, 'put').and.returnValue(of({}));
+      comp.deleteRole({ name: 'Test', roles: [ 'one', 'two', 'three' ] }, 1);
       expect(couchService.put).toHaveBeenCalledWith('_users/org.couchdb.user:Test', { name: 'Test', roles: [ 'one', 'three' ] });
     });
 
