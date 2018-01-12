@@ -1,4 +1,4 @@
-<h1>Users</h1>
+<h1 i18n>Users</h1>
 <div class="km-user-table" *ngIf="displayTable">
   <form (ngSubmit)="roleSubmit(allUsers.data,selectedRole)" #rolesForm="ngForm">
     <mat-form-field>
@@ -6,16 +6,16 @@
         <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-button type="submit">Add role to selected</button>
+    <button mat-button type="submit" i18n>Add role to selected</button>
   </form>
   <mat-table #table [dataSource]="allUsers">
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef>User Name</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef i18n>User Name</mat-header-cell>
       <mat-cell *matCellDef="let element" (click)="select(element)">{{element.name}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="roles">
-      <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
           <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.admin" (remove)="deleteRole(element,i)">
@@ -25,8 +25,8 @@
       </mat-chip-list>
       </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
       <mat-cell  *matCellDef="let element">
         <div *ngIf="!element.admin">
           <mat-icon  *ngIf="element.roles.length === 0" (click)="addRole(element)">lock</mat-icon>

@@ -15,7 +15,7 @@ export class UsersComponent implements OnInit {
   allUsers = new MatTableDataSource();
   message = '';
   displayTable = true;
-  displayedColumns = [ 'name', 'roles', 'status' ];
+  displayedColumns = [ 'name', 'roles', 'action' ];
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
