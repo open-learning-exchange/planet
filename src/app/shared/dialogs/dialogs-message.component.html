@@ -1,0 +1,22 @@
+<mat-toolbar>
+  <span><h3 i18n>Messages</h3></span>
+  <button  class="close" mat-dialog-close aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button>
+</mat-toolbar>
+   <mat-form-field>
+    <input matInput disabled value="Sender">
+  </mat-form-field>
+   <mat-form-field>
+    <input matInput disabled value="Messages">
+  </mat-form-field>
+
+  <div *ngFor="let datas of data.Msg" >
+  <mat-form-field class="field-details">
+    <textarea matInput matTextareaAutosize matAutosizeMinRows="2" matAutosizeMaxRows="5" disabled value="{{datas.user}}"></textarea>
+  </mat-form-field>
+  <mat-form-field>
+    <textarea matInput disabled matTextareaAutosize matAutosizeMinRows="2" matAutosizeMaxRows="5" value="{{datas.message}}"></textarea>
+  </mat-form-field>
+</div>
+

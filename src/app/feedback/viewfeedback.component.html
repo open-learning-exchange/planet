@@ -76,6 +76,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:row.selected}" (click)="openFeedback(row)"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:row.selected}" (click)="openFeedback(row)">
+    </mat-row>
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>

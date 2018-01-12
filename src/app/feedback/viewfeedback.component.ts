@@ -3,6 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsMessageComponent } from '../shared/dialogs/dialogs-message.component';
 import { Location } from '@angular/common';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -15,6 +16,7 @@ import { UserService } from '../shared/user.service';
 })
 export class ViewfeedbackComponent implements OnInit, AfterViewInit {
   name = '';
+  dialogsMessage: any;
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
@@ -59,7 +61,7 @@ export class ViewfeedbackComponent implements OnInit, AfterViewInit {
     this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
       data: {
         okClick: this.deleteFeedback(feedback),
-        type: 'nation',
+        type: 'feedback',
         displayName: feedback.type
       }
     });
@@ -70,7 +72,7 @@ export class ViewfeedbackComponent implements OnInit, AfterViewInit {
   }
 
   deleteFeedback(feedback) {
-    // Return a function with nation on its scope so it can be called from the dialog
+    // Return a function with feedback on its scope so it can be called from the dialog
     return () => {
       const { _id: feedbackId, _rev: feedbackRev } = feedback;
       this.couchService.delete(this.dbName + '/' + feedbackId + '?rev=' + feedbackRev)
@@ -91,7 +93,7 @@ export class ViewfeedbackComponent implements OnInit, AfterViewInit {
     const type = 'feedback';
     const fields =
       [
-        { 'label': 'To', 'type': 'textbox', 'name': 'replyTo', 'readonly': true, 'value': this.userService.get().name , 'required': false },
+        { 'label': 'To', 'type': 'textbox', 'name': 'replyTo', 'readonly': true, 'value': feedback.owner , 'required': false },
         { 'label': 'Message', 'type': 'textarea', 'name': 'message', 'placeholder': 'Leave a comment', 'required': true }
       ];
     const validation = {
@@ -123,6 +125,19 @@ export class ViewfeedbackComponent implements OnInit, AfterViewInit {
 
   openFeedback(feedback: any) {
     feedback.selected = feedback.selected ? false : true;
+    const msg = feedback.messages.map(message => {
+      return message;
+    });
+    this.dialogsMessage = this.dialog.open(DialogsMessageComponent, {
+      data: {
+        type: 'FeedBack',
+        Msg: msg
+      }
+    });
+    // Reset the message when the dialog closes
+    this.dialogsMessage.afterClosed().debug('Closing dialog').subscribe(() => {
+      this.message = '';
+    });
   }
 
 }
