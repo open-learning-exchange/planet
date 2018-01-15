@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -7,8 +8,10 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+
+import { findDocuments } from '../shared/mangoQueries';
 
 
 @Component({
@@ -47,6 +50,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
+    private userService: UserService,
     private dialog: MatDialog,
     private location: Location,
     private router: Router,
@@ -56,6 +60,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getResources();
+
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
@@ -87,6 +92,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
     // Multiply by 20 to convert rating out of 5 to percent for width
     return (rating * 20) + '%';
+  }
+
+  getRatio(num, dem) {
+    return (num / (num + dem)) * 100;
   }
 
   applyResFilter(filterResValue: string) {
@@ -121,7 +130,30 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.couchService
         .get('resources/_all_docs?include_docs=true')
         .subscribe(data => {
-          this.resources.data = data.rows.map(res => res.doc);
+          this.resources.data = data.rows.map(res => {
+            this.couchService
+            .post('ratings/_find', findDocuments({ 'type': 'resource', 'item': res.id }, null))
+            .subscribe((rating) => {
+              let rate_sum = 0;
+              let has_rated = 0;
+              let total_rating = 0;
+              let male_rating = 0;
+              let female_rating = 0;
+              rating.docs.map(rate => {
+                has_rated = (rate.user === this.userService.get().name) ? rate.rate : has_rated;
+                total_rating++;
+                (rate.gender === 'M') ? male_rating++ : female_rating++ ;
+                rate_sum = rate_sum + parseInt(rate.rate, 10);
+              });
+              res.doc.rating = rate_sum;
+              res.doc.has_rated = has_rated;
+              res.doc.female_rating = female_rating;
+              res.doc.male_rating = male_rating;
+              res.doc.total_rating = total_rating;
+            }, error => (this.message = 'Error'));
+            return res.doc;
+          });
+
         }, error => (this.message = 'Error'));
     }
   }
