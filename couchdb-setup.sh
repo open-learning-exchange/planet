@@ -83,6 +83,7 @@ curl -X PUT $COUCHURL/courses
 curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/communityregistrationrequests
 curl -X PUT $COUCHURL/feedback
+curl -X PUT $COUCHURL/resource_activities
 
 # Add or update design docs
 upsert_design courses course-validators ./design/courses/course-validators.json

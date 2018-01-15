@@ -8,6 +8,8 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
+import { UserService } from '../../shared/user.service';
+import { MatTableDataSource } from '@angular/material';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -26,7 +28,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) { }
 
   private dbName = 'resources';
@@ -45,7 +48,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe(resource => this.setResource(resource), error => console.log(error), () => console.log('complete getting resource id'));
+      .subscribe((resource) => {
+        this.resource_activity(resource._id, 'visit');
+        this.setResource(resource);
+      }, error => console.log(error), () => console.log('complete getting resource id'));
   }
 
   ngOnDestroy() {
@@ -84,6 +90,19 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
     this.couchSrc = this.urlPrefix + resource._id + '/' + filename;
+  }
+
+  resource_activity(resource_id, activity) {
+    const datas = {
+      'resource': resource_id,
+      'user': this.userService.get().name,
+      'activity': activity,
+      'time': Date()
+    };
+    this.couchService.post('resource_activities', datas)
+      .subscribe((data) => {
+        console.log(data);
+      }, (error) => console.log('Error'));
   }
 
 }
