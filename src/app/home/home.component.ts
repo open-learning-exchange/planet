@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ]
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   name = '';
   roles: string[] = [];
   constructor(
@@ -29,7 +29,6 @@ export class HomeComponent {
   ngOnInit() {
     Object.assign(this, this.userService.get());
   }
-
 
   backgroundRoute() {
     const routesWithBackground = [ 'resources' ];
