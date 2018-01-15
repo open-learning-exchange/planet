@@ -6,7 +6,7 @@
   <button mat-icon-button routerLink="/manager"><mat-icon>settings</mat-icon></button>
   <button mat-icon-button><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button>ENG</button>
-  <button mat-icon-button routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></button>
+  <button mat-icon-button *ngIf="roles.indexOf('_admin') === -1" routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></button>
 </mat-toolbar>
 <mat-sidenav-container class="main-content">
   <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav">
