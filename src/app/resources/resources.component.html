@@ -27,22 +27,72 @@
     </mat-toolbar-row>
   </mat-toolbar>
 
-  <mat-grid-list cols="3" rowHeight="1:1">
+  <mat-grid-list cols="3">
       <mat-grid-tile>
-        <img src="assets/image.png">
-      </mat-grid-tile>
-      <mat-grid-tile>
-          <img src="assets/image.png">
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <img src="assets/image.png">
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <img src="assets/image.png">
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <img src="assets/image.png">
-      </mat-grid-tile>
+        <img src="assets/image.png" width="100%" height="60%" align="top">
+        <mat-grid-tile-footer width="50%">
+          <div width="50%">
+              <h3>Title</h3>
+              <p>Description</p>
+          </div>
+          <div width="50%">
+              <h3>Rating</h3>
+              <p>5</p>
+          </div>
+        </mat-grid-tile-footer>
+       </mat-grid-tile>
+       <mat-grid-tile>
+          <img src="assets/image.png" width="100%" height="60%" align="top">
+          <mat-grid-tile-footer width="50%">
+            <div width="50%">
+                <h3>Title</h3>
+                <p>Description</p>
+            </div>
+            <div width="50%">
+                <h3>Rating</h3>
+                <p>5</p>
+            </div>
+          </mat-grid-tile-footer>
+         </mat-grid-tile>
+         <mat-grid-tile>
+            <img src="assets/image.png" width="100%" height="60%" align="top">
+            <mat-grid-tile-footer width="50%">
+              <div width="50%">
+                  <h3>Title</h3>
+                  <p>Description</p>
+              </div>
+              <div width="50%">
+                  <h3>Rating</h3>
+                  <p>5</p>
+              </div>
+            </mat-grid-tile-footer>
+           </mat-grid-tile>
+           <mat-grid-tile>
+              <img src="assets/image.png" width="100%" height="60%" align="top">
+              <mat-grid-tile-footer width="50%">
+                <div width="50%">
+                    <h3>Title</h3>
+                    <p>Description</p>
+                </div>
+                <div width="50%">
+                    <h3>Rating</h3>
+                    <p>5</p>
+                </div>
+              </mat-grid-tile-footer>
+            </mat-grid-tile>
+            <mat-grid-tile>
+              <img src="assets/image.png" width="100%" height="60%" align="top">
+              <mat-grid-tile-footer width="50%">
+                <div width="50%">
+                    <h3>Title</h3>
+                    <p>Description</p>
+                </div>
+                <div width="50%">
+                    <h3>Rating</h3>
+                    <p>5</p>
+                </div>
+              </mat-grid-tile-footer>
+             </mat-grid-tile>
     </mat-grid-list>
 
   <mat-table #table [dataSource]="resources" matSort>
