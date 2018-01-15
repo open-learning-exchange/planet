@@ -1,6 +1,44 @@
 @import '../variables.scss';
 
-main {
-  margin-top: 48px;
-  // margin-left:$body-margin;
+:host {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 64px 1fr;
+  grid-template-areas: "header" "main";
+  height: 100vh;
+
+  .header-nav {
+    grid-area: header;
+  }
+
+  .main-content {
+    grid-area: main;
+  }
+
+  .main-sidenav {
+    padding: 0 16px;
+    text-align: center;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "tp" "." "btm";
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: inline;
+    }
+
+    .top-nav {
+      grid-area: tp;
+    }
+
+    .bottom-nav {
+      grid-area: btm;
+      margin-bottom: 16px;
+    }
+
+  }
+
 }
