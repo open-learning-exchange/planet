@@ -60,7 +60,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getResources();
-
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
