@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import * as languages from '../shared/languages.json';
+import { languages } from '../shared/languages';
 
 @Component({
   selector: 'planet-navigation',
@@ -12,14 +12,13 @@ import * as languages from '../shared/languages.json';
       <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
       <li><a routerLink="/manager"><mat-icon>person</mat-icon></a></li>
       <li>
-        <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" i18n-alt alt="{{current_lang}}" i18n-title
-        title="{{current_lang}}" />
         <button mat-icon-button [matMenuTriggerFor]="language_menu">
-          <mat-icon>more_vert</mat-icon>
+          <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" i18n-alt alt="{{current_lang}}" i18n-title
+        title="{{current_lang}}" />
         </button>
         <mat-menu #language_menu="matMenu">
           <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.served_url)">
-            <img src="{{language.flag}}" i18n-title title="{{language.name}}" i18n-alt alt="{{language.name}}" />
+            <img src="assets/flags/{{language.short_code}}.png" i18n-title title="{{language.name}}" i18n-alt alt="{{language.name}}" />
             <span>{{language.short_code}}</span>
           </button>
         </mat-menu>
