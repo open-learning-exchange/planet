@@ -20,7 +20,11 @@ import { Validators } from '@angular/forms';
       height: 80vh;
       border: none;
     }
-  ` ],
+    .resRating {
+      max-width: 230px;
+      margin-left: auto;
+    }
+  ` ]
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {
@@ -37,6 +41,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
+  mRating;
+  fRating;
   resource: any;
   mediaType = '';
   resourceSrc = '';
@@ -50,6 +56,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   ratings: any;
 
   ngOnInit() {
+    this.fRating = Math.floor(Math.random() * 101);
+    this.mRating = 100 - this.fRating;
+
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))

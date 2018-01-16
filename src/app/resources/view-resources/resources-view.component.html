@@ -1,99 +1,69 @@
-<!-- <div class="container">
-  <h4>STAR RATING</h4>
-  <div class="section">
-    <div class="block">
-      <div>To Rate</div>
-      <star-rating [maxScore]="5" [forDisplay]="false" (rateChanged)="onRateChange($event)"></star-rating>
-      <div>Rating: {{score}}</div>
-    </div>
-    <div class="block">
-      <div>To Display</div>
-      <star-rating [score]="displayRatingScore" [forDisplay]="true"></star-rating>
-      <div>Rating: {{displayRatingScore}}</div>
-    </div>
-  </div>
-
-  <div class="options">
-    <h4>Options</h4>
-    <ul>
-      <li>[score]: number :  rating value</li>
-      <li>[maxScore]: number :  Max rating scale : default to 5</li>
-      <li>[forDisplay]: boolean : to rate or to display rating</li>
-      <li>(rateChanged): event :  to capture changed value</li>
-    </ul>
-  </div>
-</div> -->
-<mat-grid-list cols="2">
-  <mat-grid-tile>
-    <mat-card *ngIf="resource">
-      <mat-card-header>
-        <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
-        <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.year}} </mat-card-subtitle>
-      </mat-card-header>
-      <div [ngSwitch]="mediaType">
-        <img [src]="resourceSrc" *ngSwitchCase="'image'">
-        <video controls *ngSwitchCase="'video'">
-          <source [src]="resourceSrc" [type]="contentType" />
-          Browser not supported
-        </video>
-        <audio controls *ngSwitchCase="'audio'">
-          <source [src]="resourceSrc" [type]="contentType" />
-          Browser not supported
-        </audio>
-        <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
-        <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
-        <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
-      </div>
-      <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
-      <mat-card-content *ngIf="resource.medium">
-        <p>
-          Media: {{ resource.medium }}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.language">
-        <p>
-          Language: {{ resource.language }}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.subject">
-        <p>
-          Subject/s: {{resource.subject}}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.linkToLicense">
-        <p>
-          Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a>
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.resourceFor">
-        <p>
-          Resource: {{ resource.resourceFor }}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.resourceType">
-        <p>
-          Resource Type: {{ resource.resourceType }}
-        </p>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
+    <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.year}} </mat-card-subtitle>
+  </mat-card-header>
+  <div class="resRating">
     <div class="list-item-rating">
       <span class="stars">
         <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
           <!-- used simple arithmetic to get 20 and converted into % -->
-        <span [ngStyle]="{'width': getRating(resource.rating, resource.total_rating)}">
+        <span [ngStyle]="{'width': getRating(resource.sum, resource.timesRated)}">
           <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
         </span>
       </span>
-      <div class="stats stats-total">{{ resource.total_rating  }} Total</div>
-      <div class="stats stats-female">{{ resource.female_rating.toFixed(2) }}% Female</div>
-      <div class="stats stats-male">{{ resource.male_rating.toFixed(2) }}% Male</div>
+      <div class="stats stats-total">{{ resource.timesRated }} Total</div>
+      <div class="stats stats-female">{{ fRating }}% Female</div>
+      <div class="stats stats-male">{{ mRating }}% Male</div>
       <div class="rating">
-        <span class="rating-number">{{ resource.total_rating > 0 ? (resource.rating / resource.total_rating).toFixed(1) : (resource.rating).toFixed(1) }}</span>
-        <span *ngIf="resource.has_rated > 0" i18n>RATING</span>
-        <button mat-raised-button color="primary" *ngIf="resource.has_rated === 0" (click)="rate(resource._id)"  i18n>RATE</button>
+        <span class="rating-number">{{ resource.timesRated > 0 ? (resource.sum / resource.timesRated).toFixed(1) : resource.sum }}</span>
+        <span>RATING</span>
       </div>
+    </div>
   </div>
-  </mat-grid-tile>
-</mat-grid-list>
+  <div [ngSwitch]="mediaType">
+    <img [src]="resourceSrc" *ngSwitchCase="'image'">
+    <video controls *ngSwitchCase="'video'">
+      <source [src]="resourceSrc" [type]="contentType" />
+      Browser not supported
+    </video>
+    <audio controls *ngSwitchCase="'audio'">
+      <source [src]="resourceSrc" [type]="contentType" />
+      Browser not supported
+    </audio>
+    <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
+    <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
+    <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
+  </div>
+  <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+  <mat-card-content *ngIf="resource.medium">
+    <p>
+      Media: {{ resource.medium }}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.language">
+    <p>
+      Language: {{ resource.language }}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.subject">
+    <p>
+      Subject/s: {{resource.subject}}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.linkToLicense">
+    <p>
+      Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a>
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.resourceFor">
+    <p>
+      Resource: {{ resource.resourceFor }}
+    </p>
+  </mat-card-content>
+  <mat-card-content *ngIf="resource.resourceType">
+    <p>
+      Resource Type: {{ resource.resourceType }}
+    </p>
+  </mat-card-content>
+</mat-card>
