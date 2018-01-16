@@ -32,6 +32,15 @@
     line-height: 1em;
   }
 
+  #notification {
+    color: white;
+    margin: 10px 0;
+  }
+
+  #notification:hover {
+    cursor: pointer;
+  }
+
   li:last-child a {
     border: none;
   }

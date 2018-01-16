@@ -11,16 +11,14 @@ import { Router } from '@angular/router';
       <li><a href="#" class="km-logout" (click)="logoutClick()">LOGOUT</a></li>
       <li><a routerLink="/manager"><i class="material-icons">settings</i></a></li>
       <li *ngIf="roles.indexOf('_admin') === -1"><a routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></a></li>
-      <li><a href="#"><mat-icon [matMenuTriggerFor]="notification">notifications</mat-icon></a></li>
+      <li><mat-icon [matMenuTriggerFor]="notification" id="notification">notifications</mat-icon></li>
     </ul>
     <mat-menu #notification="matMenu">
-      <mat-list>
-        <mat-list-item> Notification 1 </mat-list-item>
-        <mat-divider></mat-divider>
-        <mat-list-item> Notification 2 </mat-list-item>
-        <mat-divider></mat-divider>
-        <mat-list-item> Notification 3 </mat-list-item>
-      </mat-list>
+      <div mat-menu-item> Notification 1 </div>
+      <mat-divider></mat-divider>
+      <div mat-menu-item> Notification 2 </div>
+      <mat-divider></mat-divider>
+      <div mat-menu-item> Notification 3 </div>
     </mat-menu>
   `,
   styleUrls: [ './navigation.scss' ]
