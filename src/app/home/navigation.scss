@@ -32,6 +32,15 @@
     line-height: 1em;
   }
 
+  mat-icon {
+    color: white;
+    margin: 10px 0;
+  }
+
+  mat-icon:hover {
+    cursor: pointer;
+  }
+
   li:last-child a {
     border: none;
   }
