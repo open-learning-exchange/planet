@@ -3,6 +3,24 @@
     <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
     <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.year}} </mat-card-subtitle>
   </mat-card-header>
+  <div class="resRating">
+    <div class="list-item-rating">
+      <span class="stars">
+        <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+          <!-- used simple arithmetic to get 20 and converted into % -->
+        <span [ngStyle]="{'width': getRating(resource.sum, resource.timesRated)}">
+          <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+        </span>
+      </span>
+      <div class="stats stats-total">{{ resource.timesRated }} Total</div>
+      <div class="stats stats-female">{{ fRating }}% Female</div>
+      <div class="stats stats-male">{{ mRating }}% Male</div>
+      <div class="rating">
+        <span class="rating-number">{{ resource.timesRated > 0 ? (resource.sum / resource.timesRated).toFixed(1) : resource.sum }}</span>
+        <span>RATING</span>
+      </div>
+    </div>
+  </div>
   <div [ngSwitch]="mediaType">
     <img [src]="resourceSrc" *ngSwitchCase="'image'">
     <video controls *ngSwitchCase="'video'">

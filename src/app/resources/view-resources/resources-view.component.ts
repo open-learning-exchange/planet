@@ -18,6 +18,10 @@ import { UserService } from '../../shared/user.service';
       height: 80vh;
       border: none;
     }
+    .resRating {
+      max-width: 230px;
+      margin-left: auto;
+    }
   ` ]
 })
 export class ResourcesViewComponent implements OnInit, OnDestroy {
@@ -33,7 +37,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
-
+  mRating;
+  fRating;
   resource: any;
   mediaType = '';
   resourceSrc = '';
@@ -44,6 +49,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   subscription;
 
   ngOnInit() {
+    this.fRating = Math.floor(Math.random() * 101);
+    this.mRating = 100 - this.fRating;
+
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
@@ -51,6 +59,15 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         this.resource_activity(resource._id, 'visit');
         this.setResource(resource);
       }, error => console.log(error), () => console.log('complete getting resource id'));
+  }
+
+  getRating(sum, timesRated) {
+    let rating = 0;
+    if (sum > 0 && timesRated > 0) {
+      rating = sum / timesRated;
+    }
+    // Multiply by 20 to convert rating out of 5 to percent for width
+    return (rating * 20) + '%';
   }
 
   ngOnDestroy() {
