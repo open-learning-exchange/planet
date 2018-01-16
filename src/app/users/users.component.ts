@@ -101,6 +101,26 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  addRole(user) {
+    const tempUser = { ...user, roles: [ 'learner' ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  removeRole(user) {
+    const tempUser = { ...user, roles: [ ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
   roleSubmit(users: any[], role: string) {
     forkJoin(users.reduce((observers, user, index) => {
       // Do not add role if it already exists on user
