@@ -66,7 +66,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   backgroundRoute() {
     const routesWithBackground = [ 'resources' ];
-    return routesWithBackground.findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
+    const routesWithoutBackground = [ 'resources/add', 'resources/view' ];
+    const isException = routesWithoutBackground
+      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
+    const isRoute = routesWithBackground
+      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
+    return isRoute && !isException;
   }
 
   toggleNav() {
