@@ -1,6 +1,6 @@
 <div class="background"></div>
 <mat-toolbar color="primary" class="header-nav">
-  <button mat-icon-button (click)="sidenav.toggle()"><mat-icon>menu</mat-icon></button>
+  <button mat-icon-button (click)="toggleNav()"><mat-icon>menu</mat-icon></button>
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
   <button mat-icon-button routerLink="/manager"><mat-icon>settings</mat-icon></button>
@@ -8,19 +8,59 @@
   <button mat-icon-button>ENG</button>
   <button mat-icon-button *ngIf="roles.indexOf('_admin') === -1" routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></button>
 </mat-toolbar>
-<mat-sidenav-container class="main-content">
-  <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav">
+<mat-sidenav-container class="main-content" #content>
+  <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
     <ul class="top-nav">
-      <li><a mat-icon-button routerLink="/"><mat-icon>home</mat-icon></a></li>
-      <li><a mat-icon-button routerLink="/resources"><mat-icon>account_balance</mat-icon></a></li>
-      <li><a mat-icon-button routerLink="/courses"><mat-icon>library_books</mat-icon></a></li>
-      <li><a mat-icon-button routerLink="/meetups"><mat-icon>event</mat-icon></a></li>
-      <li><a mat-icon-button routerLink="/users"><mat-icon>people</mat-icon></a></li>
+      <li>
+        <a mat-button routerLink="/">
+          <mat-icon>home</mat-icon>
+          <label>Home</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/resources">
+          <mat-icon>account_balance</mat-icon>
+          <label>Library</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/courses">
+          <mat-icon>library_books</mat-icon>
+          <label>Courses</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/meetups">
+          <mat-icon>event</mat-icon>
+          <label>Meetups</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/users">
+          <mat-icon>people</mat-icon>
+          <label>Members</label>
+        </a>
+      </li>
     </ul>
     <ul class="bottom-nav">
-      <li><a mat-icon-button routerLink="/"><mat-icon>chrome_reader_mode</mat-icon></a></li>
-      <li><a mat-icon-button routerLink="/feedback"><mat-icon>feedback</mat-icon></a></li>
-      <li><a mat-icon-button (click)="logoutClick()"><mat-icon>exit_to_app</mat-icon></a></li>
+      <li>
+        <a mat-button routerLink="/">
+          <mat-icon>chrome_reader_mode</mat-icon>
+          <label>???</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/feedback">
+          <mat-icon>feedback</mat-icon>
+          <label>Feedback</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button (click)="logoutClick()">
+          <mat-icon>exit_to_app</mat-icon>
+          <label>Logout</label>
+        </a>
+      </li>
     </ul>
   </mat-sidenav>
   <mat-sidenav-content [ngClass]="{'gradient-background': backgroundRoute()}">
