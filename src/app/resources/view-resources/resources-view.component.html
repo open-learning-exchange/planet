@@ -1,3 +1,28 @@
+<div class="container">
+  <h4>STAR RATING</h4>
+  <div class="section">
+    <div class="block">
+      <div>To Rate</div>
+      <star-rating [maxScore]="5" [forDisplay]="false" (rateChanged)="onRateChange($event)"></star-rating>
+      <div>Rating: {{score}}</div>
+    </div>
+    <div class="block">
+      <div>To Display</div>
+      <star-rating [score]="displayRatingScore" [forDisplay]="true"></star-rating>
+      <div>Rating: {{displayRatingScore}}</div>
+    </div>
+  </div>
+
+  <div class="options">
+    <h4>Options</h4>
+    <ul>
+      <li>[score]: number :  rating value</li>
+      <li>[maxScore]: number :  Max rating scale : default to 5</li>
+      <li>[forDisplay]: boolean : to rate or to display rating</li>
+      <li>(rateChanged): event :  to capture changed value</li>
+    </ul>
+  </div>
+</div>
 <mat-card *ngIf="resource">
   <mat-card-header>
     <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
@@ -17,7 +42,8 @@
       <div class="stats stats-male">{{ mRating }}% Male</div>
       <div class="rating">
         <span class="rating-number">{{ resource.timesRated > 0 ? (resource.sum / resource.timesRated).toFixed(1) : resource.sum }}</span>
-        <span>RATING</span>
+
+        <span><button mat-icon-button (click)="rate()" i18n>RATE THIS</button></span>
       </div>
     </div>
   </div>
