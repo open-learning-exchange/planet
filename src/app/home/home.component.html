@@ -4,10 +4,30 @@
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
   <button mat-icon-button routerLink="/manager"><mat-icon>settings</mat-icon></button>
-  <button mat-icon-button><mat-icon>notifications</mat-icon></button>
-  <button mat-icon-button>ENG</button>
+  <button mat-icon-button [matMenuTriggerFor]="notificationMenu"><mat-icon>notifications</mat-icon></button>
+  <button mat-icon-button [matMenuTriggerFor]="languageMenu">
+    <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" i18n-alt alt="{{current_lang}}" i18n-title
+      title="{{current_lang}}" />
+  </button>
   <button mat-icon-button *ngIf="roles.indexOf('_admin') === -1" routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></button>
 </mat-toolbar>
+
+<!--Languages dropdown menu-->
+<mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
+  <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.served_url)">
+    <img src="assets/flags/{{language.short_code}}.png" i18n-title title="{{language.name}}" i18n-alt alt="{{language.name}}" />
+    <span>{{language.short_code}}</span>
+  </button>
+</mat-menu>
+<!--Notification dropdown menu-->
+<mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
+  <span mat-menu-item>Notification 1</span>
+  <mat-divider></mat-divider>
+  <div mat-menu-item>Notification 2</div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item>Notification 3</div>
+</mat-menu>
+
 <mat-sidenav-container class="main-content" #content>
   <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
     <ul class="top-nav">
@@ -67,3 +87,5 @@
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+

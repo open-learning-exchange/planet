@@ -4,10 +4,10 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { languages } from '../shared/languages';
 import { interval } from 'rxjs/observable/interval';
 import { tap } from 'rxjs/operators';
 
-// Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ],
@@ -26,6 +26,9 @@ import { tap } from 'rxjs/operators';
 export class HomeComponent implements OnInit, AfterViewInit {
   name = '';
   roles: string[] = [];
+  languages = [];
+  current_flag = 'en';
+  current_lang = 'English';
   sidenavState = 'closed';
   @ViewChild('content') private mainContent;
 
@@ -45,6 +48,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     Object.assign(this, this.userService.get());
+    this.languages = (<any>languages).map(language => {
+      if (language.served_url === document.baseURI) {
+        this.current_flag = language.short_code;
+        this.current_lang = language.name;
+      }
+      return language;
+    }).filter(lang  => {
+      return lang['active'] !== 'N';
+    });
   }
 
   ngAfterViewInit() {
@@ -66,6 +78,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.animDisp) {
       this.animDisp.unsubscribe();
     }
+  }
+
+  switchLanguage(served_url) {
+    alert('You are going to switch in ' + served_url + ' environment');
   }
 
   logoutClick() {
