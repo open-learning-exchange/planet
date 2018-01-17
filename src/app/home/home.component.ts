@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -23,10 +23,10 @@ import { tap } from 'rxjs/operators';
     ])
   ]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   name = '';
   roles: string[] = [];
-  sidenavState: string = 'closed';
+  sidenavState = 'closed';
   @ViewChild('content') private mainContent;
 
   // Sets the margin for the main content to match the sidenav width
@@ -63,7 +63,7 @@ export class HomeComponent implements OnInit {
   }
 
   endAnimation() {
-    if(this.animDisp) {
+    if (this.animDisp) {
       this.animDisp.unsubscribe();
     }
   }
