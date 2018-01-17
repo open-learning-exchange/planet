@@ -8,7 +8,7 @@ import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
-//import { HighlightComponent } from './highlight.component';
+import { HighlightComponent } from './highlight.component';
 
 @NgModule({
   imports: [
@@ -21,6 +21,6 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
     HttpClientModule,
     HttpClientJsonpModule
   ],
-  declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent ]
+  declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent, HighlightComponent ]
 })
 export class ResourcesModule {}

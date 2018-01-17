@@ -21,10 +21,61 @@ import { Validators } from '@angular/forms';
       border: none;
     }
     .resRating {
+      display: grid;
       max-width: 230px;
       margin-left: auto;
     }
-  ` ]
+    .rating {
+      text-align: center;
+    }
+    $gray: #aaa;
+
+    body{
+      background: black;
+      color: white;
+    }
+    .container{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      .section{
+        display: flex;
+        height: 200px;
+        align-items: center;
+        justify-content: center;
+        .block{
+          border: 1px solid $gray;
+          border-radius: 3px;
+          margin:16px;
+          padding: 40px;
+          .margin-vertical-8{
+            margin: 8px 0;
+          }
+        }
+      }
+    }
+
+    .star-rating{
+        .to-rate{
+            cursor: pointer;
+            padding: 0 3px;
+        }
+        .fa-star-o{
+            color: orange;
+        }
+        .fa-star{
+            color: orange;
+        }
+        .fa-star-half-o{
+            color: orange;
+        }
+        .to-display{
+            padding: 0 2px;
+        }
+    }
+  ` ],
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {
@@ -51,9 +102,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
   subscription;
-  score = 0;
+  score: number = 0;
   displayRatingScore = 4;
-  ratings: any;
 
   ngOnInit() {
     this.fRating = Math.floor(Math.random() * 101);
@@ -188,6 +238,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
             }, (error) => console.log(error));
         }
       });
+  }
+
+  onRateChange = (score) => {
+    this.score = score;
+  }
+
+  rate(){
   }
 
   onRateChange = (score) => {
