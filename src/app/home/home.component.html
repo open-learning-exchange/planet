@@ -12,53 +12,53 @@
   <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
     <ul class="top-nav">
       <li>
-        <a mat-button routerLink="/">
+        <a mat-button routerLink="/" i18n-title title="Home">
           <mat-icon>home</mat-icon>
-          <label>Home</label>
+          <label i18n>Home</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/resources">
+        <a mat-button routerLink="/resources" i18n-title title="Resources">
           <mat-icon>account_balance</mat-icon>
-          <label>Library</label>
+          <label i18n>Library</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/courses">
+        <a mat-button routerLink="/courses" i18n-title title="Courses">
           <mat-icon>library_books</mat-icon>
-          <label>Courses</label>
+          <label i18n>Courses</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/meetups">
+        <a mat-button routerLink="/meetups" i18n-title title="Meetups">
           <mat-icon>event</mat-icon>
-          <label>Meetups</label>
+          <label i18n>Meetups</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/users">
+        <a mat-button routerLink="/users" i18n-title title="Users">
           <mat-icon>people</mat-icon>
-          <label>Members</label>
+          <label i18n>Members</label>
         </a>
       </li>
     </ul>
     <ul class="bottom-nav">
       <li>
-        <a mat-button routerLink="/">
+        <a mat-button routerLink="/" i18n-title title="???">
           <mat-icon>chrome_reader_mode</mat-icon>
-          <label>???</label>
+          <label i18n>???</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/feedback">
+        <a mat-button routerLink="/feedback" i18n-title title="Feedback">
           <mat-icon>feedback</mat-icon>
-          <label>Feedback</label>
+          <label i18n>Feedback</label>
         </a>
       </li>
       <li>
-        <a mat-button (click)="logoutClick()">
+        <a mat-button (click)="logoutClick()" i18n-title title="Logout">
           <mat-icon>exit_to_app</mat-icon>
-          <label>Logout</label>
+          <label i18n>Logout</label>
         </a>
       </li>
     </ul>
