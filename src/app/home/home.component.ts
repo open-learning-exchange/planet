@@ -14,10 +14,10 @@ import { tap } from 'rxjs/operators';
   animations: [
     trigger('sidenavState', [
       state('closed', style({
-        width: '72px';
+        width: '72px'
       })),
       state('open', style({
-        width: '150px';
+        width: '150px'
       })),
       transition('closed <=> open', animate('500ms ease'))
     ])
