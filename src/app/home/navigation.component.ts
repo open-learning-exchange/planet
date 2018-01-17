@@ -25,14 +25,28 @@ import { languages } from '../shared/languages';
       </li>
       <li><a routerLink="/manager"><i class="material-icons">settings</i></a></li>
       <li *ngIf="roles.indexOf('_admin') === -1"><a routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></a></li>
-      <li><mat-icon [matMenuTriggerFor]="notification">notifications</mat-icon></li>
+      <li>
+        <mat-icon [matMenuTriggerFor]="notification" *ngIf="notifications.length > 0" title="Notification">
+        notifications</mat-icon>({{notifications.count_unread}})
+        <mat-icon *ngIf="notifications.length === 0" title="No Notification">notifications</mat-icon>
+      </li>
     </ul>
     <mat-menu #notification="matMenu" [overlapTrigger]="false">
-      <span mat-menu-item>Notification 1</span>
-      <mat-divider></mat-divider>
-      <div mat-menu-item>Notification 2</div>
-      <mat-divider></mat-divider>
-      <div mat-menu-item>Notification 3</div>
+      <span mat-menu-item *ngFor="let notification of notifications" (click)="readNotification(notification.doc)">
+        <mat-divider></mat-divider>
+        <p [ngStyle]="{'color': 'green'}" *ngIf="notification.doc.status==='unread' && notification.doc.link">
+          <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
+        </p>
+        <p [ngStyle]="{'color': 'green'}" *ngIf="notification.doc.status==='unread' && notification.doc.link ===''">
+          {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+        </p>
+        <p *ngIf="notification.status!=='unread' && notification.doc.link">
+          <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
+        </p>
+        <p *ngIf="notification.status!=='unread' && notification.doc.link===''">
+          {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+        </p>
+      </span>
     </mat-menu>
   `,
   styleUrls: [ './navigation.scss' ]
@@ -45,6 +59,7 @@ export class NavigationComponent implements OnInit {
   current_lang = 'English';
   name = '';
   roles: string[] = [];
+  notifications = [];
 
   constructor(
     private couchService: CouchService,
@@ -63,6 +78,7 @@ export class NavigationComponent implements OnInit {
   ];
 
   ngOnInit() {
+    this.getNotification();
     Object.assign(this, this.userService.get());
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
@@ -85,6 +101,32 @@ export class NavigationComponent implements OnInit {
         this.router.navigate([ '/login' ], {});
       }
     });
+  }
+
+  getNotification() {
+    const user_id = 'org.couchdb.user:' + this.userService.get().name;
+    this.couchService.get('notifications/_all_docs?include_docs=true')
+      .subscribe((data) => {
+        let cnt = 0;
+        data.rows.sort((a, b) => 0 - (new Date(a.doc.time) > new Date(b.doc.time) ? 1 : -1));
+        this.notifications = data.rows.map(notifications => {
+          if (notifications.doc.status === 'unread') {
+            cnt ++;
+          }
+          return notifications;
+        }).filter(nt  => {
+          return nt.doc['user'] === user_id;
+        });
+        this.notifications['count_unread'] =  cnt;
+        console.log('NOtificaiton', this.notifications);
+      }, (error) => console.log(error));
+  }
+
+  readNotification(notification) {
+    const update_notificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+      console.log(data);
+    },  (err) => console.log(err));
   }
 
 }
