@@ -9,7 +9,6 @@ import { HttpClient } from '@angular/common/http';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
-import { MatTableDataSource } from '@angular/material';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -97,7 +96,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       'resource': resource_id,
       'user': this.userService.get().name,
       'activity': activity,
-      'time': Date()
+      'time': Date.now()
     };
     this.couchService.post('resource_activities', datas)
       .subscribe((data) => {
