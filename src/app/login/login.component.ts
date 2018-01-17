@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
       this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
-          this.login(this.model);
+          this.loginAndEditProfile(this.model);
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';
@@ -93,6 +93,12 @@ export class LoginComponent implements OnInit {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .subscribe((data) => {
         this.reRoute();
+      }, (error) => this.message = 'Username and/or password do not match');
+  }
+   loginAndEditProfile({ name, password }: {name: string, password: string}) {
+    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
+      .subscribe((data) => {
+        this.router.navigate( [ 'users/profile/' + name ]);
       }, (error) => this.message = 'Username and/or password do not match');
   }
 }
