@@ -183,7 +183,17 @@ body {
     background-color: $error-red;
   } 
 
-  .genderIconFloatRight {
+  .genderIconFemale {
     float: right;
+    color: $error-red;
+  }
+
+  .genderIconMale {
+    float: left;
+    color: #2196f3;
+  }
+
+  .genderIconFemale {
+    color: $error-red;
   }
 }
