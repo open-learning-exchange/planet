@@ -48,7 +48,6 @@ export class ViewfeedbackComponent implements OnInit, AfterViewInit {
   getFeedback() {
     this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
       .subscribe((data) => {
-        console.log(data);
         this.feedback.data = data.rows.map(feedback => {
           return feedback.doc;
         }).filter(fback  => {
@@ -138,6 +137,13 @@ export class ViewfeedbackComponent implements OnInit, AfterViewInit {
     this.dialogsMessage.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
+  }
+
+  closeFeedback(feedback: any) {
+    const update_feedback =  { ...feedback, 'closeTime': Date.now(),  'status': 'Closed' };
+    this.couchService.put(this.dbName + '/' + feedback._id, update_feedback).subscribe((data) => {
+      this.getFeedback();
+    },  (err) => console.log(err));
   }
 
 }

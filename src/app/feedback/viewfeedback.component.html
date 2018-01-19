@@ -44,12 +44,12 @@
     <!-- OpenTime Column -->
     <ng-container matColumnDef="openTime">
       <mat-header-cell *matHeaderCellDef i18n>Open Time</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.openTime}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.openTime | date: mediumDate}}</mat-cell>
     </ng-container>
     <!-- CloseTime Column -->
     <ng-container matColumnDef="closeTime">
       <mat-header-cell *matHeaderCellDef i18n>Close Time</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.closeTime}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.closeTime | date: mediumDate}}</mat-cell>
     </ng-container>
     <!-- Source Column -->
     <ng-container matColumnDef="source">
@@ -64,6 +64,10 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
+          <button mat-menu-item (click)="openFeedback(element)">
+            <mat-icon></mat-icon>
+            <span i18n>View</span>
+          </button>
           <button mat-menu-item (click)="reply(element)">
             <mat-icon>reply</mat-icon>
             <span i18n>Reply</span>
@@ -72,11 +76,15 @@
             <mat-icon>delete_forever</mat-icon>
             <span i18n>Delete</span>
           </button>
+          <button mat-menu-item (click)="closeFeedback(element)">
+            <mat-icon>close</mat-icon>
+            <span i18n>Close</span>
+          </button>
         </mat-menu>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:row.selected}" (click)="openFeedback(row)">
+    <mat-row *matRowDef="let row; columns: displayedColumns">
     </mat-row>
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
