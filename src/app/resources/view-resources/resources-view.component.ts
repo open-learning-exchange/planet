@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -18,63 +20,9 @@ import { UserService } from '../../shared/user.service';
       height: 80vh;
       border: none;
     }
-    .resRating {
-      display: grid;
-      max-width: 230px;
-      margin-left: auto;
-    }
-    .rating {
-      text-align: center;
-    }
-    $gray: #aaa;
-
-    body{
-      background: black;
-      color: white;
-    }
-    .container{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      .section{
-        display: flex;
-        height: 200px;
-        align-items: center;
-        justify-content: center;
-        .block{
-          border: 1px solid $gray;
-          border-radius: 3px;
-          margin:16px;
-          padding: 40px;
-          .margin-vertical-8{
-            margin: 8px 0;
-          }
-        }
-      }
-    }
-
-    .star-rating{
-        .to-rate{
-            cursor: pointer;
-            padding: 0 3px;
-        }
-        .fa-star-o{
-            color: orange;
-        }
-        .fa-star{
-            color: orange;
-        }
-        .fa-star-half-o{
-            color: orange;
-        }
-        .to-display{
-            padding: 0 2px;
-        }
-    }
   ` ],
 })
+
 export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   constructor(
@@ -83,13 +31,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private router: Router,
     private http: HttpClient,
-    private userService: UserService
+    private userService: UserService,
+    private dialogsFormService: DialogsFormService
   ) { }
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
-  mRating;
-  fRating;
   resource: any;
   mediaType = '';
   resourceSrc = '';
@@ -98,13 +45,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
   subscription;
-  score: number = 0;
+  score = 0;
   displayRatingScore = 4;
+  ratings: any;
 
   ngOnInit() {
-    this.fRating = Math.floor(Math.random() * 101);
-    this.mRating = 100 - this.fRating;
-
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
@@ -159,6 +104,31 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
     this.couchSrc = this.urlPrefix + resource._id + '/' + filename;
+    // resource rating
+    this.couchService.get('ratings/_all_docs?include_docs=true')
+      .subscribe((data) => {
+        this.ratings = data.rows.map(ratings => {
+          return ratings.doc;
+        }).filter(rt  => {
+          return rt['type'] === 'resource' && rt['item'] === resource._id;
+        });
+        let rate_sum = 0;
+        let has_rated = 0;
+        let total_rating = 0;
+        let male_rating = 0;
+        let female_rating = 0;
+        this.ratings.map(rate => {
+          has_rated = (rate.user === this.userService.get().name) ? rate.rate : has_rated;
+          total_rating++;
+          (rate.gender === 'M') ? male_rating++ : female_rating++ ;
+          rate_sum = rate_sum + parseInt(rate.rate, 10);
+        });
+        this.resource.rating = rate_sum;
+        this.resource.has_rated = has_rated;
+        this.resource.female_rating = (female_rating / total_rating) * 100;
+        this.resource.male_rating = (male_rating / total_rating) * 100;
+        this.resource.total_rating = total_rating;
+      }, (error) => console.log(error));
   }
 
   resource_activity(resourceId, activity) {
@@ -174,7 +144,41 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       }, (error) => console.log('Error'));
   }
 
-  rate(){
+  rate(resource_id) {
+    const title = 'Rating';
+    const type = 'rating';
+    // need to show star rating insted of typebox
+    const fields =
+      [
+        { 'label': 'Rate', 'type': 'textbox', 'name': 'rate', 'placeholder': 'Your Rating', 'required': true },
+        { 'label': 'Comment', 'type': 'textbox', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
+      ];
+    const validation = {
+      rate: [ '', Validators.required ],
+      comment: [ '' ]
+    };
+    this.dialogsFormService
+      .confirm(title, type, fields, validation, '')
+      .debug('Dialog confirm')
+      .subscribe((res) => {
+        if (res !== undefined) {
+          // gender need to fetch from profile (need to work on admin part)
+          const datas = {
+            'user': this.userService.get().name,
+            'gender': 'M',
+            'item': resource_id,
+            'type': 'resource',
+            'rate': res.rate,
+            'comment': res.comment,
+            'time': Date.now()
+          };
+          this.couchService.post('ratings', datas)
+            .subscribe((data) => {
+              // need to update rating while dialog close
+              console.log(data);
+            }, (error) => console.log(error));
+        }
+      });
   }
 
   onRateChange = (score) => {
