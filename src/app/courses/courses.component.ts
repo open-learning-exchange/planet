@@ -9,12 +9,12 @@ import { Location } from '@angular/common';
 @Component({
   templateUrl: './courses.component.html',
   styles: [ `
-  .space-container {
-    margin: 64px 30px;
+    .space-container {
+      margin: 64px 30px;
     }
-
 ` ]
 })
+
 export class CoursesComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
@@ -76,9 +76,11 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
     };
   }
+
   goBack() {
     this.location.back();
   }
+
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -92,4 +94,5 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.selection.clear() :
     this.courses.data.forEach(row => this.selection.select(row));
   }
+  
 }

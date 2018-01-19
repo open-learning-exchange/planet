@@ -1,10 +1,9 @@
 <div class="mat-elevation-z8 courses">
   <p>{{message}}</p>
   
-
   <mat-toolbar>
     <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>Cources</span>
+    <span i18n>Courses</span>
     <span class="toolbar-fill"></span>
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1">
@@ -15,47 +14,49 @@
   <div class="space-container">
     <mat-toolbar class="primary-color font-size-1">
       <span class="toolbar-fill"></span>
-      <button mat-button routerLink="request" routerLinkActive="active" i18n [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon><span i18n>Request Courses</span>
+      <button mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+        <span i18n>Request Courses</span>
       </button>
       <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     </mat-toolbar>
   
-  <mat-table #table [dataSource]="courses" matSort>
-    <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-        [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
-      </mat-checkbox>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-          (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
+    <mat-table #table [dataSource]="courses" matSort>
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
-      </mat-cell>
-    </ng-container>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-      <mat-cell class="km-course-title" *matCellDef="let element"> {{element.courseTitle}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n >Open</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Resign</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Manage</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>View Course</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Credits</a>
-          <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Progress</a>
-          <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"[ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
-  </mat-table>
- 
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
+        <mat-cell class="km-course-title" *matCellDef="let element"> {{element.courseTitle}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Open</a>
+            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Resign</a>
+            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Manage</a>
+            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>View Course</a>
+            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Credits</a>
+            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Progress</a>
+            <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    </mat-table>
+  
+    <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+  </div>
 </div>
