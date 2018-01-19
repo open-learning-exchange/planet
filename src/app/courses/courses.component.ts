@@ -94,5 +94,5 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.selection.clear() :
     this.courses.data.forEach(row => this.selection.select(row));
   }
-  
+
 }
