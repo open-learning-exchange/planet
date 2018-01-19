@@ -25,6 +25,10 @@ body {
     color: $accent-text;
   }
 
+  .bg-grey {
+    background-color: $light-grey;
+  }
+
   .display-flex {
     display: flex;
   }
