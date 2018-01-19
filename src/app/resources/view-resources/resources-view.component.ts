@@ -45,8 +45,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
   subscription;
-  score = 0;
-  displayRatingScore = 4;
   ratings: any;
 
   ngOnInit() {
@@ -150,11 +148,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     // need to show star rating insted of typebox
     const fields =
       [
-        { 'label': 'Rate', 'type': 'textbox', 'name': 'rate', 'placeholder': 'Your Rating', 'required': true },
-        { 'label': 'Comment', 'type': 'textbox', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
+        { 'label': 'Rate', 'type': 'radio', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
+        { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
       ];
     const validation = {
-      rate: [ '', Validators.required ],
+      rate: [ '' ],
       comment: [ '' ]
     };
     this.dialogsFormService
@@ -162,10 +160,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
-          // gender need to fetch from profile (need to work on admin part)
           const datas = {
             'user': this.userService.get().name,
-            'gender': 'M',
+            'gender': 'M', // gender need to fetch from profile (need to work on admin part)
             'item': resource_id,
             'type': 'resource',
             'rate': res.rate,
@@ -174,15 +171,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           };
           this.couchService.post('ratings', datas)
             .subscribe((data) => {
-              // need to update rating while dialog close
-              console.log(data);
+              location.reload();
             }, (error) => console.log(error));
         }
       });
-  }
-
-  onRateChange = (score) => {
-    this.score = score;
   }
 
 }

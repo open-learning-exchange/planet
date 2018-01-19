@@ -7,11 +7,38 @@
         <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
+
       <!-- selectbox -->
       <mat-form-field *ngIf="field.type == 'selectbox'" class="full-width">
         <select mat-select *ngFor="let options of field.options">
           <option value="{{option.value}}">{{option.text}}</option>
         </select>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <!-- Rating -->
+      <fieldset class="rating" *ngIf="field.type == 'radio'">
+        <input type="radio" [name]="field.name" value="5" [checked]="rating===5" formControlName="{{field.name}}" required="{{field.required}}" />
+        <label (click)='onClick(5)'>5 stars</label>
+
+        <input type="radio" [name]="field.name" value="4" [checked]="rating===4" formControlName="{{field.name}}" required="{{field.required}}"/>
+        <label (click)='onClick(4)'>4 stars</label>
+
+        <input type="radio" [name]="field.name" value="3" [checked]="rating===3" formControlName="{{field.name}}" required="{{field.required}}"/>
+        <label (click)='onClick(3)'>3 stars</label>
+
+        <input type="radio" [name]="field.name" value="2" [checked]="rating===2" formControlName="{{field.name}}" required="{{field.required}}"/>
+        <label (click)='onClick(2)'>2 stars</label>
+
+        <input type="radio" [name]="field.name" value="1" [checked]="rating===1" formControlName="{{field.name}}" required="{{field.required}}"/>
+        <label (click)='onClick(1)'>1 star</label>
+
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </fieldset>
+
+      <!-- Textarea -->
+      <mat-form-field *ngIf="field.type == 'textarea'" class="full-width">
+        <textarea matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}"></textarea>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </div>
