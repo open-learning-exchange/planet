@@ -1,29 +1,50 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { MatTableDataSource } from '@angular/material';
+import { Location } from '@angular/common';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
-  templateUrl: './users.component.html'
+  templateUrl: './users.component.html',
+   styles: [ `
+    /* Consider using space-container app wide for route views */
+    .space-container {
+      margin: 64px 30px;
+      background: none;
+    }
+    .view-container {
+      background-color: #FFFFFF;
+      padding: 1rem;
+    }
+    .mat-column-select {
+      max-width: 44px;
+    }
+  ` ]
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   name = '';
   roles: string[] = [];
   allUsers = new MatTableDataSource();
   message = '';
   displayTable = true;
-  displayedColumns = [ 'name', 'roles', 'action' ];
+  displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
   selectedRole = '';
+  selection = new SelectionModel(true, []);
 
   constructor(
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private location: Location
   ) {}
 
   select(user: any) {
@@ -45,6 +66,28 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  searchFilter(filterValue: string) {
+    this.allUsers.filter = filterValue.trim().toLowerCase();
+  }
+
+  ngAfterViewInit() {
+    this.allUsers.sort = this.sort;
+    this.allUsers.paginator = this.paginator;
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.allUsers.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+    this.selection.clear() :
+    this.allUsers.data.forEach(row => this.selection.select(row));
+  }
+
   getUsers() {
     return this.couchService.get('_users/_all_docs?include_docs=true');
   }
@@ -54,13 +97,15 @@ export class UsersComponent implements OnInit {
 
       this.allUsers.data = data.rows.reduce((users: any[], user: any) => {
         if (user.id !== '_design/_auth') {
+          if (user.doc._attachments) {
+            user.doc.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.doc.name + '/' + Object.keys(user.doc._attachments)[0];
+          }
           users.push({ ...user.doc });
         } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
           users.push({ ...user.doc });
         }
         return users;
       }, []);
-
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
@@ -132,6 +177,10 @@ export class UsersComponent implements OnInit {
       console.log('Error!');
       console.log(error);
     });
+  }
+
+    back() {
+    this.location.back();
   }
 
 }
