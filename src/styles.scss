@@ -5,6 +5,10 @@ body {
   font-family: $font-family;
   margin: 0;
 
+  .gradient-background {
+    background: linear-gradient(to bottom, #000000, $primary);
+  }
+
   a,
   a:hover {
     text-decoration: none;

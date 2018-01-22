@@ -1,30 +1,25 @@
 <!--Used to approximate design.  Should be replaced before merging"-->
-<div class="background"></div>
 
 <mat-toolbar>
-  <mat-toolbar-row>
-    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>Library</span>
-    <span class="toolbar-fill"></span>
-    <mat-icon>search</mat-icon>
-    <mat-form-field class="font-size-1">
-      <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
-    </mat-form-field>
-  </mat-toolbar-row>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Library</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  </mat-form-field>
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar>
-    <mat-toolbar-row class="primary-color font-size-1">
-      <span class="toolbar-fill"></span>
-      <button mat-button [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
-      </button>
-      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-      </button>
-      <button mat-mini-fab routerLink="add" *ngIf="!nationName"><mat-icon>add</mat-icon></button>
-    </mat-toolbar-row>
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill"></span>
+    <button mat-button [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+    </button>
+    <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+    </button>
+    <button mat-mini-fab routerLink="add" *ngIf="!nationName"><mat-icon>add</mat-icon></button>
   </mat-toolbar>
 
   <mat-table #table [dataSource]="resources" matSort>
