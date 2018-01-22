@@ -91,16 +91,16 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.couchSrc = this.urlPrefix + resource._id + '/' + filename;
   }
 
-  resource_activity(resource_id, activity) {
-    const datas = {
-      'resource': resource_id,
+  resource_activity(resourceId, activity) {
+    const data = {
+      'resource': resourceId,
       'user': this.userService.get().name,
       'activity': activity,
       'time': Date.now()
     };
-    this.couchService.post('resource_activities', datas)
-      .subscribe((data) => {
-        console.log(data);
+    this.couchService.post('resource_activities', data)
+      .subscribe((response) => {
+        console.log(response);
       }, (error) => console.log('Error'));
   }
 
