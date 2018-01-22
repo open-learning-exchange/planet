@@ -20,14 +20,13 @@
       </button>
       <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     </mat-toolbar>
-  
     <mat-table #table [dataSource]="courses" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
           [checked]="selection.hasValue() && isAllSelected()"
           [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox>
+          </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <mat-checkbox (click)="$event.stopPropagation()"
@@ -36,23 +35,57 @@
           </mat-checkbox>
         </mat-cell>
       </ng-container>
-
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-        <mat-cell class="km-course-title" *matCellDef="let element"> {{element.courseTitle}} </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Open</a>
-            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Resign</a>
-            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Manage</a>
-            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>View Course</a>
-            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Credits</a>
-            <a mat-raised-button color="primary" routerLink="add" routerLinkActive="active" i18n>Progress</a>
-            <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
+        <mat-cell  *matCellDef="let element" class="list-content-menu">
+          <h3 class="header">{{element.courseTitle}}</h3>
+          <div class="content"><p>{{ element.description }}</p></div>
+          <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-cell>
+            <mat-menu #resourceMenu="matMenu">
+              <a mat-menu-item routerLink="add">
+                <mat-icon>lock_open</mat-icon>
+                <span i18n>Open</span>
+              </a>
+              <a mat-menu-item routerLink="add">
+                <mat-icon>clear</mat-icon>
+                <span i18n>Resign</span>
+              </a>
+              <a mat-menu-item routerLink="add">
+                <mat-icon>folder</mat-icon>
+                <span i18n>Manage</span>
+              </a>
+              <a mat-menu-item routerLink="add">
+                <mat-icon>visibility</mat-icon>
+                <span i18n>View Course</span>
+              </a>
+              <a mat-menu-item routerLink="add">
+                <mat-icon>credit_card</mat-icon>
+                <span i18n>Credits</span>
+              </a>
+              <a mat-menu-item routerLink="add">
+                <mat-icon>equalizer</mat-icon>
+                <span i18n>Progress</span>
+              </a>
+              <button mat-menu-item (click)="deleteClick(element)">
+                <mat-icon>delete_forever</mat-icon>
+                <span i18n>Delete</span>
+              </button>
+            </mat-menu>
+          </mat-cell>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="list-content-menu">
+          <div>
+           <p>{{element.gradeLevel}}</p>
+           <p>{{element.subjectLevel}}</p>
+          </div>
+        </mat-cell>
+      </ng-container>     
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
     </mat-table>
@@ -60,3 +93,5 @@
     <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
   </div>
 </div>
+
+ 

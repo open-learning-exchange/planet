@@ -12,6 +12,12 @@ import { Location } from '@angular/common';
     .space-container {
       margin: 64px 30px;
     }
+    .mat-column-select {
+      max-width: 44px;
+    }
+    .mat-column-action {
+      max-width: 225px;
+    }
 ` ]
 })
 
