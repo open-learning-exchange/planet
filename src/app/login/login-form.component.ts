@@ -29,6 +29,22 @@ export class LoginFormComponent {
     }
   }
 
+  welcomeNotification(user_id) {
+    const data = {
+      'user': user_id,
+      'message': 'Welcome ' + user_id.replace('org.couchdb.user:', '') + ' to the Planet Learning',
+     'link': '',
+      'type': 'register',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+    this.couchService.post('notifications', data)
+      .subscribe((res) => {
+        console.log(res);
+      }, (error) => this.message = 'Error');
+  }
+
   reRoute() {
     this.router.navigate([ this.returnUrl ]);
   }
@@ -38,6 +54,7 @@ export class LoginFormComponent {
       this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
+          this.welcomeNotification(data.id);
           this.login(this.model);
         }, (error) => this.message = '');
     } else {

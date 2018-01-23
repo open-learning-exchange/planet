@@ -4,7 +4,8 @@
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
   <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings"><mat-icon>settings</mat-icon></button>
-  <button mat-icon-button [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
+  <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
+  <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
     <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" alt="{{current_lang}}"
       title="{{current_lang}}" />
@@ -21,11 +22,21 @@
 </mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-  <span mat-menu-item>Notification 1</span>
-  <mat-divider></mat-divider>
-  <div mat-menu-item>Notification 2</div>
-  <mat-divider></mat-divider>
-  <div mat-menu-item>Notification 3</div>
+  <span mat-menu-item *ngFor="let notification of notifications" (click)="readNotification(notification.doc)">
+    <mat-divider></mat-divider>
+    <p [ngStyle]="{'color': 'green'}" *ngIf="notification.doc.status==='unread' && notification.doc.link">
+      <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
+    </p>
+    <p [ngStyle]="{'color': 'green'}" *ngIf="notification.doc.status==='unread' && notification.doc.link ===''">
+      {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+    </p>
+    <p *ngIf="notification.status!=='unread' && notification.doc.link">
+      <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
+    </p>
+    <p *ngIf="notification.status!=='unread' && notification.doc.link===''">
+      {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+    </p>
+  </span>
 </mat-menu>
 
 <mat-sidenav-container class="main-content" #content>

@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   current_flag = 'en';
   current_lang = 'English';
   sidenavState = 'closed';
+  notifications = [];
   @ViewChild('content') private mainContent;
 
   // Sets the margin for the main content to match the sidenav width
@@ -47,6 +48,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.getNotification();
     Object.assign(this, this.userService.get());
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
@@ -99,4 +101,30 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }, err => console.log(err));
   }
+
+  getNotification() {
+    const user_id = 'org.couchdb.user:' + this.userService.get().name;
+    this.couchService.get('notifications/_all_docs?include_docs=true')
+      .subscribe((data) => {
+        let cnt = 0;
+        data.rows.sort((a, b) => 0 - (new Date(a.doc.time) > new Date(b.doc.time) ? 1 : -1));
+        this.notifications = data.rows.map(notifications => {
+          if (notifications.doc.status === 'unread') {
+            cnt ++;
+          }
+          return notifications;
+        }).filter(nt  => {
+          return nt.doc['user'] === user_id;
+        });
+        this.notifications['count_unread'] =  cnt;
+      }, (error) => console.log(error));
+  }
+
+  readNotification(notification) {
+    const update_notificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+      console.log(data);
+    },  (err) => console.log(err));
+  }
+
 }
