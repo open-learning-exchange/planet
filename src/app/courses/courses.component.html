@@ -79,8 +79,8 @@
         <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <div>
-           <p>{{element.gradeLevel}}</p>
-           <p>{{element.subjectLevel}}</p>
+           <p>{{ "Grade Level:" + element.gradeLevel}}</p>
+           <p>{{ "Subject Level:" + element.subjectLevel}}</p>
           </div>
         </mat-cell>
       </ng-container>     
