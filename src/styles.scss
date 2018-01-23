@@ -190,10 +190,8 @@ body {
 
   .genderIconMale {
     float: left;
-    color: #2196f3;
+    color: $ole-blue;
+    ;
   }
 
-  .genderIconFemale {
-    color: $error-red;
-  }
 }

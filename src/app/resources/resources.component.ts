@@ -8,7 +8,7 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 import { findDocuments } from '../shared/mangoQueries';
