@@ -4,6 +4,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { Location } from '@angular/common';
+import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 
@@ -40,6 +41,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
   selectedRole = '';
   selection = new SelectionModel(true, []);
+  private dbName = '_users';
+  urlPrefix = environment.couchAddress + this.dbName + '/';
 
   constructor(
     private userService: UserService,
@@ -66,7 +69,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }
   }
 
-  searchFilter(filterValue: string) {
+  applyFilter(filterValue: string) {
     this.allUsers.filter = filterValue.trim().toLowerCase();
   }
 
