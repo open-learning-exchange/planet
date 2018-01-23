@@ -6,12 +6,9 @@ import { tap, catchError } from 'rxjs/operators';
 
 import { of } from 'rxjs/observable/of';
 
-require('./login.scss');
-
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: [ './login.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: [ './login.scss' ]
 })
 export class LoginComponent implements OnInit {
   constructor(
