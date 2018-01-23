@@ -14,20 +14,34 @@
     content: "";
     height: 80vh;
     background: linear-gradient(to right, $grey, #FFFFFF);
-    display: block;
     width: 30px;
     position: absolute;
     left: 100%;
-    z-index: 10;
+    top: 0;
+  }
+
+  .login-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .login-left-tile {
-    overflow: visible;
+    grid-area: lt;
+  }
+
+  .login-right-tile {
+    grid-area: rt;
   }
 
   .login-card {
     padding: 0;
     height:80vh;
+    display: grid;
+    grid-template-areas: "lt rt";
+    grid-template-columns: 1fr 2fr;
+    grid-auto-rows: 1fr;
   }
 
   .login-form, .login-left-tile-container {

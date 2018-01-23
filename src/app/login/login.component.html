@@ -1,30 +1,28 @@
 <div class="login-container gradient-background">
   <mat-card class="login-card">
-    <mat-grid-list cols="3" rowHeight="100%">
-      <mat-grid-tile colspan="1" rowspan="1" class="login-left-tile primary-color">
-        <div class="login-left-tile-container">
-          <img class="ole-logo" src="assets/OLE_Logo1.png">
-          <h1 i18n>Planet Learning</h1>
-        </div>
-      </mat-grid-tile>
-      <mat-grid-tile colspan="2" rowspan="1">
-        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
-          <mat-form-field class="example-full-width">
-            <input matInput [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
-          </mat-form-field>
-          <mat-form-field class="example-full-width">
-            <input matInput [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
-          </mat-form-field>
-          <mat-form-field class="example-full-width" *ngIf="createMode">
-            <input matInput [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
-          </mat-form-field>
-          <button mat-button>{{ createMode ? 'Create User' : 'SIGN-IN' }}</button>
-          <a  class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
-            {{ createMode ? 'Already have an account?' : 'Are you new?' }}
-          </a>
-        </form>
-        <div id="login-status">{{message}}</div>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <div class="login-tile login-left-tile primary-color">
+      <div class="login-left-tile-container">
+        <img class="ole-logo" src="assets/OLE_Logo1.png">
+        <h1 i18n>Planet Learning</h1>
+      </div>
+    </div>
+    <div class="login-tile login-right-tile">
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+        <mat-form-field class="example-full-width">
+          <input matInput [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <input matInput [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
+        </mat-form-field>
+        <mat-form-field class="example-full-width" *ngIf="createMode">
+          <input matInput [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
+        </mat-form-field>
+        <button mat-button>{{ createMode ? 'Create User' : 'SIGN-IN' }}</button>
+        <a  class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
+          {{ createMode ? 'Already have an account?' : 'Are you new?' }}
+        </a>
+      </form>
+      <div id="login-status">{{message}}</div>
+    </div>
   </mat-card>
 </div>
