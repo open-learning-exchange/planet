@@ -31,8 +31,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private router: Router,
     private http: HttpClient,
+<<<<<<< 0a314db48e77f723d384b06468368cd4acecba74
     private userService: UserService,
     private dialogsFormService: DialogsFormService
+=======
+    private dialogsFormService: DialogsFormService,
+    private userService: UserService
+>>>>>>> [#319] removed redundant Userservice in constructor
   ) { }
 
   private dbName = 'resources';
