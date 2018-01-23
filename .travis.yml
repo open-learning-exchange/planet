@@ -50,7 +50,7 @@ before_install:
   - node bin.js http://localhost:5984
   - cd ..
   # Add initial Couch databases with script
-  - ./couchdb-setup.sh
+  - ./couchdb-setup.sh -p 5984
   # CHROME & xvfb stuff
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
