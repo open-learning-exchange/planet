@@ -3,7 +3,7 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" i18n>Add new Course</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>Add New Course</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
       <mat-grid-list cols="3">
@@ -102,8 +102,3 @@
     </form>
   </div>
 </div>
-<!--FOR DEBUGGING (remove once view is final)-->
-<!-- <div>
-  <p>Form value: {{ courseForm.value | json }}</p>
-  <p class='km-course-valid'>{{ courseForm.valid }}</p>
-</div> -->
