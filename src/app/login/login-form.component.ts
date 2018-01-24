@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UserService } from '../shared/user.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -10,7 +12,8 @@ export class LoginFormComponent {
   constructor(
     private couchService: CouchService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) { }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
@@ -44,7 +47,11 @@ export class LoginFormComponent {
 
   login({ name, password }: {name: string, password: string}) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
-      .subscribe((data) => {
+      .pipe(switchMap((data) => {
+        // Post new session info to login_activity
+        this.userService.set(data);
+        return this.userService.newSessionLog();
+      })).subscribe((res) => {
         this.reRoute();
       }, (error) => this.message = 'Username and/or password do not match');
   }

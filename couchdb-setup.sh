@@ -95,6 +95,7 @@ curl -X PUT $COUCHURL/communityregistrationrequests
 curl -X PUT $COUCHURL/feedback
 curl -X PUT $COUCHURL/resource_activities
 curl -X PUT $COUCHURL/configurations
+curl -X PUT $COUCHURL/login_activities
 
 # Add or update design docs
 upsert_doc courses _design/course-validators @./design/courses/course-validators.json
