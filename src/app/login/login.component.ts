@@ -1,14 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
-<<<<<<< HEAD
 import { Router } from '@angular/router';
 import { tap, catchError } from 'rxjs/operators';
-=======
-import { UserService } from '../shared/user.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { tap, catchError, switchMap } from 'rxjs/operators';
->>>>>>> Use UserService methods and db name from data structure doc
 
 import { of } from 'rxjs/observable/of';
 

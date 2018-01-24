@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './login-form.component.html',
