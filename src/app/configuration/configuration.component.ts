@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
-  selector: 'configuration-view',
+  selector: 'planet-configuration',
   templateUrl: './configuration.component.html'
 })
 export class ConfigurationComponent implements OnInit {
