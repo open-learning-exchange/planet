@@ -13,7 +13,6 @@ import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PlanetFormsModule } from './shared/planet-forms.module';
 
 @NgModule({
   imports: [
