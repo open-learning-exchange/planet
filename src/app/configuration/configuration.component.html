@@ -2,22 +2,16 @@
   <mat-step [stepControl]="loginForm">
     <ng-template matStepLabel i18n>Create Admin</ng-template>
     <form [formGroup]="loginForm">
-      <mat-grid-list cols="1">
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Username" formControlName="username" required>
-        </mat-form-field>
-      </mat-grid-list>
-      <mat-grid-list cols="1">
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
-        </mat-form-field>
-      </mat-grid-list>
-      <mat-grid-list cols="1">
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
-          <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </mat-grid-list>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Username" formControlName="username" required>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
+      </mat-form-field>
       <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
     </form>
     <div id="login-status">{{message}}</div>

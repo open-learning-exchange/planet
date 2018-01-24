@@ -95,7 +95,7 @@ export class ConfigurationComponent implements OnInit {
         .subscribe((data) => {
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
           this.couchService.post('configurations', config).subscribe(() => {
-            window.location.reload();
+            this.router.navigate('/login');
           }, (err) => {
             // Connect to an error display component to show user that an error has occurred
             console.log(err);
