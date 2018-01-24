@@ -57,17 +57,17 @@
       <span class="stars">
         <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
           <!-- used simple arithmetic to get 20 and converted into % -->
-        <span [ngStyle]="{'width': getRating(resource.rating, resource.total_rating)}">
+          <span [ngStyle]="{'width': getRating(resource.rating, resource.totalRating)}">
           <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
         </span>
       </span>
-      <div class="stats stats-total">{{ resource.total_rating }}Total</div>
-      <div class="stats stats-female">{{ resource.female_rating }}% Female</div>
-      <div class="stats stats-male">{{ resource.male_rating }}% Male</div>
+      <div class="stats stats-total">{{ resource.totalRating }} Total</div>
+      <div class="stats stats-female">{{ resource.femaleRating }}% Female</div>
+      <div class="stats stats-male">{{ resource.maleRating }}% Male</div>
       <div class="rating">
-        <span class="rating-number">{{ resource.total_rating > 0 ? (resource.rating / resource.total_rating).toFixed(1) : (resource.rating).toFixed(1) }}</span>
-        <span *ngIf="resource.has_rated > 0" i18n>RATING</span>
-        <button mat-icon-button *ngIf="resource.has_rated === 0" (click)="rate(resource._id)"  i18n>RATE</button>
+        <span class="rating-number">{{ resource.totalRating > 0 ? (resource.rating / resource.totalRating).toFixed(1) : (resource.rating).toFixed(1) }}</span>
+        <span *ngIf="resource.hasRated > 0" i18n>RATING</span>
+        <button mat-icon-button *ngIf="resource.hasRated === 0" (click)="openRatingDialog(resource._id)"  i18n>RATE</button>
       </div>
   </div>
   </mat-grid-tile>

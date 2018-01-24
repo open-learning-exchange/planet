@@ -11,6 +11,8 @@ import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
+import { findDocuments } from '../../shared/mangoQueries';
+import { resolve } from 'url';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -31,13 +33,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private router: Router,
     private http: HttpClient,
-<<<<<<< 0a314db48e77f723d384b06468368cd4acecba74
-    private userService: UserService,
-    private dialogsFormService: DialogsFormService
-=======
     private dialogsFormService: DialogsFormService,
     private userService: UserService
->>>>>>> [#319] removed redundant Userservice in constructor
   ) { }
 
   private dbName = 'resources';
@@ -50,7 +47,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
   subscription;
-  ratings: any;
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
@@ -59,6 +55,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resource) => {
         this.resource_activity(resource._id, 'visit');
         this.setResource(resource);
+        this.getResourceRating(resource._id);
       }, error => console.log(error), () => console.log('complete getting resource id'));
   }
 
@@ -107,47 +104,32 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
     this.couchSrc = this.urlPrefix + resource._id + '/' + filename;
-    // resource rating
-    this.couchService.get('ratings/_all_docs?include_docs=true')
-      .subscribe((data) => {
-        this.ratings = data.rows.map(ratings => {
-          return ratings.doc;
-        }).filter(rt  => {
-          return rt['type'] === 'resource' && rt['item'] === resource._id;
-        });
-        let rate_sum = 0;
-        let has_rated = 0;
-        let total_rating = 0;
-        let male_rating = 0;
-        let female_rating = 0;
-        this.ratings.map(rate => {
-          has_rated = (rate.user === this.userService.get().name) ? rate.rate : has_rated;
-          total_rating++;
-          (rate.gender === 'M') ? male_rating++ : female_rating++ ;
-          rate_sum = rate_sum + parseInt(rate.rate, 10);
-        });
-        this.resource.rating = rate_sum;
-        this.resource.has_rated = has_rated;
-        this.resource.female_rating = (female_rating / total_rating) * 100;
-        this.resource.male_rating = (male_rating / total_rating) * 100;
-        this.resource.total_rating = total_rating;
-      }, (error) => console.log(error));
   }
 
-  resource_activity(resourceId, activity) {
-    const data = {
-      'resource': resourceId,
-      'user': this.userService.get().name,
-      'activity': activity,
-      'time': Date.now()
-    };
-    this.couchService.post('resource_activities', data)
-      .subscribe((response) => {
-        console.log(response);
-      }, (error) => console.log('Error'));
+  getResourceRating(resource_id) {
+    this.couchService
+      .post('ratings/_find', findDocuments({ 'item': resource_id, 'type': 'resource' }, 0 ))
+      .subscribe((rating) => {
+        let rateSum = 0;
+        let hasRated = 0;
+        let totalRating = 0;
+        let maleRating = 0;
+        let femaleRating = 0;
+        rating.docs.map(rate => {
+          hasRated = (rate.user === this.userService.get().name) ? rate.rate : hasRated;
+          totalRating++;
+          (rate.gender === 'M') ? maleRating++ : femaleRating++ ;
+          rateSum = rateSum + parseInt(rate.rate, 10);
+        });
+        this.resource.rating = rateSum;
+        this.resource.hasRated = hasRated;
+        this.resource.femaleRating = (femaleRating / totalRating) * 100;
+        this.resource.maleRating = (maleRating / totalRating) * 100;
+        this.resource.totalRating = totalRating;
+      }, error => console.log(error));
   }
 
-  rate(resource_id) {
+  openRatingDialog(resource_id) {
     const title = 'Rating';
     const type = 'rating';
     // need to show star rating insted of typebox
@@ -165,21 +147,40 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
-          const datas = {
-            'user': this.userService.get().name,
-            'gender': 'M', // gender need to fetch from profile (need to work on admin part)
-            'item': resource_id,
-            'type': 'resource',
-            'rate': res.rate,
-            'comment': res.comment,
-            'time': Date.now()
-          };
-          this.couchService.post('ratings', datas)
-            .subscribe((data) => {
-              location.reload();
-            }, (error) => console.log(error));
+          this.rating(res);
         }
       });
+  }
+
+  rating(rating) {
+    if (rating) {
+      const ratingData = {
+        'user': this.userService.get().name,
+        'gender': 'M', // gender need to fetch from profile (need to work on admin part)
+        'item': this.resource._id,
+        'type': 'resource',
+        'rate': rating.rate,
+        'comment': rating.comment,
+        'time': Date.now()
+      };
+      this.couchService.post('ratings', ratingData)
+        .subscribe((data) => {
+          this.getResourceRating(this.resource._id);
+        }, (error) => console.log(error));
+    }
+  }
+
+  resource_activity(resourceId, activity) {
+    const data = {
+      'resource': resourceId,
+      'user': this.userService.get().name,
+      'activity': activity,
+      'time': Date.now()
+    };
+    this.couchService.post('resource_activities', data)
+      .subscribe((response) => {
+        console.log(response);
+      }, (error) => console.log('Error'));
   }
 
 }
