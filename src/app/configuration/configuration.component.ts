@@ -57,7 +57,13 @@ export class ConfigurationComponent implements OnInit {
       firstName: [ '', Validators.required ],
       lastName: [ '', Validators.required ],
       middleName: [ '' ],
-      email: [ '', Validators.required ],
+      email: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.email
+        ])
+      ],
       phoneNumber: [ '', Validators.required ]
     });
     this.getNationList();
@@ -95,7 +101,7 @@ export class ConfigurationComponent implements OnInit {
         .subscribe((data) => {
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
           this.couchService.post('configurations', config).subscribe(() => {
-            this.router.navigate('/login');
+            this.router.navigate([ '/login' ]);
           }, (err) => {
             // Connect to an error display component to show user that an error has occurred
             console.log(err);
