@@ -15,6 +15,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       min {The number cannot be below {{number}}}
       duplicate {Value already exists}
       email {Please enter a valid email}
+      matchPassword {Passwords must match}
       invalidInt {Please enter a number}
       invalidHex {Hex is not valid}
       invalidTime {Time is invalid}
