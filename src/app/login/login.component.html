@@ -1,15 +1,13 @@
 <div class="login-container gradient-background">
   <mat-card class="login-card">
-    <mat-grid-list cols="3" rowHeight="100%">
-      <mat-grid-tile colspan="1" rowspan="1" class="login-left-tile primary-color">
-        <div class="login-left-tile-container">
-          <img class="ole-logo" src="assets/OLE_Logo1.png">
-          <h1 i18n>Planet Learning</h1>
-        </div>
-      </mat-grid-tile>
-      <mat-grid-tile colspan="2" rowspan="1">
-        <router-outlet></router-outlet>
-      </mat-grid-tile>
-    </mat-grid-list>
+    <div class="login-tile login-left-tile primary-color">
+      <div class="login-left-tile-container">
+        <img class="ole-logo" src="assets/OLE_Logo1.png">
+        <h1 i18n>Planet Learning</h1>
+      </div>
+    </div>
+    <div class="login-tile login-right-tile">
+      <router-outlet></router-outlet>
+    </div>
   </mat-card>
 </div>
