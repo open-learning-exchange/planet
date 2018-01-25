@@ -1,4 +1,4 @@
-<mat-grid-list cols="2">
+<mat-grid-list cols="2"  *ngIf="resource">
   <mat-grid-tile>
     <mat-card>
       <mat-card-header>
@@ -65,9 +65,9 @@
       <div class="stats stats-female">{{ resource.femaleRating }}% Female</div>
       <div class="stats stats-male">{{ resource.maleRating }}% Male</div>
       <div class="rating">
-        <span class="rating-number">{{ resource.totalRating > 0 ? (resource.rating / resource.totalRating).toFixed(1) : (resource.rating).toFixed(1) }}</span>
+        <span class="rating-number" *ngIf="resource.rating >= 0">{{ resource.totalRating > 0 ? (resource.rating / resource.totalRating).toFixed(1) : (resource.rating).toFixed(1) }}</span>
         <span *ngIf="resource.hasRated > 0" i18n>RATING</span>
-        <button mat-icon-button *ngIf="resource.hasRated === 0" (click)="openRatingDialog(resource._id)"  i18n>RATE</button>
+        <button mat-icon-button *ngIf="resource.hasRated === 0" (click)="openRatingDialog(resource._id)" i18n>RATE</button>
       </div>
   </div>
   </mat-grid-tile>

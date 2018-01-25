@@ -116,15 +116,28 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         let maleRating = 0;
         let femaleRating = 0;
         rating.docs.map(rate => {
-          hasRated = (rate.user === this.userService.get().name) ? rate.rate : hasRated;
+          if (this.userService.get().roles.indexOf('_admin') > -1) {
+            hasRated = (rate.user === this.userService.get().name) ? rate.rate : hasRated;
+          } else {
+            hasRated = (rate.user.name === this.userService.get().name) ? rate.rate : hasRated;
+          }
           totalRating++;
-          (rate.gender === 'M') ? maleRating++ : femaleRating++ ;
+          if (rate.user.gender) {
+            switch (rate.user.gender) {
+              case 'male':
+                          maleRating++;
+                          break;
+              case 'female':
+                            femaleRating++;
+                            break;
+            }
+          }
           rateSum = rateSum + parseInt(rate.rate, 10);
         });
         this.resource.rating = rateSum;
         this.resource.hasRated = hasRated;
-        this.resource.femaleRating = (femaleRating / totalRating) * 100;
-        this.resource.maleRating = (maleRating / totalRating) * 100;
+        this.resource.femaleRating = femaleRating === 0 ? 0 : ((femaleRating / totalRating) * 100).toFixed(0);
+        this.resource.maleRating = maleRating === 0 ? 0 : ((maleRating / totalRating) * 100).toFixed(0);
         this.resource.totalRating = totalRating;
       }, error => console.log(error));
   }
@@ -132,7 +145,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   openRatingDialog(resource_id) {
     const title = 'Rating';
     const type = 'rating';
-    // need to show star rating insted of typebox
     const fields =
       [
         { 'label': 'Rate', 'type': 'radio', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
@@ -154,9 +166,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   rating(rating) {
     if (rating) {
+      const user = this.userService.get().roles.indexOf('_admin') > -1 ? this.userService.get().name : this.userService.get().profile;
       const ratingData = {
-        'user': this.userService.get().name,
-        'gender': 'M', // gender need to fetch from profile (need to work on admin part)
+        'user': user,
         'item': this.resource._id,
         'type': 'resource',
         'rate': rating.rate,
