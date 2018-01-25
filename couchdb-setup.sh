@@ -94,6 +94,9 @@ curl -X PUT $COUCHURL/meetups
 curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/resources
+curl -X PUT $COUCHURL/resource_activities
+curl -X PUT $COUCHURL/configurations
+curl -X PUT $COUCHURL/login_activities
 
 # Add or update design docs
 upsert_doc courses _design/course-validators @./design/courses/course-validators.json

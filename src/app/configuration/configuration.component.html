@@ -1,0 +1,105 @@
+<mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="loginForm">
+    <ng-template matStepLabel i18n>Create Admin</ng-template>
+    <form [formGroup]="loginForm">
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Username" formControlName="username" required>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.username"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.password"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+    </form>
+    <div id="login-status">{{message}}</div>
+  </mat-step>
+
+  <mat-step [stepControl]="configurationFormGroup">
+    <form [formGroup]="configurationFormGroup">
+      <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planet_type" required>
+          <mat-option value="nation" i18n>Nation</mat-option>
+          <mat-option value="community" i18n>Community</mat-option>
+        </mat-select>
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planet_type"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <div>
+        <div *ngIf="nationOrCommunity === 'community'">
+          <mat-form-field>
+            <input matInput i18n-placeholder placeholder="Local Url" formControlName="local_domain" readonly required>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parent_domain" required>
+              <mat-option *ngFor="let nation of nations" [value]="nation.nationurl">{{nation.name}}</mat-option>
+            </mat-select>
+            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parent_domain"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        </div>
+        <div *ngIf="nationOrCommunity === 'nation'">
+          <mat-form-field>
+            <input matInput i18n-placeholder placeholder="Local Url" formControlName="local_domain" required>
+            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.local_domain"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput i18n-placeholder placeholder="Center" formControlName="parent_domain" required readonly>
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Name" formControlName="name" required>
+          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Code" formControlName="code" required>
+          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Language" formControlName="preferred_lang" required>
+          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferred_lang"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+        <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="contactFormGroup">
+    <form [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
+      <ng-template matStepLabel i18n>Contact Details</ng-template>
+      <div>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
+          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
+          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+        <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
+      </div>
+    </form>
+  </mat-step>
+</mat-horizontal-stepper>

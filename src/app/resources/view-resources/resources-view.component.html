@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf="resource">
   <mat-card-header>
     <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
     <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.year}} </mat-card-subtitle>
@@ -14,10 +14,10 @@
       Browser not supported
     </audio>
     <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
-    <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
+    <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}} (click)="resource_activity(resource._id, 'download')">Open File</a></div>
     <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
   </div>
-  <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+  <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'" (click)="resource_activity(resource._id, 'download')">Open in new tab</a>
   <mat-card-content *ngIf="resource.medium">
     <p>
       Media: {{ resource.medium }}

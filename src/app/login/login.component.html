@@ -1,25 +1,13 @@
-<div class="ole-login" color="primary">
-  <div class="ole-logo">
-    <img src="assets/cropped-ole-ico-logo-180x180.png">
-    <h1 i18n>Planet Learning</h1>
-    <h3 i18n>Version 2.01</h3>
-  </div>
-  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-    <mat-form-field class="example-full-width" color="accent">
-      <input matInput [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
-    </mat-form-field>
-    <mat-form-field class="example-full-width" color="accent">
-      <input matInput [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
-    </mat-form-field>
-    <mat-form-field class="example-full-width" color="accent" *ngIf="createMode">
-      <input matInput [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
-    </mat-form-field>
-    <div class="login-actions">
-      <button mat-button>{{ createMode ? 'Create User' : 'SIGN-IN' }}</button>
-      <a  class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
-        {{ createMode ? 'Already have an account?' : 'Are you new?' }}
-      </a>
+<div class="login-container gradient-background">
+  <mat-card class="login-card">
+    <div class="login-tile login-left-tile primary-color">
+      <div class="login-left-tile-container">
+        <img class="ole-logo" src="assets/OLE_Logo1.png">
+        <h1 i18n>Planet Learning</h1>
+      </div>
     </div>
-  </form>
-  <div id="login-status">{{message}}</div>
+    <div class="login-tile login-right-tile">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-card>
 </div>
