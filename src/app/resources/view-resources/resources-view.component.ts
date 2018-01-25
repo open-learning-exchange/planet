@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Directive } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
