@@ -49,29 +49,19 @@ export class UsersComponent implements OnInit {
     return this.couchService.get('_users/_all_docs?include_docs=true');
   }
 
-  getAdmins() {
-    // This nonode@nohost is working for couchdb as setup by Vagrant, but may need to be changed for other implementations
-    return this.couchService.get('_node/nonode@nohost/_config/admins');
-  }
-
   initializeData() {
     forkJoin([
       this.getUsers(),
-      this.getAdmins()
     ]).debug('Getting user list').subscribe((data) => {
 
-      const admins = [],
-        adminData = data[1];
-      for (const key in adminData) {
-        if (adminData.hasOwnProperty(key)) {
-          admins.push({ name: key, roles: [ 'admin' ], admin: true });
-        }
-      }
+      const admins = [];
 
       this.allUsers.data = [].concat(
         data[0].rows.reduce((users: any[], user: any) => {
-          if (user.id !== '_design/_auth') {
+          if (user.id !== '_design/_auth' && user.doc.isUserAdmin === false) {
             users.push({ ...user.doc, admin: false });
+          } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
+            admins.push({ ...user.doc, roles: [ 'admin' ] });
           }
           return users;
         }, []),
