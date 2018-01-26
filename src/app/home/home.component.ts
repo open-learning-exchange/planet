@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return this.couchService.delete('_session', { withCredentials: true });
     })).subscribe((response: any) => {
       if (response.ok === true) {
+        this.userService.unset();
         this.router.navigate([ '/login' ], {});
       }
     }, err => console.log(err));

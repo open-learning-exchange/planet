@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
-import { map } from 'rxjs/operators';
+import { catchError, switchMap, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
-// Holds the currently logged in user information (object in userCtx property of response from a GET _session)
-// User object = { 'name': <user name>, 'roles': [ <user roles...> ] }
+// Holds the currently logged in user information
+// If available full profile from _users db, if not object in userCtx property of response from a GET _session
+// userCtx object = { 'name': <user name>, 'roles': [ <user roles...> ] }
 
 // Also handles writing log information for user sessions
 
 @Injectable()
 export class UserService {
 
-  private user: any;
+  private user: any = { name: '' };
   private logsDb = 'login_activities';
   sessionStart: number;
   sessionRev: string;
@@ -26,12 +28,24 @@ export class UserService {
     return this.user;
   }
 
-  setProfile(profile: any) {
-    this.user.profile = profile;
+  setProfile(user: any) {
+    return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
+        // If not found in users database, just use userCtx object
+        this.user = user;
+        return of(false);
+      }),
+      switchMap((data) => {
+        if (data) {
+          // Remove hashed password information from the data object
+          const { derived_key, iterations, password_scheme, salt, ...profile } = data;
+          this.user = profile;
+        }
+        return of(true);
+      }));
   }
 
   unset(): any {
-    this.user = {};
+    this.user = { name: '' };
   }
 
   logObj(logoutTime: number = 0) {
