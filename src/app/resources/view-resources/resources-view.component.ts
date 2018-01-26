@@ -40,6 +40,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any;
+  rating: any = { average: 0 };
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
@@ -53,19 +54,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((resource) => {
-        this.resource_activity(resource._id, 'visit');
+        this.resourceActivity(resource._id, 'visit');
         this.setResource(resource);
         this.getResourceRating(resource._id);
       }, error => console.log(error), () => console.log('complete getting resource id'));
-  }
-
-  getRating(sum, timesRated) {
-    let rating = 0;
-    if (sum > 0 && timesRated > 0) {
-      rating = sum / timesRated;
-    }
-    // Multiply by 20 to convert rating out of 5 to percent for width
-    return (rating * 20) + '%';
   }
 
   ngOnDestroy() {
@@ -110,35 +102,29 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.couchService
       .post('ratings/_find', findDocuments({ 'item': resource_id, 'type': 'resource' }, 0 ))
       .subscribe((rating) => {
-        let rateSum = 0;
-        let hasRated = 0;
-        let totalRating = 0;
-        let maleRating = 0;
-        let femaleRating = 0;
+        let rateSum = 0,
+          hasRated = 0,
+          totalCount = 0,
+          maleCount = 0,
+          femaleCount = 0;
         rating.docs.map(rate => {
-          if (this.userService.get().roles.indexOf('_admin') > -1) {
-            hasRated = (rate.user === this.userService.get().name) ? rate.rate : hasRated;
-          } else {
-            hasRated = (rate.user.name === this.userService.get().name) ? rate.rate : hasRated;
-          }
-          totalRating++;
-          if (rate.user.gender) {
-            switch (rate.user.gender) {
-              case 'male':
-                          maleRating++;
-                          break;
-              case 'female':
-                            femaleRating++;
-                            break;
-            }
+          hasRated = (rate.user.name === this.userService.get().name) ? rate.rate : hasRated;
+          totalCount++;
+          switch (rate.user.gender) {
+            case 'male':
+              maleCount++;
+              break;
+            case 'female':
+              femaleCount++;
+              break;
           }
           rateSum = rateSum + parseInt(rate.rate, 10);
         });
-        this.resource.rating = rateSum;
-        this.resource.hasRated = hasRated;
-        this.resource.femaleRating = femaleRating === 0 ? 0 : ((femaleRating / totalRating) * 100).toFixed(0);
-        this.resource.maleRating = maleRating === 0 ? 0 : ((maleRating / totalRating) * 100).toFixed(0);
-        this.resource.totalRating = totalRating;
+        Object.assign(this.rating, {
+          femalePercent: femaleCount === 0 ? 0 : ((femaleCount / totalCount) * 100).toFixed(0),
+          malePercent: maleCount === 0 ? 0 : ((maleCount / totalCount) * 100).toFixed(0),
+          average: totalCount === 0 ? 0 : rateSum / totalCount,
+          hasRated, totalCount });
       }, error => console.log(error));
   }
 
@@ -159,14 +145,14 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
-          this.rating(res);
+          this.postRating(res);
         }
       });
   }
 
-  rating(rating) {
+  postRating(rating) {
     if (rating) {
-      const user = this.userService.get().roles.indexOf('_admin') > -1 ? this.userService.get().name : this.userService.get().profile;
+      const user = this.userService.get();
       const ratingData = {
         'user': user,
         'item': this.resource._id,
@@ -182,7 +168,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  resource_activity(resourceId, activity) {
+  resourceActivity(resourceId, activity) {
     const data = {
       'resource': resourceId,
       'user': this.userService.get().name,
