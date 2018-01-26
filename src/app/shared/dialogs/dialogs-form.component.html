@@ -14,6 +14,30 @@
         </select>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
+
+      <div *ngIf="field.type == 'radio'" class="full-width" >
+        <label i18n>Is your feedback Urgent?</label>
+        <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}">
+          <mat-radio-button value="true" i18n>Yes</mat-radio-button>
+          <mat-radio-button value="false" i18n>No</mat-radio-button>
+        </mat-radio-group>
+        <div>
+          <label i18n>Feedback Type:</label>
+          <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}">
+            <mat-radio-button value="Question" i18n>Question</mat-radio-button>
+            <mat-radio-button value="Bug" i18n>Bug</mat-radio-button>
+            <mat-radio-button value="Suggestion" i18n>Suggestion</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+
+      <div>
+      <mat-form-field *ngIf="field.type == 'textarea'">
+        <textarea matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}"></textarea>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+  </div>
+
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
