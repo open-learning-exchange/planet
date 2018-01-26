@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const isRoute = routesWithBackground
       .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
     return isRoute && !isException;
-}
+  }
 
   toggleNav() {
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';

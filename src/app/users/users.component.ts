@@ -79,6 +79,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   isAllSelected() {
+    this.selection.selected.map((user) => {
+      /** Adding roles to user are not alowed if admin is selected */
+      if (user.roles.indexOf('admin') === -1) {
+        user.selected =  true;
+      }
+    });
     const numSelected = this.selection.selected.length;
     const numRows = this.allUsers.data.length;
     return numSelected === numRows;
@@ -182,7 +188,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-    back() {
+  back() {
     this.location.back();
   }
 
