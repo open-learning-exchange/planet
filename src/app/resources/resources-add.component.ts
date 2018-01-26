@@ -19,12 +19,13 @@ import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-
+import { ShowMessageService } from '../shared/show-message.services';
 @Component({
   templateUrl: './resources-add.component.html'
 })
 export class ResourcesAddComponent implements OnInit {
   name = '';
+  info = 'New Resources Created';
   subjects = new FormControl();
   levels = new FormControl();
   subjectList: string[];
@@ -43,7 +44,8 @@ export class ResourcesAddComponent implements OnInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private userService: UserService
+    private userService: UserService,
+    private showMesg: ShowMessageService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -133,6 +135,7 @@ export class ResourcesAddComponent implements OnInit {
         // Start with empty object so this.resourceForm.value does not change
         this.addResource(Object.assign({}, this.resourceForm.value, resource));
       });
+      this.showMesg.showMessage(this.info);
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
@@ -208,6 +211,7 @@ export class ResourcesAddComponent implements OnInit {
 
   cancel() {
     this.location.back();
+    this.showMesg.getcancle();
   }
 
   bindFile(event) {
