@@ -8,11 +8,11 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
-
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { findDocuments } from '../shared/mangoQueries';
-
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -40,8 +40,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'select', 'info', 'rating' ];
   readonly dbName = 'resources';
-  mRating;
-  fRating;
   message = '';
   file: any;
   deleteDialog: any;
@@ -55,14 +53,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private httpclient: HttpClient
+    private httpclient: HttpClient,
+    private dialogsFormService: DialogsFormService,
   ) {}
 
   ngOnInit() {
-    this.getResources();
-    // Temp fields to fill in for male and female rating
-    this.fRating = Math.floor(Math.random() * 101);
-    this.mRating = 100 - this.fRating;
+    forkJoin(this.getResources(), this.getRatings()).subscribe((results) => {
+      const resourcesRes = results[0],
+        ratingsRes = results[1];
+      this.setupList(resourcesRes, ratingsRes.docs);
+    }, (err) => console.log(err));
   }
 
   ngAfterViewInit() {
@@ -101,8 +101,68 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.resources.filter = filterResValue.trim().toLowerCase();
   }
 
+  setupList(resourcesRes, ratings) {
+    this.resources.data = resourcesRes.rows.map((r: any) => {
+      const resource = r.doc;
+      const ratingIndex = ratings.findIndex(rating => {
+        return resource._id === rating.item;
+      });
+      if (ratingIndex > -1) {
+        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, {
+          rateSum: 0,
+          totalRating: 0,
+          maleRating: 0,
+          femaleRating: 0,
+          hasRated: 0
+        });
+        return { ...resource, ...ratingInfo };
+      }
+      return { ...resource,  rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, hasRated: 0  };
+    });
+  }
+
+  addRatingToResource = (id, index, ratings, ratingInfo) => {
+    const rating = ratings[index];
+    ratingInfo.totalRating++;
+    ratingInfo.rateSum = ratingInfo.rateSum + parseInt(rating.rate, 10);
+    if (rating.user.gender) {
+      switch (rating.user.gender) {
+        case 'male':
+                    ratingInfo.maleRating++;
+                    break;
+        case 'female':
+                      ratingInfo.femaleRating++;
+                      break;
+      }
+    }
+    if (rating.user.name) {
+      ratingInfo.hasRated = (rating.user.name === this.userService.get().name) ? rating.rate :  ratingInfo.hasRated;
+    } else {
+      // since Admin profile is not accesible
+      ratingInfo.hasRated = (rating.user === this.userService.get().name) ? rating.rate : ratingInfo.hasRated;
+    }
+    if (ratings.length > index + 1 && ratings[index + 1].item === id) {
+      // Ratings are sorted by resource id,
+      // so this recursion will add all ratings to resource
+      return this.addRatingToResource(id, index + 1, ratings, ratingInfo);
+    }
+    return ratingInfo;
+  }
+
+  getRatings() {
+    return this.couchService.post('ratings/_find', findDocuments({
+      // Selector
+      'type': 'resource',
+    }, 0, 0, 1000)).pipe(catchError(err => {
+      console.log(err);
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
+}
+
   getExternalResources() {
-    this.couchService.post('nations/_find',
+    return this.couchService.post('nations/_find',
     { 'selector': { 'name': this.nationName },
     'fields': [ 'name', 'nationurl' ] })
       .pipe(switchMap(data => {
@@ -116,47 +176,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         }
         // If there is no url, return an observable of an empty array
         return of([]);
-      })).subscribe((res: any) => {
-        this.resources.data = res.rows.map(r => r.doc);
-      }, error => (this.message = 'Error'));
+    }));
   }
 
   getResources() {
     this.nationName = this.route.snapshot.paramMap.get('nationname');
     if (this.nationName !== null) {
-      this.getExternalResources();
-    } else {
-      this.couchService
-        .get('resources/_all_docs?include_docs=true')
-        .subscribe(data => {
-          this.resources.data = data.rows.map(res => {
-            this.couchService
-            .post('ratings/_find', findDocuments({ 'type': 'resource', 'item': res.id }, null))
-            .subscribe((rating) => {
-              let rate_sum = 0;
-              let has_rated = 0;
-              let total_rating = 0;
-              let male_rating = 0;
-              let female_rating = 0;
-              rating.docs.map(rate => {
-                has_rated = (rate.user === this.userService.get().name) ? rate.rate : has_rated;
-                total_rating++;
-                (rate.gender === 'M') ? male_rating++ : female_rating++ ;
-                rate_sum = rate_sum + parseInt(rate.rate, 10);
-              });
-              res.doc.rating = rate_sum;
-              res.doc.has_rated = has_rated;
-              res.doc.female_rating = female_rating;
-              res.doc.male_rating = male_rating;
-              res.doc.total_rating = total_rating;
-            }, error => (this.message = 'Error'));
-            return res.doc;
-          });
-          // Sort in descending articleDate order, so the new resource can be shown on the top
-          data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
-          this.resources.data = data.rows.map(res => res.doc);
-        }, error => (this.message = 'Error'));
+      return this.getExternalResources();
     }
+    return this.couchService.get(this.dbName + '/_all_docs?include_docs=true');
   }
 
   deleteClick(resource) {
@@ -218,6 +246,47 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.location.back();
+  }
+
+  openRatingDialog(resource_id) {
+    const title = 'Rating';
+    const type = 'rating';
+    const fields =
+      [
+        { 'label': 'Rate', 'type': 'rating', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
+        { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
+      ];
+    const validation = {
+      item: [ resource_id ],
+      rate: [ '' ],
+      comment: [ '' ]
+    };
+    this.dialogsFormService
+      .confirm(title, type, fields, validation, '')
+      .debug('Dialog confirm')
+      .subscribe((res) => {
+        if (res !== undefined) {
+          this.rating(res);
+        }
+      });
+  }
+
+  rating(rating) {
+    if (rating) {
+      const user = this.userService.get().roles.indexOf('_admin') > -1 ? this.userService.get().name : this.userService.get().profile;
+      const ratingData = {
+        'user': user,
+        'item': rating.item,
+        'type': 'resource',
+        'rate': rating.rate,
+        'comment': rating.comment,
+        'time': Date.now()
+      };
+      this.couchService.post('ratings', ratingData)
+        .subscribe((data) => {
+          console.log('Thank you for rating');
+        }, (error) => console.log(error));
+    }
   }
 
 }
