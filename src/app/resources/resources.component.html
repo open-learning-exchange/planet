@@ -70,16 +70,20 @@
           <span class="stars">
             <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
             <!-- used simple arithmetic to get 20 and converted into % -->
-            <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
+            <span [ngStyle]="{'width': getRating(element.sum, element.totalRating)}">
               <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
             </span>
           </span>
-          <div class="stats stats-total">{{ element.timesRated }} Total</div>
-          <div class="stats stats-female">{{ fRating }}% Female</div>
-          <div class="stats stats-male">{{ mRating }}% Male</div>
+          <div class="stats stats-total">{{ element.totalRating }} Total</div>      
+          <div class="stats">
+            <span i18n class="genderIconMale">male</span><span i18n class="genderIconFemale">female</span>
+            <mat-progress-bar mode="determinate" [value]="getRatio(element.maleRating, element.femaleRating)" [ngClass]="{genderRatingProgressBar:element.total_rating}"></mat-progress-bar>
+          </div>
           <div class="rating">
-            <span class="rating-number">{{ element.timesRated > 0 ? (element.sum / element.timesRated).toFixed(1) : element.sum }}</span>
-            <span>RATING</span>
+            <span i18n>Average</span>
+            <span class="rating-number">{{ element.totalRating > 0 ? (element.sum / element.totalRating).toFixed(1) : (element.sum).toFixed(1) }}</span>
+            <span *ngIf="element.hasRated > 0" i18n>RATING</span>
+            <button mat-icon-button *ngIf="element.hasRated === 0" (click)="openRatingDialog(element._id)" i18n>RATE</button>
           </div>
         </div>
       </mat-cell>

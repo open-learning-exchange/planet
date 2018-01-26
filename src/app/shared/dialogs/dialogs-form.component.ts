@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import {
   FormBuilder,
@@ -13,12 +13,16 @@ import {
 })
 export class DialogsFormComponent {
 
+  @Input() rating: number;
+  @Input() itemId: number;
+  @Output() ratingClick: EventEmitter<any> = new EventEmitter<any>();
   public title: string;
   public type: string;
   public fields: any;
   public validation: any;
   public message: string;
   public modalForm: FormGroup;
+  public star_rating: boolean;
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -32,6 +36,9 @@ export class DialogsFormComponent {
   constructor( public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder ) { }
 
   onSubmit(mForm, dialog) {
+    if (this.star_rating) {
+      mForm.rate = this.rating;
+    }
     if (dialog.componentInstance.modalForm.valid) {
       dialog.close(mForm);
     } else {
@@ -43,6 +50,15 @@ export class DialogsFormComponent {
     if (event.key) {
       this.message = '';
     }
+  }
+
+  onClick(rating: number): void {
+    this.star_rating = true;
+    this.rating = rating;
+    this.ratingClick.emit({
+      itemId: this.itemId,
+      rating: rating
+    });
   }
 
 }

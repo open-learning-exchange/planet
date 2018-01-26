@@ -26,6 +26,10 @@ export class UserService {
     return this.user;
   }
 
+  setProfile(profile: any) {
+    this.user.profile = profile;
+  }
+
   unset(): any {
     this.user = {};
   }
