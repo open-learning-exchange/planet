@@ -10,19 +10,20 @@ import {
 
 @Component({
   templateUrl: './dialogs-form.component.html',
+  styles: [ `
+    .stars mat-icon {
+      cursor: pointer;
+    }
+  ` ]
 })
 export class DialogsFormComponent {
 
-  @Input() rating: number;
-  @Input() itemId: number;
-  @Output() ratingClick: EventEmitter<any> = new EventEmitter<any>();
   public title: string;
   public type: string;
   public fields: any;
   public validation: any;
-  public message: string;
   public modalForm: FormGroup;
-  public star_rating: boolean;
+  starActiveWidth = '0%';
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -36,9 +37,6 @@ export class DialogsFormComponent {
   constructor( public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder ) { }
 
   onSubmit(mForm, dialog) {
-    if (this.star_rating) {
-      mForm.rate = this.rating;
-    }
     if (dialog.componentInstance.modalForm.valid) {
       dialog.close(mForm);
     } else {
@@ -46,19 +44,15 @@ export class DialogsFormComponent {
     }
   }
 
-  valueChange(event) {
-    if (event.key) {
-      this.message = '';
-    }
+  onStarClick(rating: number, fieldName: string): void {
+    const pVal = {};
+    pVal[fieldName] = rating;
+    this.modalForm.patchValue(pVal);
+    this.mouseOverStar(rating);
   }
 
-  onClick(rating: number): void {
-    this.star_rating = true;
-    this.rating = rating;
-    this.ratingClick.emit({
-        itemId: this.itemId,
-        rating: rating
-    });
-    }
+  mouseOverStar(starNumber: number): void {
+    this.starActiveWidth = starNumber * 20 + '%';
+  }
 
 }
