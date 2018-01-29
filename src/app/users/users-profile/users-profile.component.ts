@@ -77,31 +77,46 @@ export class UsersProfileComponent implements OnInit {
   changePasswordForm(userDetail) {
     const title = 'Change Password';
     const type = 'user';
-    const fields =
-      [
-        {
-          'label': 'Password',
-          'type': 'textbox',
-          'inputType': 'password',
-          'name': 'password',
-          'placeholder': 'Password',
-          'required': true
-        },
-        {
-          'label': 'Confirm Password',
-          'type': 'textbox',
-          'inputType': 'password',
-          'name': 'confirmPassword',
-          'placeholder': 'Confirm Password',
-          'required': true
+    const fields = this.newChangePasswordFormFields();
+    const formGroup = this.newChangePasswordFormGroup();
+    this.dialogsFormService
+      .confirm(title, type, fields, formGroup, '')
+      .debug('Dialog confirm')
+      .subscribe((res) => {
+        if (res !== undefined) {
+          this.onSubmit(res, userDetail);
         }
-      ];
-    const validation = {
+      });
+  }
+
+  newChangePasswordFormFields() {
+    return [
+      {
+        'label': 'Password',
+        'type': 'textbox',
+        'inputType': 'password',
+        'name': 'password',
+        'placeholder': 'Password',
+        'required': true
+      },
+      {
+        'label': 'Confirm Password',
+        'type': 'textbox',
+        'inputType': 'password',
+        'name': 'confirmPassword',
+        'placeholder': 'Confirm Password',
+        'required': true
+      }
+    ];
+  }
+
+  newChangePasswordFormGroup() {
+    return {
       password: [
         '',
         Validators.compose([
           Validators.required,
-          CustomValidators.matchPassword('password', true)
+          CustomValidators.matchPassword('confirmPassword', true)
         ])
       ],
       confirmPassword: [
@@ -112,13 +127,6 @@ export class UsersProfileComponent implements OnInit {
         ])
       ]
     };
-    this.dialogsFormService
-      .confirm(title, type, fields, validation, '')
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.onSubmit(res, userDetail);
-        }
-      });
   }
+
 }
