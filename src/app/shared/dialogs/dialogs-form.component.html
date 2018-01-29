@@ -1,4 +1,4 @@
-<form novalidate (ngSubmit)="onSubmit(modalForm.value, dialogRef)" [formGroup]="modalForm">
+<form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
     <div *ngFor="let field of fields">
@@ -17,21 +17,10 @@
       </mat-form-field>
 
       <!-- Star Rating -->
-      <fieldset class="rating" *ngIf="field.type === 'radio'">
-        <span class="stars">
-          <mat-icon
-            *ngFor="let i of [1,2,3,4,5]"
-            (mouseenter)="mouseOverStar(i)">star</mat-icon>
-          <!-- used simple arithmetic to get 20 and converted into % -->
-          <span [ngStyle]="{'width': starActiveWidth}">
-              <mat-icon
-                *ngFor="let i of [1,2,3,4,5]"
-                (mouseenter)="mouseOverStar(i)"
-                (mouseleave)="mouseOverStar(modalForm.get(field.name).value)"
-                (click)="onStarClick(i,field.name)">star</mat-icon>
-          </span>
-        </span>
-      </fieldset>
+      <mat-form-field class="rating" *ngIf="field.type === 'radio'">
+        <planet-rating [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
 
       <!-- Textarea -->
       <mat-form-field *ngIf="field.type === 'textarea'" class="full-width">
@@ -44,4 +33,8 @@
     <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>&nbsp;
     <button type="submit" color="primary" mat-raised-button i18n>Submit</button>
   </mat-dialog-actions>
+  <p>Form value: {{ modalForm.value | json }}</p>
+  <p>Form status: {{ modalForm.status | json }}</p>
 </form>
+
+

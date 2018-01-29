@@ -12,7 +12,6 @@ import { UserService } from '../../shared/user.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { findDocuments } from '../../shared/mangoQueries';
-import { resolve } from 'url';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -136,12 +135,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         { 'label': 'Rate', 'type': 'radio', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
         { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
       ];
-    const validation = {
-      rate: [ '' ],
+    const formGroup = {
+      rate: [ '', Validators.required ],
       comment: [ '' ]
     };
     this.dialogsFormService
-      .confirm(title, type, fields, validation, '')
+      .confirm(title, fields, formGroup)
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {

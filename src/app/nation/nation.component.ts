@@ -125,14 +125,14 @@ export class NationComponent implements OnInit, AfterViewInit {
         { 'label': 'Nation Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Nation Name', 'required': true },
         { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
       ];
-    const validation = {
+    const formGroup = {
       adminName: [ '', Validators.required ],
       name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
       nationUrl: [ '', Validators.required,
       nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
     };
     this.dialogsFormService
-      .confirm(title, type, fields, validation, '')
+      .confirm(title, fields, formGroup)
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
