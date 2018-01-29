@@ -27,7 +27,7 @@
     <p class="menu-item-notification" *ngIf="notification.doc.status==='unread' && notification.doc.link">
       <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
     </p>
-    <p class="menu-Item-notification" *ngIf="notification.doc.status==='unread' && notification.doc.link ===''">
+    <p class="menu-item-notification" *ngIf="notification.doc.status==='unread' && notification.doc.link ===''">
       {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
     </p>
     <p *ngIf="notification.status!=='unread' && notification.doc.link">
