@@ -7,9 +7,8 @@ import { fromPromise } from 'rxjs/observable/fromPromise';
 
 import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
+
 import { switchMap, map } from 'rxjs/operators';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class ValidatorService {
@@ -39,26 +38,6 @@ constructor(private couchService: CouchService) {}
         return null;
       })
     ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
-  }
-
-  public MatchPassword$(
-    ac: AbstractControl, ac1: AbstractControl
-  ): Observable<ValidationErrors | null> {
-    // calls service every .5s for input change
-    return timer(500).pipe(
-      map(exists => {
-        // for unsubscribing from Observables
-        const ngUnsubscribe: Subject<void> = new Subject<void>();
-        ac1.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
-          ac.updateValueAndValidity();
-        });
-        if (ac.value !== ac1.value) {
-          return { passwordNotMatch: true };
-        } else {
-          return null;
-        }
-      })
-    );
   }
 
 }

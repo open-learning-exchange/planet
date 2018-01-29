@@ -6,13 +6,17 @@ import { UserService } from '../../shared/user.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { CustomValidators } from '../../validators/custom-validators';
+
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   templateUrl: './users-profile.component.html'
 })
 export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
-  userDetail: any;
+  userDetail: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   name = '';
@@ -36,7 +40,8 @@ export class UsersProfileComponent implements OnInit {
   profileView() {
     this.urlName = this.route.snapshot.paramMap.get('name');
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName).subscribe((response) => {
-      this.userDetail = response;
+      const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
+      this.userDetail = userDetail;
       if (response['_attachments']) {
         const filename = Object.keys(response._attachments)[0];
         this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
@@ -47,35 +52,26 @@ export class UsersProfileComponent implements OnInit {
   }
 
   onSubmit(credentialData, userDetail) {
-    const formdata = {
-      'password': credentialData.password,
-      '_rev': userDetail._rev,
-      'name': userDetail.name,
-      'type': 'user',
-      'roles': userDetail.roles,
-      'firstName': userDetail.firstName,
-      'middleName': userDetail.middleName,
-      'lastName': userDetail.lastName,
-      'email': userDetail.email,
-      'language': userDetail.language,
-      'phoneNumber': userDetail.phoneNumber,
-      'birthDate': userDetail.birthDate,
-      'gender': userDetail.gender,
-      'level': userDetail.level,
-      '_attachments': userDetail._attachments
-    };
-    this.couchService.put(this.dbName + '/' + userDetail._id, formdata)
-      .subscribe((res) => {
-        this.couchService.delete('_session', { withCredentials: true }).subscribe((info: any) => {
-          if (info.ok === true) {
-            this.couchService.post('_session', { 'name': userDetail.name, 'password': credentialData.password }, { withCredentials: true })
-              .subscribe((data) => {
-                this.profileView();
-                this.router.navigate([ 'users/profile/' + userDetail.name ], {});
-            }, (error) => (error));
-          }
-        });
-      }, (error) => (error));
+    const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
+    this.changePasswordRequest(updateDoc).pipe(switchMap((response) => {
+      if (response.ok === true) {
+        this.userDetail._rev = response._rev;
+        return this.reinitSession(userDetail.name, credentialData.password);
+      }
+      return of({ ok: false, reason: 'Error changing password' });
+    })).subscribe((res) => {
+      if (res.ok === true) {
+        // TODO: Should notify user that password successfully changed or that there was an error
+      }
+    });
+  }
+
+  changePasswordRequest(userData) {
+    return this.couchService.put(this.dbName + '/' + userData._id, userData);
+  }
+
+  reinitSession(username, password) {
+    return this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true });
   }
 
   changePasswordForm(userDetail) {
@@ -87,8 +83,20 @@ export class UsersProfileComponent implements OnInit {
         { 'label': 'Confirm Password', 'type': 'password', 'name': 'confirmPassword', 'placeholder': 'Confirm Password', 'required': true }
       ];
     const validation = {
-      password: [ '', Validators.required ],
-      confirmPassword: [ '', Validators.required, ac => this.validatorService.MatchPassword$(ac, ac.parent.get('password')) ]
+      password: [
+        '',
+        Validators.compose([
+          Validators.required,
+          CustomValidators.matchPassword('password', true)
+        ])
+      ],
+      confirmPassword: [
+        '',
+        Validators.compose([
+          Validators.required,
+          CustomValidators.matchPassword('password', true)
+        ])
+      ]
     };
     this.dialogsFormService
       .confirm(title, type, fields, validation, '')
