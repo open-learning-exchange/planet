@@ -26,6 +26,7 @@ import { ShowMessageService } from '../shared/show-message.services';
 export class ResourcesAddComponent implements OnInit {
   name = '';
   info = 'New Resources Created';
+  infoAlert = 'Resource Cancled';
   subjects = new FormControl();
   levels = new FormControl();
   subjectList: string[];
@@ -211,7 +212,7 @@ export class ResourcesAddComponent implements OnInit {
 
   cancel() {
     this.location.back();
-    this.showMesg.getcancle();
+    this.showMesg.showMessage(this.infoAlert);
   }
 
   bindFile(event) {
