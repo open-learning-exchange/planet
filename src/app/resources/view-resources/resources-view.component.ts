@@ -39,7 +39,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any;
-  rating: any = { average: 0, hasRated: { rate: '', comment: '' } };
+  rating: any = { average: 0, userRating: { rate: '', comment: '' } };
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
@@ -103,8 +103,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((ratings) => {
         // Counts number of ratings, number of male/female ratings, adds the total rating sum,
         // and gets the logged in user's rating if applicable.
-        const { rateSum, hasRated, femaleCount, maleCount, totalCount } = ratings.docs.reduce((stats, rating) => {
-          stats.hasRated = (rating.user.name === this.userService.get().name) ? rating : stats.hasRated;
+        const { rateSum, userRating, femaleCount, maleCount, totalCount } = ratings.docs.reduce((stats, rating) => {
+          stats.userRating = (rating.user.name === this.userService.get().name) ? rating : stats.userRating;
           stats.totalCount++;
           switch (rating.user.gender) {
             case 'male':
@@ -116,12 +116,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           }
           stats.rateSum = stats.rateSum + parseInt(rating.rate, 10);
           return stats;
-        }, { rateSum: 0, hasRated: '', totalCount: 0, maleCount: 0, femaleCount: 0 });
+        }, { rateSum: 0, userRating: '', totalCount: 0, maleCount: 0, femaleCount: 0 });
         Object.assign(this.rating, {
           femalePercent: femaleCount === 0 ? 0 : ((femaleCount / totalCount) * 100).toFixed(0),
           malePercent: maleCount === 0 ? 0 : ((maleCount / totalCount) * 100).toFixed(0),
           average: totalCount === 0 ? 0 : rateSum / totalCount,
-          hasRated, totalCount });
+          userRating, totalCount });
       }, error => console.log(error));
   }
 
@@ -134,8 +134,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
       ];
     const formGroup = {
-      rate: [ this.rating.hasRated.rate || '', Validators.required ],
-      comment: [ this.rating.hasRated.comment || '' ]
+      rate: [ this.rating.userRating.rate || '', Validators.required ],
+      comment: [ this.rating.userRating.comment || '' ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
@@ -158,6 +158,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         'comment': rating.comment,
         'time': Date.now()
       };
+      if (this.rating) {
+        Object.assign(ratingData,
+          { _id: this.rating.userRating._id, _rev: this.rating.userRating._rev });
+      }
       this.couchService.post('ratings', ratingData)
         .subscribe((data) => {
           this.getResourceRating(this.resource._id);
