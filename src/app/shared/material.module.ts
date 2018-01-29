@@ -22,7 +22,7 @@ import {
   MatStepperModule
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 @NgModule({
   exports: [
     MatTableModule,
@@ -45,8 +45,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatListModule,
     MatCardModule,
     MatSidenavModule,
-    MatStepperModule,
-    MatSnackBarModule
+    MatStepperModule
+
   ]
 })
 export class MaterialModule {}

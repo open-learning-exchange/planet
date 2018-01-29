@@ -2,7 +2,8 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
-import { ShowMessageService } from '../shared/show-message.services';
+import { ShowMessageService } from '../shared/show-message.service';
+
 @Component({
   templateUrl: './courses.component.html'
 })
@@ -14,7 +15,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'title', 'action' ];
   message = '';
   deleteDialog: any;
-  alert = 'You are about to resign Course';
 
   constructor(
     private couchService: CouchService,
@@ -36,9 +36,11 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         });
       });
   }
+
   alertMessage() {
-    this.showMesg.showAlert(this.alert);
+    this.showMesg.showAlert('You are about to resign Course');
   }
+
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;

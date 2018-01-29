@@ -10,13 +10,13 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ShowMessageService } from './shared/show-message.services';
+import { ShowMessageService } from './shared/show-message.service';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, MatSnackBarModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent

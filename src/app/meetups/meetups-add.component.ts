@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { ShowMessageService } from '../shared/show-message.services';
+import { ShowMessageService } from '../shared/show-message.service';
 
 @Component({
   template: `
@@ -23,7 +23,6 @@ import { ShowMessageService } from '../shared/show-message.services';
 })
 export class MeetupsAddComponent {
   message = '';
-  info = 'New Meetup Created';
   obj = [];
   constructor(
     private couchService: CouchService,
@@ -39,7 +38,7 @@ export class MeetupsAddComponent {
         .subscribe((data) => {
           this.message = 'Meetup created: ' + meetup.title;
         }, (error) => this.message = 'There was a problem creating the meetup');
-      this.showMesg.showMessage(this.info);
+      this.showMesg.showMessage('New Meetup Created');
     } else {
       this.message = 'Please complete the form';
     }

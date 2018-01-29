@@ -8,13 +8,13 @@ import {
 } from '@angular/forms';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
+
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
-import { ShowMessageService } from '../../shared/show-message.services';
+import { ShowMessageService } from '../../shared/show-message.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -34,8 +34,6 @@ export class CoursesAddComponent {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
-  info = 'New Course Added';
-  inform = 'Course canceled';
   courseForm: FormGroup;
 
   showDaysCheckBox = true; // for toggling the days checkbox
@@ -51,7 +49,7 @@ export class CoursesAddComponent {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private snackBar: MatSnackBar,
+
     private showMesg: ShowMessageService
   ) {
     this.createForm();
@@ -114,7 +112,7 @@ export class CoursesAddComponent {
   onSubmit() {
     if (this.courseForm.valid) {
       this.addCourse(this.courseForm.value);
-      this.showMesg.showMessage(this.info);
+      this.showMesg.showMessage('New Course Added');
     } else {
       Object.keys(this.courseForm.controls).forEach(field => {
         const control = this.courseForm.get(field);
@@ -135,7 +133,7 @@ export class CoursesAddComponent {
 
   cancel() {
     this.location.back();
-    this.showMesg.showMessage(this.inform);
+    this.showMesg.showMessage('Course canceled');
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */

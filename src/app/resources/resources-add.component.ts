@@ -19,14 +19,12 @@ import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { ShowMessageService } from '../shared/show-message.services';
+import { ShowMessageService } from '../shared/show-message.service';
 @Component({
   templateUrl: './resources-add.component.html'
 })
 export class ResourcesAddComponent implements OnInit {
   name = '';
-  info = 'New Resources Created';
-  infoAlert = 'Resource Cancled';
   subjects = new FormControl();
   levels = new FormControl();
   subjectList: string[];
@@ -136,7 +134,7 @@ export class ResourcesAddComponent implements OnInit {
         // Start with empty object so this.resourceForm.value does not change
         this.addResource(Object.assign({}, this.resourceForm.value, resource));
       });
-      this.showMesg.showMessage(this.info);
+      this.showMesg.showMessage('New Resources Created');
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
@@ -212,7 +210,7 @@ export class ResourcesAddComponent implements OnInit {
 
   cancel() {
     this.location.back();
-    this.showMesg.showMessage(this.infoAlert);
+    this.showMesg.showMessage('Resource Cancled');
   }
 
   bindFile(event) {
