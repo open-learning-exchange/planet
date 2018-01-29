@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { ShowMessageService } from '../shared/show-message.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   template: `
@@ -26,7 +26,7 @@ export class MeetupsAddComponent {
   obj = [];
   constructor(
     private couchService: CouchService,
-    private showMesg: ShowMessageService
+    private planetMessageService: PlanetMessageService
   ) { }
 
   model = { title: '', description: '' };
@@ -38,7 +38,7 @@ export class MeetupsAddComponent {
         .subscribe((data) => {
           this.message = 'Meetup created: ' + meetup.title;
         }, (error) => this.message = 'There was a problem creating the meetup');
-      this.showMesg.showMessage('New Meetup Created');
+      this.planetMessageService.showMessage('New Meetup Created');
     } else {
       this.message = 'Please complete the form';
     }

@@ -19,10 +19,12 @@ import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { ShowMessageService } from '../shared/show-message.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
+
 @Component({
   templateUrl: './resources-add.component.html'
 })
+
 export class ResourcesAddComponent implements OnInit {
   name = '';
   subjects = new FormControl();
@@ -44,7 +46,7 @@ export class ResourcesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
-    private showMesg: ShowMessageService
+    private planetMessageService: PlanetMessageService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -134,7 +136,7 @@ export class ResourcesAddComponent implements OnInit {
         // Start with empty object so this.resourceForm.value does not change
         this.addResource(Object.assign({}, this.resourceForm.value, resource));
       });
-      this.showMesg.showMessage('New Resources Created');
+      this.planetMessageService.showMessage('New Resources Created');
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
@@ -210,7 +212,7 @@ export class ResourcesAddComponent implements OnInit {
 
   cancel() {
     this.location.back();
-    this.showMesg.showMessage('Resource Cancled');
+    this.planetMessageService.showMessage('Resource Cancled');
   }
 
   bindFile(event) {

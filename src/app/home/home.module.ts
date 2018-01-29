@@ -14,6 +14,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { FeedbackComponent } from '../feedback/feedback.component';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @NgModule({
   imports: [
@@ -35,5 +36,6 @@ import { FeedbackComponent } from '../feedback/feedback.component';
     ManagerDashboardComponent,
     FeedbackComponent
   ],
+  providers: [ PlanetMessageService ],
 })
 export class HomeModule {}

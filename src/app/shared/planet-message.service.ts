@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 
 @Injectable()
-export class ShowMessageService {
+export class PlanetMessageService {
   constructor(
     private snackBar: MatSnackBar
   ) { }

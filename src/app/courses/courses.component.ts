@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
-import { ShowMessageService } from '../shared/show-message.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses.component.html'
@@ -19,7 +19,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private showMesg: ShowMessageService
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -38,7 +38,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   alertMessage() {
-    this.showMesg.showAlert('You are about to resign Course');
+    this.planetMessageService.showAlert('You are about to resign Course');
   }
 
   ngAfterViewInit() {

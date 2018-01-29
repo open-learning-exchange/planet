@@ -14,7 +14,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
-import { ShowMessageService } from '../../shared/show-message.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -49,8 +49,7 @@ export class CoursesAddComponent {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-
-    private showMesg: ShowMessageService
+    private planetMessageService: PlanetMessageService
   ) {
     this.createForm();
   }
@@ -112,7 +111,7 @@ export class CoursesAddComponent {
   onSubmit() {
     if (this.courseForm.valid) {
       this.addCourse(this.courseForm.value);
-      this.showMesg.showMessage('New Course Added');
+      this.planetMessageService.showMessage('New Course Added');
     } else {
       Object.keys(this.courseForm.controls).forEach(field => {
         const control = this.courseForm.get(field);
@@ -133,7 +132,7 @@ export class CoursesAddComponent {
 
   cancel() {
     this.location.back();
-    this.showMesg.showMessage('Course canceled');
+    this.planetMessageService.showMessage('Course canceled');
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
