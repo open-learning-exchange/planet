@@ -79,8 +79,22 @@ export class UsersProfileComponent implements OnInit {
     const type = 'user';
     const fields =
       [
-        { 'label': 'Password', 'type': 'password', 'name': 'password', 'placeholder': 'Password', 'required': true },
-        { 'label': 'Confirm Password', 'type': 'password', 'name': 'confirmPassword', 'placeholder': 'Confirm Password', 'required': true }
+        {
+          'label': 'Password',
+          'type': 'textbox',
+          'inputType': 'password',
+          'name': 'password',
+          'placeholder': 'Password',
+          'required': true
+        },
+        {
+          'label': 'Confirm Password',
+          'type': 'textbox',
+          'inputType': 'password',
+          'name': 'confirmPassword',
+          'placeholder': 'Confirm Password',
+          'required': true
+        }
       ];
     const validation = {
       password: [

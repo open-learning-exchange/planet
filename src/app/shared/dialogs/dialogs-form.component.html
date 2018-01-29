@@ -4,12 +4,7 @@
     <div *ngFor="let field of fields">
       <!-- input field -->
       <mat-form-field *ngIf="field.type == 'textbox'" class="full-width">
-        <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-       <!-- password field -->
-       <mat-form-field *ngIf="field.type == 'password'" class="full-width">
-        <input matInput (keypress)="valueChange($event)" type ="password" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <input matInput (keypress)="valueChange($event)" type="{{field.inputType || 'text'}}" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <!-- selectbox -->
