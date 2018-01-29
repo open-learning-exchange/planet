@@ -17,12 +17,12 @@
       <!-- radio button -->
       <section *ngIf="field.type === 'radio'">
         <label i18n>{{field.label}}</label>
-        <!-- <div class="feedbackUrgent"> -->
+        <div class="planet-radio-group">
           <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" >
-            <mat-radio-button class="feedbackUrgent-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
+            <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-radio-group>
-        <!-- </div> -->
+        </div>
       </section>
       <!-- text area -->
       <mat-form-field *ngIf="field.type === 'textarea'">

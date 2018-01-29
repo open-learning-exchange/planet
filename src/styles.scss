@@ -179,16 +179,15 @@ body {
     overflow: visible;
   }
 
-  .feedbackUrgent {
-    padding: 10px;
+  .planet-radio-section {
+    display: grid;
+    align-content: center;
+    align-items: center;
+    height: 60px;
   }
 
-  .feedbackUrgent-radio-button {
-    margin: 5px;
-  }
-
-  .feedbackUrgent-selected-value {
-    margin: 15px 0;
+  .planet-radio-button {
+    margin: 10px;
   }
 
 }
