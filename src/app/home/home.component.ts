@@ -27,6 +27,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from
     ])
   ]
 })
+
 export class HomeComponent implements OnInit, AfterViewInit {
 
   name = '';
@@ -123,13 +124,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const type = 'feedback';
     const fields =
       [
-        { 'label': 'Is your feedback Urgent?', 'type': 'radio', 'name': 'priority', 'value': this.priorityType, 'required': false },
-        { 'label': 'Feedback Type:', 'type': 'radiobutton', 'name': 'type', 'value': this.feedbackType, 'required': false },
+        { 'label': 'Is your feedback Urgent?', 'type': 'radio', 'name': 'priority', 'options': this.priorityType, 'required': true },
+        { 'label': 'Feedback Type:', 'type': 'radio', 'name': 'type', 'options': this.feedbackType, 'required': true },
         { 'type': 'textarea', 'name': 'message', 'placeholder': 'Your Feedback', 'required': true }
       ];
     const validation = {
-      priority: [ '' ],
-      type: [ '' ],
+      priority: [ '', Validators.required ],
+      type: [ '', Validators.required ],
       message: [ '', Validators.required ]
     };
     this.dialogsFormService
@@ -164,6 +165,7 @@ export class Message {
   user: string;
   time: Number;
 }
+
 export class Feedback {
   type: string;
   priority: boolean;
