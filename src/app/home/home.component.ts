@@ -38,6 +38,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
   sidenavState = 'closed';
   @ViewChild('content') private mainContent;
 
+  priorityType = [
+    'Yes',
+    'No',
+  ];
+
+  feedbackType = [
+    'Question',
+    'Bug',
+    'Suggestion',
+  ];
+
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
     this.mainContent._updateContentMargins();
@@ -112,7 +123,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const type = 'feedback';
     const fields =
       [
-        { 'type': 'radio', 'name': 'priority', 'required': false },
+        { 'label': 'Is your feedback Urgent?', 'type': 'radio', 'name': 'priority', 'value': this.priorityType, 'required': false },
+        { 'label': 'Feedback Type:', 'type': 'radiobutton', 'name': 'type', 'value': this.feedbackType, 'required': false },
         { 'type': 'textarea', 'name': 'message', 'placeholder': 'Your Feedback', 'required': true }
       ];
     const validation = {

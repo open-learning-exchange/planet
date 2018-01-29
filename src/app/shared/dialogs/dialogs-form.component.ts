@@ -14,7 +14,7 @@ import {
 export class DialogsFormComponent {
 
   public title: string;
-  public type: string;
+  public type: any;
   public fields: any;
   public validation: any;
   public message: string;
