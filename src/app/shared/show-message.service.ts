@@ -12,7 +12,7 @@ export class ShowMessageService {
       duration: 3000,
     });
   }
-  
+
   showAlert(message: string) {
     this.snackBar.open(message, 'X', {
     });
