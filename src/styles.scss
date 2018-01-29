@@ -48,6 +48,12 @@ body {
     margin: 0 5px;
   }
 
+  // Use for text in all caps.  It avoids problems for screen readers to use this rather than all caps in HTML
+  // See https://webaim.org/techniques/fonts/#caps
+  .uppercase {
+    text-transform: uppercase;
+  }
+
   // Creates helper classes for smaller and larger horizontal spacing
   @mixin margin-lr {
     @for $i from 1 through 10 {

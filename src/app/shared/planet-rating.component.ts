@@ -57,6 +57,7 @@ export class PlanetRatingComponent implements MatFormFieldControl<number>, Contr
   }
   set value(rating: number) {
     this._value = rating;
+    this.starActiveWidth = rating * 20 + '%';
     this.onChange(rating);
     this.stateChanges.next();
   }

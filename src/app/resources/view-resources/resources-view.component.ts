@@ -39,7 +39,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any;
-  rating: any = { average: 0 };
+  rating: any = { average: 0, hasRated: { rate: '', comment: '' } };
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
@@ -100,25 +100,23 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   getResourceRating(resource_id) {
     this.couchService
       .post('ratings/_find', findDocuments({ 'item': resource_id, 'type': 'resource' }, 0 ))
-      .subscribe((rating) => {
-        let rateSum = 0,
-          hasRated = 0,
-          totalCount = 0,
-          maleCount = 0,
-          femaleCount = 0;
-        rating.docs.map(rate => {
-          hasRated = (rate.user.name === this.userService.get().name) ? rate.rate : hasRated;
-          totalCount++;
-          switch (rate.user.gender) {
+      .subscribe((ratings) => {
+        // Counts number of ratings, number of male/female ratings, adds the total rating sum,
+        // and gets the logged in user's rating if applicable.
+        const { rateSum, hasRated, femaleCount, maleCount, totalCount } = ratings.docs.reduce((stats, rating) => {
+          stats.hasRated = (rating.user.name === this.userService.get().name) ? rating : stats.hasRated;
+          stats.totalCount++;
+          switch (rating.user.gender) {
             case 'male':
-              maleCount++;
+              stats.maleCount++;
               break;
             case 'female':
-              femaleCount++;
+              stats.femaleCount++;
               break;
           }
-          rateSum = rateSum + parseInt(rate.rate, 10);
-        });
+          stats.rateSum = stats.rateSum + parseInt(rating.rate, 10);
+          return stats;
+        }, { rateSum: 0, hasRated: '', totalCount: 0, maleCount: 0, femaleCount: 0 });
         Object.assign(this.rating, {
           femalePercent: femaleCount === 0 ? 0 : ((femaleCount / totalCount) * 100).toFixed(0),
           malePercent: maleCount === 0 ? 0 : ((maleCount / totalCount) * 100).toFixed(0),
@@ -136,8 +134,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
       ];
     const formGroup = {
-      rate: [ '', Validators.required ],
-      comment: [ '' ]
+      rate: [ this.rating.hasRated.rate || '', Validators.required ],
+      comment: [ this.rating.hasRated.comment || '' ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)

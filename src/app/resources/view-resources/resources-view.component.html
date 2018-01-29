@@ -66,8 +66,10 @@
       <div class="stats stats-male">{{ rating.malePercent }}% Male</div>
       <div class="rating">
         <span class="rating-number">{{ rating.average.toFixed(1) }}</span>
-        <span *ngIf="resource.hasRated > 0" i18n>RATING</span>
-        <button mat-icon-button *ngIf="rating.hasRated === 0" (click)="openRatingDialog(resource._id)" i18n>RATE</button>
+        <button mat-button (click)="openRatingDialog(resource._id)" class="uppercase" [ngSwitch]="rating.hasRated.rate">
+          <span *ngSwitchCase="''" i18n>Rate</span>
+          <span *ngSwitchDefault i18n>Update Your Rating</span>
+        </button>
       </div>
   </div>
   </mat-grid-tile>
