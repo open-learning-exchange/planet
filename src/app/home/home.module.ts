@@ -5,7 +5,6 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-import { NavigationComponent } from './navigation.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
@@ -31,7 +30,6 @@ import { FeedbackComponent } from '../feedback/feedback.component';
   declarations: [
     HomeComponent,
     DashboardComponent,
-    NavigationComponent,
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent,

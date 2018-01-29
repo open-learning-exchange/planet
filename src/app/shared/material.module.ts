@@ -17,7 +17,9 @@ import {
   MatNativeDateModule,
   MatMenuModule,
   MatListModule,
-  MatCardModule
+  MatCardModule,
+  MatSidenavModule,
+  MatStepperModule
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
@@ -41,7 +43,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatNativeDateModule,
     MatMenuModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatSidenavModule,
+    MatStepperModule
   ]
 })
 export class MaterialModule {}

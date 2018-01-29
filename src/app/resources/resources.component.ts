@@ -14,17 +14,7 @@ import { of } from 'rxjs/observable/of';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-    /* The background & space-container styles are used to approximate the design.  Should be replaced or changed before merging */
-    .background {
-      /* Hard coded $primary for end of gradient.  Should use variable if we decide on this background */
-      background: linear-gradient(to bottom, #000000, #2196f3);
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-    }
+    /* Consider using space-container app wide for route views */
     .space-container {
       margin: 64px 30px;
       background: none;
@@ -131,6 +121,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.couchService
         .get('resources/_all_docs?include_docs=true')
         .subscribe(data => {
+          // Sort in descending articleDate order, so the new resource can be shown on the top
+          data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
           this.resources.data = data.rows.map(res => res.doc);
         }, error => (this.message = 'Error'));
     }
