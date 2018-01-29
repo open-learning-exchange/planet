@@ -20,8 +20,7 @@ import {
   MatCardModule,
   MatSidenavModule,
   MatStepperModule,
-  MatSnackBarModule,
-  MatSnackBar
+  MatSnackBarModule
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
