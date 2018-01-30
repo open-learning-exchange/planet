@@ -116,7 +116,7 @@ export class UsersProfileComponent implements OnInit {
         '',
         Validators.compose([
           Validators.required,
-          CustomValidators.matchPassword('confirmPassword', true)
+          CustomValidators.matchPassword('confirmPassword', false)
         ])
       ],
       confirmPassword: [
