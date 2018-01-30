@@ -129,7 +129,7 @@
       true,
       "attribute",
       "planet",
-      "camelCase"
+      "kebab-case"
     ],
     "component-selector": [
       true,
