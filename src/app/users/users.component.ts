@@ -3,10 +3,10 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { Location } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './users.component.html',
@@ -47,7 +47,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private location: Location
+    private router: Router
   ) {}
 
   select(user: any) {
@@ -82,7 +82,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.selection.selected.map((user) => {
       /** Adding roles to user are not alowed if admin is selected */
       if (user.roles.indexOf('admin') === -1) {
-        user.selected =  true;
+        user.selected = true;
       }
     });
     const numSelected = this.selection.selected.length;
@@ -188,7 +188,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   back() {
-    this.location.back();
+    this.router.navigate([ '/' ]);
   }
 
 }
