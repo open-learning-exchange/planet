@@ -55,8 +55,14 @@
   }
 
 }
-.menu-item-notification {
+
+.menu-item-text {
   color: green;
+}
+
+.menu-item-notification {
+  height: auto;
+  white-space: unset;
 }
 
 // Top toolbar is smaller on small screens
