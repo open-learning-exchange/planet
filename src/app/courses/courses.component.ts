@@ -2,22 +2,38 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Location } from '@angular/common';
 
 @Component({
-  templateUrl: './courses.component.html'
+  templateUrl: './courses.component.html',
+  styles: [ `
+    .space-container {
+      margin: 64px 30px;
+    }
+    .mat-column-select {
+      max-width: 44px;
+    }
+    .mat-column-action {
+      max-width: 225px;
+    }
+` ]
 })
-export class CoursesComponent implements OnInit, AfterViewInit {
 
+export class CoursesComponent implements OnInit, AfterViewInit {
+  selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'title', 'action' ];
+  displayedColumns = [ 'select', 'title', 'action' ];
   message = '';
   deleteDialog: any;
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -65,6 +81,24 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.deleteDialog.close();
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
     };
+  }
+
+  goBack() {
+    this.location.back();
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.courses.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+    this.selection.clear() :
+    this.courses.data.forEach(row => this.selection.select(row));
   }
 
 }
