@@ -4,9 +4,8 @@ import { UserService } from '../shared/user.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
-  template: `
-    <div id="greeting">Hi, {{name}}</div>
-  `
+  templateUrl: './dashboard.component.html',
+  styleUrls: [ './dashboard.scss' ]
 })
 export class DashboardComponent implements OnInit {
   name = '';

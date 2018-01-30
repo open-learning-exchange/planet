@@ -1,0 +1,39 @@
+.dashboard-card-view {
+   padding: 0.1vh;
+     
+}
+.dashboard-card-view-library {
+    padding-top: 2vh;
+    padding-left: 2px;
+    padding-right: 2px;
+ 
+}
+.backgroundcolor-gray {
+    background-color: rgb(230, 227, 227);
+    color: black;
+}
+.backgroundcolor-red {
+        background-color:red
+}
+.backgroundcolor-orange {
+       background-color:orange
+}
+.backgroundcolor-green {
+     background-color:green      
+}
+.backgroundcolor-purple {
+    background-color:purple
+}
+
+@mixin md-icon-size($size: 24px) {
+    font-size: $size;
+    height: $size;
+    width: $size;
+  }
+  .md-icon-36 {
+    @include md-icon-size(46px);
+  }
+
+
+
+
