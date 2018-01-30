@@ -129,13 +129,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
         { 'label': 'Feedback Type:', 'type': 'radio', 'name': 'type', 'options': this.feedbackType, 'required': true },
         { 'type': 'textarea', 'name': 'message', 'placeholder': 'Your Feedback', 'required': true }
       ];
-    const validation = {
+    const formGroup = {
       priority: [ '', Validators.required ],
       type: [ '', Validators.required ],
       message: [ '', Validators.required ]
     };
     this.dialogsFormService
-      .confirm(title, type, fields, validation, '')
+      .confirm(title, fields, formGroup)
       .debug('Dialog confirm')
       .subscribe((response) => {
         if (response !== undefined) {
