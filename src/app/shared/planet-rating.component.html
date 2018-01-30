@@ -1,0 +1,13 @@
+<span class="stars">
+  <mat-icon
+    *ngFor="let i of [1,2,3,4,5]"
+    (mouseenter)="mouseOverStar(i)">star</mat-icon>
+  <!-- used simple arithmetic to get 20 and converted into % -->
+  <span [ngStyle]="{'width': starActiveWidth}">
+      <mat-icon
+        *ngFor="let i of [1,2,3,4,5]"
+        (mouseenter)="mouseOverStar(i)"
+        (mouseleave)="mouseOverStar(value)"
+        (click)="onStarClick(i)">star</mat-icon>
+  </span>
+</span>

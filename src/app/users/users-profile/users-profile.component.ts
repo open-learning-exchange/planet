@@ -73,11 +73,10 @@ export class UsersProfileComponent implements OnInit {
 
   changePasswordForm(userDetail) {
     const title = 'Change Password';
-    const type = 'user';
     const fields = this.newChangePasswordFormFields();
     const formGroup = this.newChangePasswordFormGroup();
     this.dialogsFormService
-      .confirm(title, type, fields, formGroup, '')
+      .confirm(title, fields, formGroup)
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
