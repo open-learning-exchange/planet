@@ -1,12 +1,6 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
-  Validators
-} from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   templateUrl: './dialogs-form.component.html'
@@ -16,9 +10,7 @@ export class DialogsFormComponent {
   public title: string;
   public type: any;
   public fields: any;
-  public validation: any;
-  public message: string;
-  public modalForm: FormGroup;
+  public modalForm: any;
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -29,20 +21,18 @@ export class DialogsFormComponent {
     });
   }
 
-  constructor( public dialogRef: MatDialogRef<DialogsFormComponent>, public fb: FormBuilder ) { }
+  constructor(public dialogRef: MatDialogRef<DialogsFormComponent>) { }
 
   onSubmit(mForm, dialog) {
-    if (dialog.componentInstance.modalForm.valid) {
-      dialog.close(mForm);
+    if (mForm.valid) {
+      dialog.close(mForm.value);
     } else {
-      this.markFormAsTouched(this.modalForm);
+      this.markFormAsTouched(mForm);
     }
   }
 
-  valueChange(event) {
-    if (event.key) {
-      this.message = '';
-    }
+  onRatingChange(fieldName: string) {
+    console.log(fieldName);
   }
 
 }
