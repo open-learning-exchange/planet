@@ -7,10 +7,6 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { languages } from '../shared/languages';
 import { interval } from 'rxjs/observable/interval';
 import { tap, switchMap } from 'rxjs/operators';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
-import { FormBuilder, FormControl, FormGroup, Validators, FormControlName } from '@angular/forms';
 
 @Component({
   templateUrl: './home.component.html',
@@ -39,17 +35,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   sidenavState = 'closed';
   @ViewChild('content') private mainContent;
 
-  priorityType = [
-    'Yes',
-    'No',
-  ];
-
-  feedbackType = [
-    'Question',
-    'Bug',
-    'Suggestion',
-  ];
-
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
     this.mainContent._updateContentMargins();
@@ -62,8 +47,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private router: Router,
     private userService: UserService,
-    private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService
   ) {}
 
   ngOnInit() {
@@ -120,61 +103,4 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }, err => console.log(err));
   }
 
-  openFeedback() {
-    const title = 'Feedback';
-    const type = 'feedback';
-    const fields =
-      [
-        { 'label': 'Is your feedback Urgent?', 'type': 'radio', 'name': 'priority', 'options': this.priorityType, 'required': true },
-        { 'label': 'Feedback Type:', 'type': 'radio', 'name': 'type', 'options': this.feedbackType, 'required': true },
-        { 'type': 'textarea', 'name': 'message', 'placeholder': 'Your Feedback', 'required': true }
-      ];
-    const formGroup = {
-      priority: [ '', Validators.required ],
-      type: [ '', Validators.required ],
-      message: [ '', Validators.required ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.onSubmit(response);
-        }
-      });
-  }
-
-  onSubmit(post: any) {
-    this.message = '';
-    const user = this.userService.get().name,
-      { message, ...feedbackInfo } = post,
-      startingMessage: Message = { message, time: Date.now(), user },
-      newFeedback: Feedback = { owner: user, ...feedbackInfo, openTime: Date.now(), messages: [ startingMessage ] };
-    this.couchService.post('feedback/', newFeedback)
-    .subscribe((data) => {
-      this.message = 'Thank you, your feedback is submitted!';
-    },
-    (error) => {
-      this.message = 'Error, your  feedback cannot be submitted';
-    });
-  }
-
-}
-
-export class Message {
-  message: string;
-  user: string;
-  time: Number;
-}
-
-export class Feedback {
-  type: string;
-  priority: boolean;
-  owner: string;
-  title: string;
-  openTime: Number;
-  closeTime: Number;
-  source: string;
-  url: string;
-  messages: Array<Message>;
 }
