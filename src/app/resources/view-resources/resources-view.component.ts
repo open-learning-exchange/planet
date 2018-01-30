@@ -21,7 +21,7 @@ import { findDocuments } from '../../shared/mangoQueries';
       height: 80vh;
       border: none;
     }
-  ` ],
+  ` ]
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {
@@ -130,7 +130,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     const type = 'rating';
     const fields =
       [
-        { 'label': 'Rate', 'type': 'radio', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
+        { 'label': 'Rate', 'type': 'rating', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
         { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
       ];
     const formGroup = {

@@ -17,7 +17,7 @@
       </mat-form-field>
 
       <!-- Star Rating -->
-      <mat-form-field class="rating" *ngIf="field.type === 'radio'">
+      <mat-form-field class="rating" *ngIf="field.type === 'rating'">
         <planet-rating [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
@@ -34,5 +34,3 @@
     <button type="submit" color="primary" mat-raised-button i18n>Submit</button>
   </mat-dialog-actions>
 </form>
-
-
