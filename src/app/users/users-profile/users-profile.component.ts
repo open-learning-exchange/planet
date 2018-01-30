@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
-import { ValidatorService } from '../../validators/validator.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -26,10 +25,8 @@ export class UsersProfileComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private router: Router,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService,
-    private validatorService: ValidatorService
+    private dialogsFormService: DialogsFormService
   ) { }
 
   ngOnInit() {
