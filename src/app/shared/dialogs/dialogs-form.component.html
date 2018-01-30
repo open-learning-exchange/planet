@@ -1,17 +1,30 @@
-<form novalidate (ngSubmit)="onSubmit(modalForm.value, dialogRef)" [formGroup]="modalForm">
+<form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
     <div *ngFor="let field of fields">
       <!-- input field -->
-      <mat-form-field *ngIf="field.type == 'textbox'" class="full-width">
-        <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
+      <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
+        <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
+
       <!-- selectbox -->
-      <mat-form-field *ngIf="field.type == 'selectbox'" class="full-width">
+      <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
         <select mat-select *ngFor="let options of field.options">
           <option value="{{option.value}}">{{option.text}}</option>
         </select>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <!-- Star Rating -->
+      <mat-form-field class="rating" *ngIf="field.type === 'rating'">
+        <planet-rating [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <!-- Textarea -->
+      <mat-form-field *ngIf="field.type === 'textarea'" class="full-width">
+        <textarea matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}"></textarea>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </div>
