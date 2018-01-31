@@ -1,18 +1,14 @@
 <mat-card class="dashboard-card-view">
-     <mat-icon>home</mat-icon>
+     <mat-icon class="dashboard-home-icon">home</mat-icon>
           DashBoard
 </mat-card>
-<mat-divider></mat-divider>
-<div class="dashboard-card-view-library">
+<div class="dashboard-card-view-list">
     <mat-card>
-        <mat-card-content>
+        <mat-card-content>                   
                 <mat-grid-list cols="6" rowHeight="2:1">
                         <mat-grid-tile class="backgroundcolor-red">
-                        <mat-list role="list">
-             <mat-list-item role="listitem">
-             <mat-icon style="color:white;font:bold;" class="md-icon-36">account_balance</mat-icon></mat-list-item>
-             <mat-list-item role="listitem" style="color:white">MyLibrary</mat-list-item>
-                        </mat-list>
+                        <mat-icon class="md-icon-36">account_balance</mat-icon>
+                        <div class="gride-first-item-title">MyLibrary</div> 
                         </mat-grid-tile>
                         <mat-grid-tile>Title Second</mat-grid-tile>
                         <mat-grid-tile class="backgroundcolor-gray">Title Third</mat-grid-tile>
@@ -23,15 +19,13 @@
         </mat-card-content>
     </mat-card>
 </div>
-
-
-<div class="dashboard-card-view-library">
+<div class="dashboard-card-view-list">
     <mat-card>
             <mat-card-content>
                 <mat-grid-list cols="6" rowHeight="2:1">
                         <mat-grid-tile class="backgroundcolor-orange">
-                                        <mat-icon style="color:white;font:bold;" class="md-icon-36">library_books </mat-icon>
-                                       
+                        <mat-icon class="md-icon-36">library_books</mat-icon>
+                        <div class="gride-first-item-title">MyCourses</div>     
                         </mat-grid-tile>
                         <mat-grid-tile>Title Second</mat-grid-tile>
                         <mat-grid-tile class="backgroundcolor-gray">Title Third</mat-grid-tile>
@@ -42,34 +36,31 @@
           </mat-card-content>          
     </mat-card>
 </div>
-
-<div class="dashboard-card-view-library">
+<div class="dashboard-card-view-list">
     <mat-card>
             <mat-card-content>
                 <mat-grid-list cols="6" rowHeight="2:1">
                         <mat-grid-tile class="backgroundcolor-green"> 
-                                        <mat-list role="list">
-                                                        <mat-list-item role="listitem"><mat-icon style="color:white;font:bold;" class="md-icon-36">people </mat-icon></mat-list-item>
-                                                        <mat-list-item role="listitem" style="color:white">MyTeams</mat-list-item>
-                                         </mat-list>
-                                        
+                        <mat-icon class="md-icon-36">people </mat-icon>
+                        <div class="gride-first-item-title">MyTeams</div>
                         </mat-grid-tile>
+
                         <mat-grid-tile>Title Second</mat-grid-tile>
                         <mat-grid-tile class="backgroundcolor-gray">Title Third</mat-grid-tile>
-                        <mat-grid-tile >Title fourth</mat-grid-tile>
+                        <mat-grid-tile>Title fourth</mat-grid-tile>
                         <mat-grid-tile class="backgroundcolor-gray">Title fifth</mat-grid-tile>
                         <mat-grid-tile>Title Sixth </mat-grid-tile>         
                 </mat-grid-list>
             </mat-card-content>
     </mat-card>
 </div>
-<div class="dashboard-card-view-library">
+<div class="dashboard-card-view-list">
     <mat-card>
             <mat-card-content>
                 <mat-grid-list cols="6" rowHeight="2:1">
                         <mat-grid-tile class="backgroundcolor-purple">
-                          <mat-icon style="color:white;font:bold;" class="md-icon-36">event </mat-icon>
-                                                       
+                        <mat-icon class="md-icon-36">event</mat-icon>
+                        <div class="gride-first-item-title">MyMeetups</div>
                         </mat-grid-tile>
                         <mat-grid-tile>Title Second</mat-grid-tile>
                         <mat-grid-tile class="backgroundcolor-gray">Title Third</mat-grid-tile>

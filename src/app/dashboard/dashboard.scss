@@ -1,11 +1,12 @@
 .dashboard-card-view {
-   padding: 0.1vh;
+   padding: 1vh;
      
 }
-.dashboard-card-view-library {
+.dashboard-card-view-list {
     padding-top: 2vh;
-    padding-left: 2px;
-    padding-right: 2px;
+    padding-left: 4vh;
+    padding-right: 4vh;
+    
  
 }
 .backgroundcolor-gray {
@@ -32,8 +33,20 @@
   }
   .md-icon-36 {
     @include md-icon-size(46px);
+    color:white;
+    font:bold;
   }
 
-
-
+.dashboard-home-icon {
+  position: relative;
+  top:5px;
+}
+.gride-first-item-title {
+  position: relative;
+  top: 35%;
+  color:white;
+  font:bold;
+  right: 30%;   
+}
+ 
 
