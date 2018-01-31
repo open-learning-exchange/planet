@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private router: Router,
-    private userService: UserService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -102,5 +102,4 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }, err => console.log(err));
   }
-
 }

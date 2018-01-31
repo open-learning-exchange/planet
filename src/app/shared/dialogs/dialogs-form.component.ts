@@ -8,7 +8,6 @@ import { FormGroup } from '@angular/forms';
 export class DialogsFormComponent {
 
   public title: string;
-  public type: any;
   public fields: any;
   public modalForm: any;
 

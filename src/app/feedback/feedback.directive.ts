@@ -24,7 +24,7 @@ export class Feedback {
 }
 
 @Directive({
-  selector: '[planet-feedback]'
+  selector: '[planetFeedback]'
 })
 export class FeedbackDirective {
   message: string;
