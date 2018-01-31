@@ -7,9 +7,9 @@ import { Component } from '@angular/core/src/metadata/directives';
 // different HTML tags
 @Component({
   template: `
-    <a planet-feedback></a>
-    <button planet-feedback></button>
-    <div planet-feedback></div>
+    <a planetFeedback></a>
+    <button planetFeedback></button>
+    <div planetFeedback></div>
   `
 })
 class TestComponent { }
