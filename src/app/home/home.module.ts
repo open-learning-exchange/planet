@@ -13,7 +13,7 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
-import { FeedbackComponent } from '../feedback/feedback.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @NgModule({
   imports: [
@@ -33,7 +33,7 @@ import { FeedbackComponent } from '../feedback/feedback.component';
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent,
-    FeedbackComponent
+    FeedbackDirective
   ],
 })
 export class HomeModule {}

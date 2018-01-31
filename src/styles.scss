@@ -185,6 +185,17 @@ body {
     overflow: visible;
   }
 
+  .planet-radio-section {
+    display: grid;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+  }
+
+  .planet-radio-button {
+    margin: 10px;
+  }
+
   // Remove the underline from mat-form-field for custom fields
   .mat-form-field-type-no-underline .mat-input-underline {
     display: none;
