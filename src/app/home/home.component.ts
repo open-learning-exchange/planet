@@ -23,11 +23,8 @@ import { tap, switchMap } from 'rxjs/operators';
     ])
   ]
 })
-
 export class HomeComponent implements OnInit, AfterViewInit {
-
   name = '';
-  message: string;
   roles: string[] = [];
   languages = [];
   current_flag = 'en';
