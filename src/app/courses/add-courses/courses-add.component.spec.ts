@@ -16,7 +16,6 @@ describe('CoursesAddComponent', () => {
   let fixture: ComponentFixture<CoursesAddComponent>;
   let couchService;
   let testCourseForm;
-  let statusElement1;
   let de;
   let postSpy: any;
 
@@ -31,7 +30,6 @@ describe('CoursesAddComponent', () => {
     component = fixture.componentInstance;
     couchService = fixture.debugElement.injector.get(CouchService);
     de = fixture.debugElement;
-    statusElement1 = de.nativeElement.querySelector('.km-course-valid');
     postSpy = fixture.debugElement.injector.get(CouchService);
     testCourseForm = { courseTitle: 'OLE Test 1', description: 'First test for VIs' };
 
@@ -43,11 +41,8 @@ describe('CoursesAddComponent', () => {
 
   // test createForm()
   it('should createForm', () => {
-    component.createForm();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement1.textContent).toBe('false');
-    });
+      expect(component.createForm()).toBe(undefined);
+
   });
 
   // test onSubmit()
