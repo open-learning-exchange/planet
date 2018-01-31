@@ -1,52 +1,51 @@
+@import '../variables.scss';
+
 .dashboard-card-view {
-   padding: 1vh;
-     
-}
-.dashboard-card-view-list {
-    padding-top: 2vh;
-    padding-left: 4vh;
-    padding-right: 4vh;
-    
- 
-}
-.backgroundcolor-gray {
-    background-color: rgb(230, 227, 227);
-    color: black;
-}
-.backgroundcolor-red {
-        background-color:red
-}
-.backgroundcolor-orange {
-       background-color:orange
-}
-.backgroundcolor-green {
-     background-color:green      
-}
-.backgroundcolor-purple {
-    background-color:purple
+  padding: 1vh;     
 }
 
-@mixin md-icon-size($size: 24px) {
-    font-size: $size;
-    height: $size;
-    width: $size;
-  }
-  .md-icon-36 {
-    @include md-icon-size(46px);
-    color:white;
-    font:bold;
-  }
+.dashboard-card-view-list {
+  padding-top: 2vh;
+  padding-left: 4vh;
+  padding-right: 4vh;
+}
+
+.backgroundcolor-gray {
+  background-color: $ole-grey;
+  color: black;
+}
+
+.backgroundcolor-red {
+  background-color: red;
+}
+
+.backgroundcolor-orange {
+  background-color: orange;
+}
+
+.backgroundcolor-green {
+  background-color: $ole-green-dark;      
+}
+
+.backgroundcolor-purple {
+  background-color: purple;
+}
 
 .dashboard-home-icon {
   position: relative;
-  top:5px;
+  top: 5px;
 }
+
 .gride-first-item-title {
   position: relative;
   top: 35%;
-  color:white;
-  font:bold;
-  right: 30%;   
+  color: white;
+  right: 10%;   
 }
- 
+
+.custum-mat-icon {
+  color: white;
+  position: relative;
+  left: 25px;
+}
 
