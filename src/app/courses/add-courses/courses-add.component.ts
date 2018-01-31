@@ -111,7 +111,6 @@ export class CoursesAddComponent {
   onSubmit() {
     if (this.courseForm.valid) {
       this.addCourse(this.courseForm.value);
-      this.planetMessageService.showMessage('New Course Added');
     } else {
       Object.keys(this.courseForm.controls).forEach(field => {
         const control = this.courseForm.get(field);
@@ -128,11 +127,11 @@ export class CoursesAddComponent {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+    this.planetMessageService.showMessage('New Course Added');
   }
 
   cancel() {
     this.location.back();
-    this.planetMessageService.showMessage('Course canceled');
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */

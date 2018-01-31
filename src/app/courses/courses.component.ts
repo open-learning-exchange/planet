@@ -53,10 +53,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       });
   }
 
-  alertMessage() {
-    this.planetMessageService.showAlert('You are about to resign Course');
-  }
-
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
@@ -85,7 +81,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
+          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
 

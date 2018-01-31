@@ -136,7 +136,6 @@ export class ResourcesAddComponent implements OnInit {
         // Start with empty object so this.resourceForm.value does not change
         this.addResource(Object.assign({}, this.resourceForm.value, resource));
       });
-      this.planetMessageService.showMessage('New Resources Created');
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
@@ -155,6 +154,7 @@ export class ResourcesAddComponent implements OnInit {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+    this.planetMessageService.showMessage('New Resource Created');
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
@@ -212,7 +212,6 @@ export class ResourcesAddComponent implements OnInit {
 
   cancel() {
     this.location.back();
-    this.planetMessageService.showMessage('Resource Cancled');
   }
 
   bindFile(event) {
