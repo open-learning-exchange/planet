@@ -9,9 +9,11 @@ import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { HttpClient } from '@angular/common/http';
 
 import { Validators } from '@angular/forms';
-
+import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
+import { constants } from 'fs';
+import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -40,11 +42,14 @@ export class NationComponent implements OnInit, AfterViewInit {
     private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private http: HttpClient
+    private http: HttpClient,
+    private planetFilterTableService: PlanetFilterTableService
   ) {}
 
   ngOnInit() {
     this.getNationList();
+    const filterData = { name: String, admin_name: String };
+    this.planetFilterTableService.filter(filterData, this.nations);
   }
 
   ngAfterViewInit() {
