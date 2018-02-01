@@ -62,7 +62,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
-      };
+    };
   }
 
   ngOnInit() {

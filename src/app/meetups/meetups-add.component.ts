@@ -36,7 +36,7 @@ export class MeetupsAddComponent {
       this.couchService.post('meetups', { 'title': meetup.title, 'description': meetup.description })
         .subscribe((data) => {
           this.planetMessageService.showMessage('Meetup created: ' + meetup.title);
-        }, (error) => this.message = 'There was a problem creating the meetup');
+        }, (error) => this.planetMessageService.showAlert('There was a problem creating the meetup'));
     } else {
       this.planetMessageService.showMessage('Please complete the form');
     }
