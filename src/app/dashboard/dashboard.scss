@@ -1,26 +1,40 @@
 @import '../variables.scss';
 
+.left-half {
+     width: 75%;
+     position: absolute;
+     left: 0px;
+     height: 93%;
+}
+
+.right-half {
+   width: 25%;
+   position: absolute;
+   right: 0px;
+   height: 93%
+}
+
 .dashboard-card-view {
   padding: 1vh;
 }
 
 .dashboard-card-view-list {
   padding-top: 1vh;
-  padding-left: 4vh;
+  padding-left: 2vh;
   padding-right: 4vh;
 }
 
 .backgroundcolor-gray {
-  background-color: rgb(233, 227, 227);
-  color: black;
+  background-color: $ole-grey;
+  color: #000000;
 }
 
 .backgroundcolor-red {
-  background-color: red;
+  background-color: #ff0000;
 }
 
 .backgroundcolor-orange {
-  background-color: orange;
+  background-color: #ffa500;
 }
 
 .backgroundcolor-green {
@@ -28,11 +42,11 @@
 }
 
 .backgroundcolor-purple {
-  background-color: purple;
+  background-color: #800080;
 }
 
 .dashboard-home-icon {
-  color:$ole-grey;
+  color: $ole-grey;
   position: relative;
   top: 8px;
 }
@@ -40,14 +54,15 @@
 .gride-first-item-title {
   position: relative;
   top: 35%;
-  color: white;
+  color: #ffffff;
   right: 10%;
+  font-size: small;
 }
 
 .custum-mat-icon {
   color: white;
   position: relative;
-  left: 25px;
+  left: 35%;
 }
 
 .mat-card-radius {
