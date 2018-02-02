@@ -71,7 +71,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   backgroundRoute() {
     const routesWithBackground = [ 'resources', 'courses', 'users' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
-    const routesWithoutBackground = [ 'users/update', 'users/profile' ];
+    const routesWithoutBackground = [];
     const isException = routesWithoutBackground
       .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
     const isRoute = routesWithBackground

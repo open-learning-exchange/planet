@@ -1,53 +1,83 @@
-<h2 i18n>Profile</h2>
-<div mat-card-avatar *ngIf="userDetail._attachments; else noAttachment">
-    <img class="user-profile" [src]="imageSrc">
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Users</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="searchFilter($event.target.value)" i18n-placeholder placeholder="Type text to search">
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span i18n>{{userDetail.name}}</span>
+    <span class="toolbar-fill"></span>
+    <button mat-button>
+      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon>
+        <span *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" mat-raised-button color="primary" i18n [routerLink]="['/users/update/', urlName]">Edit Profile</span>
+        <a *ngIf="name === urlName" mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
+    </button>
+  </mat-toolbar>
+  <div class="back">
+    <mat-grid-list cols="3">
+      <mat-grid-tile>
+        <ng-container *ngIf="userDetail._attachments; else noAttachment">
+          <img class="user-profile" [src]="imageSrc">
+        </ng-container>
+        <ng-template #noAttachment>
+          <img class="user-profile" src="../assets/image.png">
+        </ng-template>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-list>
+          <mat-list-item>
+            <h3 matLine i18n>Full Name</h3>
+            <h2 mat-line i18n><b>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          
+          <mat-list-item >
+            <h3 matLine i18n>Login</h3>
+            <h2 matLine i18n><b>{{userDetail.name}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item>
+            <h3 matLine i18n>Email</h3>
+            <h2 matLine i18n><b>{{userDetail.email}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item >
+            <h3 matLine i18n>Language</h3>
+            <h2 matLine i18n><b>{{userDetail.language}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-list>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <mat-list>
+          <mat-list-item>
+            <h3 matLine i18n>Phone Number</h3>
+            <h2 matLine i18n><b>{{userDetail.phoneNumber}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item >
+            <h3 matLine i18n>BirthDate</h3>
+            <h2 matLine i18n><b>{{userDetail.birthDate}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <h3 matLine  i18n>Gender</h3>
+            <h2 matLine i18n><b>{{userDetail.gender}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <h3 matLine i18n>Level</h3>
+            <h2 matLine i18n><b>{{userDetail.level}}</b></h2>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-list>
+      </mat-grid-tile>
+    </mat-grid-list>
 </div>
-<ng-template #noAttachment>
-  <div mat-card-avatar><i class="material-icons">person</i></div>
-</ng-template>
-<div>
-  <a *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" mat-raised-button color="primary" i18n [routerLink]="['/users/update/', urlName]">Edit</a>
-  <a *ngIf="name === urlName" mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
-</div>
-<mat-list>
-  <mat-list-item *ngIf="userDetail.firstName">
-    <label matLine i18n>Full Name</label>
-    <p matLine>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.name" >
-    <label matLine i18n>Login</label>
-    <p matLine>{{userDetail.name}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.email">
-    <label matLine i18n>Email</label>
-    <p matLine>{{userDetail.email}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.language" >
-    <label matLine i18n>Language</label>
-    <p matLine>{{userDetail.language}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.phoneNumber">
-    <label matLine i18n>Phone Number</label>
-    <p matLine>{{userDetail.phoneNumber}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.birthDate">
-    <label matLine i18n>BirthDate</label>
-    <p matLine>{{userDetail.birthDate}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.gender">
-    <label matLine i18n>Gender</label>
-    <p matLine>{{userDetail.gender}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-  <mat-list-item *ngIf="userDetail.level">
-    <label matLine i18n>Level</label>
-    <p matLine>{{userDetail.level}}</p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
-</mat-list>

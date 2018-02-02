@@ -6,12 +6,27 @@ import { UserService } from '../../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
-
+import { Location } from '@angular/common';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 @Component({
-  templateUrl: './users-profile.component.html'
+  templateUrl: './users-profile.component.html',
+  styles: [ `
+    .space-container {
+      margin: 64px 30px;
+    }
+    .back {
+      background-color:#fff;
+      padding: 8%;
+    }
+    img.user-profile {
+      width: 119%;
+    }
+    mat-list-item h3{
+      color:#2196f3;
+    }
+  ` ]
 })
 export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
@@ -26,7 +41,8 @@ export class UsersProfileComponent implements OnInit {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -123,6 +139,14 @@ export class UsersProfileComponent implements OnInit {
         ])
       ]
     };
+  }
+
+  goBack() {
+    this.location.back();
+  }
+
+  searchFilter(filterValue: string) {
+    this.userDetail.filter = filterValue.trim().toLowerCase();
   }
 
 }

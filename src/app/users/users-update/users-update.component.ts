@@ -11,7 +11,16 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 @Component({
-  templateUrl: './users-update.component.html'
+  templateUrl: './users-update.component.html',
+  styles: [ `
+    .space-container {
+      margin: 64px 30px;
+    }
+    .view-container {
+      background-color: #FFFFFF;
+      padding: 3rem;
+    }
+  ` ]
 })
 export class UsersUpdateComponent implements OnInit {
   user: any;
@@ -90,6 +99,10 @@ export class UsersUpdateComponent implements OnInit {
 
   cancel() {
     this.router.navigate([ '/users/profile/' + this.user.name ]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   bindFile(event) {
