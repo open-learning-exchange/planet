@@ -8,13 +8,8 @@
   <mat-toolbar class="primary-color font-size-1">
     <span i18n>{{userDetail.name}}</span>
     <span class="toolbar-fill"></span>
-    <button mat-button>
-      <mat-icon class="margin-lr-3">mode_edit</mat-icon>
-      <a *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" i18n [routerLink]="['/users/update/', urlName]">Edit Profile</a>
-    </button>
-    <button mat-button>
-      <a *ngIf="name === urlName" i18n (click)="changePasswordForm(userDetail)">Change password</a>
-    </button>
+    <button mat-button  class="margin-lr-3" *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" i18n [routerLink]="['/users/update/', urlName]"><mat-icon>mode_edit</mat-icon><span>Edit Profile</span></button>
+    <button mat-button  class="margin-lr-3" *ngIf="name === urlName" i18n (click)="changePasswordForm(userDetail)"><span>Change password</span></button>
   </mat-toolbar>
   <div class="view-container">
     <mat-grid-list cols="3">
