@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { Router,  ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Location } from '@angular/common';
+
 
 export class Message {
   message: string;
@@ -28,12 +31,23 @@ export class Feedback {
 })
 export class FeedbackDirective {
   message: string;
+  currentUrl = '';
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private dialogsFormService: DialogsFormService
-  ) {}
+    private dialogsFormService: DialogsFormService,
+    private router: Router,
+    route: ActivatedRoute,
+    location: Location
+  ) {
+      router.events.subscribe(event => {
+        if (event instanceof NavigationEnd) {
+        // event.url has current url
+          this.currentUrl = window.location.origin + event.url;
+        }
+      });
+    }
 
   addFeedback(post: any) {
     this.message = '';
@@ -58,7 +72,8 @@ export class FeedbackDirective {
     const formGroup = {
       priority: [ '', Validators.required ],
       type: [ '', Validators.required ],
-      message: [ '', Validators.required ]
+      message: [ '', Validators.required ],
+      url: [ this.currentUrl, Validators.required ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
