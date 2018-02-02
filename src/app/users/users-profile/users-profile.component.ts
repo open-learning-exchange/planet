@@ -20,9 +20,6 @@ import { of } from 'rxjs/observable/of';
       background-color:#fff;
       padding: 8%;
     }
-    img.user-profile {
-      width: 119%;
-    }
     mat-list-item h3{
       color:#2196f3;
     }
