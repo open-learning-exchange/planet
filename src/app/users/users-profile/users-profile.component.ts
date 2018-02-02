@@ -16,7 +16,7 @@ import { of } from 'rxjs/observable/of';
     .space-container {
       margin: 64px 30px;
     }
-    .back {
+    .view-container {
       background-color:#fff;
       padding: 8%;
     }

@@ -2,10 +2,6 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Users</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="searchFilter($event.target.value)" i18n-placeholder placeholder="Type text to search">
-  </mat-form-field>
 </mat-toolbar>
 
 <div class="space-container">
@@ -14,11 +10,11 @@
     <span class="toolbar-fill"></span>
     <button mat-button>
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon>
-        <span *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" mat-raised-button color="primary" i18n [routerLink]="['/users/update/', urlName]">Edit Profile</span>
-        <a *ngIf="name === urlName" mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
+      <a *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" i18n [routerLink]="['/users/update/', urlName]">Edit Profile</a>
+      <a *ngIf="name === urlName" mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
     </button>
   </mat-toolbar>
-  <div class="back">
+  <div class="view-container">
     <mat-grid-list cols="3">
       <mat-grid-tile>
         <ng-container *ngIf="userDetail._attachments; else noAttachment">
@@ -35,19 +31,16 @@
             <h2 mat-line i18n><b>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
-          
           <mat-list-item >
             <h3 matLine i18n>Login</h3>
             <h2 matLine i18n><b>{{userDetail.name}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
-
           <mat-list-item>
             <h3 matLine i18n>Email</h3>
             <h2 matLine i18n><b>{{userDetail.email}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
-
           <mat-list-item >
             <h3 matLine i18n>Language</h3>
             <h2 matLine i18n><b>{{userDetail.language}}</b></h2>
