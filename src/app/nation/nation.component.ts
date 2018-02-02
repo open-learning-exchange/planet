@@ -12,8 +12,6 @@ import { Validators } from '@angular/forms';
 import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
-import { constants } from 'fs';
-import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   templateUrl: './nation.component.html'
