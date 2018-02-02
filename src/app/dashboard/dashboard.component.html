@@ -1,76 +1,182 @@
 <mat-card class="dashboard-card-view">
-  <div class="dashboard-contain-image-and-string">
-    <mat-icon>home</mat-icon>
-      DashBoard
-  </div>
-</mat-card>
+  <mat-icon>home</mat-icon>
+    DashBoard
+  </mat-card>
 <div class="left-half">
-  <div class="dashboard-card-view-list">
-    <mat-card class="mat-card-radius no-padding">
+  <div class="block-list-one">
+    <mat-card class="no-padding-card-outside">
       <mat-card-content>
-        <mat-grid-list cols="11" rowHeight="110px">
-          <mat-grid-tile class="backgroundcolor-red mat-grid-tile-left" colspan='1'>
-            <mat-icon class="custum-mat-icon">account_balance</mat-icon>
-            <div class="gride-first-item-title">MyLibrary</div> 
-          </mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Second</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title Third</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title fourth</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title fifth</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Sixth </mat-grid-tile>
-        </mat-grid-list>
+        <div class="outside-card-left-half">
+         <mat-card class="no-padding-card-inside left-inside-card-buttom-left-radius">
+            <mat-card-content>
+              <mat-grid-list cols="2" rowHeight="100px">
+                <mat-grid-tile class="background-color-red tile-left-first-radious" colspan="1">
+                  <mat-icon class="custom-mat-icon">account_balance</mat-icon>
+                </mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="1">
+                  <mat-list role="list">
+                  <mat-list-item role="listitem">MyLibrary</mat-list-item>
+                   <mat-divider></mat-divider> 
+                  <mat-list-item role="listitem" class="font-color-red">15</mat-list-item>
+                  </mat-list>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
+        <div class="outside-card-right-half">
+          <mat-card class="no-padding-card-inside right-inside-card-buttom-right-radius">
+            <mat-card-content>
+              <mat-grid-list cols="21" rowHeight="100px">
+                <mat-grid-tile class="background-color-white" colspan="4">Tile First</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Second</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Third</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Fourth</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Fifth</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray tile-right-last-radious" colspan="1">
+                  <mat-list>
+                    <mat-list-item><-</mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>-></mat-list-item>
+                  </mat-list> 
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
       </mat-card-content>
     </mat-card>
   </div>
-  <div class="dashboard-card-view-list">
-    <mat-card class="mat-card-radius no-padding">
+  <div class="block-list-two">
+    <mat-card class="no-padding-card-outside">
       <mat-card-content>
-        <mat-grid-list cols="11" rowHeight="110px">
-          <mat-grid-tile class="backgroundcolor-orange mat-grid-tile-left" colspan='1'>
-            <mat-icon class="custum-mat-icon">library_books</mat-icon>
-            <div class="gride-first-item-title">MyCourses</div>
-          </mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Second</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title Third</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title fourth</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title fifth</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Sixth </mat-grid-tile>
-      </mat-grid-list>
+        <div class="outside-card-left-half">
+         <mat-card class="no-padding-card-inside left-inside-card-buttom-left-radius">
+            <mat-card-content>
+              <mat-grid-list cols="2" rowHeight="100px">
+                <mat-grid-tile class="background-color-orange tile-left-first-radious" colspan="1">
+                  <mat-icon class="custom-mat-icon">library_books</mat-icon>
+                </mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="1">
+                  <mat-list role="list">
+                  <mat-list-item role="listitem">MyCourses</mat-list-item>
+                   <mat-divider></mat-divider> 
+                  <mat-list-item role="listitem" class="font-color-orange">10</mat-list-item>
+                  </mat-list>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
+        <div class="outside-card-right-half"> 
+          <mat-card class="no-padding-card-inside right-inside-card-buttom-right-radius">
+            <mat-card-content>
+              <mat-grid-list cols="21" rowHeight="100px">
+                <mat-grid-tile class="background-color-white" colspan="4">Tile First</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Second</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Third</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Fourth</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Fifth</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray tile-right-last-radious" colspan="1">
+                  <mat-list>
+                    <mat-list-item><-</mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>-></mat-list-item>
+                  </mat-list>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>
-  <div class="dashboard-card-view-list">
-    <mat-card class="mat-card-radius no-padding">
+  <div class="block-list-three">
+    <mat-card class="no-padding-card-outside">
       <mat-card-content>
-        <mat-grid-list cols="11" rowHeight="110px">
-          <mat-grid-tile class="backgroundcolor-green mat-grid-tile-left" colspan='1'>
-            <mat-icon class="custum-mat-icon">people</mat-icon>
-            <div class="gride-first-item-title">MyTeams</div>
-          </mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Second</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title Third</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title fourth</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title fifth</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Sixth </mat-grid-tile>
-        </mat-grid-list>
+        <div class="outside-card-left-half">
+         <mat-card class="no-padding-card-inside left-inside-card-buttom-left-radius">
+            <mat-card-content>
+              <mat-grid-list cols="2" rowHeight="100px">
+                <mat-grid-tile class="background-color-blue tile-left-first-radious" colspan="1">
+                  <mat-icon class="custom-mat-icon">event</mat-icon>
+                </mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="1">
+                  <mat-list role="list">
+                  <mat-list-item role="listitem">MyMeetup</mat-list-item>
+                   <mat-divider></mat-divider> 
+                  <mat-list-item role="listitem" class="font-color-blue">04</mat-list-item>
+                  </mat-list>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
+        <div class="outside-card-right-half"> 
+          <mat-card class="no-padding-card-inside right-inside-card-buttom-right-radius">
+            <mat-card-content>
+              <mat-grid-list cols="21" rowHeight="100px">
+                <mat-grid-tile class="background-color-white" colspan="4">Tile First</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Second</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Third</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Fourth</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Fifth</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray tile-right-last-radious" colspan="1">
+                 <mat-list>
+                    <mat-list-item><-</mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>-></mat-list-item>
+                  </mat-list> 
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
       </mat-card-content>
     </mat-card>
   </div>
-  <div class="dashboard-card-view-list">
-    <mat-card class="mat-card-radius no-padding">
+  <div class="block-list-four">
+    <mat-card class="no-padding-card-outside">
       <mat-card-content>
-        <mat-grid-list cols="11" rowHeight="110px">
-          <mat-grid-tile class="backgroundcolor-purple mat-grid-tile-left" colspan='1'>
-            <mat-icon class="custum-mat-icon">event</mat-icon>
-            <div class="gride-first-item-title">MyMeetups</div>
-          </mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Second</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title Third</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title fourth</mat-grid-tile>
-          <mat-grid-tile class="backgroundcolor-gray" colspan='2'>Title fifth</mat-grid-tile>
-          <mat-grid-tile colspan='2'>Title Sixth </mat-grid-tile>
-        </mat-grid-list>
-    </mat-card-content>
+        <div class="outside-card-left-half">
+         <mat-card class="no-padding-card-inside left-inside-card-buttom-left-radius">
+            <mat-card-content>
+              <mat-grid-list cols="2" rowHeight="100px">
+                <mat-grid-tile class="background-color-green tile-left-first-radious" colspan="1">
+                  <mat-icon class="custom-mat-icon">people</mat-icon>
+                </mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="1">
+                  <mat-list role="list">
+                  <mat-list-item role="listitem">MyTeams</mat-list-item>
+                   <mat-divider></mat-divider> 
+                  <mat-list-item role="listitem" class="font-color-green">02</mat-list-item>
+                  </mat-list>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
+        <div class="outside-card-right-half"> 
+          <mat-card class="no-padding-card-inside right-inside-card-buttom-right-radius">
+            <mat-card-content>
+              <mat-grid-list cols="21" rowHeight="100px">
+                <mat-grid-tile class="background-color-white" colspan="4">Tile first</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile Second</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile Third</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray" colspan="4">Tile fourth</mat-grid-tile>
+                <mat-grid-tile class="background-color-white" colspan="4">Tile fifth</mat-grid-tile>
+                <mat-grid-tile class="background-color-gray tile-right-last-radious" colspan="1">
+                  <mat-list style>
+                    <mat-list-item><-</mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>-></mat-list-item>
+                  </mat-list>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-card-content>
+          </mat-card>
+        </div> 
+      </mat-card-content>
     </mat-card>
   </div>
 </div>

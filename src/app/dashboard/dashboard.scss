@@ -1,86 +1,134 @@
-@import '../variables.scss';
-
 .left-half {
-     width: 75%;
-     position: absolute;
-     left: 0px;
-     height: 93%;
+  width: 70%;
+  position: absolute;
+  left: 10px;
+  height: 90%;
 }
 
 .right-half {
-   width: 25%;
-   position: absolute;
-   right: 0px;
-   height: 93%
+  width: 30%;
+  position: absolute;
+  right: 0px;
+  height: 90%;
+}
+.block-list-one {
+  position: relative;
+  top: 5%;
+}
+
+.block-list-two {
+  position: relative;
+  top: 24%;
+}
+
+.block-list-three {
+  position: relative;
+  top: 43%;
+}
+
+.block-list-four {
+  position: relative;
+  top: 62%;
+}
+
+
+.outside-card-left-half {
+  width: 20%;
+  position: absolute;
+  left: 0px;
+  height: 100%;
+}
+
+.outside-card-right-half {
+  width: 80%;
+  position: absolute;
+  right: 0px;
+  height: 100%;
+ 
 }
 
 .dashboard-card-view {
   padding: 1vh;
 }
 
-.dashboard-card-view-list {
-  padding-top: 1vh;
-  padding-left: 2vh;
-  padding-right: 4vh;
+.background-color-red {
+  background-color: red;
 }
 
-.backgroundcolor-gray {
-  background-color: $ole-grey;
-  color: #000000;
+.background-color-gray {
+  background-color: gray;
 }
 
-.backgroundcolor-red {
-  background-color: #ff0000;
+.background-color-white {
+  background-color: white;
 }
 
-.backgroundcolor-orange {
-  background-color: #ffa500;
+.background-color-orange {
+  background-color: orange;
 }
 
-.backgroundcolor-green {
-  background-color: $ole-green-dark;
+.background-color-blue {
+  background-color: blue ;
 }
 
-.backgroundcolor-purple {
-  background-color: #800080;
+.background-color-green {
+  background-color: green;
 }
 
-.dashboard-home-icon {
-  color: $ole-grey;
-  position: relative;
-  top: 8px;
+.no-padding-card-outside {
+  padding-left: 3px !important;
+  padding-right: 0px !important;
+  padding-top: 5px !important;
+  padding-bottom: 3px !important;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
-.gride-first-item-title {
-  position: relative;
-  top: 35%;
-  color: #ffffff;
-  right: 10%;
-  font-size: small;
-}
-
-.custum-mat-icon {
-  color: white;
-  position: relative;
-  left: 35%;
+.no-padding-card-inside {
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  padding-top: 0px !important;
+  padding-bottom: 3px !important;
+   
 }
 
 .mat-card-radius {
   border-radius: 5px;
 }
 
-.mat-grid-tile-left {
+.tile-left-first-radious {
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
 }
-
-.mat-card-content {
-  padding-right: 1px;
+.tile-right-last-radious {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
-.no-padding {
-  padding-left: 0px !important;
-  padding-right: 3px !important;
-  padding-top: 0px !important;
-  padding-bottom: 3px !important;
+.left-inside-card-buttom-left-radius {
+  border-bottom-left-radius: 5px;
+}
+
+.right-inside-card-buttom-right-radius {
+  border-bottom-right-radius: 5px;
+  border-top-left-radius: 8px;
+}
+
+.font-color-red {
+  color: red;
+}
+
+.font-color-blue {
+  color: blue;
+}
+
+.font-color-green {
+  color: green;
+}
+.font-color-orange {
+  color: orange;
+}
+
+.custom-mat-icon {
+  color: white;
 }
