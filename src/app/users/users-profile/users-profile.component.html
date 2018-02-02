@@ -9,9 +9,11 @@
     <span i18n>{{userDetail.name}}</span>
     <span class="toolbar-fill"></span>
     <button mat-button>
-      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon>
+      <mat-icon class="margin-lr-3">mode_edit</mat-icon>
       <a *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" i18n [routerLink]="['/users/update/', urlName]">Edit Profile</a>
-      <a *ngIf="name === urlName" mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
+    </button>
+    <button mat-button>
+      <a *ngIf="name === urlName" i18n (click)="changePasswordForm(userDetail)">Change password</a>
     </button>
   </mat-toolbar>
   <div class="view-container">
