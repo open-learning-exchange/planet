@@ -8,18 +8,15 @@ export class PlanetFilterTableService {
   filter(filterData: any, dataSource: MatTableDataSource<any>): any {
     class FilterClass {}
     Object.keys(filterData).forEach(function(key){
-      FilterClass[key];
+      FilterClass[filterData[key]];
     });
-    return dataSource.filterPredicate = (data: FilterClass, filter: string) => data['admin_name'].indexOf(filter) > -1;
-    // return  dataSource.filterPredicate = (data: nClass, filter: string) => {
-
-    //   Object.keys(filterData).forEach(function(key){
-    //    if (data['admin_name'].indexOf(filter) > -1) {
-    //      return true;
-    //    }
-    //   });
-    //   return false;
-    // } ;
+    return dataSource.filterPredicate = (data: FilterClass, filter: string) => {
+      for (let i = 0; i < filterData.length; i++) {
+        if (data[filterData[i]].indexOf(filter) > -1) {
+          return true;
+        }
+      }
+    } ;
   }
 
 }

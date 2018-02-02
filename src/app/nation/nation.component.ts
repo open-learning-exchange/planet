@@ -48,7 +48,7 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getNationList();
-    const filterData = { name: String, admin_name: String };
+    const filterData = [ 'name', 'admin_name', 'nationurl' ];
     this.planetFilterTableService.filter(filterData, this.nations);
   }
 
