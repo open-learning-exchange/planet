@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses/add' ];
+    const routesWithBackground = [ 'resources', 'courses' ];
     const routesWithoutBackground = [ 'resources/add', 'resources/view' ];
     const isException = routesWithoutBackground
       .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return this.couchService.delete('_session', { withCredentials: true });
     })).subscribe((response: any) => {
       if (response.ok === true) {
+        this.userService.unset();
         this.router.navigate([ '/login' ], {});
       }
     }, err => console.log(err));

@@ -5,8 +5,9 @@
 <ng-template #noAttachment>
   <div mat-card-avatar><i class="material-icons">person</i></div>
 </ng-template>
-<div *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)">
-	<a mat-raised-button color="primary" i18n [routerLink]="['/users/update/', urlName]">Edit</a>
+<div>
+  <a *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" mat-raised-button color="primary" i18n [routerLink]="['/users/update/', urlName]">Edit</a>
+  <a *ngIf="name === urlName" mat-raised-button color="primary" i18n (click)="changePasswordForm(userDetail)">Change password</a>
 </div>
 <mat-list>
   <mat-list-item *ngIf="userDetail.firstName">
