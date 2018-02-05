@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { findDocuments } from '../shared/mangoQueries';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -68,7 +69,17 @@ export class UserService {
   }
 
   endSessionLog() {
-    return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+    if (this.sessionId === undefined) {
+        this.couchService.post(this.logsDb + '/_find', findDocuments({
+          'user': this.get().name
+        }, 0
+        ))
+        .subscribe((data) => {
+          return this.couchService.put(this.logsDb + '/' + data.docs[0]['_id'], this.logObj(Date.now()));
+        });
+    } else {
+      return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+    }
   }
 
 }
