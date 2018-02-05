@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-
 import { MatTableDataSource } from '@angular/material';
 
 @Component({
@@ -54,18 +53,15 @@ export class UsersComponent implements OnInit {
       this.getUsers(),
     ]).debug('Getting user list').subscribe((data) => {
 
-      const admins = [];
-
       this.allUsers.data = [].concat(
         data[0].rows.reduce((users: any[], user: any) => {
-          if (user.id !== '_design/_auth' && user.doc.isUserAdmin === false) {
-            users.push({ ...user.doc, admin: false });
+          if (user.id !== '_design/_auth') {
+            users.push({ ...user.doc });
           } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
-            admins.push({ ...user.doc, roles: [ 'admin' ] });
+            users.push({ ...user.doc });
           }
           return users;
         }, []),
-        admins
       );
 
     }, (error) => {
@@ -113,8 +109,8 @@ export class UsersComponent implements OnInit {
 
   roleSubmit(users: any[], role: string) {
     forkJoin(users.reduce((observers, user, index) => {
-      // Do not add role if it already exists on user
-      if (user.selected && user.roles.indexOf(role) === -1) {
+      // Do not add role if it already exists on user and also not allow an admin to be given another role
+      if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
         const tempUser = { ...user, roles: [ ...user.roles ] };
         // Remove selected property so it doesn't get saved to DB
