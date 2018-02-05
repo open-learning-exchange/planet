@@ -1,36 +1,43 @@
 .left-half {
   width: 70%;
   position: absolute;
-  left: 10px;
-  height: 90%;
+  left: 0px;
+  height: 93%;
 }
 
 .right-half {
   width: 30%;
   position: absolute;
   right: 0px;
-  height: 90%;
+  height: 93%;
 }
+
 .block-list-one {
   position: relative;
   top: 5%;
+  padding-left: 10px
 }
 
 .block-list-two {
   position: relative;
-  top: 24%;
+  top: 25%;
+  margin-top: 10px;
+  padding-left: 10px;
 }
 
 .block-list-three {
   position: relative;
-  top: 43%;
+  top: 44%;
+  margin-top: 10px;
+  padding-left: 10px;
 }
 
 .block-list-four {
   position: relative;
-  top: 62%;
+  top: 63%;
+  margin-top: 10px;
+  padding-left: 10px;
 }
-
 
 .outside-card-left-half {
   width: 20%;
@@ -44,7 +51,6 @@
   position: absolute;
   right: 0px;
   height: 100%;
- 
 }
 
 .dashboard-card-view {
@@ -56,7 +62,7 @@
 }
 
 .background-color-gray {
-  background-color: gray;
+  background-color: #c0c0c0;
 }
 
 .background-color-white {
@@ -68,11 +74,11 @@
 }
 
 .background-color-blue {
-  background-color: blue ;
+  background-color: #3399ff ;
 }
 
 .background-color-green {
-  background-color: green;
+  background-color: #66ff99;
 }
 
 .no-padding-card-outside {
@@ -100,6 +106,7 @@
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
 }
+
 .tile-right-last-radious {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -136,5 +143,11 @@
 
 .custom-icons {
   width: 40px;
-  height: 40px; 
+  height: 40px;
+}
+
+.mat-label {
+  position: relative;
+  left: 50px;
+  background-color: blue;
 }
