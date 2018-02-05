@@ -13,8 +13,8 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
-import { FeedbackComponent } from '../feedback/feedback.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @NgModule({
   imports: [
@@ -34,7 +34,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent,
-    FeedbackComponent
+    FeedbackDirective
   ],
   providers: [ PlanetMessageService ],
 })
