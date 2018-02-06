@@ -9,7 +9,7 @@ import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { HttpClient } from '@angular/common/http';
 
 import { Validators } from '@angular/forms';
-import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
+import { filterSpecificFields } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 
@@ -40,15 +40,13 @@ export class NationComponent implements OnInit, AfterViewInit {
     private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private http: HttpClient,
-    private planetFilterTableService: PlanetFilterTableService
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     this.getNationList();
     // Override default matTable filter to only filter below fields
-    this.nations.filterPredicate =
-      this.planetFilterTableService.filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
+    this.nations.filterPredicate = filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
   }
 
   ngAfterViewInit() {
