@@ -142,8 +142,4 @@ export class UsersProfileComponent implements OnInit {
     this.location.back();
   }
 
-  searchFilter(filterValue: string) {
-    this.userDetail.filter = filterValue.trim().toLowerCase();
-  }
-
 }
