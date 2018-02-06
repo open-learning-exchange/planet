@@ -46,8 +46,9 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getNationList();
-    const filterData = [ 'name', 'admin_name', 'nationurl' ];
-    this.planetFilterTableService.filter(filterData, this.nations);
+    // Override default matTable filter to only filter below fields
+    this.nations.filterPredicate =
+      this.planetFilterTableService.filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
   }
 
   ngAfterViewInit() {
