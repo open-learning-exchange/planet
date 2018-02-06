@@ -14,6 +14,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
+import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
 
 @NgModule({
   imports: [
@@ -35,5 +36,8 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     ManagerDashboardComponent,
     FeedbackDirective
   ],
+  providers: [
+    PlanetFilterTableService
+  ]
 })
 export class HomeModule {}
