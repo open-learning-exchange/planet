@@ -38,6 +38,6 @@ import { PlanetFilterTableService } from '../shared/planet-filter-table.service'
   ],
   providers: [
     PlanetFilterTableService
-  ],
+  ]
 })
 export class HomeModule {}
