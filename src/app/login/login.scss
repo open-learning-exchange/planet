@@ -1,54 +1,66 @@
 @import '../variables.scss';
+@import '../../planet-mat-theme.scss';
 
-.ole-login {
+:host {
 
-  height:100vh;
-  width:600px;
-  margin: 0 auto;
-  background: linear-gradient($ole-blue-light,$ole-blue-dark);
-  text-align:center;
-  color: white;
-  overflow:hidden;
+  text-align: center;
 
-  form, .login-actions {
+  .login-container {
+    padding: 10vh;
+    overflow: hidden;
+  }
+
+  .login-left-tile::before {
+    content: "";
+    height: 80vh;
+    background: linear-gradient(to right, $grey, #FFFFFF);
+    width: 30px;
+    position: absolute;
+    left: 100%;
+    top: 0;
+  }
+
+  .login-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login-left-tile {
+    grid-area: lt;
+  }
+
+  .login-right-tile {
+    grid-area: rt;
+  }
+
+  .login-card {
+    padding: 0;
+    height:80vh;
+    display: grid;
+    grid-template-areas: "lt rt";
+    grid-template-columns: 1fr 2fr;
+    grid-auto-rows: 1fr;
+  }
+
+  .login-form, .login-left-tile-container {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    margin: 0 5px;
   }
 
-  form {
-    max-width: 250px;
-    margin: 0 auto;
-  }
-
-  .login-actions * {
-    margin-bottom: 3px;
-  }
-
-  label {
-    color: white;
+  .login-form {
+    a, button {
+      margin-bottom: 1rem;
+    }
   }
 
   .ole-logo {
-    margin-top:-200px;
-    height:600px;
-    width:100%;
-    background:radial-gradient(rgba(255,255,255,0.8) 5%,rgba(255,255,255,0) 55%);
-    * {
-      position:relative;
-      top:50%;
-      transform:translate(0,-50%);
-      text-shadow:1px 1px black;
-    }
-    img {
-      height:100px;
-      width:100px;
-      display:block;
-      margin:0 auto;
-    }
+    filter: brightness(0) invert(1);
+    width: 7rem;
+    display: block;
+  }
 
-  }
-  .login-actions {
-    margin-top: 6%;
-    margin-right: 5%;
-  }
 }

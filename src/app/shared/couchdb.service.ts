@@ -44,4 +44,27 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
+  // Reads a file as a Base64 string to append to object sent to CouchDB
+  prepAttachment(file) {
+    const reader = new FileReader();
+    const obs = Observable.create((observer) => {
+      reader.onload = () => {
+        // FileReader result has file type at start of string, need to remove for CouchDB
+        const fileData = reader.result.split(',')[1],
+        attachments = {};
+        attachments[file.name] = {
+          content_type: file.type,
+          data: fileData
+        };
+        const attachmentObject = {
+          _attachments: attachments
+        };
+        observer.next(attachmentObject);
+        observer.complete();
+      };
+    });
+    reader.readAsDataURL(file);
+    return obs;
+  }
+
 }

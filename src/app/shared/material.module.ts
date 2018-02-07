@@ -14,7 +14,12 @@ import {
   MatRadioModule,
   MatCheckboxModule,
   MatGridListModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatMenuModule,
+  MatListModule,
+  MatCardModule,
+  MatSidenavModule,
+  MatStepperModule
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
@@ -35,7 +40,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatCheckboxModule,
     MatGridListModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatMenuModule,
+    MatListModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatStepperModule
   ]
 })
 export class MaterialModule {}

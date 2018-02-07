@@ -5,9 +5,6 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-import { NavigationComponent } from './navigation.component';
-import { UsersComponent } from '../users/users.component';
-
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
@@ -16,6 +13,8 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
 
 @NgModule({
   imports: [
@@ -32,11 +31,13 @@ import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboar
   declarations: [
     HomeComponent,
     DashboardComponent,
-    NavigationComponent,
-    UsersComponent,
     CommunityComponent,
     NationComponent,
-    ManagerDashboardComponent
+    ManagerDashboardComponent,
+    FeedbackDirective
+  ],
+  providers: [
+    PlanetFilterTableService
   ]
 })
 export class HomeModule {}

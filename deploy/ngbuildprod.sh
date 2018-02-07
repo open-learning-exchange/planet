@@ -9,5 +9,6 @@ bell() {
 
 bell &
 ng build --prod
+BUILD_CODE=$?
 kill %1
-
+exit $BUILD_CODE

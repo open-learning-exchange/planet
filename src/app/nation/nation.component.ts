@@ -9,7 +9,7 @@ import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { HttpClient } from '@angular/common/http';
 
 import { Validators } from '@angular/forms';
-
+import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 
@@ -40,11 +40,14 @@ export class NationComponent implements OnInit, AfterViewInit {
     private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private http: HttpClient
+    private http: HttpClient,
+    private planetFilterTableService: PlanetFilterTableService
   ) {}
 
   ngOnInit() {
     this.getNationList();
+    const filterData = [ 'name', 'admin_name', 'nationurl' ];
+    this.planetFilterTableService.filter(filterData, this.nations);
   }
 
   ngAfterViewInit() {
@@ -126,14 +129,14 @@ export class NationComponent implements OnInit, AfterViewInit {
         { 'label': 'Nation Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Nation Name', 'required': true },
         { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
       ];
-    const validation = {
+    const formGroup = {
       adminName: [ '', Validators.required ],
       name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
       nationUrl: [ '', Validators.required,
       nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
     };
     this.dialogsFormService
-      .confirm(title, type, fields, validation, '')
+      .confirm(title, fields, formGroup)
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
@@ -144,6 +147,10 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   communityList(nationname) {
     this.router.navigate([ '/community/' + nationname ]);
+  }
+
+  viewResources(nationname) {
+    this.router.navigate([ '/resources/' + nationname ]);
   }
 
   view(url) {

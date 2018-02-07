@@ -15,7 +15,7 @@ export class UsersComponent implements OnInit {
   allUsers = new MatTableDataSource();
   message = '';
   displayTable = true;
-  displayedColumns = [ 'name', 'roles' ];
+  displayedColumns = [ 'name', 'roles', 'action' ];
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -97,6 +97,26 @@ export class UsersComponent implements OnInit {
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
+      console.log(error);
+    });
+  }
+
+  addRole(user) {
+    const tempUser = { ...user, roles: [ 'learner' ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  removeRole(user) {
+    const tempUser = { ...user, roles: [ ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
       console.log(error);
     });
   }

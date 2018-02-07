@@ -1,0 +1,66 @@
+[{
+		"dbName": "communityregistrationrequests",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["admin"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
+		"dbName": "courses",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["admin"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
+		"dbName": "meetups",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["admin"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
+		"dbName": "nations",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["admin"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
+		"dbName": "resources",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["admin"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	}
+]

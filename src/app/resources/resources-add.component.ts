@@ -64,6 +64,7 @@ export class ResourcesAddComponent implements OnInit {
       ],
       author: '',
       year: '',
+      description: [ '', Validators.required ],
       language: '',
       publisher: '',
       linkToLicense: '',
@@ -141,6 +142,8 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   addResource(resourceInfo) {
+    // convert articleDate in Date format to timestamp format
+    resourceInfo.articleDate = Date.now();
     // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
