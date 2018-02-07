@@ -42,7 +42,13 @@ export class FeedbackDirective {
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: Date.now(), user },
-      newFeedback: Feedback = { owner: user, ...feedbackInfo, openTime: Date.now(), messages: [ startingMessage ] };
+      newFeedback: Feedback = {
+        owner: user,
+        ...feedbackInfo,
+        openTime: Date.now(),
+        messages: [ startingMessage ],
+        url: this.router.url
+      };
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
       this.message = 'Thank you, your feedback is submitted!';
@@ -60,8 +66,7 @@ export class FeedbackDirective {
     const formGroup = {
       priority: [ '', Validators.required ],
       type: [ '', Validators.required ],
-      message: [ '', Validators.required ],
-      url: [ this.router.url ]
+      message: [ '', Validators.required ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
