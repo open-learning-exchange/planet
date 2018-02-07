@@ -22,7 +22,19 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './resources-add.component.html'
+  templateUrl: './resources-add.component.html',
+  styles: [ `
+  /* Consider using space-container app wide for route views */
+  .space-container {
+    margin: 64px 30px;
+    background: none;
+  }
+  .view-container {
+    background-color: #FFFFFF;
+    padding: 1rem;
+  }
+` ]
+  
 })
 
 export class ResourcesAddComponent implements OnInit {
