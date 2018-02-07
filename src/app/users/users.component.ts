@@ -15,6 +15,7 @@ export class UsersComponent implements OnInit {
   message = '';
   displayTable = true;
   displayedColumns = [ 'name', 'roles', 'action' ];
+  isUserAdmin = false;
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -35,7 +36,7 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     Object.assign(this, this.userService.get());
-    if (this.roles.indexOf('_admin') > -1) {
+    if (this.isUserAdmin) {
       this.initializeData();
     } else {
       // A non-admin user cannot receive all user docs
@@ -49,20 +50,16 @@ export class UsersComponent implements OnInit {
   }
 
   initializeData() {
-    forkJoin([
-      this.getUsers(),
-    ]).debug('Getting user list').subscribe((data) => {
+    this.getUsers().debug('Getting user list').subscribe((data) => {
 
-      this.allUsers.data = [].concat(
-        data[0].rows.reduce((users: any[], user: any) => {
-          if (user.id !== '_design/_auth') {
-            users.push({ ...user.doc });
-          } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
-            users.push({ ...user.doc });
-          }
-          return users;
-        }, []),
-      );
+      this.allUsers.data = data.rows.reduce((users: any[], user: any) => {
+        if (user.id !== '_design/_auth') {
+          users.push({ ...user.doc });
+        } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
+          users.push({ ...user.doc });
+        }
+        return users;
+      }, []);
 
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
