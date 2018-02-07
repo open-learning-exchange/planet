@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { Router } from '@angular/router';
 
 export class Message {
   message: string;
@@ -32,7 +33,8 @@ export class FeedbackDirective {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private router: Router
   ) {}
 
   addFeedback(post: any) {
@@ -59,7 +61,7 @@ export class FeedbackDirective {
       priority: [ '', Validators.required ],
       type: [ '', Validators.required ],
       message: [ '', Validators.required ],
-      url: [ document.URL ]
+      url: [ this.router.url ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
