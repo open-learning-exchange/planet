@@ -35,7 +35,8 @@ export class LoginFormComponent {
 
   createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
     if (password === repeatPassword) {
-      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
+      this.couchService.put('_users/org.couchdb.user:' + name,
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.login(this.model, true);

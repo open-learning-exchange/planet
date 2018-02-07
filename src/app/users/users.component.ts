@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-
 import { MatTableDataSource } from '@angular/material';
 
 @Component({
@@ -16,6 +15,7 @@ export class UsersComponent implements OnInit {
   message = '';
   displayTable = true;
   displayedColumns = [ 'name', 'roles', 'action' ];
+  isUserAdmin = false;
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -36,7 +36,7 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     Object.assign(this, this.userService.get());
-    if (this.roles.indexOf('_admin') > -1) {
+    if (this.isUserAdmin) {
       this.initializeData();
     } else {
       // A non-admin user cannot receive all user docs
@@ -49,34 +49,17 @@ export class UsersComponent implements OnInit {
     return this.couchService.get('_users/_all_docs?include_docs=true');
   }
 
-  getAdmins() {
-    // This nonode@nohost is working for couchdb as setup by Vagrant, but may need to be changed for other implementations
-    return this.couchService.get('_node/nonode@nohost/_config/admins');
-  }
-
   initializeData() {
-    forkJoin([
-      this.getUsers(),
-      this.getAdmins()
-    ]).debug('Getting user list').subscribe((data) => {
+    this.getUsers().debug('Getting user list').subscribe((data) => {
 
-      const admins = [],
-        adminData = data[1];
-      for (const key in adminData) {
-        if (adminData.hasOwnProperty(key)) {
-          admins.push({ name: key, roles: [ 'admin' ], admin: true });
+      this.allUsers.data = data.rows.reduce((users: any[], user: any) => {
+        if (user.id !== '_design/_auth') {
+          users.push({ ...user.doc });
+        } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
+          users.push({ ...user.doc });
         }
-      }
-
-      this.allUsers.data = [].concat(
-        data[0].rows.reduce((users: any[], user: any) => {
-          if (user.id !== '_design/_auth') {
-            users.push({ ...user.doc, admin: false });
-          }
-          return users;
-        }, []),
-        admins
-      );
+        return users;
+      }, []);
 
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
@@ -123,8 +106,8 @@ export class UsersComponent implements OnInit {
 
   roleSubmit(users: any[], role: string) {
     forkJoin(users.reduce((observers, user, index) => {
-      // Do not add role if it already exists on user
-      if (user.selected && user.roles.indexOf(role) === -1) {
+      // Do not add role if it already exists on user and also not allow an admin to be given another role
+      if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
         const tempUser = { ...user, roles: [ ...user.roles ] };
         // Remove selected property so it doesn't get saved to DB
