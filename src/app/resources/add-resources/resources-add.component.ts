@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../../shared/user.service';
 import {
   FormBuilder,
   FormControl,
@@ -9,10 +9,10 @@ import {
   FormArray,
   Validators
 } from '@angular/forms';
-import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { ValidatorService } from '../validators/validator.service';
-import * as constants from './resources-constants';
+import { CouchService } from '../../shared/couchdb.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
+import * as constants from '../resources-constants';
 
 import * as JSZip from 'jszip';
 import * as mime from 'mime-types';
@@ -23,15 +23,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 @Component({
   templateUrl: './resources-add.component.html',
   styles: [ `
-  /* Consider using space-container app wide for route views */
-  .space-container {
-    margin: 64px 30px;
-    background: none;
-  }
-  .view-container {
-    background-color: #FFFFFF;
-    padding: 1rem;
-  }
+
 ` ]
   
 })

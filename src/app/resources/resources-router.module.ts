@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ResourcesComponent } from './resources.component';
 import { ResourcesViewComponent } from './view-resources/resources-view.component';
-import { ResourcesAddComponent } from './resources-add.component';
+import { ResourcesAddComponent } from './add-resources/resources-add.component';
 
 const routes: Routes = [
   { path: '', component: ResourcesComponent },
