@@ -10,7 +10,11 @@ import { of } from 'rxjs/observable/of';
   templateUrl: './login.component.html',
   styleUrls: [ './login.scss' ]
 })
+
 export class LoginComponent implements OnInit {
+
+  version: string = require( '../../../package.json').version;
+
   constructor(
     private couchService: CouchService,
     private router: Router
