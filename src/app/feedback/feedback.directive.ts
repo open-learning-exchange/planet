@@ -59,7 +59,7 @@ export class FeedbackDirective {
       priority: [ '', Validators.required ],
       type: [ '', Validators.required ],
       message: [ '', Validators.required ],
-      url: [ document.URL, Validators.required ]
+      url: [ document.URL ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
