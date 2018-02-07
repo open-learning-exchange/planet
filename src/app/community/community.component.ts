@@ -60,6 +60,15 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
+  updateRev(item, array) {
+    array = array.map((c: any) => {
+      if (c._id === item.id) {
+        c._rev = item.rev;
+      }
+      return c;
+    });
+  }
+
   updateClick(community, change) {
     this.editDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
@@ -79,6 +88,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       community.registrationRequest = change;
       this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
         .subscribe((data) => {
+          this.updateRev(data, this.communities.data);
           this.editDialog.close();
         }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
     };
