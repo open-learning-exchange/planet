@@ -71,14 +71,15 @@ export class UserService {
   endSessionLog() {
     if (this.sessionId === undefined) {
       return this.couchService.post(this.logsDb + '/_find', findDocuments(
-              { 'user': this.get().name, 'logout_time': 0 },
+              { 'user': this.get().name },
               [ '_id', '_rev', 'login_time' ],
-              1
+              [ { '_id': 'desc' } ]
             )).pipe(switchMap(data => {
-                this.sessionId =  data.docs[0]['_id'];
-                this.sessionRev =  data.docs[0]['_rev'];
-                this.sessionStart =  data.docs[0]['login_time'];
-                return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+              console.log('Data' , data);
+              this.sessionId =  data.docs[0]['_id'];
+              this.sessionRev =  data.docs[0]['_rev'];
+              this.sessionStart =  data.docs[0]['login_time'];
+              return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
             }));
     } else {
       return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
