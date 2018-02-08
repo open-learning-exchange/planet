@@ -7,6 +7,7 @@ import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
+import { FeedbackComponent } from '../feedback/feedback.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 
 import { NationComponent } from '../nation/nation.component';
@@ -33,6 +34,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     DashboardComponent,
     CommunityComponent,
     NationComponent,
+    FeedbackComponent,
     ManagerDashboardComponent,
     FeedbackDirective
   ],
