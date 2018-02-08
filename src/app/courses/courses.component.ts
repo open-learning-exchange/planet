@@ -89,7 +89,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.router.navigate([ '/' ]);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

@@ -172,7 +172,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   back() {
-    this.router.navigate(['/']);
+    this.router.navigate([ '/' ]);
   }
 
 }

@@ -86,7 +86,7 @@ export class UsersUpdateComponent implements OnInit {
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
     this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe(() => {
-      this.router.navigate(['/users']);
+      this.router.navigate([ '/users' ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -94,7 +94,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/users']);
+    this.router.navigate([ '/users' ]);
   }
 
   bindFile(event) {
