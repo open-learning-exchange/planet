@@ -189,7 +189,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate(['/']);
   }
 
 }

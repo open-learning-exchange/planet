@@ -211,7 +211,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate(['/resources']);
   }
 
   bindFile(event) {

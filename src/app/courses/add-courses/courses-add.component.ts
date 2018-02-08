@@ -131,7 +131,7 @@ export class CoursesAddComponent {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate(['/courses']);
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
