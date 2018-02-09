@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
@@ -33,6 +34,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
+    private planetMessageService: PlanetMessageService,
     private location: Location
   ) { }
 
@@ -79,7 +81,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
+          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
 

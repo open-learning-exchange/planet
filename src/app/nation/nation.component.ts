@@ -7,9 +7,9 @@ import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { HttpClient } from '@angular/common/http';
-
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { Validators } from '@angular/forms';
-import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
+import { filterSpecificFields } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 
@@ -41,13 +41,13 @@ export class NationComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private http: HttpClient,
-    private planetFilterTableService: PlanetFilterTableService
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
     this.getNationList();
-    const filterData = [ 'name', 'admin_name', 'nationurl' ];
-    this.planetFilterTableService.filter(filterData, this.nations);
+    // Override default matTable filter to only filter below fields
+    this.nations.filterPredicate = filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
   }
 
   ngAfterViewInit() {
@@ -97,6 +97,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
           this.deleteDialog.close();
+          this.planetMessageService.showAlert('You have deleted nation: ' + nation.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };
   }
@@ -115,6 +116,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
           this.nations._updateChangeSubscription();
+          this.planetMessageService.showMessage('New Nation Created: ' + nation.name);
         }, (error) => this.message = 'Error');
     }
   }

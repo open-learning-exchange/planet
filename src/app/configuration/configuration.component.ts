@@ -99,6 +99,11 @@ export class ConfigurationComponent implements OnInit {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password)
         .subscribe((data) => {
+          this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username,
+          { 'name': this.loginForm.value.username, 'password': this.loginForm.value.password, roles: [], 'type': 'user',
+          'isUserAdmin': true }).subscribe((data1) => {
+            this.message = 'Admin created: ' + data1.id.replace('org.couchdb.user:', '');
+          }, (error) => this.message = '');
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
           this.couchService.post('configurations', config).subscribe(() => {
             this.router.navigate([ '/login' ]);

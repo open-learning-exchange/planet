@@ -13,8 +13,8 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackDirective } from '../feedback/feedback.directive';
-import { PlanetFilterTableService } from '../shared/planet-filter-table.service';
 
 @NgModule({
   imports: [
@@ -36,8 +36,6 @@ import { PlanetFilterTableService } from '../shared/planet-filter-table.service'
     ManagerDashboardComponent,
     FeedbackDirective
   ],
-  providers: [
-    PlanetFilterTableService
-  ]
+  providers: [ PlanetMessageService ],
 })
 export class HomeModule {}

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { Router } from '@angular/router';
 
 export class Message {
   message: string;
@@ -32,7 +33,8 @@ export class FeedbackDirective {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private router: Router
   ) {}
 
   addFeedback(post: any) {
@@ -40,7 +42,13 @@ export class FeedbackDirective {
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: Date.now(), user },
-      newFeedback: Feedback = { owner: user, ...feedbackInfo, openTime: Date.now(), messages: [ startingMessage ] };
+      newFeedback: Feedback = {
+        owner: user,
+        ...feedbackInfo,
+        openTime: Date.now(),
+        messages: [ startingMessage ],
+        url: this.router.url
+      };
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
       this.message = 'Thank you, your feedback is submitted!';
