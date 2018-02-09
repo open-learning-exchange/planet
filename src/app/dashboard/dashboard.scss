@@ -1,153 +1,47 @@
-.left-half {
-  width: 70%;
-  position: absolute;
-  left: 0px;
-  height: 93%;
+@import '../variables.scss';
+
+.flex-continer {
+  display: flex;
+  flex-direction: row;
 }
 
-.right-half {
-  width: 30%;
-  position: absolute;
-  right: 0px;
-  height: 93%;
-}
-
-.block-list-one {
-  position: relative;
-  top: 5%;
-  padding-left: 10px
-}
-
-.block-list-two {
-  position: relative;
-  top: 25%;
-  margin-top: 10px;
-  padding-left: 10px;
-}
-
-.block-list-three {
-  position: relative;
-  top: 44%;
-  margin-top: 10px;
-  padding-left: 10px;
-}
-
-.block-list-four {
-  position: relative;
-  top: 63%;
-  margin-top: 10px;
-  padding-left: 10px;
-}
-
-.outside-card-left-half {
-  width: 20%;
-  position: absolute;
-  left: 0px;
-  height: 100%;
-}
-
-.outside-card-right-half {
-  width: 80%;
-  position: absolute;
-  right: 0px;
-  height: 100%;
-}
-
-.dashboard-card-view {
-  padding: 1vh;
-}
-
-.background-color-red {
-  background-color: red;
-}
-
-.background-color-gray {
-  background-color: #c0c0c0;
-}
-
-.background-color-white {
-  background-color: white;
-}
-
-.background-color-orange {
-  background-color: orange;
-}
-
-.background-color-blue {
-  background-color: #3399ff ;
-}
-
-.background-color-green {
-  background-color: #66ff99;
-}
-
-.no-padding-card-outside {
-  padding-left: 3px !important;
-  padding-right: 0px !important;
-  padding-top: 5px !important;
-  padding-bottom: 3px !important;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-}
-
-.no-padding-card-inside {
-  padding-left: 3px !important;
-  padding-right: 3px !important;
-  padding-top: 0px !important;
-  padding-bottom: 3px !important;
-   
-}
-
-.mat-card-radius {
-  border-radius: 5px;
-}
-
-.tile-left-first-radious {
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
-}
-
-.tile-right-last-radious {
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-}
-
-.left-inside-card-buttom-left-radius {
-  border-bottom-left-radius: 5px;
-}
-
-.right-inside-card-buttom-right-radius {
-  border-bottom-right-radius: 5px;
-  border-top-left-radius: 8px;
-}
-
-.font-color-red {
-  color: red;
-}
-
-.font-color-blue {
-  color: blue;
-}
-
-.font-color-green {
-  color: green;
-}
-
-.font-color-orange {
-  color: orange;
-}
-
-.custom-mat-icon {
+.background-color-library {
+  background-color: $ole-library-color;
   color: white;
 }
 
-.custom-icons {
-  width: 40px;
-  height: 40px;
+.background-color-silver {
+  background-color: $ole-silver-color;
 }
 
-.mat-label {
-  position: relative;
-  left: 50px;
-  background-color: blue;
+.background-color-mycourses {
+  background-color: $ole-mycourses-color;
+}
+
+.background-color-myteams {
+  background-color: $ole-myTeams-color;
+}
+
+.background-color-mymeetups {
+  background-color: $ole-myMeetups-color;
+}
+
+.dashboard-card-view {
+  height: 1%;
+}
+
+.block {
+  padding-left: 3px !important;
+  padding-right: 0px !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  margin: 10px;
+}
+
+.mat-grid-list-static {
+  width: 15%;
+}
+
+.mat-grid-list-dynamic {
+  width: 75%;
 }
