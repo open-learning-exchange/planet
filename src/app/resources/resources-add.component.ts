@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
@@ -40,7 +39,6 @@ export class ResourcesAddComponent implements OnInit {
   readonly dbName = 'resources'; // make database name a constant
 
   constructor(
-    private location: Location,
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,

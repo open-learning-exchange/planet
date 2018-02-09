@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
@@ -34,7 +33,6 @@ export class NationComponent implements OnInit, AfterViewInit {
   view_data = [];
 
   constructor(
-    private location: Location,
     private router: Router,
     private couchService: CouchService,
     private validatorService: ValidatorService,

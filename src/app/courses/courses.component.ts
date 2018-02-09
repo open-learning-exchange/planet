@@ -5,7 +5,6 @@ import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldCo
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
@@ -36,7 +35,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
-    private location: Location,
     private router: Router
   ) { }
 

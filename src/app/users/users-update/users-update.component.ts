@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import {
   FormBuilder,
   FormControl,
@@ -25,7 +24,6 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
 
   constructor(
-    private location: Location,
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
