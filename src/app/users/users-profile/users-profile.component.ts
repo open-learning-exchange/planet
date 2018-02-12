@@ -17,11 +17,7 @@ import { of } from 'rxjs/observable/of';
       margin: 64px 30px;
     }
     .view-container {
-      background-color:#fff;
       padding: 8%;
-    }
-    mat-list-item h3{
-      color:#2196f3;
     }
   ` ]
 })
