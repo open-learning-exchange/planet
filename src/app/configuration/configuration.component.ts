@@ -112,6 +112,11 @@ export class ConfigurationComponent implements OnInit {
             console.log(err);
           });
         }, (error) => (error));
+      if (this.nationOrCommunity === 'community') {
+        const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
+        this.couchService.post('communityregistrationrequests', config, { 'registrationRequest': 'pending' })
+          .subscribe(data => this.message = 'config done');
+      }
     }
   }
 

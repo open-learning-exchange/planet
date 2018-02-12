@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsChangeComponent } from '../shared/dialogs/dialogs-change.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
 
@@ -24,7 +24,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'registrationRequest',
     'action'
   ];
-  deleteDialog: any;
+  changeDialog: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -60,13 +60,35 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
-  deleteClick(community) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+  changeUpdate(community, change) {
+    this.changeDialog = this.dialog.open(DialogsChangeComponent, {
       data: {
-        okClick: this.deleteCommunity(community),
+        okClick: change === 'delete' ? this.deleteCommunity(community) : this.updateCommunity(community, change),
+        changeType: change,
         type: 'community',
         displayName: community.name
       }
+    });
+  }
+
+  updateCommunity(community, change) {
+    return () => {
+      const { _id: id, _rev: rev } = community;
+      community.registrationRequest = change;
+      this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
+        .subscribe( data => {
+          this.revIdUpdate(this.communities.data, data);
+          this.changeDialog.close();
+        }, (error) => this.changeDialog.componentInstance.message = 'There was a problem accepting this community');
+    };
+  }
+
+  revIdUpdate(previousData, recentData) {
+    previousData.map(num => {
+      if (num._id === recentData.id) {
+          num._rev = recentData.rev;
+      }
+      return num._rev;
     });
   }
 
@@ -79,8 +101,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
-          this.deleteDialog.close();
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this community');
+          this.changeDialog.close();
+        }, (error) => this.changeDialog.componentInstance.message = 'There was a problem deleting this community');
     };
   }
 
