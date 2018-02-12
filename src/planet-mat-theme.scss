@@ -30,3 +30,24 @@ $grey: mat-color($mat-grey, 400);
 $primary-light: mat-color($planet-app-primary, 100);
 
 @include angular-material-theme($planet-app-theme);
+
+// Create sub-themes for the different sections which change the accent color.
+$accent-map: (
+  library: mat-palette($mat-pink, $accent-hue),
+  courses: mat-palette($mat-orange, $accent-hue),
+  meetups: mat-palette($mat-purple, $accent-hue),
+  teams: mat-palette($mat-green, $accent-hue)
+);
+
+@each $section in library, courses, meetups, teams {
+  $accent-palette: map-get($accent-map, #{$section});
+  $theme: mat-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
+  .planet-#{$section}-theme {
+    @include angular-material-theme($theme);
+
+    .accent-color {
+      background-color: mat-color($accent-palette, $accent-hue);
+      color: mat-contrast($accent-palette, $accent-hue);
+    }
+  }
+}
