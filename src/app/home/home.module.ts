@@ -14,6 +14,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
+import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     CommunityComponent,
     NationComponent,
     ManagerDashboardComponent,
-    FeedbackDirective
+    FeedbackDirective,
+    DashboardTileComponent
   ]
 })
 export class HomeModule {}
