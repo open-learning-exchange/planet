@@ -48,13 +48,13 @@
       <mat-header-cell *matHeaderCellDef i18n > Actions </mat-header-cell>
       <mat-cell *matCellDef="let element">
         <button mat-raised-button color="primary" (click)="updateClick(element, 'delete')" i18n>Delete</button>
-        <button mat-raised-button color="primary" (click)="updateClick(element, 'unlinked')" *ngIf="element.registrationRequest === 'accepted'" i18n>
+        <button mat-raised-button color="primary" (click)="updateClick(element, 'unlink')" *ngIf="element.registrationRequest === 'accepted'" i18n>
           Unlink
         </button>
-        <button mat-raised-button color="primary" (click)="updateClick(element, 'accepted')" *ngIf="element.registrationRequest === 'pending'" i18n>
+        <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" *ngIf="element.registrationRequest === 'pending'" i18n>
           Accept
         </button>
-        <button mat-raised-button color="primary" (click)="updateClick(element, 'rejected')" *ngIf="element.registrationRequest === 'pending'" i18n>
+        <button mat-raised-button color="primary" (click)="updateClick(element, 'reject')" *ngIf="element.registrationRequest === 'pending'" i18n>
           Reject
         </button>
       </mat-cell>

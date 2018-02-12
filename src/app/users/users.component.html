@@ -18,17 +18,22 @@
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.admin" (remove)="deleteRole(element,i)">
+          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.isUserAdmin" (remove)="deleteRole(element,i)">
             {{role}}
-            <mat-icon matChipRemove *ngIf="!element.admin" (click)="$event.stopPropagation()">cancel</mat-icon>
+            <mat-icon matChipRemove *ngIf="!element.isUserAdmin" (click)="$event.stopPropagation()">cancel</mat-icon>
           </mat-chip>
+          <mat-chip *ngIf="element.isUserAdmin">admin</mat-chip>
       </mat-chip-list>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
       <mat-cell  *matCellDef="let element">
-        <div *ngIf="!element.admin">
+        <div *ngIf="element.isUserAdmin">
+          <mat-icon>&nbsp;</mat-icon>
+          <a routerLink="/users/profile/{{element.name}}" i18n mat-raised-button color="primary">View Profile</a>
+        </div>
+        <div *ngIf="!element.isUserAdmin">
           <mat-icon  *ngIf="element.roles.length === 0" (click)="addRole(element)">lock</mat-icon>
           <mat-icon *ngIf="element.roles.length > 0" (click)="removeRole(element)">lock_open</mat-icon>
           <a routerLink="/users/profile/{{element.name}}" i18n mat-raised-button color="primary">View Profile</a>

@@ -25,7 +25,7 @@ export class LoginFormComponent {
     if (this.createMode) {
       this.createUser(this.model);
     } else {
-      this.login(this.model);
+      this.login(this.model, false);
     }
   }
 
@@ -35,24 +35,29 @@ export class LoginFormComponent {
 
   createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
     if (password === repeatPassword) {
-      this.couchService.put('_users/org.couchdb.user:' + name, { 'name': name, 'password': password, 'roles': [], 'type': 'user' })
+      this.couchService.put('_users/org.couchdb.user:' + name,
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
-          this.login(this.model);
+          this.login(this.model, true);
         }, (error) => this.message = '');
     } else {
       this.message = 'Passwords do not match';
     }
   }
 
-  login({ name, password }: {name: string, password: string}) {
+  login({ name, password }: {name: string, password: string}, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
         this.userService.set(data);
         return this.userService.newSessionLog();
       })).subscribe((res) => {
-        this.reRoute();
+        if (isCreate) {
+          this.router.navigate( [ 'users/update/' + name ]);
+        } else {
+          this.reRoute();
+        }
       }, (error) => this.message = 'Username and/or password do not match');
   }
 }

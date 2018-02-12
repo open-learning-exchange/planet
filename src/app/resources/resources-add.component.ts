@@ -19,10 +19,12 @@ import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './resources-add.component.html'
 })
+
 export class ResourcesAddComponent implements OnInit {
   name = '';
   subjects = new FormControl();
@@ -43,7 +45,8 @@ export class ResourcesAddComponent implements OnInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private userService: UserService
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -147,6 +150,7 @@ export class ResourcesAddComponent implements OnInit {
     // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('New Resource Created');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);

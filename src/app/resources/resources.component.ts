@@ -9,7 +9,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
-
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -51,7 +51,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private httpclient: HttpClient
+    private httpclient: HttpClient,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -168,6 +169,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         .subscribe((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
+          this.planetMessageService.showAlert('You have deleted resource: ' + resource.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
   }
@@ -182,6 +184,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.getResources();
           this.selection.clear();
           this.deleteDialog.close();
+          this.planetMessageService.showAlert('You have deleted all resources');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
   }
