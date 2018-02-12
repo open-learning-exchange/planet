@@ -32,7 +32,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
-  resource: any;
+  resource = {};
   rating: any = { average: 0, userRating: { rate: '', comment: '' } };
   mediaType = '';
   resourceSrc = '';
@@ -41,6 +41,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   couchSrc = '';
   subscription;
+  // Use string rather than boolean for i18n select
+  fullView = 'off';
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
@@ -174,6 +176,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         console.log(response);
       }, (error) => console.log('Error'));
+  }
+
+  toggleFullView() {
+    this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
 }

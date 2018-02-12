@@ -20,6 +20,10 @@
     grid-template-areas: "detail view";
   }
 
+  .full-view-container.view-container {
+    grid-template-columns: 0 1fr;
+  }
+
   .resource-detail {
     grid-area: detail;
     padding: 1rem;

@@ -69,6 +69,11 @@ body {
 
   @include margin-lr;
 
+  // Hide an element, but render its space
+  .invisible {
+    visibility: hidden;
+  }
+
   .button-icon-text mat-icon {
     margin: 0 3px;
   }

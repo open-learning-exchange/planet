@@ -4,9 +4,14 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">{{resource.title}}</mat-toolbar>
-  <div class="view-container">
-    <div class="resource-detail bg-grey">
+<mat-toolbar class="primary-color font-size-1">
+    <span class="margin-lr-3">{{resource.title}}</span>
+    <button mat-button (click)="toggleFullView()" i18n>
+      {fullView, select, on {Show} off {Hide}} details
+    </button>
+  </mat-toolbar>
+  <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
+    <div class="resource-detail bg-grey" [ngClass]="{'invisible':fullView==='on'}">
       <div class="list-item-rating">
         <span class="stars">
           <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
