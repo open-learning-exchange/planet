@@ -62,6 +62,11 @@ body {
     text-transform: uppercase;
   }
 
+  // For clickable items which don't have a cursor change by default
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
   // Creates helper classes for smaller and larger horizontal spacing
   @mixin margin-lr {
     @for $i from 1 through 10 {

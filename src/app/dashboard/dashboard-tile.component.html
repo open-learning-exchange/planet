@@ -1,0 +1,21 @@
+<mat-card class="dashboard-card">
+  <div class="left-tile accent-color">
+    <mat-icon svgIcon={{cardTitle}}></mat-icon>
+    <span>{{cardTitle}}</span>
+  </div>
+  <div class="right-tile">
+    <div class="dashboard-items">
+      <span class="dashboard-item" *ngFor="let i of items;let odd=odd" [ngClass]="{'bg-grey': odd}">{{'Item '+i}}</span>
+      <span
+        class="dashboard-item cursor-pointer"
+        *ngFor="let item of displayItems;let odd=odd"
+        [ngClass]="{'bg-grey': odd}"
+        [routerLink]="itemData.linkPrefix + item._id"
+        >{{item.title}}</span>
+    </div>
+    <div class="dashboard-arrows bg-grey">
+      <span class="cursor-pointer" (click)="arrowClick(1)"><mat-icon>keyboard_arrow_right</mat-icon></span>
+      <span class="cursor-pointer" (click)="arrowClick(-1)"><mat-icon>keyboard_arrow_left</mat-icon></span>
+    </div>
+  </div>
+</mat-card>
