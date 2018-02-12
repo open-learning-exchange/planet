@@ -11,9 +11,9 @@ import { Component, Input } from '@angular/core';
       </div>
       <div class="right-tile">
         <div class="dashboard-items">
-          <mat-card class="dashboard-item-card" *ngFor="let i of [1,2,3,4,5,6]">{{'Item '+i}}</mat-card>
+          <span class="dashboard-item" *ngFor="let i of items;let odd=odd" [ngClass]="{'bg-grey': odd}">{{'Item '+i}}</span>
         </div>
-        <div class="dashboard-arrows">
+        <div class="dashboard-arrows bg-grey">
           <span><mat-icon>keyboard_arrow_right</mat-icon></span>
           <span><mat-icon>keyboard_arrow_left</mat-icon></span>
         </div>
@@ -25,7 +25,10 @@ import { Component, Input } from '@angular/core';
 export class DashboardTileComponent {
   @Input() cardTitle: string;
   @Input() color: string;
+  items = Array(10).fill(0).map((val, ind, arr) => {
+    return ind
+  });
 
-  constructor() {}
+  constructor() { }
 
 }
