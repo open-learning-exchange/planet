@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
 import { filterSpecificFields } from '../shared/table-helpers';
+
 @Component({
   templateUrl: './courses.component.html',
   styles: [ `

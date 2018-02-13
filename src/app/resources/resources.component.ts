@@ -11,6 +11,7 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
+
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
