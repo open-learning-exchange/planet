@@ -3,6 +3,11 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+<<<<<<< HEAD
+=======
+import { switchMap } from 'rxjs/operators';
+import {FormControl, Validators} from '@angular/forms';
+>>>>>>> 84449b3... [#378] CommunityFilter
 
 @Component({
   templateUrl: './community.component.html'
@@ -22,7 +27,13 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'registrationRequest',
     'action'
   ];
+<<<<<<< HEAD
   editDialog: any;
+=======
+  deleteDialog: any;
+  nationControl = new FormControl();
+  statusControl = new FormControl();
+>>>>>>> 84449b3... [#378] CommunityFilter
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -110,11 +121,22 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     this.communities.filter = filterValue;
   }
 
-  onSelect(select: string) {
-    this.communities.filter = select;
-  }
-
   ngOnInit() {
+    this.communities.filterPredicate = (data: any, filter: string) => {
+      if (this.statusControl.value === 'All') {
+        this.statusControl.setValue('');
+      }
+      if (this.nationControl.value === 'All') {
+        this.nationControl.setValue('');
+      }
+      if (this.statusControl.value && this.nationControl.value) {
+        return data.registrationRequest === this.statusControl.value && data.nationUrl === this.nationControl.value;
+      } else if (this.statusControl.value) {
+        return data.registrationRequest === this.statusControl.value;
+      } else if (this.nationControl.value) {
+        return data.nationUrl === this.nationControl.value;
+      }
+    };
     this.getNationList();
     this.getCommunityList();
   }
