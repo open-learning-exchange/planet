@@ -13,6 +13,7 @@ import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PouchdbService } from './shared/pouchdb.service';
 
 @NgModule({
   imports: [
@@ -22,7 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService
+    CouchService, AuthService, UserService, ValidatorService, PouchdbService
   ],
   bootstrap: [ AppComponent ]
 })
