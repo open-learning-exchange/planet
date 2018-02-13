@@ -66,9 +66,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.mainContent._changeDetectorRef.markForCheck();
   }
 
+  // Used to swap in different background.
+  // Should remove when background is finalized.
   backgroundRoute() {
     const routesWithBackground = [ 'resources', 'courses' ];
-    const routesWithoutBackground = [ 'resources/add', 'resources/view' ];
+    // Leaving the exception variable in so we can easily use this while still testing backgrounds
+    const routesWithoutBackground = [];
     const isException = routesWithoutBackground
       .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
     const isRoute = routesWithBackground
