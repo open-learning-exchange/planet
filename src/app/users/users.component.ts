@@ -15,7 +15,6 @@ export class UsersComponent implements OnInit {
   message = '';
   displayTable = true;
   displayedColumns = [ 'name', 'roles', 'action' ];
-  isUserAdmin = false;
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -36,7 +35,7 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     Object.assign(this, this.userService.get());
-    if (this.isUserAdmin) {
+    if (this.roles.indexOf('_admin') > -1) {
       this.initializeData();
     } else {
       // A non-admin user cannot receive all user docs
