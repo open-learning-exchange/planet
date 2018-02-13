@@ -1,0 +1,216 @@
+<mat-card class="dashboard-card-view">
+  <mat-icon>home</mat-icon>
+    DashBoard
+</mat-card>
+<mat-card class="block flex-continer">
+  <mat-grid-list cols="2" rowHeight="100px" class="mat-grid-list-static">
+    <mat-grid-tile class="background-color-library">
+      <img src="assets/icons/library.svg">
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-list>
+        <mat-list-item>My library</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>{{myLibrary.length}}</mat-list-item>
+      </mat-list>
+    </mat-grid-tile>
+  </mat-grid-list>
+  <mat-grid-list cols="4" rowHeight="100px" class="mat-grid-list-dynamic">
+    <div *ngFor="let tile of myLibrary; index as i;even as e">
+      <div *ngIf="i<4;">
+        <mat-grid-tile
+          *ngIf="e; else elseBlock"
+          [colspan]="1"
+          [rowspan]="1"
+          >
+          {{myLibrary[i].text}}
+        </mat-grid-tile>
+        <ng-template #elseBlock>
+        <mat-grid-tile
+         [colspan]="1"
+         [rowspan]="1"
+         class="background-color-silver"
+        >
+          {{myLibrary[i].text}}
+        </mat-grid-tile>
+        </ng-template>
+      </div>
+    </div>
+  </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="100px" class="mat-grid-list-static">
+      <mat-grid-tile>
+        <mat-list>
+          <mat-list-item>
+            <button mat-icon-button (click)="nextLibrary()">
+              <mat-icon aria-label="next element of library">arrow_forward</mat-icon>
+            </button>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-icon-button (click)="previousLibrary()">
+              <mat-icon aria-label="previous element of library">arrow_back</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </mat-grid-tile>
+    </mat-grid-list>
+</mat-card>
+<mat-card class="block flex-continer">
+  <mat-grid-list cols="2" rowHeight="100px" class="mat-grid-list-static">
+    <mat-grid-tile class="background-color-mycourses">
+      <img src="assets/icons/courses.svg">
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-list>
+        <mat-list-item>My Courses</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>{{myCourses.length}}</mat-list-item>
+      </mat-list>
+    </mat-grid-tile>
+  </mat-grid-list>
+    <mat-grid-list cols="4" rowHeight="100px" class="mat-grid-list-dynamic">
+    <div *ngFor="let tile of myCourses; index as i; even as e">
+      <div *ngIf="i<4;">
+        <mat-grid-tile
+          *ngIf="e; else elseBlock"
+          [colspan]="1"
+          [rowspan]="1"
+        >
+          {{myCourses[i].text}}
+        </mat-grid-tile>
+        <ng-template #elseBlock>
+        <mat-grid-tile
+           [colspan]="1"
+           [rowspan]="1"
+           class="background-color-silver"
+          >
+            {{myCourses[i].text}}
+        </mat-grid-tile>
+        </ng-template>
+      </div>
+    </div>
+  </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="100px" class="mat-grid-list-static">
+      <mat-grid-tile>
+        <mat-list>
+          <mat-list-item>
+            <button mat-icon-button (click)="nextMyCourses()">
+              <mat-icon aria-label="next element of courses">arrow_forward</mat-icon>
+            </button>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-icon-button (click)="previousMyCourses()">
+              <mat-icon aria-label="next element of library">arrow_back</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </mat-grid-tile>
+    </mat-grid-list>
+</mat-card>
+<mat-card class="block flex-continer">
+  <mat-grid-list cols="2" rowHeight="100px" class="mat-grid-list-static">
+    <mat-grid-tile class="background-color-myteams">
+      <img src="assets/icons/team.svg">
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-list>
+        <mat-list-item>My Team</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>{{myTeam.length}}</mat-list-item>
+      </mat-list>
+    </mat-grid-tile>
+ </mat-grid-list>
+ <mat-grid-list cols="4" rowHeight="100px" class="mat-grid-list-dynamic">
+    <div *ngFor="let tile of myTeam; index as i; even as e">
+      <div *ngIf="i<4;">
+        <mat-grid-tile
+          [colspan]="1"
+          [rowspan]="1"
+          *ngIf="e; else elseBlock"
+        >
+          {{myTeam[i].text}}
+        </mat-grid-tile>
+        <ng-template #elseBlock>
+        <mat-grid-tile
+          [colspan]="1"
+          [rowspan]="1"
+          class="background-color-silver"
+        >
+          {{myTeam[i].text}}
+        </mat-grid-tile>
+        </ng-template>
+      </div>
+    </div>
+  </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="100px" class="mat-grid-list-static">
+      <mat-grid-tile>
+        <mat-list>
+          <mat-list-item>
+            <button mat-icon-button (click)="nextMyTeam()">
+              <mat-icon aria-label="next element of library">arrow_forward</mat-icon>
+            </button>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-icon-button (click)="previousMyTeam()">
+              <mat-icon aria-label="next element of library">arrow_back</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </mat-grid-tile>
+    </mat-grid-list>
+</mat-card>
+<mat-card class="block flex-continer">
+  <mat-grid-list cols="2" rowHeight="100px" class="mat-grid-list-static">
+    <mat-grid-tile class="background-color-mymeetups">
+      <img src="assets/icons/meetups.svg">
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-list>
+        <mat-list-item>My Meetups</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>{{myMeetups.length}}</mat-list-item>
+      </mat-list>
+    </mat-grid-tile>
+ </mat-grid-list>
+ <mat-grid-list cols="4" rowHeight="100px" class="mat-grid-list-dynamic">
+    <div *ngFor="let tile of myMeetups; index as i; even as e">
+      <div *ngIf="i<4;">
+        <mat-grid-tile
+          *ngIf="e; else elseBlock"
+          [colspan]="1"
+          [rowspan]="1"
+        >
+          {{myMeetups[i].text}}
+        </mat-grid-tile>
+        <ng-template #elseBlock>
+        <mat-grid-tile
+          [colspan]="1"
+          [rowspan]="1"
+          class="background-color-silver"
+        >
+          {{myMeetups[i].text}}
+        </mat-grid-tile>
+        </ng-template>
+      </div>
+    </div>
+  </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="100px" class="mat-grid-list-static">
+      <mat-grid-tile>
+        <mat-list>
+          <mat-list-item>
+            <button mat-icon-button (click)="nextMyMeetups()">
+              <mat-icon aria-label="next element of library">arrow_forward</mat-icon>
+            </button>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-icon-button (click)="previousMyMeetups()">
+              <mat-icon aria-label="next element of library">arrow_back</mat-icon>
+            </button>
+        </mat-list-item>
+        </mat-list>
+      </mat-grid-tile>
+    </mat-grid-list>
+</mat-card>

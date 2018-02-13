@@ -1,0 +1,47 @@
+@import '../variables.scss';
+
+.flex-continer {
+  display: flex;
+  flex-direction: row;
+}
+
+.background-color-library {
+  background-color: $ole-library-color;
+  color: white;
+}
+
+.background-color-silver {
+  background-color: $ole-silver-color;
+}
+
+.background-color-mycourses {
+  background-color: $ole-mycourses-color;
+}
+
+.background-color-myteams {
+  background-color: $ole-myTeams-color;
+}
+
+.background-color-mymeetups {
+  background-color: $ole-myMeetups-color;
+}
+
+.dashboard-card-view {
+  height: 1%;
+}
+
+.block {
+  padding-left: 3px !important;
+  padding-right: 0px !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  margin: 10px;
+}
+
+.mat-grid-list-static {
+  width: 15%;
+}
+
+.mat-grid-list-dynamic {
+  width: 75%;
+}
