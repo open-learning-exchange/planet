@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -63,9 +63,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(course) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteCourse(course),
+        changeType: 'delete',
         type: 'course',
         displayName: course.courseTitle
       }

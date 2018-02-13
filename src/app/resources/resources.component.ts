@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
@@ -147,10 +147,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
         amount,
+        changeType: 'delete',
         type: 'resource',
         displayName
       }

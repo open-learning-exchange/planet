@@ -12,9 +12,9 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  templateUrl: './dialogs-delete.component.html'
+  templateUrl: './dialogs-prompt.component.html'
 })
-export class DialogsDeleteComponent {
+export class DialogsPromptComponent {
 
   message = '';
 

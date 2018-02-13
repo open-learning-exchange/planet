@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
@@ -75,9 +75,10 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(nation) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteNation(nation),
+        changeType: 'delete',
         type: 'nation',
         displayName: nation.name
       }
