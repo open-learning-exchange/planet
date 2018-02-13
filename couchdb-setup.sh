@@ -81,6 +81,13 @@ multi_db_update() {
   done
 }
 
+# Function for insert index
+insert_index() {
+  DB=$1
+  DOC_LOC=$2
+  curl -H 'Content-Type: application/json' -X POST $COUCHURL/$DB/_index  -d @$DOC_LOC
+}
+
 # Add CouchDB standard databases
 curl -X PUT $COUCHURL/_users
 curl -X PUT $COUCHURL/_replicator
@@ -109,3 +116,5 @@ insert_docs resources ./design/resources/resources-mockup.json
 insert_attachments resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
 multi_db_update ./design/security-update/security-update.json _security
+# Insert index
+insert_index login_activities ./design/login-activity/login-activity-index.json

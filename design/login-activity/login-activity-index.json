@@ -1,0 +1,10 @@
+{
+    "type": "json",
+    "def": {
+        "fields": [
+            {
+                "login_time": "desc"
+            }
+        ]
+    }
+}

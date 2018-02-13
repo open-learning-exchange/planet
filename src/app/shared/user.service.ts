@@ -73,7 +73,7 @@ export class UserService {
       return this.couchService.post(this.logsDb + '/_find', findDocuments(
               { 'user': this.get().name },
               [ '_id', '_rev', 'login_time' ],
-              [ { '_id': 'desc' } ]
+              [ { 'login_time': 'desc' } ]
             )).pipe(switchMap(data => {
               console.log('Data' , data);
               this.sessionId =  data.docs[0]['_id'];
