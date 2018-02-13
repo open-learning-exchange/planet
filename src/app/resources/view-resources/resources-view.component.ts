@@ -32,7 +32,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
-  resource: any;
+  resource: any = {};
   rating: any = { average: 0, userRating: { rate: '', comment: '' } };
   mediaType = '';
   resourceSrc = '';
