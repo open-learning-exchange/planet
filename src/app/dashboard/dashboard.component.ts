@@ -23,7 +23,7 @@ import { CouchService } from '../shared/couchdb.service';
 export class DashboardComponent implements OnInit {
   name = '';
   roles: string[] = [];
-  data = { resources: { items: [] } };
+  data = { resources: [] };
 
   constructor(
     private userService: UserService,
@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     Object.assign(this, this.userService.get());
     this.getData('resources').subscribe((response) => {
-      this.data.resources = { linkPrefix: 'resources/view/', items: response.rows.map((item) => item.doc) };
+      this.data.resources = response.rows.map((item) => ({ ...item.doc, link: 'resources/view/' + item.id }));
     });
   }
 

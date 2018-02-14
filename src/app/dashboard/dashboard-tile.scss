@@ -2,8 +2,8 @@
 
   .dashboard-card {
     display: grid;
-    grid-template-areas: "lt rt";
-    grid-template-columns: 150px 1fr;
+    grid-template-areas: "lt rt arrows";
+    grid-template-columns: 150px 1fr 50px;
     grid-auto-rows: 1fr;
     height: 18vh;
     min-height: 100px;
@@ -28,15 +28,12 @@
 
     .right-tile {
       display: grid;
-      grid-template-columns: 1fr 50px;
-      grid-template-areas: "items arrows";
       overflow: hidden;
 
       .dashboard-items {
         display: grid;
-        overflow-x: hidden;
-        grid-area: items;
-        grid-auto-columns: 20%;
+        grid-auto-columns: 150px;
+        transition: transform 0.5s;
 
         .dashboard-item {
           grid-column-end: span 1;
@@ -45,15 +42,17 @@
           justify-content: center;
           align-items: center;
           text-align: center;
+          padding: 0.5rem;
         }
       }
-      .dashboard-arrows {
-        grid-area: arrows;
-        display: grid;
-        justify-content: center;
-        align-items: center;
-        grid-auto-rows: 50%;
-      }
+    }
+
+    .dashboard-arrows {
+      grid-area: arrows;
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      grid-auto-rows: 50%;
     }
   }
 

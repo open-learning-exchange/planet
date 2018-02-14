@@ -3,19 +3,18 @@
     <mat-icon svgIcon={{cardTitle}}></mat-icon>
     <span>{{cardTitle}}</span>
   </div>
-  <div class="right-tile">
-    <div class="dashboard-items">
-      <span class="dashboard-item" *ngFor="let i of items;let odd=odd" [ngClass]="{'bg-grey': odd}">{{'Item '+i}}</span>
+  <div class="right-tile" #items>
+    <div class="dashboard-items" [ngStyle]="{'transform':itemTranslate()}">
       <span
         class="dashboard-item cursor-pointer"
-        *ngFor="let item of displayItems;let odd=odd"
+        *ngFor="let item of itemData;let odd=odd"
         [ngClass]="{'bg-grey': odd}"
-        [routerLink]="itemData.linkPrefix + item._id"
+        [routerLink]="item.link"
         >{{item.title}}</span>
     </div>
-    <div class="dashboard-arrows bg-grey">
-      <span class="cursor-pointer" (click)="arrowClick(1)"><mat-icon>keyboard_arrow_right</mat-icon></span>
-      <span class="cursor-pointer" (click)="arrowClick(-1)"><mat-icon>keyboard_arrow_left</mat-icon></span>
-    </div>
+  </div>
+  <div class="dashboard-arrows bg-grey">
+    <button mat-icon-button type="button" (click)="arrowClick(1)" [disabled]="isRightDisabled"><mat-icon>keyboard_arrow_right</mat-icon></button>
+    <button mat-icon-button type="button" (click)="arrowClick(-1)" [disabled]="displayProps.displayIndex===0"><mat-icon>keyboard_arrow_left</mat-icon></button>
   </div>
 </mat-card>
