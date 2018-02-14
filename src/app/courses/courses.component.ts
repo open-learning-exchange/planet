@@ -6,6 +6,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
+import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -40,6 +41,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses();
+    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle' ]);
   }
 
   getCourses() {

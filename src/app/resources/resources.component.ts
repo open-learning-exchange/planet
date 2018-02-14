@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -60,6 +61,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
+    this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
   }
 
   ngAfterViewInit() {

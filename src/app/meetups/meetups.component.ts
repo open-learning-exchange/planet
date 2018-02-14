@@ -3,6 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -68,6 +69,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getMeetups();
+    this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }
 
 }
