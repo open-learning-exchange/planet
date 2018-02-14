@@ -6,7 +6,6 @@ import {
   FormArray,
   Validators
 } from '@angular/forms';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { CouchService } from '../../shared/couchdb.service';
@@ -44,7 +43,6 @@ export class CoursesAddComponent {
   days = constants.days;
 
   constructor(
-    private location: Location,
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
@@ -131,7 +129,7 @@ export class CoursesAddComponent {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate([ '/courses' ]);
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */

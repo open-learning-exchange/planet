@@ -5,7 +5,7 @@ import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldCo
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
@@ -36,7 +36,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
-    private location: Location
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -90,7 +90,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate([ '/' ]);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

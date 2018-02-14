@@ -3,7 +3,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -49,7 +48,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private location: Location,
     private router: Router,
     private route: ActivatedRoute,
     private httpclient: HttpClient,
@@ -192,7 +190,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate([ '/' ]);
   }
 
 }

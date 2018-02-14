@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import {
   FormBuilder,
   FormControl,
@@ -24,7 +23,6 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
 
   constructor(
-    private location: Location,
     private fb: FormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
@@ -93,7 +91,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate([ '/users/profile/' + this.user.name ]);
   }
 
   bindFile(event) {
