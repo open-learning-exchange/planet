@@ -1,76 +1,59 @@
-<mat-grid-list cols="2"  *ngIf="resource">
-  <mat-grid-tile>
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title><h3>{{resource.title}}</h3> - Author: <i>{{resource.author}}</i></mat-card-title>
-        <mat-card-subtitle>Published by: {{resource.Publisher}} on {{resource.year}} </mat-card-subtitle>
-      </mat-card-header>
-      <div [ngSwitch]="mediaType">
-        <img [src]="resourceSrc" *ngSwitchCase="'image'">
-        <video controls *ngSwitchCase="'video'">
-          <source [src]="resourceSrc" [type]="contentType" />
-          Browser not supported
-        </video>
-        <audio controls *ngSwitchCase="'audio'">
-          <source [src]="resourceSrc" [type]="contentType" />
-          Browser not supported
-        </audio>
-        <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
-        <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
-        <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
-      </div>
-      <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
-      <mat-card-content *ngIf="resource.medium">
-        <p>
-          Media: {{ resource.medium }}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.language">
-        <p>
-          Language: {{ resource.language }}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.subject">
-        <p>
-          Subject/s: {{resource.subject}}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.linkToLicense">
-        <p>
-          Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a>
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.resourceFor">
-        <p>
-          Resource: {{ resource.resourceFor }}
-        </p>
-      </mat-card-content>
-      <mat-card-content *ngIf="resource.resourceType">
-        <p>
-          Resource Type: {{ resource.resourceType }}
-        </p>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <div class="list-item-rating">
-      <span class="stars">
-        <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-          <!-- used simple arithmetic to get 20 and converted into % -->
-          <span [ngStyle]="{'width': rating.average * 20 + '%'}">
+<mat-toolbar>
+  <a mat-icon-button routerLink="/resources"><mat-icon>arrow_back</mat-icon></a>
+  <span i18n>Library</span>
+</mat-toolbar>
+
+<div class="space-container">
+<mat-toolbar class="primary-color font-size-1">
+    <span class="margin-lr-3">{{resource.title}}</span>
+    <button mat-button (click)="toggleFullView()" i18n>
+      {fullView, select, on {Show} off {Hide}} details
+    </button>
+  </mat-toolbar>
+  <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
+    <div class="resource-detail bg-grey" [ngClass]="{'invisible':fullView==='on'}">
+      <div class="list-item-rating">
+        <span class="stars">
           <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            <!-- used simple arithmetic to get 20 and converted into % -->
+            <span [ngStyle]="{'width': rating.average * 20 + '%'}">
+            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+          </span>
         </span>
-      </span>
-      <div class="stats stats-total">{{ rating.totalCount }} Total</div>
-      <div class="stats stats-female">{{ rating.femalePercent }}% Female</div>
-      <div class="stats stats-male">{{ rating.malePercent }}% Male</div>
-      <div class="rating">
-        <span class="rating-number">{{ rating.average.toFixed(1) }}</span>
-        <button mat-button (click)="openRatingDialog(resource._id)" class="uppercase" [ngSwitch]="rating.userRating.rate">
-          <span *ngSwitchCase="" i18n>Rate</span>
-          <span *ngSwitchDefault i18n>Update Your Rating</span>
-        </button>
+        <div class="stats stats-total">{{ rating.totalCount }} Total</div>
+        <div class="stats stats-female">{{ rating.femalePercent }}% Female</div>
+        <div class="stats stats-male">{{ rating.malePercent }}% Male</div>
+        <div class="rating">
+          <span class="rating-number">{{ rating.average.toFixed(1) }}</span>
+          <button mat-button (click)="openRatingDialog(resource._id)" class="uppercase" [ngSwitch]="rating.userRating.rate">
+            <span *ngSwitchCase="" i18n>Rate</span>
+            <span *ngSwitchDefault i18n>Update Your Rating</span>
+          </button>
+        </div>
       </div>
+      <p>Author: <i>{{resource.author}}</i></p>
+      <p>Published by: {{resource.Publisher}} on {{resource.year}}</p>
+      <p>Media: {{ resource.medium }}</p>
+      <p>Language: {{ resource.language }}</p>
+      <p>Subject/s: {{resource.subject}}</p>
+      <p>Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
+      <p>Resource: {{ resource.resourceFor }}</p>
+      <p>Resource Type: {{ resource.resourceType }}</p>
+      <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+    </div>
+    <div class="resource-view" [ngSwitch]="mediaType">
+      <img [src]="resourceSrc" *ngSwitchCase="'image'">
+      <video controls *ngSwitchCase="'video'">
+        <source [src]="resourceSrc" [type]="contentType" />
+        Browser not supported
+      </video>
+      <audio controls *ngSwitchCase="'audio'">
+        <source [src]="resourceSrc" [type]="contentType" />
+        Browser not supported
+      </audio>
+      <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
+      <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
+      <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
+    </div>
   </div>
-  </mat-grid-tile>
-</mat-grid-list>
+</div>
