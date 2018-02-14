@@ -60,6 +60,7 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "node-sass": "^4.5.3",
     "pouchdb": "^6.4.3",
+    "pouchdb-authentication": "^1.1.2",
     "protractor": "~5.1.2",
     "request-promise": "^4.2.1",
     "sass-lint": "^1.12.1",
