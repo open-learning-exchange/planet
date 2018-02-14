@@ -23,7 +23,6 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
 
   constructor(
-    private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
