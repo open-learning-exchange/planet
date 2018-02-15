@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsMessageComponent } from '../shared/dialogs/dialogs-message.component';
 import { Location } from '@angular/common';
 import { Validators } from '@angular/forms';
@@ -60,9 +60,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(feedback) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteFeedback(feedback),
+        changeType: 'delete',
         type: 'feedback',
         displayName: feedback.type
       }
