@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
     if (!environment.test) {
       this.checkAdminExistence().subscribe((noAdmin) => {
         // false means there is admin
-        if (noAdmin) {
+        if (noAdmin && !this.checkAuthSession()) {
           this.router.navigate([ '/login/configuration' ]);
         }
       });
@@ -41,6 +41,13 @@ export class LoginComponent implements OnInit {
         return of(false); // user doesn't have permission so there is an admin
       })
     );
+  }
+
+  checkAuthSession() {
+    return this.couchService.get('_session')
+      .subscribe((res) => {
+       return res.userCtx.name;
+      });
   }
 
 }
