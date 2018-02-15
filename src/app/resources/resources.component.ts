@@ -1,15 +1,15 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -48,7 +48,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private location: Location,
     private router: Router,
     private route: ActivatedRoute,
     private httpclient: HttpClient,
@@ -60,6 +59,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
+    this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
   }
 
   ngAfterViewInit() {
@@ -147,10 +147,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
         amount,
+        changeType: 'delete',
         type: 'resource',
         displayName
       }
@@ -189,7 +190,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate([ '/' ]);
   }
 
 }
