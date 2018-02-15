@@ -22,7 +22,6 @@ export class LoginFormComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
   message = '';
-  lowercasename = '';
 
   onSubmit() {
     if (this.createMode) {
