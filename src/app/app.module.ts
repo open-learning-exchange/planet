@@ -11,18 +11,19 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlanetMessageService } from './shared/planet-message.service';
+import { MaterialModule } from './shared/material.module';
 
 @NgModule({
   imports: [
-    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule
+    BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, MaterialModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService
   ],
   bootstrap: [ AppComponent ]
 })
