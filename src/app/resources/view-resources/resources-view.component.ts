@@ -114,8 +114,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           return stats;
         }, { rateSum: 0, userRating: '', totalCount: 0, maleCount: 0, femaleCount: 0 });
         Object.assign(this.rating, {
-          femalePercent: femaleCount === 0 ? 0 : ((femaleCount / totalCount) * 100).toFixed(0),
-          malePercent: maleCount === 0 ? 0 : ((maleCount / totalCount) * 100).toFixed(0),
+          totalFemale: femaleCount,
+          totalMale: maleCount,
           average: totalCount === 0 ? 0 : rateSum / totalCount,
           userRating, totalCount });
       }, error => console.log(error));
@@ -163,6 +163,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           this.getResourceRating(this.resource._id);
         }, (error) => console.log(error));
     }
+  }
+
+  getRatio(num, dem) {
+    return (num / (num + dem)) * 100;
   }
 
   resourceActivity(resourceId, activity) {

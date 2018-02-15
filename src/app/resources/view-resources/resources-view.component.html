@@ -25,8 +25,11 @@
           </span>
         </span>
         <div class="stats stats-total">{{ rating.totalCount }} Total</div>
-        <div class="stats stats-female">{{ rating.femalePercent }}% Female</div>
-        <div class="stats stats-male">{{ rating.malePercent }}% Male</div>
+        <div class="stats">
+          <img src="assets/icons/male.svg" alt="male" title="male" class="male-icon"/>
+          <img src="assets/icons/woman.svg" alt="female" title="female" class="female-icon"/>
+          <mat-progress-bar mode="determinate" [value]="getRatio(rating.totalMale, rating.totalFemale)" [ngClass]="{genderRatingProgressBar:rating.totalCount}"></mat-progress-bar>
+        </div>
         <div class="rating">
           <span class="rating-number">{{ rating.average.toFixed(1) }}</span>
           <button mat-button (click)="openRatingDialog(resource._id)" class="uppercase" [ngSwitch]="rating.userRating.rate">

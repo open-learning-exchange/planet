@@ -247,7 +247,7 @@ body {
     height: 50px;
     padding: 3px;
   }
-  
+
   .space-container {
     margin: 64px 30px;
   }
@@ -259,5 +259,21 @@ body {
   .view-container {
     background-color: #FFFFFF;
     padding: 1rem;
+  }
+
+  .male-icon {
+    height: 20px;
+    weight:20px;
+    float: left;
+  }
+
+  .female-icon {
+    height: 20px;
+    weight:20px;
+    float: right;
+  }
+
+  .genderRatingProgressBar .mat-progress-bar-buffer {
+    background-color: red;
   }
 }
