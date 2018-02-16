@@ -16,13 +16,11 @@ export class LoginFormComponent {
     private route: ActivatedRoute,
     private userService: UserService,
     private planetMessageService: PlanetMessageService
-  ) { }
+  ) {}
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   model = { name: '', password: '', repeatPassword: '' };
-  message = '';
-  lowercasename = '';
 
   onSubmit() {
     if (this.createMode) {
@@ -44,8 +42,7 @@ export class LoginFormComponent {
     };
     this.couchService.post('notifications', data)
       .subscribe((res) => {
-        console.log(res);
-      }, (error) => this.message = 'Error');
+      }, (error) => this.planetMessageService.showMessage('Error'));
   }
 
   reRoute() {
@@ -57,12 +54,12 @@ export class LoginFormComponent {
       this.couchService.put('_users/org.couchdb.user:' + name.toLowerCase(),
       { 'name': name.toLowerCase(), 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
-          this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
+          this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
           this.welcomeNotification(data.id);
           this.login(this.model, true);
-        }, (error) => this.planetMessageService.showMessage(error.error.reason) );
+        }, (error) => this.planetMessageService.showMessage(error.error.reason));
     } else {
-      this.message = 'Passwords do not match';
+        this.planetMessageService.showMessage('Passwords do not match');
     }
   }
 
@@ -78,6 +75,6 @@ export class LoginFormComponent {
         } else {
           this.reRoute();
         }
-      }, (error) => this.message = 'Username and/or password do not match');
+      }, (error) => this.planetMessageService.showMessage(error.error.reason));
   }
 }
