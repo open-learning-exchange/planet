@@ -50,7 +50,7 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
-    if (password === repeatPassword) {
+    if (password === repeatPassword && Boolean(password)) {
       this.couchService.put('_users/org.couchdb.user:' + name,
       { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
