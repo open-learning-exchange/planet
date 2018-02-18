@@ -9,7 +9,7 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
+
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 

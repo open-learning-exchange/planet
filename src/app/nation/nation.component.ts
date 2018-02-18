@@ -4,7 +4,7 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/m
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
+// import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Validators } from '@angular/forms';
