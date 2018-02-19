@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -19,31 +20,44 @@ export class LoginFormComponent {
     private formBuilder: FormBuilder
   ) {
        this.userForm = this.formBuilder.group({
-       name: [ '', Validators.required ],
-       password: [ '', Validators.required ],
-       repeatPassword: [ '', Validators.required ]
+       name: [ '', Validators.compose([
+         Validators.required
+         ]) ],
+       password: [ '', Validators.compose([
+         Validators.required,
+         CustomValidators.matchPassword('repeatPassword', false)
+         ]) ],
+       repeatPassword: [ '', Validators.compose([
+         Validators.required,
+         CustomValidators.matchPassword('password', true)
+         ]) ]
        });
   }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-  model = { name: '', password: '', repeatPassword: '' };
   message = '';
 
   onSubmit() {
     if (this.createMode) {
       if (this.userForm.valid) {
-        this.createUser(this.model);
+        this.createUser(this.userForm.value.name, this.userForm.value.password, this.userForm.value.repeatPassword);
       } else {
-        this.message = 'please, fill up required credential';
+         Object.keys(this.userForm.controls).forEach(field => {
+         const control = this.userForm.get(field);
+         control.markAsTouched({ onlySelf: true });
+       });
       }
     } else {
-      if (this.userForm.value.password !== '' && this.userForm.value.name !== '') {
-        this.login(this.model, false);
-      } else {
-        this.message = 'please,fill up required credential';
+        if (this.userForm.value.password !== '' && this.userForm.value.name !== '') {
+          this.login(this.userForm.value.name, this.userForm.value.password, false);
+        } else {
+          Object.keys(this.userForm.controls).forEach(field => {
+          const control = this.courseForm.get(field);
+          control.markAsTouched({ onlySelf: true });
+      });
+        }
       }
-    }
   }
 
   welcomeNotification(user_id) {
@@ -66,21 +80,17 @@ export class LoginFormComponent {
     this.router.navigate([ this.returnUrl ]);
   }
 
-  createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
-    if (password === repeatPassword) {
+  createUser(name: string, password: string, repeatPassword: string) {
       this.couchService.put('_users/org.couchdb.user:' + name,
       { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.welcomeNotification(data.id);
-          this.login(this.model, true);
+          this.login(this.userForm.value.name, this.userForm.value.password, true);
         }, (error) => this.message = '');
-    } else {
-      this.message = 'Passwords do not match';
-    }
   }
 
-  login({ name, password }: {name: string, password: string}, isCreate: boolean) {
+  login(name: string, password: string, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
