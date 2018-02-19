@@ -3,18 +3,27 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './login-form.component.html',
   styleUrls: [ './login.scss' ]
 })
 export class LoginFormComponent {
+  public userForm: FormGroup;
   constructor(
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
-  ) { }
+    private userService: UserService,
+    private formBuilder: FormBuilder
+  ) {
+       this.userForm = this.formBuilder.group({
+       name: [ '', Validators.required ],
+       password: [ '', Validators.required ],
+       repeatPassword: [ '', Validators.required ]
+       });
+  }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -23,9 +32,17 @@ export class LoginFormComponent {
 
   onSubmit() {
     if (this.createMode) {
-      this.createUser(this.model);
+      if (this.userForm.valid) {
+        this.createUser(this.model);
+      } else {
+        this.message = 'please, fill up required credential';
+      }
     } else {
-      this.login(this.model, false);
+      if (this.userForm.value.password !== '' && this.userForm.value.name !== '') {
+        this.login(this.model, false);
+      } else {
+        this.message = 'please,fill up required credential';
+      }
     }
   }
 
@@ -50,7 +67,7 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password, repeatPassword }: {name: string, password: string, repeatPassword: string}) {
-    if (password === repeatPassword && Boolean(password)) {
+    if (password === repeatPassword) {
       this.couchService.put('_users/org.couchdb.user:' + name,
       { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
