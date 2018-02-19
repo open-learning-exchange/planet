@@ -46,16 +46,16 @@ export class LoginFormComponent {
          Object.keys(this.userForm.controls).forEach(field => {
          const control = this.userForm.get(field);
          control.markAsTouched({ onlySelf: true });
-       });
+         });
       }
     } else {
         if (this.userForm.value.password !== '' && this.userForm.value.name !== '') {
           this.login(this.userForm.value.name, this.userForm.value.password, false);
         } else {
           Object.keys(this.userForm.controls).forEach(field => {
-          const control = this.courseForm.get(field);
+          const control = this.userForm.get(field);
           control.markAsTouched({ onlySelf: true });
-      });
+          });
         }
       }
   }
