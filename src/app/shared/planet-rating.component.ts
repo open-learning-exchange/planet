@@ -2,7 +2,7 @@ import { Component, HostBinding, Input, OnDestroy, Optional, Self } from '@angul
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MatFormFieldControl } from '@angular/material';
 import { Subject } from 'rxjs/Subject';
-import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({
   selector: 'planet-rating',
