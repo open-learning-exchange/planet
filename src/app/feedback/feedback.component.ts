@@ -13,7 +13,14 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './feedback.component.html'
+  templateUrl: './feedback.component.html',
+  styles: [ `
+    /* Consider using space-container app wide for route views */
+    .space-container {
+      margin: 64px 30px;
+      background: none;
+    }
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
   name = '';

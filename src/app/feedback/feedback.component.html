@@ -1,15 +1,15 @@
 <!-- Feedback Template -->
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Feedback List</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  </mat-form-field>
+</mat-toolbar>
+<div class="space-container">
   <mat-toolbar>
-    <mat-toolbar-row>
-      <button class="btnBack" mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
-      <span i18n>Feedback List</span>
-      <span class="toolbar-fill"></span>
-      <mat-icon>search</mat-icon>
-      <mat-form-field class="font-size-1">
-        <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
-      </mat-form-field>
-    </mat-toolbar-row>
-    {{message}}
     <mat-toolbar-row class="primary-color font-size-1">
       <span i18n>Your Current Lists of Feedback</span>
     </mat-toolbar-row>
@@ -88,3 +88,4 @@
     </mat-row>
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+</div>
