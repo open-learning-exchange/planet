@@ -4,8 +4,7 @@ import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
-  Validators
+  FormGroup
 } from '@angular/forms';
 
 @Injectable()
