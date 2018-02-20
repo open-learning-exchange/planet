@@ -12,7 +12,6 @@ import { CustomValidators } from '../validators/custom-validators';
 })
 export class LoginFormComponent {
   public userForm: FormGroup;
-  public loginUserForm: FormGroup;
   constructor(
     private couchService: CouchService,
     private router: Router,
