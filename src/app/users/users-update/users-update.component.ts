@@ -9,6 +9,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -28,12 +29,13 @@ export class UsersUpdateComponent implements OnInit {
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   file: any;
-
+  roles: string[] = [];
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {
     this.userData();
   }
@@ -102,7 +104,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+      this.router.navigate([ '/users/profile', this.user.name ]);
   }
 
   bindFile(event) {

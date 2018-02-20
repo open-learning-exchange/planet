@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { Location } from '@angular/common';
+
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
@@ -35,7 +35,7 @@ export class UsersProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
-    private location: Location
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -135,7 +135,12 @@ export class UsersProfileComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    Object.assign(this, this.userService.get());
+    if (this.roles.indexOf('_admin') > -1) {
+      this.router.navigate([ '/users' ]);
+    } else {
+      this.router.navigate([ '/' ]);
+    }
   }
 
 }
