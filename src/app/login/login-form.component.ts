@@ -39,10 +39,10 @@ export class LoginFormComponent {
   onSubmit() {
     if (this.createMode) {
       if (this.userForm.valid) {
-        this.createUser(this.userForm);
+        this.createUser(this.userForm.value);
       }
     } else {
-        this.login(this.userForm, false);
+        this.login(this.userForm.value, false);
     }
   }
 
@@ -66,25 +66,25 @@ export class LoginFormComponent {
     this.router.navigate([ this.returnUrl ]);
   }
 
-  createUser(userForm: FormGroup) {
-    this.couchService.put('_users/org.couchdb.user:' + userForm.value.name,
-      { 'name': userForm.value.name, 'password': userForm.value.password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
+  createUser({ name, password }: {name: string, password: string}) {
+    this.couchService.put('_users/org.couchdb.user:' + name,
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.welcomeNotification(data.id);
-          this.login(this.userForm, true);
+          this.login(this.userForm.value, true);
         }, (error) => this.message = '');
   }
 
-  login(userForm: FormGroup, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': userForm.value.name, 'password': userForm.value.password }, { withCredentials: true })
+  login({ name, password }: {name: string, password: string}, isCreate: boolean) {
+    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
         this.userService.set(data);
         return this.userService.newSessionLog();
       })).subscribe((res) => {
         if (isCreate) {
-          this.router.navigate( [ 'users/update/' + userForm.value.name ]);
+          this.router.navigate( [ 'users/update/' + name ]);
         } else {
           this.reRoute();
         }
