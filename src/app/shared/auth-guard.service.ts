@@ -9,7 +9,6 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 
 @Injectable()
 export class AuthService {
-
   constructor(private couchService: CouchService, private userService: UserService, private router: Router) {}
 
   private checkUser(url: any): Observable<boolean> {
@@ -34,6 +33,16 @@ export class AuthService {
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.checkUser(state.url);
+  }
+
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean>|boolean {
+    this.couchService
+      .get('_session', { withCredentials: true }).subscribe((data) => {
+        if (data.userCtx.name) {
+         this.router.navigate([ '/' ]);
+        }
+      });
+    return true;
   }
 
 }
