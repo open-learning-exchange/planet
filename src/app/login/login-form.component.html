@@ -1,24 +1,24 @@
-<form (ngSubmit)="onSubmit()" class="login-form"  [formGroup]="userForm">
+<form (ngSubmit)="onSubmit()" class="login-form" [formGroup]="userForm">
   <mat-form-field class="example-full-width">
     <input matInput i18n-placeholder placeholder="Username" name="name" formControlName = "name"/>
-      <mat-error>
-        <planet-form-error-messages  [control]="userForm.controls.name"></planet-form-error-messages>
-      </mat-error>
+    <mat-error>
+      <planet-form-error-messages [control]="userForm.controls.name"></planet-form-error-messages>
+    </mat-error>
   </mat-form-field>
   <mat-form-field class="example-full-width">
     <input matInput i18n-placeholder placeholder="Password" name="password" type="password" formControlName = "password"/>
-      <mat-error> 
-        <planet-form-error-messages  [control]="userForm.controls.password"></planet-form-error-messages>
-      </mat-error>
+    <mat-error>
+      <planet-form-error-messages [control]="userForm.controls.password"></planet-form-error-messages>
+    </mat-error>
   </mat-form-field>
   <mat-form-field class="example-full-width" *ngIf="createMode">
     <input matInput i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" formControlName = "repeatPassword" />
-      <mat-error>
-        <planet-form-error-messages [control]="userForm.controls.repeatPassword"></planet-form-error-messages>
-      </mat-error>
+    <mat-error>
+      <planet-form-error-messages [control]="userForm.controls.repeatPassword"></planet-form-error-messages>
+    </mat-error>
   </mat-form-field>
   <button mat-button>{{ createMode ? 'Create User' : 'SIGN-IN' }}</button>
-  <a  class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
+  <a class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
     {{ createMode ? 'Already have an account?' : 'Are you new?' }}
   </a>
 </form>

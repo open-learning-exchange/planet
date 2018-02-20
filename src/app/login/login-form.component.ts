@@ -42,7 +42,7 @@ export class LoginFormComponent {
         this.createUser(this.userForm.value);
       }
     } else {
-        this.login(this.userForm.value, false);
+      this.login(this.userForm.value, false);
     }
   }
 
@@ -50,7 +50,7 @@ export class LoginFormComponent {
     const data = {
       'user': user_id,
       'message': 'Welcome ' + user_id.replace('org.couchdb.user:', '') + ' to the Planet Learning',
-     'link': '',
+      'link': '',
       'type': 'register',
       'priority': 1,
       'status': 'unread',
