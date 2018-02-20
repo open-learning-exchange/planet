@@ -50,14 +50,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private router: Router
   ) {}
 
-  select(user: any) {
-    // Can't add roles to admins, so only select users
-    if (user._id) {
-      // Will not be defined at first, so use ternary operator rather than !=
-      user.selected = user.selected ? false : true;
-    }
-  }
-
   ngOnInit() {
     Object.assign(this, this.userService.get());
     if (this.isUserAdmin) {
@@ -81,7 +73,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   isAllSelected() {
     this.selection.selected.map((user) => {
       /** Adding roles to user are not alowed if admin is selected */
-      if (user.roles.indexOf('admin') === -1) {
+      if (user.roles.indexOf('admin') === -1 && this.isUserAdmin) {
         user.selected = true;
       }
     });
@@ -173,7 +165,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     .debug('Adding role to users')
     .subscribe((responses) => {
       users.map((user) => {
-        if (user.selected && user.roles.indexOf(role) === -1) {
+        if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
           user.roles.push(role);
           const res: any = responses.find((response: any) => response.id === user._id);
