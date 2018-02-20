@@ -35,6 +35,6 @@ import { environment } from '../environments/environment';
   providers: [
     CouchService, AuthService, UserService, ValidatorService, PlanetMessageService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule {}
