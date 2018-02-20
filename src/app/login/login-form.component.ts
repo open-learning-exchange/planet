@@ -12,6 +12,7 @@ import { CustomValidators } from '../validators/custom-validators';
 })
 export class LoginFormComponent {
   public userForm: FormGroup;
+  public loginUserForm: FormGroup;
   constructor(
     private couchService: CouchService,
     private router: Router,
@@ -19,19 +20,17 @@ export class LoginFormComponent {
     private userService: UserService,
     private formBuilder: FormBuilder
   ) {
-       this.userForm = this.formBuilder.group({
-       name: [ '', Validators.compose([
-         Validators.required
-         ]) ],
-       password: [ '', Validators.compose([
-         Validators.required,
-         CustomValidators.matchPassword('repeatPassword', false)
-         ]) ],
-       repeatPassword: [ '', Validators.compose([
-         Validators.required,
-         CustomValidators.matchPassword('password', true)
-         ]) ]
-       });
+    this.userForm = this.formBuilder.group({
+      name: [ '', Validators.required ],
+      password: [ '', Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('repeatPassword', false)
+        ]) ],
+      repeatPassword: [ '', Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('password', true)
+        ]) ]
+    });
   }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
@@ -41,23 +40,11 @@ export class LoginFormComponent {
   onSubmit() {
     if (this.createMode) {
       if (this.userForm.valid) {
-        this.createUser(this.userForm.value.name, this.userForm.value.password, this.userForm.value.repeatPassword);
-      } else {
-         Object.keys(this.userForm.controls).forEach(field => {
-         const control = this.userForm.get(field);
-         control.markAsTouched({ onlySelf: true });
-         });
+        this.createUser(this.userForm);
       }
     } else {
-        if (this.userForm.value.password !== '' && this.userForm.value.name !== '') {
-          this.login(this.userForm.value.name, this.userForm.value.password, false);
-        } else {
-          Object.keys(this.userForm.controls).forEach(field => {
-          const control = this.userForm.get(field);
-          control.markAsTouched({ onlySelf: true });
-          });
-        }
-      }
+        this.login(this.userForm, false);
+    }
   }
 
   welcomeNotification(user_id) {
@@ -80,25 +67,25 @@ export class LoginFormComponent {
     this.router.navigate([ this.returnUrl ]);
   }
 
-  createUser(name: string, password: string, repeatPassword: string) {
-      this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
+  createUser(userForm: FormGroup) {
+    this.couchService.put('_users/org.couchdb.user:' + userForm.value.name,
+      { 'name': userForm.value.name, 'password': userForm.value.password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
           this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
           this.welcomeNotification(data.id);
-          this.login(this.userForm.value.name, this.userForm.value.password, true);
+          this.login(this.userForm, true);
         }, (error) => this.message = '');
   }
 
-  login(name: string, password: string, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
+  login(userForm: FormGroup, isCreate: boolean) {
+    this.couchService.post('_session', { 'name': userForm.value.name, 'password': userForm.value.password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
         this.userService.set(data);
         return this.userService.newSessionLog();
       })).subscribe((res) => {
         if (isCreate) {
-          this.router.navigate( [ 'users/update/' + name ]);
+          this.router.navigate( [ 'users/update/' + userForm.value.name ]);
         } else {
           this.reRoute();
         }
