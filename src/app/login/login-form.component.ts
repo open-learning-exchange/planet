@@ -41,8 +41,7 @@ export class LoginFormComponent {
       'time': Date.now()
     };
     this.couchService.post('notifications', data)
-      .subscribe((res) => {
-      }, (error) => this.planetMessageService.showMessage('Error'));
+      .subscribe();
   }
 
   reRoute() {
@@ -57,7 +56,7 @@ export class LoginFormComponent {
           this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
           this.welcomeNotification(data.id);
           this.login(this.model, true);
-        }, (error) => this.planetMessageService.showMessage(error.error.reason));
+        }, (error) => this.planetMessageService.showMessage('There was an error creating a new user'));
     } else {
         this.planetMessageService.showMessage('Passwords do not match');
     }
@@ -75,6 +74,6 @@ export class LoginFormComponent {
         } else {
           this.reRoute();
         }
-      }, (error) => this.planetMessageService.showMessage(error.error.reason));
+      }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
   }
 }
