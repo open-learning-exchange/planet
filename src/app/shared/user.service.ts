@@ -69,21 +69,21 @@ export class UserService {
   }
 
   endSessionLog() {
+    let newObs = of({});
     if (this.sessionId === undefined) {
-      return this.couchService.post(this.logsDb + '/_find', findDocuments(
-              { 'user': this.get().name },
-              [ '_id', '_rev', 'login_time' ],
-              [ { 'login_time': 'desc' } ]
-            )).pipe(switchMap(data => {
-              console.log('Data' , data);
-              this.sessionId =  data.docs[0]['_id'];
-              this.sessionRev =  data.docs[0]['_rev'];
-              this.sessionStart =  data.docs[0]['login_time'];
-              return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
-            }));
-    } else {
-      return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+      newObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
+        { 'user': this.get().name },
+        [ '_id', '_rev', 'login_time' ],
+        [ { 'login_time': 'desc' } ]
+      )).pipe(map(data => {
+        this.sessionId = data.docs[0]['_id'];
+        this.sessionRev = data.docs[0]['_rev'];
+        this.sessionStart = data.docs[0]['login_time'];
+      }));
     }
+    return newObs.pipe(switchMap(() => {
+      return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+    }));
   }
 
 }
