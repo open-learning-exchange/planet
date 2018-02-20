@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { UserService } from './user.service';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
+import { switchMap, map } from 'rxjs/operators';
 
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
@@ -14,13 +15,20 @@ export class AuthService {
   private checkUser(url: any): Observable<boolean> {
     return this.couchService
       .get('_session', { withCredentials: true })
-      .pipe(map((res: any) => {
+      .pipe(switchMap((res: any) => {
         if (res.userCtx.name) {
-          this.userService.set(res.userCtx);
-          return true;
+          // If user already matches one on the user service, do not make additional call to CouchDB
+          if (res.userCtx.name === this.userService.get().name) {
+            return of(true);
+          }
+          return this.userService.setProfile(res.userCtx);
         }
+        this.userService.unset();
         this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
-        return false;
+        return of(false);
+      }),
+      map((isLoggedIn) => {
+        return isLoggedIn;
       }));
   }
 

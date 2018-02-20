@@ -49,11 +49,8 @@ before_install:
   - while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do sleep 1; done
   - node bin.js http://localhost:5984
   - cd ..
-  # Add initial Couch databases here
-  - curl -X PUT http://127.0.0.1:5984/_users
-  - curl -X PUT http://127.0.0.1:5984/_replicator
-  - curl -X PUT http://127.0.0.1:5984/_global_changes
-  - curl -X PUT http://127.0.0.1:5984/meetups
+  # Add initial Couch databases with script
+  - ./couchdb-setup.sh -p 5984
   # CHROME & xvfb stuff
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
@@ -70,7 +67,7 @@ script:
   - export
   - docker ps -a | grep planet
   - curl -X GET http://127.0.0.1:5984/_all_dbs
-  - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 4 ];
+  - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 13 ];
     then exit 1; fi
   #- node -v
   #- ng test

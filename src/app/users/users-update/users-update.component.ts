@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
-  FormArray,
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 @Component({
   templateUrl: './users-update.component.html'
@@ -24,10 +21,10 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
 
   constructor(
-    private location: Location,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.userData();
   }
@@ -84,7 +81,7 @@ export class UsersUpdateComponent implements OnInit {
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
     this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe(() => {
-      this.location.back();
+      this.router.navigate([ '/users/profile/' + this.user.name ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -92,7 +89,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate([ '/users/profile/' + this.user.name ]);
   }
 
   bindFile(event) {

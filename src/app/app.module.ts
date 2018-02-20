@@ -12,8 +12,9 @@ import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
 import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlanetMessageService } from './shared/planet-message.service';
+import { MaterialModule } from './shared/material.module';
 
 import { environment } from '../environments/environment';
 
@@ -23,12 +24,17 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    MaterialModule,
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
   ],
-  declarations: [AppComponent, PageNotFoundComponent],
-  providers: [CouchService, AuthService, UserService, ValidatorService],
+  declarations: [
+    AppComponent, PageNotFoundComponent
+  ],
+  providers: [
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

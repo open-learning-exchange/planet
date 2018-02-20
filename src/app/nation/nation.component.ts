@@ -1,15 +1,13 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { HttpClient } from '@angular/common/http';
-
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { Validators } from '@angular/forms';
-
+import { filterSpecificFields } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 
@@ -34,17 +32,19 @@ export class NationComponent implements OnInit, AfterViewInit {
   view_data = [];
 
   constructor(
-    private location: Location,
     private router: Router,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private http: HttpClient
+    private http: HttpClient,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
     this.getNationList();
+    // Override default matTable filter to only filter below fields
+    this.nations.filterPredicate = filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
   }
 
   ngAfterViewInit() {
@@ -72,9 +72,10 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(nation) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteNation(nation),
+        changeType: 'delete',
         type: 'nation',
         displayName: nation.name
       }
@@ -94,6 +95,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
           this.deleteDialog.close();
+          this.planetMessageService.showAlert('You have deleted nation: ' + nation.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };
   }
@@ -112,6 +114,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           formdata[ '_rev' ] = data.rev;
           this.nations.data.push(formdata);
           this.nations._updateChangeSubscription();
+          this.planetMessageService.showMessage('New Nation Created: ' + nation.name);
         }, (error) => this.message = 'Error');
     }
   }
@@ -125,14 +128,14 @@ export class NationComponent implements OnInit, AfterViewInit {
         { 'label': 'Nation Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Nation Name', 'required': true },
         { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
       ];
-    const validation = {
+    const formGroup = {
       adminName: [ '', Validators.required ],
       name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
       nationUrl: [ '', Validators.required,
       nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
     };
     this.dialogsFormService
-      .confirm(title, type, fields, validation, '')
+      .confirm(title, fields, formGroup)
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
@@ -167,7 +170,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   back() {
-    this.location.back();
+    this.router.navigate([ '/' ]);
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -6,7 +6,6 @@ import {
   FormArray,
   Validators
 } from '@angular/forms';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { CouchService } from '../../shared/couchdb.service';
@@ -14,16 +13,26 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
-
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
-  templateUrl: 'courses-add.component.html'
+  templateUrl: 'courses-add.component.html',
+  styles: [ `
+    /* Consider using space-container app wide for route views */
+    .space-container {
+      margin: 64px 30px;
+      background: none;
+    }
+    .view-container {
+      background-color: #FFFFFF;
+      padding: 1rem;
+    }
+  ` ]
 })
 export class CoursesAddComponent {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
-
   courseForm: FormGroup;
 
   showDaysCheckBox = true; // for toggling the days checkbox
@@ -34,11 +43,11 @@ export class CoursesAddComponent {
   days = constants.days;
 
   constructor(
-    private location: Location,
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.createForm();
   }
@@ -112,6 +121,7 @@ export class CoursesAddComponent {
     // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...courseInfo }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
+      this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -119,7 +129,7 @@ export class CoursesAddComponent {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate([ '/courses' ]);
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */

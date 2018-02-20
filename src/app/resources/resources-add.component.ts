@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormArray,
   Validators
 } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
-import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 
@@ -19,10 +16,23 @@ import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './resources-add.component.html'
+  templateUrl: './resources-add.component.html',
+  styles: [ `
+    /* Consider using space-container app wide for route views */
+    .space-container {
+      margin: 64px 30px;
+      background: none;
+    }
+    .view-container {
+      background-color: #FFFFFF;
+      padding: 1rem;
+    }
+  ` ]
 })
+
 export class ResourcesAddComponent implements OnInit {
   name = '';
   subjects = new FormControl();
@@ -38,12 +48,12 @@ export class ResourcesAddComponent implements OnInit {
   readonly dbName = 'resources'; // make database name a constant
 
   constructor(
-    private location: Location,
     private router: Router,
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private userService: UserService
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -147,6 +157,7 @@ export class ResourcesAddComponent implements OnInit {
     // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('New Resource Created');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -207,7 +218,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   cancel() {
-    this.location.back();
+    this.router.navigate([ '/resources' ]);
   }
 
   bindFile(event) {

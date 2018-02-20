@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   template: `
-  <p>{{message}}</p>
   <form class="form-horizontal" (ngSubmit)="onSubmit(meetupForm.value)" #meetupForm="ngForm">
     <legend>Start a New Meetup</legend>
     <div class="fields-container">
@@ -25,6 +25,7 @@ export class MeetupsAddComponent {
   obj = [];
   constructor(
     private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   model = { title: '', description: '' };
@@ -34,10 +35,10 @@ export class MeetupsAddComponent {
       console.log(meetup.description, meetup.title);
       this.couchService.post('meetups', { 'title': meetup.title, 'description': meetup.description })
         .subscribe((data) => {
-          this.message = 'Meetup created: ' + meetup.title;
-        }, (error) => this.message = 'There was a problem creating the meetup');
+          this.planetMessageService.showMessage('Meetup created: ' + meetup.title);
+        }, (error) => this.planetMessageService.showAlert('There was a problem creating the meetup'));
     } else {
-      this.message = 'Please complete the form';
+      this.planetMessageService.showMessage('Please complete the form');
     }
   }
 

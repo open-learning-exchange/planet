@@ -1,0 +1,15 @@
+<form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+  <mat-form-field class="example-full-width">
+    <input matInput [(ngModel)]="model.name" i18n-placeholder placeholder="Username" name="name" />
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <input matInput [(ngModel)]="model.password" i18n-placeholder placeholder="Password" name="password" type="password" />
+  </mat-form-field>
+  <mat-form-field class="example-full-width" *ngIf="createMode">
+    <input matInput [(ngModel)]="model.repeatPassword" i18n-placeholder placeholder="Repeat Password" name="repeatPassword" type="password" />
+  </mat-form-field>
+  <button mat-button>{{ createMode ? 'Create User' : 'SIGN-IN' }}</button>
+  <a  class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
+    {{ createMode ? 'Already have an account?' : 'Are you new?' }}
+  </a>
+</form>

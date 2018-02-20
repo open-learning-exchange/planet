@@ -1,27 +1,47 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { PlanetMessageService } from '../shared/planet-message.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Router } from '@angular/router';
+import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
-  templateUrl: './courses.component.html'
+  templateUrl: './courses.component.html',
+  styles: [ `
+    .space-container {
+      margin: 64px 30px;
+    }
+    .mat-column-select {
+      max-width: 44px;
+    }
+    .mat-column-action {
+      max-width: 225px;
+    }
+` ]
 })
-export class CoursesComponent implements OnInit, AfterViewInit {
 
+export class CoursesComponent implements OnInit, AfterViewInit {
+  selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'title', 'action' ];
+  displayedColumns = [ 'select', 'title', 'action' ];
   message = '';
   deleteDialog: any;
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private planetMessageService: PlanetMessageService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.getCourses();
+    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle' ]);
   }
 
   getCourses() {
@@ -45,9 +65,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(course) {
-    this.deleteDialog = this.dialog.open(DialogsDeleteComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteCourse(course),
+        changeType: 'delete',
         type: 'course',
         displayName: course.courseTitle
       }
@@ -63,8 +84,27 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course');
+          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
+  }
+
+  goBack() {
+    this.router.navigate([ '/' ]);
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.courses.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+    this.selection.clear() :
+    this.courses.data.forEach(row => this.selection.select(row));
   }
 
 }

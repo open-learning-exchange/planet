@@ -4,26 +4,21 @@ import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
-  Validators
+  FormGroup
 } from '@angular/forms';
 
 @Injectable()
 export class DialogsFormService {
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
 
-  public confirm(title: string, type: string, fields: any, validation: any, message: string): Observable<boolean> {
+  public confirm(title: string, fields: any, formGroup: any): Observable<boolean> {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px'
     });
-    dialogRef.componentInstance.modalForm = this.fb.group(validation);
+    dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
     dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.type = type;
     dialogRef.componentInstance.fields = fields;
-    dialogRef.componentInstance.message = message;
     return dialogRef.afterClosed();
   }
 

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { languages } from '../shared/languages';
 import { interval } from 'rxjs/observable/interval';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './home.component.html',
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   current_flag = 'en';
   current_lang = 'English';
   sidenavState = 'closed';
+  notifications = [];
   @ViewChild('content') private mainContent;
 
   // Sets the margin for the main content to match the sidenav width
@@ -47,6 +48,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.getNotification();
     Object.assign(this, this.userService.get());
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
@@ -64,9 +66,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.mainContent._changeDetectorRef.markForCheck();
   }
 
+  // Used to swap in different background.
+  // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources' ];
-    const routesWithoutBackground = [ 'resources/add', 'resources/view' ];
+    const routesWithBackground = [ 'resources', 'courses' ];
+    // Leaving the exception variable in so we can easily use this while still testing backgrounds
+    const routesWithoutBackground = [];
     const isException = routesWithoutBackground
       .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
     const isRoute = routesWithBackground
@@ -90,10 +95,39 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   logoutClick() {
-    this.couchService.delete('_session', { withCredentials: true }).subscribe((data: any) => {
-      if (data.ok === true) {
+    this.userService.endSessionLog().pipe(switchMap(() => {
+      return this.couchService.delete('_session', { withCredentials: true });
+    })).subscribe((response: any) => {
+      if (response.ok === true) {
+        this.userService.unset();
         this.router.navigate([ '/login' ], {});
       }
-    });
+    }, err => console.log(err));
   }
+
+  getNotification() {
+    const user_id = 'org.couchdb.user:' + this.userService.get().name;
+    this.couchService.get('notifications/_all_docs?include_docs=true')
+      .subscribe((data) => {
+        let cnt = 0;
+        data.rows.sort((a, b) => 0 - (new Date(a.doc.time) > new Date(b.doc.time) ? 1 : -1));
+        this.notifications = data.rows.map(notifications => {
+          if (notifications.doc.status === 'unread') {
+            cnt ++;
+          }
+          return notifications;
+        }).filter(nt  => {
+          return nt.doc['user'] === user_id;
+        });
+        this.notifications['count_unread'] =  cnt;
+      }, (error) => console.log(error));
+  }
+
+  readNotification(notification) {
+    const update_notificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+      console.log(data);
+    },  (err) => console.log(err));
+  }
+
 }

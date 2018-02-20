@@ -25,6 +25,10 @@ body {
     color: $accent-text;
   }
 
+  .bg-grey {
+    background-color: $light-grey;
+  }
+
   .display-flex {
     display: flex;
   }
@@ -48,6 +52,12 @@ body {
     margin: 0 5px;
   }
 
+  // Use for text in all caps.  It avoids problems for screen readers to use this rather than all caps in HTML
+  // See https://webaim.org/techniques/fonts/#caps
+  .uppercase {
+    text-transform: uppercase;
+  }
+
   // Creates helper classes for smaller and larger horizontal spacing
   @mixin margin-lr {
     @for $i from 1 through 10 {
@@ -58,6 +68,11 @@ body {
   }
 
   @include margin-lr;
+
+  // Hide an element, but render its space
+  .invisible {
+    visibility: hidden;
+  }
 
   .button-icon-text mat-icon {
     margin: 0 3px;
@@ -103,6 +118,7 @@ body {
       top: 0;
       left: 0;
       overflow: hidden;
+      display: inline-flex;
       * {
         display: inline;
       }
@@ -179,4 +195,24 @@ body {
     overflow: visible;
   }
 
+  .planet-radio-section {
+    display: grid;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+  }
+
+  .planet-radio-button {
+    margin: 10px;
+  }
+
+  // Remove the underline from mat-form-field for custom fields
+  .mat-form-field-type-no-underline .mat-input-underline {
+    display: none;
+  }
+
+  .user-profile {
+    border-radius: 5px;
+    width: 125px;
+  }
 }
