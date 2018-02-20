@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { Observable } from 'rxjs/Observable';
 import { findDocuments } from '../shared/mangoQueries';
 
 // Holds the currently logged in user information
@@ -69,7 +70,7 @@ export class UserService {
   }
 
   endSessionLog() {
-    let newObs = of({});
+    let newObs: Observable<any> = of({});
     if (this.sessionId === undefined) {
       newObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
         { 'user': this.get().name },
