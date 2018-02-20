@@ -19,17 +19,8 @@ export class LoginFormComponent {
     private userService: UserService,
     private formBuilder: FormBuilder
   ) {
-    this.userForm = this.formBuilder.group({
-      name: [ '', Validators.required ],
-      password: [ '', Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('repeatPassword', false)
-        ]) ],
-      repeatPassword: [ '', Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('password', true)
-        ]) ]
-    });
+    const formObj = this.createMode ? Object.assign({}, loginForm, repeatPassword) : loginForm;
+    this.userForm = this.formBuilder.group(formObj);
   }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
@@ -37,12 +28,16 @@ export class LoginFormComponent {
   message = '';
 
   onSubmit() {
-    if (this.createMode) {
-      if (this.userForm.valid) {
+    if (this.userForm.valid) {
+      if (this.createMode) {
         this.createUser(this.userForm.value);
+      } else {
+        this.login(this.userForm.value, false);
       }
     } else {
-      this.login(this.userForm.value, false);
+      Object.keys(this.userForm.controls).forEach(fieldName => {
+        this.userForm.controls[fieldName].markAsTouched();
+      });
     }
   }
 
@@ -91,3 +86,19 @@ export class LoginFormComponent {
       }, (error) => this.message = 'Username and/or password do not match');
   }
 }
+
+const repeatPassword = {
+  password: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('repeatPassword', false)
+    ]) ],
+  repeatPassword: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('password', true)
+    ]) ]
+};
+
+const loginForm = {
+  name: [ '', Validators.required ],
+  password: [ '', Validators.required ]
+};
