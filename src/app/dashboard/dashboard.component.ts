@@ -3,12 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
+import { map } from 'rxjs/operators';
+
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   template: `
     <planet-dashboard-tile [cardTitle]="'myLibrary'" class="planet-library-theme" [itemData]="data.resources"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme" [itemData]="data.courses"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme" [itemData]="data.meetups"></planet-dashboard-tile>
     <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme"></planet-dashboard-tile>
   `,
   styles: [ `
@@ -23,7 +25,7 @@ import { CouchService } from '../shared/couchdb.service';
 export class DashboardComponent implements OnInit {
   name = '';
   roles: string[] = [];
-  data = { resources: [] };
+  data = { resources: [], courses: [], meetups: [] };
 
   constructor(
     private userService: UserService,
@@ -32,12 +34,22 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     Object.assign(this, this.userService.get());
-    this.getData('resources').subscribe((response) => {
-      this.data.resources = response.rows.map((item) => ({ ...item.doc, link: 'resources/view/' + item.id }));
+    this.getData('resources', { linkPrefix: 'resources/view/', addId: true }).subscribe((res) => {
+      this.data.resources = res;
+    });
+    this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }). subscribe((res) => {
+      this.data.courses = res;
+    });
+    this.getData('meetups', { linkPrefix: 'meetups' }). subscribe((res) => {
+      this.data.meetups = res;
     });
   }
 
-  getData(db: string) {
-    return this.couchService.get(db + '/_all_docs?include_docs=true');
+  getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
+    return this.couchService.get(db + '/_all_docs?include_docs=true').pipe(map((response) => {
+      // Sets data, adding the text to display in the dashboard as the 'title' field and
+      // link with or without doc id based on addId
+      return response.rows.map((item) => ({ ...item.doc, title: item.doc[titleField], link: linkPrefix + (addId ? item.id : '') }));
+    }));
   }
 }
