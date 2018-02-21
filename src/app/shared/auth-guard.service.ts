@@ -9,6 +9,7 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 
 @Injectable()
 export class AuthService {
+
   constructor(private couchService: CouchService, private userService: UserService, private router: Router) {}
 
   private checkUser(url: any): Observable<boolean> {
@@ -31,10 +32,13 @@ export class AuthService {
       }));
   }
 
+  // For main app (which requires login).  Uses canActivateChild to check on every route
+  // change if session has expired
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.checkUser(state.url);
   }
 
+  // For login route will redirect to main app if there is an active session
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.couchService.get('_session', { withCredentials: true }).pipe(map(res => {
       if (res.userCtx.name) {
