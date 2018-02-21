@@ -51,7 +51,8 @@
         <source [src]="resourceSrc" [type]="contentType" />
         Browser not supported
       </audio>
-      <object [data]="pdfSrc" *ngSwitchCase="'pdf'" width="800" height="600"></object>
+      <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
+      oallowfullscreen msallowfullscreen ></iframe>
       <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
       <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
     </div>

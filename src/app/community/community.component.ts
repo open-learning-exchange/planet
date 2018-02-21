@@ -1,10 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './community.component.html'

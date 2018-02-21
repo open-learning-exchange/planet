@@ -3,7 +3,6 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 // Make sure not to import the entire rxjs library!!!
 import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
-import { fromPromise } from 'rxjs/observable/fromPromise';
 
 import { findOneDocument } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';

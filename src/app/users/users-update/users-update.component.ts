@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
-  FormArray,
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
