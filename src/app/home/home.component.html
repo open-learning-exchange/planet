@@ -3,20 +3,19 @@
   <button mat-icon-button (click)="toggleNav()" i18n-title title="Menu"><mat-icon>menu</mat-icon></button>
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
-  <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings"><mat-icon>settings</mat-icon></button>
+  <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
     <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" alt="{{current_lang}}"
       title="{{current_lang}}" />
   </button>
-  <button mat-icon-button *ngIf="roles.indexOf('_admin') === -1" routerLink="/users/profile/{{name}}"><mat-icon>person</mat-icon></button>
+  <button mat-icon-button *ngIf="roles.indexOf('_admin') === -1" routerLink="/users/profile/{{name}}"><mat-icon>account_circle</mat-icon></button>
 </mat-toolbar>
-
 <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
   <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.served_url)">
-    <img src="assets/flags/{{language.short_code}}.png" title="{{language.name}}" alt="{{language.name}}" />
+    <img src="assets/flags/{{language.short_code}}.png" title="{{language.name}}" alt="{{language.name}}"/>
     <span>{{language.short_code}}</span>
   </button>
 </mat-menu>
@@ -50,25 +49,25 @@
       </li>
       <li>
         <a mat-button routerLink="/resources" i18n-title title="Resources">
-          <mat-icon>account_balance</mat-icon>
-          <label i18n>Library</label>
+         <mat-icon svgIcon="myLibrary"></mat-icon>
+         <label i18n>Library</label>
         </a>
       </li>
       <li>
         <a mat-button routerLink="/courses" i18n-title title="Courses">
-          <mat-icon>library_books</mat-icon>
+          <mat-icon svgIcon="myCourses"></mat-icon>
           <label i18n>Courses</label>
         </a>
       </li>
       <li>
         <a mat-button routerLink="/meetups" i18n-title title="Meetups">
-          <mat-icon>event</mat-icon>
+          <mat-icon svgIcon="myMeetups"></mat-icon>
           <label i18n>Meetups</label>
         </a>
       </li>
       <li>
         <a mat-button routerLink="/users" i18n-title title="Users">
-          <mat-icon>people</mat-icon>
+          <mat-icon svgIcon="myTeams"></mat-icon>
           <label i18n>Members</label>
         </a>
       </li>
@@ -76,19 +75,19 @@
     <ul class="bottom-nav">
       <li>
         <a mat-button routerLink="/" i18n-title title="Surveys">
-          <mat-icon>chrome_reader_mode</mat-icon>
+          <mat-icon svgIcon="surveys"></mat-icon>
           <label i18n>Surveys</label>
         </a>
       </li>
       <li>
         <a mat-button planetFeedback i18n-title title="Feedback">
-          <mat-icon>feedback</mat-icon>
+          <mat-icon svgIcon="feedback"></mat-icon>
           <label i18n>Feedback</label>
         </a>
       </li>
       <li>
         <a mat-button (click)="logoutClick()" i18n-title title="Logout">
-          <mat-icon>exit_to_app</mat-icon>
+          <mat-icon svgIcon="logout"></mat-icon>
           <label i18n>Logout</label>
         </a>
       </li>
@@ -98,5 +97,3 @@
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-

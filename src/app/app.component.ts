@@ -20,5 +20,17 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'myTeams',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team.svg'));
+    iconRegistry.addSvgIcon(
+      'surveys',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/survey.svg'));
+    iconRegistry.addSvgIcon(
+      'feedback',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
+    iconRegistry.addSvgIcon(
+      'logout',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/logout.svg'));
+    iconRegistry.addSvgIcon(
+      'usersettings',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/usersettings.svg'));
   }
 }
