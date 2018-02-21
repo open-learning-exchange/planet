@@ -16,7 +16,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
   communities = new MatTableDataSource();
   selectedValue = '';
-  selectedNation = '';
   nations = [];
   displayedColumns = [ 'name',
     'lastAppUpdateDate',
@@ -52,8 +51,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       .subscribe((data) => {
         this.nations = data.rows.map(function(nt){
           if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
-            this.selectedNation = nt.doc.nationurl;
-            this.communities.filter = this.selectedNation;
+            this.nationControl.setValue(nt.doc.nationurl);
+            this.communities.filter = nt.doc.nationurl;
           }
           return nt;
         }, this);

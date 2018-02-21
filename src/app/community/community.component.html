@@ -2,7 +2,7 @@
 <br/>
 <div class="example-container mat-elevation-z8">
   <mat-form-field>
-    <mat-select [(value)]="selectedNation" [formControl]="nationControl" (change)="onChange($event.value)">
+    <mat-select [formControl]="nationControl" (change)="onChange($event.value)">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let nationName of nations;" value={{nationName.doc.nationurl}}> {{nationName.doc.name}} </mat-option>
     </mat-select>
