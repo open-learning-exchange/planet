@@ -17,6 +17,7 @@ import { PlanetMessageService } from './shared/planet-message.service';
 import { MaterialModule } from './shared/material.module';
 
 import { environment } from '../environments/environment';
+import { MatIconRegistry } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -33,7 +34,7 @@ import { environment } from '../environments/environment';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry
   ],
   bootstrap: [ AppComponent ]
 })

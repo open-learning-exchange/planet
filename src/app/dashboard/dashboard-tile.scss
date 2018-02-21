@@ -1,0 +1,59 @@
+:host {
+
+  .dashboard-card {
+    display: grid;
+    grid-template-areas: "lt rt arrows";
+    grid-template-columns: 150px 1fr 50px;
+    grid-auto-rows: 1fr;
+    height: 18vh;
+    min-height: 100px;
+    padding: 0;
+
+    .left-tile {
+      border-radius: 2px 0 0 2px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      flex-wrap: wrap;
+      font-size: 1.25rem;
+
+      mat-icon {
+        margin: 0.25rem;
+        height: 30px;
+        width: 30px;
+      }
+
+    }
+
+    .right-tile {
+      display: grid;
+      overflow: hidden;
+
+      .dashboard-items {
+        display: grid;
+        grid-auto-columns: 150px;
+        transition: transform 0.5s;
+
+        .dashboard-item {
+          grid-column-end: span 1;
+          grid-row-end: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          padding: 0.5rem;
+        }
+      }
+    }
+
+    .dashboard-arrows {
+      grid-area: arrows;
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      grid-auto-rows: 50%;
+    }
+  }
+
+}
