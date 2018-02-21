@@ -3,22 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  template: `
-  <form class="form-horizontal" (ngSubmit)="onSubmit(meetupForm.value)" #meetupForm="ngForm">
-    <legend>Start a New Meetup</legend>
-    <div class="fields-container">
-      <mat-form-field>
-        <input matInput name="title" type="text" ngModel i18n-placeholder placeholder="Title" required=""  >
-      </mat-form-field>
-    </div>
-    <div class="fields-container">
-      <mat-form-field>
-        <textarea matInput name="description" type="text" ngModel i18n-placeholder placeholder="Description" required=""></textarea>
-      </mat-form-field>
-    </div>
-    <button mat-raised-button type="submit" i18n>Save</button>
-  </form>
-  `
+  templateUrl: './meetups-add.component.html',
 })
 export class MeetupsAddComponent {
   message = '';
