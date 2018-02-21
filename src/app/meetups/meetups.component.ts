@@ -5,6 +5,8 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
+import { Router } from '@angular/router';
+
 @Component({
   templateUrl: './meetups.component.html',
   styles: [ `
@@ -16,9 +18,7 @@ import { SelectionModel } from '@angular/cdk/collections';
   .mat-column-select {
     max-width: 44px;
   }
-  `
-
-  ]
+  ` ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit {
   meetups = new MatTableDataSource();
@@ -30,7 +30,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private router: Router
   ) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -119,6 +120,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
+  }
+
+  goBack() {
+    this.router.navigate([ '/' ]);
   }
 
   ngOnInit() {
