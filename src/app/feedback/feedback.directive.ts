@@ -1,7 +1,5 @@
 import { Directive, HostListener } from '@angular/core';
 import { UserService } from '../shared/user.service';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';

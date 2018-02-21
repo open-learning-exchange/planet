@@ -5,14 +5,16 @@ upsert_doc() {
   DB=$1
   DOC_NAME=$2
   DOC_LOC=$3
+  # Default method is PUT, fourth argument overrides
+  METHOD=${4:-"PUT"}
   DOC=$(curl $COUCHURL/$DB/$DOC_NAME)
   # If DOC includes a rev then it exists so we need to update
   # Otherwise we simply insert
   if [[ $DOC == *rev* ]]; then
     DOC_REV=$(echo $DOC | jq -r '. | ._rev')
-    curl -X PUT $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
   else
-    curl -X PUT $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
   fi
 }
 
@@ -101,6 +103,9 @@ curl -X PUT $COUCHURL/notifications
 # Add or update design docs
 upsert_doc courses _design/course-validators @./design/courses/course-validators.json
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
+# Insert indexes
+# Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
+upsert_doc login_activities _index '{"index":{"fields":[{"login_time":"desc"}]},"name":"time-index"}' POST
 # Insert dummy data docs
 insert_docs communityregistrationrequests ./design/community/community-mockup.json
 insert_docs nations ./design/nations/nations-mockup.json

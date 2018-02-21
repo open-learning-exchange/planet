@@ -5,6 +5,7 @@ import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -17,7 +18,8 @@ export class LoginFormComponent {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private planetMessageService: PlanetMessageService
   ) {
     const formObj = this.createMode ? Object.assign({}, loginForm, repeatPassword) : loginForm;
     this.userForm = this.formBuilder.group(formObj);
@@ -26,6 +28,7 @@ export class LoginFormComponent {
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   message = '';
+  model = { name: '', password: '', repeatPassword: '' };
 
   onSubmit() {
     if (this.userForm.valid) {
@@ -52,9 +55,7 @@ export class LoginFormComponent {
       'time': Date.now()
     };
     this.couchService.post('notifications', data)
-      .subscribe((res) => {
-        console.log(res);
-      }, (error) => this.message = 'Error');
+      .subscribe();
   }
 
   reRoute() {
@@ -65,25 +66,24 @@ export class LoginFormComponent {
     this.couchService.put('_users/org.couchdb.user:' + name,
       { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
-          this.message = 'User created: ' + data.id.replace('org.couchdb.user:', '');
+          this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
           this.welcomeNotification(data.id);
           this.login(this.userForm.value, true);
         }, (error) => this.message = '');
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
+    this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
-        this.userService.set(data);
         return this.userService.newSessionLog();
       })).subscribe((res) => {
         if (isCreate) {
-          this.router.navigate( [ 'users/update/' + name ]);
+          this.router.navigate( [ 'users/update/' + name.toLowerCase() ]);
         } else {
           this.reRoute();
         }
-      }, (error) => this.message = 'Username and/or password do not match');
+      }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
   }
 }
 
