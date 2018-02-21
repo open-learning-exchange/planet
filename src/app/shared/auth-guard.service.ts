@@ -35,14 +35,14 @@ export class AuthService {
     return this.checkUser(state.url);
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean>|boolean {
-    this.couchService
-      .get('_session', { withCredentials: true }).subscribe((data) => {
-        if (data.userCtx.name) {
-         this.router.navigate([ '/' ]);
-        }
-      });
-    return true;
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    return this.couchService.get('_session', { withCredentials: true }).pipe(map(res => {
+      if (res.userCtx.name) {
+        this.router.navigate([ '' ]);
+        return false;
+      }
+      return true;
+    }));
   }
 
 }
