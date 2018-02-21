@@ -17,7 +17,8 @@ import { of } from 'rxjs/observable/of';
       margin: 64px 30px;
     }
     .view-container {
-      padding: 8%;
+      background-color: #FFFFFF;
+      padding: 3rem;
     }
   ` ]
 })
