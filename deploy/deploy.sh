@@ -30,6 +30,13 @@ tag_latest_docker() {
   docker tag $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:db-init-latest
 }
 
+tag_versioned_docker() {
+  build_message Tag latest docker images ...
+  docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION
+  docker tag $DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:$VERSION
+  docker tag $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION
+}
+
 push_docker() {
   build_message Pushing docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION-$BRANCH-$COMMIT
@@ -50,6 +57,16 @@ push_latest_docker() {
   sleep 5s
 }
 
+push_versioned_docker() {
+  build_message Pushing latest docker images ...
+  docker push $DOCKER_ORG/$DOCKER_REPO_DEV:$VERSION
+  sleep 5s
+  docker push $DOCKER_ORG/$DOCKER_REPO:$VERSION
+  sleep 5s
+  docker push $DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION
+  sleep 5s
+}
+
 docker login -u $DOCKER_USER -p $DOCKER_PASS
 build_docker
 push_docker
@@ -57,6 +74,12 @@ if [[ $BRANCH = master ]];
   then
   tag_latest_docker
   push_latest_docker
+fi
+
+if [[ ! -z "${TRAVIS_TAG}" ]]
+  then
+  tag_versioned_docker
+  push_versioned_docker
 fi
 
 build_message Building Raspberry Pi docker image...
