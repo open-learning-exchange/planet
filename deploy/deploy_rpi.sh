@@ -86,11 +86,25 @@ tag_latest_docker() {
   docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
+tag_versioned_docker() {
+  build_message Tag versioned docker images ...
+  docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
+}
+
 push_docker() {
   build_message Pushing docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
+}
+
+push_versioned_docker() {
+  build_message Pushing latest docker images ...
+  docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
 }
 
 push_latest_docker() {
@@ -126,6 +140,12 @@ if [[ $BRANCH = master ]];
   then
   tag_latest_docker
   push_latest_docker
+fi
+
+if [[ ! -z "${TRAVIS_TAG}" ]]
+  then
+  tag_versioned_docker
+  push_versioned_docker
 fi
 
 remove_temporary_folders
