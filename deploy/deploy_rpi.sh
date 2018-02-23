@@ -18,6 +18,9 @@ case $i in
     -p=*|--pull=*)
         pull="${i#*=}"
         ;;
+    -t=*|--gtag=*)
+        gtag="${i#*=}"
+        ;;
     *)
     echo "usage: deploy_rpi.sh -b=<branch-name>|--branch=<branch-name>"
     echo "usage: deploy_rpi.sh -c=<commit-sha>|--commit=<commit-sha>"
@@ -142,7 +145,7 @@ if [[ $BRANCH = master ]];
   push_latest_docker
 fi
 
-if [[ ! -z "${TRAVIS_TAG}" ]]
+if [[ ! -z "${gtag}" ]]
   then
   tag_versioned_docker
   push_versioned_docker
