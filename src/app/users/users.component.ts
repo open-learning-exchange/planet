@@ -5,7 +5,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { CdkTableModule } from '@angular/cdk/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 
