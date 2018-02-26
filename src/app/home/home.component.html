@@ -23,17 +23,8 @@
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
   <span class="menu-item-notification" mat-menu-item *ngFor="let notification of notifications" (click)="readNotification(notification.doc)">
     <mat-divider></mat-divider>
-    <p class="menu-item-text" *ngIf="notification.doc.status==='unread' && notification.doc.link">
+    <p [ngClass]="{'menu-item-text':notification.doc.status==='unread'}">
       <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
-    </p>
-    <p class="menu-item-text" *ngIf="notification.doc.status==='unread' && notification.doc.link ===''">
-      {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
-    </p>
-    <p *ngIf="notification.doc.status!=='unread' && notification.doc.link">
-      <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
-    </p>
-    <p *ngIf="notification.doc.status!=='unread' && notification.doc.link===''">
-      {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
     </p>
   </span>
 </mat-menu>
