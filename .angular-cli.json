@@ -17,8 +17,7 @@
       "prefix": "app",
       "styles": [
         "../node_modules/material-design-icons/iconfont/material-icons.css",
-        "styles.scss",
-        "planet-mat-theme.scss"
+        "styles.scss"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
