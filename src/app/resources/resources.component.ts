@@ -10,7 +10,8 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
-
+import { ResponseContentType } from '@angular/http';
+import { environment } from '../../environments/environment';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
@@ -44,7 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   nationName = '';
   selection = new SelectionModel(true, []);
-
+  urlPrefix = environment.couchAddress + this.dbName + '/';
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -193,4 +194,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
+  download(dataFile) {
+    const a = document.createElement('a');
+    a.href = this.urlPrefix + dataFile._id + '/' + dataFile.filename;
+    a.download = dataFile._attachments;
+    a.click();
+  }
 }

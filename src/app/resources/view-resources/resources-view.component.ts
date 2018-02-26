@@ -43,7 +43,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   subscription;
   // Use string rather than boolean for i18n select
   fullView = 'off';
-
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
       .debug('Getting resource id from parameters')
@@ -182,4 +181,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
+  download(dataFile) {
+    const a = document.createElement('a');
+    a.href = this.urlPrefix + dataFile._id + '/' + dataFile.filename;
+    a.download = dataFile._attachments;
+    a.click();
+  }
 }
