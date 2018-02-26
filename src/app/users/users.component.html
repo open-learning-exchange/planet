@@ -28,14 +28,17 @@
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
+          [checked]="(selection.hasValue() && isAllSelected()) || (checkBoxArrayResult === 'checked')"
+          [indeterminate]="(selection.hasValue() && !isAllSelected()) || (checkBoxArrayResult === 'indeterminate')"
+        >
       </mat-checkbox>
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">
+      <mat-cell *matCellDef="let row; let i = index;">
         <mat-checkbox (click)="$event.stopPropagation()"
           (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
+          [checked]="selection.isSelected(row)"
+          (click)="changeCheckBoxStatus(i)"
+        >
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -77,10 +80,10 @@
           </a>
         </div>
         <div *ngIf="!element.isUserAdmin">
-          <button mat-icon-button *ngIf="element.roles.length === 0" (click)="addRole(element)">
+          <button mat-icon-button *ngIf="element.roles.length === 0" (click)="addRole(element)" (click)="checkCheckBoxArrayStatus()">
             <mat-icon>lock</mat-icon>
           </button>
-          <button mat-icon-button *ngIf="element.roles.length > 0" (click)="removeRole(element)">
+          <button mat-icon-button *ngIf="element.roles.length > 0" (click)="removeRole(element)" (click)="checkCheckBoxArrayStatus()">
             <mat-icon>lock_open</mat-icon>
           </button>
           <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
