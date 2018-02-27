@@ -5,7 +5,6 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormArray,
   Validators
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -36,7 +35,7 @@ export class MeetupsAddComponent {
     private fb: FormBuilder,
   ) {
     this.createForm();
-   }
+  }
 
   model = { title: '', description: '' };
 
@@ -67,8 +66,8 @@ export class MeetupsAddComponent {
     });
   }
 
-cancel() {
-  this.router.navigate([ '/meetups' ]);
-}
+  cancel() {
+    this.router.navigate([ '/meetups' ]);
+  }
 
 }
