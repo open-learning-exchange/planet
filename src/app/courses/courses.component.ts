@@ -52,7 +52,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         }).filter((c: any) => {
           return c._id !== '_design/course-validators';
         });
-      });
+      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
   ngAfterViewInit() {
