@@ -158,12 +158,11 @@ body {
       'stats-f rating'
       'stats-m stars';
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: 1fr 1fr 1fr;
     align-items: center;
 
     .stars {
       grid-area: stars;
-      justify-self: end;
+      justify-self: center;
     }
 
     .stats-total {
@@ -180,7 +179,7 @@ body {
 
     .rating {
       grid-area: rating;
-      text-align: right;
+      text-align: center;
 
       .rating-number {
         font-size: 2rem;
@@ -262,18 +261,18 @@ body {
   }
 
   .male-icon {
-    height: 20px;
+    height: 27px;
     weight:20px;
     float: left;
   }
 
   .female-icon {
-    height: 20px;
+    height: 25px;
     weight:20px;
     float: right;
   }
 
   .genderRatingProgressBar .mat-progress-bar-buffer {
-    background-color: red;
+    background-color: #FF3BC6;
   }
 }

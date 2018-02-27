@@ -1,5 +1,3 @@
-<!--Used to approximate design.  Should be replaced before merging"-->
-
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Library</span>
@@ -22,6 +20,7 @@
     </button>
     <button mat-mini-fab routerLink="add" *ngIf="!nationName"><mat-icon>add</mat-icon></button>
   </mat-toolbar>
+
   <mat-table #table [dataSource]="resources" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
@@ -70,22 +69,23 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div class="list-item-rating">
-          <span class="stars">
-            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            <!-- used simple arithmetic to get 20 and converted into % -->
-            <span [ngStyle]="{'width': getRating(element.hasRated, 1)}">
-              <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            </span>
-          </span>
-          <div class="stats stats-total">{{ element.totalRating }} Total</div>
           <div class="stats">
-            <img src="assets/icons/male.svg" alt="male" title="male" class="male-icon"/>
-            <img src="assets/icons/woman.svg" alt="female" title="female" class="female-icon"/>
+            <img src="assets/icons/male.svg" alt="male" title="male" class="male-icon"/>{{ element.maleRating === 0 ? 0 : ((element.maleRating / element.totalRating) * 100).toFixed(0) }}%
+            <img src="assets/icons/woman.svg" alt="female" title="female" class="female-icon"/>{{ element.femaleRating === 0 ? 0 : ((element.femaleRating / element.totalRating) * 100).toFixed(0) }}%
             <mat-progress-bar mode="determinate" [value]="getRatio(element.maleRating, element.femaleRating)" [ngClass]="{genderRatingProgressBar:element.totalRating}"></mat-progress-bar>
+            <div class="stats stats-total">{{ element.totalRating }} Total</div>
+            <span class="stars">
+              <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+              <!-- used simple arithmetic to get 20 and converted into % -->
+              <span [ngStyle]="{'width': getRating(element.rateSum, element.totalRating)}">
+                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+              </span>
+            </span>
           </div>
+
           <div class="rating">
-            <span i18n>Average</span>
             <span class="rating-number">{{ element.totalRating > 0 ? (element.rateSum / element.totalRating).toFixed(1) : (element.rateSum).toFixed(1) }}</span>
+            <span i18n>Average</span>
             <button mat-button (click)="openRatingDialog(element)" class="uppercase" [ngSwitch]="element.hasRated">
               <span *ngSwitchCase="0" i18n>Rate</span>
               <span *ngSwitchDefault i18n>Update Rating</span>

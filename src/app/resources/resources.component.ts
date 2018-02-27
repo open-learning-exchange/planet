@@ -125,7 +125,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         });
         return { ...resource, ...ratingInfo };
       }
-      return { ...resource,  rateSum: 0, totalRating: 0, maleRating: Math.floor(Math.random() * 101), femaleRating: 0, hasRated: 0  };
+      return { ...resource,  rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, hasRated: 0  };
     });
   }
 

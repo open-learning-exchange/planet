@@ -114,8 +114,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           return stats;
         }, { rateSum: 0, userRating: '', totalCount: 0, maleCount: 0, femaleCount: 0 });
         Object.assign(this.rating, {
-          totalFemale: femaleCount,
-          totalMale: maleCount,
+          femalePercent: femaleCount === 0 ? 0 : ((femaleCount / totalCount) * 100).toFixed(0),
+          malePercent: maleCount === 0 ? 0 : ((maleCount / totalCount) * 100).toFixed(0),
           average: totalCount === 0 ? 0 : rateSum / totalCount,
           userRating, totalCount });
       }, error => console.log(error));
