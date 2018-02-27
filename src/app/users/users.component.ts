@@ -59,7 +59,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     } else {
       // A non-admin user cannot receive all user docs
       this.planetMessageService.showAlert('Access restricted to admins');
-      this.displayTable = false;
     }
   }
 
