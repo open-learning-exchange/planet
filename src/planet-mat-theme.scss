@@ -5,28 +5,27 @@
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
 @include mat-core();
-@import './app/variables';
-
-$primary-hue: 500;
-$accent-hue: 500;
-$warn-hue: 500;
-
-$planet-primary: $mat-blue;
-$planet-accent: $mat-amber;
-$planet-warn: $mat-red;
-
-$planet-app-primary: mat-palette($planet-primary, $primary-hue);
-$planet-app-accent: mat-palette($planet-accent, $accent-hue);
-$planet-app-warn: mat-palette($planet-warn, $warn-hue);
-
-$planet-app-theme: mat-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
-
-$primary: mat-color($planet-app-primary, $primary-hue);
-$accent: mat-color($planet-app-accent, $accent-hue);
-$primary-text: mat-contrast($planet-primary, $primary-hue);
-$accent-text: mat-contrast($planet-accent, $accent-hue);
-$light-grey: mat-color($mat-grey, 100);
-$grey: mat-color($mat-grey, 400);
-$primary-light: mat-color($planet-app-primary, 100);
+@import './app/_variables';
 
 @include angular-material-theme($planet-app-theme);
+
+// Create sub-themes for the different sections which change the accent color.
+$accent-map: (
+  library: mat-palette($mat-pink, $accent-hue),
+  courses: mat-palette($mat-orange, $accent-hue),
+  meetups: mat-palette($mat-purple, $accent-hue),
+  teams: mat-palette($mat-green, $accent-hue)
+);
+
+@each $section in library, courses, meetups, teams {
+  $accent-palette: map-get($accent-map, #{$section});
+  $theme: mat-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
+  .planet-#{$section}-theme {
+    @include angular-material-theme($theme);
+
+    .accent-color {
+      background-color: mat-color($accent-palette, $accent-hue);
+      color: mat-contrast($accent-palette, $accent-hue);
+    }
+  }
+}

@@ -6,7 +6,7 @@ import { AuthService } from './shared/auth-guard.service';
 
 export const routes: Routes = [
   { path: '', loadChildren: './home/home.module#HomeModule', canActivateChild: [ AuthService ] },
-  { path: 'login', loadChildren: './login/login.module#LoginModule' },
+  { path: 'login', loadChildren: './login/login.module#LoginModule', canActivate: [ AuthService ] },
   { path: '**', component: PageNotFoundComponent }
 ];
 
