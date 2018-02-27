@@ -9,7 +9,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
-
 @Component({
   templateUrl: './users.component.html',
    styles: [ `
@@ -50,7 +49,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
-    private errorMessage: PlanetMessageService
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -59,7 +58,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       this.initializeData();
     } else {
       // A non-admin user cannot receive all user docs
-      this.errorMessage.showAlert('Access restricted to admins');
+      this.planetMessageService.showAlert('Access restricted to admins');
     }
   }
 

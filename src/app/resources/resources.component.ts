@@ -125,7 +125,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           // Sort in descending articleDate order, so the new resource can be shown on the top
           data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
           this.resources.data = data.rows.map(res => res.doc);
-        }, error => (this.message = 'Error'));
+        }, (error) => this.planetMessageService.showAlert('There was a problem getting resources'));
     }
   }
 

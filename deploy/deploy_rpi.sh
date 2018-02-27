@@ -18,6 +18,9 @@ case $i in
     -p=*|--pull=*)
         pull="${i#*=}"
         ;;
+    -t=*|--gtag=*)
+        gtag="${i#*=}"
+        ;;
     *)
     echo "usage: deploy_rpi.sh -b=<branch-name>|--branch=<branch-name>"
     echo "usage: deploy_rpi.sh -c=<commit-sha>|--commit=<commit-sha>"
@@ -86,11 +89,25 @@ tag_latest_docker() {
   docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
 }
 
+tag_versioned_docker() {
+  build_message Tag versioned docker images ...
+  docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
+  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
+}
+
 push_docker() {
   build_message Pushing docker images ...
   docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
   docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
+}
+
+push_versioned_docker() {
+  build_message Pushing latest docker images ...
+  docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
+  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
 }
 
 push_latest_docker() {
@@ -126,6 +143,12 @@ if [[ $BRANCH = master ]];
   then
   tag_latest_docker
   push_latest_docker
+fi
+
+if [[ ! -z "${gtag}" ]]
+  then
+  tag_versioned_docker
+  push_versioned_docker
 fi
 
 remove_temporary_folders

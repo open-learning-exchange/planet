@@ -81,8 +81,15 @@ before_deploy:
   - chmod 600 ./deploy/deploy_rsa
   - ssh-add ./deploy/deploy_rsa
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: ./deploy/deploy.sh
-  on:
-    all_branches: true
+  - provider: script
+    skip_cleanup: true
+    script: ./deploy/deploy.sh
+    on:
+      all_branches: true
+      tags: false
+  - provider: script
+    skip_cleanup: true
+    script: ./deploy/deploy.sh
+    on:
+      all_branches: true
+      tags: true
