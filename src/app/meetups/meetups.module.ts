@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { MeetupsComponent } from './meetups.component';
 import { MeetupsAddComponent } from './meetups-add.component';
 
@@ -11,7 +11,7 @@ import { MaterialModule } from '../shared/material.module';
 
 @NgModule({
   imports: [
-    MeetupsRouterModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule
+    MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent
