@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -47,7 +48,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private router: Router
+    private router: Router,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -56,8 +58,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       this.initializeData();
     } else {
       // A non-admin user cannot receive all user docs
-      this.message = 'Access restricted to admins';
-      this.displayTable = false;
+      this.planetMessageService.showAlert('Access restricted to admins');
     }
   }
 
