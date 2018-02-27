@@ -10,7 +10,6 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { ResponseContentType } from '@angular/http';
 import { environment } from '../../environments/environment';
 @Component({
   templateUrl: './resources.component.html',
