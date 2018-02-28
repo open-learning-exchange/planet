@@ -6,6 +6,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
+    <mat-icon *ngIf="userDetail.gender" svgIcon="{{userDetail.gender}}"></mat-icon>
     <span>{{userDetail.name}}</span>
     <span class="toolbar-fill"></span>
     <button mat-button class="margin-lr-3" *ngIf="(name === urlName) || (roles.indexOf('_admin') > -1)" i18n [routerLink]="['/users/update/', urlName]"><mat-icon>mode_edit</mat-icon><span>Edit Profile</span></button>
@@ -29,11 +30,6 @@
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Login</h3>
-            <h2 matLine><b>{{userDetail.name}}</b></h2>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
             <h3 class="userProfile-text-color" matLine i18n>Email</h3>
             <h2 matLine><b>{{userDetail.email}}</b></h2>
           </mat-list-item>
@@ -47,19 +43,14 @@
       </mat-grid-tile>
       <mat-grid-tile>
         <mat-list>
-          <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Phone Number</h3>
-            <h2 matLine><b>{{userDetail.phoneNumber}}</b></h2>
-          </mat-list-item>
-          <mat-divider></mat-divider>
           <mat-list-item >
-            <h3 class="userProfile-text-color" matLine i18n>BirthDate</h3>
-            <h2 matLine><b>{{userDetail.birthDate}}</b></h2>
-          </mat-list-item>
-          <mat-divider></mat-divider>
+              <h3 class="userProfile-text-color" matLine i18n>DOB</h3>
+              <h2 matLine><b>{{userDetail.birthDate}}</b></h2>
+            </mat-list-item>
+            <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Gender</h3>
-            <h2 matLine><b>{{userDetail.gender}}</b></h2>
+            <h3 class="userProfile-text-color" matLine i18n>Phone</h3>
+            <h2 matLine><b>{{userDetail.phoneNumber}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>

@@ -32,5 +32,11 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'usersettings',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/usersettings.svg'));
+    iconRegistry.addSvgIcon(
+      'male',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/male.svg'));
+    iconRegistry.addSvgIcon(
+      'female',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/female.svg'));
   }
 }
