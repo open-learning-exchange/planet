@@ -10,9 +10,9 @@
       {fullView, select, on {Show} off {Hide}} details
     </button>
     <span class="toolbar-fill"></span>
-    <button mat-button (click)="download(resource)" [disabled]="!resource.ischecked">
+    <a href={{resourceSrc}} mat-icon-button download="{{resource.filename}}" [disabled]="!resource.isDownloadable">
       <mat-icon>file_download</mat-icon>
-    </button>
+    </a>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">

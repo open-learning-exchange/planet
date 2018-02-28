@@ -46,7 +46,6 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
-  ischecked = false;
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -88,7 +87,7 @@ export class ResourcesAddComponent implements OnInit {
       addedBy: '',
       openUrl: [],
       openWhichFile: '',
-      ischecked: ''
+      isDownloadable: ''
     });
   }
 

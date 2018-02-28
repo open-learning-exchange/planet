@@ -181,10 +181,4 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
-  download(dataFile) {
-    const a = document.createElement('a');
-    a.href = this.urlPrefix + dataFile._id + '/' + dataFile.filename;
-    a.download = dataFile._attachments;
-    a.click();
-  }
 }

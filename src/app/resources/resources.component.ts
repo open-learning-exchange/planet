@@ -45,6 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   nationName = '';
   selection = new SelectionModel(true, []);
   urlPrefix = environment.couchAddress + this.dbName + '/';
+  resourceSrc = '';
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -193,10 +194,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
-  download(dataFile) {
-    const a = document.createElement('a');
-    a.href = this.urlPrefix + dataFile._id + '/' + dataFile.filename;
-    a.download = dataFile._attachments;
-    a.click();
+  downloadFile(resource) {
+    this.resourceSrc = this.urlPrefix + resource._id + '/' + resource.filename;
   }
 }

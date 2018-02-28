@@ -59,10 +59,10 @@
             <mat-icon>delete_forever</mat-icon>
             <span i18n>Delete</span>
           </button>
-          <button mat-menu-item (click)="download(element)" [disabled]="!element.ischecked">
+          <a href={{resourceSrc}} mat-menu-item (click)="downloadFile(element)" download [disabled]="!element.isDownloadable">
             <mat-icon>file_download</mat-icon>
             <span i18n>Download file</span>
-          </button>
+          </a>
         </mat-menu>
       </mat-cell>
     </ng-container>
