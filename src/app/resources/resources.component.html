@@ -70,8 +70,8 @@
       <mat-cell *matCellDef="let element">
         <div class="list-item-rating">
           <div class="stats">
-            <img src="assets/icons/male.svg" alt="male" title="male" class="male-icon"/>{{ element.maleRating === 0 ? 0 : ((element.maleRating / element.totalRating) * 100).toFixed(0) }}%
-            <img src="assets/icons/woman.svg" alt="female" title="female" class="female-icon"/>{{ element.femaleRating === 0 ? 0 : ((element.femaleRating / element.totalRating) * 100).toFixed(0) }}%
+            <mat-icon svgIcon="male" class="male-icon"></mat-icon>{{ element.maleRating === 0 ? 0 : ((element.maleRating / element.totalRating) * 100).toFixed(0) }}% &nbsp;
+            <mat-icon svgIcon="woman" class="female-icon"></mat-icon>{{ element.femaleRating === 0 ? 0 : ((element.femaleRating / element.totalRating) * 100).toFixed(0) }}%
             <mat-progress-bar mode="determinate" [value]="getRatio(element.maleRating, element.femaleRating)" [ngClass]="{genderRatingProgressBar:element.totalRating}"></mat-progress-bar>
             <div class="stats stats-total">{{ element.totalRating }} Total</div>
             <span class="stars">

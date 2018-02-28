@@ -130,7 +130,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
 
-  addRatingToResource = (id, index, ratings, ratingInfo) => {
+  addRatingToResource(id, index, ratings, ratingInfo) {
     const rating = ratings[index];
     ratingInfo.totalRating++;
     ratingInfo.rateSum = ratingInfo.rateSum + parseInt(rating.rate, 10);
@@ -149,12 +149,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       ratingInfo.ratingId = (rating.user.name === this.userService.get().name) ? rating._id :  ratingInfo.ratingId;
       ratingInfo.ratingRev = (rating.user.name === this.userService.get().name) ? rating._rev :  ratingInfo.ratingRev;
       ratingInfo.comment = (rating.user.name === this.userService.get().name) ? rating.comment :  ratingInfo.comment;
-    } else {
-      // since Admin profile is not accesible
-      ratingInfo.hasRated = (rating.user === this.userService.get().name) ? rating.rate : ratingInfo.hasRated;
-      ratingInfo.ratingId = (rating.user === this.userService.get().name) ? rating._id :  ratingInfo.ratingId;
-      ratingInfo.ratingRev = (rating.user === this.userService.get().name) ? rating._rev :  ratingInfo.ratingRev;
-      ratingInfo.comment = (rating.user === this.userService.get().name) ? rating.comment :  ratingInfo.comment;
     }
     if (ratings.length > index + 1 && ratings[index + 1].item === id) {
       // Ratings are sorted by resource id,
@@ -304,24 +298,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.couchService.post('ratings', ratingData)
         .subscribe((data) => {
            this.ngOnInit();
+           console.log('Thank you for rating');
         }, (error) => console.log(error));
     }
   }
 
-  rating(rating) {
-    if (rating) {
-      const user = this.userService.get().roles.indexOf('_admin') > -1 ? this.userService.get().name : this.userService.get().profile;
-      const ratingData = {
-        'user': user,
-        'item': rating.item,
-        'type': 'resource',
-        'rate': rating.rate,
-        'comment': rating.comment,
-        'time': Date.now()
-      };
-      this.couchService.post('ratings', ratingData)
-        .subscribe((data) => {
-          console.log('Thank you for rating');
-        }, (error) => console.log(error));
-    }
 }
