@@ -14,8 +14,6 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
   templateUrl: './configuration.component.html'
 })
 export class ConfigurationComponent implements OnInit {
-  private headers = new HttpHeaders().set('Content-Type', 'application/json');
-  private defaultOpts = { headers: this.headers, withCredentials: true };
   @ViewChild('stepper') stepper: MatStepper;
   nationOrCommunity = 'community';
   message = '';
@@ -121,11 +119,22 @@ export class ConfigurationComponent implements OnInit {
             console.log(err);
           });
         }, (error) => (error));
-      if (this.configurationFormGroup.value.planet_type === 'community') {
-        this.http.put('http://' + this.configurationFormGroup.value.parent_domain + '/_users/org.couchdb.user:' + this.loginForm.value.username,
-          { 'name': this.loginForm.value.username, 'password': this.loginForm.value.password, 'roles': [], 'type': 'user', 'isUserAdmin': false }, this.defaultOpts)
-          .subscribe((data) => console.log(data)), (error) => (error);
-      }
+      const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      const defaultOpts = { headers: headers, withCredentials: true };
+      this.http.post('http://' + this.configurationFormGroup.value.parent_domain + '/communityregistrationrequests', config, defaultOpts)
+        .subscribe((res: any) => {
+          this.http.put('http://' + this.configurationFormGroup.value.parent_domain + '/_users/org.couchdb.user:' + this.loginForm.value.username,
+          { 'name': this.loginForm.value.username,
+            'password': this.loginForm.value.password,
+            'roles': [],
+            'type': 'user',
+            'request_id': res.id,
+            'planet_type': this.configurationFormGroup.value.planet_type,
+            'isUserAdmin': false
+          }, defaultOpts)
+            .subscribe((data) => console.log(data)), (error) => (error);
+        }, (error) => (error));
     }
   }
 
