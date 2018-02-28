@@ -20,11 +20,11 @@
   </button>
 </mat-menu>
 <!--Notification dropdown menu-->
-<mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
+<mat-menu #notificationMenu="matMenu" [overlapTrigger]="false"> 
   <span class="menu-item-notification" mat-menu-item *ngFor="let notification of notifications" (click)="readNotification(notification.doc)">
     <mat-divider></mat-divider>
-    <p [ngClass]="{'menu-item-text':notification.doc.status==='unread'}
-      <a routerLink="{{notification.doc.link}}" [queryParams]="notification.doc">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>   
+    <p [ngClass]="{'menu-item-text':notification.doc.status==='unread'}">
+      <a routerLink="{{notification.doc.link}}" [queryParams]="notification.doc">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
     </p>
   </span>
 </mat-menu>
