@@ -43,6 +43,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   subscription;
   // Use string rather than boolean for i18n select
   fullView = 'off';
+
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
       .debug('Getting resource id from parameters')

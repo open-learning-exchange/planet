@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { environment } from '../../environments/environment';
+
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
@@ -45,7 +46,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   nationName = '';
   selection = new SelectionModel(true, []);
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  resourceSrc = '';
+
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
