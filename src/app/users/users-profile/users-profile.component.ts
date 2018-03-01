@@ -40,7 +40,6 @@ export class UsersProfileComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
     this.profileView();
   }
 
@@ -136,8 +135,8 @@ export class UsersProfileComponent implements OnInit {
   }
 
   goBack() {
-    Object.assign(this, this.userService.get());
-    if (this.roles.indexOf('_admin') > -1) {
+    const currentUser = this.userService.get();
+    if (currentUser.isUserAdmin) {
       this.router.navigate([ '/users' ]);
     } else {
       this.router.navigate([ '/' ]);

@@ -99,12 +99,9 @@ export class UsersUpdateComponent implements OnInit {
     });
   }
 
-  cancel() {
-    this.router.navigate([ '/users/profile/' + this.user.name ]);
-  }
 
   goBack() {
-      this.router.navigate([ '/users/profile', this.user.name ]);
+    this.router.navigate([ '/users/profile', this.user.name ]);
   }
 
   bindFile(event) {
