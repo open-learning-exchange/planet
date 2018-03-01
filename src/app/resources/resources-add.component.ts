@@ -46,6 +46,7 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
