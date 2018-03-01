@@ -117,7 +117,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     if (this.selection.selected.length === 1) {
       const meetup = this.selection.selected[0];
       amount = 'single';
-      okClick = this.deleteMeetups(meetup);
+      okClick = this.deleteMeetup(meetup);
       displayName = meetup.title;
     }
     this.openDeleteDialog(okClick, amount, displayName);
