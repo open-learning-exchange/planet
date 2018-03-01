@@ -194,7 +194,4 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
-  downloadFile(resource) {
-    this.resourceSrc = this.urlPrefix + resource._id + '/' + resource.filename;
-  }
 }
