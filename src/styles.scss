@@ -15,6 +15,10 @@ body {
     color: inherit;
   }
 
+  .primary-text-color {
+    color: $primary;
+  }
+
   .primary-color {
     background-color: $primary;
     color: $primary-text;
@@ -229,7 +233,7 @@ body {
     display: none;
   }
 
-  .user-profile {
+  .profile-image-large {
     border-radius: 50%;
     width: 100%;
   }
@@ -238,10 +242,6 @@ body {
     max-width: 50px;
     height: 50px;
     padding: 3px;
-  }
-
-  .userProfile-text-color{
-    color: $primary;
   }
 
 }

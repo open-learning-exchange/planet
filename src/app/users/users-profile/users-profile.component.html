@@ -16,26 +16,26 @@
     <mat-grid-list cols="3">
       <mat-grid-tile>
         <ng-container *ngIf="userDetail._attachments; else noAttachment">
-          <img class="user-profile" [src]="imageSrc">
+          <img class="profile-image-large" [src]="imageSrc">
         </ng-container>
         <ng-template #noAttachment>
-          <img class="user-profile" src="../assets/image.png">
+          <img class="profile-image-large" src="../assets/image.png">
         </ng-template>
       </mat-grid-tile>
       <mat-grid-tile>
         <mat-list>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Full Name</h3>
+            <h3 class="primary-text-color" matLine i18n>Full Name</h3>
             <h2 mat-line><b>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Email</h3>
+            <h3 class="primary-text-color" matLine i18n>Email</h3>
             <h2 matLine><b>{{userDetail.email}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Language</h3>
+            <h3 class="primary-text-color" matLine i18n>Language</h3>
             <h2 matLine><b>{{userDetail.language}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
@@ -44,17 +44,17 @@
       <mat-grid-tile>
         <mat-list>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>DOB</h3>
+            <h3 class="primary-text-color" matLine i18n>DOB</h3>
             <h2 matLine><b>{{userDetail.birthDate}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Phone</h3>
+            <h3 class="primary-text-color" matLine i18n>Phone</h3>
             <h2 matLine><b>{{userDetail.phoneNumber}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <h3 class="userProfile-text-color" matLine i18n>Level</h3>
+            <h3 class="primary-text-color" matLine i18n>Level</h3>
             <h2 matLine><b>{{userDetail.level}}</b></h2>
           </mat-list-item>
           <mat-divider></mat-divider>
