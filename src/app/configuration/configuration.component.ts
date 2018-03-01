@@ -101,7 +101,9 @@ export class ConfigurationComponent implements OnInit {
         .subscribe((data) => {
           this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username,
           { 'name': this.loginForm.value.username, 'password': this.loginForm.value.password, roles: [], 'type': 'user',
-          'isUserAdmin': true }).subscribe((data1) => {
+            'isUserAdmin': true, 'firstName': this.contactFormGroup.value.firstName, 'middleName': this.contactFormGroup.value.middleName,
+            'lastName': this.contactFormGroup.value.lastName, 'email': this.contactFormGroup.value.email,
+            'phoneNumber': this.contactFormGroup.value.phoneNumber }).subscribe((data1) => {
             this.message = 'Admin created: ' + data1.id.replace('org.couchdb.user:', '');
           }, (error) => this.message = '');
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
