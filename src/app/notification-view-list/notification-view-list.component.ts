@@ -44,7 +44,7 @@ export class NotificationViewListComponent implements OnInit {
             cnt ++;
           }
           return notifications.doc;
-        }).filter(nt  => {
+        }).filter(nt => {
           return nt['user'] === user_id;
         });
         this.notifications['count_unread'] =  cnt;
