@@ -1,12 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
-import { NotificationViewComponent } from '../notification-view/notification-view.component';
 import { NotificationViewListComponent } from '../notification-view-list/notification-view-list.component';
 
 const routes: Routes = [
@@ -21,7 +19,6 @@ const routes: Routes = [
       { path: 'community/:nation', component: CommunityComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
-      { path: 'notificationview', component: NotificationViewComponent },
       { path: 'notificationviewlist', component: NotificationViewListComponent }
     ]
   }

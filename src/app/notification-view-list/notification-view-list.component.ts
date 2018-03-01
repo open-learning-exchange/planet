@@ -9,7 +9,7 @@ import { CouchService } from '../shared/couchdb.service';
       <mat-list-item (click)="readNotification(notification.doc)">
       <mat-divider></mat-divider>
         <p [ngClass]="{'menu-item-text':notification.doc.status==='unread'}">
-          <a routerLink="{{notification.doc.link}}" [queryParams]="notification.doc">
+          <a>
             {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
           </a>
         </p>
@@ -53,8 +53,10 @@ export class NotificationViewListComponent implements OnInit {
 
   readNotification(notification) {
     const update_notificaton =  { ...notification, 'status': 'read' };
-    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
-      console.log(data);
-    },  (err) => console.log(err));
+    if (notification.status === 'unread') {
+      this.couchService.put('notifications/' + notification._id, update_notificaton)
+      .subscribe((data) => {
+      }, (err) => console.log(err));
+    }
   }
 }
