@@ -24,6 +24,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   meetups = new MatTableDataSource();
   displayedColumns = [ 'select', 'title' ];
   message = '';
+  readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
 
@@ -68,7 +69,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
 
-
   deleteClick(meetup) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
@@ -93,14 +93,31 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
     };
   }
+
+  deleteMeetups(meetups) {
+    // Deletes multiple meetups
+    return () => {
+      const deleteMeetupArr = meetups.map((meetup) => {
+        return { _id: meetup._id, _rev: meetup._rev, _deleted: true };
+      });
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
+        .subscribe((data) => {
+          this.getMeetups();
+          this.selection.clear();
+          this.deleteDialog.close();
+          this.planetMessageService.showAlert('You have deleted selected meetups');
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting these meetups.');
+      };
+    }
+
   deleteSelected() {
     let amount = 'many',
-      okClick = this.deleteMeetup(this.selection.selected),
+      okClick = this.deleteMeetups(this.selection.selected),
       displayName = '';
     if (this.selection.selected.length === 1) {
       const meetup = this.selection.selected[0];
       amount = 'single';
-      okClick = this.deleteMeetup(meetup);
+      okClick = this.deleteMeetups(meetup);
       displayName = meetup.title;
     }
     this.openDeleteDialog(okClick, amount, displayName);

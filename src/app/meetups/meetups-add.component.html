@@ -7,13 +7,13 @@
   <div class="view-container">
       <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
           <legend>Start a New Meetup</legend>
-          <div >
+          <div>
             <mat-form-field>
               <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
               <mat-error><planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages></mat-error>
             </mat-form-field>
           </div>
-          <div >
+          <div>
             <mat-form-field>
               <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
               <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
@@ -23,7 +23,4 @@
           <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
         </form>
   </div>
-
-    
-
 </div>
