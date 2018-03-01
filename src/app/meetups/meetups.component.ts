@@ -60,6 +60,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.meetups.filter = filterValue;
   }
+
   getMeetups() {
     this.couchService.get('meetups/_all_docs?include_docs=true')
       .subscribe((data) => {
@@ -88,6 +89,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
         .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
+          this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
