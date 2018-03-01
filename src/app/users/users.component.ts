@@ -37,8 +37,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
-  checkBoxArray: boolean[] = [];
-  checkBoxArrayResult = '';
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -58,7 +56,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     Object.assign(this, this.userService.get());
     if (this.isUserAdmin) {
       this.initializeData();
-      this.initCheckBoxArray();
     } else {
       // A non-admin user cannot receive all user docs
       this.planetMessageService.showAlert('Access restricted to admins');
@@ -86,62 +83,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return numSelected === numRows;
   }
 
-   /** Set all init values in CheckBoxArray are false. */
-  initCheckBoxArray() {
-    this.getUsers().debug('Getting checkbox list').subscribe((data) => {
-        data.rows.reduce((users: any[], user: any, index: number) => {
-          // when index =0, user.id = '_design/_auth', we should not store it.
-          const i = index - 1;
-          if (user.id !== '_design/_auth') {
-            this.checkBoxArray[i] = false;
-          }
-          return this.checkBoxArray;
-      }, []);
-    }, (error) => {
-      console.log('Error initializing checkbox array data!');
-      console.log(error);
-    });
-  }
-
-  /** if checkbox is selected, the value in CheckBoxArray changes to true;
-      if checkbox isn't selected, the value in CheckBoxArray changes to false */
-  changeCheckBoxStatus(index: number) {
-    if (this.checkBoxArray[index] === false) {
-      this.checkBoxArray[index] = true;
-    } else {
-      this.checkBoxArray[index] = false;
-    }
-  }
-
-  checkCheckBoxArrayStatus() {
-    let countTrue = 0;
-    for (let i = 0; i < this.checkBoxArray.length; i++) {
-        if (this.checkBoxArray[i] === true) {
-            countTrue = countTrue + 1;
-        }
-    }
-    console.log('The value of countTrue : ' + countTrue);
-    console.log('The length of checkBoxArray : ' + this.checkBoxArray.length);
-    if (countTrue === this.checkBoxArray.length) {
-      this.checkBoxArrayResult = 'checked';
-    } else if (countTrue === 0) {
-      this.checkBoxArrayResult = 'unchecked';
-    } else {
-      this.checkBoxArrayResult = 'indeterminate';
-    }
-    console.log('checkBoxArrayResult: ' + this.checkBoxArrayResult);
-  }
-
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     if (this.isAllSelected()) {
       this.selection.clear();
-      this.initCheckBoxArray();
     } else {
       this.allUsers.data.forEach(row => this.selection.select(row));
-      for (let i = 0; i < this.checkBoxArray.length; i++) {
-        this.checkBoxArray[i] = true;
-      }
     }
   }
 
@@ -150,6 +97,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   initializeData() {
+    this.selection.clear();
     this.getUsers().debug('Getting user list').subscribe((data) => {
       this.allUsers.data = data.rows.reduce((users: any[], user: any) => {
         if (user.id !== '_design/_auth') {
