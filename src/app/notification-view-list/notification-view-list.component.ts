@@ -6,11 +6,11 @@ import { CouchService } from '../shared/couchdb.service';
   template: `
     Your Notifications
     <mat-list role="list" *ngFor="let notification of notifications">
-      <mat-list-item (click)="readNotification(notification.doc)">
+      <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
-        <p [ngClass]="{'menu-item-text':notification.doc.status==='unread'}">
+        <p [ngClass]="{'menu-item-text':notification.status==='unread'}">
           <a>
-            {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+            {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
           </a>
         </p>
       </mat-list-item>
@@ -43,9 +43,9 @@ export class NotificationViewListComponent implements OnInit {
           if (notifications.doc.status === 'unread') {
             cnt ++;
           }
-          return notifications;
+          return notifications.doc;
         }).filter(nt  => {
-          return nt.doc['user'] === user_id;
+          return nt['user'] === user_id;
         });
         this.notifications['count_unread'] =  cnt;
       }, (error) => console.log(error));
