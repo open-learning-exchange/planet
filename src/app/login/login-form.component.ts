@@ -48,7 +48,7 @@ export class LoginFormComponent {
     const data = {
       'user': user_id,
       'message': 'Welcome ' + user_id.replace('org.couchdb.user:', '') + ' to the Planet Learning',
-      'link': '',
+      'link': '/notificationviewlist',
       'type': 'register',
       'priority': 1,
       'status': 'unread',
@@ -69,7 +69,11 @@ export class LoginFormComponent {
           this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
           this.welcomeNotification(data.id);
           this.login(this.userForm.value, true);
-        }, (error) => this.message = '');
+        }, error => {
+          if (error.error.error === 'conflict') {
+            this.planetMessageService.showMessage('User name already exists, please, register with a different user name');
+          }
+        });
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
