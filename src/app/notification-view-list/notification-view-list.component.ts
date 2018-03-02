@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   template: `
-    <p i18n>Your Notifications<p>
+    <p i18n>Your Notifications</p>
     <mat-list role="list" *ngFor="let notification of notifications">
       <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
