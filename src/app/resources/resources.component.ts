@@ -12,24 +12,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
-  templateUrl: './resources.component.html',
-  styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    a:hover {
-      color: #2196f3;
-    }
-  ` ]
+  templateUrl: './resources.component.html'
 })
 export class ResourcesComponent implements OnInit, AfterViewInit {
   resources = new MatTableDataSource();

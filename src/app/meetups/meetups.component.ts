@@ -8,17 +8,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 
 @Component({
-  templateUrl: './meetups.component.html',
-  styles: [ `
-  .space-container {
-    margin: 64px 30px;
-    background: none;
-  }
-  /* Column Widths */
-  .mat-column-select {
-    max-width: 44px;
-  }
-  ` ]
+  templateUrl: './meetups.component.html'
 })
 export class MeetupsComponent implements OnInit, AfterViewInit {
   meetups = new MatTableDataSource();

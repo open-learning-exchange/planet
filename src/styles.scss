@@ -239,5 +239,25 @@ body {
     height: 50px;
     padding: 3px;
   }
+  
+  .space-container {
+    margin: 64px 30px;
+  }
 
+  .mat-column-select {
+    max-width: 44px;
+  }
+
+  .mat-column-action, .mat-column-rating{
+    max-width: 225px;
+  }
+  
+  .tableAnchor a:hover {
+    color:$primary;
+  }
+
+  .view-container {
+    background-color: #FFFFFF;
+    padding: 1rem;
+  }
 }
