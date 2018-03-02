@@ -4,12 +4,12 @@ import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   template: `
-    Your Notifications
+    <p i18n>Your Notifications<p>
     <mat-list role="list" *ngFor="let notification of notifications">
       <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
         <p [ngClass]="{'menu-item-text':notification.status==='unread'}">
-          <a>
+          <a routerLink="{{notification.link}}">
             {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
           </a>
         </p>
