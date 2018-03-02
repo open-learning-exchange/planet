@@ -106,7 +106,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
                 this.couchService.put('_users/' + data.doc._id + '?rev=' + data.doc._rev, { ...data.doc, roles: [ 'learner' ] }).subscribe((data) => {
                   delete community['_id'];
                   delete community['_rev'];
-                  console.log(community);
                   this.couchService.post('nations', { ...community }).subscribe(() => {
                     this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
                     .subscribe((data) => {
