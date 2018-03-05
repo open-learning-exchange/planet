@@ -3,11 +3,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
-<<<<<<< HEAD
-=======
 import { switchMap } from 'rxjs/operators';
 import {FormControl, Validators} from '@angular/forms';
->>>>>>> 84449b3... [#378] CommunityFilter
 
 @Component({
   templateUrl: './community.component.html'
@@ -26,13 +23,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'registrationRequest',
     'action'
   ];
-<<<<<<< HEAD
   editDialog: any;
-=======
   deleteDialog: any;
   nationControl = new FormControl();
   statusControl = new FormControl();
->>>>>>> 84449b3... [#378] CommunityFilter
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
