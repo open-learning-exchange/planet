@@ -12,7 +12,7 @@ fi
 
 if [ "$ON_RPI" = "true" ]
 then
-    sed -i -e "s#couchAddress: 'planet-db-host:planet-db-port/'#couchAddress: window.location.protocol + '//' + window.location.hostname + ':planet-db-port/'#g" /usr/share/nginx/html/main*
+    sed -i -e 's#couchAddress:"planet-db-host:planet-db-port/"#couchAddress:window.location.protocol+"//"+window.location.hostname+":planet-db-port/"#g' /usr/share/nginx/html/main*
 else
     sed -i -e "s#planet-db-host#$PROTOCOL://$DB_HOST#g" /usr/share/nginx/html/main*
 fi
