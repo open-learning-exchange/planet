@@ -80,6 +80,7 @@ export class LoginFormComponent {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
+        this.userService.set(data);
         return this.userService.newSessionLog();
       })).subscribe((res) => {
         if (isCreate) {
