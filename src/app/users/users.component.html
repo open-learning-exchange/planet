@@ -19,7 +19,7 @@
             <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
+        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRole.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
     </div>
   </mat-toolbar>
@@ -33,8 +33,7 @@
       </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-          (change)="$event ? selection.toggle(row) : null"
+        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
           [checked]="selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
@@ -61,7 +60,7 @@
         <mat-chip-list>
           <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.isUserAdmin" (remove)="deleteRole(element,i)">
             {{role}}
-            <mat-icon matChipRemove *ngIf="!element.isUserAdmin" (click)="$event.stopPropagation()">cancel</mat-icon>
+            <mat-icon matChipRemove *ngIf="!element.isUserAdmin">cancel</mat-icon>
           </mat-chip>
           <mat-chip *ngIf="element.isUserAdmin">admin</mat-chip>
       </mat-chip-list>

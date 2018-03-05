@@ -95,6 +95,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   initializeData() {
+    this.selection.clear();
     this.getUsers().debug('Getting user list').subscribe((data) => {
       this.allUsers.data = data.rows.reduce((users: any[], user: any) => {
         if (user.id !== '_design/_auth') {

@@ -1,31 +1,62 @@
 
-<p class="km-message">{{message}}</p>
-<h2 i18n>Meetups</h2>
-<button mat-raised-button routerLink="add" routerLinkActive="active" i18n>Meetup Add</button>
-<div class="example-container mat-elevation-z8">
-  <div class="example-header">
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
-    </mat-form-field>
-  </div>
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Meetups</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill"></span>
+    <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
+      <span i18n>Delete</span>
+    </button>
+    <button mat-mini-fab routerLink="add">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-toolbar>
   <mat-table #table [dataSource]="meetups" matSort>
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
+          i18n>
+        </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
     <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
+      <mat-cell *matCellDef="let element" class="list-content-menu">
+        <h3 class="header">{{element.title}}</h3>
+        <div class="content">
+          <p>{{ element.description }}</p>
+        </div>
+        <button *ngIf="!nationName" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-cell>
+          <mat-menu #meetupMenu="matMenu">
+            <button mat-menu-item (click)="deleteClick(element)">
+              <mat-icon>delete_forever</mat-icon>
+              <span i18n>Delete</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="description">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-      <mat-cell *matCellDef="let element" ><button mat-raised-button (click)="deleteClick(element)">Delete</button> </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
   </mat-table>
-  <mat-paginator #paginator
-    [pageSize]="10"
-    [pageSizeOptions]="[5, 10, 20]">
+  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n>
   </mat-paginator>
 </div>
