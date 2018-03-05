@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
-import {FormControl, Validators} from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './community.component.html'
@@ -128,6 +128,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         return data.registrationRequest === this.statusControl.value;
       } else if (this.nationControl.value) {
         return data.nationUrl === this.nationControl.value;
+      } else {
+        return true;
       }
     };
     this.getNationList();
