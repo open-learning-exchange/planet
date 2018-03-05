@@ -19,7 +19,7 @@ const routes: Routes = [
       { path: 'community/:nation', component: CommunityComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
-      { path: 'notificationviewlist', component: NotificationViewListComponent }
+      { path: 'view', component: NotificationViewListComponent }
     ]
   }
 ];
