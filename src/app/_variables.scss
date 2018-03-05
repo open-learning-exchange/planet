@@ -1,4 +1,33 @@
+@import '~@angular/material/theming';
+
+$primary-hue: 500;
+$accent-hue: 500;
+$warn-hue: 500;
+
+$planet-primary: $mat-blue;
+$planet-accent: $mat-amber;
+$planet-warn: $mat-red;
+
+$planet-app-primary: mat-palette($planet-primary, $primary-hue);
+$planet-app-accent: mat-palette($planet-accent, $accent-hue);
+$planet-app-warn: mat-palette($planet-warn, $warn-hue);
+
+$planet-app-theme: mat-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
+
+$primary: mat-color($planet-app-primary, $primary-hue);
+$accent: mat-color($planet-app-accent, $accent-hue);
+$primary-text: mat-contrast($planet-primary, $primary-hue);
+$accent-text: mat-contrast($planet-accent, $accent-hue);
+$light-grey: mat-color($mat-grey, 100);
+$grey: mat-color($mat-grey, 400);
+$primary-light: mat-color($planet-app-primary, 100);
+
 $font-family: Roboto, sans-serif;
+
+/*
+ * Old Planet Material Colors
+ * Saved in case we want to revert
+ * We can delete once UX finalizes colors
 
 $ole-blue-light: rgb(76, 165, 211);
 $ole-blue: rgb(42, 121, 200);
@@ -13,10 +42,6 @@ $pending: #ed9121; // Dogi's WIP label color
 $error-red: #a94442;
 // $body-margin: 8px; we won't need to use this if we use bootstrap's container class
 
-/*
- * Old Planet Material Colors
- * Saved in case we want to revert
- * We can delete once UX finalizes colors
 $planet-primary: (
   50 : #e5eff8,
   100 : #bfd7ef,

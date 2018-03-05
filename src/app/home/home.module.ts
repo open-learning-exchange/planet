@@ -14,8 +14,8 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackDirective } from '../feedback/feedback.directive';
+import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 
 @NgModule({
   imports: [
@@ -36,8 +36,8 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     NationComponent,
     FeedbackComponent,
     ManagerDashboardComponent,
-    FeedbackDirective
-  ],
-  providers: [ PlanetMessageService ],
+    FeedbackDirective,
+    DashboardTileComponent
+  ]
 })
 export class HomeModule {}
