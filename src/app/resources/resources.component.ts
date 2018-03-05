@@ -25,7 +25,7 @@ import { environment } from '../../environments/environment';
       max-width: 44px;
     }
     .mat-column-rating {
-      max-width: 250px;
+      max-width: 225px;
     }
     a:hover {
       color: #2196f3;
@@ -92,19 +92,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.resources.data.forEach(row => this.selection.select(row));
   }
 
-  getRating(sum, timesRated) {
-    let rating = 0;
-    if (sum > 0 && timesRated > 0) {
-      rating = sum / timesRated;
-    }
-    // Multiply by 20 to convert rating out of 5 to percent for width
-    return (rating * 20) + '%';
-  }
-
-  getRatio(num, dem) {
-    return (num / (num + dem)) * 100;
-  }
-
   setupList(resourcesRes, ratings) {
     this.resources.data = resourcesRes.rows.map((r: any) => {
       const resource = r.doc;
@@ -112,44 +99,29 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         return resource._id === rating.item;
       });
       if (ratingIndex > -1) {
-        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, {
-          rateSum: 0,
-          totalRating: 0,
-          maleRating: 0,
-          femaleRating: 0,
-          hasRated: 0,
-          comment: '',
-          ratingId: '',
-          ratingRev: '',
-          userRating: (ratings[ratingIndex].user.name === this.userService.get().name) ? ratings[ratingIndex].rate : ''
-        });
-        return { ...resource, ...ratingInfo };
+        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, {});
+        return { ...resource, rating: ratingInfo };
       }
-      return { ...resource,  rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, hasRated: 0  };
+      return { ...resource,  rating: { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}  } };
     });
   }
 
-
-  addRatingToResource(id, index, ratings, ratingInfo) {
+  addRatingToResource(id, index, ratings, ratingInfo: any) {
     const rating = ratings[index];
-    ratingInfo.totalRating++;
-    ratingInfo.rateSum = ratingInfo.rateSum + parseInt(rating.rate, 10);
+    // If totalRating is undefined, will start count at 1
+    ratingInfo.totalRating = ratingInfo.totalRating + 1 || 1;
+    ratingInfo.rateSum = ratingInfo.rateSum + rating.rate || rating.rate;
     if (rating.user.gender) {
       switch (rating.user.gender) {
         case 'male':
-          ratingInfo.maleRating++;
+          ratingInfo.maleRating = ratingInfo.maleRating + 1 || 1;
           break;
         case 'female':
-          ratingInfo.femaleRating++;
+          ratingInfo.femaleRating = ratingInfo.femaleRating + 1 || 1;
           break;
       }
     }
-    if (rating.user.name) {
-      ratingInfo.hasRated = (rating.user.name === this.userService.get().name) ? rating.rate :  ratingInfo.hasRated;
-      ratingInfo.ratingId = (rating.user.name === this.userService.get().name) ? rating._id :  ratingInfo.ratingId;
-      ratingInfo.ratingRev = (rating.user.name === this.userService.get().name) ? rating._rev :  ratingInfo.ratingRev;
-      ratingInfo.comment = (rating.user.name === this.userService.get().name) ? rating.comment :  ratingInfo.comment;
-    }
+    ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
     if (ratings.length > index + 1 && ratings[index + 1].item === id) {
       // Ratings are sorted by resource id,
       // so this recursion will add all ratings to resource

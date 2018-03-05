@@ -1,0 +1,25 @@
+<div class="list-item-rating">
+  <div class="stats-ratio">
+    <mat-icon svgIcon="male" class="male-icon primary-font-color"></mat-icon>
+    <mat-icon svgIcon="female" class="female-icon accent-font-color"></mat-icon>
+    <planet-stacked-bar [data]="stackedBarData"></planet-stacked-bar>
+  </div>
+
+  <div class="stats-total">{{ rating.totalRating + ' Total' }}</div>
+
+  <div class="avg-rating">
+    <span class="rating-number">{{ rating.totalRating > 0 ? (rating.rateSum / rating.totalRating).toFixed(1) : (rating.rateSum).toFixed(1) }}</span>
+    <span i18n>Average</span>
+  </div>
+
+  <div class="your-rating">
+    <div class="stars">
+      <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+      <span [ngStyle]="{'width': (rating.rateSum / rating.totalRating * 20) + '%'}">
+        <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+      </span>
+    </div>
+  </div>
+
+  <div class="your-rating-label">Your Rating</div>
+</div>

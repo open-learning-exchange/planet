@@ -68,30 +68,7 @@
     <ng-container matColumnDef="rating">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <div class="list-item-rating">
-          <div class="stats">
-            <mat-icon svgIcon="male" class="male-icon"></mat-icon>{{ element.maleRating === 0 ? 0 : ((element.maleRating / element.totalRating) * 100).toFixed(0) }}% &nbsp;
-            <mat-icon svgIcon="female" class="female-icon"></mat-icon>{{ element.femaleRating === 0 ? 0 : ((element.femaleRating / element.totalRating) * 100).toFixed(0) }}%
-            <mat-progress-bar mode="determinate" [value]="getRatio(element.maleRating, element.femaleRating)" [ngClass]="{genderRatingProgressBar:element.totalRating}"></mat-progress-bar>
-            <div class="stats stats-total">{{ element.totalRating }} Total</div>
-            <span class="stars">
-              <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-              <!-- used simple arithmetic to get 20 and converted into % -->
-              <span [ngStyle]="{'width': getRating(element.rateSum, element.totalRating)}">
-                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-              </span>
-            </span>
-          </div>
-
-          <div class="rating">
-            <span class="rating-number">{{ element.totalRating > 0 ? (element.rateSum / element.totalRating).toFixed(1) : (element.rateSum).toFixed(1) }}</span>
-            <span i18n>Average</span>
-            <button mat-button (click)="openRatingDialog(element)" class="uppercase" [ngSwitch]="element.hasRated">
-              <span *ngSwitchCase="0" i18n>Rate</span>
-              <span *ngSwitchDefault i18n>Update Rating</span>
-            </button>
-          </div>
-        </div>
+        <planet-resources-rating [rating]="element.rating"></planet-resources-rating>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
