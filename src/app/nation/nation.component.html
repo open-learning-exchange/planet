@@ -11,8 +11,6 @@
   <mat-toolbar-row class="primary-color font-size-1">
     <span i18n>Your Current Lists of {{ parentType === 'nation' ? 'Nation' : 'Community' }}</span>
     <span class="toolbar-fill"></span>
-    <span i18n>Add a Nation</span>
-    <button mat-mini-fab (click)="openNationAddForm()"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
 <div *ngIf="filter">

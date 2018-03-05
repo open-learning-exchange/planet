@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
@@ -23,35 +22,16 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'action'
   ];
   editDialog: any;
-  filter = {
-    'registrationRequest': '',
-    'nationName': this.route.snapshot.paramMap.get('nation') || ''
-  };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog,
-    private route: ActivatedRoute
+    private dialog: MatDialog
   ) {}
-
-  ngOnInit() {
-    this.communities.filterPredicate = filterDropdowns(this.filter);
-    this.getNationList();
-    this.getCommunityList();
-    this.communities.filter = this.filter.nationName;
-  }
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
-  }
-
-  getNationList() {
-    this.couchService.get('nations/_all_docs?include_docs=true')
-      .subscribe((data) => {
-        this.nations = data.rows.filter(n => n.id.indexOf('design') < 0);
-      }, (error) => this.message = 'There was a problem getting NationList');
   }
 
   getCommunityList() {
@@ -135,10 +115,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
-  onFilterChange(filterValue: string, field: string) {
-    this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    // Changing the filter string to trigger filterPredicate
-    this.communities.filter = filterValue;
+  ngOnInit() {
+    this.getCommunityList();
   }
 
 }

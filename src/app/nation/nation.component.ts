@@ -3,13 +3,10 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { ValidatorService } from '../validators/validator.service';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -23,13 +20,8 @@ export class NationComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'name', 'admin_name', 'url', 'action' ];
   readonly dbName = 'nations';
   message = '';
-  modalForm: any;
   deleteDialog: any;
   ViewNationDetailDialog: any;
-  formDialog: any;
-  valid_data: {};
-  result: any;
-  view_data = [];
   parentType = this.route.snapshot.paramMap.get('planet');
   selectedNation = '';
   filter: boolean = false;
@@ -38,9 +30,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private couchService: CouchService,
-    private validatorService: ValidatorService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
     private http: HttpClient,
     private planetMessageService: PlanetMessageService
   ) { }
@@ -109,50 +99,6 @@ export class NationComponent implements OnInit, AfterViewInit {
           this.planetMessageService.showAlert('You have deleted nation: ' + nation.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };
-  }
-
-  onSubmit(nation) {
-    if (nation) {
-      const formdata = {
-        'admin_name': nation.adminName,
-        'name': nation.name,
-        'nationurl': nation.nationUrl,
-        'type': 'nation'
-      };
-      this.couchService.post(this.dbName, formdata)
-        .subscribe((data) => {
-          formdata[ '_id' ] = data.id;
-          formdata[ '_rev' ] = data.rev;
-          this.nations.data.push(formdata);
-          this.nations._updateChangeSubscription();
-          this.planetMessageService.showMessage('New Nation Created: ' + nation.name);
-        }, (error) => this.message = 'Error');
-    }
-  }
-
-  openNationAddForm() {
-    const title = 'Add Nation';
-    const type = 'nation';
-    const fields =
-      [
-        { 'label': 'Admin Name', 'type': 'textbox', 'name': 'adminName', 'placeholder': 'Admin Name', 'required': true },
-        { 'label': 'Nation Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Nation Name', 'required': true },
-        { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
-      ];
-    const formGroup = {
-      adminName: [ '', Validators.required ],
-      name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
-      nationUrl: [ '', Validators.required,
-      nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.onSubmit(res);
-        }
-      });
   }
 
   communityList(nationname) {
