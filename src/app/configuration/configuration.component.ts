@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
@@ -23,6 +24,7 @@ export class ConfigurationComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private couchService: CouchService,
+    private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private router: Router
   ) { }
@@ -104,7 +106,7 @@ export class ConfigurationComponent implements OnInit {
             'isUserAdmin': true, 'firstName': this.contactFormGroup.value.firstName, 'middleName': this.contactFormGroup.value.middleName,
             'lastName': this.contactFormGroup.value.lastName, 'email': this.contactFormGroup.value.email,
             'phoneNumber': this.contactFormGroup.value.phoneNumber }).subscribe((data1) => {
-            this.message = 'Admin created: ' + data1.id.replace('org.couchdb.user:', '');
+             this.planetMessageService.showMessage('Admin created: ' + data1.id.replace('org.couchdb.user:', ''));
           }, (error) => this.message = '');
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
           this.couchService.post('configurations', config).subscribe(() => {
