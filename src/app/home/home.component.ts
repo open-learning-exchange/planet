@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
+  isUserAdmin = false;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
