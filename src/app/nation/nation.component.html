@@ -1,7 +1,7 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <button class="btnBack" mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>Nation List</span>
+    <span i18n>{{ parentType === 'nation' ? 'Nation' : 'Community' }} List</span>
     <span class="toolbar-fill"></span>
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1">
@@ -9,28 +9,48 @@
     </mat-form-field>
   </mat-toolbar-row>
   <mat-toolbar-row class="primary-color font-size-1">
-    <span i18n>Your Current Lists of Nations</span>
+    <span i18n>Your Current Lists of {{ parentType === 'nation' ? 'Nation' : 'Community' }}</span>
     <span class="toolbar-fill"></span>
     <span i18n>Add a Nation</span>
     <button mat-mini-fab (click)="openNationAddForm()"><mat-icon>add</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
-
+<div *ngIf="filter">
+  <mat-form-field>
+    <mat-select [(value)]="selectedNation" (change)="onChange($event.value)">
+      <mat-option i18n value="">All</mat-option>
+      <mat-option *ngFor="let nationName of nationsList;" value={{nationName.local_domain}}> {{nationName.name}} </mat-option>
+    </mat-select>
+  </mat-form-field> &nbsp;
+  <mat-form-field>
+    <mat-select [(value)]="selectedValue" (change)="onSelect($event.value)">
+      <mat-option i18n value="">All</mat-option>
+      <mat-option i18n value="pending">pending</mat-option>
+      <mat-option i18n value="accepted">accepted</mat-option>
+      <mat-option i18n value="rejected">rejected</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 <mat-table #table [dataSource]="nations" matSort>
   <!-- Name Column -->
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Nation Name</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+  </ng-container>
+  <!-- Code Column -->
+  <ng-container matColumnDef="code">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
   </ng-container>
   <!-- Admin Name Column -->
   <ng-container matColumnDef="admin_name">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Admin Name</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.admin_name}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
   </ng-container>
   <!-- URL Column -->
-  <ng-container matColumnDef="nationurl">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Nation URL</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.nationurl}}</mat-cell>
+  <ng-container matColumnDef="url">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.local_domain}}</mat-cell>
   </ng-container>
     <!-- Action Column -->
   <ng-container matColumnDef="action">
@@ -38,7 +58,7 @@
     <mat-cell *matCellDef="let element">
       <button mat-raised-button color="primary" (click)="viewResources(element.name)" i18n>List Resources</button>
       <button mat-raised-button color="primary" (click)="view(element.nationurl)" i18n>View</button>
-      <button mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
+      <button *ngIf="parentType === 'nation'" mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
       <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
     </mat-cell>
   </ng-container>

@@ -119,7 +119,7 @@ export class ConfigurationComponent implements OnInit {
             console.log(err);
           });
         }, (error) => (error));
-      const config = Object.assign({registrationRequest: 'pending'}, this.configurationFormGroup.value, this.contactFormGroup.value);
+      const config = Object.assign({ registrationRequest: 'pending' }, this.configurationFormGroup.value, this.contactFormGroup.value);
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
       const defaultOpts = { headers: headers, withCredentials: true };
       this.http.post('http://' + this.configurationFormGroup.value.parent_domain + '/communityregistrationrequests', config, defaultOpts)

@@ -89,7 +89,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       const { _id: id, _rev: rev } = community;
       community.registrationRequest = change;
-      if (change === "delete" || change === "reject" || change === "unlink") {
+      if (change === 'delete' || change === 'reject' || change === 'unlink') {
         this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
           .subscribe((data) => {
             this.updateRev(data, this.communities.data);
@@ -116,9 +116,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
                 }, (error) => (error));
               }
             }
-          )}, (error) => console.log(error));
+          );}, (error) => console.log(error));
       }
-    }
+    };
   }
 
   deleteCommunity(community) {

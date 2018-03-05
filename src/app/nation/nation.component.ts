@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
@@ -16,11 +16,11 @@ import { ValidatorService } from '../validators/validator.service';
 })
 
 export class NationComponent implements OnInit, AfterViewInit {
-
+  nationsList = [];
   nations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'admin_name', 'nationurl', 'action' ];
+  displayedColumns = [ 'name', 'admin_name', 'url', 'action' ];
   readonly dbName = 'nations';
   message = '';
   modalForm: any;
@@ -30,21 +30,29 @@ export class NationComponent implements OnInit, AfterViewInit {
   valid_data: {};
   result: any;
   view_data = [];
+  parentType = this.route.snapshot.paramMap.get('planet');
+  selectedNation = '';
+  filter: boolean = false;
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private http: HttpClient,
     private planetMessageService: PlanetMessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getNationList();
+    if (this.route.snapshot.paramMap.get('nation') !== null) {
+      this.getCommunity(this.selectedNation);
+      this.filter = true;
+    }
     // Override default matTable filter to only filter below fields
-    this.nations.filterPredicate = filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
+    this.nations.filterPredicate = filterSpecificFields([ 'name', 'code', 'admin_name', 'url' ]);
   }
 
   ngAfterViewInit() {
@@ -63,7 +71,10 @@ export class NationComponent implements OnInit, AfterViewInit {
       .subscribe((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = data.rows.map(nations => {
+        this.nations.data = this.nationsList = data.rows.map(nations => {
+          if (nations.doc.name === this.route.snapshot.paramMap.get('nation')) {
+            this.selectedNation = nations.doc.local_domain;
+          }
           return nations.doc;
         }).filter(nt  => {
           return nt['_id'].indexOf('_design') !== 0;
@@ -145,7 +156,19 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   communityList(nationname) {
-    this.router.navigate([ '/community/' + nationname ]);
+    this.router.navigate([ '/associated/community/' + nationname ]);
+  }
+
+  getCommunity(url) {
+    this.http.jsonp('http:// ' + url + ' /community/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
+      .debug('jsonp request to external nation')
+      .subscribe((res: any) => {
+        this.nations.data = res.rows.map(nations => {
+          return nations.doc;
+        }).filter(nt  => {
+          return nt['_id'].indexOf('_design') !== 0;
+        });
+      }, (error) => this.message = 'There was a problem getting NationList');
   }
 
   viewResources(nationname) {
@@ -167,6 +190,14 @@ export class NationComponent implements OnInit, AfterViewInit {
     } else {
       this.message = 'There is no data.';
     }
+  }
+
+  onChange(filterValue: string) {
+    this.getCommunity(filterValue);
+  }
+
+  onSelect(select: string) {
+    this.nations.filter = select;
   }
 
   back() {
