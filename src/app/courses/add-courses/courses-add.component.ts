@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -6,7 +6,7 @@ import {
   FormArray,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -14,6 +14,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+//import { Observable } from 'rxjs/Observable'; //maybe i dont need this but it crashed after i removed it
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -29,7 +30,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
     }
   ` ]
 })
-export class CoursesAddComponent {
+export class CoursesAddComponent implements OnInit {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
@@ -44,6 +45,7 @@ export class CoursesAddComponent {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
@@ -58,7 +60,9 @@ export class CoursesAddComponent {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
+        this.route.snapshot.url[0].path === 'update'
+        ? ac => this.validatorService.isNameAvailible$(this.dbName, 'courseTitle', ac, this.route.snapshot.params.id)
+        : ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',
@@ -106,9 +110,34 @@ export class CoursesAddComponent {
     });
   }
 
+  // Add a conditional to check routeparams, if 'update' make get request and patch the values
+  ngOnInit() {
+    console.log('This is ActivatedRoute', this.route);
+    // console.log(this.route.snapshot.paramMap.get('id'))
+    console.log(this.route.snapshot.url[0].path);
+
+    if (this.route.snapshot.url[0].path === 'update') {
+      this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
+      .subscribe((data) => {
+        console.log(data);
+        this.courseForm.patchValue(data);
+      }, (error) => {
+        console.log(error);
+      });
+    }
+  }
+
+  updateCourse(data) {
+    // this is next
+  }
+
   onSubmit() {
     if (this.courseForm.valid) {
-      this.addCourse(this.courseForm.value);
+      if (this.route.snapshot.url[0].path === 'update') {
+        this.updateCourse(this.courseForm.value);
+      } else {
+        this.addCourse(this.courseForm.value);
+      }
     } else {
       Object.keys(this.courseForm.controls).forEach(field => {
         const control = this.courseForm.get(field);
