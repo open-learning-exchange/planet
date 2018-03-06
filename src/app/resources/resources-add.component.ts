@@ -87,7 +87,8 @@ export class ResourcesAddComponent implements OnInit {
       resourceType: '',
       addedBy: '',
       openUrl: [],
-      openWhichFile: ''
+      openWhichFile: '',
+      isDownloadable: ''
     });
   }
 

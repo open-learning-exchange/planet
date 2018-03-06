@@ -9,6 +9,10 @@
     <button mat-button (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
+    <span class="toolbar-fill"></span>
+    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource.isDownloadable">
+      <mat-icon>file_download</mat-icon>
+    </a>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">

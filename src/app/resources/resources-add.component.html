@@ -100,6 +100,9 @@
         <label>File Upload:</label>
         <input type="file" (change)="bindFile($event)" />
       </mat-grid-list>
+      <mat-grid-list cols="1">
+        <mat-checkbox formControlName="isDownloadable">File downloadable</mat-checkbox>
+      </mat-grid-list>
       <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </form>

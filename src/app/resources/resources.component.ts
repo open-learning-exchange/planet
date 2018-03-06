@@ -10,6 +10,7 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -44,6 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   nationName = '';
   selection = new SelectionModel(true, []);
+  urlPrefix = environment.couchAddress + this.dbName + '/';
 
   constructor(
     private couchService: CouchService,
