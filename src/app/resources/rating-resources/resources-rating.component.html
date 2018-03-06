@@ -1,5 +1,5 @@
 <div class="list-item-rating">
-  <div class="stats-ratio">
+  <div class="stats-ratio" [ngClass]="{'invisible':rating.totalRating===0}">
     <mat-icon svgIcon="male" class="male-icon primary-text-color"></mat-icon>
     <mat-icon svgIcon="female" class="female-icon accent-text-color"></mat-icon>
     <planet-stacked-bar [data]="stackedBarData"></planet-stacked-bar>
@@ -13,12 +13,9 @@
   </div>
 
   <div class="your-rating">
-    <div class="stars">
-      <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-      <span [ngStyle]="{'width': (rating.rateSum / rating.totalRating * 20) + '%'}">
-        <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-      </span>
-    </div>
+    <form [formGroup]="rateForm" novalidate>
+      <planet-rating formControlName="rate"></planet-rating>
+    </form>
   </div>
 
   <div class="your-rating-label">Your Rating</div>
