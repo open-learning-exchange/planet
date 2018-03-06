@@ -10,7 +10,13 @@ import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './users.component.html'
+  templateUrl: './users.component.html',
+  styles: [ `
+    /* Column Widths */
+    .mat-column-select {
+      max-width: 44px;
+    }
+  ` ]
 })
 export class UsersComponent implements OnInit, AfterViewInit {
 

@@ -9,7 +9,16 @@ import { Router } from '@angular/router';
 import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
-  templateUrl: './courses.component.html'
+  templateUrl: './courses.component.html',
+  styles: [ `
+    /* Column Widths */
+    .mat-column-select {
+      max-width: 44px;
+    }
+    .mat-column-action {
+      max-width: 225px;
+    }
+  ` ]
 })
 
 export class CoursesComponent implements OnInit, AfterViewInit {
