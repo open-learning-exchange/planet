@@ -134,6 +134,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return this.couchService.post('ratings/_find', findDocuments({
       // Selector
       'type': 'resource',
+      // Must have sorted property in selector to sort correctly
+      'item': { '$gt': null }
     }, 0, [ { 'item': 'desc' } ], 1000)).pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
