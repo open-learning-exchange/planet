@@ -48,7 +48,7 @@ export class LoginFormComponent {
     const data = {
       'user': user_id,
       'message': 'Welcome ' + user_id.replace('org.couchdb.user:', '') + ' to the Planet Learning',
-      'link': 'notification/view',
+      'link': 'notifications',
       'type': 'register',
       'priority': 1,
       'status': 'unread',
