@@ -1,12 +1,10 @@
 # BeLL apps Angular reboot prototype **Planet**
 
-Project to create a prototype for a reboot of the BeLL apps using Angular4 & CouchDB.
+Project to create a prototype for a reboot of the BeLL apps using Angular5 & CouchDB2.
 
 ## To work on this
 
-The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up` in the console (In this phase you should already know about vagrant). Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`
-
-Please create an issue if the vagrant base image not available in the future for some reason.
+The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
 
 ## Project guidelines
 
