@@ -1,28 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-
+import { findDocuments } from '../shared/mangoQueries'
 @Component({
   template: `
     <p i18n>Your Notifications</p>
     <mat-list role="list" *ngFor="let notification of notifications">
       <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
-        <p [ngClass]="{'menu-item-text':notification.status==='unread'}">
-          <a routerLink="{{notification.link}}">
+        <p [ngClass]="{'primary-text-color':notification.status==='unread'}">
+          <a routerLink="/notifications">
             {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
           </a>
         </p>
       </mat-list-item>
     </mat-list>
-  `,
-  styles: [ `
-    .menu-item-text {
-    color: green;
-    }
-  ` ]
+  `
 })
-export class NotificationViewListComponent implements OnInit {
+export class NotificationViewComponent implements OnInit {
   notifications = [];
   constructor(
     private couchService: CouchService,
@@ -30,25 +25,18 @@ export class NotificationViewListComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    this.getNotification();
+    this.getNotifications();
   }
 
-  getNotification() {
-    const user_id = 'org.couchdb.user:' + this.userService.get().name;
-    this.couchService.get('notifications/_all_docs?include_docs=true')
-      .subscribe((data) => {
-        let cnt = 0;
-        data.rows.sort((a, b) => 0 - (new Date(a.doc.time) > new Date(b.doc.time) ? 1 : -1));
-        this.notifications = data.rows.map(notifications => {
-          if (notifications.doc.status === 'unread') {
-            cnt ++;
-          }
-          return notifications.doc;
-        }).filter(nt => {
-          return nt['user'] === user_id;
-        });
-        this.notifications['count_unread'] =  cnt;
-      }, (error) => console.log(error));
+  getNotifications() {
+    this.couchService.
+    post('notifications/_find', findDocuments(
+      { 'user': 'org.couchdb.user:' + this.userService.get().name },
+      [ 'message', 'time', 'status' ],
+      [ { 'time': 'desc' } ], 25)) //create a "Queryable index as time on notification doc"
+    .subscribe(notification => {
+       this.notifications = notification.docs;
+    }, (err) => console.log(err.error.reason));
   }
 
   readNotification(notification) {
