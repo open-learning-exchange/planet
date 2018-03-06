@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 @Component({
   template: `
@@ -11,15 +10,13 @@ import { UserService } from '../shared/user.service';
   `
 })
 export class ManagerDashboardComponent implements OnInit {
-
-  constructor(
-    private couchService: CouchService,
-    private userService: UserService
-  ) {}
   planet_type = [];
   isUserAdmin = false;
   displayDashboard = true;
   message = '';
+  constructor(
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -28,10 +25,6 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
-    this.couchService.get('configurations/_all_docs?include_docs=true')
-      .subscribe((response) => {
-        this.planet_type = response.rows[0].doc.planet_type;
-      }, (error) => console.log('Error'));
   }
 
 }
