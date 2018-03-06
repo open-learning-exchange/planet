@@ -7,7 +7,9 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
       *ngFor="let item of data; index as i"
       [ngClass]="item.class"
       [ngStyle]="{'grid-column-start':i+1}">
-      <span [ngStyle]="{'float':item.align || 'left'}">{{item.percent + '%'}}</span>
+      <span [ngStyle]="{'float':item.align || 'left'}" [ngClass]="{'invisible':item.noLabel}">
+        {{item.percent | percent}}
+      </span>
     </div>
   `,
   styles: [ `
@@ -19,6 +21,7 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
     .stacked-bar {
       overflow: hidden;
       font-size: 0.7em;
+      padding: 0 0.2rem;
     }
   ` ]
 })
@@ -29,7 +32,7 @@ export class PlanetStackedBarComponent implements OnChanges {
 
   ngOnChanges() {
     const total = this.data.reduce((t, item) => t + item.amount, 0);
-    this.data = this.data.map(item => ({ ...item, percent: (item.amount / total * 100) }));
+    this.data = this.data.map(item => ({ ...item, percent: (item.amount / total) }));
     this.barSizes = this.data.reduce((sizes, item) => sizes + (item.percent + 'fr '), '');
     this.barSizes.trim();
   }
