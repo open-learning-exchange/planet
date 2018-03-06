@@ -10,7 +10,7 @@ else
   PROTOCOL="http"
 fi
 
-if [ "$ON_RPI" = "true" ]
+if [ "$MULTIPLE_IPS" = "true" ]
 then
     sed -i -e 's#couchAddress:"planet-db-host:planet-db-port/"#couchAddress:window.location.protocol+"//"+window.location.hostname+":planet-db-port/"#g' /usr/share/nginx/html/main*
 else
