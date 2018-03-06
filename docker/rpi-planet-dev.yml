@@ -2,7 +2,7 @@ services:
   couchdb:
     expose:
       - 5984
-    image: treehouses/rpi-couchdb:2.0.0
+    image: treehouses/rpi-couchdb:2.1.1
     ports:
       - "2200:5984"
       - "2201:5986"

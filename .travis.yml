@@ -40,9 +40,9 @@ before_install:
   #- docker pull portainer/portainer
   #- sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
   # Add CouchDB Docker
-  - docker pull klaemo/couchdb:2.0.0
+  - docker pull couchdb:2.1.1
   - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb
-    -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
+    -v /srv/log/bell:/usr/local/var/log/couchdb couchdb:2.1.1
   - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
   - cd add-cors-to-couchdb
   - npm install
