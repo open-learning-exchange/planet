@@ -17,10 +17,7 @@ export class AuthService {
       .get('_session', { withCredentials: true })
       .pipe(switchMap((res: any) => {
         if (res.userCtx.name) {
-          // If user already matches one on the user service, do not make additional call to CouchDB
-          if (res.userCtx.name === this.userService.get().name) {
-            return of(true);
-          }
+          console.log("Res", res.userCtx.name)
           return this.userService.setProfile(res.userCtx);
         }
         this.userService.unset();
