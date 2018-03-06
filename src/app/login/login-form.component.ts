@@ -71,7 +71,7 @@ export class LoginFormComponent {
           this.login(this.userForm.value, true);
         }, error => {
           if (error.error.error === 'conflict') {
-            this.planetMessageService.showMessage('User name already exists, please, register with a different user name');
+            this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
           }
         });
   }
