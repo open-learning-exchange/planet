@@ -14,7 +14,7 @@
 
   <div class="your-rating">
     <form [formGroup]="rateForm" novalidate>
-      <planet-rating formControlName="rate"></planet-rating>
+      <planet-rating (click)="onStarClick()" formControlName="rate"></planet-rating>
     </form>
   </div>
 

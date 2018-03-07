@@ -64,7 +64,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     forkJoin(this.getResources(), this.getRatings()).subscribe((results) => {
       const resourcesRes = results[0],
         ratingsRes = results[1];
-      this.setupList(resourcesRes, ratingsRes.docs);
+      this.setupList(resourcesRes.rows, ratingsRes.docs);
     }, (err) => console.log(err));
     this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
   }
@@ -93,8 +93,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   setupList(resourcesRes, ratings) {
-    this.resources.data = resourcesRes.rows.map((r: any) => {
-      const resource = r.doc;
+    this.resources.data = resourcesRes.map((r: any) => {
+      const resource = r.doc || r;
       const ratingIndex = ratings.findIndex(rating => {
         return resource._id === rating.item;
       });
@@ -233,6 +233,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
+  updateRatings() {
+    this.getRatings().subscribe((res) => {
+      this.setupList(this.resources.data, res.docs);
+    });
+  }
+
+  /*
   openRatingDialog(element) {
     const title = 'Rating';
     const type = 'rating';
@@ -276,5 +283,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         }, (error) => console.log(error));
     }
   }
+  */
 
 }
