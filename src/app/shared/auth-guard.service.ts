@@ -50,7 +50,10 @@ export class AuthService {
       }));
     }
     if (route.url.toString() === 'add') {
-      if(this.userService.get().roles.length === 0) {
+      if (this.userService.get().isUserAdmin) {
+        return true;
+      }
+      if (this.userService.get().roles.length === 0) {
         this.router.navigate([ '' ]);
         return false;
       }
