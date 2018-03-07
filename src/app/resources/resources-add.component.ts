@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
@@ -22,7 +22,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   templateUrl: './resources-add.component.html'
 })
 
-export class ResourcesAddComponent implements OnInit {
+export class ResourcesAddComponent {
   name = '';
   subjects = new FormControl();
   levels = new FormControl();
@@ -47,10 +47,6 @@ export class ResourcesAddComponent implements OnInit {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
     this.createForm();
-  }
-
-  ngOnInit() {
-    Object.assign(this, this.userService.get());
   }
 
   createForm() {

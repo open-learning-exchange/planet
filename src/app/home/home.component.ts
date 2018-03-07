@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getNotification();
-    Object.assign(this, this.userService.get());
+    this.isUserAdmin = this.userService.get().isUserAdmin;
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
         this.current_flag = language.short_code;

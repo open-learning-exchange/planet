@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
+    this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin) {
       this.initializeData();
     } else {
