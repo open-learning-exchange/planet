@@ -76,27 +76,28 @@ export class CommunityComponent implements OnInit, AfterViewInit {
             this.editDialog.close();
           }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
       }
-      if (change === "accept") {
+      if (change === 'accept') {
         this.couchService.get('_users/_all_docs?include_docs=true')
           .subscribe((data) => {
             data.rows.map(data => {
               const communityId = community._id;
               const communityRev = community._rev;
               if (data.doc.request_id && (data.doc.request_id === communityId)) {
-                this.couchService.put('_users/' + data.doc._id + '?rev=' + data.doc._rev, { ...data.doc, roles: [ 'learner' ] }).subscribe((data) => {
-                  delete community['_id'];
-                  delete community['_rev'];
-                  this.couchService.post('nations', { ...community }).subscribe(() => {
-                    this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
-                    .subscribe((data) => {
-                      this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
-                      this.editDialog.close();
+                this.couchService.put('_users/' + data.doc._id + '?rev=' + data.doc._rev, { ...data.doc, roles: [ 'learner' ] })
+                  .subscribe((data) => {
+                    delete community['_id'];
+                    delete community['_rev'];
+                    this.couchService.post('nations', { ...community }).subscribe(() => {
+                      this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
+                      .subscribe((data) => {
+                        this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
+                        this.editDialog.close();
+                      }, (error) => (error));
                     }, (error) => (error));
                   }, (error) => (error));
-                }, (error) => (error));
               }
             }
-          );}, (error) => console.log(error));
+          ); }, (error) => console.log(error));
       }
     };
   }

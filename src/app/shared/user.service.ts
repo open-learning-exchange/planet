@@ -14,9 +14,9 @@ import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable()
 export class UserService {
-
   private user: any = { name: '' };
   private logsDb = 'login_activities';
+  private userConfig: any = { };
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
@@ -34,6 +34,14 @@ export class UserService {
 
   get(): any {
     return this.user;
+  }
+
+  setConfig(config: any): any {
+    this.userConfig = config;
+  }
+
+  getConfig(): any {
+    return this.userConfig;
   }
 
   setProfile(user: any) {
