@@ -15,7 +15,7 @@
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
       <span i18n>Request Courses</span>
     </button>
-    <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+    <button mat-mini-fab routerLink="add" disabled = "{{disableCourseAddButton}}"><mat-icon>add</mat-icon></button>
   </mat-toolbar>
   <mat-table #table [dataSource]="courses" matSort>
     <ng-container matColumnDef="select">

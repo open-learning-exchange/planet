@@ -39,14 +39,22 @@ export class AuthService {
   }
 
   // For login route will redirect to main app if there is an active session
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.couchService.get('_session', { withCredentials: true }).pipe(map(res => {
-      if (res.userCtx.name) {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): any {
+    if (route.url.toString() === 'login') {
+      return this.couchService.get('_session', { withCredentials: true }).pipe(map(res => {
+        if (res.userCtx.name) {
+          this.router.navigate([ '' ]);
+          return false;
+        }
+        return true;
+      }));
+    }
+    if (route.url.toString() === 'add') {
+      if(this.userService.get().roles.length === 0) {
         this.router.navigate([ '' ]);
         return false;
       }
       return true;
-    }));
+    }
   }
-
 }

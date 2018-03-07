@@ -23,6 +23,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+  disableMeetupsAddButton = false;
 
   constructor(
     private couchService: CouchService,
@@ -63,7 +64,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
         this.meetups.data = data.rows.map(meetup => meetup.doc);
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
+      }, (error) => {
+        this.disableMeetupsAddButton = true;
+        this.planetMessageService.showAlert('There was a problem getting meetups');
+      });
   }
 
   deleteClick(meetup) {

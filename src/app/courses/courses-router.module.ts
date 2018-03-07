@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesComponent } from './courses.component';
 import { CoursesRequestComponent } from './request-courses/courses-request.component';
+import { AuthService } from '../shared/auth-guard.service';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
