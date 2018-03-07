@@ -33,7 +33,7 @@ export class NotificationViewComponent implements OnInit {
     post('notifications/_find', findDocuments(
       { 'user': 'org.couchdb.user:' + this.userService.get().name },
       [ 'message', 'time', 'status' ],
-      [ { 'time': 'desc' } ], 25)) //create a "Queryable index as time on notification doc"
+      [ { 'time': 'desc' } ], 25))
     .subscribe(notification => {
        this.notifications = notification.docs;
     }, (err) => console.log(err.error.reason));
