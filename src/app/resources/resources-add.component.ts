@@ -45,7 +45,7 @@ export class ResourcesAddComponent {
     private planetMessageService: PlanetMessageService
   ) {
     // Adds the dropdown lists to this component
-    Object.assign(this, constants);
+    Object.assign(this, constants, this.userService.get());
     this.createForm();
   }
 
