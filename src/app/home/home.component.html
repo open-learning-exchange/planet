@@ -21,12 +21,16 @@
 </mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-  <span class="menu-item-notification" mat-menu-item *ngFor="let notification of notifications" (click)="readNotification(notification.doc)">
+  <a routerLink="/notifications"    
+    class="menu-item-notification"
+    [ngClass]="{'primary-text-color':notification.doc.status==='unread'}"
+    mat-menu-item
+    *ngFor="let notification of notifications"
+    (click)="readNotification(notification.doc)">
+    {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
     <mat-divider></mat-divider>
-    <p [ngClass]="{'menu-item-text':notification.doc.status==='unread'}">
-      <a href="{{notification.doc.link}}">{{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}</a>
-    </p>
-  </span>
+  </a>
+  <a routerLink="/notifications" mat-menu-item>See All</a>
 </mat-menu>
 
 <mat-sidenav-container class="main-content" #content>
