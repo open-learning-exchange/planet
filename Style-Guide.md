@@ -33,6 +33,16 @@ File: resources-review.service.ts
 Class name: ResourcesReviewService
 ```
 We suggest using max one sub-feature word to keep file and class names from getting too long.
+
+#### Forbidden Name
+
+Please don't use the following name for variable since it is used by our `entrypoint` script in our production docker container.
+
+|      Name      	|            Note           	|
+|:--------------:	|:-------------------------:	|
+| planet-db-host 	| used in the docker script 	|
+| planet-db-port 	| used in the docker script 	|
+
 ### App Directory Structure
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 

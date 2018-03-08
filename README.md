@@ -1,16 +1,16 @@
 # BeLL apps Angular reboot prototype **Planet**
 
-Project to create a prototype for a reboot of the BeLL apps using Angular4 & CouchDB.
+Project to create a prototype for a reboot of the BeLL apps using Angular5 & CouchDB2.
 
 ## To work on this
 
-The only prequisite is Vagrant.  After cloning the repository, run `vagrant up` in the console.  Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`
+The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
 
 ## Project guidelines
 
 * Please check out [the project page](https://waffle.io/ole-vi/planet) for available tasks to work on.
 * Before contributing also be sure to read our [style guide](Style-Guide.md)
-* Please clone the repository rather than forking.  It's easier for us to collaborate from a new branch on the same repository.
+* Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
 * After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
 * To work on an issue, create a new branch with a descriptive title.
