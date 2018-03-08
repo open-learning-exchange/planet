@@ -63,8 +63,8 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: {name: string, password: string}) {
-    this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
+    this.couchService.put('_users/org.couchdb.user:' + name.toLowerCase(),
+      { 'name': name.toLowerCase(), 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
         .subscribe((data) => {
           this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
           this.welcomeNotification(data.id);
