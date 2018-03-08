@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries'
+import { findDocuments } from '../shared/mangoQueries';
 @Component({
   template: `
     <p i18n>Your Notifications</p>
