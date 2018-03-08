@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UserService } from '../../shared/user.service';
-import { map, catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './resources-rating.component.html',
@@ -13,7 +14,7 @@ export class ResourcesRatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
   @Input() resourceId: string;
-  @Output() update = new EventEmitter();
+  @Output() onUpdate = new EventEmitter<any>();
   rateForm: FormGroup;
   stackedBarData = [];
 
@@ -23,7 +24,8 @@ export class ResourcesRatingComponent implements OnChanges {
     private fb: FormBuilder,
     private couchService: CouchService,
     private planetMessage: PlanetMessageService,
-    private userService: UserService
+    private userService: UserService,
+    private dialogsForm: DialogsFormService
   ) {
     this.rateForm = this.fb.group({
       rate: this.rating.userRating.rate || 0
@@ -49,10 +51,10 @@ export class ResourcesRatingComponent implements OnChanges {
 
   onStarClick() {
     this.updateRating().subscribe(res => {
-      this.rating.userRating._rev = res.rev;
+      this.onUpdate.emit(this.rating.userRating);
+      this.openDialog();
     }, (err) => {
-      this.planetMessage.showAlert('There was an issue with your rating');
-      this.rateForm.setValue({ rate: this.rating.userRating.rate || 0 });
+      this.ratingError();
     });
   }
 
@@ -71,11 +73,57 @@ export class ResourcesRatingComponent implements OnChanges {
       couchRequest = this.couchService.put;
       couchUrl = couchUrl + '/' + newRating._id;
     }
-    // Use call because 'this' will be undefined
+    // Use call because 'this' will be undefined otherwise
     return couchRequest.call(this.couchService, couchUrl, newRating).pipe(map((res) => {
-      this.update.emit();
+      newRating._rev = res.rev;
+      this.rating.userRating = newRating;
+      this.onUpdate.emit(newRating);
       return res;
     }));
   }
 
+  openDialog() {
+    this.rateForm.addControl('comment', new FormControl(this.rating.userRating.comment || ''));
+    this.dialogsForm
+      .confirm('Rating', popupFormFields, this.rateForm)
+      .debug('Dialog confirm')
+      .subscribe((res) => {
+        this.postDialogRating();
+      });
+  }
+
+  postDialogRating() {
+    this.updateRating().subscribe(res => {
+      this.onUpdate.emit(this.rating.userRating);
+      this.rateForm.removeControl('comment');
+    }, (err) => {
+      this.ratingError();
+    });
+  }
+
+  ratingError() {
+    this.planetMessage.showAlert('There was an issue updating your rating');
+    this.rateForm.patchValue({ rate: this.rating.userRating.rate || 0 });
+    // If the dialog is open, then there will also be a comment control to reset
+    if (this.rateForm.controls.comment) {
+      this.rateForm.patchValue({ comment: this.rating.userRating.comment || '' });
+    }
+  }
 }
+
+const popupFormFields = [
+  {
+    'label': 'Rate',
+    'type': 'rating',
+    'name': 'rate',
+    'placeholder': 'Your Rating',
+    'required': false
+  },
+  {
+    'label': 'Comment',
+    'type': 'textarea',
+    'name': 'comment',
+    'placeholder': 'Leave your comment',
+    'required': false
+  }
+];

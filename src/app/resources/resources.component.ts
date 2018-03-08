@@ -233,56 +233,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
-  updateRatings() {
+  updateRatings(newRating: any) {
     this.getRatings().subscribe((res) => {
       this.setupList(this.resources.data, res.docs);
     });
   }
-
-  /*
-  openRatingDialog(element) {
-    const title = 'Rating';
-    const type = 'rating';
-    const fields =
-      [
-        { 'label': 'Rate', 'type': 'rating', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
-        { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
-      ];
-    const formGroup = {
-      rate: [ element.hasRated || '', Validators.required ],
-      comment: [ element.comment || '' ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.postRating(res, element);
-        }
-      });
-  }
-
-  postRating(rating, element) {
-    if (rating) {
-      const user = this.userService.get();
-      const ratingData = {
-        'user': user,
-        'item': element._id,
-        'type': 'resource',
-        'rate': rating.rate,
-        'comment': rating.comment,
-        'time': Date.now()
-      };
-      if (element.ratingId !== '' && element.ratingRev !== '') {
-        Object.assign(ratingData, { _id: element.ratingId, _rev: element.ratingRev });
-      }
-      this.couchService.post('ratings', ratingData)
-        .subscribe((data) => {
-           this.ngOnInit();
-           console.log('Thank you for rating');
-        }, (error) => console.log(error));
-    }
-  }
-  */
 
 }
