@@ -135,7 +135,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   addRole(user) {
-    this.selectedRolesArray = this.selectedRolesMap.get(user.name);
+    // If user has no previous role, add learner role
+    this.selectedRolesArray = this.selectedRolesMap.get(user.name) || [ 'learner' ];
     const tempUser = { ...user, roles: [ ...this.selectedRolesArray ] };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
