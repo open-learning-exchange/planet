@@ -37,7 +37,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
-  selectedRolesArray: string[] = [];
   selectedRolesMap = new Map<string, string[]>();
 
   // List of all possible roles to add to users
@@ -136,8 +135,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   addRole(user) {
     // If user has no previous role, add learner role
-    this.selectedRolesArray = this.selectedRolesMap.get(user.name) || [ 'learner' ];
-    const tempUser = { ...user, roles: [ ...this.selectedRolesArray ] };
+    const selectedRolesArray = this.selectedRolesMap.get(user.name) || [ 'learner' ];
+    const tempUser = { ...user, roles: [ ...selectedRolesArray ] };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
