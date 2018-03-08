@@ -15,7 +15,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
-import { NotificationViewComponent } from '../notification-view-list/notification-view-list.component';
+import { NotificationsComponent } from '../notifications/notifications.component';
 
 @NgModule({
   imports: [
@@ -37,7 +37,7 @@ import { NotificationViewComponent } from '../notification-view-list/notificatio
     ManagerDashboardComponent,
     FeedbackDirective,
     DashboardTileComponent,
-    NotificationViewComponent
+    NotificationsComponent
   ]
 })
 export class HomeModule {}
