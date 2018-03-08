@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'planet-configuration',
@@ -75,15 +76,14 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.http.jsonp('http://nbs.ole.org:5997' + '/nations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
-      .debug('jsonp request to external nation')
-      .subscribe((res: any) => {
-        this.nations = res.rows.map(nations => {
-          return nations.doc;
-        }).filter(nt  => {
-          return nt['_id'].indexOf('_design/bell') !== 0;
-        });
-      }, (error) => this.message = 'There was a problem getting NationList');
+    this.couchService.get('nations/_all_docs?include_docs=true', {}, environment.centerAddress)
+      .subscribe((response) => {
+          this.nations = response.rows.map(nations => {
+            return nations.doc;
+          }).filter(nt  => {
+            return nt['_id'].indexOf('_design') !== 0;
+          });
+      }, (error) => console.log('Error'));
   }
 
   onChange(selectedValue: string) {
@@ -91,7 +91,7 @@ export class ConfigurationComponent implements OnInit {
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
         planet_type: selectedValue,
-        parent_domain: 'nbs.ole.org:5997'
+        parent_domain: environment.centerAddress
       });
     } else {
       this.configurationFormGroup.patchValue({

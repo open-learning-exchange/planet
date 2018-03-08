@@ -13,7 +13,7 @@
     <span class="toolbar-fill"></span>
   </mat-toolbar-row>
 </mat-toolbar>
-<div *ngIf="filter">
+<div *ngIf="selectFilter">
   <mat-form-field>
     <mat-select [(value)]="selectedNation" (change)="onChange($event.value)">
       <mat-option i18n value="">All</mat-option>
@@ -40,17 +40,17 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
   </ng-container>
-  <!-- Admin Name Column -->
-  <ng-container matColumnDef="admin_name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Admin Name</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
-  </ng-container>
   <!-- URL Column -->
   <ng-container matColumnDef="url">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.local_domain}}</mat-cell>
   </ng-container>
-    <!-- Action Column -->
+  <!-- Status Column -->
+  <ng-container matColumnDef="status">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.registrationRequest}}</mat-cell>
+  </ng-container>
+  <!-- Action Column -->
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
     <mat-cell *matCellDef="let element">

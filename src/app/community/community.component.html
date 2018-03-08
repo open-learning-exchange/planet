@@ -3,30 +3,22 @@
 <div class="example-container mat-elevation-z8">
   <mat-table #table [dataSource]="communities">
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef > Community </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef > Name </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="lastAppUpdateDate">
-      <mat-header-cell *matHeaderCellDef i18n > Last App Update </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.lastAppUpdateDate}} </mat-cell>
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef i18n > Code </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="version">
-      <mat-header-cell *matHeaderCellDef i18n > Version No. </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.version}} </mat-cell>
+    <ng-container matColumnDef="language">
+      <mat-header-cell *matHeaderCellDef i18n > Language </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.preferred_lang}} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="nationName">
-      <mat-header-cell *matHeaderCellDef i18n > Nation Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.nationName}} </mat-cell>
+    <ng-container matColumnDef="url">
+      <mat-header-cell *matHeaderCellDef i18n > URL </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.local_domain}} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="lastPublicationsSyncDate">
-      <mat-header-cell *matHeaderCellDef i18n > Last Publications Sync </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.lastPublicationsSyncDate}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="lastActivitiesSyncDate">
-      <mat-header-cell *matHeaderCellDef i18n > Last Activities Sync </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.lastActivitiesSyncDate}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="registrationRequest">
+    <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef i18n > Status </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.registrationRequest}} </mat-cell>
     </ng-container>

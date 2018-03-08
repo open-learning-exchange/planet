@@ -17,14 +17,14 @@ export class NationComponent implements OnInit, AfterViewInit {
   nations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'admin_name', 'url', 'action' ];
+  displayedColumns = [ 'name', 'code', 'url', 'status', 'action' ];
   readonly dbName = 'nations';
   message = '';
   deleteDialog: any;
   ViewNationDetailDialog: any;
   parentType = this.route.snapshot.paramMap.get('planet');
   selectedNation = '';
-  filter: boolean = false;
+  selectFilter: boolean = false;
 
   constructor(
     private router: Router,
@@ -37,12 +37,8 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getNationList();
-    if (this.route.snapshot.paramMap.get('nation') !== null) {
-      this.getCommunity(this.selectedNation);
-      this.filter = true;
-    }
     // Override default matTable filter to only filter below fields
-    this.nations.filterPredicate = filterSpecificFields([ 'name', 'code', 'admin_name', 'url' ]);
+    this.nations.filterPredicate = filterSpecificFields([ 'name', 'registrationRequest' ]);
   }
 
   ngAfterViewInit() {
@@ -64,6 +60,10 @@ export class NationComponent implements OnInit, AfterViewInit {
         this.nations.data = this.nationsList = data.rows.map(nations => {
           if (nations.doc.name === this.route.snapshot.paramMap.get('nation')) {
             this.selectedNation = nations.doc.local_domain;
+          }
+          if (this.route.snapshot.paramMap.get('nation') !== null) {
+            this.getCommunity(this.selectedNation);
+            this.selectFilter = true;
           }
           return nations.doc;
         }).filter(nt  => {
@@ -106,7 +106,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getCommunity(url) {
-    this.http.jsonp('http:// ' + url + ' /community/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
+    this.http.jsonp(url + 'nations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
       .debug('jsonp request to external nation')
       .subscribe((res: any) => {
         this.nations.data = res.rows.map(nations => {
