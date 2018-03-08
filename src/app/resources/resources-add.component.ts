@@ -46,7 +46,6 @@ export class ResourcesAddComponent implements OnInit {
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
-    console.log("Constant",constants);
     this.createForm();
   }
 
