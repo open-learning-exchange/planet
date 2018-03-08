@@ -3,7 +3,10 @@ import { UserService } from '../shared/user.service';
 
 @Component({
   template: `
-    <div *ngIf="displayDashboard"><a routerLink="/community" i18n mat-raised-button>Communities</a> <a routerLink="/nation" i18n mat-raised-button>Nations</a></div>
+    <div *ngIf="displayDashboard">
+      <a routerLink="/community" i18n mat-raised-button>Communities</a>
+      <a routerLink="/nation" i18n mat-raised-button>Nations</a>
+    </div>
     <div>{{message}}</div>
   `
 })
