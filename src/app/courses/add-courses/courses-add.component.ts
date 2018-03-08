@@ -16,18 +16,7 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
-  templateUrl: 'courses-add.component.html',
-  styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
-    .view-container {
-      background-color: #FFFFFF;
-      padding: 1rem;
-    }
-  ` ]
+  templateUrl: 'courses-add.component.html'
 })
 export class CoursesAddComponent {
   // needs member document to implement

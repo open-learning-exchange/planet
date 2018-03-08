@@ -15,20 +15,12 @@ import { environment } from '../../environments/environment';
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
     }
     .mat-column-rating {
       max-width: 225px;
-    }
-    a:hover {
-      color: #2196f3;
     }
   ` ]
 })

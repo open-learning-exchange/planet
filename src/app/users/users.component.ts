@@ -11,16 +11,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './users.component.html',
-   styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
-    .view-container {
-      background-color: #FFFFFF;
-      padding: 1rem;
-    }
+  styles: [ `
+    /* Column Widths */
     .mat-column-select {
       max-width: 44px;
     }
