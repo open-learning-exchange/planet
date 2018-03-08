@@ -69,7 +69,11 @@ export class LoginFormComponent {
           this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
           this.welcomeNotification(data.id);
           this.login(this.userForm.value, true);
-        }, (error) => this.message = '');
+        }, error => {
+          if (error.error.error === 'conflict') {
+            this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
+          }
+        });
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
