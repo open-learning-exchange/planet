@@ -24,7 +24,7 @@
     <!-- Priorty Column -->
     <ng-container matColumnDef="priority">
       <mat-header-cell *matHeaderCellDef i18n>Priority</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.priority === true ? "Yes" : "No"}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
     </ng-container>
     <!-- Owner Column -->
     <ng-container matColumnDef="owner">
