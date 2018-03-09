@@ -69,10 +69,19 @@ export class UserService {
 
   newSessionLog() {
     this.sessionStart = Date.now();
-    return this.couchService.post(this.logsDb, this.logObj()).pipe(map(res => {
-      this.sessionRev = res.rev;
-      this.sessionId = res.id;
+    let newObs: Observable<any> = of({});
+    if (!this.user.name) {
+      newObs = this.couchService.get('_session', { withCredentials: true }).pipe(map(data => {
+        this.user.name = data.userCtx.name;
+      }));
+    }
+    return newObs.pipe(switchMap(() => {
+      return this.couchService.post(this.logsDb, this.logObj()).pipe(map(res => {
+        this.sessionRev = res.rev;
+        this.sessionId = res.id;
+      }));
     }));
+
   }
 
   endSessionLog() {

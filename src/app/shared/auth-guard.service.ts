@@ -17,7 +17,7 @@ export class AuthService {
       .get('_session', { withCredentials: true })
       .pipe(switchMap((res: any) => {
         if (res.userCtx.name) {
-          console.log("Res", res.userCtx.name)
+          console.log('Res', res.userCtx.name);
           return this.userService.setProfile(res.userCtx);
         }
         this.userService.unset();
