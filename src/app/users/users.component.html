@@ -32,8 +32,8 @@
           [indeterminate]="selection.hasValue() && !isAllSelected()">
       </mat-checkbox>
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
+      <mat-cell *matCellDef="let row; let i = index;">
+        <mat-checkbox (change)="$event ? handleSectionToggle(row,i) : null"
           [checked]="selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>

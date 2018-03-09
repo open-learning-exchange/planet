@@ -78,9 +78,27 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.allUsers.data.forEach(row => this.selection.select(row));
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      this.allUsers.data.forEach((user: any) => {
+        user.selected = false;
+      });
+    } else {
+      this.allUsers.data.forEach(row => this.selection.select(row));
+    }
+  }
+
+  handleSectionToggle(row: any, index: number) {
+    this.selection.toggle(row);
+    if (this.selection.isSelected(row) !== true) {
+      let i = 0;
+      this.allUsers.data.forEach((user: any) => {
+        if (i === index) {
+          user.selected = false;
+        }
+        i = i + 1;
+      });
+    }
   }
 
   getUsers() {
