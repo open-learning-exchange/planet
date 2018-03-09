@@ -7,7 +7,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 
@@ -29,11 +28,13 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private router: Router,
-    private http: HttpClient
+    private router: Router
   ) { }
 
   ngOnInit() {
+    const url = require('url');
+    const adr = environment.couchAddress;
+    const localhost = url.parse(adr, true);
     this.loginForm = this.formBuilder.group({
       username: [ '', Validators.required ],
       password: [
@@ -53,7 +54,7 @@ export class ConfigurationComponent implements OnInit {
     });
     this.configurationFormGroup = this.formBuilder.group({
       planet_type: [ '', Validators.required ],
-      local_domain: [ document.baseURI, Validators.required ],
+      local_domain: [ localhost.host, Validators.required ],
       name: [ '', Validators.required ],
       parent_domain: [ '', Validators.required ],
       preferred_lang: [ '', Validators.required ],
@@ -78,12 +79,12 @@ export class ConfigurationComponent implements OnInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true', {}, environment.centerAddress)
       .subscribe((response) => {
-          this.nations = response.rows.map(nations => {
-            return nations.doc;
-          }).filter(nt  => {
-            return nt['_id'].indexOf('_design') !== 0;
-          });
-      }, (error) => console.log('Error'));
+        this.nations = response.rows.map(nations => {
+          return nations.doc;
+        }).filter(nt  => {
+          return nt['_id'].indexOf('_design') !== 0;
+        });
+      }, (error) => (error));
   }
 
   onChange(selectedValue: string) {
@@ -115,8 +116,6 @@ export class ConfigurationComponent implements OnInit {
             'email': this.contactFormGroup.value.email,
             'phoneNumber': this.contactFormGroup.value.phoneNumber
           }
-      const headers = new HttpHeaders().set('Content-Type', 'application/json');
-      const defaultOpts = { headers: headers, withCredentials: true };
       forkJoin([
         this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),

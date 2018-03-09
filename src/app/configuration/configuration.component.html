@@ -36,7 +36,7 @@
           </mat-form-field>
           <mat-form-field>
             <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parent_domain" required>
-              <mat-option *ngFor="let nation of nations" [value]="nation.nationurl">{{nation.name}}</mat-option>
+              <mat-option *ngFor="let nation of nations" [value]="nation.local_domain">{{nation.name}}</mat-option>
             </mat-select>
             <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parent_domain"></planet-form-error-messages></mat-error>
           </mat-form-field>

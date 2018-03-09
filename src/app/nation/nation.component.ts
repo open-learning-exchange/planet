@@ -106,8 +106,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getCommunity(url) {
-    this.http.jsonp(url + 'nations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
-      .debug('jsonp request to external nation')
+    this.couchService.get('nations/_all_docs?include_docs=true', {}, url)
       .subscribe((res: any) => {
         this.nations.data = res.rows.map(nations => {
           return nations.doc;

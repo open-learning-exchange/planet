@@ -60,7 +60,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   }
 
   getMeetups() {
-    this.couchService.get('meetups/_all_docs?include_docs=true', '', this.userService.getConfig().parent_domain)
+    this.couchService.get('meetups/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain)
       .subscribe((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer

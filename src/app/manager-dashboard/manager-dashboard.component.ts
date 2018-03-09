@@ -10,10 +10,10 @@ import { UserService } from '../shared/user.service';
   `
 })
 export class ManagerDashboardComponent implements OnInit {
-  planet_type = [];
   isUserAdmin = false;
   displayDashboard = true;
   message = '';
+  planet_type = this.userService.getConfig().planet_type;
   constructor(
     private userService: UserService
   ) {}
