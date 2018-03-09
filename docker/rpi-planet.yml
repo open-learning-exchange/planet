@@ -15,6 +15,7 @@ services:
     ports:
       - "80:80"
     environment:
+      - MULTIPLE_IPS=true
       - HOST_PROTOCOL=http
       - DB_HOST=127.0.0.1
       - DB_PORT=2200

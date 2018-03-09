@@ -10,7 +10,8 @@
   </mat-form-field>
 </mat-toolbar>
 
-<div class="space-container">
+
+<div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <button mat-button [disabled]="!selection.selected.length">
@@ -59,6 +60,10 @@
             <mat-icon>delete_forever</mat-icon>
             <span i18n>Delete</span>
           </button>
+          <a href="{{urlPrefix + element._id + '/' + element.filename}}" mat-menu-item download [disabled]="!element.isDownloadable">
+            <mat-icon>file_download</mat-icon>
+            <span i18n>Download file</span>
+          </a>
         </mat-menu>
       </mat-cell>
     </ng-container>

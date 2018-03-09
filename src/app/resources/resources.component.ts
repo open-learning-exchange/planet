@@ -10,24 +10,17 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './resources.component.html',
   styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
     }
     .mat-column-rating {
       max-width: 225px;
-    }
-    a:hover {
-      color: #2196f3;
     }
   ` ]
 })
@@ -44,6 +37,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   nationName = '';
   selection = new SelectionModel(true, []);
+  urlPrefix = environment.couchAddress + this.dbName + '/';
 
   constructor(
     private couchService: CouchService,

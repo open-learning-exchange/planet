@@ -25,6 +25,10 @@ body {
     color: $accent-text;
   }
 
+  .primary-text-color {
+    color: $primary;
+  }
+
   .bg-light-grey {
     background-color: $light-grey;
   }
@@ -239,5 +243,17 @@ body {
     height: 50px;
     padding: 3px;
   }
+  
+  .space-container {
+    margin: 64px 30px;
+  }
 
+  .primary-link-hover a:hover {
+    color: $primary;
+  }
+
+  .view-container {
+    background-color: #FFFFFF;
+    padding: 1rem;
+  }
 }

@@ -11,16 +11,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './users.component.html',
-   styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
-    .view-container {
-      background-color: #FFFFFF;
-      padding: 1rem;
-    }
+  styles: [ `
+    /* Column Widths */
     .mat-column-select {
       max-width: 44px;
     }
@@ -37,6 +29,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
+  selectedRolesMap = new Map<string, string[]>();
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -119,6 +112,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     // Make copy of user so UI doesn't change until DB change succeeds
     const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
+    this.selectedRolesMap.set(tempUser.name, tempUser.roles);
     delete tempUser.selected;
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
@@ -132,7 +126,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   addRole(user) {
-    const tempUser = { ...user, roles: [ 'learner' ] };
+    // If user has no previous role, add learner role
+    const selectedRolesArray = this.selectedRolesMap.get(user.name) || [ 'learner' ];
+    const tempUser = { ...user, roles: [ ...selectedRolesArray ] };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -160,6 +156,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         // Remove selected property so it doesn't get saved to DB
         delete tempUser.selected;
         tempUser.roles.push(role);
+        this.selectedRolesMap.set(tempUser.name, tempUser.roles);
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;

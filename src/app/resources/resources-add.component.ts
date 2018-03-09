@@ -19,18 +19,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './resources-add.component.html',
-  styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
-    .view-container {
-      background-color: #FFFFFF;
-      padding: 1rem;
-    }
-  ` ]
+  templateUrl: './resources-add.component.html'
 })
 
 export class ResourcesAddComponent implements OnInit {
@@ -87,7 +76,8 @@ export class ResourcesAddComponent implements OnInit {
       resourceType: '',
       addedBy: '',
       openUrl: [],
-      openWhichFile: ''
+      openWhichFile: '',
+      isDownloadable: ''
     });
   }
 
