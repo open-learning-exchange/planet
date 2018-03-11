@@ -38,7 +38,7 @@ constructor(private couchService: CouchService) {}
       })
     ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
   }
-
+// isNameAvailible is broken
   public isNameAvailible$(
     dbName: string,
     fieldName: string,
@@ -54,16 +54,14 @@ constructor(private couchService: CouchService) {}
         )
       )),
       map(exists => {
-        if (exists) { // Here I need to check if the matching name shares the same id as the course being updated
-          exists.docs.map((c, i, a) => {
+        if (exists.docs.length > 0) {
+          exists.docs.map((c) => {
             if (courseId === c._id) {
-              console.log('I should Run');
-              return { duplicate: false };
+              return null;
             } else {
-              console.log('I should Not Run');
               return { duplicate: true };
             }
-          });
+          })
         }
         return null;
       })

@@ -14,7 +14,6 @@ import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-//import { Observable } from 'rxjs/Observable'; //maybe i dont need this but it crashed after i removed it
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -35,6 +34,8 @@ export class CoursesAddComponent implements OnInit {
   members = [];
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
+  revision = null;
+  id = null;
 
   showDaysCheckBox = true; // for toggling the days checkbox
 
@@ -42,7 +43,7 @@ export class CoursesAddComponent implements OnInit {
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   days = constants.days;
-
+  
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -110,16 +111,12 @@ export class CoursesAddComponent implements OnInit {
     });
   }
 
-  // Add a conditional to check routeparams, if 'update' make get request and patch the values
   ngOnInit() {
-    console.log('This is ActivatedRoute', this.route);
-    // console.log(this.route.snapshot.paramMap.get('id'))
-    console.log(this.route.snapshot.url[0].path);
-
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
-        console.log(data);
+        this.revision = data._rev;
+        this.id = data._id;
         this.courseForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -127,8 +124,14 @@ export class CoursesAddComponent implements OnInit {
     }
   }
 
-  updateCourse(data) {
-    // this is next
+  updateCourse(courseInfo) {
+    this.couchService.put(this.dbName+'/'+this.id, { ...courseInfo, '_rev':this.revision}).subscribe(() => {
+      this.router.navigate([ '/courses' ]);
+      this.planetMessageService.showMessage('Course Updated Successfully');
+    }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
+      console.log(err);
+    });
   }
 
   onSubmit() {
