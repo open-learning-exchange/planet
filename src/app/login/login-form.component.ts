@@ -85,7 +85,6 @@ export class LoginFormComponent {
         }
       }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
   }
-
 }
 
 const repeatPassword = {
