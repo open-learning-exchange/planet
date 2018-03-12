@@ -1,6 +1,6 @@
 <form (ngSubmit)="onSubmit()" class="login-form" [formGroup]="userForm">
   <mat-form-field class="example-full-width">
-    <input matInput i18n-placeholder placeholder="Username" name="name" formControlName = "name" lowercase />
+    <input matInput i18n-placeholder placeholder="Username" name="name" formControlName = "name" [(lowercase)]='userForm.name'/>
     <mat-error>
       <planet-form-error-messages [control]="userForm.controls.name"></planet-form-error-messages>
     </mat-error>
