@@ -55,16 +55,15 @@ constructor(private couchService: CouchService) {}
       )),
       map(exists => {
         if (exists.docs.length > 0) {
-          exists.docs.map((c) => {
+          return exists.docs.reduce((isMatch, c) => {
             if (courseId === c._id) {
               return null;
-            } else {
-              return { duplicate: true };
             }
-          })
+            return isMatch;
+          }, { duplicate: true });
         }
-        return null;
       })
+
     ).debug('Checking availibility of ' + fieldName + ' in ' + dbName);
   }
 

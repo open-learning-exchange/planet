@@ -36,6 +36,7 @@ export class CoursesAddComponent implements OnInit {
   courseForm: FormGroup;
   revision = null;
   id = null;
+  pageType = 'Add new';
 
   showDaysCheckBox = true; // for toggling the days checkbox
 
@@ -43,7 +44,7 @@ export class CoursesAddComponent implements OnInit {
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   days = constants.days;
-  
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -115,6 +116,7 @@ export class CoursesAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
+        this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
         this.courseForm.patchValue(data);
@@ -125,7 +127,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
-    this.couchService.put(this.dbName+'/'+this.id, { ...courseInfo, '_rev':this.revision}).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + this.id, { ...courseInfo, '_rev': this.revision }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
