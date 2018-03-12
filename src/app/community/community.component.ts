@@ -12,7 +12,6 @@ import { filterDropdowns } from '../shared/table-helpers';
 export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
   communities = new MatTableDataSource();
-  selectedValue = '';
   nations = [];
   displayedColumns = [ 'name',
     'lastAppUpdateDate',
