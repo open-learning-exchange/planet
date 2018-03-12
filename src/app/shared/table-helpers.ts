@@ -11,7 +11,7 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 export const filterDropdowns = (filterObj: any) => {
   return (data: any, filter: string) => {
     for (const field in filterObj) {
-      if (filterObj[field] && filterObj[field] !== data[field]) {
+      if (filterObj[field] && filterObj[field].toLowerCase() !== data[field].toLowerCase()) {
         return false;
       }
     }

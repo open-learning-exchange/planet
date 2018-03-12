@@ -23,7 +23,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'action'
   ];
   editDialog: any;
-  filter = { 'registrationRequest': '', 'nationurl': '' };
+  filter = {
+    'registrationRequest': '',
+    'nationName': this.route.snapshot.paramMap.get('nation') || ''
+  };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -37,6 +40,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     this.communities.filterPredicate = filterDropdowns(this.filter);
     this.getNationList();
     this.getCommunityList();
+    this.communities.filter = this.filter.nationName;
   }
 
   ngAfterViewInit() {
@@ -46,13 +50,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .subscribe((data) => {
-        this.nations = data.rows.map(function(nt){
-          if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
-            this.nationControl.setValue(nt.doc.nationurl);
-            this.communities.filter = nt.doc.nationurl;
-          }
-          return nt;
-        }, this);
+        this.nations = data.rows;
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -115,6 +113,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   onFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Changing the filter string to trigger filterPredicate
     this.communities.filter = filterValue;
   }
 
