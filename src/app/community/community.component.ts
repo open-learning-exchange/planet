@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
-import { FormControl, Validators } from '@angular/forms';
+import { filterDropdowns } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './community.component.html'
@@ -24,9 +24,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'action'
   ];
   editDialog: any;
-  deleteDialog: any;
-  nationControl = new FormControl();
-  statusControl = new FormControl();
+  filter = { 'registrationRequest': '', 'nationurl': '' };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -35,6 +33,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    this.communities.filterPredicate = filterDropdowns(this.filter);
+    this.getNationList();
+    this.getCommunityList();
+  }
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
@@ -110,30 +114,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
-  onChange(filterValue: string) {
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
     this.communities.filter = filterValue;
-  }
-
-  ngOnInit() {
-    this.communities.filterPredicate = (data: any, filter: string) => {
-      if (this.statusControl.value === 'All') {
-        this.statusControl.setValue('');
-      }
-      if (this.nationControl.value === 'All') {
-        this.nationControl.setValue('');
-      }
-      if (this.statusControl.value && this.nationControl.value) {
-        return data.registrationRequest === this.statusControl.value && data.nationUrl === this.nationControl.value;
-      } else if (this.statusControl.value) {
-        return data.registrationRequest === this.statusControl.value;
-      } else if (this.nationControl.value) {
-        return data.nationUrl === this.nationControl.value;
-      } else {
-        return true;
-      }
-    };
-    this.getNationList();
-    this.getCommunityList();
   }
 
 }

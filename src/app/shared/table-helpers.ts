@@ -7,3 +7,14 @@ export const filterSpecificFields = (filterFields: string[]): any => {
     }
   };
 };
+
+export const filterDropdowns = (filterObj: any) => {
+  return (data: any, filter: string) => {
+    for (const field in filterObj) {
+      if (filterObj[field] && filterObj[field] !== data[field]) {
+        return false;
+      }
+    }
+    return true;
+  };
+};
