@@ -35,6 +35,7 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
+  userDetail = [];
 
   constructor(
     private router: Router,
@@ -50,7 +51,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.name = this.userService.get().name;
+    this.userDetail = this.userService.get();
   }
 
   createForm() {

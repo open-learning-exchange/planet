@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   notifications = [];
   @ViewChild('content') private mainContent;
   isUserAdmin = false;
+  userDetail = [];
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
@@ -50,8 +51,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getNotification();
-    this.isUserAdmin = this.userService.get().isUserAdmin;
-    this.name = this.userService.get().name;
+    this.userDetail = [ this.userService.get().isUserAdmin, this.userService.get().name ];
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
         this.current_flag = language.short_code;
