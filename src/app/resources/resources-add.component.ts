@@ -34,7 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
-  userDetail = {};
+  userDetail: any = {};
 
   constructor(
     private router: Router,
