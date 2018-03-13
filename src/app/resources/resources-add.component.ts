@@ -23,7 +23,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 })
 
 export class ResourcesAddComponent implements OnInit {
-  name = '';
   subjects = new FormControl();
   levels = new FormControl();
   subjectList: string[];
@@ -35,6 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
+  userDetail: any = {};
 
   constructor(
     private router: Router,
@@ -50,7 +50,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
+    this.userDetail = this.userService.get();
   }
 
   createForm() {

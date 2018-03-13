@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ole/stretch64"
-  config.vm.box_version = "0.3.1"
+  config.vm.box_version = "0.3.3"
 
   config.vm.hostname = "planet"
 
@@ -84,18 +84,21 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-#    docker pull portainer/portainer
-#    sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
+    # Portainer
+    #docker pull portainer/portainer
+    #sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
 
     # Add CouchDB Docker
-    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb klaemo/couchdb:2.0.0
+    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb couchdb:2.1.1
     # Install Angular CLI
-    sudo npm install -g @angular/cli
+    #sudo npm install -g @angular/cli
 
     # Add CORS to CouchDB so app has access to databases
-    git clone https://github.com/pouchdb/add-cors-to-couchdb.git
+    #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
+    #cd add-cors-to-couchdb
+    #npm install
     cd add-cors-to-couchdb
-    npm install
+    while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do sleep 1; done
     node bin.js http://localhost:5984
     cd /vagrant
     # End add CORS to CouchDB

@@ -23,8 +23,6 @@ import { map } from 'rxjs/operators';
   ` ]
 })
 export class DashboardComponent implements OnInit {
-  name = '';
-  roles: string[] = [];
   data = { resources: [], courses: [], meetups: [] };
 
   constructor(
@@ -33,7 +31,6 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
     this.getData('resources', { linkPrefix: 'resources/view/', addId: true }).subscribe((res) => {
       this.data.resources = res;
     });

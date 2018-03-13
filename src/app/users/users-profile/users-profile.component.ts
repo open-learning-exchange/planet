@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
@@ -11,31 +11,41 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 @Component({
-  templateUrl: './users-profile.component.html'
+  templateUrl: './users-profile.component.html',
+  styles: [ `
+    .space-container {
+      margin: 64px 30px;
+    }
+    .view-container {
+      background-color: #FFFFFF;
+      padding: 3rem;
+    }
+  ` ]
 })
 export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
   userDetail: any = {};
+  user: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  name = '';
-  roles = [];
   urlName = '';
 
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private router: Router
   ) { }
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
+    this.user = this.userService.get();
     this.profileView();
   }
 
   profileView() {
     this.urlName = this.route.snapshot.paramMap.get('name');
+    this.user = this.userService.get();
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
@@ -123,6 +133,15 @@ export class UsersProfileComponent implements OnInit {
         ])
       ]
     };
+  }
+
+  goBack() {
+    const currentUser = this.userService.get();
+    if (currentUser.isUserAdmin) {
+      this.router.navigate([ '/users' ]);
+    } else {
+      this.router.navigate([ '/' ]);
+    }
   }
 
 }

@@ -22,8 +22,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  name = '';
-  roles: string[] = [];
   allUsers = new MatTableDataSource();
   message = '';
   displayTable = true;
@@ -46,7 +44,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
+    this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin) {
       this.initializeData();
     } else {
