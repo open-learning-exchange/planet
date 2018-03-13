@@ -104,8 +104,9 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const configuration = Object.assign({ registrationRequest: 'pending' }, this.configurationFormGroup.value, this.contactFormGroup.value);
-      let userDetail = { 'name': this.loginForm.value.username,
+      const configuration = Object.assign({ registrationRequest: 'pending' },
+        this.configurationFormGroup.value, this.contactFormGroup.value);
+      const userDetail = { 'name': this.loginForm.value.username,
             'password': this.loginForm.value.password,
             roles: [],
             'type': 'user',
@@ -115,7 +116,7 @@ export class ConfigurationComponent implements OnInit {
             'lastName': this.contactFormGroup.value.lastName,
             'email': this.contactFormGroup.value.email,
             'phoneNumber': this.contactFormGroup.value.phoneNumber
-          }
+          };
       forkJoin([
         this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
@@ -124,11 +125,11 @@ export class ConfigurationComponent implements OnInit {
       ]).debug('Sending request to parent planet').subscribe((data) => {
         userDetail['request_id'] =  data[3].id;
         this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
-          userDetail, {}, configuration.parent_domain)
-            .subscribe((res) => console.log(res)), (error) => (error);
-        this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
-        this.router.navigate([ '/login' ]);
-      }, []);
+          userDetail, {}, configuration.parent_domain).subscribe((res) =>  {
+            this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
+            this.router.navigate([ '/login' ]);
+          }, (error) => (error));
+      }, (error) => (error));
     }
   }
 

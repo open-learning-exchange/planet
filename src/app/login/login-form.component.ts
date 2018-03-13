@@ -90,10 +90,11 @@ export class LoginFormComponent {
         // Post new session info to login_activity
         return this.userService.newSessionLog();
       })).subscribe((res) => {
-        this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password }, { withCredentials: true }, this.userService.getConfig().parent_domain)
-        .subscribe((response) => {
-          console.log('Success');
-        }, (error) => console.log('Error'));
+        this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
+          { withCredentials: true }, this.userService.getConfig().parent_domain)
+          .subscribe((response) => {
+            console.log('Success');
+          }, (error) => console.log('Error'));
       }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
   }
 }

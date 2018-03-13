@@ -24,7 +24,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   ViewNationDetailDialog: any;
   parentType = this.route.snapshot.paramMap.get('planet');
   selectedNation = '';
-  selectFilter: boolean = false;
+  selectFilter = false;
 
   constructor(
     private router: Router,

@@ -114,7 +114,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     alert('You are going to switch in ' + served_url + ' environment');
   }
 
-  logoutClick() { this.couchService.delete('_session', { withCredentials: true }).subscribe((data: any) => { if (data.ok === true) { this.router.navigate([ '/login' ], {}); } }); }
+  logoutClick() {
+    this.userService.endSessionLog().pipe(switchMap(() => {
+      return this.couchService.delete('_session', { withCredentials: true });
+    })).subscribe((response: any) => {
+      if (response.ok === true) {
+        this.userService.unset();
+        this.router.navigate([ '/login' ], {});
+      }
+    }, err => console.log(err));
+  }
 
   getNotification() {
     const user_id = 'org.couchdb.user:' + this.userService.get().name;

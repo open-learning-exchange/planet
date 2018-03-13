@@ -2,9 +2,8 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
-import { switchMap } from 'rxjs/operators';
-import { filterDropdowns } from '../shared/table-helpers';
-
+import { switchMap, map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 @Component({
   templateUrl: './community.component.html'
 })
@@ -66,9 +65,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      const { _id: id, _rev: rev } = community;
-      community.registrationRequest = change;
       if (change === 'delete' || change === 'reject' || change === 'unlink') {
+        const { _id: id, _rev: rev } = community;
+        community.registrationRequest = change;
         this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
           .subscribe((data) => {
             this.updateRev(data, this.communities.data);
@@ -76,29 +75,24 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
       }
       if (change === 'accept') {
-        community.registrationRequest = 'accepted';
-        this.couchService.get('_users/_all_docs?include_docs=true')
-          .subscribe((data) => {
-            data.rows.map(data => {
-              const communityId = community._id;
-              const communityRev = community._rev;
-              if (data.doc.request_id && (data.doc.request_id === communityId)) {
-                this.couchService.put('_users/' + data.doc._id + '?rev=' + data.doc._rev, { ...data.doc, roles: [ 'learner' ] })
-                  .subscribe((data) => {
-                    delete community['_id'];
-                    delete community['_rev'];
-                    this.couchService.post('nations', { ...community }).subscribe(() => {
-                      const { _id: id, _rev: rev } = community;
-                      this.couchService.delete('communityregistrationrequests/' + communityId + '?rev=' + communityRev)
-                      .subscribe((data) => {
-                        this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
-                        this.editDialog.close();
-                      }, (error) => (error));
-                    }, (error) => (error));
-                  }, (error) => (error));
-              }
-            }
-          ); }, (error) => console.log(error));
+        const communityId = community._id;
+        const communityRev = community._rev;
+        delete community['_id'],
+        delete community['_rev'],
+        forkJoin([
+          this.couchService.post('_users/_find', { 'selector': { 'request_id': communityId } })
+            .pipe(switchMap(data => {
+              return this.couchService.put('_users/' + data.docs[0]._id + '?rev=' + data.docs[0]._rev,
+              { ...data.docs[0], roles: [ 'learner' ] });
+            })),
+          this.couchService.post('nations', { ...community, registrationRequest: 'accepted' }),
+          this.couchService.put('communityregistrationrequests/' + communityId + '?rev=' + communityRev,
+          { ...community, registrationRequest: 'accepted' })
+        ]).subscribe((data) => {
+          community.registrationRequest = 'accepted';
+          this.updateRev(data, this.communities.data);
+          this.editDialog.close();
+        }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
       }
     };
   }

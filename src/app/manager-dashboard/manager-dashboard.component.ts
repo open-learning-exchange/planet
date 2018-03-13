@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 @Component({
   template: `
-    <div *ngIf="planet_type !== 'community' && displayDashboard"><a routerLink="/requests" i18n mat-raised-button>Requests</a> <a routerLink="/associated/{{ planet_type === 'center' ? 'nation' : 'community' }}" i18n mat-raised-button>{{ planet_type === 'center' ? 'Nation' : 'Community' }}</a></div>
-    <div *ngIf="displayDashboard">
-      <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+    <div *ngIf="displayDashboard && planet_type !== 'community'">
+      <a routerLink="/requests" i18n mat-raised-button>Requests</a>
+      <a routerLink="/associated/{{ planet_type === 'center' ? 'nation' : 'community' }}" i18n mat-raised-button>
+      {{ planet_type === 'center' ? 'Nation' : 'Community' }}</a>
     </div>
     <div>{{message}}</div>
   `
