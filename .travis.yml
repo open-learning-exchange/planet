@@ -79,8 +79,10 @@ jobs:
         - docker pull $DOCKER_DB_INIT_TEST
         - tag_docker $PLANET_TEST $PLANET
         - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
+        - login_docker
         - push_docker $PLANET $PLANET_LATEST
         - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
+        - docker logout
 
 cache:
   directories:
