@@ -23,8 +23,6 @@ import { map } from 'rxjs/operators';
   ` ]
 })
 export class DashboardComponent implements OnInit {
-  name = '';
-  roles: string[] = [];
   data = { resources: [], courses: [], meetups: [] };
 
   constructor(

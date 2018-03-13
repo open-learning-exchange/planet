@@ -3,14 +3,14 @@
   <button mat-icon-button (click)="toggleNav()" i18n-title title="Menu"><mat-icon>menu</mat-icon></button>
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
-  <button mat-icon-button *ngIf="userDetail[0]" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
+  <button mat-icon-button *ngIf="user.isUserAdmin" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
     <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" alt="{{current_lang}}"
       title="{{current_lang}}" />
   </button>
-  <button mat-icon-button *ngIf="roles.indexOf('_admin') === -1" routerLink="/users/profile/{{userDetail[1]}}"><mat-icon>account_circle</mat-icon></button>
+  <button mat-icon-button routerLink="/users/profile/{{user.name}}"><mat-icon>account_circle</mat-icon></button>
 </mat-toolbar>
 <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
@@ -21,7 +21,7 @@
 </mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-  <a routerLink="/notifications"    
+  <a routerLink="/notifications"
     class="menu-item-notification"
     [ngClass]="{'primary-text-color':notification.doc.status==='unread'}"
     mat-menu-item

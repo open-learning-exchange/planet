@@ -23,7 +23,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 })
 
 export class ResourcesAddComponent implements OnInit {
-  name = '';
   subjects = new FormControl();
   levels = new FormControl();
   subjectList: string[];
@@ -35,7 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
-  userDetail = [];
+  userDetail = {};
 
   constructor(
     private router: Router,
