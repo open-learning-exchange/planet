@@ -16,6 +16,7 @@ login_docker(){
 prepare_ci(){
   DOCKER_ORG=treehouses
   DOCKER_REPO=planet
+  DOCKER_REPO_TEST=planet-test
   VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
   BRANCH=$TRAVIS_BRANCH
   COMMIT=${TRAVIS_COMMIT::8}
@@ -40,9 +41,21 @@ prepare_planet(){
 }
 
 prepare_db_init(){
-  build_message prepare planet docker...
+  build_message prepare db-init docker...
   export DOCKER_DB_INIT=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
   export DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
+}
+
+prepare_planet_test(){
+  build_message prepare planet test docker...
+  export PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
+  export PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest
+}
+
+prepare_db_init_test(){
+  build_message prepare db-init test docker...
+  export DOCKER_DB_INIT_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init-$VERSION-$BRANCH-$COMMIT
+  export DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init
 }
 
 package_docker(){
@@ -64,6 +77,16 @@ push_docker(){
 	if [ "$BRANCH" = "master" ]
 	then
 	  push_a_docker $2
+	fi
+}
+
+tag_docker(){
+  # $1: tag old
+  # $2: tag new
+  tag_a_docker $1 $2
+	if [ "$BRANCH" = "master" ]
+	then
+	  tag_a_docker $1 "$2"_LATEST
 	fi
 }
 
@@ -89,7 +112,7 @@ deploy_docker(){
 
 render_compose_travis(){
   COMPOSE_LOC=$(pwd)/.travis/planet-travis.yml
-  sed -i -e "s#\${DOCKER_DB_INIT}#$DOCKER_DB_INIT#g" "$COMPOSE_LOC"
-  sed -i -e "s#\${PLANET}#$PLANET#g" "$COMPOSE_LOC"
+  sed -i -e "s#\${DOCKER_DB_INIT}#$DOCKER_DB_INIT_TEST#g" "$COMPOSE_LOC"
+  sed -i -e "s#\${PLANET}#$PLANET_TEST#g" "$COMPOSE_LOC"
   cat "$COMPOSE_LOC"
 }

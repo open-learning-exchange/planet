@@ -21,6 +21,7 @@ env:
 stages:
   - docker-creation
   - automated-test
+  - docker-release
 
 jobs:
   include:
@@ -28,14 +29,14 @@ jobs:
       script:
         - source ./.travis/travis_utils.sh
         - prepare_ci
-        - prepare_planet
-        - deploy_docker './docker/planet/Dockerfile' $PLANET $PLANET_LATEST
+        - prepare_planet_test
+        - deploy_docker './docker/planet/Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
         - prepare_ci
-        - prepare_db_init
-        - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
+        - prepare_db_init_test
+        - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TEST_LATEST
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
@@ -48,8 +49,8 @@ jobs:
       before_install:
         - source ./.travis/travis_utils.sh
         - prepare_ci
-        - prepare_planet
-        - prepare_db_init
+        - prepare_planet_test
+        - prepare_db_init_test
         - render_compose_travis
         - docker-compose -f ./.travis/planet-travis.yml up -d
         - export CHROME_BIN=chromium-browser
@@ -66,57 +67,34 @@ jobs:
       script:
         - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 13 ]; then exit 1; fi
         - ng e2e --environment test
+    - stage: docker-release
+      script:
+        - source ./.travis/travis_utils.sh
+        - prepare_ci
+        - prepare_planet
+        - prepare_db_init
+        - prepare_planet_test
+        - prepare_db_init_test
+        - docker pull $PLANET_TEST
+        - docker pull $DOCKER_DB_INIT_TEST
+        - tag_docker $PLANET_TEST $PLANET
+        - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
+        - push_docker $PLANET $PLANET_LATEST
+        - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
 
-#cache:
-#  directories:
-#    - "$(npm root -g)"
-#    - node_modules
-#
-#notifications:
-#  webhooks:
-#    urls:
-#      - https://webhooks.gitter.im/e/063276d3941fa8443947
-#    on_success: always  # options: [always|never|change] default: change
-#    on_failure: always  # options: [always|never|change] default: always
-#    on_start: never     # options: [always|never|change] default: never
-#
-#services:
-#  - docker
-#
-#before_install:
-#  - docker pull couchdb:2.1.1
-#  - sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb
-#    -v /srv/log/bell:/usr/local/var/log/couchdb couchdb:2.1.1
-#  - git clone https://github.com/pouchdb/add-cors-to-couchdb.git
-#  - cd add-cors-to-couchdb
-#  - npm install
-#  - while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do sleep 1; done
-#  - node bin.js http://localhost:5984
-#  - cd ..
-#  # Add initial Couch databases with script
-#  - ./couchdb-setup.sh -p 5984
-#  # CHROME & xvfb stuff
-#  - export CHROME_BIN=chromium-browser
-#  - export DISPLAY=:99.0
-#  - sh -e /etc/init.d/xvfb start
-#install:
-#  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
-#    && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh
-#    && nvm install $TRAVIS_NODE_VERSION
-#before_script:
-#  - travis_retry npm install
-#  - travis_retry npm install -g @angular/cli
-#  - travis_retry npm install -g karma
-#script:
-#  - export
-#  - docker ps -a | grep planet
-#  - curl -X GET http://127.0.0.1:5984/_all_dbs
-#  - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 13 ];
-#    then exit 1; fi
-#  #- node -v
-#  #- ng test
-#  - ng e2e --environment test
-#  - ./deploy/ngbuildprod.sh # ng build --prod
+cache:
+  directories:
+    - "$(npm root -g)"
+    - node_modules
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/063276d3941fa8443947
+    on_success: always  # options: [always|never|change] default: change
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: never
+
 #before_deploy:
 #  # Decrypt ssh key to connect to docker builder
 #  - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
