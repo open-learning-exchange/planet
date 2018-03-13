@@ -28,7 +28,8 @@ jobs:
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
-        - prepare_docker './docker/planet/Dockerfile' $DOCKER $DOCKER_LATEST
+        - prepare_docker
+        - deploy_docker './docker/planet/Dockerfile' $DOCKER $DOCKER_LATEST
     - stage: docker-creation
       env:
         - ARCH=x64
