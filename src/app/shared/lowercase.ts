@@ -1,25 +1,15 @@
-import {Directive, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import { Directive, Input, HostBinding, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[lowercase]',
-  host: {
-    '[value]': 'lowercase',
-    '(input)': 'format($event.target.value)'
-  }
+  selector: '[lowercase]'
 })
-export class LowerCase implements OnInit {
+export class LowerCase {
   @Input() lowercase: string;
-  @Output() lowercaseChange: EventEmitter<string> = new EventEmitter<string>();
+  @HostBinding('value') value = '';
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-    this.lowercase = this.lowercase || '';
-    this.format(this.lowercase);
-  }
-
-  format(value) {
-    value = value.toLowerCase();
-    this.lowercaseChange.next(value);
+  @HostListener('keyup') onMouseEnter() {
+    this.value = this.lowercase.toLowerCase();
   }
 }
