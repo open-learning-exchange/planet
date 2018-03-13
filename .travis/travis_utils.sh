@@ -33,10 +33,16 @@ tag_a_docker(){
 	build_message done processing $2
 }
 
-prepare_docker(){
+prepare_planet(){
   build_message prepare planet docker...
-  export DOCKER=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
-  export DOCKER_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest
+  export PLANET=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
+  export PLANET_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest
+}
+
+prepare_db_init(){
+  build_message prepare planet docker...
+  export DOCKER_DB_INIT=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
+  export DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
 }
 
 package_docker(){

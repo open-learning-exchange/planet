@@ -29,14 +29,14 @@ jobs:
       script:
         - source ./.travis/travis_utils.sh
         - prepare_package
-        - prepare_docker
-        - deploy_docker './docker/planet/Dockerfile' $DOCKER $DOCKER_LATEST
+        - prepare_planet
+        - deploy_docker './docker/planet/Dockerfile' $PLANET $PLANET_LATEST
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
         - prepare_package
-        - prepare_docker
-        - deploy_docker './docker/db-init/Dockerfile' $DOCKER $DOCKER_LATEST
+        - prepare_db_init
+        - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
     - stage: docker-creation
       env:
         - ARCH=x64
