@@ -24,15 +24,13 @@ import { tap, switchMap } from 'rxjs/operators';
   ]
 })
 export class HomeComponent implements OnInit, AfterViewInit {
-  name = '';
-  roles: string[] = [];
   languages = [];
   current_flag = 'en';
   current_lang = 'English';
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
-  isUserAdmin = false;
+  user: any = {};
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
@@ -50,7 +48,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getNotification();
-    Object.assign(this, this.userService.get());
+    this.user = this.userService.get();
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
         this.current_flag = language.short_code;

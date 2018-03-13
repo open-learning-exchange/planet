@@ -18,7 +18,7 @@ export class ManagerDashboardComponent implements OnInit {
   constructor( private userService: UserService) { }
 
   ngOnInit() {
-    Object.assign(this, this.userService.get());
+    this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
       // A non-admin user cannot receive all user docs
       this.displayDashboard = false;

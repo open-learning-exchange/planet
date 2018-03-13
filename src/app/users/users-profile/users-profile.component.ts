@@ -28,8 +28,6 @@ export class UsersProfileComponent implements OnInit {
   user: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  name = '';
-  roles = [];
   urlName = '';
 
   constructor(
@@ -41,6 +39,7 @@ export class UsersProfileComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.user = this.userService.get();
     this.profileView();
   }
 
