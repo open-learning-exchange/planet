@@ -25,6 +25,7 @@ import { of } from 'rxjs/observable/of';
 export class UsersProfileComponent implements OnInit {
   private dbName = '_users';
   userDetail: any = {};
+  user: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
   name = '';
@@ -45,6 +46,7 @@ export class UsersProfileComponent implements OnInit {
 
   profileView() {
     this.urlName = this.route.snapshot.paramMap.get('name');
+    this.user = this.userService.get();
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
