@@ -48,6 +48,8 @@ jobs:
       before_install:
         - source ./.travis/travis_utils.sh
         - prepare_ci
+        - prepare_planet
+        - prepare_db_init
         - render_compose_travis
         - docker-compose -f ./.travis/planet-travis.yml up -d
         - export CHROME_BIN=chromium-browser
