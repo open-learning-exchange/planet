@@ -29,18 +29,28 @@ jobs:
     - stage: docker-creation
       script:
         - echo this is for x86 docker creation
+        - echo "$TRAVIS_NODE_VERSION"
     - stage: docker-creation
+      env:
+        - ARCH=x64
+        - ARCH=arm
       script:
         - echo this is for rpi docker creation
+        - echo "Running tests"
+        - echo "Environment: $(uname -a)"
+        - echo "$TRAVIS_NODE_VERSION"
     - stage: automated-test
       script:
         - echo this is for automated test
+        - echo "$TRAVIS_NODE_VERSION"
     - stage: docker-release
       script:
         - echo this is docker release x86
+        - echo "$TRAVIS_NODE_VERSION"
     - stage: docker-release
       script:
         - echo this is docker release for arm
+        - echo "$TRAVIS_NODE_VERSION"
 
 #cache:
 #  directories:
