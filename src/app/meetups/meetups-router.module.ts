@@ -3,11 +3,11 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { MeetupsComponent } from './meetups.component';
 import { MeetupsAddComponent } from './meetups-add.component';
-import { AuthService } from '../shared/auth-guard.service';
+import { RoleService } from '../shared/role-guard-service';
 
 const routes: Routes = [
   { path: '', component: MeetupsComponent },
-  { path: 'add', component: MeetupsAddComponent, canActivate: [ AuthService ] }
+  { path: 'add', component: MeetupsAddComponent, canActivate: [ RoleService ] }
 ];
 
 @NgModule({
