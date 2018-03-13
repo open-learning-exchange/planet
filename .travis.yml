@@ -21,43 +21,47 @@ env:
 stages:
   - docker-creation
   - automated-test
-  - docker-release
 
 jobs:
   include:
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
-        - prepare_package
+        - prepare_ci
         - prepare_planet
         - deploy_docker './docker/planet/Dockerfile' $PLANET $PLANET_LATEST
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
-        - prepare_package
+        - prepare_ci
         - prepare_db_init
         - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
     - stage: docker-creation
-      env:
-        - ARCH=x64
-        - ARCH=arm
       script:
-        - echo this is for rpi docker creation
-        - echo "Running tests"
-        - echo "Environment: $(uname -a)"
-        - echo "$TRAVIS_NODE_VERSION"
+        - source ./.travis/travis_utils.sh
+        - build_message WIP: create RPI Planet
+    - stage: docker-creation
+      script:
+        - source ./.travis/travis_utils.sh
+        - build_message WIP: create RPI db-init
     - stage: automated-test
+      before_install:
+        - prepare_ci
+        - render_compose_travis
+        - docker-compose up -f ./.travis/planet-travis up -d
+        - export CHROME_BIN=chromium-browser
+        - export DISPLAY=:99.0
+        - sh -e /etc/init.d/xvfb start
+      install:
+        - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm
+              && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh
+              && nvm install $TRAVIS_NODE_VERSION
+      before_script:
+        - travis_retry npm install
+        - travis_retry npm install -g @angular/cli
+        - travis_retry npm install -g karma
       script:
-        - echo this is for automated test
-        - echo "$TRAVIS_NODE_VERSION"
-    - stage: docker-release
-      script:
-        - echo this is docker release x86
-        - echo "$TRAVIS_NODE_VERSION"
-    - stage: docker-release
-      script:
-        - echo this is docker release for arm
-        - echo "$TRAVIS_NODE_VERSION"
+        - ng e2e --environment test
 
 #cache:
 #  directories:

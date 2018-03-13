@@ -13,7 +13,7 @@ login_docker(){
     docker login -u $DOCKER_USER -p $DOCKER_PASS
 }
 
-prepare_package(){
+prepare_ci(){
   DOCKER_ORG=treehouses
   DOCKER_REPO=planet
   VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
@@ -85,4 +85,11 @@ deploy_docker(){
 	package_docker $1 $2 $3
 	push_docker $2 $3
 	docker logout
+}
+
+render_compose_travis(){
+  COMPOSE_LOC=$(pwd)/.travis/planet-travis.yml
+  sed -i -e "s#\${DOCKER_DB_INIT}#$DOCKER_DB_INIT#g" "$COMPOSE_LOC"
+  sed -i -e "s#\${PLANET}#$PLANET#g" "$COMPOSE_LOC"
+  cat "$COMPOSE_LOC"
 }
