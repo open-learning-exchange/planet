@@ -49,7 +49,7 @@
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
-            <a mat-menu-item routerLink="add">
+            <a mat-menu-item (click)="updateCourse(element)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>

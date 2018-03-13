@@ -5,7 +5,8 @@ import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldCo
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
@@ -29,12 +30,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'select', 'title', 'action' ];
   message = '';
   deleteDialog: any;
+  fb: FormBuilder;
+  courseForm: FormGroup;
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -60,6 +64,11 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   searchFilter(filterValue: string) {
     this.courses.filter = filterValue.trim().toLowerCase();
+  }
+
+  updateCourse(course) {
+    const { _id: courseId } = course;
+    this.router.navigate([ '/courses/update/' + course._id ]);
   }
 
   deleteClick(course) {

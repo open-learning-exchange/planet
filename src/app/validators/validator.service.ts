@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { timer } from 'rxjs/observable/timer';
 
-import { findOneDocument } from '../shared/mangoQueries';
+import { findOneDocument, findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 
 import { switchMap, map } from 'rxjs/operators';
@@ -37,6 +37,34 @@ constructor(private couchService: CouchService) {}
         return null;
       })
     ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
+  }
+
+  public isNameAvailible$(
+    dbName: string,
+    fieldName: string,
+    ac: AbstractControl,
+    courseId: string
+  ): Observable<ValidationErrors | null> {
+    return timer(500).pipe(
+      switchMap(() => this.couchService.post(
+        `${dbName}/_find`,
+        findDocuments(
+          { 'courseTitle' : ac.value },
+          [ '_id', 'courseTitle' ]
+        )
+      )),
+      map(exists => {
+        if (exists.docs.length > 0) {
+          return exists.docs.reduce((isMatch, c) => {
+            if (courseId === c._id) {
+              return null;
+            }
+            return isMatch;
+          }, { duplicate: true });
+        }
+      })
+
+    ).debug('Checking availibility of ' + fieldName + ' in ' + dbName);
   }
 
 }
