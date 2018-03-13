@@ -95,8 +95,9 @@ Vagrant.configure(2) do |config|
 
     # Add CORS to CouchDB so app has access to databases
     #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
-    cd add-cors-to-couchdb
+    #cd add-cors-to-couchdb
     #npm install
+    cd /home/vagrant/add-cors-to-couchdb
     node bin.js http://localhost:5984
     cd /vagrant
     # End add CORS to CouchDB
