@@ -17,7 +17,6 @@ env:
     - secure: "V/U6r8NEg46zbazfEyPJaSjMONaGRlzd5QeJQpqxnf+KSkC8rkkxTh8/LW7k3emGmXnqdSRtQ9keShKo1fb7qJpTxvFuK2YspEmSB69pAxxRj3C+3ikXSz5bM1VHtzC96T+eXzxug6/qAEgWR/OM3aD9GJC14R7sdv5dKxneFgJDZO2nB7pLsU19EYyPdsi4NQt11GQy/vCwYF2qEdWWo7SUmkI6DTQvdyu/dSulID0cfiBUvHcB4A3nMeewEjAY0KFKOr3zcKX6FJ5zKF47r/A/LYF25TtNRfJFvh5txkJFu3HlFSY7FEukB6eOdmqN5jm1omZd+yESzvp5Fm6qvpJb18j1zxKyJzQ3ZIhH4c8c7JNUL+nlKDTzU06Lmu+QypE4EXnlmj1v/4n56VtS8krJdefMlVDLl1Uod6/tVI+gGYj4UbSfV/yd2NS1Y0ksxUI74h2XBkUvs7pqySSob1ErkBkndvCQrEceyBEe9n+OzJ6fC9CKhaaTT0Dv7+pDl34G0FfbxESDvqSh5/aPUyZnIxwnb92iQfM5tIFl89kGyHhvkRf2es3Ga5Y35SwQ9+BT20jvPfcFfm3fHkzvZhYRS0Km+1uuyCPXuZXa53nlZkEee6StzGd6sO1sAAB3RgcH3UioiRh2yK0G+IDDv65N6ov1mMhGn1PXUT6pIIM="
     # DOCKER_PASS
     - secure: "GGxsb26T994fAPprzoGFEcUtQvXpZ7FLf3Vnsp2AQ/OeBUOpACPoB4CsYx8Zx168m7HEt3YDEnqEvCyNhD8Hpsls4g4rGT37r7j5nBd1jsxlKbP1F5CsHUXe41R2QrVGiL/dJ27JGdrTdySL4hfP2dvBUtYNBmMAvbI6PkBxO13lU/sjCherRHEpzgf5FUQj9sbWac5UWWbdLYmsErcoh6/+fhr4OHWZyk3DiELRC6WYceA8YfaYrBy/MKqOV2sBtQTBtSsjNmfQbMG1S7nrw28Gp+uFnfUfF4DC6EwBAZj9NBPwVlllqCIdC0CGm5RWEesaDA62krgzpT2EalSg0ADGj0wXA8dMd34QEzwulsEQWhmgy1fL/EEorC7arcOdoFMkyg1gx/Vg8S+hdjZuX1GmWlbs9oN6+00pJDfmubQw6lOsjipZDGjIiM9OpY1mWcowCxjMRWxO5HEzMLKRZXIEtLfEyrQG03gqsavL6SmpAFVXQj/nkm9DWx6QVOG9tpzsw8jESW4S1BTPjp9gWLCA56VdFaP3ECkSeNWUZJw/1hMh+nol+QjJZa8AvWG75n8tc/Qo6vI/mCoQZBQc5Yf1yc04BhEuqV+AtTMq2NNBW4/DI/CJVpyTnGUt4/0Vefn5cB+qvwVFKuaQL8Badcco7ecB8YJ+50I4IgrLLlc="
-    - TRAVIS_NODE_VERSION="7.9.0"
 
 stages:
   - docker-creation
@@ -28,8 +27,8 @@ jobs:
   include:
     - stage: docker-creation
       script:
-        - echo this is for x86 docker creation
-        - echo "$TRAVIS_NODE_VERSION"
+        - source ./.travis/travis_utils.sh
+        - prepare_docker './docker/planet/Dockerfile' $DOCKER $DOCKER_LATEST
     - stage: docker-creation
       env:
         - ARCH=x64
