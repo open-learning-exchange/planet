@@ -39,11 +39,11 @@ jobs:
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
-        - build_message WIP: create RPI Planet
+        - build_message WIP create RPI Planet
     - stage: docker-creation
       script:
         - source ./.travis/travis_utils.sh
-        - build_message WIP: create RPI db-init
+        - build_message WIP create RPI db-init
     - stage: automated-test
       before_install:
         - prepare_ci
