@@ -38,7 +38,7 @@ constructor(private couchService: CouchService) {}
       })
     ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
   }
-// isNameAvailible is broken
+
   public isNameAvailible$(
     dbName: string,
     fieldName: string,
