@@ -9,6 +9,13 @@ _prepare_deploy: &_prepare_deploy
     - prepare_everything
     - docker pull $PLANET_TEST
     - docker pull $DOCKER_DB_INIT_TEST
+_login_to_kraken: &_login_to_kraken
+  before_script: # Decrypt ssh key to connect to docker builder
+    - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
+      -in ./.travis/deploy_rsa.enc -out ./.travis/deploy_rsa -d
+    - eval "$(ssh-agent -s)"
+    - chmod 600 ./.travis/deploy_rsa
+    - ssh-add ./.travis/deploy_rsa
 
 sudo: required
 language: node_js
@@ -71,6 +78,24 @@ jobs:
       script:
         - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 13 ]; then exit 1; fi
         - ng e2e --environment test
+    - stage: docker-release
+      <<: *_prepare_deploy
+      script: #x86 tagging
+        - tag_docker $PLANET_TEST $PLANET
+        - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
+        - push_docker $PLANET $PLANET_LATEST
+        - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
+        - deploy_tag $TRAVIS_TAG $PLANET_TEST $PLANET_VERSIONED
+        - deploy_tag $TRAVIS_TAG $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
+        - docker logout
+    - stage: docker-release
+      <<: *_login_to_kraken
+      script: #arm image building planet
+        - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
+    - stage: docker-release
+      <<: *_login_to_kraken
+      script: #arm image building planet
+        - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
 
 cache:
   directories:
@@ -84,34 +109,3 @@ notifications:
     on_success: always  # options: [always|never|change] default: change
     on_failure: always  # options: [always|never|change] default: always
     on_start: never     # options: [always|never|change] default: never
-
-before_deploy:
-  # Decrypt ssh key to connect to docker builder
-  - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
-    -in ./.travis/deploy_rsa.enc -out ./.travis/deploy_rsa -d
-  - eval "$(ssh-agent -s)"
-  - chmod 600 ./.travis/deploy_rsa
-  - ssh-add ./.travis/deploy_rsa
-deploy:
-  - provider: script
-    skip_cleanup: true
-    <<: *_prepare_deploy
-    script: #x86 tagging
-      - tag_docker $PLANET_TEST $PLANET
-      - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
-      - push_docker $PLANET $PLANET_LATEST
-      - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
-      - deploy_tag $TRAVIS_TAG $PLANET_TEST $PLANET_VERSIONED
-      - deploy_tag $TRAVIS_TAG $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
-      - docker logout
-    <<: *_deploy_anything
-  - provider: script
-    skip_cleanup: true
-    script: #arm image building planet
-      - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
-    <<: *_deploy_anything
-  - provider: script
-    skip_cleanup: true
-    script: #arm image building db-init
-      - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
-    <<: *_deploy_anything
