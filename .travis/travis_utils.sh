@@ -117,10 +117,10 @@ tag_docker(){
 }
 
 deploy_tag(){
-  if [[ ! -z $1 ]]
+  if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
   then
-    tag_a_docker $2 $3
-    push_a_docker $3
+    tag_a_docker $1 $2
+    push_a_docker $2
   fi
 }
 

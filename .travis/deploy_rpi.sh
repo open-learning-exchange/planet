@@ -95,20 +95,20 @@ clone_branch
 prepare_var_post_clone
 create_footprint start "$commit"
 
-source ./.travis_utils.sh
+source ./.travis/travis_utils.sh
 
 if [[ $image = db-init ]]
   then
   prepare_db_init_rpi
   deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_LATEST
-  deploy_tag $gtag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
+  deploy_tag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
 fi
 
 if [[ $image = planet ]]
   then
   prepare_planet_rpi
   deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
-  deploy_tag $gtag $PLANET_RPI $PLANET_RPI_VERSIONED
+  deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
 fi
 
 remove_temporary_folders

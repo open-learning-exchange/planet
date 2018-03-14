@@ -85,8 +85,8 @@ jobs:
         - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
         - push_docker $PLANET $PLANET_LATEST
         - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
-        - deploy_tag $TRAVIS_TAG $PLANET_TEST $PLANET_VERSIONED
-        - deploy_tag $TRAVIS_TAG $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
+        - deploy_tag $PLANET_TEST $PLANET_VERSIONED
+        - deploy_tag $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
         - docker logout
     - stage: docker-release
       <<: *_login_to_kraken
