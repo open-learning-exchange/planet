@@ -2,7 +2,7 @@
 <br/>
 <div class="example-container mat-elevation-z8">
   <mat-form-field>
-    <mat-select placeholder="Nation Name" [value]="filter.nationName" (change)="onFilterChange($event.value, 'nationName')">
+    <mat-select placeholder="Nation Name" [value]="filter.nationName || 'All'" (change)="onFilterChange($event.value, 'nationName')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let nation of nations;" value={{nation.doc.name}}>{{nation.doc.name}}</mat-option>
     </mat-select>
