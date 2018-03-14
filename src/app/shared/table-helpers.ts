@@ -10,11 +10,11 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 
 export const filterDropdowns = (filterObj: any) => {
   return (data: any, filter: string) => {
-    for (const field in filterObj) {
-      if (filterObj[field] && filterObj[field].toLowerCase() !== data[field].toLowerCase()) {
+    return Object.entries(filterObj).reduce((includeItem: boolean, [ field, val ]) => {
+      if (val && val.toLowerCase() !== data[field].toLowerCase()) {
         return false;
       }
-    }
-    return true;
+      return includeItem;
+    }, true);
   };
 };
