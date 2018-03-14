@@ -50,7 +50,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .subscribe((data) => {
-        this.nations = data.rows;
+        this.nations = data.rows.filter(n => n.id.indexOf('design') < 0);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
