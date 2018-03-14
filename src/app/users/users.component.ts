@@ -126,7 +126,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   addRole(user) {
     // If user has no previous role, add learner role
     let selectedRolesArray = this.selectedRolesMap.get(user.name);
-    if ( this.selectedRolesMap.get(user.name) === undefined || this.selectedRolesMap.get(user.name).length === 0 ) {
+    if (this.selectedRolesMap.get(user.name) === undefined || this.selectedRolesMap.get(user.name).length === 0) {
       selectedRolesArray = [ 'learner' ];
     }
     const tempUser = { ...user, roles: [ ...selectedRolesArray ] };
