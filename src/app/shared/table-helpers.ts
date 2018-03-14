@@ -10,11 +10,14 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 
 export const filterDropdowns = (filterObj: any) => {
   return (data: any, filter: string) => {
-    return Object.entries(filterObj).reduce((includeItem: boolean, [ field, val ]) => {
-      if (val && val.toLowerCase() !== data[field].toLowerCase()) {
-        return false;
-      }
-      return includeItem;
-    }, true);
+    // Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
+    return Object.entries(filterObj).reduce(checkFilterItems(data), true);
   };
 };
+
+const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
+  if (val && val.toLowerCase() !== data[field].toLowerCase()) {
+    return false;
+  }
+  return includeItem;
+});
