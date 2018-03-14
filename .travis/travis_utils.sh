@@ -141,7 +141,6 @@ deploy_docker(){
 	login_docker
 	package_docker $1 $2 $3
 	push_docker $2 $3
-	docker logout
 }
 
 render_compose_travis(){
