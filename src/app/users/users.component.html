@@ -14,7 +14,7 @@
       <h1 i18n>All Users</h1>
     </span>
     <div class="margin-lr-3">
-      <form (ngSubmit)="roleSubmit(allUsers.data,selectedRole)" #rolesForm="ngForm">
+      <form (ngSubmit)="roleSubmit(selection.selected,selectedRole)" #rolesForm="ngForm">
         <mat-form-field>
           <mat-select [(ngModel)]="selectedRole" name="role">
             <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
@@ -33,8 +33,8 @@
           [indeterminate]="selection.hasValue() && !isAllSelected()">
       </mat-checkbox>
       </mat-header-cell>
-      <mat-cell *matCellDef="let row; let i = index;">
-        <mat-checkbox (change)="$event ? handleSectionToggle(row,i) : null"
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
           [checked]="selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
