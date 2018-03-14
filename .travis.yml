@@ -1,3 +1,15 @@
+_deploy_anything: &_deploy_anything
+  on:
+    all_branches: true
+    tags: false
+_prepare_deploy: &_prepare_deploy
+  before_script:
+    - source ./.travis/travis_utils.sh
+    - login_docker
+    - prepare_everything
+    - docker pull $PLANET_TEST
+    - docker pull $DOCKER_DB_INIT_TEST
+
 sudo: required
 language: node_js
 node_js:
@@ -37,14 +49,6 @@ jobs:
         - prepare_ci
         - prepare_db_init_test
         - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TEST_LATEST
-    - stage: docker-creation
-      script:
-        - source ./.travis/travis_utils.sh
-        - build_message WIP create RPI Planet
-    - stage: docker-creation
-      script:
-        - source ./.travis/travis_utils.sh
-        - build_message WIP create RPI db-init
     - stage: automated-test
       before_install:
         - source ./.travis/travis_utils.sh
@@ -67,22 +71,6 @@ jobs:
       script:
         - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 13 ]; then exit 1; fi
         - ng e2e --environment test
-    - stage: docker-release
-      script:
-        - source ./.travis/travis_utils.sh
-        - prepare_ci
-        - prepare_planet
-        - prepare_db_init
-        - prepare_planet_test
-        - prepare_db_init_test
-        - docker pull $PLANET_TEST
-        - docker pull $DOCKER_DB_INIT_TEST
-        - tag_docker $PLANET_TEST $PLANET
-        - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
-        - login_docker
-        - push_docker $PLANET $PLANET_LATEST
-        - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
-        - docker logout
 
 cache:
   directories:
@@ -97,23 +85,33 @@ notifications:
     on_failure: always  # options: [always|never|change] default: always
     on_start: never     # options: [always|never|change] default: never
 
-#before_deploy:
-#  # Decrypt ssh key to connect to docker builder
-#  - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
-#    -in ./deploy/deploy_rsa.enc -out ./deploy/deploy_rsa -d
-#  - eval "$(ssh-agent -s)"
-#  - chmod 600 ./deploy/deploy_rsa
-#  - ssh-add ./deploy/deploy_rsa
-#deploy:
-#  - provider: script
-#    skip_cleanup: true
-#    script: ./deploy/deploy.sh
-#    on:
-#      all_branches: true
-#      tags: false
-#  - provider: script
-#    skip_cleanup: true
-#    script: ./deploy/deploy.sh
-#    on:
-#      all_branches: true
-#      tags: true
+before_deploy:
+  # Decrypt ssh key to connect to docker builder
+  - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
+    -in ./deploy/deploy_rsa.enc -out ./deploy/deploy_rsa -d
+  - eval "$(ssh-agent -s)"
+  - chmod 600 ./deploy/deploy_rsa
+  - ssh-add ./deploy/deploy_rsa
+deploy:
+  - provider: script
+    skip_cleanup: true
+    <<: *_prepare_deploy
+    script: #x86 tagging
+      - tag_docker $PLANET_TEST $PLANET
+      - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
+      - push_docker $PLANET $PLANET_LATEST
+      - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
+      - deploy_tag $TRAVIS_TAG $PLANET_TEST $PLANET_VERSIONED
+      - deploy_tag $TRAVIS_TAG $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
+      - docker logout
+    <<: *_deploy_anything
+  - provider: script
+    skip_cleanup: true
+    script: #arm image building planet
+      - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
+    <<: *_deploy_anything
+  - provider: script
+    skip_cleanup: true
+    script: #arm image building db-init
+      - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
+    <<: *_deploy_anything

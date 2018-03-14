@@ -21,6 +21,9 @@ case $i in
     -t=*|--gtag=*)
         gtag="${i#*=}"
         ;;
+    -i=*|--image=*)
+        image="${i#*=}"
+        ;;
     *)
     echo "usage: deploy_rpi.sh -b=<branch-name>|--branch=<branch-name>"
     echo "usage: deploy_rpi.sh -c=<commit-sha>|--commit=<commit-sha>"
@@ -46,10 +49,20 @@ random_generator(){
     awk -v min=10000000 -v max=99999999 'BEGIN{srand(); print int(min+rand()*(max-min+1))}'
 }
 
-login_docker(){
+prepare_var(){
     DOCKER_USER="$duser"
     DOCKER_PASS="$dpass"
-    docker login --username=$DOCKER_USER --password=$DOCKER_PASS
+    RANDOM_FINGERPRINT=$(random_generator)
+    DOCKER_ORG=treehouses
+    DOCKER_REPO=planet
+    DOCKER_REPO_DEV=planet-dev
+    BRANCH=$branch
+    COMMIT=${commit::8}
+}
+
+prepare_var_post_clone(){
+    VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
+    FILENAME=$VERSION-$BRANCH-$COMMIT
 }
 
 clone_branch(){
@@ -72,84 +85,31 @@ remove_temporary_folders(){
 	rm -rf "$TEST_DIRECTORY"
 }
 
-build_docker() {
-  build_message Build the docker images ...
-  build_message Deploy planet as $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT
-  build_message Deploy planet production as $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
-  build_message Deploy db-init as $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
-  docker build -f ./docker/planet-dev/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT ./docker/planet-dev
-  docker build -f ./docker/planet/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT .
-  docker build -f ./docker/db-init/rpi-Dockerfile -t $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT .
-}
-
-tag_latest_docker() {
-  build_message Tag latest docker images ...
-  docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-latest
-  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-latest
-  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
-}
-
-tag_versioned_docker() {
-  build_message Tag versioned docker images ...
-  docker tag $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION
-  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
-  docker tag $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
-}
-
-push_docker() {
-  build_message Pushing docker images ...
-  docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION-$BRANCH-$COMMIT
-  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
-  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
-}
-
-push_versioned_docker() {
-  build_message Pushing latest docker images ...
-  docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-$VERSION
-  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
-  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
-}
-
-push_latest_docker() {
-  build_message Pushing latest docker images ...
-  docker push $DOCKER_ORG/$DOCKER_REPO_DEV:rpi-latest
-  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-latest
-  docker push $DOCKER_ORG/$DOCKER_REPO:rpi-db-init-latest
-}
-
 create_footprint() {
-  echo $(date +%Y-%m-%d.%H-%M-%S) >> $FOOTPRINT
+  FOOTPRINT=~/travis-build/$FILENAME
+  echo $(date +%Y-%m-%d.%H-%M-%S) $1 >> $FOOTPRINT
 }
 
-RANDOM_FINGERPRINT=$(random_generator)
-login_docker
-DOCKER_ORG=treehouses
-DOCKER_REPO=planet
-DOCKER_REPO_DEV=planet-dev
-BRANCH=$branch
-COMMIT=${commit::8}
-
+prepare_var
 clone_branch
+prepare_var_post_clone
+create_footprint start "$commit"
 
-VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
+source ./.travis_utils.sh
 
-FILENAME=$VERSION-$BRANCH-$COMMIT
-FOOTPRINT=~/travis-build/$FILENAME
-create_footprint
-
-build_docker
-push_docker
-if [[ $BRANCH = master ]];
+if [[ $image = db-init ]]
   then
-  tag_latest_docker
-  push_latest_docker
+  prepare_db_init_rpi
+  deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_LATEST
+  deploy_tag $gtag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
 fi
 
-if [[ ! -z "${gtag}" ]]
+if [[ $image = planet ]]
   then
-  tag_versioned_docker
-  push_versioned_docker
+  prepare_planet_rpi
+  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
+  deploy_tag $gtag $PLANET_RPI $PLANET_RPI_VERSIONED
 fi
 
 remove_temporary_folders
-create_footprint
+create_footprint finish "$commit"

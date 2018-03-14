@@ -36,26 +36,52 @@ tag_a_docker(){
 
 prepare_planet(){
   build_message prepare planet docker...
-  export PLANET=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
-  export PLANET_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest
+  PLANET=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
+  PLANET_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:$VERSION
+  PLANET_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest
 }
 
 prepare_db_init(){
   build_message prepare db-init docker...
-  export DOCKER_DB_INIT=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
-  export DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
+  DOCKER_DB_INIT=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION
+  DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
+}
+
+prepare_planet_rpi(){
+  build_message prepare planet docker...
+  PLANET_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
+  PLANET_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
+  PLANET_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-latest
+}
+
+prepare_db_init_rpi(){
+  build_message prepare db-init docker...
+  DOCKER_DB_INIT_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
+  DOCKER_DB_INIT_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init
 }
 
 prepare_planet_test(){
   build_message prepare planet test docker...
-  export PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
-  export PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest
+  PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
+  PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest
 }
 
 prepare_db_init_test(){
   build_message prepare db-init test docker...
-  export DOCKER_DB_INIT_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init-$VERSION-$BRANCH-$COMMIT
-  export DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init
+  DOCKER_DB_INIT_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init
+}
+
+prepare_everything(){
+  prepare_ci
+  prepare_planet
+  prepare_db_init
+  prepare_planet_test
+  prepare_db_init_test
+  prepare_planet_rpi
+  prepare_db_init_rpi
 }
 
 package_docker(){
@@ -90,6 +116,14 @@ tag_docker(){
 	fi
 }
 
+deploy_tag(){
+  if [[ ! -z $1 ]]
+  then
+    tag_a_docker $2 $3
+    push_a_docker $3
+  fi
+}
+
 delete_docker(){
   # $1: tag
   # $2: tag latest
@@ -97,7 +131,7 @@ delete_docker(){
 	if [ "$BRANCH" = "master" ]
 	then
 		docker rmi -f $2
-    fi
+  fi
 }
 
 deploy_docker(){
