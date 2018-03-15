@@ -11,7 +11,6 @@ import { UserService } from '../shared/user.service';
     <div>{{message}}</div>
   `
 })
-
 export class ManagerDashboardComponent implements OnInit {
   isUserAdmin = false;
   displayDashboard = true;
