@@ -3,18 +3,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 
-
 @Component({
-  templateUrl: './view-courses.component.html',
-  styles: [ `
-    /* Textare style */
-    textarea {
-      width: 600px;
-      height: 110px;
-      resize: none;
-      overflow: auto;
-    }
-  ` ]
+  templateUrl: './view-courses.component.html'
 })
 
 export class ViewCoursesComponent implements OnInit {
@@ -23,15 +13,15 @@ export class ViewCoursesComponent implements OnInit {
 
   constructor(
     private couchService: CouchService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getCourse(params.get('id'))))
-      .debug('Getting resource id from parameters')
+      .debug('Getting course id from parameters')
       .subscribe((course) => {
         this.courseDetail = course;
-      }, error => console.log(error), () => console.log('complete getting resource id'));
+      }, error => console.log(error));
   }
 
   getCourse(id: string) {
