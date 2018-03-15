@@ -3,6 +3,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { switchMap } from 'rxjs/operators';
+import { filterDropdowns } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './community.component.html'
@@ -10,8 +12,6 @@ import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
   communities = new MatTableDataSource();
-  selectedValue = '';
-  selectedNation = '';
   nations = [];
   displayedColumns = [ 'name',
     'lastAppUpdateDate',
@@ -23,6 +23,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'action'
   ];
   editDialog: any;
+  filter = {
+    'registrationRequest': '',
+    'nationName': this.route.snapshot.paramMap.get('nation') || ''
+  };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -32,6 +36,13 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute
   ) {}
 
+  ngOnInit() {
+    this.communities.filterPredicate = filterDropdowns(this.filter);
+    this.getNationList();
+    this.getCommunityList();
+    this.communities.filter = this.filter.nationName;
+  }
+
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
   }
@@ -39,13 +50,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   getNationList() {
     this.couchService.get('nations/_all_docs?include_docs=true')
       .subscribe((data) => {
-        this.nations = data.rows.map(function(nt){
-          if (nt.doc.name === this.route.snapshot.paramMap.get('nation')) {
-            this.selectedNation = nt.doc.nationurl;
-            this.communities.filter = this.selectedNation;
-          }
-          return nt;
-        }, this);
+        this.nations = data.rows.filter(n => n.id.indexOf('design') < 0);
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
@@ -106,17 +111,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
-  onChange(filterValue: string) {
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Changing the filter string to trigger filterPredicate
     this.communities.filter = filterValue;
-  }
-
-  onSelect(select: string) {
-    this.communities.filter = select;
-  }
-
-  ngOnInit() {
-    this.getNationList();
-    this.getCommunityList();
   }
 
 }
