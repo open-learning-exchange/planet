@@ -7,13 +7,13 @@ import { LoginRouterModule } from './login-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { LoginFormComponent } from './login-form.component';
-import { LowerCase } from '../shared/lowercase'
+import { LowercaseDirective } from '../shared/lowercase.directive';
 
 @NgModule({
   imports: [
     LoginRouterModule, FormsModule, CommonModule, MaterialModule, ReactiveFormsModule, PlanetFormsModule ],
   declarations: [
-    LoginComponent, LoginFormComponent, ConfigurationComponent, LowerCase
+    LoginComponent, LoginFormComponent, ConfigurationComponent, LowercaseDirective
   ]
 })
 export class LoginModule { }
