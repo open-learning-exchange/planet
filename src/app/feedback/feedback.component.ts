@@ -1,30 +1,17 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Router } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { DialogsMessageComponent } from '../shared/dialogs/dialogs-message.component';
-import { Location } from '@angular/common';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './feedback.component.html',
-  styles: [ `
-    /* Consider using space-container app wide for route views */
-    .space-container {
-      margin: 64px 30px;
-      background: none;
-    }
-  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
-  name = '';
-  dialogsMessage: any;
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
@@ -34,9 +21,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private router: Router,
     private dialog: MatDialog,
-    private location: Location,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService
@@ -95,17 +80,18 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     };
   }
 
-  back() {
-    this.location.back();
-  }
-
   reply(feedback) {
-    const title = 'Reply';
+    const title = 'Reply to: ' + feedback.owner;
     const type = 'feedback';
     const fields =
       [
-        { 'label': 'To', 'type': 'textbox', 'name': 'replyTo', 'readonly': true, 'value': feedback.owner , 'required': false },
-        { 'label': 'Message', 'type': 'textarea', 'name': 'message', 'placeholder': 'Leave a comment', 'required': true }
+        {
+          'label': 'Message',
+          'type': 'textarea',
+          'name': 'message',
+          'placeholder': 'Leave a comment',
+          'required': true
+        }
       ];
     const formGroup = {
       id: [ feedback._id ],
@@ -117,12 +103,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       .debug('Dialog confirm')
       .subscribe((res) => {
         if (res !== undefined) {
-          this.onSubmit(res);
+          this.addMessageToFeedback(res);
         }
       });
   }
 
-  onSubmit(feedback) {
+  addMessageToFeedback(feedback) {
     const messages = [];
     this.couchService.get(this.dbName + '/' + feedback.id)
       .subscribe((data) => {
@@ -132,23 +118,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
           this.planetMessageService.showMessage('Reply success.');
         }, (error) => this.message = '');
       }, (error) => this.message = 'There is a problem of getting data.');
-  }
-
-  openFeedback(feedback: any) {
-    feedback.selected = feedback.selected ? false : true;
-    const msg = feedback.messages.map(message => {
-      return message;
-    });
-    this.dialogsMessage = this.dialog.open(DialogsMessageComponent, {
-      data: {
-        type: 'FeedBack',
-        Msg: msg
-      }
-    });
-    // Reset the message when the dialog closes
-    this.dialogsMessage.afterClosed().debug('Closing dialog').subscribe(() => {
-      this.message = '';
-    });
   }
 
   closeFeedback(feedback: any) {
