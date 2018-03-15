@@ -4,6 +4,7 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
+import { FeedbackComponent } from '../feedback/feedback.component';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'community', component: CommunityComponent },
       { path: 'community/:nation', component: CommunityComponent },
+      { path: 'feedback', component: FeedbackComponent },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
       { path: 'notifications', component: NotificationsComponent }
