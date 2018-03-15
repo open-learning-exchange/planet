@@ -4,7 +4,7 @@
     <div *ngFor="let field of fields">
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
-        <input matInput (keypress)="valueChange($event)" placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}" readonly="{{field.readonly}}" value="{{field.value}}">
+        <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
