@@ -3,7 +3,6 @@ import { MaterialModule  } from '../material.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogsFormComponent } from './dialogs-form.component';
-import { DialogsMessageComponent } from './dialogs-message.component';
 import { DialogsPromptComponent } from './dialogs-prompt.component';
 import { DialogsViewComponent } from './dialogs-view.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,16 +13,16 @@ import { PlanetFormsModule } from '../planet-forms.module';
     CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
   ],
   exports: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, DialogsMessageComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent
   ],
   declarations: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, DialogsMessageComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent
   ],
   providers: [
     DialogsFormService
   ],
   entryComponents: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, DialogsMessageComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent
   ]
 })
 export class PlanetDialogsModule {}
