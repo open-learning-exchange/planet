@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { environment } from '../../environments/environment';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -38,6 +39,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   nationName = '';
   selection = new SelectionModel(true, []);
   urlPrefix = environment.couchAddress + this.dbName + '/';
+  user: any = {};
 
   constructor(
     private couchService: CouchService,
@@ -45,7 +47,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private httpclient: HttpClient,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -187,4 +190,24 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
+  addResourceId(resourceId) {
+    const resourceIdArray = resourceId.map((data) => {
+      return data._id;
+    });
+    this.couchService.post(`_users/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(switchMap(data => {
+        if (data.docs[0].myLibrary) {
+          data.docs[0].myLibrary.map((resource) => {
+            if (resourceIdArray.indexOf(resource) === -1) {
+              resourceIdArray.push(resource);
+            }
+          });
+        }
+        return this.couchService.put('_users/' + data.docs[0]._id + '?rev=' + data.docs[0]._rev,
+          { ...data.docs[0], myLibrary: resourceIdArray });
+      })).subscribe((res) =>  {
+        this.planetMessageService.showAlert('Resource added to your library');
+    }, (error) => (error));
+
+  }
 }
