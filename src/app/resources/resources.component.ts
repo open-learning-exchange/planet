@@ -40,7 +40,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   nationName = '';
   selection = new SelectionModel(true, []);
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  user: any = {};
 
   constructor(
     private couchService: CouchService,
