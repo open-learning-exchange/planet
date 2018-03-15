@@ -1,9 +1,9 @@
 import { Directive, Input, HostBinding, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[lowercase]'
+  selector: '[planetLowercase]'
 })
-export class LowerCase {
+export class LowercaseDirective {
   @Input() lowercase: string;
   @HostBinding('value') value = '';
 
