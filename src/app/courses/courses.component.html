@@ -34,7 +34,7 @@
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell  *matCellDef="let element" class="list-content-menu">
-        <h3 class="header">{{element.courseTitle}}</h3>
+        <h3 class="header"><a [routerLink]="['/courses/view', element._id]">{{element.courseTitle}}</a></h3>
         <div class="content"><p>{{ element.description }}</p></div>
         <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
@@ -53,7 +53,7 @@
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>
-            <a mat-menu-item routerLink="add">
+            <a mat-menu-item [routerLink]="['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>
               <span i18n>View Course</span>
             </a>
