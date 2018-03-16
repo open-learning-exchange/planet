@@ -36,6 +36,8 @@ esac
 done
 ##########################################################
 
+set -e
+
 build_message(){
     # $1 = build message
     echo
