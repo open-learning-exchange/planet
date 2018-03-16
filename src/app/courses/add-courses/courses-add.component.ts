@@ -26,7 +26,9 @@ export class CoursesAddComponent implements OnInit {
   revision = null;
   id = null;
   pageType = 'Add new';
-
+  courseFrequency = [];
+  weeklyRadio = false;
+  dailyRadio = false;
   showDaysCheckBox = true; // for toggling the days checkbox
 
   // from the constants import
@@ -108,6 +110,18 @@ export class CoursesAddComponent implements OnInit {
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
+        this.courseFrequency = data.day;
+
+        if ( this.courseFrequency === undefined || this.courseFrequency.length === 0) {
+          this.showDaysCheckBox = true;
+        } else if (this.courseFrequency.length > 0 && this.courseFrequency.length < 7) {
+          this.showDaysCheckBox = false;
+          this.weeklyRadio = true;
+        } else {
+          this.showDaysCheckBox = true;
+          this.dailyRadio = true;
+        }
+
         this.courseForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -155,6 +169,14 @@ export class CoursesAddComponent implements OnInit {
     this.router.navigate([ '/courses' ]);
   }
 
+  isClassDay(day) {
+    if (this.courseFrequency.includes(day)) {
+        return true;
+      } else {
+        return false;
+      }
+  }
+
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
 
   onDayChange(day: string, isChecked: boolean) {
@@ -171,7 +193,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   // remove old values from array on radio button change
-  toogleWeekly(val: boolean) {
+  toggleDaily(val: boolean) {
     // empty the array
     this.courseForm.setControl('day', this.fb.array([]));
     if (val) {
