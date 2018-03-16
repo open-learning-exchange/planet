@@ -1,4 +1,4 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, Input } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Validators } from '@angular/forms';
@@ -20,6 +20,7 @@ export class Feedback {
   source: string;
   url: string;
   messages: Array<Message>;
+  Resource_title: string;
 }
 
 @Directive({
@@ -27,6 +28,7 @@ export class Feedback {
 })
 export class FeedbackDirective {
   message: string;
+  @Input() value: any;
 
   constructor(
     private userService: UserService,
@@ -45,7 +47,8 @@ export class FeedbackDirective {
         ...feedbackInfo,
         openTime: Date.now(),
         messages: [ startingMessage ],
-        url: this.router.url
+        url: this.router.url,
+        Resource_title: this.value
       };
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
