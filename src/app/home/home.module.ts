@@ -14,7 +14,7 @@ import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
-import { FeedbackDirective } from '../feedback/feedback.directive';
+import { FeedbackModule } from '../feedback/feedback.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
@@ -28,7 +28,8 @@ import { NotificationsComponent } from '../notifications/notifications.component
     MaterialModule,
     PlanetDialogsModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    FeedbackModule
   ],
   declarations: [
     HomeComponent,
@@ -37,7 +38,6 @@ import { NotificationsComponent } from '../notifications/notifications.component
     NationComponent,
     FeedbackComponent,
     ManagerDashboardComponent,
-    FeedbackDirective,
     DashboardTileComponent,
     NotificationsComponent
   ]

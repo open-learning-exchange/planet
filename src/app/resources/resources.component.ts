@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
@@ -12,7 +11,6 @@ import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { environment } from '../../environments/environment';
-import { Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -47,8 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private httpclient: HttpClient,
-    private planetMessageService: PlanetMessageService,
-    private dialogsFormService: DialogsFormService
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -188,47 +185,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.router.navigate([ '/' ]);
-  }
-
-  openFeedbackForm(element) {
-    const title = 'Feedback';
-    const type = 'Resource feedback';
-    const fields =
-      [
-        { 'label': 'Title', 'type': 'textbox', 'name': 'title', 'placeholder': 'Feedback Title', 'required': true },
-        { 'label': 'Your Feedback', 'type': 'textbox', 'name': 'message', 'placeholder': 'Your Feedback', 'required': true }
-      ];
-    const formGroup = {
-      title: [ '', Validators.required ],
-      message: [ '', Validators.required ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((response) => {
-        console.log('data', response);
-        if (response !== undefined) {
-          this.addFeedback(response, element);
-        }
-      });
-  }
-
-  addFeedback(response, element) {
-    const newFeedback = {
-      'Resource Titile': element.title,
-      'Resource_id': element._id,
-      'Feedback title': response.title,
-      'message': response.message,
-      openTime: Date.now(),
-      'type': 'Resource feedback'
-    };
-    this.couchService.post('feedback/', newFeedback)
-    .subscribe((data) => {
-      this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
-    },
-    (error) => {
-      this.planetMessageService.showAlert('Error, your  feedback cannot be submitted');
-    });
   }
 
 }

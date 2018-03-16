@@ -8,6 +8,7 @@ import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
+import { FeedbackModule } from '../feedback/feedback.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
     ResourcesRouterModule,
     MaterialModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    FeedbackModule
   ],
   declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent ]
 })
