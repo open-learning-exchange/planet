@@ -1,7 +1,3 @@
-_deploy_anything: &_deploy_anything
-  on:
-    all_branches: true
-    tags: false
 _prepare_deploy: &_prepare_deploy
   before_script:
     - source ./.travis/travis_utils.sh
@@ -16,22 +12,26 @@ _login_to_kraken: &_login_to_kraken
     - eval "$(ssh-agent -s)"
     - chmod 600 ./.travis/deploy_rsa
     - ssh-add ./.travis/deploy_rsa
+_add_kraken: &_add_kraken
+  addons:
+    ssh_known_hosts: kraken.ole.org
+_use_chrome: &_use_chrome
+  addons:
+    apt:
+      sources:
+        - google-chrome
+      packages:
+        - google-chrome-stable
+        - google-chrome-beta
+_use_nodejs: &_use_nodejs
+  language: node_js
+  node_js:
+    - "8"
 
 sudo: required
-branches:	
-  except:	
-  - l10n_master
-language: node_js
-node_js:
-  - "8"
 addons:
-  ssh_known_hosts: kraken.ole.org
   apt:
-    sources:
-      - google-chrome
     packages:
-      - google-chrome-stable
-      - google-chrome-beta
       - docker-ce
 env:
   global:
@@ -64,6 +64,8 @@ jobs:
         - prepare_db_init_test
         - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TEST_LATEST
     - stage: automated-test
+      <<: *_use_chrome
+      <<: *_use_nodejs
       before_install:
         - source ./.travis/travis_utils.sh
         - prepare_ci
@@ -88,18 +90,20 @@ jobs:
     - stage: docker-release
       <<: *_prepare_deploy
       script: #x86 tagging
-        - tag_docker $PLANET_TEST $PLANET
-        - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT
+        - tag_docker $PLANET_TEST $PLANET $PLANET_LATEST
+        - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
         - push_docker $PLANET $PLANET_LATEST
         - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
         - deploy_tag $PLANET_TEST $PLANET_VERSIONED
         - deploy_tag $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
         - docker logout
     - stage: docker-release
+      <<: *_add_kraken
       <<: *_login_to_kraken
       script: #arm image building planet
         - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
     - stage: docker-release
+      <<: *_add_kraken
       <<: *_login_to_kraken
       script: #arm image building planet
         - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
