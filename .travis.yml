@@ -53,12 +53,14 @@ jobs:
   include:
     - stage: docker-creation
       script:
+        - set -e
         - source ./.travis/travis_utils.sh
         - prepare_ci
         - prepare_planet_test
         - deploy_docker './docker/planet/Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST
     - stage: docker-creation
       script:
+        - set -e
         - source ./.travis/travis_utils.sh
         - prepare_ci
         - prepare_db_init_test
@@ -85,11 +87,13 @@ jobs:
         - travis_retry npm install -g @angular/cli
         - travis_retry npm install -g karma
       script:
+        - set -e
         - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 13 ]; then exit 1; fi
         - ng e2e --environment test
     - stage: docker-release
       <<: *_prepare_deploy
       script: #x86 tagging
+        - set -e
         - tag_docker $PLANET_TEST $PLANET $PLANET_LATEST
         - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
         - push_docker $PLANET $PLANET_LATEST
