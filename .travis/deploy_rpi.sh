@@ -95,9 +95,9 @@ create_footprint() {
 wait_for_kraken_free() {
     build_message  "Waiting for kraken to not occupied ..."
     WAIT_TIME=0
-    MAXS_TIME=300
+    MAX_TIME=300
     MAX_DOCKER_RUNNING=2
-    until [[ $(docker ps | wc -l) -le $MAX_DOCKER_RUNNING ]] || [[ $WAIT_TIME -eq 180 ]]; do
+    until [[ $(docker ps | wc -l) -le $MAX_DOCKER_RUNNING ]] || [[ $WAIT_TIME -eq $MAX_TIME ]]; do
         echo "kraken occupied, please wait for more 5 seconds"
         sleep 5
         WAIT_TIME=$(expr $WAIT_TIME + 5)
