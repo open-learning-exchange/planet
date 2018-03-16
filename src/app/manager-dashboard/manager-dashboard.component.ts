@@ -7,9 +7,7 @@ import { UserService } from '../shared/user.service';
       <a routerLink="/requests" i18n mat-raised-button>Requests</a>
       <a routerLink="/associated/{{ planet_type === 'center' ? 'nation' : 'community' }}" i18n mat-raised-button>
       {{ planet_type === 'center' ? 'Nation' : 'Community' }}</a>
-    </div>
-    <div *ngIf="displayDashboard>
-       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+      <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     </div>
     <div>{{message}}</div>
   `
