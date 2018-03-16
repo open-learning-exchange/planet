@@ -11,7 +11,7 @@ services:
     depends_on:
       - couchdb
     environment:
-      - COUCHDB_HOST='http://couchdb:5984'
+      - COUCHDB_HOST=http://couchdb:5984
   planet:
     image: ${PLANET}
     ports:
