@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
+
 @Component({
   template: `
     <div *ngIf="displayDashboard && planet_type !== 'community'">
@@ -7,9 +8,13 @@ import { UserService } from '../shared/user.service';
       <a routerLink="/associated/{{ planet_type === 'center' ? 'nation' : 'community' }}" i18n mat-raised-button>
       {{ planet_type === 'center' ? 'Nation' : 'Community' }}</a>
     </div>
+    <div *ngIf="displayDashboard>
+       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+    </div>
     <div>{{message}}</div>
   `
 })
+
 export class ManagerDashboardComponent implements OnInit {
   isUserAdmin = false;
   displayDashboard = true;
