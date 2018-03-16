@@ -1,6 +1,9 @@
 #!/bin/sh
 
-if [ -z $COUCHDB_HOST ]; then echo '$COUCHDB_HOST is not set, defaulting to' 'http://couchdb:5984'; export $COUCHDB_HOST='http://couchdb:5984'; fi
+if [ -z $COUCHDB_HOST ]; then
+  echo '$COUCHDB_HOST is not set, defaulting to' 'http://couchdb:5984'
+  export $COUCHDB_HOST='http://couchdb:5984'
+fi
 
 #WAIT_TIME
 echo  "Waiting for couchdb to start"
