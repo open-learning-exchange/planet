@@ -44,7 +44,7 @@ export class ResourcesAddComponent implements OnInit {
     private validatorService: ValidatorService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
-    private roleService: RoleService
+    public roleService: RoleService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);

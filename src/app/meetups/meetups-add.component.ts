@@ -23,7 +23,7 @@ export class MeetupsAddComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private fb: FormBuilder,
-    private roleService: RoleService
+    public roleService: RoleService
   ) {
     this.createForm();
   }

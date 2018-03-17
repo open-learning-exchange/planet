@@ -42,7 +42,7 @@ export class CoursesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
-    private roleService: RoleService
+    public roleService: RoleService
   ) {
     this.createForm();
   }
