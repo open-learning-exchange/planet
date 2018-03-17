@@ -14,6 +14,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { RoleService } from '../../shared/role-guard.service';
 
 @Component({
   templateUrl: 'courses-add.component.html'
@@ -40,7 +41,8 @@ export class CoursesAddComponent implements OnInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private roleService: RoleService
   ) {
     this.createForm();
   }
@@ -102,6 +104,9 @@ export class CoursesAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.roleService.isHaveARoleAndIsAdmin()) {
+      this.router.navigate([ '/courses' ]);
+    }
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {

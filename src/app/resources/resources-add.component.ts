@@ -17,6 +17,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { RoleService } from '../shared/role-guard.service';
 
 @Component({
   templateUrl: './resources-add.component.html'
@@ -42,7 +43,8 @@ export class ResourcesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private roleService: RoleService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -50,6 +52,9 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.roleService.isHaveARoleAndIsAdmin()) {
+      this.router.navigate([ '/resources' ]);
+    }
     this.userDetail = this.userService.get();
   }
 
