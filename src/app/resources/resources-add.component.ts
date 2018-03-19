@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
@@ -33,6 +33,8 @@ export class ResourcesAddComponent implements OnInit {
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
+  id = null;
+  revision = null;
 
   constructor(
     private router: Router,
@@ -40,7 +42,8 @@ export class ResourcesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private route: ActivatedRoute
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -49,6 +52,19 @@ export class ResourcesAddComponent implements OnInit {
 
   ngOnInit() {
     this.userDetail = this.userService.get();
+    // update resource url check
+    if (this.route.snapshot.url[0].path === 'update') {
+      this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
+      .subscribe((data) => {
+        this.revision = data._rev;
+        this.id = data._id;
+        console.log('this', data);
+        this.resourceForm.patchValue(data);
+      }, (error) => {
+        console.log(error);
+      });
+    }
+
   }
 
   createForm() {
@@ -109,6 +125,15 @@ export class ResourcesAddComponent implements OnInit {
     });
     reader.readAsDataURL(file);
     return obs;
+  }
+
+  updateResource(resourceInfo) {
+    this.couchService.put(this.dbName + '/' + this.id, { ...resourceInfo, '_rev': this.revision  }).subscribe(() => {
+      this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('Resource Updated Successfully');
+    }, (err) => {
+      console.log(err);
+    });
   }
 
   onSubmit() {

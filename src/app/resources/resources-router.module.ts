@@ -7,7 +7,11 @@ import { ResourcesAddComponent } from './resources-add.component';
 const routes: Routes = [
   { path: '', component: ResourcesComponent },
   { path: 'view/:id', component: ResourcesViewComponent },
-  { path: 'add', component: ResourcesAddComponent }
+  { path: 'view/:nationname/:id', component: ResourcesViewComponent },
+  { path: 'add', component: ResourcesAddComponent },
+  { path: ':nationname', component: ResourcesComponent },
+  { path: 'update/:id', component: ResourcesAddComponent }
+
 ];
 
 @NgModule({
