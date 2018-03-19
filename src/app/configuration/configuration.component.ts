@@ -78,7 +78,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.get('nations/_all_docs?include_docs=true', {}, environment.centerAddress)
+    this.couchService.get('nations/_all_docs?include_docs=true', { domain: environment.centerAddress })
       .subscribe((response) => {
         this.nations = response.rows.map(nations => {
           return nations.doc;
@@ -122,12 +122,12 @@ export class ConfigurationComponent implements OnInit {
         this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
         this.couchService.post('configurations', configuration),
-        this.couchService.post('communityregistrationrequests', configuration, {}, configuration.parent_domain)
+        this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parent_domain })
           .pipe(switchMap(data => {
             userDetail['request_id'] =  data.id;
             userDetail['isUserAdmin'] =  false;
             return this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
-              userDetail, {}, configuration.parent_domain);
+              userDetail, { domain: configuration.parent_domain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));

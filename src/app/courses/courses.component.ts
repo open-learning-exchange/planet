@@ -54,7 +54,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     let url = this.couchService.get('courses/_all_docs?include_docs=true');
     if (this.router.url === '/courses/parent') {
       this.parentUrl = true;
-      url = this.couchService.get('courses/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain);
+      url = this.couchService.get('courses/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
     }
     url.subscribe((data) => {
       this.courses.data = data.rows.map((course: any) => {

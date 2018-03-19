@@ -64,7 +64,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     let url = this.couchService.get('meetups/_all_docs?include_docs=true');
     if (this.router.url === '/meetups/parent') {
       this.parentLink = true;
-      url = this.couchService.get('meetups/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain);
+      url = this.couchService.get('meetups/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
     }
     url.subscribe((data) => {
       // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.

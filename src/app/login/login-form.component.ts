@@ -90,8 +90,9 @@ export class LoginFormComponent {
         // Post new session info to login_activity
         return this.userService.newSessionLog();
       })).subscribe((res) => {
+        console.log(name);
         this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
-          { withCredentials: true }, this.userService.getConfig().parent_domain)
+          { withCredentials: true, domain: this.userService.getConfig().parent_domain })
           .subscribe((response) => {
             console.log('Success');
           }, (error) => console.log('Error'));

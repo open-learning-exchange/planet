@@ -63,7 +63,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   getResource(id: string) {
     if (this.router.url === '/resources/view/parent/' + id) {
       this.urlPrefix = 'http://' + this.userService.getConfig().parent_domain + '/' + this.dbName + '/';
-      return this.couchService.get('resources/' + id, {}, this.userService.getConfig().parent_domain);
+      return this.couchService.get('resources/' + id, { domain: this.userService.getConfig().parent_domain });
     }
     return this.couchService.get('resources/' + id);
   }

@@ -119,7 +119,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     let url = this.couchService.get('resources/_all_docs?include_docs=true');
     if (this.router.url === '/resources/parent') {
       this.parentUrl = true;
-      url = this.couchService.get('resources/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain);
+      url = this.couchService.get('resources/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
     }
     url.subscribe(data => {
       // Sort in descending articleDate order, so the new resource can be shown on the top

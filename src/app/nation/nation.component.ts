@@ -106,7 +106,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getCommunity(url) {
-    this.couchService.get('nations/_all_docs?include_docs=true', {}, url)
+    this.couchService.get('nations/_all_docs?include_docs=true', { domain: url })
       .subscribe((res: any) => {
         this.nations.data = res.rows.map(nations => {
           return nations.doc;

@@ -10,12 +10,13 @@ export class CouchService {
   private baseUrl = environment.couchAddress;
   private reqNum = 0;
 
-  private setOpts(opts?: any) {
-    return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
+  private setOpts(opts: any = {}) {
+    const { domain, ...httpOpts } = opts;
+    return [ domain, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
   }
 
-  private couchDBReq(type: string, db: string, opts: any, data?: any, parentLink?: any) {
-    const url = parentLink ? 'http://' + parentLink + '/' + db : this.baseUrl + db;
+  private couchDBReq(type: string, db: string, [ domain, opts ]: any[], data?: any) {
+    const url = domain ? 'http://' + domain + '/' + db : this.baseUrl + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
       httpReq = this.http[type](url, data, opts);
@@ -28,20 +29,20 @@ export class CouchService {
 
   constructor(private http: HttpClient) {}
 
-  put(db: string, data: any, opts?: any, parentLink?: any): Observable<any> {
-    return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '', parentLink);
+  put(db: string, data: any, opts?: any): Observable<any> {
+    return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');
   }
 
-  post(db: string, data: any, opts?: any, parentLink?: any): Observable<any> {
-    return this.couchDBReq('post', db, this.setOpts(opts), JSON.stringify(data) || '', parentLink);
+  post(db: string, data: any, opts?: any): Observable<any> {
+    return this.couchDBReq('post', db, this.setOpts(opts), JSON.stringify(data) || '');
   }
 
-  get(db: string, opts?: any, parentLink?: any): Observable<any> {
-    return this.couchDBReq('get', db, this.setOpts(opts), '', parentLink);
+  get(db: string, opts?: any): Observable<any> {
+    return this.couchDBReq('get', db, this.setOpts(opts));
   }
 
-  delete(db: string, opts?: any, parentLink?: any): Observable<any> {
-    return this.couchDBReq('delete', db, this.setOpts(opts), '', parentLink);
+  delete(db: string, opts?: any): Observable<any> {
+    return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
   // Reads a file as a Base64 string to append to object sent to CouchDB
