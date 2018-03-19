@@ -70,7 +70,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(course) {
-    this.openDeleteDialog(this.deleteCourse(course), 'single', course.title);
+    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle);
   }
 
   deleteSelected() {
@@ -81,7 +81,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const course = this.selection.selected[0];
       amount = 'single';
       okClick = this.deleteCourse(course);
-      displayName = course.title;
+      displayName = course.courseTitle;
     }
     this.openDeleteDialog(okClick, amount, displayName);
   }
