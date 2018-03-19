@@ -3,11 +3,17 @@ import { UserService } from '../shared/user.service';
 
 @Component({
   template: `
-    <div *ngIf="displayDashboard && planet_type !== 'community'">
-      <a routerLink="/requests" i18n mat-raised-button>Requests</a>
-      <a routerLink="/associated/{{ planet_type === 'center' ? 'nation' : 'community' }}" i18n mat-raised-button>
-      {{ planet_type === 'center' ? 'Nation' : 'Community' }}</a>
+    <div *ngIf="displayDashboard">
+      <a *ngIf="planetType !== 'community'" routerLink="/requests" i18n mat-raised-button>Requests</a>
+      <a *ngIf="planetType !== 'community'" routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
+      i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+    </div>
+    <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
+      <h3 i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
+      <a routerLink="/resources/parent" i18n mat-raised-button>List Resources</a>
+      <a routerLink="/courses/parent" i18n mat-raised-button>List Courses</a>
+      <a routerLink="/meetups/parent" i18n mat-raised-button>List Meetups</a>
     </div>
     <div>{{message}}</div>
   `
@@ -17,7 +23,8 @@ export class ManagerDashboardComponent implements OnInit {
   isUserAdmin = false;
   displayDashboard = true;
   message = '';
-  planet_type = this.userService.getConfig().planet_type;
+  planetType = this.userService.getConfig().planet_type;
+
   constructor(
     private userService: UserService
   ) {}

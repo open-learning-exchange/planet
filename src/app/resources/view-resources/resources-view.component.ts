@@ -45,7 +45,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   fullView = 'off';
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'))))
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((resource) => {
@@ -60,18 +60,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getResource(id: string, nationName: string) {
-    if (nationName) {
-      return this.couchService.post(`nations/_find`,
-      { 'selector': { 'name': nationName },
-      'fields': [ 'name', 'nationurl' ] })
-        .pipe(switchMap(data => {
-          const nationUrl = data.docs[0].nationurl;
-          if (nationUrl) {
-            this.urlPrefix = 'http://' + nationUrl + '/' + this.dbName + '/';
-            return this.http.jsonp(this.urlPrefix + id + '?include_docs=true&callback=JSONP_CALLBACK', 'callback');
-          }
-        }));
+  getResource(id: string) {
+    if (this.router.url === '/resources/view/parent/' + id) {
+      this.urlPrefix = 'http://' + this.userService.getConfig().parent_domain + '/' + this.dbName + '/';
+      return this.couchService.get('resources/' + id, {}, this.userService.getConfig().parent_domain);
     }
     return this.couchService.get('resources/' + id);
   }

@@ -37,9 +37,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   message = '';
   file: any;
   deleteDialog: any;
-  nationName = '';
   selection = new SelectionModel(true, []);
   urlPrefix = environment.couchAddress + this.dbName + '/';
+  parentUrl = false;
 
   constructor(
     private couchService: CouchService,
@@ -115,31 +115,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }));
   }
 
-  getExternalResources() {
-    return this.couchService.post('nations/_find',
-    { 'selector': { 'name': this.nationName },
-    'fields': [ 'name', 'nationurl' ] })
-      .pipe(switchMap(data => {
-        this.nationName = data.docs[0].name;
-        const nationUrl = data.docs[0].nationurl;
-        if (nationUrl) {
-          return this.httpclient.jsonp('http://' + nationUrl +
-            '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK',
-            'callback'
-          );
-        }
-        // If there is no url, return an observable of an empty array
-        return of([]);
-      }));
-  }
-
   getResources() {
-    this.nationName = this.route.snapshot.paramMap.get('nationname');
-    if (this.nationName !== null) {
-      return this.getExternalResources();
-    } else {
-      return this.couchService.get('resources/_all_docs?include_docs=true');
+    let url = this.couchService.get('resources/_all_docs?include_docs=true');
+    if (this.router.url === '/resources/parent') {
+      this.parentUrl = true;
+      url = this.couchService.get('resources/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain);
     }
+    url.subscribe(data => {
+      // Sort in descending articleDate order, so the new resource can be shown on the top
+      data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
+      this.resources.data = data.rows.map(res => res.doc);
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting resources'));
   }
 
   deleteClick(resource) {

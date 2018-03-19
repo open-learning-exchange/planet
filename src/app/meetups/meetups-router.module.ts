@@ -6,7 +6,8 @@ import { MeetupsAddComponent } from './meetups-add.component';
 
 const routes: Routes = [
   { path: '', component: MeetupsComponent },
-  { path: 'add', component: MeetupsAddComponent }
+  { path: 'add', component: MeetupsAddComponent },
+  { path: 'parent', component: MeetupsComponent }
 ];
 
 @NgModule({

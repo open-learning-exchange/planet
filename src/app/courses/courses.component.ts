@@ -8,6 +8,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -33,12 +34,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
+  parentUrl = false;
+
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -47,14 +51,18 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   getCourses() {
-    this.couchService.get('courses/_all_docs?include_docs=true')
-      .subscribe((data) => {
-        this.courses.data = data.rows.map((course: any) => {
-          return course.doc;
-        }).filter((c: any) => {
-          return c._id !== '_design/course-validators';
-        });
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
+    let url = this.couchService.get('courses/_all_docs?include_docs=true');
+    if (this.router.url === '/courses/parent') {
+      this.parentUrl = true;
+      url = this.couchService.get('courses/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain);
+    }
+    url.subscribe((data) => {
+      this.courses.data = data.rows.map((course: any) => {
+        return course.doc;
+      }).filter((c: any) => {
+        return c._id !== '_design/course-validators';
+      });
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
   ngAfterViewInit() {

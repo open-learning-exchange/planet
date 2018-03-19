@@ -24,6 +24,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+  parentLink = false;
 
   constructor(
     private couchService: CouchService,
@@ -60,12 +61,16 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   }
 
   getMeetups() {
-    this.couchService.get('meetups/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain)
-      .subscribe((data) => {
-        // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
-        // Map over data.rows to remove the 'doc' property layer
-        this.meetups.data = data.rows.map(meetup => meetup.doc);
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
+    let url = this.couchService.get('meetups/_all_docs?include_docs=true');
+    if (this.router.url === '/meetups/parent') {
+      this.parentLink = true;
+      url = this.couchService.get('meetups/_all_docs?include_docs=true', {}, this.userService.getConfig().parent_domain);
+    }
+    url.subscribe((data) => {
+      // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
+      // Map over data.rows to remove the 'doc' property layer
+      this.meetups.data = data.rows.map(meetup => meetup.doc);
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
 
   deleteClick(meetup) {

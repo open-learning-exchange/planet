@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-configuration',
@@ -122,13 +123,15 @@ export class ConfigurationComponent implements OnInit {
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
         this.couchService.post('configurations', configuration),
         this.couchService.post('communityregistrationrequests', configuration, {}, configuration.parent_domain)
+          .pipe(switchMap(data => {
+            userDetail['request_id'] =  data.id;
+            userDetail['isUserAdmin'] =  false;
+            return this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
+              userDetail, {}, configuration.parent_domain);
+          })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
-        userDetail['request_id'] =  data[3].id;
-        this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
-          userDetail, {}, configuration.parent_domain).subscribe((res) =>  {
-            this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
-            this.router.navigate([ '/login' ]);
-          }, (error) => (error));
+        this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
+        this.router.navigate([ '/login' ]);
       }, (error) => (error));
     }
   }
