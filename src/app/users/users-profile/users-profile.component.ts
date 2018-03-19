@@ -6,6 +6,7 @@ import { UserService } from '../../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
@@ -35,7 +36,8 @@ export class UsersProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
-    private router: Router
+    private router: Router,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -69,6 +71,9 @@ export class UsersProfileComponent implements OnInit {
     })).subscribe((res) => {
       if (res.ok === true) {
         // TODO: Should notify user that password successfully changed or that there was an error
+        this.planetMessageService.showAlert('Password sucessfully changed');
+      } else {
+        this.planetMessageService.showAlert('there was an error');
       }
     });
   }
