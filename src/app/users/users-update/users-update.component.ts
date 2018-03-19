@@ -9,7 +9,6 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UserService } from '../../shared/user.service';
 
 @Component({
@@ -35,6 +34,15 @@ import { UserService } from '../../shared/user.service';
       margin-top: -50px;
       padding: 0.5rem;
     }
+    .input-file {
+      height: 50px;
+      width: 125px;
+      position: absolute;
+      font-size: 100px;
+      opacity: 0;
+      right: 0;
+      top: 0;
+    }
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {
@@ -49,7 +57,6 @@ export class UsersUpdateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService,
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService
@@ -133,16 +140,16 @@ export class UsersUpdateComponent implements OnInit {
     if (this.file) {
       reader.readAsDataURL(this.file);
     }
-    this.uploadImage = true;
+
+    if (preview.src !== '') {
+      this.uploadImage = true;
+    }
   }
 
   removeFile() {
     const preview = <HTMLImageElement>document.querySelector('.profile-upload-image');
-    preview.src = '../assets/image.png';
+    preview.src = '';
     this.uploadImage = false;
   }
 
-  changeFile() {
-    this.planetMessageService.showMessage('Please change image at file upload.');
-  }
 }
