@@ -36,6 +36,8 @@ esac
 done
 ##########################################################
 
+set -e
+
 build_message(){
     # $1 = build message
     echo
@@ -90,10 +92,24 @@ create_footprint() {
   echo $(date +%Y-%m-%d.%H-%M-%S) $1 >> $FOOTPRINT
 }
 
+wait_for_kraken_free() {
+    build_message  "Waiting for kraken to not occupied ..."
+    WAIT_TIME=0
+    MAX_TIME=300
+    MAX_DOCKER_RUNNING=2
+    until [[ $(docker ps | wc -l) -le $MAX_DOCKER_RUNNING ]] || [[ $WAIT_TIME -eq $MAX_TIME ]]; do
+        echo "kraken occupied, please wait for more 5 seconds"
+        sleep 5
+        WAIT_TIME=$(expr $WAIT_TIME + 5)
+    done
+    build_message "Waiting done, we will run the build now ..."
+}
+
 prepare_var
 clone_branch
 prepare_var_post_clone
 create_footprint start "$commit"
+wait_for_kraken_free
 
 source ./.travis/travis_utils.sh
 

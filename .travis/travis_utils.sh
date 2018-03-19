@@ -112,7 +112,7 @@ tag_docker(){
   tag_a_docker $1 $2
 	if [ "$BRANCH" = "master" ]
 	then
-	  tag_a_docker $1 "$2"_LATEST
+	  tag_a_docker $1 $3
 	fi
 }
 
