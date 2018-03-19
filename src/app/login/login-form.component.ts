@@ -77,13 +77,13 @@ export class LoginFormComponent {
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password }, { withCredentials: true })
+    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
         // Post new session info to login_activity
         return this.userService.newSessionLog();
       })).subscribe((res) => {
         if (isCreate) {
-          this.router.navigate( [ 'users/update/' + name.toLowerCase() ]);
+          this.router.navigate( [ 'users/update/' + name ]);
         } else {
           this.reRoute();
         }
