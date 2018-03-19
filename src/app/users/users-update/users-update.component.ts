@@ -9,6 +9,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UserService } from '../../shared/user.service';
 
 @Component({
@@ -21,6 +22,19 @@ import { UserService } from '../../shared/user.service';
       background-color: #FFFFFF;
       padding: 3rem;
     }
+    .profile-upload-view {
+      height: 200px;
+      width: 185px;
+      margin-top: -300px;
+      margin-left: 530px;
+      padding: 3rem;
+    }
+    .profile-upload-image {
+      height: 180px;
+      width: 155px;
+      margin-top: -50px;
+      padding: 0.5rem;
+    }
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {
@@ -28,11 +42,14 @@ export class UsersUpdateComponent implements OnInit {
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
+  uploadImage = false;
   file: any;
   roles: string[] = [];
+
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
+    private planetMessageService: PlanetMessageService,
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService
@@ -104,7 +121,28 @@ export class UsersUpdateComponent implements OnInit {
     this.router.navigate([ '/users/profile', this.user.name ]);
   }
 
-  bindFile(event) {
+  previewFile(event) {
+    const preview = <HTMLImageElement>document.querySelector('.profile-upload-image');
     this.file = event.target.files[0];
+    const reader  = new FileReader();
+
+    reader.addEventListener('load', function () {
+      preview.src = reader.result;
+    }, false);
+
+    if (this.file) {
+      reader.readAsDataURL(this.file);
+    }
+    this.uploadImage = true;
+  }
+
+  removeFile() {
+    const preview = <HTMLImageElement>document.querySelector('.profile-upload-image');
+    preview.src = '../assets/image.png';
+    this.uploadImage = false;
+  }
+
+  changeFile() {
+    this.planetMessageService.showMessage('Please change image at file upload.');
   }
 }

@@ -59,12 +59,18 @@
           <mat-error><planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <label>File Upload:</label>
-        <input type="file" (change)="bindFile($event)" />
+        <input type="file" (change)="previewFile($event)" />
       </div>
       <div>
         <button type="submit" mat-raised-button color="primary" i18n>Update</button>
         <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
       </div>
     </form>
+    <div class="profile-upload-view">
+      <img class="profile-upload-image" src="../assets/image.png">
+      <br>
+      <button mat-raised-button (click)="changeFile()" [disabled]="uploadImage === false">Change</button>
+      <button mat-raised-button color="warn" (click)="removeFile()" [disabled]="uploadImage === false">Remove</button>
+    </div>
   </div>
 </div>
