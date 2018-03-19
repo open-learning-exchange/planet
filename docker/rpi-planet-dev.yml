@@ -10,6 +10,8 @@ services:
     image: treehouses/planet:rpi-db-init-latest
     depends_on:
       - couchdb
+    environment:
+      - COUCHDB_HOST=http://couchdb:5984
   planet:
     image: treehouses/planet-dev:rpi-latest
     ports:

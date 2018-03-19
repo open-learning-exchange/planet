@@ -10,6 +10,8 @@ services:
     image: ${DOCKER_DB_INIT}
     depends_on:
       - couchdb
+    environment:
+      - COUCHDB_HOST=http://couchdb:5984
   planet:
     image: ${PLANET}
     ports:

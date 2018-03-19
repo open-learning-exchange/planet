@@ -1,7 +1,7 @@
 FROM node:6.11-alpine
 
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ;\
+    apk add --no-cache bash curl git jq ca-certificates;\
     #CORS DOWNLOAD
     npm install -g add-cors-to-couchdb
 
