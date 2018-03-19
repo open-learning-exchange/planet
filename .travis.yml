@@ -29,6 +29,9 @@ _use_nodejs: &_use_nodejs
     - "8"
 
 sudo: required
+branches:		
+  except:		
+  - l10n_master
 addons:
   apt:
     packages:
