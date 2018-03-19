@@ -32,7 +32,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
-
+  readonly dbName = 'courses';
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -49,12 +49,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   getCourses() {
     this.couchService.get('courses/_all_docs?include_docs=true')
       .subscribe((data) => {
-        this.courses.data = data.rows.map((course: any) => {
-          return course.doc;
-        }).filter((c: any) => {
-          return c._id !== '_design/course-validators';
-        });
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
+         // Sort in descending articleDate order, so the new courses can be shown on the top
+         data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
+         this.courses.data = data.rows.map(res => res.doc);
+       }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
   ngAfterViewInit() {
@@ -72,13 +70,35 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(course) {
+    this.openDeleteDialog(this.deleteCourse(course), 'single', course.title);
+  }
+
+  deleteSelected() {
+    let amount = 'many',
+      okClick = this.deleteCourses(this.selection.selected),
+      displayName = '';
+    if (this.selection.selected.length === 1) {
+      const course = this.selection.selected[0];
+      amount = 'single';
+      okClick = this.deleteCourse(course);
+      displayName = course.title;
+    }
+    this.openDeleteDialog(okClick, amount, displayName);
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '') {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: this.deleteCourse(course),
+        okClick,
+        amount,
         changeType: 'delete',
         type: 'course',
-        displayName: course.courseTitle
+        displayName
       }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+      this.message = '';
     });
   }
 
@@ -92,6 +112,21 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+    };
+  }
+
+  deleteCourses(courses) {
+    return () => {
+      const deleteArray = courses.map((course) => {
+        return { _id: course._id, _rev: course._rev, _deleted: true };
+      });
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
+        .subscribe((data) => {
+          this.getCourses();
+          this.selection.clear();
+          this.deleteDialog.close();
+          this.planetMessageService.showAlert('You have deleted selected courses');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
