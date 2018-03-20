@@ -24,7 +24,7 @@ import { UserService } from '../../shared/user.service';
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {
-  user: any;
+  user: any = {};
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
