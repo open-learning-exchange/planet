@@ -49,10 +49,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   getCourses() {
     this.couchService.get('courses/_all_docs?include_docs=true')
       .subscribe((data) => {
-         // Sort in descending articleDate order, so the new courses can be shown on the top
-         data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
-         this.courses.data = data.rows.map(res => res.doc);
-       }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
+        this.courses.data = data.rows.map((course: any) => {
+          return course.doc;
+        }).filter((c: any) => {
+          return c._id !== '_design/course-validators';
+        });
+      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
   ngAfterViewInit() {
