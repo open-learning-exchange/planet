@@ -72,7 +72,7 @@ export class UsersProfileComponent implements OnInit {
       if (res.ok === true) {
         this.planetMessageService.showAlert('Password sucessfully changed');
       } else {
-        this.planetMessageService.showAlert('There was an error');
+        this.planetMessageService.showAlert(res.reason);
       }
     });
   }
