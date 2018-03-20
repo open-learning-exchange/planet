@@ -3,7 +3,7 @@
     <ng-template matStepLabel i18n>Create Admin</ng-template>
     <form [formGroup]="loginForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Username" formControlName="username" required>
+        <input matInput i18n-placeholder placeholder="Username" formControlName="username" required planetLowercase>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.username"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
