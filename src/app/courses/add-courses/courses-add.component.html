@@ -68,7 +68,6 @@
       </mat-grid-list>
 
       <div *ngIf="!showDaysCheckBox">
-        <label i18n>Day</label> <!-- I would like to remove this label because I think its ugly and not necessary -->
         <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
 

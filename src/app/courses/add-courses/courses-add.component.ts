@@ -111,18 +111,19 @@ export class CoursesAddComponent implements OnInit {
         this.revision = data._rev;
         this.id = data._id;
         this.courseFrequency = data.day;
+        this.courseForm.patchValue(data);
 
         if ( this.courseFrequency === undefined || this.courseFrequency.length === 0) {
           this.showDaysCheckBox = true;
         } else if (this.courseFrequency.length > 0 && this.courseFrequency.length < 7) {
           this.showDaysCheckBox = false;
           this.weeklyRadio = true;
+          this.courseForm.value.day = this.courseFrequency;
         } else {
           this.showDaysCheckBox = true;
           this.dailyRadio = true;
+          this.courseForm.value.day = this.courseFrequency;
         }
-
-        this.courseForm.patchValue(data);
       }, (error) => {
         console.log(error);
       });
@@ -182,20 +183,30 @@ export class CoursesAddComponent implements OnInit {
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.courseForm.controls.day;
 
+    for (let i = 0; i < this.courseFrequency.length; i++) {
+      if (!dayFormArray.value.includes(this.courseFrequency[i])) {
+          dayFormArray.push(new FormControl(this.courseFrequency[i]));
+      }
+    }
+
     if (isChecked) {
       // add to day array if checked
-      dayFormArray.push(new FormControl(day));
+      if (!dayFormArray.value.includes(day)) {
+              dayFormArray.push(new FormControl(day));
+         }
     } else {
       // remove from day array if unchecked
       const index = dayFormArray.controls.findIndex(x => x.value === day);
       dayFormArray.removeAt(index);
+
+      const i = this.courseFrequency.indexOf(day) > -1 ? this.courseFrequency.indexOf(day) : null;
+
+      if (i !== null) {this.courseFrequency.splice(i, 1); }
     }
   }
 
   // remove old values from array on radio button change
   toggleDaily(val: boolean) {
-    // empty the array
-    this.courseForm.setControl('day', this.fb.array([]));
     if (val) {
       // add all days to the array if the course is daily
       this.courseForm.setControl('day', this.fb.array(this.days));
