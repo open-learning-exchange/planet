@@ -48,9 +48,13 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
-          <a mat-menu-item (click)="addResourceId([{'_id': element._id}])">
+          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addResourceId([{'_id': element._id}])">
             <mat-icon>library_add</mat-icon>
             <span i18n>Add to Library</span>
+          </a>
+          <a *ngIf="element.libraryInfo" [disabled]="element.libraryInfo" mat-menu-item>
+            <mat-icon>library_add</mat-icon>
+            <span i18n>Already added to Library</span>
           </a>
           <a mat-menu-item [routerLink]="['/resources/wip']">
             <mat-icon>feedback</mat-icon>
