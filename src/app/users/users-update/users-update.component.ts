@@ -55,7 +55,6 @@ export class UsersUpdateComponent implements OnInit {
       firstName: [ '', Validators.required ],
       middleName: '',
       lastName: [ '', Validators.required ],
-      name: [ { value: '', disabled: true }, Validators.required ],
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
