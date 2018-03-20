@@ -3,7 +3,10 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" i18n>Edit Your Profile</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1">
+    <span>{{user.name}}</span><span class="toolbar-fill"></span>
+    <span class="margin-lr-3">Edit Profile</span>
+  </mat-toolbar>
   <div class="view-container">
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
       <div>
@@ -20,9 +23,6 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Login" disabled value="{{user.name}}">
-        </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
