@@ -22,17 +22,11 @@ import { UserService } from '../../shared/user.service';
       padding: 3rem;
     }
     .profile-upload-view {
-      height: 200px;
+      height: 220px;
       width: 185px;
-      margin-top: -300px;
+      margin-top: -340px;
       margin-left: 530px;
       padding: 3rem;
-    }
-    .profile-upload-image {
-      height: 180px;
-      width: 155px;
-      margin-top: -50px;
-      padding: 0.5rem;
     }
     .input-file {
       height: 50px;
@@ -50,6 +44,7 @@ export class UsersUpdateComponent implements OnInit {
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
+  previewSrc = '../assets/image.png';
   uploadImage = false;
   file: any;
   roles: string[] = [];
@@ -128,27 +123,25 @@ export class UsersUpdateComponent implements OnInit {
     this.router.navigate([ '/users/profile', this.user.name ]);
   }
 
-  previewFile(event) {
-    const preview = <HTMLImageElement>document.querySelector('.profile-upload-image');
+  previewImageFile(event) {
     this.file = event.target.files[0];
     const reader  = new FileReader();
+    const self = this;
 
     reader.addEventListener('load', function () {
-      preview.src = reader.result;
+      self.previewSrc = reader.result;
+      if (self.previewSrc !== '../assets/image.png') {
+        self.uploadImage = true;
+      }
     }, false);
 
     if (this.file) {
       reader.readAsDataURL(this.file);
     }
-
-    if (preview.src !== '') {
-      this.uploadImage = true;
-    }
   }
 
-  removeFile() {
-    const preview = <HTMLImageElement>document.querySelector('.profile-upload-image');
-    preview.src = '';
+  removeImageFile() {
+    this.previewSrc = '../assets/image.png';
     this.uploadImage = false;
   }
 

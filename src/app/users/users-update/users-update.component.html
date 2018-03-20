@@ -65,18 +65,19 @@
       </div>
     </form>
     <div class="profile-upload-view">
-      <img class="profile-upload-image" src="">
-      <br>
-      <button mat-raised-button color="primary" *ngIf="uploadImage === false" >
-          Select Image
-          <input type="file" class="input-file" (change)="previewFile($event)" />
-      </button>
-      <div *ngIf="uploadImage === true">
-        <button mat-raised-button >
-          Change
-          <input type="file" class="input-file" (change)="previewFile($event)" />
+      <img class="profile-image-large" [src]="previewSrc">
+      <div>
+        <button mat-raised-button color="primary" *ngIf="uploadImage === false" >
+            Select Image
+            <input type="file" class="input-file" (change)="previewImageFile($event)" />
         </button>
-        <button mat-raised-button color="warn" (click)="removeFile()" >Remove</button>
+        <div *ngIf="uploadImage === true">
+          <button mat-raised-button >
+            Change
+            <input type="file" class="input-file" (change)="previewImageFile($event)" />
+          </button>
+          <button mat-raised-button color="warn" (click)="removeImageFile()" >Remove</button>
+        </div>
       </div>
     </div>
   </div>
