@@ -3,12 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { ResourcesComponent } from './resources.component';
 import { ResourcesViewComponent } from './view-resources/resources-view.component';
 import { ResourcesAddComponent } from './resources-add.component';
+import { RoleService } from '../shared/role-guard.service';
 
 const routes: Routes = [
   { path: '', component: ResourcesComponent },
   { path: 'view/:id', component: ResourcesViewComponent },
   { path: 'view/:nationname/:id', component: ResourcesViewComponent },
-  { path: 'add', component: ResourcesAddComponent },
+  { path: 'add', component: ResourcesAddComponent, canActivate: [ RoleService ] },
   { path: ':nationname', component: ResourcesComponent }
 ];
 

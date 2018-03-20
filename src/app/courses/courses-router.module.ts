@@ -8,7 +8,7 @@ import { RoleService } from '../shared/role-guard.service';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
-  { path: 'add', component: CoursesAddComponent },
+  { path: 'add', component: CoursesAddComponent, canActivate: [ RoleService ] },
   { path: 'request', component: CoursesRequestComponent },
   { path: 'update/:id', component: CoursesAddComponent }
 ];

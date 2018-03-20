@@ -4,7 +4,7 @@
   </a>
 </mat-toolbar>
 
-<div class="space-container" *ngIf="roleService.isHaveARoleAndIsAdmin()">
+<div class="space-container">
   <mat-toolbar class="primary-color font-size-1" i18n>New Meetup</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>

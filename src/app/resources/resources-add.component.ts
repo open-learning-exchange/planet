@@ -52,9 +52,6 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.roleService.isHaveARoleAndIsAdmin()) {
-      this.router.navigate([ '/resources' ]);
-    }
     this.userDetail = this.userService.get();
   }
 

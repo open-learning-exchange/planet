@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { RoleService } from '../shared/role-guard.service';
 import {
   FormBuilder,
   FormControl,
@@ -13,7 +12,7 @@ import { Router } from '@angular/router';
 @Component({
   templateUrl: './meetups-add.component.html'
 })
-export class MeetupsAddComponent implements OnInit {
+export class MeetupsAddComponent {
   message = '';
   obj = [];
   meetupForm: FormGroup;
@@ -22,8 +21,7 @@ export class MeetupsAddComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private fb: FormBuilder,
-    public roleService: RoleService
+    private fb: FormBuilder
   ) {
     this.createForm();
   }
@@ -59,12 +57,6 @@ export class MeetupsAddComponent implements OnInit {
 
   cancel() {
     this.router.navigate([ '/meetups' ]);
-  }
-
-  ngOnInit() {
-    if (!this.roleService.isHaveARoleAndIsAdmin()) {
-      this.router.navigate([ '/resources' ]);
-    }
   }
 
 }

@@ -38,7 +38,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   nationName = '';
   selection = new SelectionModel(true, []);
-  disableResourcesAddButton: boolean = this.userService.get().roles.length > 0  || this.userService.get().isUserAdmin ? false : true;
+  disableResourcesAddButton: boolean;
   urlPrefix = environment.couchAddress + this.dbName + '/';
 
   constructor(
@@ -52,6 +52,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.disableResourcesAddButton = false;
     this.getResources();
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
@@ -122,7 +123,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           // Sort in descending articleDate order, so the new resource can be shown on the top
           data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
           this.resources.data = data.rows.map(res => res.doc);
-        }, (error) => this.planetMessageService.showAlert('There was a problem getting resources'));
+        }, (error) => {
+          this.planetMessageService.showAlert('There was a problem getting resources');
+          this.disableResourcesAddButton = true;
+        });
     }
   }
 
