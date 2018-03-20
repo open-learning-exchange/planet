@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
 
 @Component({
   templateUrl: './view-courses.component.html'
