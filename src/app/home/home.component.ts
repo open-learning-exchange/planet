@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-
+import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   notifications = [];
   @ViewChild('content') private mainContent;
   user: any = {};
+  imgSrc: string;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
@@ -49,6 +50,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getNotification();
     this.user = this.userService.get();
+    const filename = Object.keys(this.user._attachments)[0];
+    this.imgSrc = environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
         this.current_flag = language.short_code;

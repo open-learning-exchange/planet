@@ -10,7 +10,10 @@
     <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" alt="{{current_lang}}"
       title="{{current_lang}}" />
   </button>
-  <button mat-icon-button routerLink="/users/profile/{{user.name}}"><mat-icon>account_circle</mat-icon></button>
+  <button mat-icon-button routerLink="/users/profile/{{user.name}}">
+    <mat-icon *ngIf="!imgSrc">account_circle</mat-icon>
+    <img *ngIf="imgSrc" class="profile-image-large" [src]="imgSrc">
+  </button>
 </mat-toolbar>
 <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
