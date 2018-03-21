@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-router.module';
 
 import { CouchService } from './shared/couchdb.service';
 import { AuthService } from './shared/auth-guard.service';
+import { RoleService } from './shared/role-guard.service';
 import { UserService } from './shared/user.service';
 import { ValidatorService } from './validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,7 +35,7 @@ import { MatIconRegistry } from '@angular/material';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, RoleService
   ],
   bootstrap: [ AppComponent ]
 })

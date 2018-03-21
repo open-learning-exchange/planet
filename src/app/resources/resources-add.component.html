@@ -2,7 +2,7 @@
   <a mat-icon-button routerLink="/resources"><mat-icon>arrow_back</mat-icon></a>
 </mat-toolbar>
 
-<div class="space-container">
+<div class="space-container" *ngIf="roleService.isHaveARoleAndIsAdmin()">
   <mat-toolbar class="primary-color font-size-1" i18n>New resource</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
