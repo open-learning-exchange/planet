@@ -71,10 +71,8 @@ export class UsersProfileComponent implements OnInit {
     })).subscribe((res) => {
       if (res.ok === true) {
         this.planetMessageService.showAlert('Password sucessfully changed');
-      } else {
-        this.planetMessageService.showAlert(res.reason);
       }
-    });
+    }, (error) => this.planetMessageService.showAlert(error.error.reason));
   }
 
   changePasswordRequest(userData) {
