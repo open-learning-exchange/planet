@@ -33,7 +33,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
-  disableCourseAddButton: boolean;
+  disableCourseAddButton: boolean = this.userService.get().isUserAdmin || this.userService.get().roles.length > 0 ? false : true;
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -44,7 +44,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.disableCourseAddButton = false;
     this.getCourses();
     this.courses.filterPredicate = filterSpecificFields([ 'courseTitle' ]);
   }
@@ -57,10 +56,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         }).filter((c: any) => {
           return c._id !== '_design/course-validators';
         });
-      }, (error) => {
-        this.planetMessageService.showAlert('There was a problem getting courses');
-        this.disableCourseAddButton = true;
-      });
+      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
   ngAfterViewInit() {

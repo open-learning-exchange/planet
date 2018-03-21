@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import {
@@ -8,19 +8,21 @@ import {
   Validators
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './meetups-add.component.html'
 })
-export class MeetupsAddComponent {
-  message = '';
+export class MeetupsAddComponent implements OnInit {
   obj = [];
   meetupForm: FormGroup;
   readonly dbName = 'meetups'; // database name constant
+  displayMeetupComponent = false;
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
+    private userService: UserService,
     private fb: FormBuilder
   ) {
     this.createForm();
@@ -57,6 +59,14 @@ export class MeetupsAddComponent {
 
   cancel() {
     this.router.navigate([ '/meetups' ]);
+  }
+
+  ngOnInit() {
+    if (this.userService.get().roles.length > 0  || this.userService.get().isUserAdmin) {
+      this.displayMeetupComponent = true;
+    } else {
+      this.planetMessageService.showMessage('Access restricted to admins');
+    }
   }
 
 }

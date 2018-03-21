@@ -24,7 +24,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
-  disableMeetupsAddButton: boolean;
+  disableMeetupsAddButton: boolean = this.userService.get().isUserAdmin || this.userService.get().roles.length > 0 ? false : true ;
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -65,10 +65,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
         this.meetups.data = data.rows.map(meetup => meetup.doc);
-      }, (error) => {
-        this.planetMessageService.showAlert('There was a problem getting meetups');
-        this.disableMeetupsAddButton = true;
-      });
+      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
 
   deleteClick(meetup) {
@@ -147,7 +144,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.disableMeetupsAddButton = false;
     this.getMeetups();
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }

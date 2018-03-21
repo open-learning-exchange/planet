@@ -17,7 +17,6 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { RoleService } from '../shared/role-guard.service';
 
 @Component({
   templateUrl: './resources-add.component.html'
@@ -36,6 +35,7 @@ export class ResourcesAddComponent implements OnInit {
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
+  displayResourceComponent = false;
 
   constructor(
     private router: Router,
@@ -43,8 +43,7 @@ export class ResourcesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService,
-    public roleService: RoleService
+    private planetMessageService: PlanetMessageService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -52,6 +51,11 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.userService.get().roles.length > 0  || this.userService.get().isUserAdmin) {
+      this.displayResourceComponent = true;
+    } else {
+      this.planetMessageService.showMessage('Access restricted to admins');
+    }
     this.userDetail = this.userService.get();
   }
 
