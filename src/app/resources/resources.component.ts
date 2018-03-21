@@ -6,7 +6,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -53,7 +53,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     forkJoin(this.getResources(), this.getAddedLibrary()).subscribe((results) => {
-      this.setupList(results[0].rows, results[1].docs[0].resourceIds);
+      this.setupList(results[0].rows, results[1].docs[0] ? results[1].docs[0].resourceIds || [] : []);
     }, (error) => console.log(error));
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
@@ -107,7 +107,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   getAddedLibrary() {
-    return this.couchService.post('shelf/_find', { 'selector': { 'user': this.userService.get().name } })
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
     .pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
@@ -206,25 +206,34 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
   addResourceId(resourceId) {
     const resourceIdArray = resourceId.map((data) => {
       return data._id;
     });
-    this.couchService.post(`shelf/_find`, { 'selector': { 'user': this.userService.get().name } })
-      .pipe(switchMap(data => {
-        if (data.docs.length > 0) {
-          data.docs[0].resourceIds.map((resource) => {
-            if (resourceIdArray.indexOf(resource) === -1) {
-              resourceIdArray.push(resource);
-            }
-          });
-          return this.couchService.put('shelf/' + data.docs[0]._id + '?rev=' + data.docs[0]._rev,
-          { ...data.docs[0], resourceIds: resourceIdArray });
-        } else {
-          return this.couchService.post('shelf',
-            { resourceIds: resourceIdArray, 'user': this.userService.get().name });
-        }
-      })).subscribe((res) =>  {
+    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(
+        map(data => {
+          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [] };
+        }),
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", and it needs to be created
+        catchError(err => {
+          // Observable of continues stream
+          return of({ rev: {}, resourceIds: [] });
+        }),
+        switchMap(data => {
+          const resourceIds = resourceIdArray.concat(data.resourceIds).reduce(this.dedupeShelfReduce, []);
+          return this.couchService.put('shelf/' + this.userService.get()._id,
+            Object.assign(data.rev, { resourceIds }));
+        })
+      ).subscribe((res) =>  {
         this.updateAddLibrary();
         this.selection.clear();
         this.planetMessageService.showAlert('Resource added to your library');
