@@ -42,25 +42,25 @@ constructor(
       })
     ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
   }
-
+// made validator function universal as oppoed to being specific to courses
   public isNameAvailible$(
     dbName: string,
     fieldName: string,
     ac: AbstractControl,
-    courseId: string
+    Id: string
   ): Observable<ValidationErrors | null> {
     return timer(500).pipe(
       switchMap(() => this.couchService.post(
         `${dbName}/_find`,
         findDocuments(
-          { 'courseTitle' : ac.value },
-          [ '_id', 'courseTitle' ]
+          { fieldName : ac.value },
+          [ '_id', fieldName ]
         )
       )),
       map(exists => {
         if (exists.docs.length > 0) {
           return exists.docs.reduce((isMatch, c) => {
-            if (courseId === c._id) {
+            if (Id === c._id) {
               return null;
             }
             return isMatch;

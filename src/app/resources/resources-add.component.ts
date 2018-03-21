@@ -29,12 +29,17 @@ export class ResourcesAddComponent implements OnInit {
   media: string[];
   openWith: string[];
   resourceType: string[];
+<<<<<<< HEAD
+=======
+  currentDate = new Date(); // might be forced to change date format using "toISOString().split('T')[0]"
+>>>>>>> [#498] update resources
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
   id = null;
   revision = null;
+  fileName = null;
 
   constructor(
     private router: Router,
@@ -52,13 +57,14 @@ export class ResourcesAddComponent implements OnInit {
 
   ngOnInit() {
     this.userDetail = this.userService.get();
-    // update resource url check
+        // update resource url check
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.revision = data._rev;
         this.id = data._id;
-        console.log('this', data);
+        data.articleDate = new Date(data.articleDate); // convert epoch back to date
+      //  this.fileName = (data.hasOwnProperty('_attachments')) ? data._attachments[0] : ''; TODO:Work on file reupload
         this.resourceForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -73,7 +79,9 @@ export class ResourcesAddComponent implements OnInit {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
+        this.route.snapshot.url[0].path === 'update'
+       ?  ac => this.validatorService.isNameAvailible$(this.dbName, 'title', ac, this.route.snapshot.params.id)
+       : ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
       ],
       author: '',
       year: '',
@@ -91,7 +99,8 @@ export class ResourcesAddComponent implements OnInit {
       addedBy: '',
       openUrl: [],
       openWhichFile: '',
-      isDownloadable: ''
+      isDownloadable: '',
+      filename: ''
     });
   }
 
@@ -154,7 +163,11 @@ export class ResourcesAddComponent implements OnInit {
       }
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
         // Start with empty object so this.resourceForm.value does not change
-        this.addResource(Object.assign({}, this.resourceForm.value, resource));
+        if (this.route.snapshot.url[0].path === 'update') {
+          this.updateResource(Object.assign({}, this.resourceForm.value, resource));
+        } else {
+          this.addResource(Object.assign({}, this.resourceForm.value, resource));
+        }
       });
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
