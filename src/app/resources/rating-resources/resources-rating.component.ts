@@ -74,7 +74,7 @@ export class ResourcesRatingComponent implements OnChanges {
       couchUrl = couchUrl + '/' + newRating._id;
     }
     // Use call because 'this' will be undefined otherwise
-    return couchRequest.call(this.couchService, couchUrl, newRating).pipe(map((res) => {
+    return couchRequest.call(this.couchService, couchUrl, newRating).pipe(map((res: any) => {
       newRating._rev = res.rev;
       this.rating.userRating = newRating;
       this.onUpdate.emit(newRating);
