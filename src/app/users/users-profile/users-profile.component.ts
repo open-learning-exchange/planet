@@ -63,13 +63,14 @@ export class UsersProfileComponent implements OnInit {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
     this.changePasswordRequest(updateDoc).pipe(switchMap((response) => {
       if (response.ok === true) {
-        this.userDetail._rev = response._rev;
+        this.userDetail._rev = response.rev;
         return this.reinitSession(userDetail.name, credentialData.password);
       }
       return of({ ok: false, reason: 'Error changing password' });
     })).subscribe((res) => {
       if (res.ok === true) {
-        this.planetMessageService.showAlert('Password sucessfully changed');
+        this.planetMessageService.showAlert('Password successfully changed');
+        this.router.navigate([ '/users/profile/newuser' ]);
       }
     }, (error) => this.planetMessageService.showAlert(error.error.reason));
   }
