@@ -70,7 +70,6 @@ export class UsersProfileComponent implements OnInit {
     })).subscribe((res) => {
       if (res.ok === true) {
         this.planetMessageService.showAlert('Password successfully changed');
-        this.router.navigate([ '/users/profile/newuser' ]);
       }
     }, (error) => this.planetMessageService.showAlert(error.error.reason));
   }
