@@ -64,7 +64,7 @@ export class ResourcesAddComponent implements OnInit {
         this.revision = data._rev;
         this.id = data._id;
         data.articleDate = new Date(data.articleDate); // convert epoch back to date
-      //  this.fileName = (data.hasOwnProperty('_attachments')) ? data._attachments[0] : ''; TODO:Work on file reupload
+        this.fileName = (data.hasOwnProperty('_attachments')) ? data._attachments[0] : '';
         this.resourceForm.patchValue(data);
       }, (error) => {
         console.log(error);
