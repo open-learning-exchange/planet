@@ -89,6 +89,7 @@ package_docker(){
   # $2: tag
   # $3: tag latest
   build_message processing $2
+  nohup bell &
   docker build -f $1 -t $2 .
   if [ "$BRANCH" = "master" ]
 	then
@@ -148,4 +149,11 @@ render_compose_travis(){
   sed -i -e "s#\${DOCKER_DB_INIT}#$DOCKER_DB_INIT_TEST#g" "$COMPOSE_LOC"
   sed -i -e "s#\${PLANET}#$PLANET_TEST#g" "$COMPOSE_LOC"
   cat "$COMPOSE_LOC"
+}
+
+bell() {
+  while true; do
+    echo -e "\a"
+    sleep 60
+  done
 }
