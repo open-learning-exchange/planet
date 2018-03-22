@@ -14,7 +14,6 @@ import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: 'courses-add.component.html'
@@ -41,8 +40,7 @@ export class CoursesAddComponent implements OnInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private planetMessageService: PlanetMessageService,
-    private userService: UserService
+    private planetMessageService: PlanetMessageService
   ) {
     this.createForm();
   }
@@ -103,21 +101,7 @@ export class CoursesAddComponent implements OnInit {
     });
   }
 
-  getMembers() {
-    this.couchService.get('_users/_all_docs?include_docs=true')
-    .subscribe((data) => {
-      this.members = data.rows.map((users: any) => {
-        return users.doc;
-      }).filter((user: any) => {
-        return user._id !== '_design/_auth';
-      });
-    }, (error) => {
-      console.log(error);
-    });
-  }
-
   ngOnInit() {
-    this.getMembers();
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {

@@ -5,10 +5,10 @@ import { switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  templateUrl: './view-courses.component.html'
+  templateUrl: './courses-view.component.html'
 })
 
-export class ViewCoursesComponent implements OnInit {
+export class CoursesViewComponent implements OnInit {
 
   courseDetail: any = {};
 

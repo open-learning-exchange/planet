@@ -23,7 +23,7 @@
       <mat-grid-list cols="2">
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Course Leader" formControlName="courseLeader" multiple>
-            <mat-option *ngFor="let memb of members" value="{{memb.firstName}} {{memb.middleName}} {{memb.lastName}}">{{memb.firstName}} {{memb.middleName}} {{memb.lastName}}</mat-option>
+            <mat-option  *ngFor="let memb of members" value={{memb?.id}}> {{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>

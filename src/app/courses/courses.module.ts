@@ -9,7 +9,7 @@ import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
-import { ViewCoursesComponent } from './view-courses/view-courses.component';
+import { CoursesViewComponent } from './view-courses/courses-view.component';
 
 @NgModule({
   imports: [
@@ -25,7 +25,7 @@ import { ViewCoursesComponent } from './view-courses/view-courses.component';
     CoursesComponent,
     CoursesAddComponent,
     CoursesRequestComponent,
-    ViewCoursesComponent
+    CoursesViewComponent
   ]
 })
 export class CoursesModule {}
