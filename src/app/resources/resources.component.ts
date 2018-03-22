@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { environment } from '../../environments/environment';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -37,6 +38,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   nationName = '';
   selection = new SelectionModel(true, []);
+  disableResourcesAddButton: boolean = this.userService.get().isUserAdmin || this.userService.get().roles.length > 0 ? false : true ;
   urlPrefix = environment.couchAddress + this.dbName + '/';
 
   constructor(
@@ -45,7 +47,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private httpclient: HttpClient,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {

@@ -35,6 +35,7 @@ export class ResourcesAddComponent implements OnInit {
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
+  displayResourceComponent = false;
 
   constructor(
     private router: Router,
@@ -50,6 +51,11 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.userService.get().roles.length > 0  || this.userService.get().isUserAdmin) {
+      this.displayResourceComponent = true;
+    } else {
+      this.planetMessageService.showMessage('Access restricted to admins');
+    }
     this.userDetail = this.userService.get();
   }
 
