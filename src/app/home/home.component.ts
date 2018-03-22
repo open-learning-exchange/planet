@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { languages } from '../shared/languages';
 import { interval } from 'rxjs/observable/interval';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './home.component.html',
@@ -23,7 +24,7 @@ import { tap, switchMap } from 'rxjs/operators';
     ])
   ]
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   languages = [];
   current_flag = 'en';
   current_lang = 'English';
@@ -31,7 +32,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   notifications = [];
   @ViewChild('content') private mainContent;
   user: any = {};
-  imgSrc: string;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
@@ -41,17 +41,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // For disposable returned by observer to unsubscribe
   animDisp: any;
 
+  private onDestroy$ = new Subject<void>();
+
   constructor(
     private couchService: CouchService,
     private router: Router,
     private userService: UserService
-  ) {}
+  ) {
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.user = this.userService.get();
+      });
+  }
 
   ngOnInit() {
     this.getNotification();
     this.user = this.userService.get();
-    const filename = Object.keys(this.user._attachments)[0];
-    this.imgSrc = environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
         this.current_flag = language.short_code;
@@ -66,6 +71,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.mainContent._updateContentMargins();
     this.mainContent._changeDetectorRef.markForCheck();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   // Used to swap in different background.
@@ -84,6 +94,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   toggleNav() {
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
     this.animDisp = this.animObs.subscribe();
+  }
+
+  userImageSrc() {
+    if (this.user._attachments) {
+      const filename = Object.keys(this.user._attachments)[0];
+      return environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+    }
+    return '';
   }
 
   endAnimation() {

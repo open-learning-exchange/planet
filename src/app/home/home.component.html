@@ -11,8 +11,8 @@
       title="{{current_lang}}" />
   </button>
   <button mat-icon-button routerLink="/users/profile/{{user.name}}">
-    <mat-icon *ngIf="!imgSrc">account_circle</mat-icon>
-    <img *ngIf="imgSrc" class="profile-image-large" [src]="imgSrc">
+    <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImageSrc()">
+    <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
   </button>
 </mat-toolbar>
 <!--Languages dropdown menu-->

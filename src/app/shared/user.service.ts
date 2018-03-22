@@ -3,6 +3,7 @@ import { CouchService } from './couchdb.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { findDocuments } from '../shared/mangoQueries';
 
 // Holds the currently logged in user information
@@ -20,10 +21,15 @@ export class UserService {
   sessionRev: string;
   sessionId: string;
 
+  // Create an observable for components that need to react to user changes can subscribe to
+  private userChange = new Subject<void>();
+  userChange$ = this.userChange.asObservable();
+
   constructor(private couchService: CouchService) {}
 
   set(user: any): any {
     this.user = user;
+    this.userChange.next();
   }
 
   get(): any {
