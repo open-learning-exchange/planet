@@ -7,16 +7,17 @@ import { DialogsPromptComponent } from './dialogs-prompt.component';
 import { DialogsViewComponent } from './dialogs-view.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../planet-forms.module';
+import { FeedbackDirective } from '../../feedback/feedback.directive';
 
 @NgModule({
   imports: [
     CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
   ],
   exports: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective
   ],
   declarations: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective
   ],
   providers: [
     DialogsFormService

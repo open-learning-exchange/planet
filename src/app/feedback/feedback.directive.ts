@@ -27,7 +27,7 @@ export class Feedback {
 })
 export class FeedbackDirective {
   message: string;
-  @Input() value: any;
+  @Input() feedbackOf: any = {};
 
   constructor(
     private userService: UserService,
@@ -38,7 +38,6 @@ export class FeedbackDirective {
 
   addFeedback(post: any) {
     this.message = '';
-    this.value = (this.value !== undefined) ? this.value : ' ';
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: Date.now(), user },
@@ -48,7 +47,7 @@ export class FeedbackDirective {
         openTime: Date.now(),
         messages: [ startingMessage ],
         url: this.router.url,
-        ...this.value[0]
+        ...this.feedbackOf
       };
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {

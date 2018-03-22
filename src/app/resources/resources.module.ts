@@ -8,7 +8,7 @@ import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
-import { FeedbackModule } from '../feedback/feedback.module';
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 
 @NgModule({
   imports: [
@@ -20,7 +20,7 @@ import { FeedbackModule } from '../feedback/feedback.module';
     MaterialModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    FeedbackModule
+    PlanetDialogsModule
   ],
   declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent ]
 })
