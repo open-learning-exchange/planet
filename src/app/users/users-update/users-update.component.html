@@ -4,8 +4,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span>{{user.name}}</span><span class="toolbar-fill"></span>
-    <span class="margin-lr-3">Edit Profile</span>
+    <span>{{user.name}}</span>
   </mat-toolbar>
   <div class="view-container">
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
