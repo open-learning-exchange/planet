@@ -3,7 +3,9 @@
         {
             "_id":"0216c7208a72e79b29997d0fd400be3c",
             "need_optimization": false,
-            "resourceFor": "Learner",
+            "resourceFor": [
+                "Learner"
+            ],
             "Publisher": "africanstorybook.org",
             "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
             "addedBy": "admin",
@@ -36,7 +38,9 @@
          {
             "_id":"0216c7208a72e79b29997d0fd400beac",
             "need_optimization": false,
-            "resourceFor": "Learner",
+            "resourceFor": [
+                "Learner"
+            ],
             "Publisher": "African Storybooks",
             "linkToLicense": "https://creativecommons.org/licenses/by-nc/4.0/",
             "addedBy": "admin",
@@ -69,7 +73,9 @@
          {
             "_id":"0216c7208a72e79b29997ded400beac",
             "need_optimization": false,
-            "resourceFor": "Learner",
+            "resourceFor": [
+                "Learner"
+            ],
             "Publisher": "africanstorybook.org",
             "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
             "addedBy": "admin",
@@ -102,7 +108,9 @@
          {
             "_id":"0216c7208a7ss79b29997d0fd400beac",
             "need_optimization": false,
-            "resourceFor": "Learner",
+            "resourceFor": [
+                "Learner"
+            ],
             "Publisher": "Africanstorybook.org",
             "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
             "addedBy": "admin",
@@ -136,6 +144,9 @@
             "_id":"0216s208a72e79b29997d0fd400beac",
             "Publisher": "Phi Delta Kappa (permission received from PDK and author JSaphier)",
             "need_optimization": false,
+            "resourceFor": [
+                "Learner"
+            ],
             "addedBy": "teacher",
             "uploadDate": "2014-07-22T04:00:00.000Z",
             "openWith": "PDF.js",
