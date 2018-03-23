@@ -8,7 +8,7 @@
     <span>{{user.name}}</span>
   </mat-toolbar>
   <div class="view-container">
-    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="form-view">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
@@ -68,7 +68,7 @@
       <img class="profile-image-large" [src]="previewSrc">
       <div>
         <div *ngIf="uploadImage === false">
-          <button mat-raised-button color="primary" *ngIf="uploadImage === false">
+          <button mat-raised-button color="primary">
               Select Image
               <input type="file" class="input-file" (change)="previewImageFile($event)"/>
           </button>
