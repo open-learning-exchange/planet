@@ -61,17 +61,33 @@ export class UsersProfileComponent implements OnInit {
 
   onSubmit(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
-    this.changePasswordRequest(updateDoc).pipe(switchMap((response) => {
-      if (response.ok === true) {
-        this.userDetail._rev = response.rev;
-        return this.reinitSession(userDetail.name, credentialData.password);
-      }
-      return of({ ok: false, reason: 'Error changing password' });
-    })).subscribe((res) => {
-      if (res.ok === true) {
-        this.planetMessageService.showAlert('Password successfully changed');
-      }
-    }, (error) => this.planetMessageService.showAlert(error.error.reason));
+    if (!this.userService.get().isUserAdmin) {
+      this.changePasswordRequest(updateDoc).pipe(switchMap((response) => {
+        if (response.ok === true) {
+          this.userDetail._rev = response.rev;
+          return this.reinitSession(userDetail.name, credentialData.password);
+        }
+        return of({ ok: false, reason: 'Error changing password' });
+      })).subscribe((res) => {
+        if (res.ok === true) {
+          this.planetMessageService.showAlert('Password successfully changed');
+        }
+      }, (error) => this.planetMessageService.showAlert(error.error.reason));
+    } else {
+      this.changeAdminPassword(updateDoc);
+    }
+  }
+
+  changeAdminPassword(adminData) {
+    this.couchService.put('_node/nonode@nohost/_config/admins/' + adminData.name, adminData.password)
+    .subscribe((res) => {
+      this.reinitSession(adminData.name, adminData.password)
+      .subscribe((mydata) => {
+        if (mydata.ok === true) {
+          this.planetMessageService.showAlert('Password successfully changed');
+        }
+      });
+    }, (error) => this.planetMessageService.showAlert(error));
   }
 
   changePasswordRequest(userData) {
