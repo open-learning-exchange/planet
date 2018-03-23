@@ -48,6 +48,14 @@
         </button>
         <mat-cell>
           <mat-menu #meetupMenu="matMenu">
+            <a mat-menu-item (click)="updateMeetup(element)">
+              <mat-icon>folder</mat-icon>
+              <span i18n>Manage</span>
+            </a>
+            <a mat-menu-item [routerLink]="['/meetups/view', element._id]">
+              <mat-icon>visibility</mat-icon>
+              <span i18n>View</span>
+            </a>
             <button mat-menu-item (click)="deleteClick(element)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>

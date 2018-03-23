@@ -1,0 +1,18 @@
+<mat-toolbar>
+  <a mat-icon-button routerLink="/meetups"><mat-icon>arrow_back</mat-icon></a>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
+    <span class="toolbar-fill"></span>
+  </mat-toolbar>
+  <div class="view-container">
+    <p i18n>Category : {{meetupDetail.category}} </p>
+    <p i18n>Meetup Date: {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
+    <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
+    <p i18n>Recurring: {{meetupDetail.recurring}}</p>
+    <p i18n>Location: {{meetupDetail.meetupLocation}}</p>
+    <p i18n>Description: {{meetupDetail.description}}</p>
+  </div>
+</div>

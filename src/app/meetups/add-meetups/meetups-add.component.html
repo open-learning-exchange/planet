@@ -1,0 +1,83 @@
+<mat-toolbar>
+  <a mat-icon-button routerLink="/meetups">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
+  <div class="view-container">
+    <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
+      <div>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-grid-list cols="2">
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Start Date" type="date" formControlName="startDate">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="date" i18n-placeholder placeholder="End Date" formControlName="endDate">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </mat-grid-list>
+
+      <div>
+        <label i18n>Recurring</label>
+        <mat-radio-group formControlName="recurring">
+          <mat-radio-button value="daily">Daily</mat-radio-button>
+          <mat-radio-button value="weekly">Weekly</mat-radio-button>
+          <mat-radio-button value="none">None</mat-radio-button>
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
+        </mat-radio-group>
+      </div>
+
+      <mat-grid-list cols="2">
+        <mat-form-field>
+          <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </mat-grid-list>
+
+      <div>
+        <mat-form-field>
+          <mat-select i18n-placeholder placeholder="Category" formControlName="category">
+            <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+          </mat-select>
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.category"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button type="submit" color="primary" i18n>Save</button>
+      <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+    </form>
+  </div>
+</div>

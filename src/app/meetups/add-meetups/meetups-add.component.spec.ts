@@ -1,9 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { MeetupsAddComponent } from './meetups-add.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../shared/material.module';
+import { MaterialModule } from '../../shared/material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/observable/throw';
@@ -24,7 +24,7 @@ describe('MeetupsAddComponent', () => {
   let fixture;
   let spy: any;
   let couchService;
-  let testModel;
+  let testModel: any;
   let de;
   let statusElement;
   let compiled;
@@ -46,7 +46,7 @@ describe('MeetupsAddComponent', () => {
 
   it('should make a post request to couchService', () => {
     spy = spyOn(couchService, 'post').and.returnValue(of(testModel));
-    component.onSubmit(testModel);
+    component.onSubmit();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe('MeetupsAddComponent', () => {
 
   it('should show meetup created: title correctly', () => {
     spy = spyOn(couchService, 'post').and.returnValue(of(testModel.title));
-    component.onSubmit(testModel);
+    component.onSubmit();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(statusElement.textContent).toBe('Meetup created: ' + testModel.title);
@@ -65,7 +65,7 @@ describe('MeetupsAddComponent', () => {
   it('should message Please complete the form', () => {
     testModel.title = '';
     testModel.description = '';
-    component.onSubmit(testModel);
+    component.onSubmit();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(statusElement.textContent).toBe('Please complete the form');
@@ -74,7 +74,7 @@ describe('MeetupsAddComponent', () => {
 
   it('should message There was a problem creating the meetup', () => {
     spy = spyOn(couchService, 'post').and.returnValue(Rx.Observable.throw({ Error }));
-    component.onSubmit(testModel);
+    component.onSubmit();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(statusElement.textContent).toBe('There was a problem creating the meetup');
