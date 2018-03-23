@@ -171,11 +171,13 @@ export class CoursesAddComponent implements OnInit {
   }
 
   isClassDay(day) {
-    if (this.courseFrequency.includes(day)) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.courseFrequency.includes(day) ? true : false;
+  }
+
+  updateCourseFrequency(courseFrequency, formArray) {
+    courseFrequency.map((c) => {
+      !formArray.value.includes(c) ? formArray.push( new FormControl(c)) : null ;
+    });
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
@@ -183,11 +185,7 @@ export class CoursesAddComponent implements OnInit {
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.courseForm.controls.day;
 
-    for (let i = 0; i < this.courseFrequency.length; i++) {
-      if (!dayFormArray.value.includes(this.courseFrequency[i])) {
-          dayFormArray.push(new FormControl(this.courseFrequency[i]));
-      }
-    }
+    this.updateCourseFrequency(this.courseFrequency, dayFormArray);
 
     if (isChecked) {
       // add to day array if checked
@@ -211,6 +209,7 @@ export class CoursesAddComponent implements OnInit {
       // add all days to the array if the course is daily
       this.courseForm.setControl('day', this.fb.array(this.days));
     }
+    this.courseForm.setControl('day', this.fb.array(this.courseFrequency));
     this.showDaysCheckBox = val;
   }
 }
