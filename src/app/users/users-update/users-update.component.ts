@@ -19,13 +19,9 @@ import { UserService } from '../../shared/user.service';
     }
     .view-container {
       background-color: #FFFFFF;
-      padding: 3rem;
-    }
-    .profile-upload-view {
-      height: 220px;
-      width: 185px;
-      margin-top: -340px;
-      margin-left: 530px;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content:space-around;
       padding: 3rem;
     }
     .input-file {
@@ -36,7 +32,7 @@ import { UserService } from '../../shared/user.service';
       opacity: 0;
       right: 0;
       top: 0;
-    }
+      }
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {

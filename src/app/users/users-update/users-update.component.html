@@ -8,7 +8,7 @@
     <span>{{user.name}}</span>
   </mat-toolbar>
   <div class="view-container">
-    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="form-view">
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
@@ -64,19 +64,21 @@
         <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
       </div>
     </form>
-    <div class="profile-upload-view">
+    <div>
       <img class="profile-image-large" [src]="previewSrc">
       <div>
-        <button mat-raised-button color="primary" *ngIf="uploadImage === false" >
-            Select Image
-            <input type="file" class="input-file" (change)="previewImageFile($event)" />
-        </button>
-        <div *ngIf="uploadImage === true">
-          <button mat-raised-button >
-            Change
-            <input type="file" class="input-file" (change)="previewImageFile($event)" />
+        <div *ngIf="uploadImage === false">
+          <button mat-raised-button color="primary" *ngIf="uploadImage === false">
+              Select Image
+              <input type="file" class="input-file" (change)="previewImageFile($event)"/>
           </button>
-          <button mat-raised-button color="warn" (click)="removeImageFile()" >Remove</button>
+        </div>
+        <div *ngIf="uploadImage === true">
+          <button mat-raised-button>
+            Change
+            <input type="file" class="input-file" (change)="previewImageFile($event)"/>
+          </button> 
+          <button mat-raised-button color="warn" (click)="removeImageFile()">Remove</button>
         </div>
       </div>
     </div>
