@@ -1,0 +1,23 @@
+<mat-toolbar>
+  <a mat-icon-button routerLink="/courses"><mat-icon>arrow_back</mat-icon></a>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
+    <span class="toolbar-fill"></span>
+  </mat-toolbar>
+  <div class="view-container">
+    <p i18n>Course Leader: {{courseDetail.courseLeader}} </p>
+    <p i18n>Subject Level: {{courseDetail.subjectLevel}}</p>
+    <p i18n>Grade Level: {{courseDetail.gradeLevel}}</p>
+    <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
+    <p i18n>Method: {{courseDetail.method}}</p>
+    <p i18n>Frequency/Days: {{courseDetail.day}}</p>
+    <p i18n>Schedule - 
+      Date: {{courseDetail.startDate | date }}
+      Time: {{courseDetail.startTime }}</p>
+    <p i18n>Location: {{courseDetail.location}}</p>
+    <p i18n>Description: {{courseDetail.description}}</p>
+  </div>
+</div>

@@ -52,7 +52,7 @@
             <mat-icon>library_add</mat-icon>
             <span i18n>Add to Library</span>
           </a>
-          <a mat-menu-item [routerLink]="['/resources/wip']">
+          <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
             <mat-icon>feedback</mat-icon>
             <span i18n>Feedback</span>
           </a>
