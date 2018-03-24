@@ -24,12 +24,18 @@ case $i in
     -i=*|--image=*)
         image="${i#*=}"
         ;;
+    -w=*|--timeout=*)
+        timeout="${i#*=}"
+        ;;
     *)
     echo "usage: deploy_rpi.sh -b=<branch-name>|--branch=<branch-name>"
     echo "usage: deploy_rpi.sh -c=<commit-sha>|--commit=<commit-sha>"
     echo "usage: deploy_rpi.sh -p=<pull-request-number>|--pull=<pull-request-number>"
     echo "usage: deploy_rpi.sh -u=<docker-user-name>|--duser=<docker-user-name>"
     echo "usage: deploy_rpi.sh -k=<docker-password>|--dpass=<docker-password>"
+    echo "usage: deploy_rpi.sh -t=<git-tag>|--gtag=<git-tag>"
+    echo "usage: deploy_rpi.sh -i=<image-we-want-to-build>|--image=<image-we-want-to-build>"
+    echo "usage: deploy_rpi.sh -w=<time-out-for-flock>|--timeout=<time-out-for-flock>"
     exit 1;
     ;;
 esac
@@ -37,6 +43,9 @@ done
 ##########################################################
 
 set -e
+readonly PROGNAME=$(basename "$0$image")
+readonly LOCKFILE_DIR=/tmp
+readonly LOCK_FD=200
 
 build_message(){
     # $1 = build message
@@ -105,27 +114,55 @@ wait_for_kraken_free() {
     build_message "Waiting done, we will run the build now ..."
 }
 
-prepare_var
-clone_branch
-prepare_var_post_clone
-create_footprint start "$commit"
-wait_for_kraken_free
+lock() {
+    local prefix=$1
+    local fd=${2:-$LOCK_FD}
+    local lock_file=$LOCKFILE_DIR/$prefix.lock
 
-source ./.travis/travis_utils.sh
+    # create lock file
+    eval "exec $fd>$lock_file"
 
-if [[ $image = db-init ]]
-  then
-  prepare_db_init_rpi
-  deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_LATEST
-  deploy_tag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
-fi
+    # acquier the lock
+    flock -w $timeout $fd \
+        && return 0 \
+        || return 1
+}
 
-if [[ $image = planet ]]
-  then
-  prepare_planet_rpi
-  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
-  deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
-fi
+eexit() {
+    local error_str="$@"
 
-remove_temporary_folders
-create_footprint finish "$commit"
+    echo $error_str
+    exit 1
+}
+
+main(){
+    lock $PROGNAME \
+        || eexit "Only one instance of $PROGNAME can run at one time."
+
+    prepare_var
+    clone_branch
+    prepare_var_post_clone
+    create_footprint start "$commit"
+    wait_for_kraken_free
+
+    source ./.travis/travis_utils.sh
+
+    if [[ $image = db-init ]]
+      then
+      prepare_db_init_rpi
+      deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_LATEST
+      deploy_tag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
+    fi
+
+    if [[ $image = planet ]]
+      then
+      prepare_planet_rpi
+      deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
+      deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
+    fi
+
+    remove_temporary_folders
+    create_footprint finish "$commit"
+}
+
+main
