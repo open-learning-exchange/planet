@@ -13,7 +13,11 @@ _login_to_kraken: &_login_to_kraken
     - chmod 600 ./.travis/deploy_rsa
     - ssh-add ./.travis/deploy_rsa
     - source ./.travis/travis_utils.sh
-    - bell &
+    - export -f bell
+    - nohup bash -c bell &
+_logout_from_kraken: &_logout_from_kraken
+  after_script:
+    - exit $BUILD_CODE
 _add_kraken: &_add_kraken
   addons:
     ssh_known_hosts: kraken.ole.org
@@ -112,19 +116,15 @@ jobs:
       <<: *_login_to_kraken
       script: #arm image building planet
         - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet -w=900
-      after_script:
         - BUILD_CODE=$?
-        - kill %1
-        - exit $BUILD_CODE
+      <<: *_logout_from_kraken
     - stage: docker-release
       <<: *_add_kraken
       <<: *_login_to_kraken
       script: #arm image building planet
         - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init -w=900
-      after_script:
         - BUILD_CODE=$?
-        - kill %1
-        - exit $BUILD_CODE
+      <<: *_logout_from_kraken
 
 notifications:
   webhooks:
