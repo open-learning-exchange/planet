@@ -89,7 +89,6 @@ package_docker(){
   # $2: tag
   # $3: tag latest
   build_message processing $2
-  bell &
   docker build -f $1 -t $2 .
   if [ "$BRANCH" = "master" ]
 	then
