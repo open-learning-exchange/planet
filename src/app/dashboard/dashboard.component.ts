@@ -26,6 +26,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 })
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [] };
+  courseArray = [];
 
   constructor(
     private userService: UserService,
