@@ -113,9 +113,9 @@ export class CoursesAddComponent implements OnInit {
         this.courseFrequency = data.day;
         this.courseForm.patchValue(data);
 
-        if ( this.courseFrequency === undefined || this.courseFrequency.length === 0) {
+        if ( !this.courseFrequency === undefined ) {
           this.showDaysCheckBox = true;
-        } else if (this.courseFrequency.length > 0 && this.courseFrequency.length < 7) {
+        } else if ( this.courseFrequency.length < 7) {
           this.showDaysCheckBox = false;
           this.weeklyRadio = true;
           this.courseForm.value.day = this.courseFrequency;
@@ -176,7 +176,9 @@ export class CoursesAddComponent implements OnInit {
 
   updateCourseFrequency(courseFrequency, formArray) {
     courseFrequency.map((c) => {
-      !formArray.value.includes(c) ? formArray.push( new FormControl(c)) : null ;
+      if (!formArray.value.includes(c)) {
+          formArray.push( new FormControl(c));
+      }
     });
   }
 
@@ -208,8 +210,9 @@ export class CoursesAddComponent implements OnInit {
     if (val) {
       // add all days to the array if the course is daily
       this.courseForm.setControl('day', this.fb.array(this.days));
+    } else {
+      this.courseForm.setControl('day', this.fb.array(this.courseFrequency));
     }
-    this.courseForm.setControl('day', this.fb.array(this.courseFrequency));
     this.showDaysCheckBox = val;
   }
 }
