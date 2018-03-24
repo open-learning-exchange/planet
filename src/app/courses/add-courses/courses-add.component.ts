@@ -113,7 +113,7 @@ export class CoursesAddComponent implements OnInit {
         this.courseFrequency = data.day;
         this.courseForm.patchValue(data);
 
-        if ( !this.courseFrequency === undefined ) {
+        if ( !this.courseFrequency ) {
           this.showDaysCheckBox = true;
         } else if ( this.courseFrequency.length < 7) {
           this.showDaysCheckBox = false;
