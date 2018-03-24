@@ -109,12 +109,22 @@ jobs:
       <<: *_add_kraken
       <<: *_login_to_kraken
       script: #arm image building planet
+        - source ./.travis/travis_utils.sh
+        - bell &
         - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet -w=900
+        - BUILD_CODE=$?
+        - kill %1
+        - exit $BUILD_CODE
     - stage: docker-release
       <<: *_add_kraken
       <<: *_login_to_kraken
       script: #arm image building planet
+        - source ./.travis/travis_utils.sh
+        - bell &
         - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init -w=900
+        - BUILD_CODE=$?
+        - kill %1
+        - exit $BUILD_CODE
 
 notifications:
   webhooks:
