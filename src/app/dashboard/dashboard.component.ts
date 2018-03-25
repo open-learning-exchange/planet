@@ -24,6 +24,7 @@ import { map } from 'rxjs/operators';
 })
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [] };
+  courseArray = [];
 
   constructor(
     private userService: UserService,
@@ -35,7 +36,7 @@ export class DashboardComponent implements OnInit {
       this.data.resources = res;
     });
     this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }). subscribe((res) => {
-      this.data.courses = res;
+      this.data.courses = this.filterResigned(res);
     });
     this.getData('meetups', { linkPrefix: 'meetups' }). subscribe((res) => {
       this.data.meetups = res;
@@ -48,5 +49,14 @@ export class DashboardComponent implements OnInit {
       // link with or without doc id based on addId
       return response.rows.map((item) => ({ ...item.doc, title: item.doc[titleField], link: linkPrefix + (addId ? item.id : '') }));
     }));
+  }
+
+  filterResigned(res) {
+    res.forEach(course => {
+      if (!course.resign) {
+        this.courseArray.push(course);
+      }
+    });
+    return this.courseArray;
   }
 }

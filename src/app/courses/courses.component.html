@@ -45,13 +45,13 @@
         </button>
         <mat-cell>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item routerLink="add">
+            <a *ngIf="element.resign" mat-menu-item routerLink="add">
               <mat-icon>lock_open</mat-icon>
               <span i18n>Open</span>
             </a>
-            <a mat-menu-item routerLink="add">
-              <mat-icon>clear</mat-icon>
-              <span i18n>Resign</span>
+            <a mat-menu-item (click)="toggleResign(element,element._id)">
+              <mat-icon>{{element.resign?"school":"clear"}}</mat-icon>
+              <span i18n>{{element.resign?"Admission":"Resign"}}</span>
             </a>
             <a mat-menu-item (click)="updateCourse(element)">
               <mat-icon>folder</mat-icon>

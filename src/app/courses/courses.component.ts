@@ -8,7 +8,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
-
+import { UserService } from '../shared/user.service';
 @Component({
   templateUrl: './courses.component.html',
   styles: [ `
@@ -150,6 +150,22 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.isAllSelected() ?
     this.selection.clear() :
     this.courses.data.forEach(row => this.selection.select(row));
+  }
+
+  toggleResign(course, courseId) {
+    if (course.resign === undefined) {
+      // Resign does not exist
+      course.resign = true;
+    }  else {
+      // Resign already exists
+      course.resign = !course.resign;
+    }
+    this.couchService.put('courses/' + courseId, course)
+      .subscribe((response) => {
+        console.log('Success!');
+      }, (error) => {
+      console.log('Error!');
+    });
   }
 
 }
