@@ -49,18 +49,17 @@ export class MeetupsViewComponent implements OnInit {
   }
 
   attendMeetup(meetupId) {
-  this.couchService.post(`usermeetups/_find`,
-    findDocuments({ 'meetupId': meetupId }, 0 ))
-    .pipe(switchMap(data => {
-      const meetupInfo = { ...data.docs[0] };
-      const memberId = data.docs[0].memberId;
-      (this.meetupDetail.participate) ? memberId.splice(this.userService.get().name.string, 1) : memberId.push(this.userService.get().name);
-      return of({ ...meetupInfo, memberId });
-    })).subscribe((usermeetup) => {
-      this.couchService.put('usermeetups/' + usermeetup._id , { ...usermeetup }).subscribe(() => {
+    this.couchService.post(`usermeetups/_find`,
+      findDocuments({ 'meetupId': meetupId }, 0 ))
+      .pipe(switchMap(data => {
+        const meetupInfo = { ...data.docs[0] };
+        const memberId = meetupInfo.memberId;
+        const username: string = this.userService.get().name;
+        (memberId.indexOf(username) > -1) ? memberId.splice(memberId.indexOf(username), 1) : memberId.push(username);
+        return this.couchService.put('usermeetups/' + meetupInfo._id , { ...meetupInfo, memberId });
+      })).subscribe((res) => {
         (this.meetupDetail.participate) ? this.meetupDetail.participate = false : this.meetupDetail.participate = true;
       });
-    });
   }
 
 }
