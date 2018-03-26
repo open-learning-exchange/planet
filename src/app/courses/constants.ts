@@ -1,4 +1,5 @@
 export const gradeLevels = [
+  '',
   'Pre-Kindergarten',
   'Kindergarten',
   '1',
@@ -17,7 +18,7 @@ export const gradeLevels = [
   'Post-Graduate'
 ];
 
-export const subjectLevels = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
+export const subjectLevels = [ '', 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
 
 export const days = [
   'Saturday',

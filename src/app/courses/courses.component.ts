@@ -8,6 +8,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
+import { filterDropdowns } from '../shared/table-helpers';
+import * as constants from './constants';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -32,6 +34,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
+  subjectLevels = constants.subjectLevels;
+  gradeLevels = constants.gradeLevels;
   readonly dbName = 'courses';
   constructor(
     private couchService: CouchService,
@@ -43,7 +47,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses();
-    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle' ]);
+    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle', 'gradeLevel', 'subjectLevel' ]);
   }
 
   getCourses() {

@@ -4,6 +4,18 @@
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
+    <mat-select i18n-placeholder placeholder="Grade Level">
+      <mat-option *ngFor="let grade of gradeLevels" [value]="grade" (click)="searchFilter(grade)">{{grade}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <mat-select i18n-placeholder placeholder="Subject Level">
+      <mat-option *ngFor="let sub of subjectLevels" [value]="sub" (click)="searchFilter(sub)">{{sub}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
     <input matInput (keyup)="searchFilter($event.target.value)" i18n-placeholder placeholder="Search">
   </mat-form-field>
 </mat-toolbar>
