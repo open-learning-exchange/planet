@@ -6,6 +6,8 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
     <span class="toolbar-fill"></span>
+    <button mat-button class="margin-lr-3" i18n *ngIf="meetupDetail.participate; else joinMeetup" (click)="attendMeetup(meetupDetail._id)"><span>Leave</span></button>
+    <ng-template #joinMeetup><button mat-button class="margin-lr-3" i18n (click)="attendMeetup(meetupDetail._id)"><span>Join</span></button></ng-template>
   </mat-toolbar>
   <div class="view-container">
     <p i18n>Category : {{meetupDetail.category}} </p>

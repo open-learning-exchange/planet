@@ -11,7 +11,7 @@
   </mat-form-field>
 </mat-toolbar>
 
-<div class="space-container">
+<div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <span *ngIf="!parentLink">
@@ -39,7 +39,8 @@
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
-        <h3 class="header">{{element.title}}</h3>
+        <h3 class="header"><a [routerLink]="['/meetups/view', element._id]">{{element.title}}</a>
+        </h3>
         <div class="content">
           <p>{{ element.description }}</p>
         </div>
