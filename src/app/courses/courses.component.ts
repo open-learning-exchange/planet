@@ -196,4 +196,30 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
+  courseAdmission(course) {
+    if (course.members  === undefined || course.members.length > 0 ) {
+      course.members.push(this.userService.get()._id);
+    }
+    this.couchService.put('courses/' + course._id, course)
+      .subscribe((response) => {
+        console.log('Success!');
+        this.router.navigate([ '/' ]);
+      }, (error) => {
+      console.log('Error!');
+    });
+  }
+
+  courseResign(course) {
+    const user = this.userService.get()._id;
+    const index = course.members.indexOf(user);
+    course.members.splice(index, 1);
+    this.couchService.put('courses/' + course._id, course)
+    .subscribe((response) => {
+      console.log('Success!');
+      this.router.navigate([ '/' ]);
+    }, (error) => {
+    console.log('Error!');
+  });
+  }
+
 }
