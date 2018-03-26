@@ -9,6 +9,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { filterDropdowns } from '../shared/table-helpers';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import * as constants from './constants';
 
 @Component({
@@ -36,18 +37,24 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courseForm: FormGroup;
   subjectLevels = constants.subjectLevels;
   gradeLevels = constants.gradeLevels;
+  advanceSearchResponseDetails: any = {};
   readonly dbName = 'courses';
+  filter = {
+    'gradeLevel': '',
+    'subjectLevel': ''
+  };
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialogsFormService: DialogsFormService
   ) { }
 
   ngOnInit() {
     this.getCourses();
-    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle', 'gradeLevel', 'subjectLevel' ]);
+    this.courses.filterPredicate = filterDropdowns(this.filter);
   }
 
   getCourses() {
@@ -67,6 +74,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   searchFilter(filterValue: string) {
+    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle' ]);
     this.courses.filter = filterValue.trim().toLowerCase();
   }
 
@@ -154,6 +162,57 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.isAllSelected() ?
     this.selection.clear() :
     this.courses.data.forEach(row => this.selection.select(row));
+  }
+
+  onFilterChange(filterValue: string, field: string) {
+    this.courses.filterPredicate = filterDropdowns(this.filter);
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Changing the filter string to trigger filterPredicate
+    this.courses.filter = filterValue;
+  }
+
+  AdvanceSearchForm() {
+    const title = 'Advance Search';
+    const fields = this.AdvanceSearchFormFields();
+    const formGroup = this.AdvanceSearchFormGroup();
+    this.dialogsFormService
+      .confirm(title, fields, formGroup)
+      .subscribe((res) => {
+        if (res !== undefined) {
+          this.advanceSearchResponseDetails = res;
+          console.log(this.advanceSearchResponseDetails);
+          this.onFilterChange(this.advanceSearchResponseDetails.gradetext, this.advanceSearchResponseDetails.gradeLevel);
+          if (this.advanceSearchResponseDetails.subjecttext !== '') {
+            this.onFilterChange(this.advanceSearchResponseDetails.subjecttext, this.advanceSearchResponseDetails.subjectLevel);
+          }
+        }
+      });
+  }
+
+  AdvanceSearchFormFields() {
+    return [
+      {
+        'type': 'selectbox',
+        'name': 'gradetext',
+        'options': this.gradeLevels,
+        'placeholder': 'Grade Level'
+      },
+      {
+        'type': 'selectbox',
+        'name': 'subjecttext',
+        'options': this.subjectLevels,
+        'placeholder': 'Subject Level'
+      }
+    ];
+  }
+
+    AdvanceSearchFormGroup() {
+    return {
+      gradeLevel: 'gradeLevel',
+      subjectLevel: 'subjectLevel',
+      gradetext: '',
+      subjecttext: ''
+    };
   }
 
 }

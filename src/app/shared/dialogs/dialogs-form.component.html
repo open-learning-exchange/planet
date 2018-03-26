@@ -9,12 +9,14 @@
       </mat-form-field>
 
       <!-- selectbox -->
-      <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
-        <select mat-select *ngFor="let options of field.options">
-          <option value="{{option.value}}">{{option.text}}</option>
-        </select>
+      <section *ngIf="field.type === 'selectbox'">
+      <mat-form-field class="full-width">
+        <mat-select i18n-placeholder placeholder="{{field.placeholder}}" formControlName="{{field.name}}">
+          <mat-option *ngFor="let option of field.options" [value]="option">{{option}}</mat-option>
+        </mat-select>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      </section>
 
       <!-- radio button -->
       <section *ngIf="field.type === 'radio'">
