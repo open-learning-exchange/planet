@@ -14,7 +14,7 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button [disabled]="!selection.selected.length">
+    <button mat-button [disabled]="!selection.selected.length" (click)="addResourceId(selection.selected)">
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
     </button>
     <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
@@ -48,7 +48,7 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
-          <a mat-menu-item [routerLink]="['/resources/wip']">
+          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addResourceId([{'_id': element._id}])">
             <mat-icon>library_add</mat-icon>
             <span i18n>Add to Library</span>
           </a>

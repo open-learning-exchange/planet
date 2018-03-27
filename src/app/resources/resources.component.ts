@@ -6,11 +6,13 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { environment } from '../../environments/environment';
+import { UserService } from '../shared/user.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -45,15 +47,31 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private httpclient: HttpClient,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
-    this.getResources();
+    forkJoin(this.getResources(), this.getAddedLibrary()).subscribe((results) => {
+      this.setupList(results[0].rows, results[1].docs[0] ? results[1].docs[0].resourceIds || [] : []);
+    }, (error) => console.log(error));
     // Temp fields to fill in for male and female rating
     this.fRating = Math.floor(Math.random() * 101);
     this.mRating = 100 - this.fRating;
     this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
+  }
+
+  setupList(resourcesRes, myLibrarys) {
+    this.resources.data = resourcesRes.map((r: any) => {
+      const resource = r.doc || r;
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
+        return resource._id === resourceId;
+      });
+      if (myLibraryIndex > -1) {
+        return { ...resource, libraryInfo: true };
+      }
+      return { ...resource,  libraryInfo: false };
+    });
   }
 
   ngAfterViewInit() {
@@ -88,8 +106,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.resources.filter = filterResValue.trim().toLowerCase();
   }
 
+  getAddedLibrary() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
+  }
+
   getExternalResources() {
-    this.couchService.post('nations/_find',
+    return this.couchService.post('nations/_find',
     { 'selector': { 'name': this.nationName },
     'fields': [ 'name', 'nationurl' ] })
       .pipe(switchMap(data => {
@@ -103,23 +130,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         }
         // If there is no url, return an observable of an empty array
         return of([]);
-      })).subscribe((res: any) => {
-        this.resources.data = res.rows.map(r => r.doc);
-      }, error => (this.message = 'Error'));
+      }));
   }
 
   getResources() {
     this.nationName = this.route.snapshot.paramMap.get('nationname');
     if (this.nationName !== null) {
-      this.getExternalResources();
+      return this.getExternalResources();
     } else {
-      this.couchService
-        .get('resources/_all_docs?include_docs=true')
-        .subscribe(data => {
-          // Sort in descending articleDate order, so the new resource can be shown on the top
-          data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
-          this.resources.data = data.rows.map(res => res.doc);
-        }, (error) => this.planetMessageService.showAlert('There was a problem getting resources'));
+      return this.couchService.get('resources/_all_docs?include_docs=true');
     }
   }
 
@@ -185,6 +204,46 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.router.navigate([ '/' ]);
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  addResourceId(resourceId) {
+    const resourceIdArray = resourceId.map((data) => {
+      return data._id;
+    });
+    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(
+        map(data => {
+          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [] };
+        }),
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", and it needs to be created
+        catchError(err => {
+          // Observable of continues stream
+          return of({ rev: {}, resourceIds: [] });
+        }),
+        switchMap(data => {
+          const resourceIds = resourceIdArray.concat(data.resourceIds).reduce(this.dedupeShelfReduce, []);
+          return this.couchService.put('shelf/' + this.userService.get()._id,
+            Object.assign(data.rev, { resourceIds }));
+        })
+      ).subscribe((res) =>  {
+        this.updateAddLibrary();
+        this.selection.clear();
+        this.planetMessageService.showAlert('Resource added to your library');
+    }, (error) => (error));
+  }
+
+  updateAddLibrary() {
+    this.getAddedLibrary().subscribe((res) => {
+      this.setupList(this.resources.data, res.docs[0].resourceIds);
+    });
   }
 
 }
