@@ -5,6 +5,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UserService } from '../../shared/user.service';
 import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { ResourcesService } from '../resources.service';
 
 @Component({
   templateUrl: './resources-rating.component.html',
@@ -14,9 +15,17 @@ export class ResourcesRatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
   @Input() resourceId: string;
-  @Output() onUpdate = new EventEmitter<any>();
+
   rateForm: FormGroup;
+  popupForm: FormGroup;
+  isPopupOpen: boolean = false;
   stackedBarData = [];
+  get rateFormField() {
+    return { rate: this.rating.userRating.rate || 0 }
+  };
+  get commentField() {
+    return { comment: this.rating.userRating.comment || '' }
+  };
 
   private dbName = 'ratings';
 
@@ -25,11 +34,11 @@ export class ResourcesRatingComponent implements OnChanges {
     private couchService: CouchService,
     private planetMessage: PlanetMessageService,
     private userService: UserService,
-    private dialogsForm: DialogsFormService
+    private dialogsForm: DialogsFormService,
+    private resourcesService: ResourcesService
   ) {
-    this.rateForm = this.fb.group({
-      rate: this.rating.userRating.rate || 0
-    });
+    this.rateForm = this.fb.group(this.rateFormField);
+    this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
   }
 
   ngOnChanges() {
@@ -44,27 +53,31 @@ export class ResourcesRatingComponent implements OnChanges {
       },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
     ];
-    this.rateForm.setValue({
-      rate: this.rating.userRating.rate || 0
-    });
+    this.rateForm.setValue(this.rateFormField);
+    this.popupForm.setValue(Object.assign({}, this.rateFormField, this.commentField));
   }
 
-  onStarClick() {
-    this.updateRating().subscribe(res => {
-      this.onUpdate.emit(this.rating.userRating);
-      this.openDialog();
+  onStarClick(form = this.rateForm) {
+    this.updateRating(form).subscribe(res => {
+      this.resourcesService.updateResources();
+      if (!this.isPopupOpen) {
+        this.openDialog();
+      } else {
+        this.rateForm.setValue({ rate: this.popupForm.controls.rate.value });
+        this.isPopupOpen = false;
+      }
     }, (err) => {
       this.ratingError();
     });
   }
 
-  updateRating() {
+  updateRating(form) {
     // Later parameters of Object.assign will overwrite values from previous objects
     const newRating = Object.assign({
       type: 'resource',
       item: this.resourceId,
       user: this.userService.get()
-    }, this.rating.userRating, this.rateForm.value, {
+    }, this.rating.userRating, form.value, {
       time: Date.now()
     });
     let couchRequest = this.couchService.post,
@@ -77,28 +90,21 @@ export class ResourcesRatingComponent implements OnChanges {
     return couchRequest.call(this.couchService, couchUrl, newRating).pipe(map((res: any) => {
       newRating._rev = res.rev;
       this.rating.userRating = newRating;
-      this.onUpdate.emit(newRating);
       return res;
     }));
   }
 
   openDialog() {
-    this.rateForm.addControl('comment', new FormControl(this.rating.userRating.comment || ''));
+    this.popupForm.patchValue(this.rateForm.value);
+    this.isPopupOpen = true;
     this.dialogsForm
-      .confirm('Rating', popupFormFields, this.rateForm)
+      .confirm('Rating', popupFormFields, this.popupForm)
       .debug('Dialog confirm')
       .subscribe((res) => {
-        this.postDialogRating();
+        if (res) {
+          this.onStarClick(this.popupForm);
+        }
       });
-  }
-
-  postDialogRating() {
-    this.updateRating().subscribe(res => {
-      this.onUpdate.emit(this.rating.userRating);
-      this.rateForm.removeControl('comment');
-    }, (err) => {
-      this.ratingError();
-    });
   }
 
   ratingError() {

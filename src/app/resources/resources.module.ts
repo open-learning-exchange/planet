@@ -10,6 +10,7 @@ import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ResourcesRatingComponent } from './rating-resources/resources-rating.component';
 import { PlanetStackedBarComponent } from '../shared/planet-stacked-bar.component';
+import { ResourcesService } from './resources.service';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { PlanetStackedBarComponent } from '../shared/planet-stacked-bar.componen
     HttpClientModule,
     HttpClientJsonpModule
   ],
-  declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent, ResourcesRatingComponent, PlanetStackedBarComponent ]
+  declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent, ResourcesRatingComponent, PlanetStackedBarComponent ],
+  providers: [ ResourcesService ]
 })
 export class ResourcesModule {}

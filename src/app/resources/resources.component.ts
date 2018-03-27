@@ -16,6 +16,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { environment } from '../../environments/environment';
+import { ResourcesService } from './resources.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -58,14 +59,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
+    private resourcesService: ResourcesService
   ) {}
 
   ngOnInit() {
-    forkJoin(this.getResources(), this.getRatings()).subscribe((results) => {
-      const resourcesRes = results[0],
-        ratingsRes = results[1];
-      this.setupList(resourcesRes.rows, ratingsRes.docs);
-    }, (err) => console.log(err));
+    this.resourcesService.resourcesUpdated$.subscribe((resources) => {
+      this.resources.data = resources;
+    });
+    this.resourcesService.updateResources();
     this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
   }
 
