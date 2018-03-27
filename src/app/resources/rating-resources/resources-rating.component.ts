@@ -18,14 +18,14 @@ export class ResourcesRatingComponent implements OnChanges {
 
   rateForm: FormGroup;
   popupForm: FormGroup;
-  isPopupOpen: boolean = false;
+  isPopupOpen = false;
   stackedBarData = [];
   get rateFormField() {
-    return { rate: this.rating.userRating.rate || 0 }
-  };
+    return { rate: this.rating.userRating.rate || 0 };
+  }
   get commentField() {
-    return { comment: this.rating.userRating.comment || '' }
-  };
+    return { comment: this.rating.userRating.comment || '' };
+  }
 
   private dbName = 'ratings';
 

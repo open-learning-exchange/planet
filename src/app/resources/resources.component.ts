@@ -34,7 +34,7 @@ import { Subject } from 'rxjs/Subject';
     }
   ` ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
