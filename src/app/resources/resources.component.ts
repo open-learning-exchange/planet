@@ -121,11 +121,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.parentUrl = true;
       url = this.couchService.get('resources/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
     }
-    url.subscribe(data => {
-      // Sort in descending articleDate order, so the new resource can be shown on the top
-      data.rows.sort((a, b) => b.doc.articleDate - a.doc.articleDate);
-      this.resources.data = data.rows.map(res => res.doc);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting resources'));
+    return url
   }
 
   deleteClick(resource) {
