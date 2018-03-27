@@ -67,21 +67,29 @@ export class UserService {
     } : {});
   }
 
+  // Safeguard to make sure user profile has been set by AuthService
+  // before running newSessionLog()
+  getNewLogObj() {
+    return Observable.create(observer => {
+      const timer = setInterval(() => {
+        if (this.user.name) {
+          observer.next(this.logObj());
+          observer.complete();
+        }
+      }, 500);
+      return () => { clearInterval(timer); };
+    });
+  }
+
   newSessionLog() {
     this.sessionStart = Date.now();
-    let newObs: Observable<any> = of({});
-    if (!this.user.name) {
-      newObs = this.couchService.get('_session', { withCredentials: true }).pipe(map(data => {
-        this.user.name = data.userCtx.name;
-      }));
-    }
-    return newObs.pipe(switchMap(() => {
-      return this.couchService.post(this.logsDb, this.logObj()).pipe(map(res => {
-        this.sessionRev = res.rev;
-        this.sessionId = res.id;
-      }));
+    return this.getNewLogObj().pipe(switchMap(logObj => {
+      return this.couchService.post(this.logsDb, this.logObj());
+    }),
+    map((res: any) => {
+      this.sessionRev = res.rev;
+      this.sessionId = res.id;
     }));
-
   }
 
   endSessionLog() {
