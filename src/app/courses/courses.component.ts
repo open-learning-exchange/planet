@@ -35,9 +35,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
-  subjectLevels = constants.subjectLevels;
-  gradeLevels = constants.gradeLevels;
-  advanceSearchResponseDetails: any = {};
+  advanceSearchResponseDetails: any;
   readonly dbName = 'courses';
   filter = {
     'gradeLevel': '',
@@ -167,7 +165,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   onFilterChange(filterValue: string, field: string) {
     this.courses.filterPredicate = filterDropdowns(this.filter);
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    // Changing the filter string to trigger filterPredicate
     this.courses.filter = filterValue;
   }
 
@@ -180,11 +177,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       .subscribe((res) => {
         if (res !== undefined) {
           this.advanceSearchResponseDetails = res;
-          console.log(this.advanceSearchResponseDetails);
           this.onFilterChange(this.advanceSearchResponseDetails.gradetext, this.advanceSearchResponseDetails.gradeLevel);
-          if (this.advanceSearchResponseDetails.subjecttext !== '') {
-            this.onFilterChange(this.advanceSearchResponseDetails.subjecttext, this.advanceSearchResponseDetails.subjectLevel);
-          }
+          this.onFilterChange(this.advanceSearchResponseDetails.subjecttext, this.advanceSearchResponseDetails.subjectLevel);
         }
       });
   }
@@ -194,19 +188,21 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       {
         'type': 'selectbox',
         'name': 'gradetext',
-        'options': this.gradeLevels,
-        'placeholder': 'Grade Level'
+        'options': [ 'All' ].concat(constants.gradeLevels),
+        'placeholder': 'Grade Level',
+        'required': true
       },
       {
         'type': 'selectbox',
         'name': 'subjecttext',
-        'options': this.subjectLevels,
-        'placeholder': 'Subject Level'
+        'options': [ 'All' ].concat(constants.subjectLevels),
+        'placeholder': 'Subject Level',
+        'required': true
       }
     ];
   }
 
-    AdvanceSearchFormGroup() {
+  AdvanceSearchFormGroup() {
     return {
       gradeLevel: 'gradeLevel',
       subjectLevel: 'subjectLevel',

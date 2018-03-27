@@ -11,7 +11,7 @@
       <!-- selectbox -->
       <section *ngIf="field.type === 'selectbox'">
       <mat-form-field class="full-width">
-        <mat-select i18n-placeholder placeholder="{{field.placeholder}}" formControlName="{{field.name}}">
+        <mat-select i18n-placeholder placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
           <mat-option *ngFor="let option of field.options" [value]="option">{{option}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
