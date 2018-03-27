@@ -62,9 +62,9 @@ export class UsersProfileComponent implements OnInit {
 
   onSubmit(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
-    this.changePasswordRequest(updateDoc).pipe(switchMap((response) => {
-      if (response.ok === true || response[0].ok === true) {
-        this.userDetail._rev = response.rev || response[0].rev;
+    this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
+      if (responses.reduce((ok, r) => r.ok && ok, true)) {
+        this.userDetail._rev = responses[0].rev;
         return this.reinitSession(userDetail.name, credentialData.password);
       }
       return of({ ok: false, reason: 'Error changing password' });
@@ -77,13 +77,15 @@ export class UsersProfileComponent implements OnInit {
 
   changePasswordRequest(userData) {
     const isUserAdmin = this.userService.get().isUserAdmin;
+    const observables = [
+      this.couchService.put(this.dbName + '/' + userData._id, userData)
+    ];
     if (isUserAdmin) {
-      return forkJoin([
-        this.couchService.put(this.dbName + '/' + userData._id, userData),
+      observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
-      ]);
+      );
     }
-    return this.couchService.put(this.dbName + '/' + userData._id, userData);
+    return forkJoin(observables);
   }
 
   reinitSession(username, password) {
