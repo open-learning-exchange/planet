@@ -26,7 +26,7 @@ export class ResourcesService {
     forkJoin(resourceQuery, this.getRatings()).subscribe((results) => {
       const resourcesRes = results[0],
         ratingsRes = results[1];
-      this.resourcesUpdated.next(this.createResourceList(resourcesRes.rows, ratingsRes.docs));
+      this.resourcesUpdated.next(this.createResourceList(resourcesRes.rows || resourcesRes.docs, ratingsRes.docs));
     }, (err) => console.log(err));
   }
 
