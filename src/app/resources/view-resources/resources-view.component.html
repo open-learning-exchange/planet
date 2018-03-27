@@ -25,7 +25,7 @@
       <p>Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
       <p>Resource: {{ resource.resourceFor }}</p>
       <p>Resource Type: {{ resource.resourceType }}</p>
-      <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+      <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
     <div class="resource-view" [ngSwitch]="mediaType">
       <img [src]="resourceSrc" *ngSwitchCase="'image'">

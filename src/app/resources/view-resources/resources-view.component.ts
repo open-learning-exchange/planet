@@ -5,13 +5,9 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { Validators } from '@angular/forms';
-import { findDocuments } from '../../shared/mangoQueries';
 import { ResourcesService } from '../resources.service';
 
 @Component({
@@ -26,8 +22,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private http: HttpClient,
-    private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private resourcesService: ResourcesService
   ) { }
@@ -35,24 +29,22 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any = {};
-  rating: any = { average: 0, userRating: { rate: '', comment: '' } };
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  couchSrc = '';
-  subscription;
   // Use string rather than boolean for i18n select
   fullView = 'off';
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
+    this.route.paramMap
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe((resource) => {
-        this.resourceActivity(resource._id, 'visit');
-        this.resourcesService.updateResources([ resource._id ]);
+      .subscribe((params: ParamMap) => {
+        const resourceId = params.get('id');
+        this.resourceActivity(resourceId, 'visit');
+        this.resourcesService.updateResources([ resourceId ]);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((resourceArr) => {
@@ -63,22 +55,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  getResource(id: string, nationName: string) {
-    if (nationName) {
-      return this.couchService.post(`nations/_find`,
-      { 'selector': { 'name': nationName },
-      'fields': [ 'name', 'nationurl' ] })
-        .pipe(switchMap(data => {
-          const nationUrl = data.docs[0].nationurl;
-          if (nationUrl) {
-            this.urlPrefix = 'http://' + nationUrl + '/' + this.dbName + '/';
-            return this.http.jsonp(this.urlPrefix + id + '?include_docs=true&callback=JSONP_CALLBACK', 'callback');
-          }
-        }));
-    }
-    return this.couchService.get('resources/' + id);
   }
 
   setResource(resource: any) {
@@ -95,7 +71,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
-    this.couchSrc = this.urlPrefix + resource._id + '/' + filename;
   }
 
   resourceActivity(resourceId, activity) {
