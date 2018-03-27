@@ -6,7 +6,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError,  } from 'rxjs/operators';
+import { switchMap, catchError, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -59,7 +59,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesUpdated$.subscribe((resources) => {
+    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe((resources) => {
       this.resources.data = resources;
     });
     this.resourcesService.updateResources();
