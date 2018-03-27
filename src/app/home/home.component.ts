@@ -8,6 +8,7 @@ import { languages } from '../shared/languages';
 import { interval } from 'rxjs/observable/interval';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './home.component.html',
@@ -115,13 +116,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   logoutClick() {
-    this.userService.endSessionLog().pipe(switchMap(() => {
-      return this.couchService.delete('_session', { withCredentials: true });
+    forkJoin([
+      this.userService.endSessionLog(),
+      this.userService.endParentSessionLog()
+    ]).pipe(switchMap(() => {
+      return  forkJoin([
+        this.couchService.delete('_session', { withCredentials: true }),
+        this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parent_domain }),
+      ]);
     })).subscribe((response: any) => {
-      if (response.ok === true) {
         this.userService.unset();
         this.router.navigate([ '/login' ], {});
-      }
     }, err => console.log(err));
   }
 

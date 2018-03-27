@@ -5,6 +5,7 @@ import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { findDocuments } from '../shared/mangoQueries';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -20,6 +21,7 @@ export class UserService {
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
+  parentSessionId: string;
 
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
@@ -92,11 +94,15 @@ export class UserService {
   newSessionLog() {
     this.sessionStart = Date.now();
     return this.getNewLogObj().pipe(switchMap(logObj => {
-      return this.couchService.post(this.logsDb, this.logObj());
+      return forkJoin([
+        this.couchService.post(this.logsDb, this.logObj()),
+        this.couchService.post(this.logsDb, this.logObj(), { domain: this.getConfig().parent_domain })
+      ]);
     }),
     map((res: any) => {
-      this.sessionRev = res.rev;
-      this.sessionId = res.id;
+      this.sessionRev = res[0].rev;
+      this.sessionId = res[0].id;
+      this.parentSessionId = res[1].id;
     }));
   }
 
@@ -118,4 +124,22 @@ export class UserService {
     }));
   }
 
+  endParentSessionLog() {
+    let newParentObs: Observable<any> = of({});
+    if (this.parentSessionId === undefined) {
+      newParentObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
+        { 'user': this.get().name },
+        [ '_id', '_rev', 'login_time' ],
+        [ { 'login_time': 'desc' } ]
+      ), { domain: this.getConfig().parent_domain }).pipe(map(data => {
+        this.parentSessionId = data.docs[0]['_id'];
+        this.sessionRev = data.docs[0]['_rev'];
+        this.sessionStart = data.docs[0]['login_time'];
+      }));
+    }
+    return newParentObs.pipe(switchMap(() => {
+      return this.couchService.put(this.logsDb + '/' + this.parentSessionId, this.logObj(Date.now()),
+        { domain: this.getConfig().parent_domain });
+    }));
+  }
 }

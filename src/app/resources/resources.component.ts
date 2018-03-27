@@ -121,7 +121,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.parentUrl = true;
       url = this.couchService.get('resources/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
     }
-    return url
+    return url;
   }
 
   deleteClick(resource) {
