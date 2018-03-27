@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { of } from 'rxjs/observable/of';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './meetups-view.component.html'
@@ -18,7 +19,8 @@ export class MeetupsViewComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -59,6 +61,8 @@ export class MeetupsViewComponent implements OnInit {
         return this.couchService.put('usermeetups/' + meetupInfo._id , { ...meetupInfo, memberId });
       })).subscribe((res) => {
         (this.meetupDetail.participate) ? this.meetupDetail.participate = false : this.meetupDetail.participate = true;
+        const msg = this.meetupDetail.participate ? 'join' : 'left';
+        this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
       });
   }
 

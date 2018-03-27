@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-
 import { map, switchMap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
@@ -45,7 +43,32 @@ export class DashboardComponent implements OnInit {
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
     });
+  }
 
+  myMeetups() {
+    return this.couchService.post(`usermeetups/_find`,
+      findDocuments({ 'memberId':  {'$in': [
+        this.userService.get().name
+        ]} }, 0 ))
+      .pipe(
+        map(data => {
+          const meetupIds = [];
+          Object.keys(data.docs).forEach(field => {
+            meetupIds.push(data.docs[field].meetupId);
+          });
+          return meetupIds;
+        }),
+        switchMap(meetupIds => {
+          return this.couchService.post(`meetups/_find`,
+            findDocuments({ '_id':  {'$in':
+              meetupIds
+              } }, 0 ))
+              .pipe(switchMap(meetup => {
+                console.log('Meetups', meetup);
+                return meetup.docs.map((item) => ({ ...item, link: 'meetups/view/' + item._id  }));
+              }));
+        })
+      );
   }
 
   getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
