@@ -6,9 +6,10 @@ import { UserService } from '../../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
-
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -35,6 +36,7 @@ export class UsersProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
+    private planetMessageService: PlanetMessageService,
     private router: Router
   ) { }
 
@@ -60,21 +62,30 @@ export class UsersProfileComponent implements OnInit {
 
   onSubmit(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
-    this.changePasswordRequest(updateDoc).pipe(switchMap((response) => {
-      if (response.ok === true) {
-        this.userDetail._rev = response._rev;
+    this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
+      if (responses.reduce((ok, r) => r.ok && ok, true)) {
+        this.userDetail._rev = responses[0].rev;
         return this.reinitSession(userDetail.name, credentialData.password);
       }
       return of({ ok: false, reason: 'Error changing password' });
     })).subscribe((res) => {
       if (res.ok === true) {
-        // TODO: Should notify user that password successfully changed or that there was an error
+        this.planetMessageService.showMessage('Password successfully updated');
       }
-    });
+    }, (error) => this.planetMessageService.showMessage('Error changing password'));
   }
 
   changePasswordRequest(userData) {
-    return this.couchService.put(this.dbName + '/' + userData._id, userData);
+    const isUserAdmin = this.userService.get().isUserAdmin;
+    const observables = [
+      this.couchService.put(this.dbName + '/' + userData._id, userData)
+    ];
+    if (isUserAdmin) {
+      observables.push(
+        this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
+      );
+    }
+    return forkJoin(observables);
   }
 
   reinitSession(username, password) {
