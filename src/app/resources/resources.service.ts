@@ -20,19 +20,29 @@ export class ResourcesService {
     private userService: UserService
   ) {}
 
-  updateResources() {
-    forkJoin(this.getResources(), this.getRatings()).subscribe((results) => {
+  updateResources(resourceIds: string[] = []) {
+    const resourceQuery = resourceIds.length > 0 ?
+      this.getResources(resourceIds) : this.getAllResources();
+    forkJoin(resourceQuery, this.getRatings()).subscribe((results) => {
       const resourcesRes = results[0],
         ratingsRes = results[1];
       this.resourcesUpdated.next(this.createResourceList(resourcesRes.rows, ratingsRes.docs));
     }, (err) => console.log(err));
   }
 
-  getResources() {
+  getAllResources() {
     return this.couchService.get(this.resourcesDb + '/_all_docs?include_docs=true');
   }
 
-  getRatings() {
+  getResources(resourceIds: string[]) {
+    return this.couchService.post('resources/_find', findDocuments({
+      '_id': { '$in': resourceIds }
+    }, 0, [], 1000));
+  }
+
+  getRatings(resourceIds: string[] = []) {
+    const itemSelector = resourceIds.length > 0 ?
+      { '$in': resourceIds } : { '$gt': null };
     return this.couchService.post('ratings/_find', findDocuments({
       // Selector
       'type': 'resource',
