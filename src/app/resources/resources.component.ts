@@ -95,6 +95,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.data.forEach(row => this.selection.select(row));
   }
 
+  // Keeping for reference.  Need to refactor for service.
+  /*
   getExternalResources() {
     return this.couchService.post('nations/_find',
     { 'selector': { 'name': this.nationName },
@@ -112,6 +114,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         return of([]);
     }));
   }
+  */
 
   deleteClick(resource) {
     this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
@@ -165,7 +168,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
-          this.getResources();
+          this.resourcesService.updateResources();
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted all resources');
