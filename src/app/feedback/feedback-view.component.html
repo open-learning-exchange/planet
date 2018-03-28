@@ -1,0 +1,31 @@
+<!-- Feedback Template -->
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/feedback"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Feedback List</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  </mat-form-field>
+</mat-toolbar>
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span>{{feedback.type + ' regarding ' + feedback.url}}</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="view-container">
+    <div class="chat-list">
+      <div class="chat-list-item" *ngFor="let message of feedback.messages">
+        <div class="chat-list-user">{{message.user}}</div>
+        <mat-card class="chat-list-message" [ngClass]="{'primary-color':message.user!==user.name}">{{message.message}}</mat-card>
+      </div>
+    </div>
+    <div class="chat-reply">
+      <mat-form-field>
+        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
+      </mat-form-field>
+      <button mat-raised-button color="accent" (click)="postMessage()">Reply</button>
+    </div>
+  </div>
+</div>

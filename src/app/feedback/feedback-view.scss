@@ -1,0 +1,34 @@
+.view-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas: "messages textarea";
+  grid-column-gap: 10px;
+  textarea {
+    grid-area: textarea;
+  }
+  .chat-list {
+    grid-area: messages;
+  }
+}
+
+.chat-list-item {
+  display: grid;
+  grid-template-columns: 75px 1fr;
+  grid-template-areas: "user message";
+  grid-column-gap: 5px;
+  width: 100%;
+  margin-bottom: 10px;
+  .chat-list-user {
+    grid-area: user;
+  }
+  .chat-list-message {
+    grid-area: message;
+    justify-self: end;
+  }
+}
+
+.chat-reply {
+  mat-form-field {
+    width: 100%;
+  }
+}
