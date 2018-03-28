@@ -49,6 +49,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+  userId = this.userService.get()._id;
 
   constructor(
     private couchService: CouchService,
@@ -72,7 +73,20 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }
     this.couchService.allDocs('courses', opts)
       .subscribe((data) => {
-        this.courses.data = data;
+        this.courses.data = data.rows.map((course: any) => {
+          let index = -1;
+          if (course.doc.members) {
+            index = course.doc.members.indexOf(this.userId);
+          }
+          if (index > -1) {
+            course.doc['admission'] = true;
+          } else {
+            course.doc['admission'] = false;
+          }
+          return course.doc;
+        }).filter((c: any) => {
+          return c._id !== '_design/course-validators';
+        });
       }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
@@ -197,8 +211,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   courseAdmission(course) {
-    if (course.members  === undefined || course.members.length > 0 ) {
-      course.members.push(this.userService.get()._id);
+    if (course.members  === undefined) {
+      course['members'] = [ this.userId ];
+        }  else {
+      course.members.push(this.userId);
     }
     this.couchService.put('courses/' + course._id, course)
       .subscribe((response) => {
@@ -210,9 +226,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   courseResign(course) {
-    const user = this.userService.get()._id;
-    const index = course.members.indexOf(user);
-    course.members.splice(index, 1);
+    const user = this.userId;
+    const memeberIndex = course.members.indexOf(user);
+    course.members.splice(memeberIndex, 1);
     this.couchService.put('courses/' + course._id, course)
     .subscribe((response) => {
       console.log('Success!');

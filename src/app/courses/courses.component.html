@@ -56,15 +56,15 @@
         </button>
         <mat-cell>
           <mat-menu #resourceMenu="matMenu">
-            <a *ngIf="element.members" mat-menu-item routerLink="add">
+            <a mat-menu-item *ngIf="element.admission" routerLink="add">
               <mat-icon>lock_open</mat-icon>
               <span i18n>Open</span>
             </a>
-            <a mat-menu-item (click)="courseAdmission(element)" *ngIf ="!element.members">
+            <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission(element)"  >
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
             </a>
-            <a mat-menu-item (click)="courseResign(element)" *ngIf ="element.members">
+            <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element)">
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
