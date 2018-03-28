@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { findDocuments } from '../shared/mangoQueries';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -31,8 +33,8 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getData('resources', { linkPrefix: 'resources/view/', addId: true }).subscribe((res) => {
-      this.data.resources = res;
+    forkJoin(this.myLibrary()).subscribe((res) => {
+      this.data.resources = res[0];
     });
     this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }). subscribe((res) => {
       this.data.courses = res;
@@ -49,4 +51,15 @@ export class DashboardComponent implements OnInit {
       return response.rows.map((item) => ({ ...item.doc, title: item.doc[titleField], link: linkPrefix + (addId ? item.id : '') }));
     }));
   }
+
+  myLibrary() {
+    return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ))
+    .pipe(switchMap(resId => {
+      return this.couchService.post(`resources/_find`, findDocuments({ '_id': { '$in': resId.docs[0].resourceIds } }, 0 ))
+      .pipe(map(resopnse => {
+        return resopnse.docs.map((item) => ({ ...item, link: 'resources/view/' + item._id }));
+      }));
+    }));
+  }
+
 }
