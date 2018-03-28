@@ -67,9 +67,26 @@ export class UserService {
     } : {});
   }
 
+  // Safeguard to make sure user profile has been set by AuthService
+  // before running newSessionLog()
+  getNewLogObj() {
+    return Observable.create(observer => {
+      const timer = setInterval(() => {
+        if (this.user.name) {
+          observer.next(this.logObj());
+          observer.complete();
+        }
+      }, 500);
+      return () => { clearInterval(timer); };
+    });
+  }
+
   newSessionLog() {
     this.sessionStart = Date.now();
-    return this.couchService.post(this.logsDb, this.logObj()).pipe(map(res => {
+    return this.getNewLogObj().pipe(switchMap(logObj => {
+      return this.couchService.post(this.logsDb, this.logObj());
+    }),
+    map((res: any) => {
       this.sessionRev = res.rev;
       this.sessionId = res.id;
     }));

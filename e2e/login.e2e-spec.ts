@@ -21,7 +21,6 @@ describe('Login', () => {
     userInput.sendKeys(browser.params.user);
     passInput.sendKeys('e2e');
     page.clickSignin();
-    browser.waitForAngular();
     browser.getCurrentUrl().then((url) => {
       expect(url).toEqual('http://0.0.0.0:49152/');
     });
