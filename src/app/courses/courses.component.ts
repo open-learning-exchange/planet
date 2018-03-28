@@ -35,7 +35,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
-  advanceSearchResponseDetails: any;
   readonly dbName = 'courses';
   filter = {
     'gradeLevel': '',
@@ -162,28 +161,28 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.data.forEach(row => this.selection.select(row));
   }
 
-  onFilterChange(filterValue: string, field: string) {
+  onFilterChange(filterValue) {
     this.courses.filterPredicate = filterDropdowns(this.filter);
-    this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    this.courses.filter = filterValue;
+    this.filter['gradeLevel'] = filterValue.gradeLevel === 'All' ? '' : filterValue.gradeLevel;
+    this.filter['subjectLevel'] = filterValue.subjectLevel === 'All' ? '' : filterValue.subjectLevel;
+    this.courses.filter = filterValue.gradeLevel && filterValue.subjectLevel;
   }
 
-  AdvanceSearchForm() {
+  advanceSearchForm() {
     const title = 'Advance Search';
-    const fields = this.AdvanceSearchFormFields();
-    const formGroup = this.AdvanceSearchFormGroup();
+    const fields = this.advanceSearchFormFields();
+    const formGroup = this.advanceSearchFormGroup();
     this.dialogsFormService
       .confirm(title, fields, formGroup)
       .subscribe((res) => {
+        console.log('myres', res);
         if (res !== undefined) {
-          this.advanceSearchResponseDetails = res;
-          this.onFilterChange(this.advanceSearchResponseDetails.gradetext, this.advanceSearchResponseDetails.gradeLevel);
-          this.onFilterChange(this.advanceSearchResponseDetails.subjecttext, this.advanceSearchResponseDetails.subjectLevel);
+           this.onFilterChange({ gradeLevel: res['gradetext'], subjectLevel: res['subjecttext'] });
         }
       });
   }
 
-  AdvanceSearchFormFields() {
+  advanceSearchFormFields() {
     return [
       {
         'type': 'selectbox',
@@ -202,10 +201,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  AdvanceSearchFormGroup() {
+  advanceSearchFormGroup() {
     return {
-      gradeLevel: 'gradeLevel',
-      subjectLevel: 'subjectLevel',
       gradetext: '',
       subjecttext: ''
     };
