@@ -63,8 +63,7 @@ export class DashboardComponent implements OnInit {
             findDocuments({ '_id':  {'$in':
               meetupIds
               } }, 0 ))
-              .pipe(switchMap(meetup => {
-                console.log('Meetups', meetup);
+              .pipe(map(meetup => {
                 return meetup.docs.map((item) => ({ ...item, link: 'meetups/view/' + item._id  }));
               }));
         })
