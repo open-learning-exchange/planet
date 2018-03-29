@@ -67,18 +67,12 @@
     <div>
       <img class="profile-image-large" [src]="previewSrc">
       <div>
-        <div *ngIf="uploadImage === false">
-          <label class="planet-label-button cursor-pointer">
-              Select Image
-              <input type="file" class="input-file" (change)="previewImageFile($event)"/>
-          </label>
-        </div>
-        <div *ngIf="uploadImage === true">
-          <label class="planet-label-button cursor-pointer">
-            Change
-            <input type="file" class="input-file" (change)="previewImageFile($event)"/>
-          </label> 
-          <button mat-raised-button color="warn" (click)="removeImageFile()">Remove</button>
+        <div>
+          <button mat-raised-button color="primary" (click)="imageInput.click()">
+            {{uploadImage ? 'Change' : 'Select Image'}}
+          </button>
+          <input #imageInput type="file" class="hidden" (change)="previewImageFile($event)"/>
+          <button *ngIf="uploadImage === true" mat-raised-button color="warn" (click)="removeImageFile()">Remove</button>
         </div>
       </div>
     </div>

@@ -24,15 +24,6 @@ import { UserService } from '../../shared/user.service';
       justify-content:space-around;
       padding: 3rem;
     }
-    .input-file {
-      height: 50px;
-      width: 125px;
-      position: absolute;
-      font-size: 100px;
-      opacity: 0;
-      right: 0;
-      top: 0;
-      }
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {
