@@ -3,11 +3,14 @@
   grid-template-columns: 2fr 1fr;
   grid-template-areas: "messages textarea";
   grid-column-gap: 10px;
+  max-height: calc(100vh - 352px);
   textarea {
     grid-area: textarea;
   }
   .chat-list {
     grid-area: messages;
+    overflow-y: auto;
+    max-height: inherit;
   }
 }
 

@@ -12,8 +12,11 @@
   <div class="view-container">
     <div class="chat-list">
       <div class="chat-list-item" *ngFor="let message of feedback.messages">
-        <div class="chat-list-user">{{message.user}}</div>
-        <mat-card class="chat-list-message" [ngClass]="{'primary-color':message.user!==user.name}">{{message.message}}</mat-card>
+        <div class="chat-list-user">
+          <p>{{message.user}}</p>
+          <p class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</p>
+        </div>
+        <div class="chat-list-message"><mat-card [ngClass]="{'primary-color':message.user!==user.name}">{{message.message}}</mat-card></div>
       </div>
     </div>
     <div class="chat-reply">
