@@ -75,7 +75,7 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [ngModel]="currentDate | date: 'MMMM d, y, h:mm:ss a z'" formControlName="articleDate" i18n-placeholder placeholder="Article Date" readonly>
+          <input matInput [ngModel]="currentDate | date: 'MMMM d, y, h:mm:ss a z'" (ngModelChange)="revertDate($event)" formControlName="articleDate" i18n-placeholder placeholder="Article Date" readonly>
         </mat-form-field>
       </mat-grid-list>
       <mat-grid-list cols="3">
