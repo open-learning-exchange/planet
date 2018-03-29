@@ -33,6 +33,10 @@ body {
     color: $primary;
   }
 
+  .accent-text-color {
+    color: $accent;
+  }
+
   .bg-light-grey {
     background-color: $light-grey;
   }
@@ -131,12 +135,19 @@ body {
 
   // the colored stars are placed on top of the uncolored ones
   // the width is set dynamically with JS
+  $stars-margin: 1px;
+  // Each mat-icon star is 24x24 (5 stars = 120px).  Will need to change if star sizes change
+  $stars-width: calc(120px + (10 * #{$stars-margin}));
   .stars {
     display: inline-block;
     color: $grey;
     position: relative;
     // Each mat-icon star is 24x24.  Will need to change if star sizes change
-    width: 120px;
+    width: $stars-width;
+
+    mat-icon {
+      margin: 0 $stars-margin;
+    }
 
     span {
       color: $accent;
@@ -153,42 +164,63 @@ body {
 
   .list-item-rating {
     display: grid;
+    margin: 5px 0;
     grid-template-areas:
-      'stats-t rating'
-      'stats-f rating'
-      'stats-m stars';
-    grid-template-columns: 2fr 3fr;
-    grid-template-rows: 1fr 1fr 1fr;
+      'ratio rating'
+      'total rating'
+      'your your-label';
+    // 5 mat-icon stars are 120px
+    grid-template-columns: 130px 1fr;
+    grid-template-rows: 2.5rem 1fr 1fr;
     align-items: center;
 
-    .stars {
-      grid-area: stars;
-      justify-self: end;
+    .stats-ratio {
+      grid-area: ratio;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1.75rem 0.75rem;
+      grid-template-areas: 'm-icon f-icon' 'bar bar';
+      mat-icon {
+        align-self: start;
+      }
+      .male-icon {
+        grid-area: m-icon;
+      }
+      .female-icon {
+        grid-area: f-icon;
+        justify-self: end;
+      }
+      planet-stacked-bar {
+        grid-area: bar;
+        align-self: end;
+      }
+    }
+
+    .stats-total, .avg-rating, .your-rating-label {
+      text-align: center;
     }
 
     .stats-total {
-      grid-area: stats-t;
+      grid-area: total;
     }
 
-    .stats-male {
-      grid-area: stats-m;
-    }
-
-    .stats-female {
-      grid-area: stats-f;
-    }
-
-    .rating {
+    .avg-rating {
       grid-area: rating;
-      text-align: right;
+      align-self: start;
 
       .rating-number {
-        font-size: 2rem;
+        font-size: 2.5rem;
         display: block;
       }
-
     }
 
+    .your-rating {
+      grid-area: your;
+    }
+
+    .your-rating-label {
+      grid-area: your-label;
+    }
 
   }
 
@@ -209,7 +241,7 @@ body {
     font-size: 0.625rem;
   }
 
-  mat-table .highlight {
+  mat-table .highlight, .primary-light-color {
     background-color: $primary-light;
   }
 
@@ -247,7 +279,7 @@ body {
     height: 50px;
     padding: 3px;
   }
-  
+
   .space-container {
     margin: 64px 30px;
   }
@@ -260,4 +292,5 @@ body {
     background-color: #FFFFFF;
     padding: 1rem;
   }
+
 }

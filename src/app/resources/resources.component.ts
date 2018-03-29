@@ -1,17 +1,18 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatFormField, MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, takeUntil, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields } from '../shared/table-helpers';
-import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
+import { filterSpecificFields } from '../shared/table-helpers';
+import { ResourcesService } from './resources.service';
+import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
@@ -24,22 +25,26 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
     .mat-column-rating {
       max-width: 225px;
     }
+    a:hover {
+      color: #2196f3;
+    }
+    .mat-progress-bar {
+      height: 10px;
+      width: 120px;
+    }
   ` ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'select', 'info', 'rating' ];
   readonly dbName = 'resources';
-  mRating;
-  fRating;
   message = '';
-  file: any;
   deleteDialog: any;
   nationName = '';
   selection = new SelectionModel(true, []);
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -48,16 +53,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private httpclient: HttpClient,
     private planetMessageService: PlanetMessageService,
-    private userService: UserService
+    private userService: UserService,
+    private resourcesService: ResourcesService
   ) {}
 
   ngOnInit() {
-    forkJoin(this.getResources(), this.getAddedLibrary()).subscribe((results) => {
-      this.setupList(results[0].rows, results[1].docs[0] ? results[1].docs[0].resourceIds || [] : []);
-    }, (error) => console.log(error));
-    // Temp fields to fill in for male and female rating
-    this.fRating = Math.floor(Math.random() * 101);
-    this.mRating = 100 - this.fRating;
+    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe((resources) => {
+      this.resources.data = resources;
+      this.updateAddLibrary();
+    });
+    this.resourcesService.updateResources();
     this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
   }
 
@@ -79,6 +85,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.resources.paginator = this.paginator;
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -86,24 +97,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return numSelected === numRows;
   }
 
+  applyResFilter(filterResValue: string) {
+    this.resources.filter = filterResValue.trim().toLowerCase();
+  }
+
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
     this.resources.data.forEach(row => this.selection.select(row));
-  }
-
-  getRating(sum, timesRated) {
-    let rating = 0;
-    if (sum > 0 && timesRated > 0) {
-      rating = sum / timesRated;
-    }
-    // Multiply by 20 to convert rating out of 5 to percent for width
-    return (rating * 20) + '%';
-  }
-
-  applyResFilter(filterResValue: string) {
-    this.resources.filter = filterResValue.trim().toLowerCase();
   }
 
   getAddedLibrary() {
@@ -115,6 +117,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  // Keeping for reference.  Need to refactor for service.
+  /*
   getExternalResources() {
     return this.couchService.post('nations/_find',
     { 'selector': { 'name': this.nationName },
@@ -130,17 +134,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         }
         // If there is no url, return an observable of an empty array
         return of([]);
-      }));
+    }));
   }
-
-  getResources() {
-    this.nationName = this.route.snapshot.paramMap.get('nationname');
-    if (this.nationName !== null) {
-      return this.getExternalResources();
-    } else {
-      return this.couchService.get('resources/_all_docs?include_docs=true');
-    }
-  }
+  */
 
   deleteClick(resource) {
     this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
@@ -194,7 +190,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
-          this.getResources();
+          this.resourcesService.updateResources();
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted all resources');
