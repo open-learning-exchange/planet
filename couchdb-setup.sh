@@ -100,6 +100,7 @@ curl -X PUT $COUCHURL/configurations
 curl -X PUT $COUCHURL/login_activities
 curl -X PUT $COUCHURL/notifications
 curl -X PUT $COUCHURL/ratings
+curl -X PUT $COUCHURL/shelf
 
 # Add or update design docs
 upsert_doc courses _design/course-validators @./design/courses/course-validators.json

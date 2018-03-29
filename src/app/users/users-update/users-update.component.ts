@@ -24,7 +24,7 @@ import { UserService } from '../../shared/user.service';
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {
-  user: any;
+  user: any = {};
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
@@ -55,8 +55,6 @@ export class UsersUpdateComponent implements OnInit {
       firstName: [ '', Validators.required ],
       middleName: '',
       lastName: [ '', Validators.required ],
-      name: '',
-      login: [ { value: '', disabled: true }, Validators.required ],
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
@@ -91,7 +89,9 @@ export class UsersUpdateComponent implements OnInit {
 
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe(() => {
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
+      userInfo._rev = res.rev;
+      this.userService.set(userInfo);
       this.router.navigate([ '/users/profile/' + this.user.name ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred

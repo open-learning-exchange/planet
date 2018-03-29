@@ -3,6 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
+import { fromPromise } from 'rxjs/observable/fromPromise';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -59,7 +60,7 @@ export class LoginFormComponent {
   }
 
   reRoute() {
-    this.router.navigate([ this.returnUrl ]);
+    return this.router.navigate([ this.returnUrl ]);
   }
 
   createUser({ name, password }: {name: string, password: string}) {
@@ -79,14 +80,17 @@ export class LoginFormComponent {
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
+        // Navigate into app
+        if (isCreate) {
+          return fromPromise(this.router.navigate( [ 'users/update/' + name ]));
+        } else {
+          return fromPromise(this.reRoute());
+        }
+      }), switchMap((routeSuccess) => {
         // Post new session info to login_activity
         return this.userService.newSessionLog();
       })).subscribe((res) => {
-        if (isCreate) {
-          this.router.navigate( [ 'users/update/' + name ]);
-        } else {
-          this.reRoute();
-        }
+
       }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
   }
 }

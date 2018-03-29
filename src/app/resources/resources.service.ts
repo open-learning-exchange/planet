@@ -62,10 +62,10 @@ export class ResourcesService {
         return resource._id === rating.item;
       });
       if (ratingIndex > -1) {
-        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, startingRating);
+        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, Object.assign({}, startingRating));
         return { ...resource, rating: ratingInfo };
       }
-      return { ...resource,  rating: startingRating };
+      return { ...resource,  rating: Object.assign({}, startingRating) };
     });
   }
 

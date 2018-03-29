@@ -6,14 +6,14 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError, takeUntil } from 'rxjs/operators';
+import { switchMap, catchError, takeUntil, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { Subject } from 'rxjs/Subject';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -54,7 +54,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private httpclient: HttpClient,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService,
     private resourcesService: ResourcesService
   ) {}
 
@@ -62,9 +61,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((resources) => {
       this.resources.data = resources;
+      this.updateAddLibrary();
     });
     this.resourcesService.updateResources();
     this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
+  }
+
+  setupList(resourcesRes, myLibrarys) {
+    this.resources.data = resourcesRes.map((r: any) => {
+      const resource = r.doc || r;
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
+        return resource._id === resourceId;
+      });
+      if (myLibraryIndex > -1) {
+        return { ...resource, libraryInfo: true };
+      }
+      return { ...resource,  libraryInfo: false };
+    });
   }
 
   ngAfterViewInit() {
@@ -93,6 +106,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isAllSelected() ?
     this.selection.clear() :
     this.resources.data.forEach(row => this.selection.select(row));
+  }
+
+  getAddedLibrary() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
   }
 
   // Keeping for reference.  Need to refactor for service.
@@ -178,6 +200,46 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '/' ]);
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  addResourceId(resourceId) {
+    const resourceIdArray = resourceId.map((data) => {
+      return data._id;
+    });
+    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(
+        map(data => {
+          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [] };
+        }),
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", and it needs to be created
+        catchError(err => {
+          // Observable of continues stream
+          return of({ rev: {}, resourceIds: [] });
+        }),
+        switchMap(data => {
+          const resourceIds = resourceIdArray.concat(data.resourceIds).reduce(this.dedupeShelfReduce, []);
+          return this.couchService.put('shelf/' + this.userService.get()._id,
+            Object.assign(data.rev, { resourceIds }));
+        })
+      ).subscribe((res) =>  {
+        this.updateAddLibrary();
+        this.selection.clear();
+        this.planetMessageService.showAlert('Resource added to your library');
+    }, (error) => (error));
+  }
+
+  updateAddLibrary() {
+    this.getAddedLibrary().subscribe((res) => {
+      this.setupList(this.resources.data, res.docs[0].resourceIds);
+    });
   }
 
 }

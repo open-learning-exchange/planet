@@ -11,6 +11,7 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ResourcesRatingComponent } from './rating-resources/resources-rating.component';
 import { PlanetStackedBarComponent } from '../shared/planet-stacked-bar.component';
 import { ResourcesService } from './resources.service';
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { ResourcesService } from './resources.service';
     ResourcesRouterModule,
     MaterialModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    PlanetDialogsModule
   ],
   declarations: [ ResourcesComponent, ResourcesViewComponent, ResourcesAddComponent, ResourcesRatingComponent, PlanetStackedBarComponent ],
   providers: [ ResourcesService ]
