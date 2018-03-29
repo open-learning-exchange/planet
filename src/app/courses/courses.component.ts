@@ -36,6 +36,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
+  formGroup = {
+    gradeText: '',
+    subjectText: ''
+  };
   filter = {
     'gradeLevel': '',
     'subjectLevel': ''
@@ -161,23 +165,23 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.data.forEach(row => this.selection.select(row));
   }
 
-  onFilterChange(filterValue) {
+  onFilterChange(filterValue: any) {
     this.courses.filterPredicate = filterDropdowns(this.filter);
-    this.filter['gradeLevel'] = filterValue.gradeLevel === 'All' ? '' : filterValue.gradeLevel;
-    this.filter['subjectLevel'] = filterValue.subjectLevel === 'All' ? '' : filterValue.subjectLevel;
-    this.courses.filter = filterValue.gradeLevel && filterValue.subjectLevel;
+    filterValue.key.forEach((item, index) => {
+      this.filter[ Object.keys(this.filter)[ index ] ] = item === 'All' || '' ? '' : item;
+      this.formGroup[ Object.keys(this.formGroup)[ index ] ] = item;
+    });
+    this.courses.filter = filterValue;
   }
 
   advanceSearchForm() {
     const title = 'Advance Search';
     const fields = this.advanceSearchFormFields();
-    const formGroup = this.advanceSearchFormGroup();
     this.dialogsFormService
-      .confirm(title, fields, formGroup)
+      .confirm(title, fields, this.formGroup)
       .subscribe((res) => {
-        console.log('myres', res);
         if (res !== undefined) {
-           this.onFilterChange({ gradeLevel: res['gradetext'], subjectLevel: res['subjecttext'] });
+          this.onFilterChange({ key: [ res['gradeText'], res['subjectText'] ] });
         }
       });
   }
@@ -186,26 +190,19 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     return [
       {
         'type': 'selectbox',
-        'name': 'gradetext',
+        'name': 'gradeText',
         'options': [ 'All' ].concat(constants.gradeLevels),
         'placeholder': 'Grade Level',
-        'required': true
+        'required': false
       },
       {
         'type': 'selectbox',
-        'name': 'subjecttext',
+        'name': 'subjectText',
         'options': [ 'All' ].concat(constants.subjectLevels),
         'placeholder': 'Subject Level',
-        'required': true
+        'required': false
       }
     ];
-  }
-
-  advanceSearchFormGroup() {
-    return {
-      gradetext: '',
-      subjecttext: ''
-    };
   }
 
 }
