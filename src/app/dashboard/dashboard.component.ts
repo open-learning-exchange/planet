@@ -33,15 +33,19 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    forkJoin(this.myLibrary()).subscribe((res) => {
-      this.data.resources = res[0];
+    this.getShelf().pipe(switchMap(shelf => {
+      console.log(shelf);
+      return forkJoin([
+        this.getDataShelf('resources', shelf.docs[0].resourceIds),
+        this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }),
+        this.getData('meetups', { linkPrefix: 'meetups' })
+      ]);
+    })).subscribe(dashboardItems => {
+      this.data.resources = dashboardItems[0];
+      this.data.courses = dashboardItems[1];
+      this.data.meetups = dashboardItems[2];
     });
-    this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }). subscribe((res) => {
-      this.data.courses = res;
-    });
-    this.getData('meetups', { linkPrefix: 'meetups' }). subscribe((res) => {
-      this.data.meetups = res;
-    });
+
   }
 
   getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
@@ -52,14 +56,15 @@ export class DashboardComponent implements OnInit {
     }));
   }
 
-  myLibrary() {
-    return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ))
-    .pipe(switchMap(resId => {
-      return this.couchService.post(`resources/_find`, findDocuments({ '_id': { '$in': resId.docs[0].resourceIds } }, 0 ))
-      .pipe(map(resopnse => {
-        return resopnse.docs.map((item) => ({ ...item, link: 'resources/view/' + item._id }));
+  getShelf() {
+    return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
+  }
+
+  getDataShelf(db: string, shelf: string[]) {
+    return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
+      .pipe(map(response => {
+        return response.docs.map((item) => ({ ...item, link: db + '/view/' + item._id }));
       }));
-    }));
   }
 
 }
