@@ -62,27 +62,25 @@ export class ResourcesService {
         return resource._id === rating.item;
       });
       if (ratingIndex > -1) {
-        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, {});
+        const ratingInfo = this.addRatingToResource(resource._id, ratingIndex, ratings, startingRating);
         return { ...resource, rating: ratingInfo };
       }
-      return { ...resource,  rating: { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}  } };
+      return { ...resource,  rating: startingRating };
     });
   }
 
   addRatingToResource(id, index, ratings, ratingInfo: any) {
     const rating = ratings[index];
     // If totalRating is undefined, will start count at 1
-    ratingInfo.totalRating = ratingInfo.totalRating + 1 || 1;
-    ratingInfo.rateSum = ratingInfo.rateSum + rating.rate || rating.rate;
-    if (rating.user.gender) {
-      switch (rating.user.gender) {
-        case 'male':
-          ratingInfo.maleRating = ratingInfo.maleRating + 1 || 1;
-          break;
-        case 'female':
-          ratingInfo.femaleRating = ratingInfo.femaleRating + 1 || 1;
-          break;
-      }
+    ratingInfo.totalRating = ratingInfo.totalRating + 1;
+    ratingInfo.rateSum = ratingInfo.rateSum + rating.rate;
+    switch (rating.user.gender) {
+      case 'male':
+        ratingInfo.maleRating = ratingInfo.maleRating + 1;
+        break;
+      case 'female':
+        ratingInfo.femaleRating = ratingInfo.femaleRating + 1;
+        break;
     }
     ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
     if (ratings.length > index + 1 && ratings[index + 1].item === id) {
@@ -94,3 +92,5 @@ export class ResourcesService {
   }
 
 }
+
+const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
