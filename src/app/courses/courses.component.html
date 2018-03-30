@@ -60,7 +60,7 @@
               <mat-icon>lock_open</mat-icon>
               <span i18n>Open</span>
             </a>
-            <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission(element)"  >
+            <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission([{'_id': element._id}])"  >
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
             </a>

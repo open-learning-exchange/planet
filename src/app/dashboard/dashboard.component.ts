@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { findDocuments } from '../shared/mangoQueries';
+
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
@@ -26,7 +26,6 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 })
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [] };
-  courseArray = [];
 
   constructor(
     private userService: UserService,
@@ -37,8 +36,8 @@ export class DashboardComponent implements OnInit {
     this.getShelf().pipe(switchMap(shelf => {
       console.log(shelf);
       return forkJoin([
-        this.getDataShelf('resources', shelf.docs[0].resourceIds),
-        this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }),
+        this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
+        this.getDataShelf('courses', shelf.docs[0].courseIds, { linkPrefix: 'courses', titleField: 'courseTitle' }),
         this.getData('meetups', { linkPrefix: 'meetups' })
       ]);
     })).subscribe(dashboardItems => {
@@ -61,10 +60,10 @@ export class DashboardComponent implements OnInit {
     return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
   }
 
-  getDataShelf(db: string, shelf: string[]) {
+  getDataShelf(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
       .pipe(map(response => {
-        return response.docs.map((item) => ({ ...item, link: db + '/view/' + item._id }));
+        return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item.id : '') }));
       }));
   }
 

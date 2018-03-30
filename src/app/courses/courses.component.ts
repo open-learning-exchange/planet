@@ -8,6 +8,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService } from '../shared/user.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { switchMap, catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 
@@ -61,8 +64,32 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.getCourses();
+    forkJoin([ this.getCourses(), this.getAddedCourses() ]).subscribe((results) => {
+      this.setupList(results[0].rows, results[1].docs[0] ? results[1].docs[0].courseIds || [] : []);
+    }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+  }
+
+  getAddedCourses() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userId } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so courses can be displayed.
+      return of({ docs: [] });
+    }));
+  }
+
+  setupList(courseRes, myCourses) {
+    this.courses.data = courseRes.map((r: any) => {
+      const course = r.doc || r;
+      const myCourseIndex = myCourses.findIndex(courseId => {
+        return course._id === courseId;
+      });
+      if (myCourseIndex > -1) {
+        return { ...course, admission: true };
+      }
+      return { ...course,  admission: false };
+    });
   }
 
   getCourses() {
@@ -71,23 +98,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.parentUrl = true;
       opts = { domain: this.userService.getConfig().parent_domain };
     }
-    this.couchService.allDocs('courses', opts)
-      .subscribe((data) => {
-        this.courses.data = data.rows.map((course: any) => {
-          let index = -1;
-          if (course.doc.members) {
-            index = course.doc.members.indexOf(this.userId);
-          }
-          if (index > -1) {
-            course.doc['admission'] = true;
-          } else {
-            course.doc['admission'] = false;
-          }
-          return course.doc;
-        }).filter((c: any) => {
-          return c._id !== '_design/course-validators';
-        });
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
+    return this.couchService.get('courses/_all_docs?include_docs=true', opts);
   }
 
   ngAfterViewInit() {
@@ -210,32 +221,59 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  courseAdmission(course) {
-    if (course.members  === undefined) {
-      course['members'] = [ this.userId ];
-        }  else {
-      course.members.push(this.userId);
-    }
-    this.couchService.put('courses/' + course._id, course)
-      .subscribe((response) => {
-        console.log('Success!');
-        this.router.navigate([ '/' ]);
-      }, (error) => {
-      console.log('Error!');
-    });
+  courseResign(course) {
+    this.couchService.get('shelf/' + this.userId)
+      .subscribe((data) => {
+        const myCourseIndex = data.courseIds.indexOf(course._id);
+        data.courseIds.splice(myCourseIndex, 1);
+        this.couchService.put('shelf/' + this.userId, data)
+          .subscribe((response) => {
+            console.log('success');
+            this.updateAddLibrary();
+            this.router.navigate([ '/' ]);
+            this.planetMessageService.showAlert('Course successfully resigned');
+          });
+      });
   }
 
-  courseResign(course) {
-    const user = this.userId;
-    const memeberIndex = course.members.indexOf(user);
-    course.members.splice(memeberIndex, 1);
-    this.couchService.put('courses/' + course._id, course)
-    .subscribe((response) => {
-      console.log('Success!');
-      this.router.navigate([ '/' ]);
-    }, (error) => {
-    console.log('Error!');
-  });
+  courseAdmission(courseId) {
+    const courseIdArray = courseId.map((data) => {
+      return data._id;
+    });
+    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(
+        map(data => {
+          return { rev: { _rev: data.docs[0]._rev }, courseIds: data.docs[0].courseIds || [] };
+        }),
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", and it needs to be created
+        catchError(err => {
+          // Observable of continues stream
+          return of({ rev: {}, courseIds: [] });
+        }),
+        switchMap(data => {
+          const courseIds = courseIdArray.concat(data.courseIds).reduce(this.dedupeShelfReduce, []);
+          return this.couchService.put('shelf/' + this.userId,
+            Object.assign(data.rev, { courseIds }));
+        })
+      ).subscribe((res) =>  {
+        this.updateAddLibrary();
+        this.router.navigate([ '/' ]);
+        this.planetMessageService.showAlert('Course added to your dashboard');
+    }, (error) => (error));
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  updateAddLibrary() {
+    this.getAddedCourses().subscribe((res) => {
+      this.setupList(this.courses.data, res.docs[0].courseIds);
+    });
   }
 
 }
