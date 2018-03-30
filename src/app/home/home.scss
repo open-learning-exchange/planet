@@ -11,11 +11,12 @@
     grid-area: header;
     position: relative;
     z-index: 10;
+    //box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12)
   }
 
   .header-nav::before {
-    height: 0.5rem;
-    background: linear-gradient(to bottom, $dark-primary-text, rgba($dark-primary-text, 0.1) 20%, rgba($dark-primary-text, 0));
+    height: 3px;
+    background: linear-gradient(to bottom, $shadow, rgba($shadow, 0.2) 25%, rgba($shadow, 0.12) 75%, rgba($shadow, 0));
     width: 100%;
     left: 0;
     top: 100%;
@@ -32,8 +33,8 @@
   }
 
   .main-sidenav::before {
-    width: 0.5rem;
-    background: linear-gradient(to right, $dark-primary-text, rgba($dark-primary-text, 0.1) 20%, rgba($dark-primary-text, 0));
+    width: 3px;
+    background: linear-gradient(to right, $shadow, rgba($shadow, 0.2) 25%, rgba($shadow, 0.12) 75%, rgba($shadow, 0));
     height: 100%;
     left: 100%;
     top: 0;
