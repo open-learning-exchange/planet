@@ -99,6 +99,7 @@ curl -X PUT $COUCHURL/resource_activities
 curl -X PUT $COUCHURL/configurations
 curl -X PUT $COUCHURL/login_activities
 curl -X PUT $COUCHURL/notifications
+curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/shelf
 
 # Add or update design docs
@@ -108,6 +109,7 @@ upsert_doc nations _design/nation-validators @./design/nations/nation-validators
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"login_time":"desc"}]},"name":"time-index"}' POST
 upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
+upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
 # Insert dummy data docs
 insert_docs communityregistrationrequests ./design/community/community-mockup.json
 insert_docs nations ./design/nations/nations-mockup.json

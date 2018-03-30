@@ -16,25 +16,7 @@
   </mat-toolbar>
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-      <div class="list-item-rating">
-        <span class="stars">
-          <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            <!-- used simple arithmetic to get 20 and converted into % -->
-            <span [ngStyle]="{'width': rating.average * 20 + '%'}">
-            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-          </span>
-        </span>
-        <div class="stats stats-total">{{ rating.totalCount }} Total</div>
-        <div class="stats stats-female">{{ rating.femalePercent }}% Female</div>
-        <div class="stats stats-male">{{ rating.malePercent }}% Male</div>
-        <div class="rating">
-          <span class="rating-number">{{ rating.average.toFixed(1) }}</span>
-          <button mat-button (click)="openRatingDialog(resource._id)" class="uppercase" [ngSwitch]="rating.userRating.rate">
-            <span *ngSwitchCase="" i18n>Rate</span>
-            <span *ngSwitchDefault i18n>Update Your Rating</span>
-          </button>
-        </div>
-      </div>
+      <planet-resources-rating [rating]="resource.rating" [resourceId]="resource._id"></planet-resources-rating>
       <p>Author: <i>{{resource.author}}</i></p>
       <p>Published by: {{resource.Publisher}} on {{resource.year}}</p>
       <p>Media: {{ resource.medium }}</p>
@@ -43,7 +25,7 @@
       <p>Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
       <p>Resource: {{ resource.resourceFor }}</p>
       <p>Resource Type: {{ resource.resourceType }}</p>
-      <a mat-raised-button [href]="couchSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
+      <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
     <div class="resource-view" [ngSwitch]="mediaType">
       <img [src]="resourceSrc" *ngSwitchCase="'image'">

@@ -5,13 +5,10 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { Validators } from '@angular/forms';
-import { findDocuments } from '../../shared/mangoQueries';
+import { ResourcesService } from '../resources.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -25,55 +22,39 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private http: HttpClient,
-    private dialogsFormService: DialogsFormService,
-    private userService: UserService
+    private userService: UserService,
+    private resourcesService: ResourcesService
   ) { }
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any = {};
-  rating: any = { average: 0, userRating: { rate: '', comment: '' } };
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  couchSrc = '';
-  subscription;
   // Use string rather than boolean for i18n select
   fullView = 'off';
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getResource(params.get('id'), params.get('nationname'))))
+    this.route.paramMap
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe((resource) => {
-        this.resourceActivity(resource._id, 'visit');
-        this.setResource(resource);
-        this.getResourceRating(resource._id);
+      .subscribe((params: ParamMap) => {
+        const resourceId = params.get('id');
+        this.resourceActivity(resourceId, 'visit');
+        this.resourcesService.updateResources([ resourceId ]);
       }, error => console.log(error), () => console.log('complete getting resource id'));
+    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
+      .subscribe((resourceArr) => {
+        this.setResource(resourceArr[0]);
+      });
   }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  getResource(id: string, nationName: string) {
-    if (nationName) {
-      return this.couchService.post(`nations/_find`,
-      { 'selector': { 'name': nationName },
-      'fields': [ 'name', 'nationurl' ] })
-        .pipe(switchMap(data => {
-          const nationUrl = data.docs[0].nationurl;
-          if (nationUrl) {
-            this.urlPrefix = 'http://' + nationUrl + '/' + this.dbName + '/';
-            return this.http.jsonp(this.urlPrefix + id + '?include_docs=true&callback=JSONP_CALLBACK', 'callback');
-          }
-        }));
-    }
-    return this.couchService.get('resources/' + id);
   }
 
   setResource(resource: any) {
@@ -89,79 +70,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     }
     if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-    }
-    this.couchSrc = this.urlPrefix + resource._id + '/' + filename;
-  }
-
-  getResourceRating(resource_id) {
-    this.couchService
-      .post('ratings/_find', findDocuments({ 'item': resource_id, 'type': 'resource' }, 0 ))
-      .subscribe((ratings) => {
-        // Counts number of ratings, number of male/female ratings, adds the total rating sum,
-        // and gets the logged in user's rating if applicable.
-        const { rateSum, userRating, femaleCount, maleCount, totalCount } = ratings.docs.reduce((stats, rating) => {
-          stats.userRating = (rating.user.name === this.userService.get().name) ? rating : stats.userRating;
-          stats.totalCount++;
-          switch (rating.user.gender) {
-            case 'male':
-              stats.maleCount++;
-              break;
-            case 'female':
-              stats.femaleCount++;
-              break;
-          }
-          stats.rateSum = stats.rateSum + parseInt(rating.rate, 10);
-          return stats;
-        }, { rateSum: 0, userRating: '', totalCount: 0, maleCount: 0, femaleCount: 0 });
-        Object.assign(this.rating, {
-          femalePercent: femaleCount === 0 ? 0 : ((femaleCount / totalCount) * 100).toFixed(0),
-          malePercent: maleCount === 0 ? 0 : ((maleCount / totalCount) * 100).toFixed(0),
-          average: totalCount === 0 ? 0 : rateSum / totalCount,
-          userRating, totalCount });
-      }, error => console.log(error));
-  }
-
-  openRatingDialog(resource_id) {
-    const title = 'Rating';
-    const type = 'rating';
-    const fields =
-      [
-        { 'label': 'Rate', 'type': 'rating', 'name': 'rate', 'placeholder': 'Your Rating', 'required': false },
-        { 'label': 'Comment', 'type': 'textarea', 'name': 'comment', 'placeholder': 'Leave your comment', 'required': false }
-      ];
-    const formGroup = {
-      rate: [ this.rating.userRating.rate || '', Validators.required ],
-      comment: [ this.rating.userRating.comment || '' ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.postRating(res);
-        }
-      });
-  }
-
-  postRating(rating) {
-    if (rating) {
-      const user = this.userService.get();
-      const ratingData = {
-        'user': user,
-        'item': this.resource._id,
-        'type': 'resource',
-        'rate': rating.rate,
-        'comment': rating.comment,
-        'time': Date.now()
-      };
-      if (this.rating) {
-        Object.assign(ratingData,
-          { _id: this.rating.userRating._id, _rev: this.rating.userRating._rev });
-      }
-      this.couchService.post('ratings', ratingData)
-        .subscribe((data) => {
-          this.getResourceRating(this.resource._id);
-        }, (error) => console.log(error));
     }
   }
 
