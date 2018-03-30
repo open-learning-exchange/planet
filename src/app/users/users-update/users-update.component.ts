@@ -10,6 +10,7 @@ import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -33,6 +34,8 @@ export class UsersUpdateComponent implements OnInit {
   editForm: FormGroup;
   previewSrc = '../assets/image.png';
   uploadImage = false;
+  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlName = '';
   file: any;
   roles: string[] = [];
 
@@ -47,10 +50,17 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
+    this.urlName = this.route.snapshot.paramMap.get('name');
+    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
         this.editForm.patchValue(data);
+        if (data['_attachments']) {
+          const filename = Object.keys(data._attachments)[0];
+          this.previewSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
+          this.uploadImage = true;
+        }
+        console.log('data: ' + data);
       }, (error) => {
         console.log(error);
       });
@@ -129,6 +139,7 @@ export class UsersUpdateComponent implements OnInit {
 
   removeImageFile() {
     this.previewSrc = '../assets/image.png';
+    this.file = undefined;
     this.uploadImage = false;
   }
 
