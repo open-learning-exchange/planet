@@ -7,9 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { filterSpecificFields } from '../shared/table-helpers';
-import { filterDropdowns } from '../shared/table-helpers';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { filterDropdownWithSpecificFields } from '../shared/table-helpers';
 import * as constants from './constants';
 
 @Component({
@@ -36,11 +34,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
-  formGroup = {
-    gradeText: '',
-    subjectText: ''
-  };
+  gradelevel: any = constants.gradeLevels;
+  subjectlevel: any = constants.subjectLevels;
+  gradeSelectedValue: string;
+  subjectSelectedValue: string;
+  titleSelectedValue: string;
   filter = {
+    'courseTitle': '',
     'gradeLevel': '',
     'subjectLevel': ''
   };
@@ -49,13 +49,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private route: ActivatedRoute,
-    private dialogsFormService: DialogsFormService
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.getCourses();
-    this.courses.filterPredicate = filterDropdowns(this.filter);
+    this.courses.filterPredicate = filterDropdownWithSpecificFields(this.filter, 'courseTitle');
   }
 
   getCourses() {
@@ -72,11 +71,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
-  }
-
-  searchFilter(filterValue: string) {
-    this.courses.filterPredicate = filterSpecificFields([ 'courseTitle' ]);
-    this.courses.filter = filterValue.trim().toLowerCase();
   }
 
   updateCourse(course) {
@@ -165,44 +159,20 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.data.forEach(row => this.selection.select(row));
   }
 
-  onFilterChange(filterValue: any) {
-    this.courses.filterPredicate = filterDropdowns(this.filter);
-    filterValue.key.forEach((item, index) => {
-      this.filter[ Object.keys(this.filter)[ index ] ] = item === 'All' || '' ? '' : item;
-      this.formGroup[ Object.keys(this.formGroup)[ index ] ] = item;
-    });
-    this.courses.filter = filterValue;
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' || '' ? '' : filterValue;
+    this.courses.filter = filterValue.trim().toLowerCase();
+    console.log('filter', this.courses.filter);
+
   }
 
-  advanceSearchForm() {
-    const title = 'Advance Search';
-    const fields = this.advanceSearchFormFields();
-    this.dialogsFormService
-      .confirm(title, fields, this.formGroup)
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.onFilterChange({ key: [ res['gradeText'], res['subjectText'] ] });
-        }
-      });
-  }
-
-  advanceSearchFormFields() {
-    return [
-      {
-        'type': 'selectbox',
-        'name': 'gradeText',
-        'options': [ 'All' ].concat(constants.gradeLevels),
-        'placeholder': 'Grade Level',
-        'required': false
-      },
-      {
-        'type': 'selectbox',
-        'name': 'subjectText',
-        'options': [ 'All' ].concat(constants.subjectLevels),
-        'placeholder': 'Subject Level',
-        'required': false
-      }
-    ];
+  resetSearch() {
+    this.gradeSelectedValue = '';
+    this.subjectSelectedValue = '';
+    this.titleSelectedValue = '';
+    this.onFilterChange(this.titleSelectedValue, 'courseTitle');
+    this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
+    this.onFilterChange(this.subjectSelectedValue , 'subjectLevel');
   }
 
 }

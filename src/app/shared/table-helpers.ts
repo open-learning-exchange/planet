@@ -15,8 +15,24 @@ export const filterDropdowns = (filterObj: any) => {
   };
 };
 
+export const filterDropdownWithSpecificFields = (obj: any, key: string) => {
+  return (data: any, filter: string) => {
+    if (data[key].toLowerCase().indexOf(filter) > -1 ) {
+      return Object.entries(obj).reduce(check(data), true);
+    }
+    return Object.entries(obj).reduce(checkFilterItems(data), true);
+  };
+};
+
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
   if (val && val.toLowerCase() !== data[field].toLowerCase()) {
+    return false;
+  }
+  return includeItem;
+});
+
+const check = (data: any) => ((includeItem: boolean, [ field, val ]) => {
+  if (val.charAt(0) && val.toLowerCase().charAt(0) !== data[field].toLowerCase().charAt(0)) {
     return false;
   }
   return includeItem;
