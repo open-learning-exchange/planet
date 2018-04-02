@@ -172,9 +172,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
     this.onFilterChange(this.subjectSelectedValue , 'subjectLevel');
   }
-  
+
   triggeronfilterChange() {
-    if (this.titleSelectedValue == '') {
+    if (this.titleSelectedValue === '') {
       this.onFilterChange(this.titleSelectedValue, 'courseTitle');
       this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
     }
