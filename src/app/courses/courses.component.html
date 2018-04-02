@@ -13,7 +13,7 @@
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of subjectlevel" value={{option}}>{{option}}</mat-option>
     </mat-select>
-  </mat-form-field>  
+  </mat-form-field>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="onFilterChange($event.target.value, 'courseTitle')" i18n-placeholder placeholder="Title" [(ngModel)]="titleSelectedValue" (keyup) ="triggeronfilterChange()">
   </mat-form-field>
