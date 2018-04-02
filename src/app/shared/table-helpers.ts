@@ -15,9 +15,9 @@ export const filterDropdowns = (filterObj: any) => {
   };
 };
 
-export const filterDropdownWithSpecificFields = (obj: any, key: string) => {
+export const filterDropdownWithSpecificFields = (obj: any) => {
   return (data: any, filter: string) => {
-    if (data[key].toLowerCase().indexOf(filter) > -1 ) {
+    if (data[ Object.keys(obj) [ 0 ] ].toLowerCase().indexOf(filter) > -1) {
       return Object.entries(obj).reduce(check(data), true);
     }
     return Object.entries(obj).reduce(checkFilterItems(data), true);

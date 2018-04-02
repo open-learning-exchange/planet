@@ -54,7 +54,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses();
-    this.courses.filterPredicate = filterDropdownWithSpecificFields(this.filter, 'courseTitle');
+    this.courses.filterPredicate = filterDropdownWithSpecificFields(this.filter);
   }
 
   getCourses() {
@@ -160,7 +160,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   onFilterChange(filterValue: string, field: string) {
-    this.filter[field] = filterValue === 'All' || '' ? '' : filterValue;
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
     this.courses.filter = filterValue.trim().toLowerCase();
   }
 
@@ -168,15 +168,26 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.gradeSelectedValue = 'All';
     this.subjectSelectedValue = 'All';
     this.titleSelectedValue = '';
-    this.onFilterChange(this.titleSelectedValue, 'courseTitle');
-    this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
-    this.onFilterChange(this.subjectSelectedValue , 'subjectLevel');
+    for (let i = 0; i < Object.entries(this.filter).length; i++) {
+      this.onFilterChange(this.provideSelectedValue(i), Object.keys(this.filter)[i]);
+    }
   }
 
   triggeronfilterChange() {
     if (this.titleSelectedValue === '') {
-      this.onFilterChange(this.titleSelectedValue, 'courseTitle');
-      this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
+      for (let i = 1; i < Object.entries(this.filter).length; i++) {
+        this.onFilterChange(this.provideSelectedValue(i), Object.keys(this.filter)[i]);
+      }
+    }
+  }
+
+  provideSelectedValue(i: number) {
+    if (i === 0) {
+      return this.titleSelectedValue;
+    } else if (i === 1) {
+      return this.gradeSelectedValue;
+    } else if (i === 2) {
+      return this.subjectSelectedValue;
     }
   }
 
