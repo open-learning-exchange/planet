@@ -13,7 +13,6 @@ import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { Subject } from 'rxjs/Subject';
 
-
 @Component({
   templateUrl: './meetups.component.html',
   styles: [ `
@@ -23,6 +22,7 @@ import { Subject } from 'rxjs/Subject';
     }
   ` ]
 })
+
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   meetups = new MatTableDataSource();
   displayedColumns = [ 'select', 'title' ];
@@ -32,6 +32,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   parentLink = false;
   onDestroy$ = new Subject<void>();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,
@@ -45,15 +47,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((meetups) => {
-      console.log("meetup", meetups)
       this.meetups.data = meetups;
     });
     this.meetupService.updateMeetup();
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.meetups.paginator = this.paginator;

@@ -8,6 +8,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { resetFakeAsyncZone } from '@angular/core/testing';
+import { UsersRouterModule } from '../users/users-router.module';
 
 @Injectable()
 export class MeetupService {
@@ -25,12 +26,10 @@ export class MeetupService {
     const resourceQuery = meetupIds.length > 0 ?
       this.getMeetups(meetupIds) : this.getAllMeetups();
     forkJoin(resourceQuery, this.getUserMeetups()).subscribe((results) => {
-      const meetupsRes = results[0],
-        Res = results[1];
-      this.meetupUpdated.next(this.setupList(meetupsRes.rows || meetupsRes.docs, Res.docs));
+      const shelfMeetupIds = (results[1].docs[0] && results[1].docs[0].meetupIds) ? results[1].docs[0].meetupIds : [];
+      this.meetupUpdated.next(this.setupList(results[0].rows || results[0].docs, shelfMeetupIds));
     }, (err) => console.log(err));
   }
-
 
   getAllMeetups() {
     return this.couchService.get('meetups/_all_docs?include_docs=true');
@@ -51,32 +50,20 @@ export class MeetupService {
     }));
   }
 
-  shelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
-  }
-
   setupList(meetupRes, userMeetupRes) {
     return  meetupRes.map((m: any) => {
       const meetup = m.doc || m;
       const meetupIndex = userMeetupRes.findIndex(meetupIds => {
-        return (meetup._id === meetupIds && meetupIds.indexOf(this.userService.get()._id) > -1)
-        //return meetup._id === meetupIds;
+        return meetup._id === meetupIds;
       });
       if (meetupIndex > -1) {
-
         return { ...meetup, participate: true };
       }
       return { ...meetup,  participate: false };
     });
   }
 
-  attendMeetup(meetupIds) {
-    const meetupIdArray = meetupIds.map((data) => {
-      return data._id;
-    });
+  attendMeetup(meetupId, participate) {
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(map(data => {
           return { rev: { _rev: data.docs[0]._rev }, meetupIds: data.docs[0].meetupIds || [], resourceIds: data.docs[0].resourceIds || [] };
@@ -88,31 +75,16 @@ export class MeetupService {
           return of({ rev: {}, meetupIds: [], resourceIds: [] });
         }),
         switchMap(data => {
-          const meetupIds = meetupIdArray.concat(data.meetupIds).reduce(this.shelfReduce, []);
+          const meetupIds = participate ? data.meetupIds.splice(meetupId, 1) && data.meetupIds
+            : data.meetupIds.push(meetupId) && data.meetupIds;
           return this.couchService.put('shelf/' + this.userService.get()._id,
             Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds }));
         })
       ).subscribe((res) =>  {
         this.updateMeetup();
-        const msg = meetupIds.participate ? 'left' : 'join';
+        const msg = participate ? 'left' : 'join';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
   }
 
 }
-
-/*attendMeetup(meetupId) {
-    this.couchService.post(`usermeetups/_find`,
-      findDocuments({ 'meetupId': meetupId }, 0 ))
-      .pipe(switchMap(data => {
-        const meetupInfo = { ...data.docs[0] };
-        const memberId = meetupInfo.memberId;
-        const username: string = this.userService.get().name;
-        (memberId.indexOf(username) > -1) ? memberId.splice(memberId.indexOf(username), 1) : memberId.push(username);
-        return this.couchService.put('usermeetups/' + meetupInfo._id , { ...meetupInfo, memberId });
-      })).subscribe((res) => {
-        (this.meetupDetail.participate) ? this.meetupDetail.participate = false : this.meetupDetail.participate = true;
-        const msg = this.meetupDetail.participate ? 'join' : 'left';
-        this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
-      });
-  }*/

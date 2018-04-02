@@ -6,11 +6,14 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
     <span class="toolbar-fill"></span>
-    <button mat-button class="margin-lr-3" i18n *ngIf="meetupDetail.participate; else joinMeetup" (click)="attendMeetup(meetupDetail._id)"><span>Leave</span></button>
-    <ng-template #joinMeetup><button mat-button class="margin-lr-3" i18n (click)="attendMeetup(meetupDetail._id)"><span>Join</span></button></ng-template>
+    <button mat-button class="margin-lr-3" (click)="meetupService.attendMeetup(meetupDetail._id, meetupDetail.participate)">
+      <span *ngIf="meetupDetail.participate; else joinMeetup" i18n>Leave</span>
+      <ng-template #joinMeetup><span i18n>Join</span></ng-template>
+    </button>
   </mat-toolbar>
   <div class="view-container">
     <p i18n>Meetup Title : {{meetupDetail.title}} </p>
+    <p i18n>Created By : {{meetupDetail.createdBy}} </p>
     <p i18n>Category : {{meetupDetail.category}} </p>
     <p i18n>Meetup Date: {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
     <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>

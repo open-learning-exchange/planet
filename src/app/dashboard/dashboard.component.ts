@@ -59,7 +59,7 @@ export class DashboardComponent implements OnInit {
   getDataShelf(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
       .pipe(map(response => {
-        return response.docs.map((item) => (console.log("Item", item), { ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
+        return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
       }));
   }
 }

@@ -11,14 +11,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './meetups-add.component.html'
 })
+
 export class MeetupsAddComponent implements OnInit {
   message = '';
-  obj = [];
   meetupForm: FormGroup;
   readonly dbName = 'meetups'; // database name constant
   categories = constants.categories;
@@ -75,7 +74,8 @@ export class MeetupsAddComponent implements OnInit {
         ])
       ],
       category: '',
-      meetupLocation: ''
+      meetupLocation: '',
+      createdBy: this.userService.get().name
     });
 
     // set default values
@@ -111,13 +111,10 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   addMeetup(meetupInfo) {
-    this.couchService.post(this.dbName, { ...meetupInfo })
-      .pipe(switchMap((data) => {
-        return this.couchService.post('usermeetups', { 'memberId': [ this.userService.get().name ], 'meetupId': data['id']  });
-      })).subscribe(() => {
-        this.router.navigate([ '/meetups' ]);
-        this.planetMessageService.showMessage('Meetup created');
-      });
+    this.couchService.post(this.dbName, { ...meetupInfo }).subscribe(() => {
+      this.router.navigate([ '/meetups' ]);
+      this.planetMessageService.showMessage('Meetup created');
+    }, (err) => console.log(err));
   }
 
   cancel() {
