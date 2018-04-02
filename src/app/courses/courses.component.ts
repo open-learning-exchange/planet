@@ -36,8 +36,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   readonly dbName = 'courses';
   gradelevel: any = constants.gradeLevels;
   subjectlevel: any = constants.subjectLevels;
-  gradeSelectedValue: string;
-  subjectSelectedValue: string;
+  gradeSelectedValue = 'All';
+  subjectSelectedValue = 'All';
   titleSelectedValue: string;
   filter = {
     'courseTitle': '',
@@ -165,8 +165,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   resetSearch() {
-    this.gradeSelectedValue = '';
-    this.subjectSelectedValue = '';
+    this.gradeSelectedValue = 'All';
+    this.subjectSelectedValue = 'All';
     this.titleSelectedValue = '';
     this.onFilterChange(this.titleSelectedValue, 'courseTitle');
     this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
