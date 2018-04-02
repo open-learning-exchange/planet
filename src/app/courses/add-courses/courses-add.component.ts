@@ -106,7 +106,7 @@ export class CoursesAddComponent implements OnInit {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
-        this.documentInfo = { rev: data._rev, id: data._id};
+        this.documentInfo = { rev: data._rev, id: data._id };
         this.courseFrequency = data.day || [];
         this.courseForm.value.day = this.courseFrequency;
         this.courseForm.patchValue(data);
@@ -116,6 +116,7 @@ export class CoursesAddComponent implements OnInit {
             this.radio = 'daily';
             // If daily was selected, do not check any days after toggling weekly
             this.courseFrequency = [];
+            /* falls through */
           case 0:
             this.showDaysCheckBox = true;
             break;
