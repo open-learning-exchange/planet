@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { filterDropdownWithSpecificFields } from '../shared/table-helpers';
+import { filterDropdownsAndSpecificFields } from '../shared/table-helpers';
 import * as constants from './constants';
 
 @Component({
@@ -19,10 +19,6 @@ import * as constants from './constants';
     }
     .mat-column-action {
       max-width: 225px;
-    }
-    .mat-form-field {
-       margin-left: 5px;
-       margin-right: 5px;
     }
   ` ]
 })
@@ -38,16 +34,20 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
-  gradelevel: any = constants.gradeLevels;
-  subjectlevel: any = constants.subjectLevels;
-  gradeSelectedValue = 'All';
-  subjectSelectedValue = 'All';
-  titleSelectedValue: string;
+  gradeOptions: any = constants.gradeLevels;
+  subjectOptions: any = constants.subjectLevels;
   filter = {
-    'courseTitle': '',
     'gradeLevel': '',
     'subjectLevel': ''
   };
+  private _titleSearch = '';
+  get titleSearch(): string { return this._titleSearch; }
+  set titleSearch(value: string) {
+    // When setting the titleSearch, also set the courses filter
+    this.courses.filter = value ? value : this.dropdownsFill();
+    this._titleSearch = value;
+  }
+
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
@@ -58,7 +58,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses();
-    this.courses.filterPredicate = filterDropdownWithSpecificFields(this.filter);
+    this.courses.filterPredicate = filterDropdownsAndSpecificFields(this.filter, [ 'courseTitle' ]);
   }
 
   getCourses() {
@@ -75,6 +75,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
+  }
+
+  searchFilter(filterValue: string) {
+    this.courses.filter = filterValue.trim().toLowerCase();
   }
 
   updateCourse(course) {
@@ -165,34 +169,27 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   onFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    this.courses.filter = filterValue.trim().toLowerCase();
+    // Force filter to update by setting it to a space if empty
+    this.courses.filter = this.courses.filter ? this.courses.filter : ' ';
   }
 
   resetSearch() {
-    this.gradeSelectedValue = 'All';
-    this.subjectSelectedValue = 'All';
-    this.titleSelectedValue = '';
-    for (let i = 0; i < Object.entries(this.filter).length; i++) {
-      this.onFilterChange(this.provideSelectedValue(i), Object.keys(this.filter)[i]);
-    }
+    this.filter = {
+      'gradeLevel': '',
+      'subjectLevel': ''
+    };
+    this.titleSearch = '';
   }
 
-  triggeronfilterChange() {
-    if (this.titleSelectedValue === '') {
-      for (let i = 1; i < Object.entries(this.filter).length; i++) {
-        this.onFilterChange(this.provideSelectedValue(i), Object.keys(this.filter)[i]);
+  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+  // search text is deleted, but does not run when there are no active filters.
+  dropdownsFill() {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
+      if (val) {
+        return ' ';
       }
-    }
-  }
-
-  provideSelectedValue(i: number) {
-    if (i === 0) {
-      return this.titleSelectedValue;
-    } else if (i === 1) {
-      return this.gradeSelectedValue;
-    } else if (i === 2) {
-      return this.subjectSelectedValue;
-    }
+      return emptySpace;
+    }, '');
   }
 
 }

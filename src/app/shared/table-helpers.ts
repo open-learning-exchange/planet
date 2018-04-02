@@ -15,24 +15,14 @@ export const filterDropdowns = (filterObj: any) => {
   };
 };
 
-export const filterDropdownWithSpecificFields = (obj: any) => {
+export const filterDropdownsAndSpecificFields = (filterObj: any, filterFields: string[]) => {
   return (data: any, filter: string) => {
-    if (data[ Object.keys(obj) [ 0 ] ].toLowerCase().indexOf(filter) > -1) {
-      return Object.entries(obj).reduce(check(data), true);
-    }
-    return Object.entries(obj).reduce(checkFilterItems(data), true);
+    return filterDropdowns(filterObj)(data, filter) && filterSpecificFields(filterFields)(data, filter.trim());
   };
 };
 
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
   if (val && val.toLowerCase() !== data[field].toLowerCase()) {
-    return false;
-  }
-  return includeItem;
-});
-
-const check = (data: any) => ((includeItem: boolean, [ field, val ]) => {
-  if (val.charAt(0) && val.toLowerCase().charAt(0) !== data[field].toLowerCase().charAt(0)) {
     return false;
   }
   return includeItem;

@@ -3,19 +3,19 @@
   <span i18n>Courses</span>
   <span class="toolbar-fill"></span>
   <mat-form-field class="font-size-1">
-    <mat-select placeholder="Grade Level" [(ngModel)]="gradeSelectedValue"  (change)="onFilterChange($event.value, 'gradeLevel')">
+    <mat-select placeholder="Grade Level" [value]="filter.gradeLevel || 'All'" (change)="onFilterChange($event.value, 'gradeLevel')">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of gradelevel" value={{option}}>{{option}}</mat-option>
+      <mat-option *ngFor="let option of gradeOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="font-size-1">
-    <mat-select placeholder="Subject Level" [(ngModel)]="subjectSelectedValue" (change)="onFilterChange($event.value, 'subjectLevel')">
+    <mat-select placeholder="Subject Level" [value]="filter.subjectLevel || 'All'" (change)="onFilterChange($event.value, 'subjectLevel')">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of subjectlevel" value={{option}}>{{option}}</mat-option>
+      <mat-option *ngFor="let option of subjectOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="onFilterChange($event.target.value, 'courseTitle')" i18n-placeholder placeholder="Title" [(ngModel)]="titleSelectedValue" (keyup) ="triggeronfilterChange()">
+    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
   <button mat-button i18n (click)="resetSearch()"><span>Reset</span></button>
 </mat-toolbar>
