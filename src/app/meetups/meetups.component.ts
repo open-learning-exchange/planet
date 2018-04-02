@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -6,12 +6,13 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
-
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { UserService } from '../shared/user.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { of } from 'rxjs/observable/of';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { MeetupService } from './meetups.service';
+import { Subject } from 'rxjs/Subject';
+
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -22,7 +23,7 @@ import { switchMap } from 'rxjs/operators';
     }
   ` ]
 })
-export class MeetupsComponent implements OnInit, AfterViewInit {
+export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   meetups = new MatTableDataSource();
   displayedColumns = [ 'select', 'title' ];
   message = '';
@@ -30,14 +31,26 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   parentLink = false;
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private meetupService: MeetupService
   ) { }
+
+  ngOnInit() {
+    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe((meetups) => {
+      console.log("meetup", meetups)
+      this.meetups.data = meetups;
+    });
+    this.meetupService.updateMeetup();
+    this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
+  }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -76,6 +89,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
         this.meetups.data = data;
       }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   deleteClick(meetup) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
@@ -111,7 +128,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
         .subscribe((data) => {
-          this.getMeetups();
+          this.meetupService.updateMeetup();
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected meetups');
@@ -150,61 +167,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.router.navigate([ '/' ]);
-  }
-
-  ngOnInit() {
-    forkJoin(this.getMeetups(), this.getUserMeetups()).subscribe((results) => {
-      const meetupRes = results[0],
-        userMeetupRes = results[1];
-      this.setupList(meetupRes.rows, userMeetupRes.rows);
-    }, (err) => console.log(err));
-    this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
-  }
-
-  setupList(meetupRes, userMeetupRes) {
-    this.meetups.data = meetupRes.map((m: any) => {
-      const meetup = m.doc || m;
-      const meetupIndex = userMeetupRes.findIndex(usermeetup => {
-        return (meetup._id === usermeetup.doc.meetupId && usermeetup.doc.memberId.indexOf(this.userService.get().name) > -1);
-      });
-      if (meetupIndex > -1) {
-        return { ...meetup, participate: true };
-      }
-      return { ...meetup,  participate: false };
-    });
-  }
-
-  updateMeetup(meetup) {
-    const { _id: meetupId } = meetup;
-    this.router.navigate([ '/meetups/update/' + meetup._id ]);
-  }
-
-  getUserMeetups() {
-    return this.couchService.get('usermeetups/_all_docs?include_docs=true');
-  }
-
-  attendMeetup(meetup) {
-    this.couchService.post(`usermeetups/_find`,
-      findDocuments({ 'meetupId': meetup._id }, 0 ))
-      .pipe(switchMap(data => {
-        const meetupInfo = { ...data.docs[0] };
-        const memberId = meetupInfo.memberId;
-        const username: string = this.userService.get().name;
-        (memberId.indexOf(username) > -1) ? memberId.splice(memberId.indexOf(username), 1) : memberId.push(username);
-        return this.couchService.put('usermeetups/' + meetupInfo._id , { ...meetupInfo, memberId });
-      })).subscribe((res) => {
-        const msg = meetup.participate ? 'join' : 'left';
-        this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
-        const mData = this.meetups.data;
-        if (mData.length > 0) {
-          for (let i = 0; i < mData.length; i++ ) {
-            if (mData[i]['id'] === res._id) {
-              (this.meetups.data[i]['participate']) ?
-                this.meetups.data[i]['participate'] = false : this.meetups.data[i]['participate'] = true;
-            }
-          }
-        }
-      });
   }
 
 }

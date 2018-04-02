@@ -7,6 +7,7 @@ import { UserService } from '../../shared/user.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { MeetupService } from '../meetups.service';
 
 @Component({
   templateUrl: './meetups-view.component.html'
@@ -20,7 +21,8 @@ export class MeetupsViewComponent implements OnInit {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private meetupService: MeetupService
   ) { }
 
   ngOnInit() {
@@ -33,15 +35,17 @@ export class MeetupsViewComponent implements OnInit {
   }
 
   getMeetupMember(id: string) {
-    this.couchService.post(`usermeetups/_find`,
-      findDocuments({ 'meetupId': id }, 0 ))
+    this.couchService.post(`shelf/_find`,
+      findDocuments({ 'meetupIds': id }, 0 ))
       .pipe(switchMap(data => {
-        const memberId = data.docs[0].memberId;
-        if (memberId.indexOf(this.userService.get().name) > -1) {
+        console.log("First data",data)
+        const memberId = this.userService.get()._id;
+        if (memberId.indexOf(this.userService.get()._id) > -1) {
           return of(true);
         }
         return of(false);
       })).subscribe(data => {
+        console.log("second data",data);
         (data) ? this.meetupDetail.participate = true : this.meetupDetail.participate = false;
       });
   }
@@ -50,15 +54,15 @@ export class MeetupsViewComponent implements OnInit {
     return this.couchService.get('meetups/' + id);
   }
 
-  attendMeetup(meetupId) {
-    this.couchService.post(`usermeetups/_find`,
-      findDocuments({ 'meetupId': meetupId }, 0 ))
+  attendMeetup(meetupIds) {
+    this.couchService.post(`shelf/_find`,
+      findDocuments({ 'meetupIds': meetupIds }, 0 ))
       .pipe(switchMap(data => {
         const meetupInfo = { ...data.docs[0] };
-        const memberId = meetupInfo.memberId;
-        const username: string = this.userService.get().name;
-        (memberId.indexOf(username) > -1) ? memberId.splice(memberId.indexOf(username), 1) : memberId.push(username);
-        return this.couchService.put('usermeetups/' + meetupInfo._id , { ...meetupInfo, memberId });
+        const meetupIds = this.userService.get()._id;
+        const username: string = this.userService.get()._id;
+        //(meetupIds.indexOf(username) > -1) ? meetupIds.splice(meetupIds.indexOf(username), 1) : meetupIds.push(username);
+        return this.couchService.put('shelf/' + meetupInfo._id , { ...meetupInfo, meetupIds });
       })).subscribe((res) => {
         (this.meetupDetail.participate) ? this.meetupDetail.participate = false : this.meetupDetail.participate = true;
         const msg = this.meetupDetail.participate ? 'join' : 'left';

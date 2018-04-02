@@ -32,42 +32,16 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.getShelf().pipe(switchMap(shelf => {
-      console.log(shelf);
       return forkJoin([
-        this.getDataShelf('resources', shelf.docs[0].resourceIds),
+        this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
         this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }),
-        this.getData('meetups', { linkPrefix: 'meetups' })
+        this.getDataShelf('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true })
       ]);
     })).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
     });
-  }
-
-  myMeetups() {
-    return this.couchService.post(`usermeetups/_find`,
-      findDocuments({ 'memberId':  {'$in': [
-        this.userService.get().name
-        ]} }, 0 ))
-      .pipe(
-        map(data => {
-          const meetupIds = [];
-          Object.keys(data.docs).forEach(field => {
-            meetupIds.push(data.docs[field].meetupId);
-          });
-          return meetupIds;
-        }),
-        switchMap(meetupIds => {
-          return this.couchService.post(`meetups/_find`,
-            findDocuments({ '_id':  {'$in':
-              meetupIds
-              } }, 0 ))
-              .pipe(map(meetup => {
-                return meetup.docs.map((item) => ({ ...item, link: 'meetups/view/' + item._id  }));
-              }));
-        })
-      );
   }
 
   getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
@@ -82,11 +56,10 @@ export class DashboardComponent implements OnInit {
     return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
   }
 
-  getDataShelf(db: string, shelf: string[]) {
+  getDataShelf(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
       .pipe(map(response => {
-        return response.docs.map((item) => ({ ...item, link: db + '/view/' + item._id }));
+        return response.docs.map((item) => (console.log("Item", item), { ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
       }));
   }
-
 }

@@ -10,6 +10,7 @@
     <ng-template #joinMeetup><button mat-button class="margin-lr-3" i18n (click)="attendMeetup(meetupDetail._id)"><span>Join</span></button></ng-template>
   </mat-toolbar>
   <div class="view-container">
+    <p i18n>Meetup Title : {{meetupDetail.title}} </p>
     <p i18n>Category : {{meetupDetail.category}} </p>
     <p i18n>Meetup Date: {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
     <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
