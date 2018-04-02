@@ -20,6 +20,10 @@ import * as constants from './constants';
     .mat-column-action {
       max-width: 225px;
     }
+    .mat-form-field {
+       margin-left: 5px;
+       margin-right: 5px;
+    }
   ` ]
 })
 
