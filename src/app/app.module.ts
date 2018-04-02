@@ -19,8 +19,6 @@ import { MaterialModule } from './shared/material.module';
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
 
-import { PouchdbService } from './shared/pouchdb.service';
-
 @NgModule({
   imports: [
     BrowserModule,
@@ -39,8 +37,7 @@ import { PouchdbService } from './shared/pouchdb.service';
     UserService,
     ValidatorService,
     PlanetMessageService,
-    MatIconRegistry,
-    PouchdbService
+    MatIconRegistry
   ],
   bootstrap: [AppComponent]
 })
