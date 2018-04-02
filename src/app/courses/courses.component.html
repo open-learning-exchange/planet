@@ -15,7 +15,7 @@
     </mat-select>
   </mat-form-field> &nbsp;  
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="onFilterChange($event.target.value, 'courseTitle')" i18n-placeholder placeholder="Title" [(ngModel)]="titleSelectedValue">
+    <input matInput (keyup)="onFilterChange($event.target.value, 'courseTitle')" i18n-placeholder placeholder="Title" [(ngModel)]="titleSelectedValue" (keyup) ="triggeronfilterChange()">
   </mat-form-field> &nbsp;
   <button mat-button i18n (click)="resetSearch()"><span>Reset</span></button>
 </mat-toolbar>

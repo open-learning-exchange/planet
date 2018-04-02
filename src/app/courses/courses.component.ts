@@ -162,8 +162,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   onFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' || '' ? '' : filterValue;
     this.courses.filter = filterValue.trim().toLowerCase();
-    console.log('filter', this.courses.filter);
-
   }
 
   resetSearch() {
@@ -173,6 +171,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.onFilterChange(this.titleSelectedValue, 'courseTitle');
     this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
     this.onFilterChange(this.subjectSelectedValue , 'subjectLevel');
+  }
+  
+  triggeronfilterChange() {
+    if (this.titleSelectedValue == '') {
+      this.onFilterChange(this.titleSelectedValue, 'courseTitle');
+      this.onFilterChange(this.gradeSelectedValue , 'gradeLevel');
+    }
   }
 
 }
