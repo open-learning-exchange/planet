@@ -108,11 +108,14 @@ export class CoursesAddComponent implements OnInit {
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id};
         this.courseFrequency = data.day || [];
+        this.courseForm.value.day = this.courseFrequency;
         this.courseForm.patchValue(data);
 
         switch (this.courseFrequency.length) {
           case 7:
             this.radio = 'daily';
+            // If daily was selected, do not check any days after toggling weekly
+            this.courseFrequency = [];
           case 0:
             this.showDaysCheckBox = true;
             break;
@@ -120,7 +123,7 @@ export class CoursesAddComponent implements OnInit {
             this.showDaysCheckBox = false;
             this.radio = 'weekly';
         }
-        this.courseForm.value.day = this.courseFrequency;
+
       }, (error) => {
         console.log(error);
       });
@@ -168,15 +171,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   isClassDay(day) {
-      return this.courseFrequency.includes(day) ? true : false;
-  }
-
-  updateCourseFrequency(courseFrequency, formArray) {
-    courseFrequency.map((c) => {
-      if (!formArray.value.includes(c)) {
-          formArray.push( new FormControl(c));
-      }
-    });
+    return this.courseFrequency.includes(day) ? true : false;
   }
 
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
@@ -184,21 +179,15 @@ export class CoursesAddComponent implements OnInit {
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.courseForm.controls.day;
 
-    this.updateCourseFrequency(this.courseFrequency, dayFormArray);
-
     if (isChecked) {
       // add to day array if checked
       if (!dayFormArray.value.includes(day)) {
-              dayFormArray.push(new FormControl(day));
-         }
+        dayFormArray.push(new FormControl(day));
+      }
     } else {
       // remove from day array if unchecked
       const index = dayFormArray.controls.findIndex(x => x.value === day);
       dayFormArray.removeAt(index);
-
-      const i = this.courseFrequency.indexOf(day) > -1 ? this.courseFrequency.indexOf(day) : null;
-
-      if (i !== null) {this.courseFrequency.splice(i, 1); }
     }
   }
 
