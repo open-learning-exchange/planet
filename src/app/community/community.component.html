@@ -5,16 +5,6 @@
   </button>
   <span i18n>Communities List</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
-  </mat-form-field>
-</mat-toolbar>
-
-<div class="space-container">
-  <mat-toolbar>
-    <mat-toolbar-row class="primary-color font-size-1">
-      <span class="toolbar-fill"></span>
       <mat-form-field>
         <mat-select placeholder="Nation Name" [value]="filter.nationName || 'All'" (change)="onFilterChange($event.value, 'nationName')">
           <mat-option i18n value="All">All</mat-option>
@@ -28,7 +18,13 @@
           <mat-option i18n value="accepted">accepted</mat-option>
           <mat-option i18n value="rejected">rejected</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field>  
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>Your Current List of Communities</span>  
     </mat-toolbar-row>
   </mat-toolbar>
 
