@@ -7,16 +7,16 @@
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of gradelevel" value={{option}}>{{option}}</mat-option>
     </mat-select>
-  </mat-form-field> &nbsp;
+  </mat-form-field>
   <mat-form-field class="font-size-1">
     <mat-select placeholder="Subject Level" [(ngModel)]="subjectSelectedValue" (change)="onFilterChange($event.value, 'subjectLevel')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of subjectlevel" value={{option}}>{{option}}</mat-option>
     </mat-select>
-  </mat-form-field> &nbsp;  
+  </mat-form-field>  
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="onFilterChange($event.target.value, 'courseTitle')" i18n-placeholder placeholder="Title" [(ngModel)]="titleSelectedValue" (keyup) ="triggeronfilterChange()">
-  </mat-form-field> &nbsp;
+  </mat-form-field>
   <button mat-button i18n (click)="resetSearch()"><span>Reset</span></button>
 </mat-toolbar>
 <div class="space-container primary-link-hover">
