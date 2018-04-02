@@ -243,18 +243,18 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(
         map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, courseIds: data.docs[0].courseIds || [] };
+          return { rev: { _rev: data.docs[0]._rev }, courseIds: data.docs[0].courseIds || [] , resourceIds: data.docs[0].resourceIds || [], meetupIds: data.docs[0].meetupIds || [] };
         }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
           // Observable of continues stream
-          return of({ rev: {}, courseIds: [] });
+          return of({ rev: {}, courseIds: [], resourceIds: [], meetupIds: [] });
         }),
         switchMap(data => {
           const courseIds = courseIdArray.concat(data.courseIds).reduce(this.dedupeShelfReduce, []);
           return this.couchService.put('shelf/' + this.userId,
-            Object.assign(data.rev, { courseIds }));
+            Object.assign(data.rev, { courseIds, resourceIds: data.resourceIds, meetupIds: data.meetupIds }));
         })
       ).subscribe((res) =>  {
         this.updateAddLibrary();

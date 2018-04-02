@@ -34,10 +34,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.getShelf().pipe(switchMap(shelf => {
-      console.log(shelf);
       return forkJoin([
         this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-        this.getDataShelf('courses', shelf.docs[0].courseIds, { linkPrefix: 'courses', titleField: 'courseTitle' }),
+        this.getDataShelf('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
         this.getData('meetups', { linkPrefix: 'meetups' })
       ]);
     })).subscribe(dashboardItems => {
@@ -63,7 +62,7 @@ export class DashboardComponent implements OnInit {
   getDataShelf(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
       .pipe(map(response => {
-        return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item.id : '') }));
+        return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
       }));
   }
 
