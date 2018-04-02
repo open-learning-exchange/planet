@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { filterDropdownsAndSpecificFields } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 
 @Component({
@@ -58,7 +58,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses();
-    this.courses.filterPredicate = filterDropdownsAndSpecificFields(this.filter, [ 'courseTitle' ]);
+    this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
   }
 
   getCourses() {

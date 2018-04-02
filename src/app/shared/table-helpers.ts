@@ -15,9 +15,12 @@ export const filterDropdowns = (filterObj: any) => {
   };
 };
 
-export const filterDropdownsAndSpecificFields = (filterObj: any, filterFields: string[]) => {
-  return (data: any, filter: string) => {
-    return filterDropdowns(filterObj)(data, filter) && filterSpecificFields(filterFields)(data, filter.trim());
+// Takes an array of the above filtering functions and returns true if all match
+export const composeFilterFunctions = (filterFunctions: any[]) => {
+  return (data: any, filter: any) => {
+    return filterFunctions.reduce((isMatch, filterFunction) => {
+      return isMatch && filterFunction(data, filter);
+    }, true);
   };
 };
 
