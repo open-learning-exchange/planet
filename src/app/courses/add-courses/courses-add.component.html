@@ -62,8 +62,8 @@
         </mat-form-field>
         <mat-radio-group>
           <label i18n>Frequency</label>
-          <mat-radio-button value="true" name="daysToggler" (change)="toggleDaily(true)"  [checked]="dailyRadio" i18n>Daily</mat-radio-button>
-          <mat-radio-button value="false" name="daysToggler" (change)="toggleDaily(false)" [checked]="weeklyRadio" i18n>Weekly</mat-radio-button>
+          <mat-radio-button value="true" name="daysToggler" (change)="toggleDaily(true)"  [checked]="radio === 'daily'" i18n>Daily</mat-radio-button>
+          <mat-radio-button value="false" name="daysToggler" (change)="toggleDaily(false)" [checked]="radio === 'weekly'" i18n>Weekly</mat-radio-button>
         </mat-radio-group>
       </mat-grid-list>
 

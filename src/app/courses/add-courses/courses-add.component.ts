@@ -23,12 +23,10 @@ export class CoursesAddComponent implements OnInit {
   members = [];
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
-  revision = null;
-  id = null;
+  documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
   courseFrequency = [];
-  weeklyRadio = false;
-  dailyRadio = false;
+  radio = '';
   showDaysCheckBox = true; // for toggling the days checkbox
 
   // from the constants import
@@ -108,22 +106,21 @@ export class CoursesAddComponent implements OnInit {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
-        this.revision = data._rev;
-        this.id = data._id;
-        this.courseFrequency = data.day;
+        this.documentInfo = { rev: data._rev, id: data._id};
+        this.courseFrequency = data.day || [];
         this.courseForm.patchValue(data);
 
-        if ( !this.courseFrequency ) {
-          this.showDaysCheckBox = true;
-        } else if ( this.courseFrequency.length < 7) {
-          this.showDaysCheckBox = false;
-          this.weeklyRadio = true;
-          this.courseForm.value.day = this.courseFrequency;
-        } else {
-          this.showDaysCheckBox = true;
-          this.dailyRadio = true;
-          this.courseForm.value.day = this.courseFrequency;
+        switch (this.courseFrequency.length) {
+          case 7:
+            this.radio = 'daily';
+          case 0:
+            this.showDaysCheckBox = true;
+            break;
+          default:
+            this.showDaysCheckBox = false;
+            this.radio = 'weekly';
         }
+        this.courseForm.value.day = this.courseFrequency;
       }, (error) => {
         console.log(error);
       });
@@ -131,7 +128,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...courseInfo, '_rev': this.revision }).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + this.documentInfo.id, { ...courseInfo, '_rev': this.documentInfo.rev }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
