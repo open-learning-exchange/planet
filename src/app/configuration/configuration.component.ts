@@ -106,7 +106,9 @@ export class ConfigurationComponent implements OnInit {
             'isUserAdmin': true, 'firstName': this.contactFormGroup.value.firstName, 'middleName': this.contactFormGroup.value.middleName,
             'lastName': this.contactFormGroup.value.lastName, 'email': this.contactFormGroup.value.email,
             'phoneNumber': this.contactFormGroup.value.phoneNumber }).subscribe((data1) => {
-             this.planetMessageService.showMessage('Admin created: ' + data1.id.replace('org.couchdb.user:', ''));
+              this.couchService.put('shelf/' + data1.id, { })
+              .subscribe((res) => { }, error => { console.log(error); });
+              this.planetMessageService.showMessage('Admin created: ' + data1.id.replace('org.couchdb.user:', ''));
           }, (error) => this.message = '');
           const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
           this.couchService.post('configurations', config).subscribe(() => {
