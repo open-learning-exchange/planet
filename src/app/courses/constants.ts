@@ -20,11 +20,11 @@ export const gradeLevels = [
 export const subjectLevels = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
 
 export const days = [
-  'Saturday',
-  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
-  'Friday'
+  'Friday',
+  'Saturday',
+  'Sunday'
 ];
