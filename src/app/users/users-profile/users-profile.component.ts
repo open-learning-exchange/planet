@@ -21,6 +21,9 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
       background-color: #FFFFFF;
       padding: 3rem;
     }
+    .user_data {
+      padding: 3rem;
+    }
   ` ]
 })
 export class UsersProfileComponent implements OnInit {

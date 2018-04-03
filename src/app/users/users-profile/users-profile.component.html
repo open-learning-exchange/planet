@@ -13,7 +13,7 @@
     <button mat-button class="margin-lr-3" *ngIf="user.name === urlName" i18n (click)="changePasswordForm(userDetail)"><span>Change password</span></button>
   </mat-toolbar>
   <div class="view-container">
-    <mat-grid-list cols="3">
+    <mat-grid-list cols="2">
       <mat-grid-tile>
         <ng-container *ngIf="userDetail._attachments; else noAttachment">
           <img class="profile-image-large" [src]="imageSrc">
@@ -23,7 +23,7 @@
         </ng-template>
       </mat-grid-tile>
       <mat-grid-tile>
-        <mat-list>
+        <mat-list class="user_data">
           <mat-list-item>
             <h4 class="primary-text-color" matLine i18n>Full Name</h4>
             <p matLine><b>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</b></p>
@@ -40,9 +40,7 @@
           </mat-list-item>
           <mat-divider></mat-divider>
         </mat-list>
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <mat-list>
+        <mat-list class="user_data">
           <mat-list-item>
             <h4 class="primary-text-color" matLine i18n>DOB</h4>
             <p matLine><b>{{userDetail.birthDate}}</b></p>
