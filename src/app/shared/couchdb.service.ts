@@ -44,6 +44,12 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
+  allDocs(db: string) {
+    return this.get(db + '/_all_docs?include_docs=true').pipe(map(data => {
+      return data;
+    }));
+  }
+
   // Reads a file as a Base64 string to append to object sent to CouchDB
   prepAttachment(file) {
     const reader = new FileReader();
