@@ -7,7 +7,6 @@ import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { resetFakeAsyncZone } from '@angular/core/testing';
 import { UsersRouterModule } from '../users/users-router.module';
 
 @Injectable()
@@ -25,9 +24,9 @@ export class MeetupService {
   updateMeetup(meetupIds: string[] = []) {
     const resourceQuery = meetupIds.length > 0 ?
       this.getMeetups(meetupIds) : this.getAllMeetups();
-    forkJoin(resourceQuery, this.getUserMeetups()).subscribe((results) => {
-      const shelfMeetupIds = (results[1].docs[0] && results[1].docs[0].meetupIds) ? results[1].docs[0].meetupIds : [];
-      this.meetupUpdated.next(this.setupList(results[0].rows || results[0].docs, shelfMeetupIds));
+    forkJoin(resourceQuery, this.getUserMeetups()).subscribe((response) => {
+      const shelfMeetupIds = (response[1].docs[0] && response[1].docs[0].meetupIds) ? response[1].docs[0].meetupIds : [];
+      this.meetupUpdated.next(this.setupList(response[0].rows || response[0].docs, shelfMeetupIds));
     }, (err) => console.log(err));
   }
 
@@ -38,7 +37,7 @@ export class MeetupService {
   getMeetups(meetupIds: string[]) {
     return this.couchService.post('meetups/_find', findDocuments({
       '_id': { '$in': meetupIds }
-    }, 0, [], 1000));
+    }, 0));
   }
 
   getUserMeetups() {
@@ -66,19 +65,19 @@ export class MeetupService {
   attendMeetup(meetupId, participate) {
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, meetupIds: data.docs[0].meetupIds || [], resourceIds: data.docs[0].resourceIds || [] };
+          return { rev: { _rev: data.docs[0]._rev }, meetupIds: data.docs[0].meetupIds || [], resourceIds: data.docs[0].resourceIds || [], courseIds: data.docs[0].courseIds || [] };
         }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
           // Observable of continues stream
-          return of({ rev: {}, meetupIds: [], resourceIds: [] });
+          return of({ rev: {}, meetupIds: [], resourceIds: [], courseIds: [] });
         }),
         switchMap(data => {
           const meetupIds = participate ? data.meetupIds.splice(meetupId, 1) && data.meetupIds
             : data.meetupIds.push(meetupId) && data.meetupIds;
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds }));
+            Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds, courseIds: data.courseIds }));
         })
       ).subscribe((res) =>  {
         this.updateMeetup();

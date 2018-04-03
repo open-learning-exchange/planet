@@ -24,8 +24,7 @@
           </mat-error>
         </mat-form-field>
       </div>
-
-      <mat-grid-list cols="2">
+      <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Start Date" type="date" formControlName="startDate">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
@@ -34,8 +33,7 @@
           <input matInput type="date" i18n-placeholder placeholder="End Date" formControlName="endDate">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </mat-grid-list>
-
+      </div>
       <div>
         <label i18n>Recurring</label>
         <mat-radio-group formControlName="recurring">
@@ -45,8 +43,7 @@
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
       </div>
-
-      <mat-grid-list cols="2">
+      <div>
         <mat-form-field>
           <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
@@ -55,8 +52,7 @@
           <input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </mat-grid-list>
-
+      </div>
       <div>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Category" formControlName="category">
@@ -66,9 +62,6 @@
             <planet-form-error-messages [control]="meetupForm.controls.category"></planet-form-error-messages>
           </mat-error>
         </mat-form-field>
-      </div>
-
-      <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
           <mat-error>

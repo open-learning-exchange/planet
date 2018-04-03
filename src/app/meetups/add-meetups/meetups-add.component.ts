@@ -32,7 +32,6 @@ export class MeetupsAddComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private userService: UserService
-
   ) {
     this.createForm();
   }

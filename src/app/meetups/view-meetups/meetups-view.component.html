@@ -13,7 +13,7 @@
   </mat-toolbar>
   <div class="view-container">
     <p i18n>Meetup Title : {{meetupDetail.title}} </p>
-    <p i18n>Created By : {{meetupDetail.createdBy}} </p>
+    <p i18n>Created By : <i>{{meetupDetail.createdBy}}</i></p>
     <p i18n>Category : {{meetupDetail.category}} </p>
     <p i18n>Meetup Date: {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
     <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
