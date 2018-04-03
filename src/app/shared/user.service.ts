@@ -21,7 +21,6 @@ export class UserService {
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
-  parentSessionId: string;
 
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
@@ -94,15 +93,11 @@ export class UserService {
   newSessionLog() {
     this.sessionStart = Date.now();
     return this.getNewLogObj().pipe(switchMap(logObj => {
-      return forkJoin([
-        this.couchService.post(this.logsDb, this.logObj()),
-        this.couchService.post(this.logsDb, this.logObj(), { domain: this.getConfig().parent_domain })
-      ]);
+      return this.couchService.post(this.logsDb, this.logObj());
     }),
     map((res: any) => {
-      this.sessionRev = res[0].rev;
-      this.sessionId = res[0].id;
-      this.parentSessionId = res[1].id;
+      this.sessionRev = res.rev;
+      this.sessionId = res.id;
     }));
   }
 
@@ -124,22 +119,4 @@ export class UserService {
     }));
   }
 
-  endParentSessionLog() {
-    let newParentObs: Observable<any> = of({});
-    if (this.parentSessionId === undefined) {
-      newParentObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
-        { 'user': this.get().name },
-        [ '_id', '_rev', 'login_time' ],
-        [ { 'login_time': 'desc' } ]
-      ), { domain: this.getConfig().parent_domain }).pipe(map(data => {
-        this.parentSessionId = data.docs[0]['_id'];
-        this.sessionRev = data.docs[0]['_rev'];
-        this.sessionStart = data.docs[0]['login_time'];
-      }));
-    }
-    return newParentObs.pipe(switchMap(() => {
-      return this.couchService.put(this.logsDb + '/' + this.parentSessionId, this.logObj(Date.now()),
-        { domain: this.getConfig().parent_domain });
-    }));
-  }
 }
