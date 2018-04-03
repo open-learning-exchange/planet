@@ -14,11 +14,11 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+    <button *ngIf="!parentLink" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
       <span i18n>Delete</span>
     </button>
-    <button *ngIf="!parentLink"mat-mini-fab routerLink="add">
+    <button *ngIf="!parentLink" mat-mini-fab routerLink="add">
       <mat-icon>add</mat-icon>
     </button>
   </mat-toolbar>

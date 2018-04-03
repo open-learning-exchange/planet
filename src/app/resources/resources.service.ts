@@ -6,17 +6,21 @@ import { Subject } from 'rxjs/Subject';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class ResourcesService {
-
+  parentUrl = false;
   private resourcesDb = 'resources';
   private ratingsDb = 'ratings';
   private resourcesUpdated = new Subject<any[]>();
   resourcesUpdated$ = this.resourcesUpdated.asObservable();
+  urlPrefix = environment.couchAddress + 'resources/';
 
   constructor(
     private couchService: CouchService,
+    private router: Router,
     private userService: UserService
   ) {}
 
@@ -31,10 +35,25 @@ export class ResourcesService {
   }
 
   getAllResources() {
-    return this.couchService.get(this.resourcesDb + '/_all_docs?include_docs=true');
+    let url = this.couchService.get('resources/_all_docs?include_docs=true');
+    if (this.router.url === '/resources/parent') {
+      this.parentUrl = true;
+      url = this.couchService.get('resources/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
+    } else {
+      this.parentUrl = false;
+    }
+    return url;
   }
 
   getResources(resourceIds: string[]) {
+    if (this.router.url === '/resources/view/parent/' + resourceIds) {
+      this.urlPrefix = 'http://' + this.userService.getConfig().parent_domain + '/' + 'resources/';
+      return this.couchService.post('resources/_find', findDocuments({
+        '_id': { '$in': resourceIds }
+      }, 0, [], 1000), { domain: this.userService.getConfig().parent_domain });
+    } else {
+      this.urlPrefix = environment.couchAddress + 'resources/';
+    }
     return this.couchService.post('resources/_find', findDocuments({
       '_id': { '$in': resourceIds }
     }, 0, [], 1000));

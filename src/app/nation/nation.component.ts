@@ -5,7 +5,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterDropdowns } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 
 @Component({
@@ -25,6 +25,10 @@ export class NationComponent implements OnInit, AfterViewInit {
   parentType = this.route.snapshot.paramMap.get('planet');
   selectedNation = '';
   selectFilter = false;
+  filter = {
+    'registrationRequest': '',
+    'parent_domain': ''
+  };
 
   constructor(
     private router: Router,
@@ -36,20 +40,13 @@ export class NationComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.nations.filterPredicate = filterDropdowns(this.filter);
     this.getNationList();
-    // Override default matTable filter to only filter below fields
-    this.nations.filterPredicate = filterSpecificFields([ 'name', 'registrationRequest' ]);
   }
 
   ngAfterViewInit() {
     this.nations.sort = this.sort;
     this.nations.paginator = this.paginator;
-  }
-
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.nations.filter = filterValue;
   }
 
   getNationList() {
@@ -59,10 +56,10 @@ export class NationComponent implements OnInit, AfterViewInit {
         // Map over data.rows to remove the 'doc' property layer
         this.nations.data = this.nationsList = data.rows.map(nations => {
           if (nations.doc.name === this.route.snapshot.paramMap.get('nation')) {
-            this.selectedNation = nations.doc.local_domain;
+            this.filter.parent_domain = nations.doc.local_domain;
           }
           if (this.route.snapshot.paramMap.get('nation') !== null) {
-            this.getCommunity(this.selectedNation);
+            this.getCommunity(this.filter.parent_domain);
             this.selectFilter = true;
           }
           return nations.doc;
@@ -133,16 +130,17 @@ export class NationComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onChange(filterValue: string) {
-    this.getCommunity(filterValue);
-  }
-
-  onSelect(select: string) {
-    this.nations.filter = select;
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Changing the filter string to trigger filterPredicate
+    this.nations.filter = filterValue;
+    if (field === 'parent_domain') {
+      this.getCommunity(filterValue);
+    }
   }
 
   back() {
-    this.router.navigate([ '/' ]);
+    this.router.navigate([ '/manager' ]);
   }
 
 }

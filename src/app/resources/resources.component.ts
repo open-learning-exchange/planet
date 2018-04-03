@@ -43,8 +43,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
-  urlPrefix = environment.couchAddress + this.dbName + '/';
-  parentUrl = false;
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -118,15 +116,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  getResources() {
-    let url = this.couchService.get('resources/_all_docs?include_docs=true');
-    if (this.router.url === '/resources/parent') {
-      this.parentUrl = true;
-      url = this.couchService.get('resources/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
-    }
-    return url;
-  }
-                
   // Keeping for reference.  Need to refactor for service.
   /*
   getExternalResources() {
@@ -147,7 +136,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
   */
-                   
+
   deleteClick(resource) {
     this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
   }
