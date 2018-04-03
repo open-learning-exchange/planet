@@ -2,12 +2,23 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Courses</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="searchFilter($event.target.value)" i18n-placeholder placeholder="Search">
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select placeholder="Grade Level" [value]="filter.gradeLevel || 'All'" (change)="onFilterChange($event.value, 'gradeLevel')">
+      <mat-option i18n value="All">All</mat-option>
+      <mat-option *ngFor="let option of gradeOptions" value={{option}}>{{option}}</mat-option>
+    </mat-select>
   </mat-form-field>
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select placeholder="Subject Level" [value]="filter.subjectLevel || 'All'" (change)="onFilterChange($event.value, 'subjectLevel')">
+      <mat-option i18n value="All">All</mat-option>
+      <mat-option *ngFor="let option of subjectOptions" value={{option}}>{{option}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+  </mat-form-field>
+  <button mat-button i18n (click)="resetSearch()"><span>Reset</span></button>
 </mat-toolbar>
-
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
