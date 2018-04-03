@@ -7,6 +7,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { switchMap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   selector: 'planet-configuration',
@@ -100,24 +102,21 @@ export class ConfigurationComponent implements OnInit {
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password)
-        .subscribe((data) => {
+      .subscribe((data) => {
+        forkJoin([
           this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username,
           { 'name': this.loginForm.value.username, 'password': this.loginForm.value.password, roles: [], 'type': 'user',
             'isUserAdmin': true, 'firstName': this.contactFormGroup.value.firstName, 'middleName': this.contactFormGroup.value.middleName,
             'lastName': this.contactFormGroup.value.lastName, 'email': this.contactFormGroup.value.email,
-            'phoneNumber': this.contactFormGroup.value.phoneNumber }).subscribe((data1) => {
-              this.couchService.put('shelf/' + data1.id, { })
-              .subscribe((res) => { }, error => { console.log(error); });
-              this.planetMessageService.showMessage('Admin created: ' + data1.id.replace('org.couchdb.user:', ''));
-          }, (error) => this.message = '');
-          const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
-          this.couchService.post('configurations', config).subscribe(() => {
-            this.router.navigate([ '/login' ]);
-          }, (err) => {
-            // Connect to an error display component to show user that an error has occurred
-            console.log(err);
-          });
-        }, (error) => (error));
+            'phoneNumber': this.contactFormGroup.value.phoneNumber }),
+          this.couchService.put('shelf/org.couchdb.user:' + this.loginForm.value.username, { }),
+          this.couchService.post('configurations', Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value))
+        ])
+        .subscribe((res) => {
+          this.planetMessageService.showMessage('Admin created: ' + res[0].id.replace('org.couchdb.user:', ''));
+          this.router.navigate([ '/login' ]);
+        }, (error => (error)));
+      });
     }
   }
 

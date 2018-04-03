@@ -7,6 +7,7 @@ import { fromPromise } from 'rxjs/observable/fromPromise';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -64,20 +65,19 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: {name: string, password: string}) {
-    this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
-        .subscribe((data) => {
-          this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
-          this.welcomeNotification(data.id);
-          this.login(this.userForm.value, true);
-          this.couchService.put('shelf/' + data.id, { })
-          .subscribe((res) => {
-          }, error => { console.log(error); });
-        }, error => {
-          if (error.error.error === 'conflict') {
-            this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
-          }
-        });
+    forkJoin([
+      this.couchService.put('_users/org.couchdb.user:' + name,
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false }),
+      this.couchService.put('shelf/org.couchdb.user:' + name, { })
+    ]).subscribe((data) => {
+      this.planetMessageService.showMessage('User created: ' + data[0].id.replace('org.couchdb.user:', ''));
+      this.welcomeNotification(data[0].id);
+      this.login(this.userForm.value, true);
+    }, error => {
+      if (error.error.error === 'conflict') {
+        this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
+      }
+    });
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
