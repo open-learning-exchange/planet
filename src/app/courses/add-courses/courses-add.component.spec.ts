@@ -76,8 +76,8 @@ describe('CoursesAddComponent', () => {
   });
 
   // test toogleWeekly()
-  it('should toogleWeekly', () => {
-    component.toogleWeekly(false);
+  it('should toogleDaily', () => {
+    component.toggleDaily(false);
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(component.showDaysCheckBox).toBe(false);

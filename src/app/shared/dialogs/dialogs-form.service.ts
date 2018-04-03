@@ -16,7 +16,11 @@ export class DialogsFormService {
     dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px'
     });
-    dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
+    if (formGroup instanceof FormGroup) {
+      dialogRef.componentInstance.modalForm = formGroup;
+    } else {
+      dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
+    }
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.fields = fields;
     return dialogRef.afterClosed();

@@ -15,6 +15,15 @@ export const filterDropdowns = (filterObj: any) => {
   };
 };
 
+// Takes an array of the above filtering functions and returns true if all match
+export const composeFilterFunctions = (filterFunctions: any[]) => {
+  return (data: any, filter: any) => {
+    return filterFunctions.reduce((isMatch, filterFunction) => {
+      return isMatch && filterFunction(data, filter);
+    }, true);
+  };
+};
+
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
   if (val && val.toLowerCase() !== data[field].toLowerCase()) {
     return false;

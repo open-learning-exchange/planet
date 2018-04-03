@@ -1,6 +1,19 @@
-<h2 i18n>Requests List</h2>
-<br/>
-<div class="example-container mat-elevation-z8">
+<!-- Community template -->
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/manager">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Requests List</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>Your Current List of Requests</span>  
+    </mat-toolbar-row>
+  </mat-toolbar>
+
   <mat-table #table [dataSource]="communities">
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef > Name </mat-header-cell>

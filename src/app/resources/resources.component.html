@@ -1,5 +1,3 @@
-<!--Used to approximate design.  Should be replaced before merging"-->
-
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Library</span>
@@ -70,22 +68,7 @@
     <ng-container matColumnDef="rating">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <div class="list-item-rating">
-          <span class="stars">
-            <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            <!-- used simple arithmetic to get 20 and converted into % -->
-            <span [ngStyle]="{'width': getRating(element.sum, element.timesRated)}">
-              <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            </span>
-          </span>
-          <div class="stats stats-total">{{ element.timesRated }} Total</div>
-          <div class="stats stats-female">{{ fRating }}% Female</div>
-          <div class="stats stats-male">{{ mRating }}% Male</div>
-          <div class="rating">
-            <span class="rating-number">{{ element.timesRated > 0 ? (element.sum / element.timesRated).toFixed(1) : element.sum }}</span>
-            <span>RATING</span>
-          </div>
-        </div>
+        <planet-resources-rating [rating]="element.rating" [resourceId]="element._id"></planet-resources-rating>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>

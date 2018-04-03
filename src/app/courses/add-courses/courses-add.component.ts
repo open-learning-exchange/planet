@@ -23,10 +23,10 @@ export class CoursesAddComponent implements OnInit {
   members = [];
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
-  revision = null;
-  id = null;
+  documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
-
+  courseFrequency = [];
+  radio = '';
   showDaysCheckBox = true; // for toggling the days checkbox
 
   // from the constants import
@@ -106,9 +106,25 @@ export class CoursesAddComponent implements OnInit {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
-        this.revision = data._rev;
-        this.id = data._id;
+        this.documentInfo = { rev: data._rev, id: data._id };
+        this.courseFrequency = data.day || [];
+        this.courseForm.value.day = this.courseFrequency;
         this.courseForm.patchValue(data);
+
+        switch (this.courseFrequency.length) {
+          case 7:
+            this.radio = 'daily';
+            // If daily was selected, do not check any days after toggling weekly
+            this.courseFrequency = [];
+            /* falls through */
+          case 0:
+            this.showDaysCheckBox = true;
+            break;
+          default:
+            this.showDaysCheckBox = false;
+            this.radio = 'weekly';
+        }
+
       }, (error) => {
         console.log(error);
       });
@@ -116,7 +132,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...courseInfo, '_rev': this.revision }).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + this.documentInfo.id, { ...courseInfo, '_rev': this.documentInfo.rev }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
@@ -155,6 +171,10 @@ export class CoursesAddComponent implements OnInit {
     this.router.navigate([ '/courses' ]);
   }
 
+  isClassDay(day) {
+    return this.courseFrequency.includes(day) ? true : false;
+  }
+
   /* FOR TOGGLING DAILY/WEEKLY DAYS */
 
   onDayChange(day: string, isChecked: boolean) {
@@ -162,7 +182,9 @@ export class CoursesAddComponent implements OnInit {
 
     if (isChecked) {
       // add to day array if checked
-      dayFormArray.push(new FormControl(day));
+      if (!dayFormArray.value.includes(day)) {
+        dayFormArray.push(new FormControl(day));
+      }
     } else {
       // remove from day array if unchecked
       const index = dayFormArray.controls.findIndex(x => x.value === day);
@@ -171,12 +193,12 @@ export class CoursesAddComponent implements OnInit {
   }
 
   // remove old values from array on radio button change
-  toogleWeekly(val: boolean) {
-    // empty the array
-    this.courseForm.setControl('day', this.fb.array([]));
+  toggleDaily(val: boolean) {
     if (val) {
       // add all days to the array if the course is daily
       this.courseForm.setControl('day', this.fb.array(this.days));
+    } else {
+      this.courseForm.setControl('day', this.fb.array(this.courseFrequency));
     }
     this.showDaysCheckBox = val;
   }

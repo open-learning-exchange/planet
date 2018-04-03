@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { findDocuments } from '../shared/mangoQueries';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -31,15 +33,19 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getData('resources', { linkPrefix: 'resources/view/', addId: true }).subscribe((res) => {
-      this.data.resources = res;
+    this.getShelf().pipe(switchMap(shelf => {
+      console.log(shelf);
+      return forkJoin([
+        this.getDataShelf('resources', shelf.docs[0].resourceIds),
+        this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }),
+        this.getData('meetups', { linkPrefix: 'meetups' })
+      ]);
+    })).subscribe(dashboardItems => {
+      this.data.resources = dashboardItems[0];
+      this.data.courses = dashboardItems[1];
+      this.data.meetups = dashboardItems[2];
     });
-    this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }). subscribe((res) => {
-      this.data.courses = res;
-    });
-    this.getData('meetups', { linkPrefix: 'meetups' }). subscribe((res) => {
-      this.data.meetups = res;
-    });
+
   }
 
   getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
@@ -49,4 +55,16 @@ export class DashboardComponent implements OnInit {
       return response.rows.map((item) => ({ ...item.doc, title: item.doc[titleField], link: linkPrefix + (addId ? item.id : '') }));
     }));
   }
+
+  getShelf() {
+    return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
+  }
+
+  getDataShelf(db: string, shelf: string[]) {
+    return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
+      .pipe(map(response => {
+        return response.docs.map((item) => ({ ...item, link: db + '/view/' + item._id }));
+      }));
+  }
+
 }
