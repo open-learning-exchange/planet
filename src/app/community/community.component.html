@@ -1,20 +1,33 @@
-<h2 i18n>Communities List</h2>
-<br/>
-<div class="example-container mat-elevation-z8">
-  <mat-form-field>
+<!-- Community template -->
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/manager">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Communities List</span>
+  <span class="toolbar-fill"></span>
+  <mat-form-field class="font-size-1">
     <mat-select placeholder="Nation Name" [value]="filter.nationName || 'All'" (change)="onFilterChange($event.value, 'nationName')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let nation of nations;" value={{nation.doc.name}}>{{nation.doc.name}}</mat-option>
     </mat-select>
   </mat-form-field> &nbsp;
-  <mat-form-field>
+  <mat-form-field class="font-size-1">
     <mat-select placeholder="Status" value="All" (change)="onFilterChange($event.value, 'registrationRequest')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option i18n value="pending">pending</mat-option>
       <mat-option i18n value="accepted">accepted</mat-option>
       <mat-option i18n value="rejected">rejected</mat-option>
     </mat-select>
-  </mat-form-field>
+  </mat-form-field>  
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>Your Current List of Communities</span>  
+    </mat-toolbar-row>
+  </mat-toolbar>
+
   <mat-table #table [dataSource]="communities">
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef > Community </mat-header-cell>
