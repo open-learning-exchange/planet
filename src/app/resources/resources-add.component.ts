@@ -36,7 +36,6 @@ export class ResourcesAddComponent implements OnInit {
   userDetail: any = {};
   id = null;
   revision = null;
-  fileName = null;
 
   constructor(
     private router: Router,
@@ -244,10 +243,6 @@ export class ResourcesAddComponent implements OnInit {
 
   bindFile(event) {
     this.file = event.target.files[0];
-  }
-
-  revertDate(date) {
-
   }
 
 }
