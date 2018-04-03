@@ -17,7 +17,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private meetupService: MeetupService
+    public meetupService: MeetupService
   ) { }
 
   ngOnInit() {
