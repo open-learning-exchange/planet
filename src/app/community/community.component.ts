@@ -64,38 +64,33 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   updateCommunity(community, change) {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
-      if (change === 'delete' || change === 'reject' || change === 'unlink') {
-        // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-        const { _id: id, _rev: rev } = community;
-        community.registrationRequest = change;
-        this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
-          .subscribe((data) => {
+      // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+      // Split community object into id, rev, and all other props in communityInfo
+      const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
+      switch (change) {
+        case 'delete':
+        case 'reject':
+        case 'unlink':
+          const updatedCommunity = { ...community, registrationRequest: change };
+          this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
+            .subscribe((data) => {
+              this.updateRev(data, this.communities.data);
+              this.editDialog.close();
+            }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+          break;
+        case 'accept':
+          forkJoin([
+            // When accepting a registration request, add learner role to user from that community/nation,
+            this.unlockUser(community),
+            // add registrant's information to this database,
+            this.couchService.post('nations', { ...communityInfo, registrationRequest: 'accepted' }),
+            // update registration request to accepted
+            this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
+          ]).subscribe((data) => {
+            community.registrationRequest = 'accepted';
             this.updateRev(data, this.communities.data);
             this.editDialog.close();
-          }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
-      }
-      if (change === 'accept') {
-        const communityId = community._id;
-        const communityRev = community._rev;
-        delete community['_id'],
-        delete community['_rev'],
-        forkJoin([
-          // When accepting a registration request, add user from request to this CouchDB _users,
-          this.couchService.post('_users/_find', { 'selector': { 'request_id': communityId } })
-            .pipe(switchMap(data => {
-              return this.couchService.put('_users/' + data.docs[0]._id + '?rev=' + data.docs[0]._rev,
-              { ...data.docs[0], roles: [ 'learner' ] });
-            })),
-          // add registrant's information to this database,
-          this.couchService.post('nations', { ...community, registrationRequest: 'accepted' }),
-          // update registration request to accepted
-          this.couchService.put('communityregistrationrequests/' + communityId + '?rev=' + communityRev,
-          { ...community, registrationRequest: 'accepted' })
-        ]).subscribe((data) => {
-          community.registrationRequest = 'accepted';
-          this.updateRev(data, this.communities.data);
-          this.editDialog.close();
-        }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
+          }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
       }
     };
   }
@@ -116,6 +111,16 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCommunityList();
+  }
+
+  // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
+  unlockUser(community) {
+    return this.couchService.post('_users/_find', { 'selector': { 'request_id': community._id } })
+      .pipe(switchMap(data => {
+        const user = data.docs[0];
+        return this.couchService.put('_users/' + user._id + '?rev=' + user._rev,
+          { ...user, roles: [ 'learner' ] });
+      }));
   }
 
 }
