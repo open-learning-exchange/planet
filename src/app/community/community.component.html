@@ -16,27 +16,27 @@
 
   <mat-table #table [dataSource]="communities">
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef > Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="code">
-      <mat-header-cell *matHeaderCellDef i18n > Code </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Code</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="language">
-      <mat-header-cell *matHeaderCellDef i18n > Language </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.preferred_lang}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Language</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.preferred_lang}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="url">
-      <mat-header-cell *matHeaderCellDef i18n > URL </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.local_domain}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef i18n>URL</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.local_domain}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef i18n > Status </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.registrationRequest}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.registrationRequest}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef i18n > Actions </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <button mat-raised-button color="primary" (click)="updateClick(element, 'delete')" i18n>Delete</button>
         <button mat-raised-button color="primary" (click)="updateClick(element, 'unlink')" *ngIf="element.registrationRequest === 'accepted'" i18n>
