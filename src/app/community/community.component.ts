@@ -64,8 +64,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   updateCommunity(community, change) {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
-    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       if (change === 'delete' || change === 'reject' || change === 'unlink') {
+        // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
         const { _id: id, _rev: rev } = community;
         community.registrationRequest = change;
         this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
@@ -80,12 +80,15 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         delete community['_id'],
         delete community['_rev'],
         forkJoin([
+          // When accepting a registration request, add user from request to this CouchDB _users,
           this.couchService.post('_users/_find', { 'selector': { 'request_id': communityId } })
             .pipe(switchMap(data => {
               return this.couchService.put('_users/' + data.docs[0]._id + '?rev=' + data.docs[0]._rev,
               { ...data.docs[0], roles: [ 'learner' ] });
             })),
+          // add registrant's information to this database,
           this.couchService.post('nations', { ...community, registrationRequest: 'accepted' }),
+          // update registration request to accepted
           this.couchService.put('communityregistrationrequests/' + communityId + '?rev=' + communityRev,
           { ...community, registrationRequest: 'accepted' })
         ]).subscribe((data) => {
