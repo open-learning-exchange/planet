@@ -8,7 +8,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { environment } from '../../environments/environment.test';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './login-form.component.html',
