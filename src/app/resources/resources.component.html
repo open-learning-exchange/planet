@@ -12,13 +12,15 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button [disabled]="!selection.selected.length" *ngIf="!resourcesService.parentUrl" (click)="addResourceId(selection.selected)">
-      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
-    </button>
-    <button mat-button (click)="deleteSelected()" *ngIf="!resourcesService.parentUrl" [disabled]="!selection.selected.length">
-      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-    </button>
-    <button mat-mini-fab routerLink="add" *ngIf="!resourcesService.parentUrl"><mat-icon>add</mat-icon></button>
+    <span *ngIf="!parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="addResourceId(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+      </button>
+      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+      </button>
+      <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
+    </span>
   </mat-toolbar>
 
   <mat-table #table [dataSource]="resources" matSort>
@@ -38,11 +40,11 @@
     <ng-container matColumnDef="info">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
-        <h3 class="header"><a *ngIf="!resourcesService.parentUrl" [routerLink]="['/resources/view', element._id]">{{element.title}}</a>
-          <a *ngIf="resourcesService.parentUrl" [routerLink]="['/resources/view/parent', element._id]">{{element.title}}</a>
+        <h3 class="header">
+          <a [routerLink]="['/resources/view' + (parent ? '/parent' : ''), element._id]">{{element.title}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
-        <button  *ngIf="!resourcesService.parentUrl" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button  *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
@@ -68,7 +70,7 @@
     <ng-container matColumnDef="rating">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <planet-resources-rating [rating]="element.rating" [resourceId]="element._id"></planet-resources-rating>
+        <planet-resources-rating [rating]="element.rating" [resourceId]="element._id" [parent]="parent"></planet-resources-rating>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>

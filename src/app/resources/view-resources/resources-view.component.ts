@@ -33,18 +33,32 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  // If parent route, url will use parent domain.  If not uses this domain.
+  parent = this.route.snapshot.data.parent;
+  get urlPrefix()  {
+    let domain = environment.couchAddress;
+    if (this.parent) {
+      domain = 'http://' + this.userService.getConfig().parent_domain + '/';
+    }
+    return domain + this.dbName + '/';
+  }
   // Use string rather than boolean for i18n select
   fullView = 'off';
 
   ngOnInit() {
+
+
     this.route.paramMap
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const resourceId = params.get('id');
+        const getOpts: any = { resourceIds: [ resourceId ] };
+        if (this.parent) {
+          getOpts.opts = { domain: this.userService.getConfig().parent_domain };
+        }
         this.resourceActivity(resourceId, 'visit');
-        this.resourcesService.updateResources([ resourceId ]);
+        this.resourcesService.updateResources(getOpts);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((resourceArr) => {

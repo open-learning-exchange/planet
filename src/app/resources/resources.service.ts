@@ -19,27 +19,27 @@ export class ResourcesService {
     private userService: UserService
   ) {}
 
-  updateResources(resourceIds: string[] = []) {
+  updateResources({ resourceIds = [], opts = {} }: { resourceIds?: string[], opts?: any } = {}) {
     const resourceQuery = resourceIds.length > 0 ?
-      this.getResources(resourceIds) : this.getAllResources();
-    forkJoin(resourceQuery, this.getRatings()).subscribe((results) => {
+      this.getResources(resourceIds, opts) : this.getAllResources(opts);
+    forkJoin(resourceQuery, this.getRatings(resourceIds, opts)).subscribe((results) => {
       const resourcesRes = results[0],
         ratingsRes = results[1];
       this.resourcesUpdated.next(this.createResourceList(resourcesRes.rows || resourcesRes.docs, ratingsRes.docs));
     }, (err) => console.log(err));
   }
 
-  getAllResources() {
-    return this.couchService.get('resources/_all_docs?include_docs=true');
+  getAllResources(opts: any) {
+    return this.couchService.get('resources/_all_docs?include_docs=true', opts);
   }
 
-  getResources(resourceIds: string[]) {
+  getResources(resourceIds: string[], opts: any) {
     return this.couchService.post('resources/_find', findDocuments({
       '_id': { '$in': resourceIds }
-    }, 0, [], 1000));
+    }, 0, [], 1000), opts);
   }
 
-  getRatings(resourceIds: string[] = []) {
+  getRatings(resourceIds: string[], opts: any) {
     const itemSelector = resourceIds.length > 0 ?
       { '$in': resourceIds } : { '$gt': null };
     return this.couchService.post('ratings/_find', findDocuments({
@@ -47,7 +47,7 @@ export class ResourcesService {
       'type': 'resource',
       // Must have sorted property in selector to sort correctly
       'item': { '$gt': null }
-    }, 0, [ { 'item': 'desc' } ], 1000)).pipe(catchError(err => {
+    }, 0, [ { 'item': 'desc' } ], 1000), opts).pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
       return of({ docs: [] });

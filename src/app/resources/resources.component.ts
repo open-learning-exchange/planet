@@ -44,6 +44,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
+  parent = this.route.snapshot.data.parent;
+  getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
 
   constructor(
     private couchService: CouchService,
@@ -62,7 +64,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.data = resources;
       this.updateAddLibrary();
     });
-    this.resourcesService.updateResources();
+    this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
   }
 
@@ -189,7 +191,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
-          this.resourcesService.updateResources();
+          this.resourcesService.updateResources({ opts: this.getOpts });
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted all resources');
