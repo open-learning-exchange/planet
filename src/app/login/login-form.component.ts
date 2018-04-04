@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/observable/fromPromise';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -88,13 +89,13 @@ export class LoginFormComponent {
         }
       }), switchMap((routeSuccess) => {
         // Post new session info to login_activity
-        return this.userService.newSessionLog();
+        return forkJoin([
+          this.userService.newSessionLog(),
+          this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
+            { withCredentials: true, domain: this.userService.getConfig().parent_domain })
+        ]);
       })).subscribe((res) => {
-        this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
-          { withCredentials: true, domain: this.userService.getConfig().parent_domain })
-          .subscribe((response) => {
-            console.log('Success');
-          }, (error) => console.log('Error'));
+
       }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
   }
 }
