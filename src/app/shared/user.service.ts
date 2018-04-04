@@ -17,7 +17,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 export class UserService {
   private user: any = { name: '' };
   private logsDb = 'login_activities';
-  private userConfig: any = { };
+  private configuration: any = { };
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
@@ -37,26 +37,27 @@ export class UserService {
     return this.user;
   }
 
-  setConfig(config: any): any {
-    this.userConfig = config;
-  }
-
   getConfig(): any {
-    return this.userConfig;
+    return this.configuration;
   }
 
-  setProfile(user: any) {
+  setUserAndConfig(user: any) {
     return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
         // If not found in users database, just use userCtx object
         this.user = user;
         return of(false);
       }),
-      switchMap((data) => {
-        if (data) {
+      switchMap((userData) => {
+        if (userData) {
           // Remove hashed password information from the data object
-          const { derived_key, iterations, password_scheme, salt, ...profile } = data;
+          const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
           this.user = profile;
         }
+        // Get configuration information next
+        return this.couchService.get('configurations/_all_docs?include_docs=true');
+      }),
+      switchMap((configData) => {
+        this.configuration = configData.rows[0].doc;
         return of(true);
       }));
   }

@@ -21,11 +21,7 @@ export class AuthService {
           if (res.userCtx.name === this.userService.get().name) {
             return of(true);
           }
-          this.couchService.get('configurations/_all_docs?include_docs=true')
-            .subscribe((response) => {
-              this.userService.setConfig(response.rows[0].doc);
-            }, (error) => console.log('Error'));
-          return this.userService.setProfile(res.userCtx);
+          return this.userService.setUserAndConfig(res.userCtx);
         }
         this.userService.unset();
         this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
