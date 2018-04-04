@@ -4,6 +4,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
@@ -32,6 +33,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
+  urlPrefix = environment.couchAddress + this.dbName + '/';
   // Use string rather than boolean for i18n select
   fullView = 'off';
 
@@ -61,7 +63,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
     this.mediaType = resource.mediaType;
     this.contentType = resource._attachments[filename].content_type;
-    this.resourceSrc = this.resourcesService.urlPrefix + resource._id + '/' + filename;
+    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
     if (!this.mediaType) {
       const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
       this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
