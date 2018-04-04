@@ -12,11 +12,11 @@
     <span i18n>Average</span>
   </div>
 
-  <div class="your-rating">
+  <div class="your-rating" *ngIf="!parent">
     <form [formGroup]="rateForm" novalidate>
       <planet-rating (click)="onStarClick()" formControlName="rate"></planet-rating>
     </form>
   </div>
 
-  <div class="your-rating-label">Your Rating</div>
+  <div class="your-rating-label" *ngIf="!parent">Your Rating</div>
 </div>
