@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { environment } from '../../environments/environment.prod';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -53,8 +54,11 @@ export class UserService {
           const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
           this.user = profile;
         }
-        // Get configuration information next
-        return this.couchService.get('configurations/_all_docs?include_docs=true');
+        // Get configuration information next if not in testing environment
+        if (!environment.test) {
+          return this.couchService.get('configurations/_all_docs?include_docs=true');
+        }
+        return of(true);
       }),
       switchMap((configData) => {
         this.configuration = configData.rows[0].doc;
