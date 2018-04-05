@@ -10,6 +10,7 @@ import { of } from 'rxjs/observable/of';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -19,7 +20,12 @@ import { UserService } from '../../shared/user.service';
     }
     .view-container {
       background-color: #FFFFFF;
+      display: flex;
+      flex-wrap: wrap;
       padding: 3rem;
+    }
+    .view-container form {
+      margin: 0 10px 10px 0;
     }
   ` ]
 })
@@ -28,8 +34,13 @@ export class UsersUpdateComponent implements OnInit {
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
+  previewSrc = '../assets/image.png';
+  uploadImage = false;
+  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlName = '';
   file: any;
   roles: string[] = [];
+
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
@@ -41,10 +52,17 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.route.snapshot.paramMap.get('name'))
+    this.urlName = this.route.snapshot.paramMap.get('name');
+    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
         this.editForm.patchValue(data);
+        if (data['_attachments']) {
+          const filename = Object.keys(data._attachments)[0];
+          this.previewSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
+          this.uploadImage = true;
+        }
+        console.log('data: ' + data);
       }, (error) => {
         console.log(error);
       });
@@ -104,7 +122,27 @@ export class UsersUpdateComponent implements OnInit {
     this.router.navigate([ '/users/profile', this.user.name ]);
   }
 
-  bindFile(event) {
+  previewImageFile(event) {
     this.file = event.target.files[0];
+    const reader  = new FileReader();
+    const self = this;
+
+    reader.addEventListener('load', function () {
+      self.previewSrc = reader.result;
+      if (self.previewSrc !== '../assets/image.png') {
+        self.uploadImage = true;
+      }
+    }, false);
+
+    if (this.file) {
+      reader.readAsDataURL(this.file);
+    }
   }
+
+  removeImageFile() {
+    this.previewSrc = '../assets/image.png';
+    this.file = undefined;
+    this.uploadImage = false;
+  }
+
 }

@@ -4,10 +4,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/observable/fromPromise';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -91,7 +92,13 @@ export class LoginFormComponent {
         }
       }), switchMap((routeSuccess) => {
         // Post new session info to login_activity
-        return this.userService.newSessionLog();
+        const obsArr = [ this.userService.newSessionLog() ];
+        // If not in e2e test, also add session to parent domain
+        if (!environment.test) {
+          obsArr.push(this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
+            { withCredentials: true, domain: this.userService.getConfig().parent_domain }));
+        }
+        return forkJoin(obsArr);
       })).subscribe((res) => {
 
       }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));

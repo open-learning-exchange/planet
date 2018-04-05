@@ -1,16 +1,4 @@
-[{
-		"dbName": "communityregistrationrequests",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": ["admin"]
-			},
-			"members": {
-				"names": [],
-				"roles": ["intern", "learner", "teacher"]
-			}
-		}
-	},
+[
 	{
 		"dbName": "courses",
 		"json": {
@@ -46,7 +34,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": []
 			}
 		}
 	},

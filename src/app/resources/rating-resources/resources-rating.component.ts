@@ -15,6 +15,7 @@ export class ResourcesRatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
   @Input() resourceId: string;
+  @Input() parent;
 
   rateForm: FormGroup;
   popupForm: FormGroup;
@@ -59,6 +60,7 @@ export class ResourcesRatingComponent implements OnChanges {
 
   onStarClick(form = this.rateForm) {
     this.updateRating(form).subscribe(res => {
+      // This should never be called for parent resources, so do not need to send domain options
       this.resourcesService.updateResources();
       if (!this.isPopupOpen) {
         this.openDialog();

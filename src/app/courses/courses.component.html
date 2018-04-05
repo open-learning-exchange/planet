@@ -22,14 +22,14 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
+    <button *ngIf="!parentUrl" mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
       <span i18n>Request Courses</span>
     </button>
-    <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+    <button *ngIf="!parentUrl" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
     </button>
-    <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+    <button *ngIf="!parentUrl" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
   </mat-toolbar>
   <mat-table #table [dataSource]="courses" matSort>
     <ng-container matColumnDef="select">
@@ -51,7 +51,7 @@
         <h3 class="header"><a [routerLink]="['/courses/view', element._id]">{{element.courseTitle}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
-        <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button *ngIf="!parentUrl" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-cell>
