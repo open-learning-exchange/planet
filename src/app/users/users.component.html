@@ -23,6 +23,7 @@
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRole.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
     </div>
+    <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
   </mat-toolbar>
 
   <mat-table #table [dataSource]="allUsers" matSort>
@@ -83,6 +84,8 @@
           <button mat-icon-button *ngIf="element.roles.length > 0" (click)="removeRole(element)">
             <mat-icon>lock_open</mat-icon>
           </button>
+          <button mat-raised-button color="primary"  *ngIf="!element.myTeamInfo" (click)="addTeams([{'_id': element._id}])">Add Team</button>
+          <button mat-raised-button color="primary"  *ngIf="element.myTeamInfo" (click)="removeTeam(element._id)">Remove Team</button>
           <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
             <mat-icon>folder_open</mat-icon>
           </a>

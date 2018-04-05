@@ -8,6 +8,8 @@ import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { switchMap, catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   templateUrl: './users.component.html',
@@ -85,14 +87,35 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return this.couchService.allDocs('_users');
   }
 
+  getShelf() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
+  }
+
   initializeData() {
     this.selection.clear();
-    this.getUsers().debug('Getting user list').subscribe((data) => {
-      this.allUsers.data = data.reduce((users: any[], user: any) => {
-        if (user._attachments) {
-          user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
+    forkJoin([ this.getUsers(), this.getShelf() ])
+    .debug('Getting user list').subscribe((data) => {
+      this.allUsers.data = data[0].reduce((users: any[], user: any) => {
+        if (user._id !== '_design/_auth') {
+          if (user._attachments) {
+            user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
+          }
+          const myTeamIndex = data[1].docs[0].myTeamIds ? data[1].docs[0].myTeamIds.findIndex(myTeamId => {
+            return user._id === myTeamId;
+          }) : -1;
+          if (myTeamIndex > -1) {
+            users.push({ ...user, myTeamInfo: true });
+          } else {
+            users.push({ ...user, myTeamInfo: false });
+          }
+        } else if (user._id !== '_design/_auth' && user.isUserAdmin === true) {
+          users.push({ ...user });
         }
-        users.push({ ...user });
         return users;
       }, []);
     }, (error) => {
@@ -173,6 +196,55 @@ export class UsersComponent implements OnInit, AfterViewInit {
       console.log('Error!');
       console.log(error);
     });
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  removeAdminId(ids, id) {
+    if (id.isUserAdmin === true) {
+      return ids;
+    }
+    return ids.concat(id._id);
+  }
+
+  addTeams(userId) {
+    const userIdArray = userId.reduce(this.removeAdminId, []);
+    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(
+        map(data => {
+          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [], myTeamIds: data.docs[0].myTeamIds || [] };
+        }),
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", and it needs to be created
+        catchError(err => {
+          // Observable of continues stream
+          return of({ rev: {}, resourceIds: [], myTeamIds: [] });
+        }),
+        switchMap(data => {
+          const myTeamIds = userIdArray.concat(data.myTeamIds).reduce(this.dedupeShelfReduce, []);
+          return this.couchService.put('shelf/' + this.userService.get()._id,
+            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds } ));
+        })
+      ).subscribe((res) =>  {
+        this.initializeData();
+        const msg = userIdArray.length === 1 ? 'User' : 'Users';
+        this.planetMessageService.showAlert(msg + ' added to your shelf');
+    }, (error) => (error));
+  }
+
+  removeTeam (teamId) {
+    this.getShelf().pipe(switchMap(data => {
+      data.docs[0].myTeamIds.splice(data.docs[0].myTeamIds.indexOf(teamId), 1);
+      return this.couchService.put('shelf/' + this.userService.get()._id, data.docs[0]);
+    })).subscribe(data => {
+      this.initializeData();
+      this.planetMessageService.showAlert('User removed from shelf');
+    }, (error) => (error));
   }
 
   back() {

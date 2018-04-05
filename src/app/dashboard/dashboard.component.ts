@@ -13,7 +13,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
     <planet-dashboard-tile [cardTitle]="'myLibrary'" class="planet-library-theme" [itemData]="data.resources"></planet-dashboard-tile>
     <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme" [itemData]="data.courses"></planet-dashboard-tile>
     <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme" [itemData]="data.meetups"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme" [itemData]="data.myTeams"></planet-dashboard-tile>
   `,
   styles: [ `
     :host {
@@ -25,7 +25,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
   ` ]
 })
 export class DashboardComponent implements OnInit {
-  data = { resources: [], courses: [], meetups: [] };
+  data = { resources: [], courses: [], meetups: [], myTeams: [] };
 
   constructor(
     private userService: UserService,
@@ -37,12 +37,14 @@ export class DashboardComponent implements OnInit {
       return forkJoin([
         this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
         this.getDataShelf('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-        this.getDataShelf('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true })
+        this.getDataShelf('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
+        this.getDataShelf('_users', shelf.docs[0].myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
       ]);
     })).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
+      this.data.myTeams = dashboardItems[3];
     });
   }
 
