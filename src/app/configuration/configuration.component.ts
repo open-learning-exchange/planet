@@ -33,11 +33,9 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const url = require('url');
-    const adr = environment.couchAddress;
-    const localhost = url.parse(adr, true);
+    const localDomain = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
     this.loginForm = this.formBuilder.group({
-      username: [ '', Validators.required ],
+      name: [ '', Validators.required ],
       password: [
         '',
         Validators.compose([
@@ -55,7 +53,7 @@ export class ConfigurationComponent implements OnInit {
     });
     this.configurationFormGroup = this.formBuilder.group({
       planet_type: [ '', Validators.required ],
-      local_domain: [ localhost.host, Validators.required ],
+      local_domain: [ localDomain, Validators.required ],
       name: [ '', Validators.required ],
       parent_domain: [ '', Validators.required ],
       preferred_lang: [ '', Validators.required ],
@@ -85,7 +83,7 @@ export class ConfigurationComponent implements OnInit {
         }).filter(nt  => {
           return nt['_id'].indexOf('_design') !== 0;
         });
-      }, (error) => (error));
+      }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
   }
 
   onChange(selectedValue: string) {
@@ -107,18 +105,16 @@ export class ConfigurationComponent implements OnInit {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const configuration = Object.assign({ registrationRequest: 'pending' },
         this.configurationFormGroup.value, this.contactFormGroup.value);
-      const userDetail = { 'name': this.loginForm.value.username,
-            'password': this.loginForm.value.password,
-            roles: [],
-            'type': 'user',
-            'isUserAdmin': true,
-            'firstName': this.contactFormGroup.value.firstName,
-            'middleName': this.contactFormGroup.value.middleName,
-            'lastName': this.contactFormGroup.value.lastName,
-            'email': this.contactFormGroup.value.email,
-            'phoneNumber': this.contactFormGroup.value.phoneNumber
-          };
+      const { confirmPassword, ...credentials } = this.loginForm.value;
+      const userDetail: any = {
+        ...credentials,
+        'roles': [],
+        'type': 'user',
+        'isUserAdmin': true,
+        ...this.contactFormGroup.value
+      };
       forkJoin([
+        // When
         this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
         this.couchService.post('configurations', configuration),
@@ -132,8 +128,14 @@ export class ConfigurationComponent implements OnInit {
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
-      }, (error) => (error));
+      }, (error) => this.planetMessageService.showMessage('There was an error creating planet');
     }
   }
 
 }
+
+const removeProtocol = (str: string) => {
+  // RegEx grabs the fragment of the string between '//' and '/'
+  // First match includes characters, second does not (so we use second)
+  return /\/\/(.*?)\//.exec(str)[1];
+};
