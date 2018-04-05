@@ -1,11 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
-import { switchMap } from 'rxjs/operators';
-import { filterDropdowns } from '../shared/table-helpers';
-
+import { switchMap, map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 @Component({
   templateUrl: './community.component.html'
 })
@@ -13,45 +11,29 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
   communities = new MatTableDataSource();
   nations = [];
-  displayedColumns = [ 'name',
-    'lastAppUpdateDate',
-    'version',
-    'nationName',
-    'lastPublicationsSyncDate',
-    'lastActivitiesSyncDate',
-    'registrationRequest',
+  displayedColumns = [
+    'name',
+    'code',
+    'language',
+    'url',
+    'status',
     'action'
   ];
   editDialog: any;
-  filter = {
-    'registrationRequest': '',
-    'nationName': this.route.snapshot.paramMap.get('nation') || ''
-  };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog,
-    private route: ActivatedRoute
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    this.communities.filterPredicate = filterDropdowns(this.filter);
-    this.getNationList();
     this.getCommunityList();
-    this.communities.filter = this.filter.nationName;
   }
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
-  }
-
-  getNationList() {
-    this.couchService.allDocs('nations')
-      .subscribe((data) => {
-        this.nations = data;
-      }, (error) => this.message = 'There was a problem getting NationList');
   }
 
   getCommunityList() {
@@ -84,14 +66,34 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   updateCommunity(community, change) {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
-    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      const { _id: id, _rev: rev } = community;
-      community.registrationRequest = change;
-      this.couchService.put('communityregistrationrequests/' + id + '?rev=' + rev, community)
-        .subscribe((data) => {
-          this.updateRev(data, this.communities.data);
-          this.editDialog.close();
-        }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+      // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+      // Split community object into id, rev, and all other props in communityInfo
+      const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
+      switch (change) {
+        case 'delete':
+        case 'reject':
+        case 'unlink':
+          const updatedCommunity = { ...community, registrationRequest: change };
+          this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
+            .subscribe((data) => {
+              this.updateRev(data, this.communities.data);
+              this.editDialog.close();
+            }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+          break;
+        case 'accept':
+          forkJoin([
+            // When accepting a registration request, add learner role to user from that community/nation,
+            this.unlockUser(community),
+            // add registrant's information to this database,
+            this.couchService.post('nations', { ...communityInfo, registrationRequest: 'accepted' }),
+            // update registration request to accepted
+            this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
+          ]).subscribe((data) => {
+            community.registrationRequest = 'accepted';
+            this.updateRev(data, this.communities.data);
+            this.editDialog.close();
+          }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
+      }
     };
   }
 
@@ -109,10 +111,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
-  onFilterChange(filterValue: string, field: string) {
-    this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    // Changing the filter string to trigger filterPredicate
-    this.communities.filter = filterValue;
+  // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
+  unlockUser(community) {
+    return this.couchService.post('_users/_find', { 'selector': { 'request_id': community._id } })
+      .pipe(switchMap(data => {
+        const user = data.docs[0];
+        return this.couchService.put('_users/' + user._id + '?rev=' + user._rev,
+          { ...user, roles: [ 'learner' ] });
+      }));
   }
 
 }

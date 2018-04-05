@@ -7,6 +7,9 @@ import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { environment } from '../../environments/environment';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-configuration',
@@ -30,8 +33,9 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    const localDomain = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
     this.loginForm = this.formBuilder.group({
-      username: [ '', Validators.required ],
+      name: [ '', Validators.required ],
       password: [
         '',
         Validators.compose([
@@ -49,7 +53,7 @@ export class ConfigurationComponent implements OnInit {
     });
     this.configurationFormGroup = this.formBuilder.group({
       planet_type: [ '', Validators.required ],
-      local_domain: [ document.baseURI, Validators.required ],
+      local_domain: [ localDomain, Validators.required ],
       name: [ '', Validators.required ],
       parent_domain: [ '', Validators.required ],
       preferred_lang: [ '', Validators.required ],
@@ -72,10 +76,10 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.allDocs('nations')
+    this.couchService.allDocs('nations', { domain: environment.centerAddress })
       .subscribe((data) => {
         this.nations = data;
-      }, (error) => this.message = 'There was a problem getting NationList');
+      }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
   }
 
   onChange(selectedValue: string) {
@@ -83,7 +87,7 @@ export class ConfigurationComponent implements OnInit {
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
         planet_type: selectedValue,
-        parent_domain: 'nbs.ole.org:5997'
+        parent_domain: environment.centerAddress
       });
     } else {
       this.configurationFormGroup.patchValue({
@@ -95,24 +99,43 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password)
-        .subscribe((data) => {
-          this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username,
-          { 'name': this.loginForm.value.username, 'password': this.loginForm.value.password, roles: [], 'type': 'user',
-            'isUserAdmin': true, 'firstName': this.contactFormGroup.value.firstName, 'middleName': this.contactFormGroup.value.middleName,
-            'lastName': this.contactFormGroup.value.lastName, 'email': this.contactFormGroup.value.email,
-            'phoneNumber': this.contactFormGroup.value.phoneNumber }).subscribe((data1) => {
-             this.planetMessageService.showMessage('Admin created: ' + data1.id.replace('org.couchdb.user:', ''));
-          }, (error) => this.message = '');
-          const config = Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value);
-          this.couchService.post('configurations', config).subscribe(() => {
-            this.router.navigate([ '/login' ]);
-          }, (err) => {
-            // Connect to an error display component to show user that an error has occurred
-            console.log(err);
-          });
-        }, (error) => (error));
+      const configuration = Object.assign({ registrationRequest: 'pending' },
+        this.configurationFormGroup.value, this.contactFormGroup.value);
+      const { confirmPassword, ...credentials } = this.loginForm.value;
+      const userDetail: any = {
+        ...credentials,
+        'roles': [],
+        'type': 'user',
+        'isUserAdmin': true,
+        ...this.contactFormGroup.value
+      };
+      forkJoin([
+        // When creating a planet, add admin
+        this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
+        // then add user with same credentials
+        this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
+        // then add configuration
+        this.couchService.post('configurations', configuration),
+        // then post configuration to parent planet's registration requests
+        this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parent_domain })
+          .pipe(switchMap(data => {
+            // then add user to parent planet with id of configuration and isUserAdmin set to false
+            userDetail['request_id'] =  data.id;
+            userDetail['isUserAdmin'] =  false;
+            return this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
+              userDetail, { domain: configuration.parent_domain });
+          })),
+      ]).debug('Sending request to parent planet').subscribe((data) => {
+        this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
+        this.router.navigate([ '/login' ]);
+      }, (error) => this.planetMessageService.showMessage('There was an error creating planet'));
     }
   }
 
 }
+
+const removeProtocol = (str: string) => {
+  // RegEx grabs the fragment of the string between '//' and '/'
+  // First match includes characters, second does not (so we use second)
+  return /\/\/(.*?)\//.exec(str)[1];
+};

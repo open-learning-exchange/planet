@@ -6,6 +6,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -23,12 +24,14 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+  parentLink = false;
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -58,7 +61,12 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   }
 
   getMeetups() {
-    this.couchService.allDocs('meetups')
+    let opts: any = {};
+    if (this.router.url === '/meetups/parent') {
+      this.parentLink = true;
+      opts = { domain: this.userService.getConfig().parent_domain };
+    }
+    this.couchService.allDocs('meetups', opts)
       .subscribe((data) => {
         this.meetups.data = data;
       }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));

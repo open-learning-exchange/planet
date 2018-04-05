@@ -95,6 +95,11 @@ body {
     visibility: hidden;
   }
 
+  // Hide an element entirely, making space for other elements
+  .hidden {
+    display: none;
+  }
+
   .button-icon-text mat-icon {
     margin: 0 3px;
   }

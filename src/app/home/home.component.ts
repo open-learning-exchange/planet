@@ -8,6 +8,7 @@ import { languages } from '../shared/languages';
 import { interval } from 'rxjs/observable/interval';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
   templateUrl: './home.component.html',
@@ -81,7 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'community' ];
+    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
@@ -116,12 +117,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   logoutClick() {
     this.userService.endSessionLog().pipe(switchMap(() => {
-      return this.couchService.delete('_session', { withCredentials: true });
+      return  forkJoin([
+        this.couchService.delete('_session', { withCredentials: true }),
+        this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parent_domain }),
+      ]);
     })).subscribe((response: any) => {
-      if (response.ok === true) {
         this.userService.unset();
         this.router.navigate([ '/login' ], {});
-      }
     }, err => console.log(err));
   }
 

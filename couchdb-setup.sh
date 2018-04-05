@@ -111,8 +111,6 @@ upsert_doc login_activities _index '{"index":{"fields":[{"login_time":"desc"}]},
 upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
 # Insert dummy data docs
-insert_docs communityregistrationrequests ./design/community/community-mockup.json
-insert_docs nations ./design/nations/nations-mockup.json
 insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json

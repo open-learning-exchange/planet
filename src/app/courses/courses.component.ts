@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
+import { UserService } from '../shared/user.service';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 
@@ -34,6 +35,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
+  parentUrl = false;
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -53,7 +55,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -62,7 +65,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   getCourses() {
-    this.couchService.allDocs('courses')
+    let opts: any = {};
+    if (this.router.url === '/courses/parent') {
+      this.parentUrl = true;
+      opts = { domain: this.userService.getConfig().parent_domain };
+    }
+    this.couchService.allDocs('courses', opts)
       .subscribe((data) => {
         this.courses.data = data;
       }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
