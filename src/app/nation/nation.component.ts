@@ -50,21 +50,17 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getNationList() {
-    this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
+    this.couchService.allDocs(this.dbName)
       .subscribe((data) => {
-        // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
-        // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = this.nationsList = data.rows.map(nations => {
-          if (nations.doc.name === this.route.snapshot.paramMap.get('nation')) {
-            this.filter.parent_domain = nations.doc.local_domain;
+        this.nations.data = data.map(nation => {
+          if (nation.name === this.route.snapshot.paramMap.get('nation')) {
+            this.filter.parent_domain = nation.local_domain;
           }
           if (this.route.snapshot.paramMap.get('nation') !== null) {
             this.getCommunity(this.filter.parent_domain);
             this.selectFilter = true;
           }
-          return nations.doc;
-        }).filter(nt  => {
-          return nt['_id'].indexOf('_design') !== 0;
+          return nation;
         });
       }, (error) => this.message = 'There was a problem getting NationList');
   }

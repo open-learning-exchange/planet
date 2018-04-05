@@ -65,18 +65,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   getCourses() {
-    let url = this.couchService.get('courses/_all_docs?include_docs=true');
+    let opts: any = {};
     if (this.router.url === '/courses/parent') {
       this.parentUrl = true;
-      url = this.couchService.get('courses/_all_docs?include_docs=true', { domain: this.userService.getConfig().parent_domain });
+      opts = { domain: this.userService.getConfig().parent_domain };
     }
-    url.subscribe((data) => {
-      this.courses.data = data.rows.map((course: any) => {
-        return course.doc;
-      }).filter((c: any) => {
-        return c._id !== '_design/course-validators';
-      });
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
+    this.couchService.allDocs('courses', opts)
+      .subscribe((data) => {
+        this.courses.data = data;
+      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
   }
 
   ngAfterViewInit() {

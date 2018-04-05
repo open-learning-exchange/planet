@@ -41,13 +41,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   getFeedback() {
-    this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
+    this.couchService.allDocs(this.dbName)
       .subscribe((data) => {
-        this.feedback.data = data.rows.map(feedback => {
-          return feedback.doc;
-        }).filter(fback  => {
-          return fback['_id'].indexOf('_design') !== 0;
-        });
+        this.feedback.data = data;
       }, (error) => this.message = 'There is a problem of getting data.');
   }
 

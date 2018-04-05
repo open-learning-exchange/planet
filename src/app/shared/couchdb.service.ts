@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class CouchService {
@@ -43,6 +44,19 @@ export class CouchService {
 
   delete(db: string, opts?: any): Observable<any> {
     return this.couchDBReq('delete', db, this.setOpts(opts));
+  }
+
+  allDocs(db: string, opts?: any) {
+    return this.couchDBReq('get', db + '/_all_docs?include_docs=true', this.setOpts(opts)).pipe(map((data: any) => {
+      // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
+      return data.rows.map((res: any) => {
+          // Map over data.rows to remove the 'doc' property layer
+          return res.doc;
+        }).filter((doc: any) => {
+          // Filter out any design documents
+          return doc._id.indexOf('_design') === -1;
+        });
+    }));
   }
 
   // Reads a file as a Base64 string to append to object sent to CouchDB

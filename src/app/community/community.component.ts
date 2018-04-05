@@ -37,11 +37,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   getCommunityList() {
-     this.couchService.get('communityregistrationrequests/_all_docs?include_docs=true')
+     this.couchService.allDocs('communityregistrationrequests')
       .subscribe((data) => {
-        // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
-        // Map over data.rows to remove the 'doc' property layer
-        this.communities.data = data.rows.map(community => community.doc);
+        this.communities.data = data;
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 

@@ -76,13 +76,9 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.get('nations/_all_docs?include_docs=true', { domain: environment.centerAddress })
-      .subscribe((response) => {
-        this.nations = response.rows.map(nations => {
-          return nations.doc;
-        }).filter(nt  => {
-          return nt['_id'].indexOf('_design') !== 0;
-        });
+    this.couchService.allDocs('nations', { domain: environment.centerAddress })
+      .subscribe((data) => {
+        this.nations = data;
       }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
   }
 
