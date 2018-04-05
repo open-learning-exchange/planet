@@ -60,8 +60,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
   getMeetups() {
     this.couchService.allDocs('meetups')
       .subscribe((data) => {
-        // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
-        // Map over data.rows to remove the 'doc' property layer
         this.meetups.data = data;
       }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
