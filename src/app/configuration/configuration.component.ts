@@ -102,8 +102,8 @@ export class ConfigurationComponent implements OnInit {
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password)
-      .subscribe((data) => {
-        forkJoin([
+      .pipe(switchMap(data => {
+        return forkJoin([
           this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username,
           { 'name': this.loginForm.value.username, 'password': this.loginForm.value.password, roles: [], 'type': 'user',
             'isUserAdmin': true, 'firstName': this.contactFormGroup.value.firstName, 'middleName': this.contactFormGroup.value.middleName,
@@ -111,12 +111,11 @@ export class ConfigurationComponent implements OnInit {
             'phoneNumber': this.contactFormGroup.value.phoneNumber }),
           this.couchService.put('shelf/org.couchdb.user:' + this.loginForm.value.username, { }),
           this.couchService.post('configurations', Object.assign({}, this.configurationFormGroup.value, this.contactFormGroup.value))
-        ])
-        .subscribe((res) => {
-          this.planetMessageService.showMessage('Admin created: ' + res[0].id.replace('org.couchdb.user:', ''));
-          this.router.navigate([ '/login' ]);
-        }, (error => (error)));
-      });
+        ]);
+      })).subscribe(res => {
+        this.planetMessageService.showMessage('Admin created: ' + res[0].id.replace('org.couchdb.user:', ''));
+        this.router.navigate([ '/login' ]);
+      }, (error => (error)));
     }
   }
 

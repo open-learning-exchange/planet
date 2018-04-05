@@ -65,13 +65,13 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: {name: string, password: string}) {
-    forkJoin([
-      this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false }),
-      this.couchService.put('shelf/org.couchdb.user:' + name, { })
-    ]).subscribe((data) => {
-      this.planetMessageService.showMessage('User created: ' + data[0].id.replace('org.couchdb.user:', ''));
-      this.welcomeNotification(data[0].id);
+    this.couchService.put('_users/org.couchdb.user:' + name,
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
+    .pipe(switchMap(() => {
+      return this.couchService.put('shelf/org.couchdb.user:' + name, { });
+    })).subscribe((response: any) => {
+      this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
+      this.welcomeNotification(response.id);
       this.login(this.userForm.value, true);
     }, error => {
       if (error.error.error === 'conflict') {
