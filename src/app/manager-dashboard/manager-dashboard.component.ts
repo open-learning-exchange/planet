@@ -4,9 +4,11 @@ import { UserService } from '../shared/user.service';
 @Component({
   template: `
     <div *ngIf="displayDashboard">
-      <a *ngIf="planetType !== 'community'" routerLink="/requests" i18n mat-raised-button>Requests</a>
-      <a *ngIf="planetType !== 'community'" routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
-      i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
+      <span *ngIf="planetType !== 'community'">
+        <a routerLink="/requests" i18n mat-raised-button>Requests</a>
+        <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
+          i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
+      </span>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
