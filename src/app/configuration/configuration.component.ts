@@ -114,12 +114,16 @@ export class ConfigurationComponent implements OnInit {
         ...this.contactFormGroup.value
       };
       forkJoin([
-        // When
+        // When creating a planet, add admin
         this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
+        // then add user with same credentials
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
+        // then add configuration
         this.couchService.post('configurations', configuration),
+        // then post configuration to parent planet's registration requests
         this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parent_domain })
           .pipe(switchMap(data => {
+            // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['request_id'] =  data.id;
             userDetail['isUserAdmin'] =  false;
             return this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
@@ -128,7 +132,7 @@ export class ConfigurationComponent implements OnInit {
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
-      }, (error) => this.planetMessageService.showMessage('There was an error creating planet');
+      }, (error) => this.planetMessageService.showMessage('There was an error creating planet'));
     }
   }
 

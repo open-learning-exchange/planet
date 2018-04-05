@@ -37,7 +37,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private http: HttpClient,
     private planetMessageService: PlanetMessageService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.nations.filterPredicate = filterDropdowns(this.filter);
