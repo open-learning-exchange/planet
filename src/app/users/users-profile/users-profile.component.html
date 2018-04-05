@@ -1,29 +1,27 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>Users</span>
-  <span class="toolbar-fill"></span>
-</mat-toolbar>
-
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span>{{userDetail.name}}</span>
-    <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender}}"></mat-icon>
+    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>Users</span>
     <span class="toolbar-fill"></span>
-    <button mat-button class="margin-lr-3" *ngIf="user.name === urlName || user.isUserAdmin" i18n [routerLink]="['/users/update/', urlName]"><mat-icon>mode_edit</mat-icon><span>Edit Profile</span></button>
-    <button mat-button class="margin-lr-3" *ngIf="user.name === urlName" i18n (click)="changePasswordForm(userDetail)"><span>Change password</span></button>
   </mat-toolbar>
-  <div class="view-container">
-    <mat-grid-list cols="2">
-      <mat-grid-tile>
+  <div class="space-container">
+    <mat-toolbar class="primary-color font-size-1">
+      <span>{{userDetail.name}}</span>
+      <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender}}"></mat-icon>
+      <span class="toolbar-fill"></span>
+      <button mat-button class="margin-lr-3" *ngIf="user.name === urlName || user.isUserAdmin" i18n [routerLink]="['/users/update/', urlName]"><mat-icon>mode_edit</mat-icon><span>Edit Profile</span></button>
+      <button mat-button class="margin-lr-3" *ngIf="user.name === urlName" i18n (click)="changePasswordForm(userDetail)"><span>Change password</span></button>
+    </mat-toolbar>
+    <div class="view-container">
+      <div class="user_image">
         <ng-container *ngIf="userDetail._attachments; else noAttachment">
-          <img class="profile-image-large" [src]="imageSrc">
-        </ng-container>
-        <ng-template #noAttachment>
-          <img class="profile-image-large" src="../assets/image.png">
-        </ng-template>
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <mat-list class="user_data">
+         <img class="profile-image-large" [src]="imageSrc">
+       </ng-container>
+       <ng-template #noAttachment>
+         <img class="profile-image-large" src="../assets/image.png">
+       </ng-template>
+      </div>
+      <div class="user_data">
+        <mat-list class="user_info">
           <mat-list-item>
             <h4 class="primary-text-color" matLine i18n>Full Name</h4>
             <p matLine><b>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</b></p>
@@ -40,23 +38,22 @@
           </mat-list-item>
           <mat-divider></mat-divider>
         </mat-list>
-        <mat-list class="user_data">
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>DOB</h4>
-            <p matLine><b>{{userDetail.birthDate}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Phone</h4>
-            <p matLine><b>{{userDetail.phoneNumber}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Level</h4>
-            <p matLine><b>{{userDetail.level}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        </mat-list>
-      </mat-grid-tile>
-    </mat-grid-list>
-</div>
+       <mat-list class="user_info">
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>DOB</h4>
+          <p matLine><b>{{userDetail.birthDate}}</b></p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>Phone</h4>
+          <p matLine><b>{{userDetail.phoneNumber}}</b></p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>Level</h4>
+          <p matLine><b>{{userDetail.level}}</b></p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+       </mat-list>
+      </div>
+    </div>
