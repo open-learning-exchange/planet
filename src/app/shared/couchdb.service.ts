@@ -10,12 +10,13 @@ export class CouchService {
   private baseUrl = environment.couchAddress;
   private reqNum = 0;
 
-  private setOpts(opts?: any) {
-    return Object.assign({}, this.defaultOpts, opts) || this.defaultOpts;
+  private setOpts(opts: any = {}) {
+    const { domain, ...httpOpts } = opts;
+    return [ domain, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
   }
 
-  private couchDBReq(type: string, db: string, opts: any, data?: any) {
-    const url = this.baseUrl + db;
+  private couchDBReq(type: string, db: string, [ domain, opts ]: any[], data?: any) {
+    const url = domain ? 'http://' + domain + '/' + db : this.baseUrl + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
       httpReq = this.http[type](url, data, opts);

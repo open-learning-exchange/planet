@@ -1,50 +1,47 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { Validators } from '@angular/forms';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterDropdowns } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { ValidatorService } from '../validators/validator.service';
 
 @Component({
   templateUrl: './nation.component.html'
 })
 
 export class NationComponent implements OnInit, AfterViewInit {
-
+  nationsList = [];
   nations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'admin_name', 'nationurl', 'action' ];
+  displayedColumns = [ 'name', 'code', 'url', 'status', 'action' ];
   readonly dbName = 'nations';
   message = '';
-  modalForm: any;
   deleteDialog: any;
   ViewNationDetailDialog: any;
-  formDialog: any;
-  valid_data: {};
-  result: any;
-  view_data = [];
+  parentType = this.route.snapshot.paramMap.get('planet');
+  selectedNation = '';
+  selectFilter = false;
+  filter = {
+    'registrationRequest': '',
+    'parent_domain': ''
+  };
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private couchService: CouchService,
-    private validatorService: ValidatorService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
     private http: HttpClient,
     private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
+    this.nations.filterPredicate = filterDropdowns(this.filter);
     this.getNationList();
-    // Override default matTable filter to only filter below fields
-    this.nations.filterPredicate = filterSpecificFields([ 'name', 'admin_name', 'nationurl' ]);
   }
 
   ngAfterViewInit() {
@@ -52,18 +49,19 @@ export class NationComponent implements OnInit, AfterViewInit {
     this.nations.paginator = this.paginator;
   }
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.nations.filter = filterValue;
-  }
-
   getNationList() {
     this.couchService.get(this.dbName + '/_all_docs?include_docs=true')
       .subscribe((data) => {
         // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
         // Map over data.rows to remove the 'doc' property layer
-        this.nations.data = data.rows.map(nations => {
+        this.nations.data = this.nationsList = data.rows.map(nations => {
+          if (nations.doc.name === this.route.snapshot.paramMap.get('nation')) {
+            this.filter.parent_domain = nations.doc.local_domain;
+          }
+          if (this.route.snapshot.paramMap.get('nation') !== null) {
+            this.getCommunity(this.filter.parent_domain);
+            this.selectFilter = true;
+          }
           return nations.doc;
         }).filter(nt  => {
           return nt['_id'].indexOf('_design') !== 0;
@@ -100,56 +98,19 @@ export class NationComponent implements OnInit, AfterViewInit {
     };
   }
 
-  onSubmit(nation) {
-    if (nation) {
-      const formdata = {
-        'admin_name': nation.adminName,
-        'name': nation.name,
-        'nationurl': nation.nationUrl,
-        'type': 'nation'
-      };
-      this.couchService.post(this.dbName, formdata)
-        .subscribe((data) => {
-          formdata[ '_id' ] = data.id;
-          formdata[ '_rev' ] = data.rev;
-          this.nations.data.push(formdata);
-          this.nations._updateChangeSubscription();
-          this.planetMessageService.showMessage('New Nation Created: ' + nation.name);
-        }, (error) => this.message = 'Error');
-    }
-  }
-
-  openNationAddForm() {
-    const title = 'Add Nation';
-    const type = 'nation';
-    const fields =
-      [
-        { 'label': 'Admin Name', 'type': 'textbox', 'name': 'adminName', 'placeholder': 'Admin Name', 'required': true },
-        { 'label': 'Nation Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Nation Name', 'required': true },
-        { 'label': 'Nation URL', 'type': 'textbox', 'name': 'nationUrl', 'placeholder': 'Nation URL', 'required': true }
-      ];
-    const formGroup = {
-      adminName: [ '', Validators.required ],
-      name: [ '', Validators.required, ac => this.validatorService.isUnique$(this.dbName, 'name', ac) ],
-      nationUrl: [ '', Validators.required,
-      nurl => this.validatorService.isUnique$(this.dbName, 'nationurl', nurl) ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.onSubmit(res);
-        }
-      });
-  }
-
   communityList(nationname) {
-    this.router.navigate([ '/community/' + nationname ]);
+    this.router.navigate([ '/associated/community/' + nationname ]);
   }
 
-  viewResources(nationname) {
-    this.router.navigate([ '/resources/' + nationname ]);
+  getCommunity(url) {
+    this.couchService.get('nations/_all_docs?include_docs=true', { domain: url })
+      .subscribe((res: any) => {
+        this.nations.data = res.rows.map(nations => {
+          return nations.doc;
+        }).filter(nt  => {
+          return nt['_id'].indexOf('_design') !== 0;
+        });
+      }, (error) => this.message = 'There was a problem getting NationList');
   }
 
   view(url) {
@@ -169,8 +130,17 @@ export class NationComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Changing the filter string to trigger filterPredicate
+    this.nations.filter = filterValue;
+    if (field === 'parent_domain') {
+      this.getCommunity(filterValue);
+    }
+  }
+
   back() {
-    this.router.navigate([ '/' ]);
+    this.router.navigate([ '/manager' ]);
   }
 
 }
