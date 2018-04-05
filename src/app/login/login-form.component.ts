@@ -68,15 +68,17 @@ export class LoginFormComponent {
   createUser({ name, password }: {name: string, password: string}) {
     this.couchService.put('_users/org.couchdb.user:' + name,
       { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
-        .subscribe((data) => {
-          this.planetMessageService.showMessage('User created: ' + data.id.replace('org.couchdb.user:', ''));
-          this.welcomeNotification(data.id);
-          this.login(this.userForm.value, true);
-        }, error => {
-          if (error.error.error === 'conflict') {
-            this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
-          }
-        });
+    .pipe(switchMap(() => {
+      return this.couchService.put('shelf/org.couchdb.user:' + name, { });
+    })).subscribe((response: any) => {
+      this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
+      this.welcomeNotification(response.id);
+      this.login(this.userForm.value, true);
+    }, error => {
+      if (error.error.error === 'conflict') {
+        this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
+      }
+    });
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {

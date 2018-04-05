@@ -118,6 +118,8 @@ export class ConfigurationComponent implements OnInit {
         this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
         // then add user with same credentials
         this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
+        // then add a shelf for that user
+        this.couchService.put('shelf/org.couchdb.user:' + this.loginForm.value.username, { }),
         // then add configuration
         this.couchService.post('configurations', configuration),
         // then post configuration to parent planet's registration requests
