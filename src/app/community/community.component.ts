@@ -28,6 +28,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog
   ) {}
 
+  ngOnInit() {
+    this.getCommunityList();
+  }
+
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
   }
@@ -107,10 +111,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           this.editDialog.close();
         }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
     };
-  }
-
-  ngOnInit() {
-    this.getCommunityList();
   }
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
