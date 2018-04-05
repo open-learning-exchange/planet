@@ -45,9 +45,13 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
-  allDocs(db: string) {
-    return this.get(db + '/_all_docs?include_docs=true').pipe(map(data => {
-      return data;
+  allDocs(db: string, opts?: any) {
+    return this.couchDBReq('get', db + '/_all_docs?include_docs=true', this.setOpts(opts)).pipe(map(data => {
+      return data['rows'].map((res: any) => {
+          return res.doc;
+        }).filter((doc: any) => {
+          return doc._id.indexOf('_design') === -1;
+        });
     }));
   }
 

@@ -72,13 +72,9 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.get('nations/_all_docs?include_docs=true')
+    this.couchService.allDocs('nations')
       .subscribe((data) => {
-        this.nations = data.rows.map(nations => {
-          return nations.doc;
-        }).filter(nt  => {
-          return nt['_id'].indexOf('_design') !== 0;
-        });
+        this.nations = data;
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 

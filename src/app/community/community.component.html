@@ -8,7 +8,7 @@
   <mat-form-field class="font-size-1">
     <mat-select placeholder="Nation Name" [value]="filter.nationName || 'All'" (change)="onFilterChange($event.value, 'nationName')">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let nation of nations;" value={{nation.doc.name}}>{{nation.doc.name}}</mat-option>
+      <mat-option *ngFor="let nation of nations;" value={{nation.name}}>{{nation.name}}</mat-option>
     </mat-select>
   </mat-form-field> &nbsp;
   <mat-form-field class="font-size-1">
