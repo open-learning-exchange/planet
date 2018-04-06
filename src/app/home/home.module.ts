@@ -15,6 +15,9 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { MeetupsModule } from '../meetups/meetups.module';
+import { CoursesModule } from '../courses/courses.module';
+import { ResourcesModule } from '../resources/resources.module';
 
 @NgModule({
   imports: [
@@ -26,7 +29,10 @@ import { NotificationsComponent } from '../notifications/notifications.component
     MaterialModule,
     PlanetDialogsModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    MeetupsModule,
+    CoursesModule,
+    ResourcesModule
   ],
   declarations: [
     HomeComponent,
