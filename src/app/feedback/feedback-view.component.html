@@ -10,7 +10,7 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container">
-    <div class="chat-list">
+    <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages">
         <div class="chat-list-user">
           <p>{{message.user}}</p>

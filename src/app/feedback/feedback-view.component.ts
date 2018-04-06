@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { switchMap, takeUntil } from 'rxjs/operators';
@@ -17,6 +17,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   feedback: any = {};
   user: any = {};
   newMessage = '';
+  @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
     private couchService: CouchService,
@@ -42,7 +43,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   setFeedback(result) {
     this.feedback = result.docs[0];
-    this.feedback.messages = this.feedback.messages.sort((a, b) => b.time - a.time);
+    this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
+    this.scrollToBottom();
   }
 
   getFeedback(id) {
@@ -51,7 +53,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   postMessage() {
     const newFeedback = Object.assign({}, this.feedback);
-    newFeedback.messages.push({ message: this.newMessage, user: this.user.name, time: Date.now() });
+    // Object.assign is a shallow copy, so also copy messages array so view only updates after success
+    newFeedback.messages = [].concat(this.feedback.messages, { message: this.newMessage, user: this.user.name, time: Date.now() });
     this.couchService.put(this.dbName + '/' + this.feedback._id, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
@@ -73,6 +76,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         // Problem is if we recursively call this function here it will
         // indefinitely run, even if the user moves on to a new route.
       });
+  }
+
+  scrollToBottom() {
+    this.chatListElement.nativeElement.scrollTop = this.chatListElement.nativeElement.scrollHeight;
   }
 
 }
