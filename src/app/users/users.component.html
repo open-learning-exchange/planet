@@ -84,8 +84,8 @@
           <button mat-icon-button *ngIf="element.roles.length > 0" (click)="removeRole(element)">
             <mat-icon>lock_open</mat-icon>
           </button>
-          <button mat-raised-button color="primary"  *ngIf="!element.myTeamInfo" (click)="addTeams([{'_id': element._id}])">Add Team</button>
-          <button mat-raised-button color="primary"  *ngIf="element.myTeamInfo" (click)="removeTeam(element._id)">Remove Team</button>
+          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([{'_id': element._id}])">Add Team</button>
+          <ng-template #addTeam><button mat-raised-button color="primary" *ngIf="element.myTeamInfo" (click)="removeTeam(element._id)">Remove Team</button></ng-template>
           <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
             <mat-icon>folder_open</mat-icon>
           </a>

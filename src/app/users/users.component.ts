@@ -108,12 +108,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
           const myTeamIndex = data[1].docs[0].myTeamIds ? data[1].docs[0].myTeamIds.findIndex(myTeamId => {
             return user._id === myTeamId;
           }) : -1;
-          if (myTeamIndex > -1) {
-            users.push({ ...user, myTeamInfo: true });
-          } else {
-            users.push({ ...user, myTeamInfo: false });
-          }
-        } else if (user._id !== '_design/_auth' && user.isUserAdmin === true) {
+          myTeamIndex > -1 ? users.push({ ...user, myTeamInfo: true }) : users.push({ ...user, myTeamInfo: false });
+        } else if (user._id !== '_design/_auth' && user.doc.isUserAdmin === true) {
           users.push({ ...user });
         }
         return users;
