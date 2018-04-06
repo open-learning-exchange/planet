@@ -82,26 +82,22 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.get('_users/_all_docs?include_docs=true');
+    return this.couchService.allDocs('_users');
   }
 
   initializeData() {
     this.selection.clear();
-    this.getUsers().debug('Getting user list').subscribe((data) => {
-      this.allUsers.data = data.rows.reduce((users: any[], user: any) => {
-        if (user.id !== '_design/_auth') {
-          if (user.doc._attachments) {
-            user.doc.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.doc.name + '/' + Object.keys(user.doc._attachments)[0];
-          }
-          users.push({ ...user.doc });
-        } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
-          users.push({ ...user.doc });
+    this.getUsers().subscribe((data) => {
+      this.allUsers.data = data.reduce((users: any[], user: any) => {
+        if (user._attachments) {
+          user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
+        users.push({ ...user });
         return users;
       }, []);
     }, (error) => {
-      // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
-      console.log('Error initializing data!');
+      // A bit of a placeholder for error handling. Request will return error if the logged in user is not an admin.
+      console.log('Error initializing data');
       console.log(error);
     });
   }

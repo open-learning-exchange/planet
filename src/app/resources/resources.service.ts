@@ -56,7 +56,6 @@ export class ResourcesService {
 
   createResourceList(resourcesRes, ratings) {
     return resourcesRes.map((r: any) => {
-      console.log('r', r);
       const resource = r.doc || r;
       const ratingIndex = ratings.findIndex(rating => {
         return resource._id === rating.item;
