@@ -8,7 +8,7 @@ import { MeetupsViewComponent } from './view-meetups/meetups-view.component';
 const routes: Routes = [
   { path: '', component: MeetupsComponent },
   { path: 'add', component: MeetupsAddComponent },
-  { path: 'parent', component: MeetupsComponent }
+  { path: 'parent', component: MeetupsComponent },
   { path: 'update/:id', component: MeetupsAddComponent },
   { path: 'view/:id', component: MeetupsViewComponent }
 ];

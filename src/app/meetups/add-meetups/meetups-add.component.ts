@@ -74,12 +74,7 @@ export class MeetupsAddComponent implements OnInit {
       ],
       category: '',
       meetupLocation: '',
-      createdBy: this.userService.get().name
-    });
-
-    // set default values
-    this.meetupForm.patchValue({
-      creator: this.userService.get().name,
+      createdBy: this.userService.get().name,
       createdDate: Date.now()
     });
   }

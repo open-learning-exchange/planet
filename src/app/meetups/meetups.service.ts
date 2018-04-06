@@ -26,12 +26,12 @@ export class MeetupService {
       this.getMeetups(meetupIds) : this.getAllMeetups();
     forkJoin(resourceQuery, this.getUserMeetups()).subscribe((response) => {
       const shelfMeetupIds = (response[1].docs[0] && response[1].docs[0].meetupIds) ? response[1].docs[0].meetupIds : [];
-      this.meetupUpdated.next(this.setupList(response[0].rows || response[0].docs, shelfMeetupIds));
+      this.meetupUpdated.next(this.meetupList(response[0], shelfMeetupIds));
     }, (err) => console.log(err));
   }
 
   getAllMeetups() {
-    return this.couchService.get('meetups/_all_docs?include_docs=true');
+    return this.couchService.allDocs('meetups');
   }
 
   getMeetups(meetupIds: string[]) {
@@ -43,15 +43,14 @@ export class MeetupService {
   getUserMeetups() {
     return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
     .pipe(catchError(err => {
-      // If there's an error, return a fake couchDB empty response
-      // so resources can be displayed.
+      // If there's an error, return a fake couchDB empty response so meetups can be displayed.
       return of({ docs: [] });
     }));
   }
 
-  setupList(meetupRes, userMeetupRes) {
-    return  meetupRes.map((m: any) => {
-      const meetup = m.doc || m;
+  meetupList(meetupRes, userMeetupRes) {
+    return  meetupRes.map((res: any) => {
+      const meetup = res.doc || res;
       const meetupIndex = userMeetupRes.findIndex(meetupIds => {
         return meetup._id === meetupIds;
       });
@@ -65,19 +64,21 @@ export class MeetupService {
   attendMeetup(meetupId, participate) {
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, meetupIds: data.docs[0].meetupIds || [], resourceIds: data.docs[0].resourceIds || [], courseIds: data.docs[0].courseIds || [] };
+          return { rev: { _rev: data.docs[0]._rev }, meetupIds: data.docs[0].meetupIds || [],
+            resourceIds: data.docs[0].resourceIds || [], courseIds: data.docs[0].courseIds || [],
+            myTeamIds: data.docs[0].myTeamIds || [] };
         }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
           // Observable of continues stream
-          return of({ rev: {}, meetupIds: [], resourceIds: [], courseIds: [] });
+          return of({ rev: {}, meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] });
         }),
         switchMap(data => {
           const meetupIds = participate ? data.meetupIds.splice(meetupId, 1) && data.meetupIds
             : data.meetupIds.push(meetupId) && data.meetupIds;
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds, courseIds: data.courseIds }));
+            Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds, courseIds: data.courseIds, myTeamIds: data.myTeamIds }));
         })
       ).subscribe((res) =>  {
         this.updateMeetup();
