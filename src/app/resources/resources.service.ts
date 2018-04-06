@@ -25,12 +25,12 @@ export class ResourcesService {
     forkJoin(resourceQuery, this.getRatings(resourceIds, opts)).subscribe((results) => {
       const resourcesRes = results[0],
         ratingsRes = results[1];
-      this.resourcesUpdated.next(this.createResourceList(resourcesRes.rows || resourcesRes.docs, ratingsRes.docs));
+      this.resourcesUpdated.next(this.createResourceList(resourcesRes || resourcesRes, ratingsRes.docs));
     }, (err) => console.log(err));
   }
 
   getAllResources(opts: any) {
-    return this.couchService.get('resources/_all_docs?include_docs=true', opts);
+    return this.couchService.allDocs('resources', opts);
   }
 
   getResources(resourceIds: string[], opts: any) {
@@ -56,6 +56,7 @@ export class ResourcesService {
 
   createResourceList(resourcesRes, ratings) {
     return resourcesRes.map((r: any) => {
+      console.log('r', r);
       const resource = r.doc || r;
       const ratingIndex = ratings.findIndex(rating => {
         return resource._id === rating.item;

@@ -129,17 +129,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getNotification() {
     const user_id = 'org.couchdb.user:' + this.userService.get().name;
-    this.couchService.get('notifications/_all_docs?include_docs=true')
+    this.couchService.allDocs('notifications')
       .subscribe((data) => {
+        console.log('notification', data);
         let cnt = 0;
-        data.rows.sort((a, b) => 0 - (new Date(a.doc.time) > new Date(b.doc.time) ? 1 : -1));
-        this.notifications = data.rows.map(notifications => {
-          if (notifications.doc.status === 'unread') {
+        data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
+        this.notifications = data.map(notifications => {
+          if (notifications.status === 'unread') {
             cnt ++;
           }
           return notifications;
         }).filter(nt  => {
-          return nt.doc['user'] === user_id;
+          return nt['user'] === user_id;
         });
         this.notifications['count_unread'] =  cnt;
       }, (error) => console.log(error));
