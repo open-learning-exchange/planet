@@ -33,14 +33,6 @@ export class MeetupService {
     }, (err) => console.log(err));
   }
 
-  // getAllMeetups() {
-  //   // meetups form meetup table
-
-  //   return this.couchService.allDocs('meetups')
-  //   .subscribe((data) =>{
-  //     return data;
-  //   })
-  // }
   getAllMeetups() {
     let opts: any = {};
     if (this.router.url === '/meetups/parent') {
@@ -100,7 +92,7 @@ export class MeetupService {
         })
       ).subscribe((res) =>  {
         this.showMeetup();
-        const msg = participate ? 'left' : 'join';
+        const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
   }

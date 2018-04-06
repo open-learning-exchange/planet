@@ -17,6 +17,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
+    // meetupService made public because of error Property is private and only accessible within class during prod build
     public meetupService: MeetupService
   ) { }
 
