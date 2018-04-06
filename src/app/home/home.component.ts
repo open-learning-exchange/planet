@@ -117,10 +117,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   logoutClick() {
     this.userService.endSessionLog().pipe(switchMap(() => {
-      return  forkJoin([
-        this.couchService.delete('_session', { withCredentials: true }),
-        this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parent_domain }),
-      ]);
+      if (this.userService.getConfig().name === this.userService.get().name) {
+        return  forkJoin([
+          this.couchService.delete('_session', { withCredentials: true }),
+          this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parent_domain }),
+        ]);
+      }
+      return this.couchService.delete('_session', { withCredentials: true });
     })).subscribe((response: any) => {
         this.userService.unset();
         this.router.navigate([ '/login' ], {});
