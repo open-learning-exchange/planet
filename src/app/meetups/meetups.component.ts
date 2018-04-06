@@ -30,7 +30,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
-  parentLink = false;
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -49,7 +48,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((meetups) => {
       this.meetups.data = meetups;
     });
-    this.meetupService.updateMeetup();
+    this.meetupService.showMeetup();
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }
 
@@ -76,17 +75,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.filter = filterValue;
   }
 
-  getMeetups() {
-    let opts: any = {};
-    if (this.router.url === '/meetups/parent') {
-      this.parentLink = true;
-      opts = { domain: this.userService.getConfig().parent_domain };
-    }
-    this.couchService.allDocs('meetups', opts)
-      .subscribe((data) => {
-        this.meetups.data = data;
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
-  }
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -126,7 +114,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
         .subscribe((data) => {
-          this.meetupService.updateMeetup();
+          this.meetupService.showMeetup();
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected meetups');

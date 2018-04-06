@@ -7,40 +7,58 @@ import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { UsersRouterModule } from '../users/users-router.module';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class MeetupService {
 
   private meetupUpdated = new Subject<any[]>();
   meetupUpdated$ = this.meetupUpdated.asObservable();
+  parentLink = false;
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
+    private router: Router,
     private planetMessageService: PlanetMessageService
   ) {}
 
-  updateMeetup(meetupIds: string[] = []) {
+  showMeetup(meetupIds: string[] = []) {
     const resourceQuery = meetupIds.length > 0 ?
       this.getMeetups(meetupIds) : this.getAllMeetups();
-    forkJoin(resourceQuery, this.getUserMeetups()).subscribe((response) => {
+    forkJoin(resourceQuery, this.getUserMeetups()).subscribe((response: any) => {
       const shelfMeetupIds = (response[1].docs[0] && response[1].docs[0].meetupIds) ? response[1].docs[0].meetupIds : [];
-      this.meetupUpdated.next(this.meetupList(response[0], shelfMeetupIds));
+      const listAllMeetups = response[0].docs ? response[0].docs : response[0];
+      this.meetupUpdated.next(this.meetupList(listAllMeetups, shelfMeetupIds));
     }, (err) => console.log(err));
   }
 
+  // getAllMeetups() {
+  //   // meetups form meetup table
+
+  //   return this.couchService.allDocs('meetups')
+  //   .subscribe((data) =>{
+  //     return data;
+  //   })
+  // }
   getAllMeetups() {
-    return this.couchService.allDocs('meetups');
+    let opts: any = {};
+    if (this.router.url === '/meetups/parent') {
+      this.parentLink = true;
+      opts = { domain: this.userService.getConfig().parent_domain };
+    }
+    return this.couchService.allDocs('meetups', opts);
   }
 
   getMeetups(meetupIds: string[]) {
+    // find meetupId on meetup table
     return this.couchService.post('meetups/_find', findDocuments({
       '_id': { '$in': meetupIds }
     }, 0));
   }
 
   getUserMeetups() {
+    // get meetup from user shelf
     return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
     .pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response so meetups can be displayed.
@@ -81,7 +99,7 @@ export class MeetupService {
             Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds, courseIds: data.courseIds, myTeamIds: data.myTeamIds }));
         })
       ).subscribe((res) =>  {
-        this.updateMeetup();
+        this.showMeetup();
         const msg = participate ? 'left' : 'join';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
     }, (error) => (error));

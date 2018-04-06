@@ -39,7 +39,8 @@
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
-        <h3 class="header"><a [routerLink]="['/meetups/view', element._id]">{{element.title}}</a>
+        <h3 class="header">
+          <a [routerLink]="['/meetups/view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content">
           <p>{{ element.description }}</p>

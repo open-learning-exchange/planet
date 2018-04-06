@@ -17,7 +17,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private meetupService: MeetupService
+    public meetupService: MeetupService
   ) { }
 
   ngOnInit() {
@@ -26,7 +26,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
-        this.meetupService.updateMeetup([ meetupId ]);
+        this.meetupService.showMeetup([ meetupId ]);
       }, error => console.log(error), () => console.log('complete getting meetup id'));
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
