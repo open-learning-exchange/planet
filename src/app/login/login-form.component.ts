@@ -5,26 +5,35 @@ import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormBuilder,
+  Validators
+} from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
+import { PouchdbAuthService } from '../shared/services';
 
 @Component({
   templateUrl: './login-form.component.html',
-  styleUrls: [ './login.scss' ]
+  styleUrls: ['./login.scss']
 })
 export class LoginFormComponent {
   public userForm: FormGroup;
   constructor(
     private couchService: CouchService,
+    private authService: PouchdbAuthService,
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService
   ) {
-    const formObj = this.createMode ? Object.assign({}, loginForm, repeatPassword) : loginForm;
+    const formObj = this.createMode
+      ? Object.assign({}, loginForm, repeatPassword)
+      : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
 
@@ -47,74 +56,173 @@ export class LoginFormComponent {
 
   welcomeNotification(userId) {
     const data = {
-      'user': userId,
-      'message': 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
-      'link': '',
-      'type': 'register',
-      'priority': 1,
-      'status': 'unread',
-      'time': Date.now()
+      user: userId,
+      message:
+        'Welcome ' +
+        userId.replace('org.couchdb.user:', '') +
+        ' to the Planet Learning',
+      link: '',
+      type: 'register',
+      priority: 1,
+      status: 'unread',
+      time: Date.now()
     };
-    this.couchService.post('notifications', data)
-      .subscribe();
+    this.couchService.post('notifications', data).subscribe();
   }
 
   reRoute() {
-    return this.router.navigate([ this.returnUrl ]);
+    return this.router.navigate([this.returnUrl]);
   }
 
-  createUser({ name, password }: {name: string, password: string}) {
-    this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
-    .pipe(switchMap(() => {
-      return this.couchService.put('shelf/org.couchdb.user:' + name, { });
-    })).subscribe((response: any) => {
-      this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
-      this.welcomeNotification(response.id);
-      this.login(this.userForm.value, true);
-    }, error => {
-      if (error.error.error === 'conflict') {
-        this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
-      }
-    });
+  createUser({ name, password }: { name: string; password: string }) {
+    this.authService
+      .signupUser(name, password, {
+        roles: [],
+        type: 'user',
+        isUserAdmin: false
+      })
+      .subscribe(
+        data => {
+          this.planetMessageService.showMessage(
+            'User created: ' + data.id.replace('org.couchdb.user:', '')
+          );
+          this.welcomeNotification(data.id);
+          this.login(this.userForm.value, true);
+        },
+        error => {
+          if (error.error.error === 'conflict') {
+            this.planetMessageService.showAlert(
+              'User name already exists. Please register with a different user name.'
+            );
+          }
+        }
+      );
+    // this.couchService
+    //   .put('_users/org.couchdb.user:' + name, {
+    //     name: name,
+    //     password: password,
+    //     roles: [],
+    //     type: 'user',
+    //     isUserAdmin: false
+    //   })
+    //   .subscribe(
+    //     data => {
+    //       this.planetMessageService.showMessage(
+    //         'User created: ' + data.id.replace('org.couchdb.user:', '')
+    //       );
+    //       this.welcomeNotification(data.id);
+    //       this.login(this.userForm.value, true);
+    //     },
+    //     error => {
+    //       if (error.error.error === 'conflict') {
+    //         this.planetMessageService.showAlert(
+    //           'User name already exists. Please register with a different user name.'
+    //         );
+    //       }
+    //     }
+    //   );
   }
 
-  login({ name, password }: {name: string, password: string}, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
-      .pipe(switchMap((data) => {
-        // Navigate into app
-        if (isCreate) {
-          return fromPromise(this.router.navigate( [ 'users/update/' + name ]));
-        } else {
-          return fromPromise(this.reRoute());
-        }
-      }), switchMap((routeSuccess) => {
-        // Post new session info to login_activity
-        const obsArr = [ this.userService.newSessionLog() ];
-        // If not in e2e test, also add session to parent domain
-        if (!environment.test && this.userService.getConfig().name === name.toLowerCase()) {
-          obsArr.push(this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
-            { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
-        }
-        return forkJoin(obsArr);
-      })).subscribe((res) => {
-
-      }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
+  login(
+    { name, password }: { name: string; password: string },
+    isCreate: boolean
+  ) {
+    this.authService
+      .login(name, password)
+      .pipe(
+        switchMap(data => {
+          if (isCreate) {
+            return fromPromise(this.router.navigate(['users/update/' + name]));
+          } else {
+            return fromPromise(this.reRoute());
+          }
+        }),
+        switchMap(routeSuccess => {
+          const obsArr = [this.userService.newSessionLog()];
+          if (!environment.test) {
+            obsArr.push(
+              this.couchService.post(
+                '_session',
+                { name: name.toLowerCase(), password: password },
+                {
+                  withCredentials: true,
+                  domain: this.userService.getConfig().parent_domain
+                }
+              )
+            );
+          }
+          return forkJoin(obsArr);
+        })
+      )
+      .subscribe(
+        res => {},
+        error =>
+          this.planetMessageService.showMessage(
+            'Username and/or password do not match'
+          )
+      );
+    //   this.couchService
+    //     .post(
+    //       '_session',
+    //       { name: name, password: password },
+    //       { withCredentials: true }
+    //     )
+    //     .pipe(
+    //       switchMap(data => {
+    //         // Navigate into app
+    //         if (isCreate) {
+    //           return fromPromise(this.router.navigate(['users/update/' + name]));
+    //         } else {
+    //           return fromPromise(this.reRoute());
+    //         }
+    //       }),
+    //       switchMap(routeSuccess => {
+    //         // Post new session info to login_activity
+    //         const obsArr = [this.userService.newSessionLog()];
+    //         // If not in e2e test, also add session to parent domain
+    //         if (!environment.test) {
+    //           obsArr.push(
+    //             this.couchService.post(
+    //               '_session',
+    //               { name: name.toLowerCase(), password: password },
+    //               {
+    //                 withCredentials: true,
+    //                 domain: this.userService.getConfig().parent_domain
+    //               }
+    //             )
+    //           );
+    //         }
+    //         return forkJoin(obsArr);
+    //       })
+    //     )
+    //     .subscribe(
+    //       res => {},
+    //       error =>
+    //         this.planetMessageService.showMessage(
+    //           'Username and/or password do not match'
+    //         )
+    //     );
   }
 }
 
 const repeatPassword = {
-  password: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('repeatPassword', false)
-    ]) ],
-  repeatPassword: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('password', true)
-    ]) ]
+  password: [
+    '',
+    Validators.compose([
+      Validators.required,
+      CustomValidators.matchPassword('repeatPassword', false)
+    ])
+  ],
+  repeatPassword: [
+    '',
+    Validators.compose([
+      Validators.required,
+      CustomValidators.matchPassword('password', true)
+    ])
+  ]
 };
 
 const loginForm = {
-  name: [ '', Validators.required ],
-  password: [ '', Validators.required ]
+  name: ['', Validators.required],
+  password: ['', Validators.required]
 };
