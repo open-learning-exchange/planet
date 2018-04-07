@@ -18,6 +18,7 @@ import { MaterialModule } from './shared/material.module';
 
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
+import { SHARED_SERVICES } from './shared/services';
 
 @NgModule({
   imports: [
@@ -30,12 +31,16 @@ import { MatIconRegistry } from '@angular/material';
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
   ],
-  declarations: [
-    AppComponent, PageNotFoundComponent
-  ],
+  declarations: [AppComponent, PageNotFoundComponent],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry
+    CouchService,
+    AuthService,
+    UserService,
+    ValidatorService,
+    PlanetMessageService,
+    MatIconRegistry,
+    ...SHARED_SERVICES
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
