@@ -19,6 +19,7 @@ import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
 import { FeedbackService } from './feedback/feedback.service';
+import { SHARED_SERVICES } from './shared/services';
 
 @NgModule({
   imports: [
@@ -32,12 +33,17 @@ import { FeedbackService } from './feedback/feedback.service';
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
   ],
-  declarations: [
-    AppComponent, PageNotFoundComponent
-  ],
+  declarations: [AppComponent, PageNotFoundComponent],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService
+    CouchService,
+    AuthService,
+    UserService,
+    ValidatorService,
+    PlanetMessageService,
+    MatIconRegistry,
+    FeedbackService,
+    ...SHARED_SERVICES
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
