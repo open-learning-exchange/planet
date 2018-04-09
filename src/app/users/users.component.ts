@@ -94,6 +94,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
             user.doc.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.doc.name + '/' + Object.keys(user.doc._attachments)[0];
           }
           users.push({ ...user.doc });
+          this.selectedRolesMap.set(user.doc.name, user.doc.roles);
         } else if (user.id !== '_design/_auth' && user.doc.isUserAdmin === true) {
           users.push({ ...user.doc });
         }
@@ -111,11 +112,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     this.selectedRolesMap.set(tempUser.name, tempUser.roles);
+    if (tempUser.roles.length === 0) {
+      tempUser.isUserLocked = true ;
+    } else {
+      tempUser.isUserLocked = false ;
+    }
     delete tempUser.selected;
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       user.roles.splice(index, 1);
       user._rev = response.rev;
+      this.initializeData();
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
@@ -129,7 +136,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     if (this.selectedRolesMap.get(user.name) === undefined || this.selectedRolesMap.get(user.name).length === 0) {
       selectedRolesArray = [ 'learner' ];
     }
-    const tempUser = { ...user, roles: [ ...selectedRolesArray ] };
+    const tempUser = { ...user, roles: [ ...selectedRolesArray ], isUserLocked: false };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -139,7 +146,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   removeRole(user) {
-    const tempUser = { ...user, roles: [ ] };
+    const tempUser = { ...user, isUserLocked: true };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -153,7 +160,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       // Do not add role if it already exists on user and also not allow an admin to be given another role
       if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const tempUser = { ...user, roles: [ ...user.roles ] };
+        const tempUser = { ...user, roles: [ ...user.roles ], isUserLocked: false };
         // Remove selected property so it doesn't get saved to DB
         delete tempUser.selected;
         tempUser.roles.push(role);
@@ -170,6 +177,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
           user.roles.push(role);
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
+          this.initializeData();
         }
       });
     }, (error) => {
