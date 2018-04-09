@@ -59,7 +59,7 @@ export class MeetupService {
   }
 
   meetupList(meetupRes, userMeetupRes) {
-    return  meetupRes.map((res: any) => {
+    return meetupRes.map((res: any) => {
       const meetup = res.doc || res;
       const meetupIndex = userMeetupRes.findIndex(meetupIds => {
         return meetup._id === meetupIds;
@@ -67,7 +67,7 @@ export class MeetupService {
       if (meetupIndex > -1) {
         return { ...meetup, participate: true };
       }
-      return { ...meetup,  participate: false };
+      return { ...meetup, participate: false };
     });
   }
 
@@ -90,7 +90,7 @@ export class MeetupService {
           return this.couchService.put('shelf/' + this.userService.get()._id,
             Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds, courseIds: data.courseIds, myTeamIds: data.myTeamIds }));
         })
-      ).subscribe((res) =>  {
+      ).subscribe((res) => {
         this.showMeetup();
         const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
