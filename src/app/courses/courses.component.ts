@@ -82,15 +82,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((r: any) => {
-      const course = r.doc || r;
+    this.courses.data = courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
       if (myCourseIndex > -1) {
         return { ...course, admission: true };
       }
-      return { ...course,  admission: false };
+      return { ...course, admission: false };
     });
   }
 
@@ -224,7 +223,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   updateShelf(newShelf, message) {
-    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) =>  {
+    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       this.updateAddLibrary();
       this.planetMessageService.showAlert(message);
     }, (error) => (error));
