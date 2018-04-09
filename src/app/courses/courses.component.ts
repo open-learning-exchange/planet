@@ -223,16 +223,18 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
+  updateShelf(newShelf, message) {
+    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) =>  {
+      this.updateAddLibrary();
+      this.planetMessageService.showAlert(message);
+    }, (error) => (error));
+  }
+
   courseResign(courseId) {
     const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     const myCourseIndex = userShelf.courseIds.indexOf(courseId);
     userShelf.courseIds.splice(myCourseIndex, 1);
-    this.couchService.put('shelf/' + this.userId, userShelf).subscribe((response) => {
-      console.log('success');
-      this.updateAddLibrary();
-      this.router.navigate([ '/' ]);
-      this.planetMessageService.showAlert('Course successfully resigned');
-    });
+    this.updateShelf(userShelf, 'Course successfully resigned');
   }
 
   courseAdmission(courseId) {
@@ -240,18 +242,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.userShelf.courseIds = this.userShelf.courseIds || [];
     const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     userShelf.courseIds.push(courseId);
-    this.couchService.put('shelf/' + this.userId, userShelf).subscribe((res) =>  {
-      this.updateAddLibrary();
-      this.router.navigate([ '/' ]);
-      this.planetMessageService.showAlert('Course added to your dashboard');
-    }, (error) => (error));
-  }
-
-  dedupeShelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
+    this.updateShelf(userShelf, 'Course added to your dashboard');
   }
 
   updateAddLibrary() {
