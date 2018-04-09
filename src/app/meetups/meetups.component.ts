@@ -6,7 +6,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { UserService } from '../shared/user.service';
 import { of } from 'rxjs/observable/of';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
@@ -30,11 +29,14 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
+
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
+  parentLink = false;
+
 
   constructor(
     private couchService: CouchService,
@@ -44,6 +46,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private meetupService: MeetupService
+
   ) { }
 
   ngOnInit() {
@@ -81,6 +84,18 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+  
+  getMeetups() {
+    let opts: any = {};
+    if (this.router.url === '/manager/meetups') {
+      this.parentLink = true;
+      opts = { domain: this.userService.getConfig().parent_domain };
+    }
+    this.couchService.allDocs('meetups', opts)
+      .subscribe((data) => {
+        this.meetups.data = data;
+      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
 
   deleteClick(meetup) {
@@ -155,7 +170,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    if (this.parent === true) {
+      this.router.navigate([ '/manager' ]);
+    } else {
+        this.router.navigate([ '/' ]);
+      }
   }
 
 }

@@ -38,6 +38,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
+  parent = this.route.snapshot.data.parent;
   parentUrl = false;
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
@@ -95,7 +96,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   getCourses() {
     let opts: any = {};
-    if (this.router.url === '/courses/parent') {
+    if (this.router.url === '/manager/courses') {
       this.parentUrl = true;
       opts = { domain: this.userService.getConfig().parent_domain };
     }
@@ -180,7 +181,11 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    if (this.parent === true) {
+      this.router.navigate([ '/manager' ]);
+    } else {
+        this.router.navigate([ '/' ]);
+      }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
