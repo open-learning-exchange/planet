@@ -49,11 +49,11 @@ export class DashboardComponent implements OnInit {
 
   getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.get(db + '/_all_docs?include_docs=true').pipe(map((response) => {
-    // Sets data, adding the text to display in the dashboard as the 'title' field and
-    // link with or without doc id based on addId
+      // Sets data, adding the text to display in the dashboard as the 'title' field and
+      // link with or without doc id based on addId
       return response.rows.map((item) => ({ ...item.doc, title: item.doc[titleField], link: linkPrefix + (addId ? item.id : '') }));
-      }));
-    }
+    }));
+  }
 
   getShelf() {
     return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
