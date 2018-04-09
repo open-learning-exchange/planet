@@ -23,12 +23,12 @@ export class MeetupService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  showMeetup(meetupIds: string[] = []) {
-    const resourceQuery = meetupIds.length > 0 ?
+  updateMeetups(meetupIds: string[] = []) {
+    const meetupQuery = meetupIds.length > 0 ?
       this.getMeetups(meetupIds) : this.getAllMeetups();
-    forkJoin(resourceQuery, this.getUserMeetups()).subscribe((response: any) => {
-      const shelfMeetupIds = (response[1].docs[0] && response[1].docs[0].meetupIds) ? response[1].docs[0].meetupIds : [];
-      const listAllMeetups = response[0].docs ? response[0].docs : response[0];
+    forkJoin(meetupQuery, this.getShelf()).subscribe(([ meetups, shelf ]: [ any, any ]) => {
+      const shelfMeetupIds = (shelf.docs[0] && shelf.docs[0].meetupIds) ? shelf.docs[0].meetupIds : [];
+      const listAllMeetups = meetups.docs ? meetups.docs : meetups;
       this.meetupUpdated.next(this.meetupList(listAllMeetups, shelfMeetupIds));
     }, (err) => console.log(err));
   }
@@ -49,7 +49,7 @@ export class MeetupService {
     }, 0));
   }
 
-  getUserMeetups() {
+  getShelf() {
     // get meetup from user shelf
     return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
     .pipe(catchError(err => {
@@ -91,7 +91,7 @@ export class MeetupService {
             Object.assign(data.rev, { meetupIds, resourceIds: data.resourceIds, courseIds: data.courseIds, myTeamIds: data.myTeamIds }));
         })
       ).subscribe((res) => {
-        this.showMeetup();
+        this.updateMeetups();
         const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
     }, (error) => (error));

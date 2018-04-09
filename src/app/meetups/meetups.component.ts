@@ -22,8 +22,8 @@ import { Subject } from 'rxjs/Subject';
     }
   ` ]
 })
-
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
+
   meetups = new MatTableDataSource();
   displayedColumns = [ 'select', 'title' ];
   message = '';
@@ -48,7 +48,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((meetups) => {
       this.meetups.data = meetups;
     });
-    this.meetupService.showMeetup();
+    this.meetupService.updateMeetups();
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }
 
@@ -114,7 +114,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
         .subscribe((data) => {
-          this.meetupService.showMeetup();
+          this.meetupService.updateMeetups();
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected meetups');
