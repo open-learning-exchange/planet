@@ -111,11 +111,11 @@ export class ConfigurationComponent implements OnInit {
       };
       forkJoin([
         // When creating a planet, add admin
-        this.couchService.put('_node/nonode@nohost/_config/admins/' + this.loginForm.value.username, this.loginForm.value.password),
+        this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
         // then add user with same credentials
-        this.couchService.put('_users/org.couchdb.user:' + this.loginForm.value.username, userDetail),
+        this.couchService.put('_users/org.couchdb.user:' + credentials.name, userDetail),
         // then add a shelf for that user
-        this.couchService.put('shelf/org.couchdb.user:' + this.loginForm.value.username, { }),
+        this.couchService.put('shelf/org.couchdb.user:' + credentials.name, { }),
         // then add configuration
         this.couchService.post('configurations', configuration),
         // then post configuration to parent planet's registration requests
@@ -124,7 +124,7 @@ export class ConfigurationComponent implements OnInit {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['request_id'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('/_users/org.couchdb.user:' + this.loginForm.value.username,
+            return this.couchService.put('/_users/org.couchdb.user:' + credentials.name,
               userDetail, { domain: configuration.parent_domain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
