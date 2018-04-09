@@ -87,7 +87,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   initializeData() {
     this.selection.clear();
-    this.getUsers().subscribe((data) => {
+    this.getUsers().debug('Getting user list').subscribe((data) => {
       this.allUsers.data = data.reduce((users: any[], user: any) => {
         if (user._attachments) {
           user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -97,7 +97,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       }, []);
     }, (error) => {
       // A bit of a placeholder for error handling. Request will return error if the logged in user is not an admin.
-      console.log('Error initializing data');
+      console.log('Error initializing data!');
       console.log(error);
     });
   }

@@ -22,10 +22,10 @@ export class ResourcesService {
   updateResources({ resourceIds = [], opts = {} }: { resourceIds?: string[], opts?: any } = {}) {
     const resourceQuery = resourceIds.length > 0 ?
       this.getResources(resourceIds, opts) : this.getAllResources(opts);
-    forkJoin(resourceQuery, this.getRatings(resourceIds, opts)).subscribe((results) => {
-      const resourcesRes = results[0],
-        ratingsRes = results[1];
-      this.resourcesUpdated.next(this.createResourceList(resourcesRes || resourcesRes, ratingsRes.docs));
+    forkJoin(resourceQuery, this.getRatings(resourceIds, opts)).subscribe((results: any) => {
+      const ratingsRes = results[1],
+      resourcesRes = results[0].docs ? results[0].docs : results[0];
+      this.resourcesUpdated.next(this.createResourceList(resourcesRes, ratingsRes.docs));
     }, (err) => console.log(err));
   }
 
