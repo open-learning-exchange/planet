@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 
-
 @Component({
   template: `
     <div *ngIf="displayDashboard">
