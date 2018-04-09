@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -11,6 +11,9 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
+//import { CroppieOptions } from 'croppie';
+import * as Croppie from 'croppie';
+import { CroppieDirective } from 'angular-croppie-module';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -29,7 +32,7 @@ import { environment } from '../../../environments/environment';
     }
   ` ]
 })
-export class UsersUpdateComponent implements OnInit {
+export class UsersUpdateComponent implements OnInit, AfterViewInit {
   user: any = {};
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
@@ -49,6 +52,26 @@ export class UsersUpdateComponent implements OnInit {
     private userService: UserService
   ) {
     this.userData();
+  }
+
+
+  public croppieOptions: Croppie.CroppieOptions = {
+    boundary: { width: 512, height: 521 },
+    viewport: { width: 128, height: 128 },
+    showZoomer: true,
+    enableOrientation: true,
+    enforceBoundary: false
+  };
+
+  @ViewChild('croppie')
+  public croppieDirective: CroppieDirective;
+
+  public ngAfterViewInit() {
+      this.croppieDirective.croppie;
+  }
+
+  public handleUpdate(data) {
+      console.log(data); // -> { points: number[], zoom: number }
   }
 
   ngOnInit() {

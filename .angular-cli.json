@@ -17,7 +17,8 @@
       "prefix": "app",
       "styles": [
         "../node_modules/material-design-icons/iconfont/material-icons.css",
-        "styles.scss"
+        "styles.scss",
+        "../node_modules/croppie/croppie.css"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

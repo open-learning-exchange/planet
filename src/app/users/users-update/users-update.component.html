@@ -71,6 +71,9 @@
           <button mat-raised-button color="primary" (click)="imageInput.click()">
             {{uploadImage ? 'Change' : 'Select Image'}}
           </button>
+
+          <img #croppie="croppie" [croppieOptions]="croppieOptions" (update)="handleCroppieUpdate($event)" />
+
           <input #imageInput type="file" class="hidden" (change)="previewImageFile($event)"/>
           <button *ngIf="uploadImage === true" mat-raised-button color="warn" (click)="removeImageFile()">Remove</button>
         </div>
