@@ -53,6 +53,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this._titleSearch = value;
   }
   userId = this.userService.get()._id;
+  userShelf: any = [];
 
   constructor(
     private couchService: CouchService,
@@ -64,18 +65,19 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    forkJoin([ this.getCourses(), this.getAddedCourses() ]).subscribe((results) => {
-      this.setupList(results[0].rows, results[1].docs[0] ? results[1].docs[0].courseIds || [] : []);
+    forkJoin([ this.getCourses(), this.getShelf() ]).subscribe(([ courses, shelfRes ]: [ any, any ]) => {
+      this.userShelf = shelfRes.docs[0];
+      this.setupList(courses, this.userShelf.courseIds || []);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
   }
 
-  getAddedCourses() {
+  getShelf() {
     return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userId } })
     .pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so courses can be displayed.
-      return of({ docs: [] });
+      return of({ docs: [ { courseIds: [] } ] });
     }));
   }
 
@@ -98,7 +100,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.parentUrl = true;
       opts = { domain: this.userService.getConfig().parent_domain };
     }
-    return this.couchService.get('courses/_all_docs?include_docs=true', opts);
+    return this.couchService.allDocs('courses', opts);
   }
 
   ngAfterViewInit() {
@@ -221,45 +223,27 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  courseResign(course) {
-    this.couchService.get('shelf/' + this.userId)
-      .subscribe((data) => {
-        const myCourseIndex = data.courseIds.indexOf(course._id);
-        data.courseIds.splice(myCourseIndex, 1);
-        this.couchService.put('shelf/' + this.userId, data)
-          .subscribe((response) => {
-            console.log('success');
-            this.updateAddLibrary();
-            this.router.navigate([ '/' ]);
-            this.planetMessageService.showAlert('Course successfully resigned');
-          });
-      });
+  courseResign(courseId) {
+    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
+    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
+    userShelf.courseIds.splice(myCourseIndex, 1);
+    this.couchService.put('shelf/' + this.userId, userShelf).subscribe((response) => {
+      console.log('success');
+      this.updateAddLibrary();
+      this.router.navigate([ '/' ]);
+      this.planetMessageService.showAlert('Course successfully resigned');
+    });
   }
 
   courseAdmission(courseId) {
-    const courseIdArray = courseId.map((data) => {
-      return data._id;
-    });
-    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
-      .pipe(
-        map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, courseIds: data.docs[0].courseIds || [] , resourceIds: data.docs[0].resourceIds || [], meetupIds: data.docs[0].meetupIds || [] };
-        }),
-        // If there are no matches, CouchDB throws an error
-        // User has no "shelf", and it needs to be created
-        catchError(err => {
-          // Observable of continues stream
-          return of({ rev: {}, courseIds: [], resourceIds: [], meetupIds: [] });
-        }),
-        switchMap(data => {
-          const courseIds = courseIdArray.concat(data.courseIds).reduce(this.dedupeShelfReduce, []);
-          return this.couchService.put('shelf/' + this.userId,
-            Object.assign(data.rev, { courseIds, resourceIds: data.resourceIds, meetupIds: data.meetupIds }));
-        })
-      ).subscribe((res) =>  {
-        this.updateAddLibrary();
-        this.router.navigate([ '/' ]);
-        this.planetMessageService.showAlert('Course added to your dashboard');
+    // If courseIds is undefined on shelf, set to empty array
+    this.userShelf.courseIds = this.userShelf.courseIds || [];
+    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
+    userShelf.courseIds.push(courseId);
+    this.couchService.put('shelf/' + this.userId, userShelf).subscribe((res) =>  {
+      this.updateAddLibrary();
+      this.router.navigate([ '/' ]);
+      this.planetMessageService.showAlert('Course added to your dashboard');
     }, (error) => (error));
   }
 
@@ -271,7 +255,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   updateAddLibrary() {
-    this.getAddedCourses().subscribe((res) => {
+    this.getShelf().subscribe((res) => {
       this.setupList(this.courses.data, res.docs[0].courseIds);
     });
   }
