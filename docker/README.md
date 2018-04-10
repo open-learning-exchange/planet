@@ -35,9 +35,10 @@ I will divide this how to use into two sections, for development and for product
 
 1. Move to `docker` folder
 2. Run the following command to spawn your environment for the first time
+   (Optional: update planet.yml with specific images from https://hub.docker.com/r/treehouses/planet/tags/)
 
 ```
-docker-compose -f planet-dev.yml -p planet-dev up -d --build
+docker-compose -f planet.yml -p planet up -d --build
 ```
 
 See if the docker containers running
@@ -71,19 +72,19 @@ press `CTRL+C` to exit logs view
 3. When you're done, you can do the following command
 
 ```
-docker-compose -f planet-dev.yml -p planet-dev stop
+docker-compose -f planet.yml -p planet stop
 ```
 
 4. When you go back to code
 
 ```
-docker-compose -f planet-dev.yml -p planet-dev start
+docker-compose -f planet.yml -p planet start
 ```
 
 5. When you have to delete the environment
 
 ```
-docker-compose -f planet-dev.yml -p planet-dev down
+docker-compose -f planet.yml -p planet down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.
