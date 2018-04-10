@@ -1,12 +1,17 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { UserService } from '../shared/user.service';
+import { of } from 'rxjs/observable/of';
+import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { MeetupService } from './meetups.service';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -17,25 +22,38 @@ import { UserService } from '../shared/user.service';
     }
   ` ]
 })
-export class MeetupsComponent implements OnInit, AfterViewInit {
+export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
+
   meetups = new MatTableDataSource();
   displayedColumns = [ 'select', 'title' ];
   message = '';
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
-  parentLink = false;
+  onDestroy$ = new Subject<void>();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  parent = this.route.snapshot.data.parent;
+  getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
-    private userService: UserService
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private meetupService: MeetupService
   ) { }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  ngOnInit() {
+    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe((meetups) => {
+      this.meetups.data = meetups;
+    });
+    this.meetupService.updateMeetups({ opts: this.getOpts });
+    this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
+  }
 
   ngAfterViewInit() {
     this.meetups.paginator = this.paginator;
@@ -60,16 +78,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
     this.meetups.filter = filterValue;
   }
 
-  getMeetups() {
-    let opts: any = {};
-    if (this.router.url === '/meetups/parent') {
-      this.parentLink = true;
-      opts = { domain: this.userService.getConfig().parent_domain };
-    }
-    this.couchService.allDocs('meetups', opts)
-      .subscribe((data) => {
-        this.meetups.data = data;
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   deleteClick(meetup) {
@@ -106,7 +117,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
         .subscribe((data) => {
-          this.getMeetups();
+          this.meetupService.updateMeetups();
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected meetups');
@@ -145,11 +156,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.router.navigate([ '/' ]);
-  }
-
-  ngOnInit() {
-    this.getMeetups();
-    this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }
 
 }

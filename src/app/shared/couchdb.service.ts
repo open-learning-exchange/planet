@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
@@ -57,6 +57,14 @@ export class CouchService {
           return doc._id.indexOf('_design') === -1;
         });
     }));
+  }
+
+  stream(method: string, db: string) {
+    const url = this.baseUrl + db;
+    const req = new HttpRequest(method, url, {
+      reportProgress: true
+    });
+    return this.http.request(req);
   }
 
   // Reads a file as a Base64 string to append to object sent to CouchDB

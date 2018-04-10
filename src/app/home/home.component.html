@@ -3,6 +3,7 @@
   <button mat-icon-button (click)="toggleNav()" i18n-title title="Menu"><mat-icon>menu</mat-icon></button>
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
+  <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
   <button mat-icon-button *ngIf="user.isUserAdmin" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
@@ -26,11 +27,11 @@
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
   <a routerLink="/notifications"
     class="menu-item-notification"
-    [ngClass]="{'primary-text-color':notification.doc.status==='unread'}"
+    [ngClass]="{'primary-text-color':notification.status==='unread'}"
     mat-menu-item
     *ngFor="let notification of notifications"
-    (click)="readNotification(notification.doc)">
-    {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+    (click)="readNotification(notification)">
+    {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
     <mat-divider></mat-divider>
   </a>
   <a routerLink="/notifications" mat-menu-item>See All</a>
