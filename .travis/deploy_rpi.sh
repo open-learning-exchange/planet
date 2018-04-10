@@ -105,11 +105,12 @@ wait_for_kraken_free() {
     build_message "Waiting done, we will run the build now ..."
 }
 
+echo "The current directory is: $(pwd)"
 prepare_var
-clone_branch
+#clone_branch
 prepare_var_post_clone
-create_footprint start "$commit"
-wait_for_kraken_free
+#create_footprint start "$commit"
+#wait_for_kraken_free
 
 source ./.travis/travis_utils.sh
 
@@ -127,5 +128,5 @@ if [[ $image = planet ]]
   deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
 fi
 
-remove_temporary_folders
-create_footprint finish "$commit"
+#remove_temporary_folders
+#create_footprint finish "$commit"
