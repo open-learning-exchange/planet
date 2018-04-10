@@ -6,6 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { HttpRequest } from '@angular/common/http';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -17,12 +18,14 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   feedback: any = {};
   user: any = {};
   newMessage = '';
+  isActive = true;
   @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -37,6 +40,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.isActive = false;
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -60,7 +64,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         this.newMessage = '';
         return this.getFeedback(res.id);
       }))
-      .subscribe(this.setFeedback.bind(this), error => console.log(error));
+      .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
   }
 
   setCouchListener(id) {
@@ -72,9 +76,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(this.setFeedback.bind(this), error => console.log(error), () => {
-        // Feed times out after one minute, so consider resubscribing here.
-        // Problem is if we recursively call this function here it will
-        // indefinitely run, even if the user moves on to a new route.
+        // Feed times out after one minute, so resubscribe until ngOnDestrpy runs.
+        if (this.isActive) {
+          this.setCouchListener(id);
+        }
       });
   }
 
