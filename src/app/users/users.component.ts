@@ -96,7 +96,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         return users;
       }, []);
     }, (error) => {
-      // A bit of a placeholder for error handling. Request will return error if the logged in user is not an admin.
+      // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
       console.log(error);
     });
