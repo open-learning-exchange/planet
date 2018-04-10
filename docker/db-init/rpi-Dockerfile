@@ -20,9 +20,7 @@ COPY docker/qemu/ /usr/bin/
 RUN [ "cross-build-start" ]
 
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates;\    
-    #CORS DOWNLOAD
-    #npm install -g add-cors-to-couchdb; \
+    apk add --no-cache bash curl git jq ca-certificates;\
     mkdir -p /usr/local/lib/node_modules; \
     ln -s /usr/local/lib/node_modules/add-cors-to-couchdb/bin.js /usr/local/bin/add-cors-to-couchdb
 
