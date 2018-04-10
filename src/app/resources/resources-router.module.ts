@@ -9,9 +9,8 @@ const routes: Routes = [
   { path: 'view/:id', component: ResourcesViewComponent },
   { path: 'view/:nationname/:id', component: ResourcesViewComponent },
   { path: 'add', component: ResourcesAddComponent },
-  { path: ':nationname', component: ResourcesComponent },
+  { path: 'parent', component: ResourcesComponent, data: { parent: true } },
   { path: 'update/:id', component: ResourcesAddComponent }
-
 ];
 
 @NgModule({
