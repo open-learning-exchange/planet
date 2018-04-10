@@ -37,14 +37,13 @@ export class DashboardComponent implements OnInit {
       return forkJoin([
         this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
         this.getDataShelf('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-        this.getData('meetups', { linkPrefix: 'meetups' })
+        this.getDataShelf('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true })
       ]);
     })).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
     });
-
   }
 
   getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
@@ -65,5 +64,4 @@ export class DashboardComponent implements OnInit {
         return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
       }));
   }
-
 }
