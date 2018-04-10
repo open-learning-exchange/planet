@@ -5,16 +5,6 @@ _prepare_deploy: &_prepare_deploy
     - prepare_everything
     - docker pull $PLANET_TEST
     - docker pull $DOCKER_DB_INIT_TEST
-_login_to_kraken: &_login_to_kraken
-  before_script: # Decrypt ssh key to connect to docker builder
-    - openssl aes-256-cbc -K $encrypted_a2bcd72c1079_key -iv $encrypted_a2bcd72c1079_iv
-      -in ./.travis/deploy_rsa.enc -out ./.travis/deploy_rsa -d
-    - eval "$(ssh-agent -s)"
-    - chmod 600 ./.travis/deploy_rsa
-    - ssh-add ./.travis/deploy_rsa
-_add_kraken: &_add_kraken
-  addons:
-    ssh_known_hosts: kraken.ole.org
 _use_chrome: &_use_chrome
   addons:
     apt:
@@ -106,25 +96,14 @@ jobs:
         - deploy_tag $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
         - docker logout
     - stage: docker-release
-      
-      #<<: *_add_kraken
-      #<<: *_login_to_kraken
-      #script: #arm image building planet
-      #  - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
-      
       ## Modified for building arm on amd64
       script: #arm image building planet
-        - bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
+        - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
     
     - stage: docker-release
-      #<<: *_add_kraken
-      #<<: *_login_to_kraken
-      #script: #arm image building planet
-      #  - ssh -o StrictHostKeyChecking=no -p 22 travis@kraken.ole.org 'bash -s' -- < ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
-      
       ## Modified for building arm on amd64
       script: #arm image building planet
-        - bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
+        - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
 
 
 notifications:

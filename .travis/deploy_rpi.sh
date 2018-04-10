@@ -67,50 +67,14 @@ prepare_var_post_clone(){
     FILENAME=$VERSION-$BRANCH-$COMMIT
 }
 
-clone_branch(){
-    cd /tmp && rm -rf "planet-$RANDOM_FINGERPRINT";
-    git clone -b "$branch" https://github.com/ole-vi/planet.git "planet-$RANDOM_FINGERPRINT" && cd "planet-$RANDOM_FINGERPRINT" || exit
-    git checkout "$commit"
-    TEST_DIRECTORY=/tmp/"planet-$RANDOM_FINGERPRINT"
-}
-
-# clone_pr(){
-#     TEMPORARY_BRANCH="travis-build"
-#     cd /tmp && rm -rf "planet-$RANDOM_FINGERPRINT";
-#     git clone https://github.com/ole-vi/planet.git "planet-$commit-$pull" && cd "planet-$commit-$pull" || exit
-#     git fetch origin pull/"$pull"/head:"$TEMPORARY_BRANCH"
-#     git checkout "$TEMPORARY_BRANCH"
-#     TEST_DIRECTORY=/tmp/"planet-$commit-$pull"
-# }
 
 remove_temporary_folders(){
 	rm -rf "$TEST_DIRECTORY"
 }
 
-create_footprint() {
-  FOOTPRINT=~/travis-build/$FILENAME
-  echo $(date +%Y-%m-%d.%H-%M-%S) $1 >> $FOOTPRINT
-}
-
-wait_for_kraken_free() {
-    build_message  "Waiting for kraken to not occupied ..."
-    WAIT_TIME=0
-    MAX_TIME=300
-    MAX_DOCKER_RUNNING=2
-    until [[ $(docker ps | wc -l) -le $MAX_DOCKER_RUNNING ]] || [[ $WAIT_TIME -eq $MAX_TIME ]]; do
-        echo "kraken occupied, please wait for more 5 seconds"
-        sleep 5
-        WAIT_TIME=$(expr $WAIT_TIME + 5)
-    done
-    build_message "Waiting done, we will run the build now ..."
-}
-
 echo "The current directory is: $(pwd)"
 prepare_var
-#clone_branch
 prepare_var_post_clone
-#create_footprint start "$commit"
-#wait_for_kraken_free
 
 source ./.travis/travis_utils.sh
 
@@ -127,6 +91,3 @@ if [[ $image = planet ]]
   deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
   deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
 fi
-
-#remove_temporary_folders
-#create_footprint finish "$commit"
