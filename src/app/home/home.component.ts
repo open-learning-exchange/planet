@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   current_flag = 'en';
   current_lang = 'English';
   sidenavState = 'closed';
-  notifications: any = [];
+  notifications = { count_unread: 0 };
   @ViewChild('content') private mainContent;
   user: any = {};
 
