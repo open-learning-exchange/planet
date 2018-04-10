@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   current_flag = 'en';
   current_lang = 'English';
   sidenavState = 'closed';
-  notifications = [];
+  notifications: any = [];
   @ViewChild('content') private mainContent;
   user: any = {};
 
@@ -142,9 +142,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           return notifications;
         }).filter(nt  => {
-          return nt['user'] === user_id;
+          return nt.user === user_id;
         });
-        this.notifications['count_unread'] =  cnt;
+        this.notifications.count_unread = cnt;
       }, (error) => console.log(error));
   }
 
