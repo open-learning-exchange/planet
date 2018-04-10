@@ -24,8 +24,6 @@ echo "Building Planet for ${ARCH}"
 if [[ "${ACT}" == "install"  ]]; then
    echo "Install stage"
    npm install "--arch=${TRIPLE}"
-   mkdir /ng-app
-   cp -R ./node_modules ./ng-app
 elif [[ "${ACT}" == "build"  ]]; then
    echo "Build the angular app in production mode stage"
    $(npm bin)/ng build "--arch=${TRIPLE}" --prod

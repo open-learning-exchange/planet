@@ -1,41 +1,29 @@
-### STAGE 1: Build ###
-# We label our stage as ‘builder’
 FROM node:6.11 as builder
-MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
-LABEL maintainer="sahil@ole.org"
+LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
+WORKDIR /ng-app
 COPY package.json ./
 
-## For cross compile
 COPY docker/planet/crosscompile_planet.sh .
-
-## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
 RUN bash ./crosscompile_planet.sh armv7 install
-WORKDIR /ng-app
+
 COPY . .
-## Build the angular app in production mode and store the artifacts in dist folder
-RUN bash ../crosscompile_planet.sh armv7 build
+RUN bash ./crosscompile_planet.sh armv7 build
 
+#####
 
-### STAGE 2: Setup ###
 FROM tobi312/rpi-nginx:alpine
-#QEMU
 COPY docker/qemu/ /usr/bin/
-
-## Copy our default nginx config
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 
-# building arm on amd64
 RUN [ "cross-build-start" ]
 
-## Remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
 
-# end building arm on amd64
 RUN [ "cross-build-end" ]
 
 
-## From ‘builder’ stage copy over the artifacts in dist folder to default nginx public folder
-COPY --from=builder /ng-app/dist /usr/share/nginx/html
+COPY --from=builder /ng-app/node_modules/dist /usr/share/nginx/html
 COPY docker/planet/docker-entrypoint.sh ./
+
 CMD sh ./docker-entrypoint.sh
