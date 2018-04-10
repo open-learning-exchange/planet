@@ -99,12 +99,10 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getCommunity(url) {
-    this.couchService.get('nations/_all_docs?include_docs=true', { domain: url })
+    this.couchService.allDocs('nations', { domain: url })
       .subscribe((res: any) => {
         this.nations.data = res.rows.map(nations => {
-          return nations.doc;
-        }).filter(nt  => {
-          return nt['_id'].indexOf('_design') !== 0;
+          return nations;
         });
       }, (error) => this.message = 'There was a problem getting NationList');
   }

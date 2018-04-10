@@ -56,13 +56,13 @@ export class UserService {
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
-          return this.couchService.get('configurations/_all_docs?include_docs=true');
+          return this.couchService.allDocs('configurations');
         }
         return of(false);
       }),
       switchMap((configData) => {
         if (configData) {
-          this.configuration = configData.rows[0].doc;
+          this.configuration = configData[0];
         }
         return of(true);
       }));

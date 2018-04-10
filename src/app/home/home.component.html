@@ -27,11 +27,11 @@
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
   <a routerLink="/notifications"
     class="menu-item-notification"
-    [ngClass]="{'primary-text-color':notification.doc.status==='unread'}"
+    [ngClass]="{'primary-text-color':notification.status==='unread'}"
     mat-menu-item
     *ngFor="let notification of notifications"
-    (click)="readNotification(notification.doc)">
-    {{notification.doc.message}} {{notification.doc.time | date: 'MMM d, yyyy'}}
+    (click)="readNotification(notification)">
+    {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
     <mat-divider></mat-divider>
   </a>
   <a routerLink="/notifications" mat-menu-item>See All</a>
