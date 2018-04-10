@@ -14,7 +14,6 @@ export class MeetupService {
 
   private meetupUpdated = new Subject<any[]>();
   meetupUpdated$ = this.meetupUpdated.asObservable();
-  parentLink = false;
 
   constructor(
     private couchService: CouchService,
@@ -23,9 +22,9 @@ export class MeetupService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  updateMeetups(meetupIds: string[] = []) {
+  updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
     const meetupQuery = meetupIds.length > 0 ?
-      this.getMeetups(meetupIds) : this.getAllMeetups();
+      this.getMeetups(meetupIds, opts) : this.getAllMeetups(opts);
     forkJoin(meetupQuery, this.getShelf()).subscribe(([ meetups, shelf ]: [ any, any ]) => {
       const shelfMeetupIds = (shelf.docs[0] && shelf.docs[0].meetupIds) ? shelf.docs[0].meetupIds : [];
       const listAllMeetups = meetups.docs ? meetups.docs : meetups;
@@ -33,20 +32,15 @@ export class MeetupService {
     }, (err) => console.log(err));
   }
 
-  getAllMeetups() {
-    let opts: any = {};
-    if (this.router.url === '/meetups/parent') {
-      this.parentLink = true;
-      opts = { domain: this.userService.getConfig().parent_domain };
-    }
+  getAllMeetups(opts: any) {
     return this.couchService.allDocs('meetups', opts);
   }
 
-  getMeetups(meetupIds: string[]) {
+  getMeetups(meetupIds: string[], opts: any) {
     // find meetupId on meetup table
     return this.couchService.post('meetups/_find', findDocuments({
       '_id': { '$in': meetupIds }
-    }, 0));
+    }, 0), opts);
   }
 
   getShelf() {

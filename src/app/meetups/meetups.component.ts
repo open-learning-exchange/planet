@@ -5,7 +5,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { UserService } from '../shared/user.service';
 import { of } from 'rxjs/observable/of';
@@ -33,12 +33,15 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  parent = this.route.snapshot.data.parent;
+  getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
+    private route: ActivatedRoute,
     private userService: UserService,
     private meetupService: MeetupService
   ) { }
@@ -48,7 +51,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((meetups) => {
       this.meetups.data = meetups;
     });
-    this.meetupService.updateMeetups();
+    this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
   }
 

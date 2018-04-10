@@ -27,7 +27,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
-        this.meetupService.updateMeetups([ meetupId ]);
+        this.meetupService.updateMeetups({ meetupIds: [ meetupId ] });
       }, error => console.log(error), () => console.log('complete getting meetup id'));
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
