@@ -15,6 +15,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { ActivityReportComponent } from '../activity-report/activity-report.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { NotificationsComponent } from '../notifications/notifications.component
     NationComponent,
     ManagerDashboardComponent,
     DashboardTileComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    ActivityReportComponent
   ]
 })
 export class HomeModule {}
