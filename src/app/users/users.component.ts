@@ -101,17 +101,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
     forkJoin([ this.getUsers(), this.getShelf() ])
     .debug('Getting user list').subscribe((data) => {
       this.allUsers.data = data[0].reduce((users: any[], user: any) => {
-        if (user._id !== '_design/_auth') {
-          if (user._attachments) {
-            user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
-          }
-          const myTeamIndex = data[1].docs[0].myTeamIds ? data[1].docs[0].myTeamIds.findIndex(myTeamId => {
-            return user._id === myTeamId;
-          }) : -1;
-          myTeamIndex > -1 ? users.push({ ...user, myTeamInfo: true }) : users.push({ ...user, myTeamInfo: false });
-        } else if (user._id !== '_design/_auth' && user.doc.isUserAdmin === true) {
-          users.push({ ...user });
+        if (user._attachments) {
+          user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
+        const myTeamIndex = data[1].docs[0].myTeamIds ? data[1].docs[0].myTeamIds.findIndex(myTeamId => {
+          return user._id === myTeamId;
+        }) : -1;
+        myTeamIndex > -1 ? users.push({ ...user, myTeamInfo: true }) : users.push({ ...user, myTeamInfo: false });
         return users;
       }, []);
     }, (error) => {
@@ -201,15 +197,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return ids.concat(id);
   }
 
-  removeAdminId(ids, id) {
-    if (id.isUserAdmin === true) {
-      return ids;
-    }
-    return ids.concat(id._id);
-  }
-
   addTeams(userId) {
-    const userIdArray = userId.reduce(this.removeAdminId, []);
+    const userIdArray = userId.map((data) => {
+      return data._id;
+    });
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(
         map(data => {

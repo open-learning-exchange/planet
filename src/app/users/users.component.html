@@ -73,6 +73,8 @@
       <mat-cell  *matCellDef="let element">
         <div *ngIf="element.isUserAdmin">
           <mat-icon>&nbsp;</mat-icon>
+          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addAdminAsTeam" (click)="addTeams([{'_id': element._id}])">Add Team</button>
+          <ng-template #addAdminAsTeam><button mat-raised-button color="primary" *ngIf="element.myTeamInfo" (click)="removeTeam(element._id)">Remove Team</button></ng-template>
           <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
             <mat-icon>folder_open</mat-icon>
           </a>
