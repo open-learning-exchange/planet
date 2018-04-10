@@ -67,11 +67,6 @@ prepare_var_post_clone(){
     FILENAME=$VERSION-$BRANCH-$COMMIT
 }
 
-
-remove_temporary_folders(){
-	rm -rf "$TEST_DIRECTORY"
-}
-
 echo "The current directory is: $(pwd)"
 prepare_var
 prepare_var_post_clone
