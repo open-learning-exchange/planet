@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit {
     this.getShelf().pipe(switchMap(shelf => {
       return forkJoin([
         this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-        this.getData('courses', { linkPrefix: 'courses', titleField: 'courseTitle' }),
+        this.getDataShelf('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
         this.getDataShelf('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true })
       ]);
     })).subscribe(dashboardItems => {
