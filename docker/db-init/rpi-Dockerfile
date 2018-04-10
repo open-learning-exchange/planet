@@ -1,8 +1,36 @@
+### STAGE 1: Build ###
+# We label our stage as ‘builder’
+FROM node:6.11 as builder
+MAINTAINER Abdurrachman Mappuji <mappuji@ole.org>
+LABEL maintainer="sahil@ole.org"
+
+
+## For cross compile
+COPY docker/db-init/crosscompile_db-init.sh .
+
+RUN bash ./crosscompile_db-init.sh armv7 install
+
+### STAGE 2: Setup ###
 FROM hypriot/rpi-node:6.10.0-alpine
+
+#QEMU
+COPY docker/qemu/ /usr/bin/
+
+# building arm on amd64
+RUN [ "cross-build-start" ]
+
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates;\
+    apk add --no-cache bash curl git jq ca-certificates;\    
     #CORS DOWNLOAD
-    npm install -g add-cors-to-couchdb
+    #npm install -g add-cors-to-couchdb; \
+    mkdir -p /usr/local/lib/node_modules; \
+    ln -s /usr/local/lib/node_modules/add-cors-to-couchdb/bin.js /usr/local/bin/add-cors-to-couchdb
+
+#CORS copy from builder
+COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+
+# end building arm on amd64
+RUN [ "cross-build-end" ]
 
 WORKDIR /root
 
