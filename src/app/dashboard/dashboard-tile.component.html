@@ -1,9 +1,9 @@
 <mat-card class="dashboard-card">
-  <div class="left-tile accent-color">
+  <div class="upper-tile accent-color">
     <mat-icon svgIcon={{cardTitle}}></mat-icon>
     <span>{{cardTitle}}</span>
   </div>
-  <div class="right-tile" #items>
+  <div class="lower-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" [ngStyle]="{'transform':itemTranslate()}">
       <span
         class="dashboard-item cursor-pointer"

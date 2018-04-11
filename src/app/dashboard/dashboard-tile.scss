@@ -6,14 +6,14 @@
 
   .dashboard-card {
     display: grid;
-    grid-template-areas: "lt rt arrows";
-    grid-template-columns: 150px 1fr 50px;
-    grid-auto-rows: 1fr;
-    height: 18vh;
-    min-height: 100px;
+    grid-template-areas: "ut" "lt";
+    grid-template-rows: 3rem 1fr;
+    grid-template-columns: 1fr;
     padding: 0;
+    height: 100%;
 
-    .left-tile {
+    .upper-tile {
+      grid-area: ut;
       border-radius: 2px 0 0 2px;
       display: flex;
       justify-content: center;
@@ -30,7 +30,8 @@
 
     }
 
-    .right-tile {
+    .lower-tile {
+      grid-area: lt;
       display: grid;
       overflow: hidden;
 
@@ -40,12 +41,13 @@
       
       .dashboard-items {
         display: grid;
-        grid-auto-columns: 150px;
+        grid-auto-rows: 3rem;
         transition: transform 0.5s;
+        overflow: auto;
 
         .dashboard-item {
-          grid-column-end: span 1;
-          grid-row-end: 1;
+          grid-column-end: 1;
+          grid-row-end: span 1;
           display: flex;
           justify-content: center;
           align-items: center;
