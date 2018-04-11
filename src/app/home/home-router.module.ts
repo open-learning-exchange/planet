@@ -4,7 +4,6 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
-import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
 const routes: Routes = [
@@ -14,10 +13,7 @@ const routes: Routes = [
       { path: 'users', loadChildren: '../users/users.module#UsersModule' },
       { path: 'associated/:planet/:nation', component: NationComponent },
       { path: 'associated/:planet', component: NationComponent },
-      { path: 'manager', component: ManagerDashboardComponent },
-      { path: 'manager/meetups', loadChildren: '../meetups/meetups.module#MeetupsModule', data: { parent: true } },
-      { path: 'manager/courses', loadChildren: '../courses/courses.module#CoursesModule', data: { parent: true } },
-      { path: 'manager/resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },
+      { path: 'manager', loadChildren: '../manager-dashboard/manager-dashboard.module#ManagerDashboardModule' },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'requests', component: CommunityComponent },
       { path: 'feedback', loadChildren: '../feedback/feedback.module#FeedbackModule' },

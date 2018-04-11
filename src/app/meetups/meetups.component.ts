@@ -85,7 +85,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
-  
+
   getMeetups() {
     let opts: any = {};
     if (this.router.url === '/manager/meetups') {

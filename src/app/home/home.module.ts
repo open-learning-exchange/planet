@@ -12,12 +12,8 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
-import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { MeetupsModule } from '../meetups/meetups.module';
-import { CoursesModule } from '../courses/courses.module';
-import { ResourcesModule } from '../resources/resources.module';
 
 @NgModule({
   imports: [
@@ -29,17 +25,13 @@ import { ResourcesModule } from '../resources/resources.module';
     MaterialModule,
     PlanetDialogsModule,
     HttpClientModule,
-    HttpClientJsonpModule,
-    MeetupsModule,
-    CoursesModule,
-    ResourcesModule
+    HttpClientJsonpModule
   ],
   declarations: [
     HomeComponent,
     DashboardComponent,
     CommunityComponent,
     NationComponent,
-    ManagerDashboardComponent,
     DashboardTileComponent,
     NotificationsComponent
   ]
