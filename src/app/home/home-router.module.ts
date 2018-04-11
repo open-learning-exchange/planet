@@ -22,7 +22,7 @@ const routes: Routes = [
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
       { path: 'notifications', component: NotificationsComponent },
-      {path: 'activityreports', component: ActivityReportComponent}
+      { path: 'activityreports', component: ActivityReportComponent }
     ]
   }
 ];

@@ -16,7 +16,6 @@
       <button type="submit" mat-raised-button color="primary" i18n>Generate Report</button>
     </form>
   </mat-toolbar>
-
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill">
@@ -24,7 +23,6 @@
     </span>
   </mat-toolbar>
   <mat-table #table [dataSource]="reportActivities">
-{{reportActivities}}
     <ng-container matColumnDef="register">
       <mat-header-cell *matHeaderCellDef> </mat-header-cell>
       <mat-cell *matCellDef="let element"> Registered Members </mat-cell>
@@ -32,20 +30,21 @@
     <!-- Total Count Column -->
     <ng-container matColumnDef="total">
       <mat-header-cell *matHeaderCellDef> Total </mat-header-cell>
-      <mat-cell *matCellDef="let element">  </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.totalUsers}} </mat-cell>
     </ng-container>
 
     <!-- Male Count Column -->
     <ng-container matColumnDef="male">
       <mat-header-cell *matHeaderCellDef> Male </mat-header-cell>
-      <mat-cell *matCellDef="let element">  </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.totalMaleCount}} </mat-cell>
     </ng-container>
 
     <!-- Female Count Column -->
     <ng-container matColumnDef="female">
       <mat-header-cell *matHeaderCellDef> Female </mat-header-cell>
-      <mat-cell *matCellDef="let element">  </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.totalFemaleCount}} </mat-cell>
     </ng-container>
+    
 
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
