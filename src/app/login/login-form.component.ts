@@ -47,10 +47,10 @@ export class LoginFormComponent {
     }
   }
 
-  welcomeNotification(user_id) {
+  welcomeNotification(userId) {
     const data = {
-      'user': user_id,
-      'message': 'Welcome ' + user_id.replace('org.couchdb.user:', '') + ' to the Planet Learning',
+      'user': userId,
+      'message': 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
       'link': '',
       'type': 'register',
       'priority': 1,

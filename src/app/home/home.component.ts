@@ -27,8 +27,8 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   languages = [];
-  current_flag = 'en';
-  current_lang = 'English';
+  currentFlag = 'en';
+  currentLang = 'English';
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
@@ -60,8 +60,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
-        this.current_flag = language.short_code;
-        this.current_lang = language.name;
+        this.currentFlag = language.short_code;
+        this.currentLang = language.name;
       }
       return language;
     }).filter(lang  => {
@@ -111,8 +111,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  switchLanguage(served_url) {
-    alert('You are going to switch in ' + served_url + ' environment');
+  switchLanguage(servedUrl) {
+    alert('You are going to switch in ' + servedUrl + ' environment');
   }
 
   logoutClick() {
@@ -131,7 +131,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNotification() {
-    const user_id = 'org.couchdb.user:' + this.userService.get().name;
+    const userId = 'org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
         let cnt = 0;
@@ -142,15 +142,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           return notifications;
         }).filter(nt  => {
-          return nt['user'] === user_id;
+          return nt['user'] === userId;
         });
         this.notifications['count_unread'] =  cnt;
       }, (error) => console.log(error));
   }
 
   readNotification(notification) {
-    const update_notificaton =  { ...notification, 'status': 'read' };
-    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+    const updateNotificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       console.log(data);
     },  (err) => console.log(err));
   }

@@ -8,8 +8,8 @@
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
-    <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" alt="{{current_lang}}"
-      title="{{current_lang}}" />
+    <img *ngIf="currentFlag" src="assets/flags/{{currentFlag}}.png" alt="{{currentLang}}"
+      title="{{currentLang}}" />
   </button>
   <button mat-icon-button routerLink="/users/profile/{{user.name}}">
     <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImageSrc()">
