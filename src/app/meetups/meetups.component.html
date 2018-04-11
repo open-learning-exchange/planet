@@ -74,9 +74,9 @@
       <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div>
-          <p>{{ "Date: " + (element.startDate | date: 'fullDate') + " - " + (element.endDate | date: 'fullDate') + " at " + element.startTime + ' - ' + element.endTime}}</p>
-          <p>{{ "Recurring: " + element.recurring}}</p>
-          <p>{{ "Location: " + element.meetupLocation}}</p>
+          <p>{{"Date: " + (element.startDate | date: 'fullDate') + " - " + (element.endDate | date: 'fullDate') + " at " + element.startTime + ' - ' + element.endTime}}</p>
+          <p>{{"Recurring: " + element.recurring}}</p>
+          <p>{{"Location: " + element.meetupLocation}}</p>
         </div>
       </mat-cell>
     </ng-container>
