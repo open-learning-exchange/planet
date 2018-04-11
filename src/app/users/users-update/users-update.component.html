@@ -72,8 +72,8 @@
             {{uploadImage ? 'Change' : 'Select Image'}}
           </button>
 
-          <img #croppie="croppie" [croppieOptions]="croppieOptions" (update)="handleCroppieUpdate($event)" />
-
+          <ngx-img (onSelect)="onImageSelect($event)" (onReset)="onReset()" [config]="{ crop: [ { ratio: 1 } ] }"></ngx-img>
+          
           <input #imageInput type="file" class="hidden" (change)="previewImageFile($event)"/>
           <button *ngIf="uploadImage === true" mat-raised-button color="warn" (click)="removeImageFile()">Remove</button>
         </div>

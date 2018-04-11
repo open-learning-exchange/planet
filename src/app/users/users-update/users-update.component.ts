@@ -11,9 +11,7 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
-//import { CroppieOptions } from 'croppie';
-import * as Croppie from 'croppie';
-import { CroppieDirective } from 'angular-croppie-module';
+import { NgxImgModule } from 'ngx-img';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -32,7 +30,7 @@ import { CroppieDirective } from 'angular-croppie-module';
     }
   ` ]
 })
-export class UsersUpdateComponent implements OnInit, AfterViewInit {
+export class UsersUpdateComponent implements OnInit {
   user: any = {};
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
@@ -43,7 +41,7 @@ export class UsersUpdateComponent implements OnInit, AfterViewInit {
   urlName = '';
   file: any;
   roles: string[] = [];
-
+  
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
@@ -54,25 +52,6 @@ export class UsersUpdateComponent implements OnInit, AfterViewInit {
     this.userData();
   }
 
-
-  public croppieOptions: Croppie.CroppieOptions = {
-    boundary: { width: 512, height: 521 },
-    viewport: { width: 128, height: 128 },
-    showZoomer: true,
-    enableOrientation: true,
-    enforceBoundary: false
-  };
-
-  @ViewChild('croppie')
-  public croppieDirective: CroppieDirective;
-
-  public ngAfterViewInit() {
-      this.croppieDirective.croppie;
-  }
-
-  public handleUpdate(data) {
-      console.log(data); // -> { points: number[], zoom: number }
-  }
 
   ngOnInit() {
     this.urlName = this.route.snapshot.paramMap.get('name');
@@ -143,6 +122,47 @@ export class UsersUpdateComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.router.navigate([ '/users/profile', this.user.name ]);
+  }
+
+  onImageSelect(img) {
+    // let imageName = ""; not sure if I'll need to give the image a name
+    // img is a base64 encodeded image
+    let metaData = new RegExp(/^data:image\/\w+;base64,/gi)
+    let croppedImg = img.replace(metaData, "");
+    //remove the metadata above
+    let blob = new Blob([croppedImg]);
+    //try to create a blob to feed into fileReader below 
+    let previewImageSource;
+    
+    //let d = new Date().valueOf();
+
+    // switch (img.split(";")[0].split("/")[1]) {
+    //   case "jpeg":
+    //     imageName = d+".jpg"
+    //     break;
+    //   case "png":
+    //     imageName = d+".png"
+    //     break;
+    //   case "x-icon":
+    //     imageName = d+".ico"
+    //     break;  
+    //   default:
+    //     break;
+    // }
+
+    const reader  = new FileReader();
+    reader.onloadend = function(){
+      previewImageSource = reader.result;
+    };
+    reader.readAsDataURL(blob);
+    
+    this.previewSrc = previewImageSource;
+
+    console.log(this.previewSrc)
+
+    //reader.readAsDataURL(croppedImg);
+    //this.previewSrc = dataUrl this will allow the image to be previewable
+    // let buf = new Buffer(croppedImg, 'base64');
   }
 
   previewImageFile(event) {

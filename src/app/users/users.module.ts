@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxImgModule } from 'ngx-img';
 
 import { UsersComponent } from './users.component';
 import { UsersProfileComponent } from './users-profile/users-profile.component';
@@ -11,6 +12,7 @@ import { MaterialModule } from '../shared/material.module';
 
 @NgModule({
   imports: [
+    NgxImgModule,
     UsersRouterModule,
     CommonModule,
     FormsModule,
