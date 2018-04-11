@@ -1,7 +1,7 @@
 <mat-card class="dashboard-card">
   <div class="upper-tile accent-color">
     <mat-icon svgIcon={{cardTitle}}></mat-icon>
-    <span>{{cardTitle}}</span>
+    <span class="margin-lr-5">{{cardTitle}}</span>
   </div>
   <div class="lower-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" [ngStyle]="{'transform':itemTranslate()}">
