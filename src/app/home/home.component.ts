@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   current_flag = 'en';
   current_lang = 'English';
   sidenavState = 'closed';
-  notifications = { count_unread: 0 };
+  notifications = [];
   @ViewChild('content') private mainContent;
   user: any = {};
 
@@ -134,23 +134,31 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const user_id = 'org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
-        let cnt = 0;
         data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
         this.notifications = data.map(notifications => {
-          if (notifications.status === 'unread') {
-            cnt ++;
-          }
-          return notifications;
+         return Object.keys(notifications).map(key => {
+            return { [ key ] : notifications[ key ] };
+          });
         }).filter(nt  => {
-          return nt.user === user_id;
+          return nt[ 2 ].user === user_id;
         });
-        this.notifications.count_unread = cnt;
       }, (error) => console.log(error));
   }
 
   readNotification(notification) {
-    const update_notificaton =  { ...notification, 'status': 'read' };
-    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+    const myObjectNotification = {
+      _id: notification[ 0 ]._id,
+      _rev: notification[ 1 ]._rev,
+      user: notification[ 2 ].user,
+      message: notification[ 3 ].message,
+      link: notification[ 4 ].link,
+      type: notification[ 5 ].type,
+      priority: notification[ 6 ].priority,
+      status: notification[ 7 ].status,
+      time: notification[ 8 ].time
+    };
+    const update_notificaton =  { ...myObjectNotification, 'status': 'read' };
+    this.couchService.put('notifications/' + myObjectNotification._id, update_notificaton).subscribe((data) => {
       console.log(data);
     },  (err) => console.log(err));
   }
