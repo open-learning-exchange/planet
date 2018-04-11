@@ -13,9 +13,12 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
   templateUrl: './dashboard.component.html',
   styles: [ `
     :host {
+      height: calc(100% - 64px);
       padding: 2rem;
       display: grid;
-      grid-auto-columns: 100%;
+      grid-auto-columns: 1fr;
+      grid-auto-rows: 100%;
+      grid-auto-flow: column;
       grid-gap: 1rem;
     }
   ` ]
