@@ -30,8 +30,6 @@ export class LoginFormComponent {
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-  message = '';
-  model = { name: '', password: '', repeatPassword: '' };
 
   onSubmit() {
     if (this.userForm.valid) {
