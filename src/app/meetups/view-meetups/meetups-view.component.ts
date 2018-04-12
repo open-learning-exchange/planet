@@ -14,7 +14,6 @@ import { UserService } from '../../shared/user.service';
 export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
-  meetupId: any = {} ;
 
   constructor(
     private couchService: CouchService,
@@ -30,7 +29,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
-        this.meetupId = meetupId;
         this.meetupService.updateMeetups({ meetupIds: [ meetupId ] });
       }, error => console.log(error), () => console.log('complete getting meetup id'));
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
@@ -45,7 +43,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openDialogService() {
-    console.log('current user', this.userService.get());
     this.meetupService.inviteMemberForm(this.meetupDetail);
   }
 }
