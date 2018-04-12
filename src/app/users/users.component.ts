@@ -110,7 +110,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
       console.log('Success!');
       user.roles.splice(index, 1);
       user._rev = response.rev;
-      this.initializeData();
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
