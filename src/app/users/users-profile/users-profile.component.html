@@ -1,7 +1,7 @@
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>Users</span>
-    <span class="toolbar-fill"></span>
+  <span i18n>Users</span>
+  <span class="toolbar-fill"></span>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
@@ -12,15 +12,15 @@
     <button mat-button class="margin-lr-3" *ngIf="user.name === urlName" i18n (click)="changePasswordForm(userDetail)"><span>Change password</span></button>
   </mat-toolbar>
   <div class="view-container">
-    <div class="user_image">
-      <ng-container *ngIf="userDetail._attachments; else noAttachment">
-        <img class="profile-image-large" [src]="imageSrc">
-      </ng-container>
-      <ng-template #noAttachment>
-        <img class="profile-image-large" src="../assets/image.png">
-      </ng-template>
-    </div>
-    <div class="user_data">
+    <div class="profile-container">
+      <div class="user_image">
+        <ng-container *ngIf="userDetail._attachments; else noAttachment">
+          <img class="profile-image-large" [src]="imageSrc">
+        </ng-container>
+        <ng-template #noAttachment>
+          <img class="profile-image-large" src="../assets/image.png">
+        </ng-template>
+      </div>
       <mat-list class="user_info">
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Full Name</h4>

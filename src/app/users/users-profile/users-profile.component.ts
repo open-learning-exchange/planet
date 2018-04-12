@@ -20,8 +20,12 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
     .view-container {
       background-color: #FFFFFF;
       padding: 3rem;
+    }
+    .profile-container {
+      max-width: 900px;
       display: grid;
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 1fr 0.75fr 0.75fr;
+      grid-column-gap: 2rem;
     }
   ` ]
 })
