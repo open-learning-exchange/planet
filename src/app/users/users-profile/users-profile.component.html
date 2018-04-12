@@ -3,6 +3,7 @@
   <span i18n>Users</span>
   <span class="toolbar-fill"></span>
 </mat-toolbar>
+
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{userDetail.name}}</span>
@@ -13,7 +14,7 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="profile-container">
-      <div class="user_image">
+      <div>
         <ng-container *ngIf="userDetail._attachments; else noAttachment">
           <img class="profile-image-large" [src]="imageSrc">
         </ng-container>
@@ -21,7 +22,7 @@
           <img class="profile-image-large" src="../assets/image.png">
         </ng-template>
       </div>
-      <mat-list class="user_info">
+      <mat-list>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Full Name</h4>
           <p matLine><b>{{userDetail.firstName}} {{userDetail.middleName}} {{userDetail.lastName}}</b></p>
@@ -38,7 +39,7 @@
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
-      <mat-list class="user_info">
+      <mat-list>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>DOB</h4>
           <p matLine><b>{{userDetail.birthDate}}</b></p>
