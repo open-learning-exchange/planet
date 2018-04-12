@@ -31,7 +31,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   current_lang = 'English';
   sidenavState = 'closed';
   notifications = [];
-  notification_unread = 0;
   @ViewChild('content') private mainContent;
   user: any = {};
 
@@ -135,17 +134,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const user_id = 'org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
-        let cnt = 0;
         data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
         this.notifications = data.map(notifications => {
-          if (notifications.status === 'unread') {
-            cnt ++;
-          }
           return notifications;
         }).filter(nt  => {
           return nt['user'] === user_id;
         });
-        this.notification_unread =  cnt;
       }, (error) => console.log(error));
   }
 
