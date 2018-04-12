@@ -1,0 +1,54 @@
+<mat-toolbar>
+    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>Activity Report</span>
+    <span class="toolbar-fill"></span>
+    <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+      <mat-form-field class="font-size-1">
+        <input matInput [matDatepicker]="picker" placeholder="Start date" formControlName="startdate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="font-size-1">
+        <input matInput [matDatepicker]="picker1" placeholder="End Date" formControlName="enddate">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+      <button type="submit" mat-raised-button color="primary" i18n>Generate Report</button>
+    </form>
+  </mat-toolbar>
+<div class="space-container primary-link-hover">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill">
+      Period (YYYY:MM:DD) 2018-03-01  |  2018-04-09 
+    </span>
+  </mat-toolbar>
+  <mat-table #table [dataSource]="reportActivities">
+    <ng-container matColumnDef="register">
+      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+      <mat-cell *matCellDef="let element"> Registered Members </mat-cell>
+    </ng-container>
+    <!-- Total Count Column -->
+    <ng-container matColumnDef="total">
+      <mat-header-cell *matHeaderCellDef> Total </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.totalUsers}} </mat-cell>
+    </ng-container>
+
+    <!-- Male Count Column -->
+    <ng-container matColumnDef="male">
+      <mat-header-cell *matHeaderCellDef> Male </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.totalMaleCount}} </mat-cell>
+    </ng-container>
+
+    <!-- Female Count Column -->
+    <ng-container matColumnDef="female">
+      <mat-header-cell *matHeaderCellDef> Female </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.totalFemaleCount}} </mat-cell>
+    </ng-container>
+    
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+</div>

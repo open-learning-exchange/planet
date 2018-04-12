@@ -6,6 +6,7 @@ import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
 import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { ActivityReportComponent } from '../activity-report/activity-report.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -20,7 +21,8 @@ const routes: Routes = [
       { path: 'feedback', loadChildren: '../feedback/feedback.module#FeedbackModule' },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
-      { path: 'notifications', component: NotificationsComponent }
+      { path: 'notifications', component: NotificationsComponent },
+      { path: 'activityreports', component: ActivityReportComponent }
     ]
   }
 ];
