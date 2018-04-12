@@ -8,6 +8,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Router } from '@angular/router';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Injectable()
 export class MeetupService {
@@ -19,7 +20,8 @@ export class MeetupService {
     private couchService: CouchService,
     private userService: UserService,
     private router: Router,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsFormService: DialogsFormService
   ) {}
 
   updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
@@ -89,6 +91,61 @@ export class MeetupService {
         const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
+  }
+
+  inviteMemberForm(meetupDetail) {
+    const title = 'InviteMember';
+    const fields = this.inviteMemberFormFields();
+    const formGroup = {
+      invitationtype: ''
+    };
+    this.dialogsFormService
+      .confirm(title, fields, formGroup)
+      .debug('Dialog confirm')
+      .subscribe((res) => {
+        if (res !== undefined) {
+           if (res.invitationtype === 'All') {
+             this.getAllUser(meetupDetail);
+           }
+        }
+      });
+  }
+
+  inviteMemberFormFields() {
+    return [
+      {
+        'label': 'Invitation Type',
+        'type': 'selectbox',
+        'options': [ 'All', 'Members' ],
+        'name': 'invitationtype',
+        'placeholder': 'Invitation Type',
+        'required': true
+      }
+    ];
+  }
+
+  sendInviteNotification(user_id, meetupDetail) {
+    const data = {
+      'user': user_id,
+      'message': 'Meet up notification of ' + meetupDetail.title + ' at ' + meetupDetail.meetupLocation,
+      'link': 'http://localhost:3000/meetups/view/' + meetupDetail._id,
+      'item': meetupDetail._id,
+      'type': 'meetup',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+    this.couchService.post('notifications', data)
+      .subscribe();
+    this.planetMessageService.showAlert('Invitation send sucessfully');
+  }
+
+  getAllUser(meetupDetail) {
+    this.couchService.allDocs('_users').subscribe(users => {
+    users.forEach((user) => {
+      this.sendInviteNotification(user._id, meetupDetail);
+    });
+    });
   }
 
 }
