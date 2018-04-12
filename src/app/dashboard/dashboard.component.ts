@@ -7,24 +7,18 @@ import { map, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { environment } from '../../environments/environment';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   templateUrl: './dashboard.component.html',
-  styles: [ `
-    :host {
-      height: calc(100% - 64px);
-      padding: 2rem;
-      display: grid;
-      grid-auto-columns: 1fr;
-      grid-auto-rows: 100%;
-      grid-auto-flow: column;
-      grid-gap: 1rem;
-    }
-  ` ]
+  styleUrls: [ './dashboard.scss' ]
 })
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
+  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
+  displayName = this.userService.get().firstName + ' ' + this.userService.get().lastName;
+  dateNow = Date.now();
 
   constructor(
     private userService: UserService,
@@ -56,5 +50,13 @@ export class DashboardComponent implements OnInit {
           return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
         })
       );
+  }
+
+  get profileImg() {
+    const attachments = this.userService.get()._attachments;
+    if (attachments) {
+      return this.urlPrefix + Object.keys(attachments)[0];
+    }
+    return 'assets/image.png';
   }
 }
