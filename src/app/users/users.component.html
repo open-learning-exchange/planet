@@ -59,12 +59,10 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <div *ngIf="element.isUserLocked !== true">
-            <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.isUserAdmin" (remove)="deleteRole(element,i)">
-              {{role}}
-              <mat-icon matChipRemove *ngIf="!element.isUserAdmin">cancel</mat-icon>
-            </mat-chip>
-          </div>
+          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.isUserAdmin" (remove)="deleteRole(element,i)">
+            {{role}}
+            <mat-icon matChipRemove *ngIf="!element.isUserAdmin">cancel</mat-icon>
+          </mat-chip>
           <mat-chip *ngIf="element.isUserAdmin">admin</mat-chip>
       </mat-chip-list>
       </mat-cell>
@@ -79,10 +77,10 @@
           </a>
         </div>
         <div *ngIf="!element.isUserAdmin">
-          <button mat-icon-button *ngIf="element.isUserLocked !== false" (click)="addRole(element)">
+          <button mat-icon-button *ngIf="element.roles.length === 0" (click)="addRole(element)">
             <mat-icon>lock</mat-icon>
           </button>
-          <button mat-icon-button *ngIf="element.isUserLocked !== true" (click)="removeRole(element)">
+          <button mat-icon-button *ngIf="element.roles.length > 0" (click)="removeRole(element)">
             <mat-icon>lock_open</mat-icon>
           </button>
           <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile

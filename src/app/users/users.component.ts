@@ -27,7 +27,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
-  selectedRolesMap = new Map<string, string[]>();
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -93,7 +92,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
           user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
         users.push({ ...user });
-        this.selectedRolesMap.set(user.name, user.roles);
         return users;
       }, []);
     }, (error) => {
@@ -107,12 +105,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     // Make copy of user so UI doesn't change until DB change succeeds
     const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
-    this.selectedRolesMap.set(tempUser.name, tempUser.roles);
-    if (tempUser.roles.length === 0) {
-      tempUser.isUserLocked = true ;
-    } else {
-      tempUser.isUserLocked = false ;
-    }
     delete tempUser.selected;
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
@@ -127,22 +119,30 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   addRole(user) {
-    // If user has no previous role, add learner role
-    let selectedRolesArray = this.selectedRolesMap.get(user.name);
-    if (this.selectedRolesMap.get(user.name) === undefined || this.selectedRolesMap.get(user.name).length === 0) {
-      selectedRolesArray = [ 'learner' ];
-    }
-    const tempUser = { ...user, roles: [ ...selectedRolesArray ], isUserLocked: false };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-      console.log('Success!');
-      this.initializeData();
+    let oldRoles: string[] = [];
+    let selectedRole: string[] = [];
+    this.couchService.get('_users/org.couchdb.user:' + user.name).subscribe((data) => {
+      oldRoles = data.oldRoles;
+      if ( oldRoles.length === 0 ) {
+        selectedRole = [ 'learner' ];
+      } else {
+        selectedRole = oldRoles;
+      }
+      const tempUser = { ...user, roles: [ ...selectedRole ] };
+      this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+        console.log('Success!');
+        this.initializeData();
+      }, (error) => {
+        console.log(error);
+      });
     }, (error) => {
-      console.log(error);
+       console.log('Error getting oldRoles data!');
+       console.log(error);
     });
   }
 
   removeRole(user) {
-    const tempUser = { ...user, isUserLocked: true };
+    const tempUser = { ...user, roles: [ ], oldRoles: [ ...user.roles ]  };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -156,11 +156,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
       // Do not add role if it already exists on user and also not allow an admin to be given another role
       if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const tempUser = { ...user, roles: [ ...user.roles ], isUserLocked: false };
+        const tempUser = { ...user, roles: [ ...user.roles ] };
         // Remove selected property so it doesn't get saved to DB
         delete tempUser.selected;
         tempUser.roles.push(role);
-        this.selectedRolesMap.set(tempUser.name, tempUser.roles);
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
@@ -173,7 +172,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
           user.roles.push(role);
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
-          this.initializeData();
         }
       });
     }, (error) => {
