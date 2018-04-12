@@ -35,7 +35,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
-  parentLink = false;
 
 
   constructor(
@@ -46,7 +45,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private meetupService: MeetupService
-
   ) { }
 
   ngOnInit() {
@@ -89,7 +87,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   getMeetups() {
     let opts: any = {};
     if (this.router.url === '/manager/meetups') {
-      this.parentLink = true;
       opts = { domain: this.userService.getConfig().parent_domain };
     }
     this.couchService.allDocs('meetups', opts)
@@ -170,11 +167,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    if (this.parent === true) {
-      this.router.navigate([ '/manager' ]);
-    } else {
-        this.router.navigate([ '/' ]);
-      }
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
 }

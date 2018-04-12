@@ -8,7 +8,6 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardRouterModule } from './manger-dashboard-router.module';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 
-
 @NgModule({
   imports: [
     CommonModule,

@@ -200,11 +200,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    if (this.parent === true) {
-      this.router.navigate([ '/manager' ]);
-    } else {
-        this.router.navigate([ '/' ]);
-      }
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   dedupeShelfReduce(ids, id) {

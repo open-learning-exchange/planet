@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 export class CoursesViewComponent implements OnInit {
 
   courseDetail: any = {};
+  parent = this.route.snapshot.data.parent;
 
   constructor(
     private couchService: CouchService,
@@ -24,9 +25,8 @@ export class CoursesViewComponent implements OnInit {
         this.courseDetail = course;
       }, error => console.log(error));
   }
-
+  
   getCourse(id: string) {
     return this.couchService.get('courses/' + id);
   }
-
 }

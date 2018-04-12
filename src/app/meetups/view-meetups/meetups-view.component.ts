@@ -13,7 +13,7 @@ import { Subject } from 'rxjs/Subject';
 export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
-
+  parent = this.route.snapshot.data.parent;
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,

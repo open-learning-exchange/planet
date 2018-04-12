@@ -39,7 +39,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  parentUrl = false;
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -97,7 +96,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   getCourses() {
     let opts: any = {};
     if (this.router.url === '/manager/courses') {
-      this.parentUrl = true;
       opts = { domain: this.userService.getConfig().parent_domain };
     }
     return this.couchService.allDocs('courses', opts);
@@ -181,11 +179,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    if (this.parent === true) {
-      this.router.navigate([ '/manager' ]);
-    } else {
-        this.router.navigate([ '/' ]);
-      }
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
