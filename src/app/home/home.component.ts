@@ -135,9 +135,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
         data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
-        this.notifications = data.map(notifications => {
-          return notifications;
-        }).filter(nt  => {
+        this.notifications = data.filter(nt  => {
           return nt['user'] === user_id;
         });
       }, (error) => console.log(error));
