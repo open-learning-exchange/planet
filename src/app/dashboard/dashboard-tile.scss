@@ -3,6 +3,8 @@
 :host {
 
   @include left-right-grid-areas;
+  // For Firefox.  Otherwise grid tile will expand to fit text.
+  min-width: 0;
 
   .dashboard-card {
     display: grid;
@@ -39,22 +41,9 @@
       .dashboard-items.dashboard-empty {
         grid-auto-columns: auto;
       }
-      
-      .dashboard-items {
-        display: grid;
-        grid-auto-rows: 3rem;
-        transition: transform 0.5s;
-        overflow: auto;
 
-        .dashboard-item {
-          grid-column-end: 1;
-          grid-row-end: span 1;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          padding: 0.5rem;
-        }
+      .dashboard-items {
+        overflow: auto;
       }
     }
   }
