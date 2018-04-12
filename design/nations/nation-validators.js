@@ -13,14 +13,15 @@ function (newDoc, oldDoc, userCtx, secObj) {
         CAN_WRITE = false;
       } else {
         for (var i = 0; i < userCtx.roles.length; i++) {
-          if (~ readOnly.indexOf(userCtx.roles[i])) {
+          if (readOnly.indexOf(userCtx.roles[i]) !== -1) {
             CAN_WRITE = false;
           }
         }
       }
     }
-    if(!CAN_WRITE)
+    if(!CAN_WRITE) {
       throw { forbidden: 'You have only read-only access' };
+    }
   }
   canWrite();
   if (!newDoc) {
