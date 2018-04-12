@@ -25,7 +25,7 @@ export class CoursesViewComponent implements OnInit {
         this.courseDetail = course;
       }, error => console.log(error));
   }
-  
+
   getCourse(id: string) {
     return this.couchService.get('courses/' + id);
   }
