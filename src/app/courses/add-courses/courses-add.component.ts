@@ -16,7 +16,8 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
-  templateUrl: 'courses-add.component.html'
+  templateUrl: 'courses-add.component.html',
+  styleUrls: [ './courses-add.scss' ]
 })
 export class CoursesAddComponent implements OnInit {
   // needs member document to implement
@@ -25,14 +26,10 @@ export class CoursesAddComponent implements OnInit {
   courseForm: FormGroup;
   documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
-  courseFrequency = [];
-  radio = '';
-  showDaysCheckBox = true; // for toggling the days checkbox
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
-  days = constants.days;
 
   constructor(
     private router: Router,
@@ -58,7 +55,7 @@ export class CoursesAddComponent implements OnInit {
       description: [ '', Validators.required ],
       languageOfInstruction: '',
       memberLimit: [
-        '', // need to compose validators if we use more than one
+        10, // need to compose validators if we use more than one
         Validators.compose([
           CustomValidators.integerValidator,
           Validators.min(1)
@@ -66,38 +63,8 @@ export class CoursesAddComponent implements OnInit {
       ],
       courseLeader: [ '' ],
       method: '',
-      gradeLevel: '',
-      subjectLevel: '',
-      startDate: [ '', CustomValidators.dateValidator ],
-      endDate: [
-        '',
-        Validators.compose([
-          // we are using a higher order function so we  need to call the validator function
-          CustomValidators.endDateValidator(),
-          CustomValidators.dateValidator
-        ])
-      ],
-      day: this.fb.array([]),
-      startTime: [ '', CustomValidators.timeValidator ],
-      endTime: [
-        '',
-        Validators.compose([
-          CustomValidators.endTimeValidator(),
-          CustomValidators.timeValidator
-        ])
-      ],
-      location: '',
-      backgroundColor: [ '', CustomValidators.hexValidator ],
-      foregroundColor: [ '', CustomValidators.hexValidator ]
-    });
-
-    // set default values
-    this.courseForm.patchValue({
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
-      memberLimit: 10,
-      backgroundColor: '#ffffff',
-      foregroundColor: '#000000'
     });
   }
 
@@ -107,24 +74,7 @@ export class CoursesAddComponent implements OnInit {
       .subscribe((data) => {
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
-        this.courseFrequency = data.day || [];
-        this.courseForm.value.day = this.courseFrequency;
         this.courseForm.patchValue(data);
-
-        switch (this.courseFrequency.length) {
-          case 7:
-            this.radio = 'daily';
-            // If daily was selected, do not check any days after toggling weekly
-            this.courseFrequency = [];
-            /* falls through */
-          case 0:
-            this.showDaysCheckBox = true;
-            break;
-          default:
-            this.showDaysCheckBox = false;
-            this.radio = 'weekly';
-        }
-
       }, (error) => {
         console.log(error);
       });
@@ -171,35 +121,4 @@ export class CoursesAddComponent implements OnInit {
     this.router.navigate([ '/courses' ]);
   }
 
-  isClassDay(day) {
-    return this.courseFrequency.includes(day) ? true : false;
-  }
-
-  /* FOR TOGGLING DAILY/WEEKLY DAYS */
-
-  onDayChange(day: string, isChecked: boolean) {
-    const dayFormArray = <FormArray>this.courseForm.controls.day;
-
-    if (isChecked) {
-      // add to day array if checked
-      if (!dayFormArray.value.includes(day)) {
-        dayFormArray.push(new FormControl(day));
-      }
-    } else {
-      // remove from day array if unchecked
-      const index = dayFormArray.controls.findIndex(x => x.value === day);
-      dayFormArray.removeAt(index);
-    }
-  }
-
-  // remove old values from array on radio button change
-  toggleDaily(val: boolean) {
-    if (val) {
-      // add all days to the array if the course is daily
-      this.courseForm.setControl('day', this.fb.array(this.days));
-    } else {
-      this.courseForm.setControl('day', this.fb.array(this.courseFrequency));
-    }
-    this.showDaysCheckBox = val;
-  }
 }
