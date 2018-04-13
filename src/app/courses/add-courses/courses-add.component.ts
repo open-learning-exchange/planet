@@ -16,7 +16,8 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
-  templateUrl: 'courses-add.component.html'
+  templateUrl: 'courses-add.component.html',
+  styleUrls: [ './courses-add.scss' ]
 })
 export class CoursesAddComponent implements OnInit {
   // needs member document to implement

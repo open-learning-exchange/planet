@@ -1,0 +1,9 @@
+:host {
+  form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 550px;
+    justify-content: space-between;
+  }
+}
