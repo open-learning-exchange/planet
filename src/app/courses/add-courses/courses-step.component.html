@@ -1,7 +1,7 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title>
-      {{stepInfo.stepTitle}}
+      {{stepInfo.stepTitle || 'Step ' + stepNum}}
     </mat-panel-title>
     <mat-panel-description>
       Fill step type here

@@ -17,6 +17,7 @@ export class CoursesStepComponent implements OnInit {
     description: ''
   };
   @Output() stepInfoChange = new EventEmitter<any>();
+  @Input() stepNum: number;
   stepForm: FormGroup;
 
   constructor(

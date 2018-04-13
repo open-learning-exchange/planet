@@ -26,6 +26,7 @@ export class CoursesAddComponent implements OnInit {
   courseForm: FormGroup;
   documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
+  steps = [];
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -116,6 +117,13 @@ export class CoursesAddComponent implements OnInit {
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
+    });
+  }
+
+  addStep() {
+    this.steps.push({
+      stepTitle: '',
+      description: ''
     });
   }
 
