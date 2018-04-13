@@ -31,6 +31,8 @@ export class CoursesAddComponent implements OnInit {
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
 
+  mockStep = { stepTitle: 'Add title', description: '!!!' };
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -108,7 +110,7 @@ export class CoursesAddComponent implements OnInit {
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...courseInfo }).subscribe(() => {
+    this.couchService.post(this.dbName, { ...courseInfo, steps: [ this.mockStep ] }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
