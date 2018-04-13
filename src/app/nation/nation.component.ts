@@ -21,7 +21,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   readonly dbName = 'nations';
   message = '';
   deleteDialog: any;
-  ViewNationDetailDialog: any;
+  viewNationDetailDialog: any;
   parentType = this.route.snapshot.paramMap.get('planet');
   selectedNation = '';
   selectFilter = false;
@@ -112,7 +112,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
       .debug('jsonp request to external nation')
       .subscribe((res: any) => {
-        this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+        this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {
             allData : res.rows.length > 0 ? res.rows[0].doc : [],
             title : 'Nation Details'

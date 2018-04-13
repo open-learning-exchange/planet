@@ -1,5 +1,5 @@
 <div class="background"></div>
-<mat-toolbar color="primary" class="header-nav">
+<mat-toolbar color="primary" class="header-nav nav-shadow">
   <button mat-icon-button (click)="toggleNav()" i18n-title title="Menu"><mat-icon>menu</mat-icon></button>
   <span>Planet Learning</span>
   <span class="toolbar-fill"></span>
@@ -8,8 +8,8 @@
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
-    <img *ngIf="current_flag" src="assets/flags/{{current_flag}}.png" alt="{{current_lang}}"
-      title="{{current_lang}}" />
+    <img *ngIf="currentFlag" src="assets/flags/{{currentFlag}}.png" alt="{{currentLang}}"
+      title="{{currentLang}}" />
   </button>
   <button mat-icon-button routerLink="/users/profile/{{user.name}}">
     <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImageSrc()">
@@ -38,7 +38,7 @@
 </mat-menu>
 
 <mat-sidenav-container class="main-content" #content>
-  <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
+  <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
     <ul class="top-nav">
       <li>
         <a mat-button routerLink="/" i18n-title title="Home">

@@ -116,7 +116,7 @@
     ],
     "typeof-compare": true,
     "unified-signatures": true,
-    "variable-name": false,
+    "variable-name": [ true, "check-format", "allow-leading-underscore" ],
     "whitespace": [
       true,
       "check-branch",
