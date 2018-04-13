@@ -49,7 +49,8 @@ export class ConfigurationComponent implements OnInit {
           Validators.required,
           CustomValidators.matchPassword('password', true)
         ])
-      ]
+      ],
+      joinededDate: Date.now() 
     });
     this.configurationFormGroup = this.formBuilder.group({
       planet_type: [ '', Validators.required ],
