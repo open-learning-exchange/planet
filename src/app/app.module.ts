@@ -15,7 +15,6 @@ import { ValidatorService } from './validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlanetMessageService } from './shared/planet-message.service';
 import { MaterialModule } from './shared/material.module';
-//import { CroppieModule } from 'angular-croppie-module';
 import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';

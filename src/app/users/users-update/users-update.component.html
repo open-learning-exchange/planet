@@ -65,17 +65,17 @@
       </div>
     </form>
     <div>
-      <img class="profile-image-large" [src]="previewSrc">
+      <img class="profile-image-large" [src]="previewSrc" > 
       <div>
         <div>
-          <button mat-raised-button color="primary" (click)="imageInput.click()">
+          <!-- <button mat-raised-button color="primary" (click)="imageInput.click()">
             {{uploadImage ? 'Change' : 'Select Image'}}
-          </button>
+          </button> -->
 
-          <ngx-img (onSelect)="onImageSelect($event)" (onReset)="onReset()" [config]="{ crop: [ { ratio: 1 } ] }"></ngx-img>
+          <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="{ crop: [ { ratio: 1 } ] }"></ngx-img>
           
-          <input #imageInput type="file" class="hidden" (change)="previewImageFile($event)"/>
-          <button *ngIf="uploadImage === true" mat-raised-button color="warn" (click)="removeImageFile()">Remove</button>
+          <!-- <input #imageInput type="file" class="hidden" (change)="previewImageFile($event)"/> -->
+          <!-- <button *ngIf="uploadImage === true" mat-raised-button color="warn" (click)="removeImageFile()">Remove</button> -->
         </div>
       </div>
     </div>

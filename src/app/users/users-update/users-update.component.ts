@@ -35,13 +35,15 @@ export class UsersUpdateComponent implements OnInit {
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
+  currentProfileImg: string;
+  defaultProfileImg = '../assets/image.png';
   previewSrc = '../assets/image.png';
   uploadImage = false;
   urlPrefix = environment.couchAddress + this.dbName + '/';
   urlName = '';
   file: any;
   roles: string[] = [];
-  
+
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
@@ -61,8 +63,11 @@ export class UsersUpdateComponent implements OnInit {
         this.editForm.patchValue(data);
         if (data['_attachments']) {
           const filename = Object.keys(data._attachments)[0];
-          this.previewSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
+          this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
+          this.previewSrc = this.currentProfileImg;
           this.uploadImage = true;
+        } else {
+          this.previewSrc = this.defaultProfileImg;
         }
         console.log('data: ' + data);
       }, (error) => {
@@ -95,10 +100,22 @@ export class UsersUpdateComponent implements OnInit {
     }
   }
 
-  handleAttachment(user, formValue) {
+  oldHandleAttachment(user, formValue) {
     let fileObs: Observable<any>;
     if (this.file && this.file.type.indexOf('image') > -1) {
       fileObs = this.couchService.prepAttachment(this.file);
+    } else {
+      fileObs = of({});
+    }
+    fileObs.subscribe((memberImage) => {
+      this.updateUser(Object.assign({}, user, formValue, memberImage));
+    });
+  }
+
+  handleAttachment(user, formValue) {
+    let fileObs: Observable<any>;
+    if (this.file) {
+      fileObs = this.couchService.newPrepAttachment(this.file);
     } else {
       fileObs = of({});
     }
@@ -119,50 +136,14 @@ export class UsersUpdateComponent implements OnInit {
     });
   }
 
-
   goBack() {
     this.router.navigate([ '/users/profile', this.user.name ]);
   }
 
   onImageSelect(img) {
-    // let imageName = ""; not sure if I'll need to give the image a name
-    // img is a base64 encodeded image
-    let metaData = new RegExp(/^data:image\/\w+;base64,/gi)
-    let croppedImg = img.replace(metaData, "");
-    //remove the metadata above
-    let blob = new Blob([croppedImg]);
-    //try to create a blob to feed into fileReader below 
-    let previewImageSource;
-    
-    //let d = new Date().valueOf();
-
-    // switch (img.split(";")[0].split("/")[1]) {
-    //   case "jpeg":
-    //     imageName = d+".jpg"
-    //     break;
-    //   case "png":
-    //     imageName = d+".png"
-    //     break;
-    //   case "x-icon":
-    //     imageName = d+".ico"
-    //     break;  
-    //   default:
-    //     break;
-    // }
-
-    const reader  = new FileReader();
-    reader.onloadend = function(){
-      previewImageSource = reader.result;
-    };
-    reader.readAsDataURL(blob);
-    
-    this.previewSrc = previewImageSource;
-
-    console.log(this.previewSrc)
-
-    //reader.readAsDataURL(croppedImg);
-    //this.previewSrc = dataUrl this will allow the image to be previewable
-    // let buf = new Buffer(croppedImg, 'base64');
+    this.file = img;
+    this.previewSrc = img;
+    this.uploadImage = true;
   }
 
   previewImageFile(event) {
@@ -183,7 +164,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   removeImageFile() {
-    this.previewSrc = '../assets/image.png';
+    this.previewSrc = this.currentProfileImg;
     this.file = undefined;
     this.uploadImage = false;
   }

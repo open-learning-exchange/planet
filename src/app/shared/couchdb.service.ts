@@ -82,4 +82,35 @@ export class CouchService {
     return obs;
   }
 
+  newPrepAttachment(file) {
+    file = file.replace(/^data:image\/\w+;base64,/gi, '');
+    const byteCharacters = atob(file);
+    const byteNumbers = new Array(byteCharacters.length);
+
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([ byteArray ], { type: 'image' });
+
+    const reader = new FileReader();
+    const obs = Observable.create((observer) => {
+      reader.onload = () => {
+        const attachments = {};
+        attachments[file.name] = {
+          content_type: file.type,
+          data: file
+        };
+        const attachmentObject = {
+          _attachments: attachments
+        };
+        observer.next(attachmentObject);
+        observer.complete();
+      };
+    });
+    reader.readAsDataURL(blob);
+    return obs;
+  }
+
 }
