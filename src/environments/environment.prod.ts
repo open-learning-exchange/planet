@@ -1,4 +1,4 @@
-function calculateCouchAddress() {
+export function calculateCouchAddress() {
   if (process.env.MULTIPLE_IPS) {
     return window.location.protocol + '//' + window.location.hostname + ':' + process.env.DB_PORT;
   } else {
