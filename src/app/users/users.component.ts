@@ -101,11 +101,15 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteRole(user: any, index: number) {
+  deleteRole(user: any, index: number, position: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
-    const tempUser = { ...user, roles: [ ...user.roles ] };
+    let tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     delete tempUser.selected;
+    if (tempUser.roles.length === 0) {
+      tempUser = { ...tempUser, oldRoles: [] };
+      this.allUsers.data.forEach(row => this.updateOldRole(row, position, tempUser));
+    }
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       user.roles.splice(index, 1);
@@ -117,26 +121,25 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
+  updateOldRole(row: any, position: number, tempUser: any) {
+     if ( this.allUsers.data.indexOf(row) === position ) {
+        row.oldRoles = tempUser.oldRoles;
+     }
+  }
+
   addRole(user) {
-    let oldRoles: string[] = [];
-    let selectedRole: string[] = [];
-    this.couchService.get('_users/org.couchdb.user:' + user.name).subscribe((data) => {
-      oldRoles = data.oldRoles;
-      if ( oldRoles.length === 0 ) {
-        selectedRole = [ 'learner' ];
-      } else {
-        selectedRole = oldRoles;
-      }
-      const tempUser = { ...user, roles: [ ...selectedRole ] };
-      this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-        console.log('Success!');
-        this.initializeData();
-      }, (error) => {
-        console.log(error);
-      });
+    let selectedUserRole: string[] = [];
+    if ( user.oldRoles === undefined || user.oldRoles.length === 0) {
+      selectedUserRole = [ 'learner' ];
+    } else {
+      selectedUserRole = user.oldRoles;
+    }
+    const tempUser = { ...user, roles: [ ...selectedUserRole ] };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
     }, (error) => {
-       console.log('Error getting oldRoles data!');
-       console.log(error);
+      console.log(error);
     });
   }
 

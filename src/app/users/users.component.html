@@ -57,9 +57,9 @@
 
     <ng-container matColumnDef="roles">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
-      <mat-cell *matCellDef="let element">
+      <mat-cell *matCellDef="let element; let k = index;">
         <mat-chip-list>
-          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.isUserAdmin" (remove)="deleteRole(element,i)">
+          <mat-chip *ngFor="let role of element.roles; index as i" [removable]="!element.isUserAdmin" (remove)="deleteRole(element,i,k)">
             {{role}}
             <mat-icon matChipRemove *ngIf="!element.isUserAdmin">cancel</mat-icon>
           </mat-chip>
