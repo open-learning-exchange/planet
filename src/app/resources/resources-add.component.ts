@@ -10,7 +10,6 @@ import {
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
-import { DatePipe } from '@angular/common';
 import * as JSZip from 'jszip';
 import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
