@@ -19,10 +19,8 @@ import { environment } from '../../../environments/environment';
       margin: 64px 30px;
     }
     .view-container {
-      background-color: #FFFFFF;
       display: flex;
       flex-wrap: wrap;
-      padding: 3rem;
     }
     .view-container form {
       margin: 0 10px 10px 0;

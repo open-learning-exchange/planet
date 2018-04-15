@@ -17,10 +17,6 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
     .space-container {
       margin: 64px 30px;
     }
-    .view-container {
-      background-color: #FFFFFF;
-      padding: 3rem;
-    }
     .profile-container {
       max-width: 900px;
       display: grid;
