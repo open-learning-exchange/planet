@@ -1,6 +1,6 @@
 <form novalidate (ngSubmit)="onSubmit(invitation, dialogRef )" [formGroup]="invitation">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>Meetup Invitation</span></h1>
-  <mat-dialog-content>    
+  <mat-dialog-content>
     <mat-form-field class="full-width">
       <mat-select i18n-placeholder placeholder='Invite Member'
       formControlName="invitemember" 
@@ -10,34 +10,34 @@
       </mat-select>
       <mat-error><planet-form-error-messages></planet-form-error-messages></mat-error>
     </mat-form-field>
-  <div class="example-container mat-elevation-z8" *ngIf="show">
-  <mat-toolbar *ngIf="show">
-    <span class="toolbar-fill"></span>
-    <mat-icon>search</mat-icon>
-    <mat-form-field class="font-size-1">
-      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
-    </mat-form-field>
-  </mat-toolbar>  
-  <mat-table #table [dataSource]="users">
-    <!-- Position Column -->
-    <ng-container matColumnDef="_id">
-      <mat-header-cell *matHeaderCellDef i18n>Selected Items</mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
-        <mat-checkbox (change)="onMemberSelected(element._id, $event.checked)"></mat-checkbox>
-      </mat-cell>
-    </ng-container>
+    <div *ngIf="show">
+      <mat-toolbar *ngIf="show">
+        <span class="toolbar-fill"></span>
+        <mat-icon>search</mat-icon>
+        <mat-form-field class="font-size-1">
+          <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
+        </mat-form-field>
+      </mat-toolbar>
+      <mat-table #table [dataSource]="users">
+        <!-- Position Column -->
+        <ng-container matColumnDef="_id">
+          <mat-header-cell *matHeaderCellDef i18n>Selected Items</mat-header-cell>
+          <mat-cell *matCellDef="let element"> 
+            <mat-checkbox (change)="onMemberSelected(element._id, $event.checked)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef i18n>Member Name</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
-    </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef i18n>Member Name</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
-  </div>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>

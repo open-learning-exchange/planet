@@ -13,7 +13,6 @@ export class MeetupsInvitationService {
     dialogRef = this.dialog.open(MeetupsInvitationComponent, {
       width: '600px'
     });
-
     return dialogRef.afterClosed();
   }
 

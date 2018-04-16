@@ -15,7 +15,7 @@ export class MeetupsInvitationComponent implements AfterViewInit {
   public title: string;
   public fields: any;
   public modalForm: any;
-  public show = false;
+  show = false;
   invitation: FormGroup;
   displayedColumns = [ '_id', 'name' ];
   users: any = new MatTableDataSource();
@@ -43,10 +43,7 @@ export class MeetupsInvitationComponent implements AfterViewInit {
     private userService: UserService
     ) {
     this.createFormGroup();
-    this.getAlluser().
-    subscribe(user => {
-      this.users = new MatTableDataSource(user);
-    });
+    this.getAlluser();
     this.users.filterPredicate = filterSpecificFields([ 'name' ]);
   }
 
@@ -55,13 +52,12 @@ export class MeetupsInvitationComponent implements AfterViewInit {
   }
 
   getAlluser() {
-    return this.couchService.allDocs('_users').pipe(map((data: any) => {
-      return data.map((res: any) => {
-        return res;
-      }).filter((user: any) => {
-        return user._id !== this.userService.get()._id;
+    this.couchService.allDocs('_users').subscribe(user => {
+      const filterusers = user.filter((filteruser: any) => {
+        return filteruser._id !== this.userService.get()._id;
       });
-    }));
+      this.users.data = filterusers;
+    });
   }
 
   onSubmit(mForm, dialogRef ) {

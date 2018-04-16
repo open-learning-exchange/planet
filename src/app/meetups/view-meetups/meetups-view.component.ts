@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil, switchMap } from 'rxjs/operators';
@@ -60,15 +60,12 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   sendInvitationToAllUser(meetupDetail) {
-    this.couchService.allDocs('_users').pipe(map((data: any) => {
-      return data.map((res: any) => {
-        return res;
-      }).filter((user: any) => {
+    this.couchService.allDocs('_users').subscribe(users => {
+      const filterusers = users.filter((user: any) => {
         return user._id !== this.userService.get()._id;
       });
-    })).subscribe(users => {
-      users.forEach((user) => {
-        this.sendInviteNotification(user._id, meetupDetail);
+      filterusers.forEach((fusers) => {
+        this.sendInviteNotification(fusers._id, meetupDetail);
       });
     });
   }
