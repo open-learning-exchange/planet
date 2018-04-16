@@ -142,7 +142,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Keeping for reference.  Need to refactor for service.
   /*
   getExternalResources() {
-    return this.couchService.post('nations/_find',
+    return this.couchService.post('childPlanets/_find',
     { 'selector': { 'name': this.nationName },
     'fields': [ 'name', 'nationurl' ] })
       .pipe(switchMap(data => {

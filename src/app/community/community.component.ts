@@ -76,7 +76,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   getCommunityList() {
-    this.couchService.post('communityregistrationrequests/_find',
+    this.couchService.post('registrationRequests/_find',
       findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
         this.communities.data = data.docs;
@@ -124,7 +124,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
             // update registration request to accepted
-            this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
+            this.couchService.put('registrationRequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
             community.registrationRequest = 'accepted';
             this.updateRev(data, this.communities.data);
@@ -147,7 +147,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   deleteCommunity(community) {
     // Return a function with community on its scope to pass to delete dialog
     const { _id: id, _rev: rev } = community;
-    return this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community)
+    return this.pipeRemovePlanetUser(this.couchService.delete('registrationRequests/' + id + '?rev=' + rev), community)
     .subscribe(([ data, userRes ]) => {
       // It's safer to remove the item from the array based on its id than to splice based on the index
       this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
@@ -157,7 +157,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   rejectCommunity(community: any) {
     // Return a function with community on its scope to pass to delete dialog
-    return this.pipeRemovePlanetUser(this.couchService.put('communityregistrationrequests/' + community._id, community), community)
+    return this.pipeRemovePlanetUser(this.couchService.put('registrationRequests/' + community._id, community), community)
     .subscribe(([ data, userRes ]) => {
       this.updateRev(data, this.communities.data);
       this.getCommunityList();

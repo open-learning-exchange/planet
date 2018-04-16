@@ -91,7 +91,7 @@
 		}
 	},
 	{
-		"dbName": "nations",
+		"dbName": "childPlanets",
 		"json": {
 			"admins": {
 				"names": [],
