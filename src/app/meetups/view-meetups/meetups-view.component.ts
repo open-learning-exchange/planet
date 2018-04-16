@@ -1,11 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
+import { MeetupsInvitationService } from '../invitation-meetups/meetups-invitation.service';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   templateUrl: './meetups-view.component.html'
@@ -14,13 +18,15 @@ import { UserService } from '../../shared/user.service';
 export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
-
   constructor(
+    public dialog: MatDialog,
     private couchService: CouchService,
     private route: ActivatedRoute,
     // meetupService made public because of error Property is private and only accessible within class during prod build
     public meetupService: MeetupService,
-    public userService: UserService
+    public meetupsInvitationService: MeetupsInvitationService,
+    public userService: UserService,
+    public planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -37,12 +43,56 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  openDialogService() {
+    this.meetupsInvitationService
+    .confirm()
+    .subscribe((res: any) => {
+      if (res !== undefined) {
+        if (res.invitemember === 'All') {
+          this.sendInvitationToAllUser(this.meetupDetail);
+        } else {
+          res.myselectedMember.forEach((user_id) => {
+            this.sendInviteNotification(user_id, this.meetupDetail);
+          });
+        }
+      }
+    });
+  }
+
+  sendInvitationToAllUser(meetupDetail) {
+    this.couchService.allDocs('_users').pipe(map((data: any) => {
+      return data.map((res: any) => {
+        return res;
+      }).filter((user: any) => {
+        return user._id !== this.userService.get()._id;
+      });
+    })).subscribe(users => {
+      users.forEach((user) => {
+        this.sendInviteNotification(user._id, meetupDetail);
+      });
+    });
+  }
+
+  sendInviteNotification(user_id, meetupDetail) {
+    const data = {
+      'user': user_id,
+      'message': 'Meet up notification of ' + meetupDetail.title + ' at ' + meetupDetail.meetupLocation,
+      'link': 'http://localhost:3000/meetups/view/' + meetupDetail._id,
+      'item': meetupDetail._id,
+      'type': 'meetup',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+    this.couchService.post('notifications', data)
+      .subscribe(rs => {
+      }, error => this.planetMessageService.showAlert('Sorry,there is a problem with sending Invitation'));
+    this.planetMessageService.showAlert('Invitation send sucessfully');
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
-  openDialogService() {
-    this.meetupService.inviteMemberForm(this.meetupDetail);
-  }
 }
