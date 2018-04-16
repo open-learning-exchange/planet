@@ -9,8 +9,7 @@ const routes: Routes = [
   { path: '', component: MeetupsComponent },
   { path: 'add', component: MeetupsAddComponent },
   { path: 'update/:id', component: MeetupsAddComponent },
-  { path: 'view/:id', component: MeetupsViewComponent },
-  { path: 'view/:id', component: MeetupsViewComponent, data: { parent: true } }
+  { path: 'view/:id', component: MeetupsViewComponent }
 ];
 
 @NgModule({

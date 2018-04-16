@@ -24,18 +24,16 @@ import { Subject } from 'rxjs/Subject';
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetups = new MatTableDataSource();
-  displayedColumns = [ 'select', 'title' ];
   message = '';
   readonly dbName = 'meetups';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
-
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
+  displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
-
 
   constructor(
     private couchService: CouchService,
@@ -82,17 +80,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  getMeetups() {
-    let opts: any = {};
-    if (this.router.url === '/manager/meetups') {
-      opts = { domain: this.userService.getConfig().parent_domain };
-    }
-    this.couchService.allDocs('meetups', opts)
-      .subscribe((data) => {
-        this.meetups.data = data;
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting meetups'));
   }
 
   deleteClick(meetup) {

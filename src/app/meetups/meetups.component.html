@@ -27,24 +27,20 @@
   <mat-table #table [dataSource]="meetups" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
-        <span *ngIf="!parent">
-          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
-            i18n>
-          </mat-checkbox>
-        </span>
+        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
+          i18n>
+        </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <span *ngIf="!parent">
-          <mat-checkbox (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
-          </mat-checkbox>
-        </span>
+        <mat-checkbox (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        </mat-checkbox>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
         <h3 class="header">
-          <a [routerLink]="parent ? ['view', element._id] : ['/meetups/view', element._id]">{{element.title}}</a>
+          <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content">
           <p>{{ element.description }}</p>
