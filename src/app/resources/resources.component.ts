@@ -38,13 +38,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns = [ 'select', 'info', 'rating' ];
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
+  displayedColumns = this.parent ? [ 'info', 'rating' ] : [ 'select', 'info', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
 
   constructor(
