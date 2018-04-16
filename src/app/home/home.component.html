@@ -12,7 +12,7 @@
       title="{{currentLang}}" />
   </button>
   <button mat-icon-button routerLink="/users/profile/{{user.name}}">
-    <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImageSrc()">
+    <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
     <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
   </button>
 </mat-toolbar>
