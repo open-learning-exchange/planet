@@ -49,8 +49,7 @@ export class ConfigurationComponent implements OnInit {
           Validators.required,
           CustomValidators.matchPassword('password', true)
         ])
-      ],
-      joinedDate: Date.now() 
+      ]
     });
     this.configurationFormGroup = this.formBuilder.group({
       planet_type: [ '', Validators.required ],
@@ -108,6 +107,7 @@ export class ConfigurationComponent implements OnInit {
         'roles': [],
         'type': 'user',
         'isUserAdmin': true,
+        'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
       forkJoin([
@@ -125,7 +125,7 @@ export class ConfigurationComponent implements OnInit {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['request_id'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('/_users/org.couchdb.user:' + credentials.name,
+            return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
               userDetail, { domain: configuration.parent_domain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {

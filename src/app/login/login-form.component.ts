@@ -65,7 +65,7 @@ export class LoginFormComponent {
 
   createUser({ name, password }: {name: string, password: string}) {
     this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false , joinedDate: Date.now() })
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false, joinDate: Date.now() })
     .pipe(switchMap(() => {
       return this.couchService.put('shelf/org.couchdb.user:' + name, { });
     })).subscribe((response: any) => {
