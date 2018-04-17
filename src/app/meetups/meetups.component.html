@@ -70,6 +70,17 @@
         </mat-cell>
       </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="info">
+      <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <div>
+          <p>{{ "Meetup Date: " + element.startDate + '-' + element.endDate}}</p>
+          <p>{{ "Meetup Time: " + element.startTime + '-' + element.endTime}}</p>
+          <p>{{ "Recurring: " + element.recurring}}</p>
+          <p>{{ "Location: " + element.meetupLocation}}</p>
+        </div>
+      </mat-cell>
+    </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
   </mat-table>

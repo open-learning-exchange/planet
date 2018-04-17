@@ -19,6 +19,9 @@ import { Subject } from 'rxjs/Subject';
     .mat-column-select {
       max-width: 44px;
     }
+    .mat-column-info {
+      max-width: 225px;
+    }
   ` ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -32,7 +35,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title' ];
+  displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
 
   constructor(
