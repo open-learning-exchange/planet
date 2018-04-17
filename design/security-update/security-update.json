@@ -91,7 +91,7 @@
 		}
 	},
 	{
-		"dbName": "childPlanets",
+		"dbName": "child_planets",
 		"json": {
 			"admins": {
 				"names": [],

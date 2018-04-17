@@ -100,8 +100,8 @@ curl -X PUT $COUCHURL/meetups
 curl -X PUT $COUCHURL/resources
 curl -X PUT $COUCHURL/courses
 curl -X PUT $COUCHURL/exams
-curl -X PUT $COUCHURL/childPlanets
-curl -X PUT $COUCHURL/registrationRequests
+curl -X PUT $COUCHURL/child_planets
+curl -X PUT $COUCHURL/registration_requests
 curl -X PUT $COUCHURL/feedback
 curl -X PUT $COUCHURL/resource_activities
 curl -X PUT $COUCHURL/configurations
@@ -113,7 +113,7 @@ curl -X PUT $COUCHURL/submissions
 curl -X PUT $COUCHURL/courses_progress
 
 # Add or update design docs
-upsert_doc childPlanets _design/nation-validators @./design/nations/nation-validators.json
+upsert_doc child_planets _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST

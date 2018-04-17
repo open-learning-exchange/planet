@@ -101,7 +101,7 @@ export class ConfigurationComponent implements OnInit {
 
   parentUniqueValidator(controlName: string) {
     return ac => this.validatorService.isUnique$(
-      'registrationRequests',
+      'registration_requests',
       controlName,
       ac,
       { domain: ac.parent.get('parentDomain').value }
@@ -136,7 +136,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.post('registrationRequests/_find',
+    this.couchService.post('registration_requests/_find',
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
       { domain: environment.centerAddress })
       .subscribe((data) => {
@@ -226,7 +226,7 @@ export class ConfigurationComponent implements OnInit {
             // then add configuration
             this.couchService.post('configurations', configuration),
             // then post configuration to parent planet's registration requests
-            this.couchService.post('registrationRequests', configuration, { domain: configuration.parentDomain })
+            this.couchService.post('registration_requests', configuration, { domain: configuration.parentDomain })
               .pipe(mergeMap(data => {
                 // then add user to parent planet with id of configuration and isUserAdmin set to false
                 userDetail['requestId'] =  data.id;

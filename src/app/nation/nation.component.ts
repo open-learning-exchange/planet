@@ -21,7 +21,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'name', 'code', 'url', 'status', 'createdDate', 'action' ];
-  readonly dbName = 'registrationRequests';
+  readonly dbName = 'registration_requests';
   message = '';
   deleteDialog: any;
   viewNationDetailDialog: any;
