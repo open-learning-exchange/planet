@@ -45,7 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
   displayedColumns = this.parent ? [ 'info', 'rating' ] : [ 'select', 'info', 'rating' ];
-  getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
+  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
 
   constructor(
     private couchService: CouchService,

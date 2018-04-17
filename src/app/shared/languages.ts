@@ -1,26 +1,26 @@
 export const languages = [
     {
-        'short_code': 'en',
+        'shortCode': 'en',
         'name': 'English',
-        'served_url': 'http://localhost:3000',
+        'servedUrl': 'http://localhost:3000',
         'active': 'Y'
     },
     {
-        'short_code': 'ne-NP',
+        'shortCode': 'ne-NP',
         'name': 'Nepali',
-        'served_url': 'http://np.localhost:3000',
+        'servedUrl': 'http://np.localhost:3000',
         'active': 'Y'
     },
     {
-        'short_code': 'fr',
+        'shortCode': 'fr',
         'name': 'French',
-        'served_url': 'http://fr.localhost:3000',
+        'servedUrl': 'http://fr.localhost:3000',
         'active': 'N'
     },
     {
-        'short_code': 'es-ES',
+        'shortCode': 'es-ES',
         'name': 'Spanish',
-        'served_url': 'http://es.localhost:3000',
+        'servedUrl': 'http://es.localhost:3000',
         'active': 'Y'
     }
 ];
