@@ -276,7 +276,7 @@ body {
 
   .profile-image-large {
     border-radius: 50%;
-    width: 100%;
+    width: 70%;
   }
 
   .profile-image {
@@ -296,6 +296,11 @@ body {
   .view-container {
     background-color: #FFFFFF;
     padding: 1rem;
+  }
+
+  .vertical-form {
+    display: flex;
+    flex-direction: column;
   }
 
 }

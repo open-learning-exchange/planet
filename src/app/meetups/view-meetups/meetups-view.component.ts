@@ -18,6 +18,7 @@ import { map } from 'rxjs/operators';
 export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
+  parent = this.route.snapshot.data.parent;
   constructor(
     public dialog: MatDialog,
     private couchService: CouchService,
@@ -25,8 +26,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     // meetupService made public because of error Property is private and only accessible within class during prod build
     public meetupService: MeetupService,
     public meetupsInvitationService: MeetupsInvitationService,
-    public userService: UserService,
-    public planetMessageService: PlanetMessageService
+    public planetMessageService: PlanetMessageService,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -35,7 +36,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
-        this.meetupService.updateMeetups({ meetupIds: [ meetupId ] });
+        const getOpts: any = { meetupIds: [ meetupId ] };
+        if (this.parent) {
+          getOpts.opts = { domain: this.userService.getConfig().parent_domain };
+        }
+        this.meetupService.updateMeetups(getOpts);
       }, error => console.log(error), () => console.log('complete getting meetup id'));
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {

@@ -1,7 +1,6 @@
 <mat-toolbar>
-  <a mat-icon-button routerLink="/meetups"><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button [routerLink]="parent ? ['/manager/meetups'] : ['/meetups']"><mat-icon>arrow_back</mat-icon></a>
 </mat-toolbar>
-
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
@@ -10,8 +9,10 @@
       <span i18n>Invite Member</span>
     </button>    
     <button mat-button class="margin-lr-3" (click)="meetupService.attendMeetup(meetupDetail._id, meetupDetail.participate)">
-      <span *ngIf="meetupDetail.participate; else joinMeetup" i18n>Leave</span>
-      <ng-template #joinMeetup><span i18n>Join</span></ng-template>
+      <span *ngIf="!parent">
+        <span *ngIf="meetupDetail.participate; else joinMeetup" i18n>Leave</span>
+        <ng-template #joinMeetup><span i18n>Join</span></ng-template>
+      </span>
     </button>
   </mat-toolbar>
   <div class="view-container">

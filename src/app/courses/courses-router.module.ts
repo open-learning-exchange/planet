@@ -11,8 +11,7 @@ const routes: Routes = [
   { path: 'add', component: CoursesAddComponent },
   { path: 'request', component: CoursesRequestComponent },
   { path: 'update/:id', component: CoursesAddComponent },
-  { path: 'view/:id', component: CoursesViewComponent },
-  { path: 'parent', component: CoursesComponent }
+  { path: 'view/:id', component: CoursesViewComponent }
 ];
 
 @NgModule({

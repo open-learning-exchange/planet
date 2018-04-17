@@ -21,6 +21,12 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
       background-color: #FFFFFF;
       padding: 3rem;
     }
+    .profile-container {
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 1fr 0.75fr 0.75fr;
+      grid-column-gap: 2rem;
+    }
   ` ]
 })
 export class UsersProfileComponent implements OnInit {
@@ -81,6 +87,13 @@ export class UsersProfileComponent implements OnInit {
       this.couchService.put(this.dbName + '/' + userData._id, userData)
     ];
     if (isUserAdmin) {
+      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parent_domain })
+        .pipe(switchMap((data) => {
+          const { derived_key, iterations, password_scheme, salt, ...profile } = data;
+          profile.password = userData.password;
+          return this.couchService.put(this.dbName + '/' + profile._id, profile,
+          { domain: this.userService.getConfig().parent_domain });
+        })));
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
       );

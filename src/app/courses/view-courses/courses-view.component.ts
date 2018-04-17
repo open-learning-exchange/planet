@@ -3,6 +3,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: './courses-view.component.html'
@@ -11,9 +12,11 @@ import { DatePipe } from '@angular/common';
 export class CoursesViewComponent implements OnInit {
 
   courseDetail: any = {};
+  parent = this.route.snapshot.data.parent;
 
   constructor(
     private couchService: CouchService,
+    private userService: UserService,
     private route: ActivatedRoute
   ) { }
 
@@ -26,6 +29,9 @@ export class CoursesViewComponent implements OnInit {
   }
 
   getCourse(id: string) {
+    if (this.parent) {
+      return this.couchService.get('courses/' + id,  { domain: this.userService.getConfig().parent_domain } );
+    }
     return this.couchService.get('courses/' + id);
   }
 

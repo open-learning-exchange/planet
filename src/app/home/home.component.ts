@@ -27,12 +27,13 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   languages = [];
-  current_flag = 'en';
-  current_lang = 'English';
+  currentFlag = 'en';
+  currentLang = 'English';
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
   user: any = {};
+  userImgSrc = '';
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
@@ -51,17 +52,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
-        this.user = this.userService.get();
+        this.onUserUpdate();
       });
   }
 
   ngOnInit() {
     this.getNotification();
-    this.user = this.userService.get();
+    this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
-        this.current_flag = language.short_code;
-        this.current_lang = language.name;
+        this.currentFlag = language.short_code;
+        this.currentLang = language.name;
       }
       return language;
     }).filter(lang  => {
@@ -82,7 +83,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests' ];
+    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
@@ -97,12 +98,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.animDisp = this.animObs.subscribe();
   }
 
-  userImageSrc() {
+  onUserUpdate() {
+    this.user = this.userService.get();
     if (this.user._attachments) {
       const filename = Object.keys(this.user._attachments)[0];
-      return environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+      this.userImgSrc = environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+    } else {
+      this.userImgSrc = '';
     }
-    return '';
   }
 
   endAnimation() {
@@ -111,8 +114,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  switchLanguage(served_url) {
-    alert('You are going to switch in ' + served_url + ' environment');
+  switchLanguage(servedUrl) {
+    alert('You are going to switch in ' + servedUrl + ' environment');
   }
 
   logoutClick() {
@@ -131,26 +134,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNotification() {
-    const user_id = 'org.couchdb.user:' + this.userService.get().name;
+    const userId = 'org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
-        let cnt = 0;
         data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
-        this.notifications = data.map(notifications => {
-          if (notifications.status === 'unread') {
-            cnt ++;
-          }
-          return notifications;
-        }).filter(nt  => {
-          return nt['user'] === user_id;
+        this.notifications = data.filter((nt: any)  => {
+          return nt.user === userId;
         });
-        this.notifications['count_unread'] =  cnt;
       }, (error) => console.log(error));
   }
 
   readNotification(notification) {
-    const update_notificaton =  { ...notification, 'status': 'read' };
-    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+    const updateNotificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       console.log(data);
     },  (err) => console.log(err));
   }
