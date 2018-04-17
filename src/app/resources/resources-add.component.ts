@@ -34,8 +34,8 @@ export class ResourcesAddComponent implements OnInit {
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
-  id = null;
-  revision = null;
+  id = '';
+  revision = '';
 
   constructor(
     private router: Router,
@@ -54,6 +54,7 @@ export class ResourcesAddComponent implements OnInit {
   ngOnInit() {
     this.userDetail = this.userService.get();
     // update resource url check
+    console.log(this.route.snapshot.url[0].path);
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
@@ -133,6 +134,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   updateResource(resourceInfo) {
+    console.log( this.revision );
     this.couchService.put(this.dbName + '/' + this.id, { ...resourceInfo, '_rev': this.revision }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
       this.planetMessageService.showMessage('Resource Updated Successfully');
@@ -159,8 +161,10 @@ export class ResourcesAddComponent implements OnInit {
       }
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
         // Start with empty object so this.resourceForm.value does not change
+
         if (this.route.snapshot.url[0].path === 'update') {
-          this.updateResource(Object.assign({}, this.resourceForm.value, resource));
+          console.log(this.resourceForm);
+          this.updateResource(this.resourceForm.value);
         } else {
           this.addResource(Object.assign({}, this.resourceForm.value, resource));
         }
