@@ -100,22 +100,35 @@ export class UsersUpdateComponent implements OnInit {
     }
   }
 
-  oldHandleAttachment(user, formValue) {
-    let fileObs: Observable<any>;
-    if (this.file && this.file.type.indexOf('image') > -1) {
-      fileObs = this.couchService.prepAttachment(this.file);
-    } else {
-      fileObs = of({});
-    }
-    fileObs.subscribe((memberImage) => {
-      this.updateUser(Object.assign({}, user, formValue, memberImage));
-    });
+  // TODO: temporary solution, should be in separate module
+  // Preferably changed for UUID generating function.
+  // Perhaps just incrementing imagenumber by 1 if any chosen could be other alternative
+  // http://www.frontcoded.com/javascript-create-unique-ids.html
+  uniqueId(): string {
+    return 'id-' + Math.random().toString(36).substr(2, 16);
+  }
+
+  getAttachmentObject(): object {
+    // Unclear if only encoding is base64
+    // This ought to cover any encoding as long as the formatting is: ";[encoding],"
+    const imgDataArr: string[] = this.file.split(/;\w+,/);
+    // Replacing start ['data:'] of content type string
+    const contentType: string = imgDataArr[0].replace(/data:/, '');
+    const data: string = imgDataArr[1];
+    // Create attachment object
+    const attachments: object = {};
+    attachments[this.uniqueId()] = {
+      'content_type': contentType,
+      'data': data
+    };
+
+    return { '_attachments': attachments };
   }
 
   handleAttachment(user, formValue) {
     let fileObs: Observable<any>;
     if (this.file) {
-      fileObs = this.couchService.newPrepAttachment(this.file);
+      fileObs = of(this.getAttachmentObject());
     } else {
       fileObs = of({});
     }
