@@ -13,3 +13,5 @@ log.txt
 /pouchdb
 /tmp
 pouchdb-tests
+config.json
+database/
