@@ -4,7 +4,6 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
-import { MeetupsInvitationService } from '../invitation-meetups/meetups-invitation.service';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -25,7 +24,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     // meetupService made public because of error Property is private and only accessible within class during prod build
     public meetupService: MeetupService,
-    public meetupsInvitationService: MeetupsInvitationService,
     public planetMessageService: PlanetMessageService,
     private userService: UserService
   ) { }
@@ -49,15 +47,15 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openDialogService() {
-    this.meetupsInvitationService
+    this.meetupService
     .confirm()
     .subscribe((res: any) => {
       if (res !== undefined) {
         if (res.invitemember === 'All') {
           this.sendInvitationToAllUser(this.meetupDetail);
         } else {
-          res.myselectedMember.forEach((user_id) => {
-            this.sendInviteNotification(user_id, this.meetupDetail);
+          res.myselectedMember.forEach((userId) => {
+            this.sendInviteNotification(userId, this.meetupDetail);
           });
         }
       }
@@ -75,9 +73,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendInviteNotification(user_id, meetupDetail) {
+  sendInviteNotification(userId, meetupDetail) {
     const data = {
-      'user': user_id,
+      'user': userId,
       'message': 'Meet up notification of ' + meetupDetail.title + ' at ' + meetupDetail.meetupLocation,
       'link': 'http://localhost:3000/meetups/view/' + meetupDetail._id,
       'item': meetupDetail._id,

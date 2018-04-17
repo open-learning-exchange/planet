@@ -9,6 +9,12 @@ import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Router } from '@angular/router';
 
+import { Observable } from 'rxjs/Rx';
+import { MeetupsInvitationComponent } from './invitation-meetups/meetups-invitation.component';
+import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
+import { FormBuilder } from '@angular/forms';
+
+
 @Injectable()
 export class MeetupService {
 
@@ -19,7 +25,9 @@ export class MeetupService {
     private couchService: CouchService,
     private userService: UserService,
     private router: Router,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialog: MatDialog,
+    private fb: FormBuilder
   ) {}
 
   updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
@@ -89,6 +97,14 @@ export class MeetupService {
         const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
+  }
+
+  public confirm(): Observable<boolean> {
+    let dialogRef: MatDialogRef<MeetupsInvitationComponent>;
+    dialogRef = this.dialog.open(MeetupsInvitationComponent, {
+      width: '600px'
+    });
+    return dialogRef.afterClosed();
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 @Component({
   templateUrl: './meetups-invitation.component.html'
 })
-export class MeetupsInvitationComponent implements AfterViewInit {
+export class MeetupsInvitationComponent {
 
   public title: string;
   public fields: any;
@@ -40,15 +40,11 @@ export class MeetupsInvitationComponent implements AfterViewInit {
     public dialogRef: MatDialogRef<MeetupsInvitationComponent>,
     private fb: FormBuilder,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private changeDetector: ChangeDetectorRef
     ) {
     this.createFormGroup();
-    this.getAlluser();
     this.users.filterPredicate = filterSpecificFields([ 'name' ]);
-  }
-
-  ngAfterViewInit() {
-    this.users.paginator = this.paginator;
   }
 
   getAlluser() {
@@ -71,6 +67,9 @@ export class MeetupsInvitationComponent implements AfterViewInit {
   onChange($event) {
     if ($event === 'Member') {
       this.show = true;
+      this.getAlluser();
+      this.changeDetector.detectChanges();
+      this.users.paginator = this.paginator;
     } else {
       this.show = false;
     }
