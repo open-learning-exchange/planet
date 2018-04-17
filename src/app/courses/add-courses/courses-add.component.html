@@ -3,7 +3,11 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Course</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1">
+    <span i18n>{{this.pageType}} Course</span>
+    <span class="toolbar-fill"></span>
+    <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
+  </mat-toolbar>
   <div class="view-container">
     <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
       <mat-form-field class="full-width">
@@ -54,7 +58,10 @@
       </div>
     </form>
     <div>
-      <planet-courses-step></planet-courses-step>
+      <planet-courses-step
+        *ngFor="let step of steps; index as i"
+        [(stepInfo)]="steps[i]"
+        [stepNum]="i+1"></planet-courses-step>
     </div>
   </div>
 </div>

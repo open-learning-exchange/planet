@@ -26,10 +26,13 @@ export class CoursesAddComponent implements OnInit {
   courseForm: FormGroup;
   documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
+  steps = [];
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
+
+  mockStep = { stepTitle: 'Add title', description: '!!!' };
 
   constructor(
     private router: Router,
@@ -108,12 +111,19 @@ export class CoursesAddComponent implements OnInit {
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...courseInfo }).subscribe(() => {
+    this.couchService.post(this.dbName, { ...courseInfo, steps: [ this.mockStep ] }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
+    });
+  }
+
+  addStep() {
+    this.steps.push({
+      stepTitle: '',
+      description: ''
     });
   }
 
