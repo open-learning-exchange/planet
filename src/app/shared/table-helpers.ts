@@ -25,7 +25,7 @@ export const composeFilterFunctions = (filterFunctions: any[]) => {
 };
 
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
-  if (val && val.toLowerCase() !== data[field].toLowerCase()) {
+  if (val  && data[field].indexOf(val) === -1) {
     return false;
   }
   return includeItem;
