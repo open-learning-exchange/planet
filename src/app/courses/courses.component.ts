@@ -8,6 +8,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService } from '../shared/user.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { switchMap, catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 
@@ -29,13 +32,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'select', 'title', 'action' ];
   message = '';
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
-  parentUrl = false;
+  parent = this.route.snapshot.data.parent;
+  displayedColumns = this.parent ? [ 'title', 'action' ] : [ 'select', 'title', 'action' ];
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -49,6 +52,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+  userId = this.userService.get()._id;
+  userShelf: any = [];
 
   constructor(
     private couchService: CouchService,
@@ -60,20 +65,40 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.getCourses();
+    forkJoin([ this.getCourses(), this.getShelf() ]).subscribe(([ courses, shelfRes ]: [ any, any ]) => {
+      this.userShelf = shelfRes.docs[0];
+      this.setupList(courses, this.userShelf.courseIds || []);
+    }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+  }
+
+  getShelf() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userId } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so courses can be displayed.
+      return of({ docs: [ { courseIds: [] } ] });
+    }));
+  }
+
+  setupList(courseRes, myCourses) {
+    this.courses.data = courseRes.map((course: any) => {
+      const myCourseIndex = myCourses.findIndex(courseId => {
+        return course._id === courseId;
+      });
+      if (myCourseIndex > -1) {
+        return { ...course, admission: true };
+      }
+      return { ...course, admission: false };
+    });
   }
 
   getCourses() {
     let opts: any = {};
-    if (this.router.url === '/courses/parent') {
-      this.parentUrl = true;
+    if (this.parent) {
       opts = { domain: this.userService.getConfig().parent_domain };
     }
-    this.couchService.allDocs('courses', opts)
-      .subscribe((data) => {
-        this.courses.data = data;
-      }, (error) => this.planetMessageService.showAlert('There was a problem getting courses'));
+    return this.couchService.allDocs('courses', opts);
   }
 
   ngAfterViewInit() {
@@ -154,7 +179,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -194,6 +219,34 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       }
       return emptySpace;
     }, '');
+  }
+
+  updateShelf(newShelf, message) {
+    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
+      this.updateAddLibrary();
+      this.planetMessageService.showAlert(message);
+    }, (error) => (error));
+  }
+
+  courseResign(courseId) {
+    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
+    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
+    userShelf.courseIds.splice(myCourseIndex, 1);
+    this.updateShelf(userShelf, 'Course successfully resigned');
+  }
+
+  courseAdmission(courseId) {
+    // If courseIds is undefined on shelf, set to empty array
+    this.userShelf.courseIds = this.userShelf.courseIds || [];
+    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
+    userShelf.courseIds.push(courseId);
+    this.updateShelf(userShelf, 'Course added to your dashboard');
+  }
+
+  updateAddLibrary() {
+    this.getShelf().subscribe((res) => {
+      this.setupList(this.courses.data, res.docs[0].courseIds);
+    });
   }
 
 }

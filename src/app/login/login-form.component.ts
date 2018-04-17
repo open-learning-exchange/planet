@@ -30,8 +30,6 @@ export class LoginFormComponent {
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-  message = '';
-  model = { name: '', password: '', repeatPassword: '' };
 
   onSubmit() {
     if (this.userForm.valid) {
@@ -47,10 +45,10 @@ export class LoginFormComponent {
     }
   }
 
-  welcomeNotification(user_id) {
+  welcomeNotification(userId) {
     const data = {
-      'user': user_id,
-      'message': 'Welcome ' + user_id.replace('org.couchdb.user:', '') + ' to the Planet Learning',
+      'user': userId,
+      'message': 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
       'link': '',
       'type': 'register',
       'priority': 1,
@@ -94,7 +92,7 @@ export class LoginFormComponent {
         // Post new session info to login_activity
         const obsArr = [ this.userService.newSessionLog() ];
         // If not in e2e test, also add session to parent domain
-        if (!environment.test) {
+        if (!environment.test && this.userService.getConfig().name === name.toLowerCase()) {
           obsArr.push(this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
             { withCredentials: true, domain: this.userService.getConfig().parent_domain }));
         }

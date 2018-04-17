@@ -29,7 +29,7 @@
         <mat-checkbox (change)="$event ? masterToggle() : null"
         [checked]="selection.hasValue() && isAllSelected()"
         [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
-      </mat-checkbox>
+        </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
         <mat-checkbox (change)="$event ? selection.toggle(row) : null"
@@ -41,7 +41,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
         <h3 class="header">
-          <a [routerLink]="['/resources/view' + (parent ? '/parent' : ''), element._id]">{{element.title}}</a>
+          <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
         <button  *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">

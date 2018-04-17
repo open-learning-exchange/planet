@@ -13,9 +13,9 @@ import { UserService } from '../shared/user.service';
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <a routerLink="/resources/parent" i18n mat-raised-button>List Resources</a>
-      <a routerLink="/courses/parent" i18n mat-raised-button>List Courses</a>
-      <a routerLink="/meetups/parent" i18n mat-raised-button>List Meetups</a>
+      <a routerLink="resources" i18n mat-raised-button>List Resources</a>
+      <a routerLink="courses" i18n mat-raised-button>List Courses</a>
+      <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
     </div>
     <div>{{message}}</div>
   `

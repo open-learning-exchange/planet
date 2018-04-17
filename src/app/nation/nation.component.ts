@@ -21,7 +21,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   readonly dbName = 'nations';
   message = '';
   deleteDialog: any;
-  ViewNationDetailDialog: any;
+  viewNationDetailDialog: any;
   parentType = this.route.snapshot.paramMap.get('planet');
   selectedNation = '';
   selectFilter = false;
@@ -99,12 +99,10 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getCommunity(url) {
-    this.couchService.get('nations/_all_docs?include_docs=true', { domain: url })
+    this.couchService.allDocs('nations', { domain: url })
       .subscribe((res: any) => {
         this.nations.data = res.rows.map(nations => {
-          return nations.doc;
-        }).filter(nt  => {
-          return nt['_id'].indexOf('_design') !== 0;
+          return nations;
         });
       }, (error) => this.message = 'There was a problem getting NationList');
   }
@@ -114,7 +112,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
       .debug('jsonp request to external nation')
       .subscribe((res: any) => {
-        this.ViewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+        this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
           data: {
             allData : res.rows.length > 0 ? res.rows[0].doc : [],
             title : 'Nation Details'

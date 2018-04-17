@@ -64,7 +64,7 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
-          <button mat-menu-item>
+          <button mat-menu-item [routerLink]="['view',element._id]">
             <mat-icon></mat-icon>
             <span i18n>View</span>
           </button>

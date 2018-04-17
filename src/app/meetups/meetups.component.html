@@ -11,10 +11,10 @@
   </mat-form-field>
 </mat-toolbar>
 
-<div class="space-container">
+<div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <span *ngIf="!parentLink">
+    <span *ngIf="!parent">
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
         <span i18n>Delete</span>
@@ -39,15 +39,29 @@
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
-        <h3 class="header">{{element.title}}</h3>
+        <h3 class="header">
+          <a [routerLink]="['view', element._id]">{{element.title}}</a>
+        </h3>
         <div class="content">
           <p>{{ element.description }}</p>
         </div>
-        <button *ngIf="!parentLink" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
+        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-cell>
           <mat-menu #meetupMenu="matMenu">
+            <a mat-menu-item (click)="meetupService.attendMeetup(element._id, element.participate)">
+              <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
+              <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
+            </a>
+            <a mat-menu-item [routerLink]="['/meetups/update', element._id]">
+              <mat-icon>folder</mat-icon>
+              <span i18n>Manage</span>
+            </a>
+            <a mat-menu-item [routerLink]="['/meetups/view', element._id]">
+              <mat-icon>visibility</mat-icon>
+              <span i18n>View</span>
+            </a>
             <button mat-menu-item (click)="deleteClick(element)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
