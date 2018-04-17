@@ -27,8 +27,8 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   languages = [];
-  current_flag = 'en';
-  current_lang = 'English';
+  currentFlag = 'en';
+  currentLang = 'English';
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
@@ -60,8 +60,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
-        this.current_flag = language.short_code;
-        this.current_lang = language.name;
+        this.currentFlag = language.short_code;
+        this.currentLang = language.name;
       }
       return language;
     }).filter(lang  => {
@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests' ];
+    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
@@ -111,8 +111,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  switchLanguage(served_url) {
-    alert('You are going to switch in ' + served_url + ' environment');
+  switchLanguage(servedUrl) {
+    alert('You are going to switch in ' + servedUrl + ' environment');
   }
 
   logoutClick() {
@@ -131,19 +131,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNotification() {
-    const user_id = 'org.couchdb.user:' + this.userService.get().name;
+    const userId = 'org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
         data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
-        this.notifications = data.filter(nt  => {
-          return nt['user'] === user_id;
+        this.notifications = data.filter((nt: any)  => {
+          return nt.user === userId;
         });
       }, (error) => console.log(error));
   }
 
   readNotification(notification) {
-    const update_notificaton =  { ...notification, 'status': 'read' };
-    this.couchService.put('notifications/' + notification._id, update_notificaton).subscribe((data) => {
+    const updateNotificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       console.log(data);
     },  (err) => console.log(err));
   }

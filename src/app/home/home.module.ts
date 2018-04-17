@@ -12,7 +12,6 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
-import { ManagerDashboardComponent } from '../manager-dashboard/manager-dashboard.component';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
@@ -33,7 +32,6 @@ import { NotificationsComponent } from '../notifications/notifications.component
     DashboardComponent,
     CommunityComponent,
     NationComponent,
-    ManagerDashboardComponent,
     DashboardTileComponent,
     NotificationsComponent
   ]

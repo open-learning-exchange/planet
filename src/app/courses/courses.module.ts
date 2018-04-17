@@ -10,6 +10,7 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
+import { CoursesStepComponent } from './add-courses/courses-step.component';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { CoursesViewComponent } from './view-courses/courses-view.component';
     CoursesComponent,
     CoursesAddComponent,
     CoursesRequestComponent,
-    CoursesViewComponent
+    CoursesViewComponent,
+    CoursesStepComponent
   ]
 })
 export class CoursesModule {}

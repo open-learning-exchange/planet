@@ -46,8 +46,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   fullView = 'off';
 
   ngOnInit() {
-
-
     this.route.paramMap
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
