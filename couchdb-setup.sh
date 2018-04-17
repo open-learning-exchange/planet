@@ -107,7 +107,7 @@ upsert_doc courses _design/course-validators @./design/courses/course-validators
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
-upsert_doc login_activities _index '{"index":{"fields":[{"login_time":"desc"}]},"name":"time-index"}' POST
+upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
 # Insert dummy data docs
