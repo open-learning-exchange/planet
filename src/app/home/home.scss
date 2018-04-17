@@ -66,6 +66,10 @@
       label {
         margin: 0 24px;
       }
+
+      &:focus {
+        border-right: 5px solid #ffffff;   
+      }
     }
 
     .top-nav, .bottom-nav {
