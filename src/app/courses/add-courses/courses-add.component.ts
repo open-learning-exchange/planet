@@ -78,6 +78,7 @@ export class CoursesAddComponent implements OnInit {
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
         this.courseForm.patchValue(data);
+        this.steps = data.steps || [];
       }, (error) => {
         console.log(error);
       });
@@ -85,7 +86,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
-    this.couchService.put(this.dbName + '/' + this.documentInfo.id, { ...courseInfo, '_rev': this.documentInfo.rev }).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + this.documentInfo.id, { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
