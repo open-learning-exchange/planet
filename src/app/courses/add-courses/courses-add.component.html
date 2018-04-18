@@ -60,6 +60,7 @@
     <div>
       <planet-courses-step
         *ngFor="let step of steps; index as i"
+        (stepRemove)="removeStep(i)"
         [(stepInfo)]="steps[i]"
         [stepNum]="i+1"></planet-courses-step>
     </div>

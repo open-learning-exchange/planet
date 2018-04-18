@@ -127,6 +127,10 @@ export class CoursesAddComponent implements OnInit {
     });
   }
 
+  removeStep(pos) {
+    this.steps.splice(pos, 1);
+  }
+
   cancel() {
     this.router.navigate([ '/courses' ]);
   }
