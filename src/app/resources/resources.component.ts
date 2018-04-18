@@ -3,17 +3,17 @@ import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router } from '@angular/router';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { switchMap, catchError, takeUntil, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, filterDropdowns, composeFilterFunctions } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import * as constants from './resources-constants';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -38,14 +38,27 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns = [ 'select', 'info', 'rating' ];
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
+  displayedColumns = this.parent ? [ 'info', 'rating' ] : [ 'select', 'info', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
+  subjectList: any = constants.subjectList;
+  levelList: any = constants.levelList;
+  filter = {
+    'subject': '',
+    'level': ''
+  };
+  private _titleSearch = '';
+  get titleSearch(): string { return this._titleSearch; }
+  set titleSearch(value: string) {
+    // When setting the titleSearch, also set the resource filter
+    this.resources.filter = value ? value : this.dropdownsFill();
+    this._titleSearch = value;
+  }
 
   constructor(
     private couchService: CouchService,
@@ -65,7 +78,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateAddLibrary();
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
-    this.resources.filterPredicate = filterSpecificFields([ 'title' ]);
+    this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
   }
 
   setupList(resourcesRes, myLibrarys) {
@@ -200,7 +213,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   dedupeShelfReduce(ids, id) {
@@ -241,6 +254,31 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getAddedLibrary().subscribe((res) => {
       this.setupList(this.resources.data, res.docs[0].resourceIds);
     });
+  }
+
+  onDropdownFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Force filter to update by setting it to a space if empty
+    this.resources.filter = this.resources.filter ? this.resources.filter : ' ';
+  }
+
+  resetFilter() {
+    this.filter = {
+      'subject': '',
+      'level': ''
+    };
+    this.titleSearch = '';
+  }
+
+  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+  // search text is deleted, but does not run when there are no active filters.
+  dropdownsFill() {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
+      if (val) {
+        return ' ';
+      }
+      return emptySpace;
+    }, '');
   }
 
 }

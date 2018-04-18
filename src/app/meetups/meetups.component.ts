@@ -6,7 +6,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { UserService } from '../shared/user.service';
 import { of } from 'rxjs/observable/of';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
@@ -25,7 +24,6 @@ import { Subject } from 'rxjs/Subject';
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetups = new MatTableDataSource();
-  displayedColumns = [ 'select', 'title' ];
   message = '';
   readonly dbName = 'meetups';
   deleteDialog: any;
@@ -34,6 +32,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
+  displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
 
   constructor(
@@ -155,7 +154,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
 }

@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   notifications = [];
   @ViewChild('content') private mainContent;
   user: any = {};
+  userImgSrc = '';
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
@@ -51,13 +52,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
-        this.user = this.userService.get();
+        this.onUserUpdate();
       });
   }
 
   ngOnInit() {
     this.getNotification();
-    this.user = this.userService.get();
+    this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
       if (language.served_url === document.baseURI) {
         this.currentFlag = language.short_code;
@@ -97,12 +98,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.animDisp = this.animObs.subscribe();
   }
 
-  userImageSrc() {
+  onUserUpdate() {
+    this.user = this.userService.get();
     if (this.user._attachments) {
       const filename = Object.keys(this.user._attachments)[0];
-      return environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+      this.userImgSrc = environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+    } else {
+      this.userImgSrc = '';
     }
-    return '';
   }
 
   endAnimation() {
@@ -134,17 +137,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const userId = 'org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('notifications')
       .subscribe((data) => {
-        let cnt = 0;
         data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
-        this.notifications = data.map(notifications => {
-          if (notifications.status === 'unread') {
-            cnt ++;
-          }
-          return notifications;
-        }).filter(nt  => {
-          return nt['user'] === userId;
+        this.notifications = data.filter((nt: any)  => {
+          return nt.user === userId;
         });
-        this.notifications['count_unread'] =  cnt;
       }, (error) => console.log(error));
   }
 
