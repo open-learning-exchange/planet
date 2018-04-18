@@ -25,7 +25,9 @@ export const composeFilterFunctions = (filterFunctions: any[]) => {
 };
 
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
-  if (val && val.toLowerCase() !== data[field].toLowerCase()) {
+  // If field is an array field, check if one value matches.  If not check if values match exactly.
+  const noMatch = data[field] instanceof Array ? data[field].indexOf(val) === -1 : val.toLowerCase() !== data[field].toLowerCase();
+  if (val && noMatch) {
     return false;
   }
   return includeItem;

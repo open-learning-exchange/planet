@@ -10,7 +10,6 @@ import {
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
-
 import * as JSZip from 'jszip';
 import * as mime from 'mime-types';
 import { Observable } from 'rxjs/Observable';
@@ -30,7 +29,6 @@ export class ResourcesAddComponent implements OnInit {
   media: string[];
   openWith: string[];
   resourceType: string[];
-  currentDate = new Date();
   file: any;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
@@ -72,7 +70,7 @@ export class ResourcesAddComponent implements OnInit {
       openWith: '',
       resourceFor: [],
       medium: '',
-      articleDate: '',
+      articleDate: Date.now(),
       resourceType: '',
       addedBy: '',
       openUrl: [],
@@ -142,8 +140,6 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   addResource(resourceInfo) {
-    // convert articleDate in Date format to timestamp format
-    resourceInfo.articleDate = Date.now();
     // ...is the rest syntax for object destructuring
     this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
