@@ -6,7 +6,29 @@ import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 
 @Component({
-  templateUrl: './courses-view.component.html'
+  templateUrl: './courses-view.component.html',
+  styles: [ `
+  .view-container {
+    background-color: #FFFFFF;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "detail view";
+  }
+
+  .course-detail {
+    grid-area: detail;
+    padding: 1rem;
+  }
+
+  .course-view {
+    grid-area: view;
+
+    * {
+      max-width: 100%;
+      max-height: 60vh;
+    }
+  }
+  ` ]
 })
 
 export class CoursesViewComponent implements OnInit {
