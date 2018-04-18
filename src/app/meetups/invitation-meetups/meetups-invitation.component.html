@@ -10,8 +10,8 @@
       </mat-select>
       <mat-error><planet-form-error-messages></planet-form-error-messages></mat-error>
     </mat-form-field>
-    <div *ngIf="show">
-      <mat-toolbar *ngIf="show">
+    <div *ngIf="usersTable">
+      <mat-toolbar>
         <span class="toolbar-fill"></span>
         <mat-icon>search</mat-icon>
         <mat-form-field class="font-size-1">
@@ -26,17 +26,15 @@
             <mat-checkbox (change)="onMemberSelected(element._id, $event.checked)"></mat-checkbox>
           </mat-cell>
         </ng-container>
-
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef i18n>Member Name</mat-header-cell>
           <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
         </ng-container>
-
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       </mat-table>
-      <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+      <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
     </div>    
   </mat-dialog-content>
   <mat-dialog-actions>

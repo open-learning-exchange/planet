@@ -8,12 +8,10 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Router } from '@angular/router';
-
 import { Observable } from 'rxjs/Rx';
 import { MeetupsInvitationComponent } from './invitation-meetups/meetups-invitation.component';
 import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { FormBuilder } from '@angular/forms';
-
 
 @Injectable()
 export class MeetupService {
@@ -99,7 +97,7 @@ export class MeetupService {
     }, (error) => (error));
   }
 
-  public confirm(): Observable<boolean> {
+  public inviteMember(): Observable<boolean> {
     let dialogRef: MatDialogRef<MeetupsInvitationComponent>;
     dialogRef = this.dialog.open(MeetupsInvitationComponent, {
       width: '600px'

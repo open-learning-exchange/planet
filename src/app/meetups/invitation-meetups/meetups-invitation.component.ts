@@ -15,7 +15,7 @@ export class MeetupsInvitationComponent {
   public title: string;
   public fields: any;
   public modalForm: any;
-  show = false;
+  usersTable = false;
   invitation: FormGroup;
   displayedColumns = [ '_id', 'name' ];
   users: any = new MatTableDataSource();
@@ -64,14 +64,14 @@ export class MeetupsInvitationComponent {
     }
   }
 
-  onChange($event) {
-    if ($event === 'Member') {
-      this.show = true;
+  onChange(event) {
+    if (event === 'Member') {
+      this.usersTable = true;
       this.getAlluser();
       this.changeDetector.detectChanges();
       this.users.paginator = this.paginator;
     } else {
-      this.show = false;
+      this.usersTable = false;
     }
   }
 

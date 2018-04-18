@@ -46,9 +46,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  openDialogService() {
+  inviteMemberDialog() {
     this.meetupService
-    .confirm()
+    .inviteMember()
     .subscribe((res: any) => {
       if (res !== undefined) {
         if (res.invitemember === 'All') {
@@ -67,8 +67,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       const filterusers = users.filter((user: any) => {
         return user._id !== this.userService.get()._id;
       });
-      filterusers.forEach((fusers) => {
-        this.sendInviteNotification(fusers._id, meetupDetail);
+      filterusers.forEach((user) => {
+        this.sendInviteNotification(user._id, meetupDetail);
       });
     });
   }
@@ -77,7 +77,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     const data = {
       'user': userId,
       'message': 'Meet up notification of ' + meetupDetail.title + ' at ' + meetupDetail.meetupLocation,
-      'link': 'http://localhost:3000/meetups/view/' + meetupDetail._id,
+      'link': window.location.href,
       'item': meetupDetail._id,
       'type': 'meetup',
       'priority': 1,
@@ -85,9 +85,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       'time': Date.now()
     };
     this.couchService.post('notifications', data)
-      .subscribe(rs => {
-      }, error => this.planetMessageService.showAlert('Sorry,there is a problem with sending Invitation'));
-    this.planetMessageService.showAlert('Invitation send sucessfully');
+      .subscribe(() => {
+        this.planetMessageService.showAlert('Invitation send sucessfully.');
+      }, error => this.planetMessageService.showAlert('Sorry,there is a problem with sending request.'));
   }
 
   ngOnDestroy() {
