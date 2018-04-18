@@ -18,6 +18,7 @@ import { MaterialModule } from './shared/material.module';
 
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
+import { SortablejsModule } from 'angular-sortablejs/dist';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { MatIconRegistry } from '@angular/material';
     HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
+    SortablejsModule.forRoot({ animation: 150 }),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SortablejsModule } from 'angular-sortablejs/dist';
 
 import { CoursesComponent } from './courses.component';
 import { CoursesAddComponent } from './add-courses/courses-add.component';
@@ -20,7 +21,8 @@ import { CoursesStepComponent } from './add-courses/courses-step.component';
     ReactiveFormsModule,
     PlanetFormsModule,
     PlanetDialogsModule,
-    MaterialModule
+    MaterialModule,
+    SortablejsModule
   ],
   declarations: [
     CoursesComponent,
