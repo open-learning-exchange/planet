@@ -103,7 +103,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   deleteRole(user: any, index: number, position: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
-    let tempUser = { ...user, roles: [ ...user.roles ] };
+    let tempUser = user;
     tempUser.roles.splice(index, 1);
     delete tempUser.selected;
     if (tempUser.roles.length === 0) {
