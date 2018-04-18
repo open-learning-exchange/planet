@@ -256,7 +256,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onChange(filterValue: string, field: string) {
+  onDropdownFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.resources.filter = this.resources.filter ? this.resources.filter : ' ';
