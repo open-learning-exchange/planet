@@ -86,7 +86,10 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
-    this.couchService.put(this.dbName + '/' + this.documentInfo.id, { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }).subscribe(() => {
+    this.couchService.put(
+      this.dbName + '/' + this.documentInfo.id,
+      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
+    ).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
