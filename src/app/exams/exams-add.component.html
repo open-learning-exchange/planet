@@ -1,0 +1,25 @@
+<mat-toolbar>
+  <a mat-icon-button routerLink="/courses"><mat-icon>arrow_back</mat-icon></a>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span i18n>Add Course</span>
+    <span class="toolbar-fill"></span>
+    <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
+  </mat-toolbar>
+  <div class="view-container">
+    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
+      <mat-form-field class="full-width">
+        <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
+        <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+    </form>
+    <div>
+      <planet-exam-question
+        *ngFor="let question of examForm.controls.questions; index as i"
+        [questionForm]="question"
+        ></planet-exam-question>
+    </div>
+  </div>
+</div>
