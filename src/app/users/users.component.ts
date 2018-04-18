@@ -65,12 +65,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   isAllSelected() {
-    this.selection.selected.map((user) => {
-      /** Adding roles to user are not alowed if admin is selected */
-      if (user.roles.indexOf('admin') === -1 && this.isUserAdmin) {
-        user.selected = true;
-      }
-    });
     const numSelected = this.selection.selected.length;
     const numRows = this.allUsers.data.length;
     return numSelected === numRows;
@@ -99,16 +93,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
   initializeData() {
     this.selection.clear();
     forkJoin([ this.getUsers(), this.getShelf() ])
-    .debug('Getting user list').subscribe((data) => {
-      this.allUsers.data = data[0].reduce((users: any[], user: any) => {
+    .debug('Getting user list').subscribe(([ users, shelfRes ]) => {
+      const myTeamIds = shelfRes.docs[0].myTeamIds;
+      this.allUsers.data = users.reduce((newUsers: any[], user: any) => {
+        const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
-          user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
+          userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
-        const myTeamIndex = data[1].docs[0].myTeamIds ? data[1].docs[0].myTeamIds.findIndex(myTeamId => {
-          return user._id === myTeamId;
-        }) : -1;
-        myTeamIndex > -1 ? users.push({ ...user, myTeamInfo: true }) : users.push({ ...user, myTeamInfo: false });
-        return users;
+        userInfo.myTeamInfo = myTeamIds.indexOf(user._id) > -1 ? true : false;
+        newUsers.push(userInfo);
+        return newUsers;
       }, []);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
@@ -122,7 +116,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     this.selectedRolesMap.set(tempUser.name, tempUser.roles);
-    delete tempUser.selected;
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       user.roles.splice(index, 1);
@@ -160,13 +153,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   roleSubmit(users: any[], role: string) {
-    forkJoin(users.reduce((observers, user, index) => {
+    forkJoin(users.reduce((observers, userInfo) => {
+      const user = userInfo.doc;
       // Do not add role if it already exists on user and also not allow an admin to be given another role
-      if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
+      if (user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
         const tempUser = { ...user, roles: [ ...user.roles ] };
-        // Remove selected property so it doesn't get saved to DB
-        delete tempUser.selected;
         tempUser.roles.push(role);
         this.selectedRolesMap.set(tempUser.name, tempUser.roles);
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
@@ -175,8 +167,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, []))
     .debug('Adding role to users')
     .subscribe((responses) => {
-      users.map((user) => {
-        if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
+      users.map((userInfo) => {
+        const user = userInfo.doc;
+        if (user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
           user.roles.push(role);
           const res: any = responses.find((response: any) => response.id === user._id);
