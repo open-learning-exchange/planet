@@ -14,12 +14,14 @@
         <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Add Exam</button>
     </form>
     <div>
       <planet-exam-question
-        *ngFor="let question of examForm.controls.questions; index as i"
+        *ngFor="let question of examForm.controls.questions.controls"
         [questionForm]="question"
         ></planet-exam-question>
     </div>
   </div>
+  <div *ngFor="let question of examForm.controls.questions.controls">{{question.value | json}}</div>
 </div>

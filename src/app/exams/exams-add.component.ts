@@ -11,6 +11,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
   templateUrl: 'exams-add.component.html'
@@ -28,7 +29,8 @@ export class ExamsAddComponent implements OnInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private coursesService: CoursesService
   ) {
     this.createForm();
   }
@@ -72,8 +74,10 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addExam(examInfo) {
-    this.couchService.post(this.dbName, examInfo).subscribe(() => {
-      this.router.navigate([ '/courses' ]);
+    this.couchService.post(this.dbName, examInfo).subscribe((res) => {
+      const courseExam = { _id: res.id, _rev: res.rev, ...examInfo };
+      this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
+      this.router.navigate([ this.coursesService.returnUrl ]);
       this.planetMessageService.showMessage('New exam added');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -82,7 +86,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addStep() {
-    this.examForm.controls.questions.push(this.fb.group({
+    (<FormArray>this.examForm.controls.questions).push(this.fb.group({
       header: '',
       body: '',
       type: 'input',
@@ -90,7 +94,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate([ '/courses' ]);
+    this.router.navigate([ this.coursesService.returnUrl ]);
   }
 
 }

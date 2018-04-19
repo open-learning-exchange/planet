@@ -13,6 +13,7 @@ import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { CoursesStepComponent } from './add-courses/courses-step.component';
 import { ExamsAddComponent } from '../exams/exams-add.component';
 import { ExamsQuestionComponent } from '../exams/exams-question.component';
+import { CoursesService } from './courses.service';
 
 @NgModule({
   imports: [
@@ -32,6 +33,9 @@ import { ExamsQuestionComponent } from '../exams/exams-question.component';
     CoursesStepComponent,
     ExamsAddComponent,
     ExamsQuestionComponent
+  ],
+  providers: [
+    CoursesService
   ]
 })
 export class CoursesModule {}
