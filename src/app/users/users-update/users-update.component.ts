@@ -159,26 +159,9 @@ export class UsersUpdateComponent implements OnInit {
     this.uploadImage = true;
   }
 
-  previewImageFile(event) {
-    this.file = event.target.files[0];
-    const reader  = new FileReader();
-    const self = this;
-
-    reader.addEventListener('load', function () {
-      self.previewSrc = reader.result;
-      if (self.previewSrc !== '../assets/image.png') {
-        self.uploadImage = true;
-      }
-    }, false);
-
-    if (this.file) {
-      reader.readAsDataURL(this.file);
-    }
-  }
-
   removeImageFile() {
     this.previewSrc = this.currentProfileImg;
-    this.file = undefined;
+    this.file = null;
     this.uploadImage = false;
   }
 
