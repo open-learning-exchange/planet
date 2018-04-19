@@ -108,7 +108,7 @@ export class UsersUpdateComponent implements OnInit {
     return 'id-' + Math.random().toString(36).substr(2, 16);
   }
 
-  getAttachmentObject(): object {
+  createAttachmentObj(): object {
     // Unclear if only encoding is base64
     // This ought to cover any encoding as long as the formatting is: ";[encoding],"
     const imgDataArr: string[] = this.file.split(/;\w+,/);
@@ -128,7 +128,7 @@ export class UsersUpdateComponent implements OnInit {
   handleAttachment(user, formValue) {
     let fileObs: Observable<any>;
     if (this.file) {
-      fileObs = of(this.getAttachmentObject());
+      fileObs = of(this.createAttachmentObj());
     } else {
       fileObs = of({});
     }
