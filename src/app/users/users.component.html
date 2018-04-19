@@ -88,7 +88,7 @@
           </button>
           <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([{'_id': element.doc._id}])">Add Team</button>
           <ng-template #addTeam><button mat-raised-button color="primary" *ngIf="element.myTeamInfo" (click)="removeTeam(element.doc._id)">Remove Team</button></ng-template>
-          <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
+          <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>View Profile
             <mat-icon>folder_open</mat-icon>
           </a>
         </div>
