@@ -145,4 +145,8 @@ export class CoursesAddComponent implements OnInit {
     this.router.navigate([ '/courses' ]);
   }
 
+  stepTrackByFn(index, item) {
+    return index;
+  }
+
 }

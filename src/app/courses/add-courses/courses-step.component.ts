@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -10,7 +10,7 @@ import {
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html'
 })
-export class CoursesStepComponent implements OnInit {
+export class CoursesStepComponent implements OnChanges {
 
   @Input() stepInfo: any = {
     stepTitle: '',
@@ -27,7 +27,7 @@ export class CoursesStepComponent implements OnInit {
     private fb: FormBuilder
   ) {}
 
-  ngOnInit() {
+  ngOnChanges() {
     this.stepForm = this.fb.group(this.stepInfo);
   }
 
@@ -40,7 +40,7 @@ export class CoursesStepComponent implements OnInit {
   }
 
   moveUp() {
-    this.stepOrder.emit(this.stepNum-2);
+    this.stepOrder.emit(this.stepNum - 2);
   }
 
   moveDown() {
