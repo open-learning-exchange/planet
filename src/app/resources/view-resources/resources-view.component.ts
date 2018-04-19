@@ -38,7 +38,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   get urlPrefix()  {
     let domain = environment.couchAddress;
     if (this.parent) {
-      domain = 'http://' + this.userService.getConfig().parent_domain + '/';
+      domain = 'http://' + this.userService.getConfig().parentDomain + '/';
     }
     return domain + this.dbName + '/';
   }
@@ -46,8 +46,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   fullView = 'off';
 
   ngOnInit() {
-
-
     this.route.paramMap
       .debug('Getting resource id from parameters')
       .pipe(takeUntil(this.onDestroy$))
@@ -55,7 +53,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         const resourceId = params.get('id');
         const getOpts: any = { resourceIds: [ resourceId ] };
         if (this.parent) {
-          getOpts.opts = { domain: this.userService.getConfig().parent_domain };
+          getOpts.opts = { domain: this.userService.getConfig().parentDomain };
         }
         this.resourceActivity(resourceId, 'visit');
         this.resourcesService.updateResources(getOpts);

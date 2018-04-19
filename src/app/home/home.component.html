@@ -6,21 +6,21 @@
   <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
   <button mat-icon-button *ngIf="user.isUserAdmin" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications"><mat-icon>notifications</mat-icon></button>
-  <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications</mat-icon></button>
+  <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
     <img *ngIf="currentFlag" src="assets/flags/{{currentFlag}}.png" alt="{{currentLang}}"
       title="{{currentLang}}" />
   </button>
   <button mat-icon-button routerLink="/users/profile/{{user.name}}">
-    <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImageSrc()">
+    <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
     <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
   </button>
 </mat-toolbar>
 <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
-  <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.served_url)">
-    <img src="assets/flags/{{language.short_code}}.png" title="{{language.name}}" alt="{{language.name}}"/>
-    <span>{{language.short_code}}</span>
+  <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.servedUrl)">
+    <img src="assets/flags/{{language.shortCode}}.png" title="{{language.name}}" alt="{{language.name}}"/>
+    <span>{{language.shortCode}}</span>
   </button>
 </mat-menu>
 <!--Notification dropdown menu-->
@@ -42,7 +42,7 @@
     <ul class="top-nav">
       <li>
         <a mat-button routerLink="/" i18n-title title="Home">
-          <mat-icon>home</mat-icon>
+          <mat-icon svgIcon="home"></mat-icon>
           <label i18n>Home</label>
         </a>
       </li>

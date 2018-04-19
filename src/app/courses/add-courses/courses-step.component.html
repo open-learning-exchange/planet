@@ -1,0 +1,30 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      {{stepInfo.stepTitle || 'Step ' + stepNum}}
+    </mat-panel-title>
+    <mat-panel-description>
+      Fill step type here
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <form class="vertical-form" [formGroup]="stepForm" (change)="stepChange()">
+    <mat-form-field>
+      <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
+    </mat-form-field>
+    <mat-form-field>
+      <textarea
+        matInput
+        i18n-placeholder
+        placeholder="Description"
+        formControlName="description"
+        required
+        matTextareaAutosize
+        matAutosizeMaxRows="5"
+        matAutosizeMinRows="4">
+      </textarea>
+    </mat-form-field>
+  </form>
+  <mat-action-row>
+    <button mat-icon-button><mat-icon (click)="deleteStep()">delete</mat-icon></button>
+  </mat-action-row>
+</mat-expansion-panel>

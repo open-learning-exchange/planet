@@ -2,12 +2,23 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Library</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyResFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select i18n-placeholder placeholder="Subject(s)" [value]="filter.subject || 'All'" (change)="onDropdownFilterChange($event.value, 'subject')">
+      <mat-option i18n value="All">All</mat-option>
+      <mat-option *ngFor="let subject of subjectList" [value]="subject">{{subject}}</mat-option>
+    </mat-select>
   </mat-form-field>
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select i18n-placeholder placeholder="Level(s)" [value]="filter.level || 'All'" (change)="onDropdownFilterChange($event.value, 'level')">
+      <mat-option i18n value="All">All</mat-option>
+      <mat-option *ngFor="let level of levelList" [value]="level">{{level}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+  </mat-form-field>
+  <button mat-button i18n (click)="resetFilter()"><span>Reset</span></button>
 </mat-toolbar>
-
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
@@ -29,7 +40,7 @@
         <mat-checkbox (change)="$event ? masterToggle() : null"
         [checked]="selection.hasValue() && isAllSelected()"
         [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
-      </mat-checkbox>
+        </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
         <mat-checkbox (change)="$event ? selection.toggle(row) : null"
@@ -41,7 +52,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
         <h3 class="header">
-          <a [routerLink]="['/resources/view' + (parent ? '/parent' : ''), element._id]">{{element.title}}</a>
+          <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
         <button  *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">

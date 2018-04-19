@@ -32,13 +32,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'select', 'title', 'action' ];
   message = '';
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
-  parentUrl = false;
+  parent = this.route.snapshot.data.parent;
+  displayedColumns = this.parent ? [ 'title', 'action' ] : [ 'select', 'title', 'action' ];
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -95,9 +95,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   getCourses() {
     let opts: any = {};
-    if (this.router.url === '/courses/parent') {
-      this.parentUrl = true;
-      opts = { domain: this.userService.getConfig().parent_domain };
+    if (this.parent) {
+      opts = { domain: this.userService.getConfig().parentDomain };
     }
     return this.couchService.allDocs('courses', opts);
   }
@@ -180,7 +179,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

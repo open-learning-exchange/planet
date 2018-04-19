@@ -298,4 +298,9 @@ body {
     padding: 1rem;
   }
 
+  .vertical-form {
+    display: flex;
+    flex-direction: column;
+  }
+
 }

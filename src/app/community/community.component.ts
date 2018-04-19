@@ -113,7 +113,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
   unlockUser(community) {
-    return this.couchService.post('_users/_find', { 'selector': { 'request_id': community._id } })
+    return this.couchService.post('_users/_find', { 'selector': { 'requestId': community._id } })
       .pipe(switchMap(data => {
         const user = data.docs[0];
         return this.couchService.put('_users/' + user._id + '?rev=' + user._rev,
