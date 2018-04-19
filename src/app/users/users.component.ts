@@ -8,8 +8,9 @@ import { MatTableDataSource, MatSort, MatPaginator, PageEvent } from '@angular/m
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './users.component.html',
@@ -36,14 +37,20 @@ export class UsersComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  pageEvent: PageEvent;
+  userShelf = this.userService.getUserShelf();
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
     private planetMessageService: PlanetMessageService
-  ) {}
+  ) {
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.setMyTeams(this.allUsers.data, this.userService.getUserShelf().myTeamIds);
+      });
+    }
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -85,29 +92,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
   }
 
-  getShelf() {
-    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
-    .pipe(catchError(err => {
-      // If there's an error, return a fake couchDB empty response
-      // so resources can be displayed.
-      return of({ docs: [] });
-    }));
-  }
-
   initializeData() {
     this.selection.clear();
-    forkJoin([ this.getUsers(), this.getShelf() ])
-    .debug('Getting user list').subscribe(([ users, shelfRes ]) => {
-      const myTeamIds = shelfRes.docs[0].myTeamIds;
-      this.allUsers.data = users.docs.reduce((newUsers: any[], user: any) => {
+    this.getUsers().debug('Getting user list').subscribe(users => {
+      users = users.docs.map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
-        userInfo.myTeamInfo = myTeamIds && myTeamIds.indexOf(user._id) > -1 ? true : false;
-        newUsers.push(userInfo);
-        return newUsers;
-      }, []);
+        return userInfo;
+      });
+      this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
@@ -128,6 +123,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => {
       console.log(error);
     });
+  }
+
+  setMyTeams(users, myTeamIds = []) {
+    this.allUsers.data = users.map((user: any) => {
+      user.myTeamInfo = myTeamIds.indexOf(user.doc._id) > -1;
+      return user;
+    }, []);
   }
 
   deleteRole(user: any, index: number) {
@@ -186,39 +188,28 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return ids.concat(id);
   }
 
-  addTeams(userId) {
-    const userIdArray = userId.map((data) => {
-      return data._id;
-    });
-    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
-      .pipe(
-        // If there are no matches, CouchDB throws an error
-        // User has no "shelf", and it needs to be created
-        catchError(err => {
-          // Observable of continues stream, send fake response with empty myTeamIds array
-          return of({ docs: [ { _rev: '', myTeamIds: [] } ] });
-        }),
-        switchMap(data => {
-          const oldShelf = data.docs[0];
-          const myTeamIds = userIdArray.concat(oldShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
-          return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(oldShelf, { myTeamIds }));
-        })
-      ).subscribe((res) =>  {
-        this.initializeData();
-        const msg = userIdArray.length === 1 ? 'User' : 'Users';
-        this.planetMessageService.showAlert(msg + ' added to your shelf');
+  updateShelf(myTeamIds: string[] = [], userShelf: any, msg: string) {
+    this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
+      this.userService.setShelf({ ...userShelf, _rev: res.rev, myTeamIds });
+
+      this.planetMessageService.showAlert(msg + ' your shelf');
     }, (error) => (error));
   }
 
-  removeTeam (teamId) {
-    this.getShelf().pipe(switchMap(data => {
-      data.docs[0].myTeamIds.splice(data.docs[0].myTeamIds.indexOf(teamId), 1);
-      return this.couchService.put('shelf/' + this.userService.get()._id, data.docs[0]);
-    })).subscribe(data => {
-      this.initializeData();
-      this.planetMessageService.showAlert('User removed from shelf');
-    }, (error) => (error));
+  addTeams(users) {
+    const userShelf = this.userService.getUserShelf();
+    const myTeamIds = users.map((data) => {
+      return data._id || data.doc._id;
+    }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
+    const msg = (myTeamIds.length === 1 ? 'User' : 'Users') + ' added to';
+    this.updateShelf(myTeamIds, userShelf, msg);
+  }
+
+  removeTeam(teamId) {
+    const userShelf = this.userService.getUserShelf();
+    const myTeamIds = [ ...userShelf.myTeamIds ];
+    myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
+    this.updateShelf(myTeamIds, userShelf, 'User removed from ');
   }
 
   back() {

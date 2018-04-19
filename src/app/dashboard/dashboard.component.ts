@@ -34,11 +34,12 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    const userShelf = this.userService.getUserShelf();
     forkJoin([
-      this.getData('resources', this.userService.getUserShelf().resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-      this.getData('courses', this.userService.getUserShelf().courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-      this.getData('meetups', this.userService.getUserShelf().meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-      this.getData('_users', this.userService.getUserShelf().myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
+      this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
+      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
+      this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
+      this.getData('_users', userShelf.myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
