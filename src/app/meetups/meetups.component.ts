@@ -36,7 +36,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
-  getOpts = this.parent ? { domain: this.userService.getConfig().parent_domain } : {};
+  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
 
   constructor(
     private couchService: CouchService,

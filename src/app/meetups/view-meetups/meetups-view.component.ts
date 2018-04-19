@@ -31,7 +31,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         const meetupId = params.get('id');
         const getOpts: any = { meetupIds: [ meetupId ] };
         if (this.parent) {
-          getOpts.opts = { domain: this.userService.getConfig().parent_domain };
+          getOpts.opts = { domain: this.userService.getConfig().parentDomain };
         }
         this.meetupService.updateMeetups(getOpts);
       }, error => console.log(error), () => console.log('complete getting meetup id'));
