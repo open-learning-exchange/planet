@@ -30,7 +30,7 @@ export class CoursesViewComponent implements OnInit {
 
   getCourse(id: string) {
     if (this.parent) {
-      return this.couchService.get('courses/' + id,  { domain: this.userService.getConfig().parent_domain } );
+      return this.couchService.get('courses/' + id,  { domain: this.userService.getConfig().parentDomain } );
     }
     return this.couchService.get('courses/' + id);
   }
