@@ -18,10 +18,10 @@
     </form>
     <div>
       <planet-exam-question
-        *ngFor="let question of examForm.controls.questions.controls"
+        *ngFor="let question of questionsFormArray.controls"
         [questionForm]="question"
         ></planet-exam-question>
     </div>
   </div>
-  <div *ngFor="let question of examForm.controls.questions.controls">{{question.value | json}}</div>
+  <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>
 </div>

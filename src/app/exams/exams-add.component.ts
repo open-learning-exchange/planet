@@ -19,6 +19,7 @@ import { CoursesService } from '../courses/courses.service';
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
   examForm: FormGroup;
+  questionsFormArray: FormArray;
   documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
   steps = [];
@@ -47,6 +48,7 @@ export class ExamsAddComponent implements OnInit {
       ],
       questions: this.fb.array([])
     });
+    this.questionsFormArray = <FormArray>this.examForm.controls.questions;
   }
 
   ngOnInit() {
@@ -86,7 +88,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addStep() {
-    (<FormArray>this.examForm.controls.questions).push(this.fb.group({
+    this.questionsFormArray.push(this.fb.group({
       header: '',
       body: '',
       type: 'input',
