@@ -35,6 +35,7 @@ export class UsersUpdateComponent implements OnInit {
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
+  currentImgKey: string;
   currentProfileImg: string;
   defaultProfileImg = '../assets/image.png';
   previewSrc = '../assets/image.png';
@@ -62,8 +63,9 @@ export class UsersUpdateComponent implements OnInit {
         this.user = data;
         this.editForm.patchValue(data);
         if (data['_attachments']) {
-          const filename = Object.keys(data._attachments)[0];
-          this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
+          // If multiple attachments this could break? Entering the if-block as well
+          this.currentImgKey = Object.keys(data._attachments)[0];
+          this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
           this.previewSrc = this.currentProfileImg;
           this.uploadImage = true;
         } else {
@@ -100,14 +102,6 @@ export class UsersUpdateComponent implements OnInit {
     }
   }
 
-  // TODO: temporary solution, should be in separate module
-  // Preferably changed for UUID generating function.
-  // Perhaps just incrementing imagenumber by 1 if any chosen could be other alternative
-  // http://www.frontcoded.com/javascript-create-unique-ids.html
-  uniqueId(): string {
-    return 'id-' + Math.random().toString(36).substr(2, 16);
-  }
-
   createAttachmentObj(): object {
     // Unclear if only encoding is base64
     // This ought to cover any encoding as long as the formatting is: ";[encoding],"
@@ -117,7 +111,9 @@ export class UsersUpdateComponent implements OnInit {
     const data: string = imgDataArr[1];
     // Create attachment object
     const attachments: object = {};
-    attachments[this.uniqueId()] = {
+    // Alter between two possible keys for image element to ensure database updates
+    const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
+    attachments[imgKey] = {
       'content_type': contentType,
       'data': data
     };
