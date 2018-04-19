@@ -72,7 +72,7 @@ constructor(
   }
 
   public checkOldPassword$(ac: AbstractControl): Observable<boolean> {
-    return this.couchService.post('_session', { 'name': this.userService.get().name, 'password': ac.value }, { withCredentials: true })
+    return this.couchService.post('_session', { 'name': this.userService.get().name, 'password': ac.value }, { withCredentials: false })
     .pipe(
       map(data => {
         return null;
