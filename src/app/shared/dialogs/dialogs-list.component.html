@@ -1,0 +1,17 @@
+<mat-table [dataSource]="tableData">
+  <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
+    <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element[column]}}</mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>
+  <mat-row
+    *matRowDef="let row; columns: tableColumns"
+    (click)="selection.toggle(row)"
+    [ngClass]="{highlight:selection.isSelected(row)}"
+    class="cursor-pointer">
+  </mat-row>
+</mat-table>
+<mat-dialog-actions>
+  <button mat-button (click)="ok()" [disabled]="!selection.hasValue()" i18n>OK</button>
+  <button mat-button mat-dialog-close i18n>Cancel</button>
+</mat-dialog-actions>
