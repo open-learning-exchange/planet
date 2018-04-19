@@ -1,7 +1,7 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title>
-      {{stepInfo.stepTitle || 'Step ' + stepNum}}
+      {{stepInfo.stepTitle || 'Step ' + (stepNum)}}
     </mat-panel-title>
     <mat-panel-description>
       Fill step type here
@@ -25,6 +25,8 @@
     </mat-form-field>
   </form>
   <mat-action-row>
+    <button mat-icon-button *ngIf="stepNum !== 1" (click)="moveUp()"><mat-icon>arrow_upward</mat-icon></button>
+    <button mat-icon-button *ngIf="stepCount !== stepNum" (click)="moveDown()"><mat-icon>arrow_downward</mat-icon></button>
     <button mat-icon-button><mat-icon (click)="deleteStep()">delete</mat-icon></button>
   </mat-action-row>
 </mat-expansion-panel>

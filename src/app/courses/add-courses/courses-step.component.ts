@@ -18,6 +18,8 @@ export class CoursesStepComponent implements OnInit {
   };
   @Output() stepInfoChange = new EventEmitter<any>();
   @Input() stepNum: number;
+  @Input() stepCount: number;
+  @Output() stepOrder = new EventEmitter<any>();
   @Output() stepRemove = new EventEmitter<any>();
   stepForm: FormGroup;
 
@@ -35,6 +37,14 @@ export class CoursesStepComponent implements OnInit {
 
   deleteStep() {
     this.stepRemove.emit();
+  }
+
+  moveUp() {
+    this.stepOrder.emit(this.stepNum-2);
+  }
+
+  moveDown() {
+    this.stepOrder.emit(this.stepNum);
   }
 
 }
