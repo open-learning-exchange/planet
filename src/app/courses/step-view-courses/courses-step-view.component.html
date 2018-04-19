@@ -1,0 +1,17 @@
+<mat-toolbar>
+  <a mat-icon-button [routerLink]="['/courses']"><mat-icon>arrow_back</mat-icon></a>
+  <span i18n>Course</span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+      <span class="margin-lr-3"><h3>{{stepDetail.stepTitle}}</h3></span>
+    <span class="toolbar-fill"></span>
+    <span i18n>{{stepNo+1}}/{{courseSteps.length}}</span>
+    <button mat-icon-button [disabled]="!stepNo" (click)="prev()"><mat-icon>navigate_before</mat-icon></button>
+    <button mat-icon-button [disabled]="stepNo === courseSteps.length-1" (click)="next()"><mat-icon>navigate_next</mat-icon></button>
+  </mat-toolbar>
+  <div class="view-container">
+    {{stepDetail.description}}
+  </div>
+</div>

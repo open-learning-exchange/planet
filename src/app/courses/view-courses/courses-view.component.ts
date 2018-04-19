@@ -34,6 +34,7 @@ export class CoursesViewComponent implements OnInit {
 
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
+  courseView = true;
 
   constructor(
     private couchService: CouchService,
