@@ -1,5 +1,6 @@
 <mat-toolbar>
   <a mat-icon-button [routerLink]="parent ? ['/manager/courses'] : ['/courses']"><mat-icon>arrow_back</mat-icon></a>
+  <span i18n>Course</span>
 </mat-toolbar>
 
 <div class="space-container">
@@ -8,16 +9,34 @@
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container">
-    <p i18n>Course Leader: {{courseDetail.courseLeader}} </p>
-    <p i18n>Subject Level: {{courseDetail.subjectLevel}}</p>
-    <p i18n>Grade Level: {{courseDetail.gradeLevel}}</p>
-    <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
-    <p i18n>Method: {{courseDetail.method}}</p>
-    <p i18n>Frequency/Days: {{courseDetail.day}}</p>
-    <p i18n>Schedule - 
-      Date: {{courseDetail.startDate | date }}
-      Time: {{courseDetail.startTime }}</p>
-    <p i18n>Location: {{courseDetail.location}}</p>
-    <p i18n>Description: {{courseDetail.description}}</p>
+    <div class="course-detail bg-light-grey">
+      <p i18n>Course Leader: {{courseDetail.courseLeader}} </p>
+      <p i18n>Subject Level: {{courseDetail.subjectLevel}}</p>
+      <p i18n>Grade Level: {{courseDetail.gradeLevel}}</p>
+      <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
+      <p i18n>Method: {{courseDetail.method}}</p>
+      <p i18n>Frequency/Days: {{courseDetail.day}}</p>
+      <p i18n>Schedule - 
+        Date: {{courseDetail.startDate | date }}
+        Time: {{courseDetail.startTime }}</p>
+      <p i18n>Location: {{courseDetail.location}}</p>
+      <p i18n>Description: {{courseDetail.description}}</p>
+    </div>
+    <div class="course-view">
+      <ng-container *ngFor="let step of courseDetail.steps">
+        <mat-expansion-panel hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{step.stepTitle || 'Step ' + stepNum}}
+            </mat-panel-title>
+            <mat-panel-description>
+              <!-- TODO: show icons based on what step contains such as resource/test -->
+              <mat-icon>attach_file</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          {{step.description}}
+        </mat-expansion-panel>
+      </ng-container>
+    </div>
   </div>
 </div>
