@@ -158,7 +158,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle, 2000, 'X');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }

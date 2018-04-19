@@ -91,7 +91,7 @@ export class CoursesAddComponent implements OnInit {
       { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
     ).subscribe(() => {
       this.router.navigate([ '/courses' ]);
-      this.planetMessageService.showMessage('Course Updated Successfully');
+      this.planetMessageService.showMessage('Course Updated Successfully', 2000, '+');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
