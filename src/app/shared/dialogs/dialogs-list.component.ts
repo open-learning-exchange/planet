@@ -12,7 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 })
 export class DialogsListComponent {
 
-  tableData:any = [];
+  tableData: any = [];
   tableColumns: string[] = [];
   selection = new SelectionModel(false, []);
 

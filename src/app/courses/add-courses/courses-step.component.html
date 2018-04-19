@@ -24,7 +24,9 @@
       </textarea>
     </mat-form-field>
   </form>
+  <div *ngIf="attachment"><span i18n>Attached {attachment.type, select, resources {resource}}:</span> {{attachment.doc.title}}</div>
   <mat-action-row>
+    <button mat-raised-button color="primary" (click)="attachItem('resources')">Add Resource</button>
     <button mat-icon-button><mat-icon (click)="deleteStep()">delete</mat-icon></button>
   </mat-action-row>
 </mat-expansion-panel>

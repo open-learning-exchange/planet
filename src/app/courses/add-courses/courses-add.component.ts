@@ -115,7 +115,7 @@ export class CoursesAddComponent implements OnInit {
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...courseInfo, steps: [ this.mockStep ] }).subscribe(() => {
+    this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
@@ -127,7 +127,8 @@ export class CoursesAddComponent implements OnInit {
   addStep() {
     this.steps.push({
       stepTitle: '',
-      description: ''
+      description: '',
+      attachment: ''
     });
   }
 

@@ -18,5 +18,5 @@ export class DialogsListService {
 }
 
 const listColumns = {
-  'resources': [ "title" ]
+  'resources': [ 'title' ]
 };
