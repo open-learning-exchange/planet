@@ -23,31 +23,31 @@
     <form [formGroup]="configurationFormGroup">
       <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planet_type" required>
+        <mat-select i18n-placeholder placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planetType" required>
           <mat-option value="nation" i18n>Nation</mat-option>
           <mat-option value="community" i18n>Community</mat-option>
         </mat-select>
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planet_type"></planet-form-error-messages></mat-error>
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planetType"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div>
         <div *ngIf="nationOrCommunity === 'community'">
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Local Url" formControlName="local_domain" readonly required>
+            <input matInput i18n-placeholder placeholder="Local Url" formControlName="localDomain" readonly required>
           </mat-form-field>
           <mat-form-field>
-            <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parent_domain" required>
-              <mat-option *ngFor="let nation of nations" [value]="nation.local_domain">{{nation.name}}</mat-option>
+            <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" required>
+              <mat-option *ngFor="let nation of nations" [value]="nation.localDomain">{{nation.name}}</mat-option>
             </mat-select>
-            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parent_domain"></planet-form-error-messages></mat-error>
+            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
           </mat-form-field>
         </div>
         <div *ngIf="nationOrCommunity === 'nation'">
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Local Url" formControlName="local_domain" required>
-            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.local_domain"></planet-form-error-messages></mat-error>
+            <input matInput i18n-placeholder placeholder="Local Url" formControlName="localDomain" required>
+            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.localDomain"></planet-form-error-messages></mat-error>
           </mat-form-field>
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Center" formControlName="parent_domain" required readonly>
+            <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
           </mat-form-field>
         </div>
         <mat-form-field>
@@ -59,8 +59,8 @@
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Language" formControlName="preferred_lang" required>
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferred_lang"></planet-form-error-messages></mat-error>
+          <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
+          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
