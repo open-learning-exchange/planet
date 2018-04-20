@@ -25,6 +25,42 @@ import { Subject } from 'rxjs/Subject';
     .mat-column-action {
       max-width: 225px;
     }
+    /* styles for '...' */
+    .content-ellipsis {
+      overflow: hidden;
+      position: relative;
+      line-height: 1.2em;
+      max-height: 3.6em;
+      text-align: justify;
+      margin-right: -1em;
+      padding-right: 1em;
+    }
+    /* create the ... */
+    .content-ellipsis:before {
+      content: '...';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+    /* hide ... if we have text, which is less than or equal to max lines */
+    .content-ellipsis:after {
+      content: '';
+      position: absolute;
+      right: 0;
+      width: 1em;
+      height: 1em;
+      margin-top: 0.2em;
+      background: white;
+    }
+    /* ellipsis only works for webkit
+    .content-ellipsis {
+      max-height: 3.1em;
+      line-height: 1em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }*/
   ` ]
 })
 
