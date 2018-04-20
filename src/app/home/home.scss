@@ -7,7 +7,7 @@
   grid-template-areas: "header" "main";
   height: 100vh;
 
-
+  // takes the left sidenav and alters color of text, background and svg-fill on .active class
   /deep/ mat-sidenav-container .active{
     background-color: $primary-text;
     color: $primary;
