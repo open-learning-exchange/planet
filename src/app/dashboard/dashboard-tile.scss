@@ -17,6 +17,7 @@
       flex-direction: column;
       flex-wrap: wrap;
       font-size: 1.25rem;
+      grid-area: lt;
 
       mat-icon {
         margin: 0.25rem;
@@ -29,6 +30,7 @@
     .right-tile {
       display: grid;
       overflow: hidden;
+      grid-area: rt;
 
       .dashboard-items {
         display: grid;
