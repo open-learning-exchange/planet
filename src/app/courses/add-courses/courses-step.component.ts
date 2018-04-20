@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -13,7 +13,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html'
 })
-export class CoursesStepComponent implements OnInit {
+export class CoursesStepComponent implements OnChanges {
 
   @Input() stepInfo: any = {
     stepTitle: '',
@@ -22,6 +22,8 @@ export class CoursesStepComponent implements OnInit {
   };
   @Output() stepInfoChange = new EventEmitter<any>();
   @Input() stepNum: number;
+  @Input() stepCount: number;
+  @Output() stepOrder = new EventEmitter<any>();
   @Output() stepRemove = new EventEmitter<any>();
   stepForm: FormGroup;
   dialogRef: MatDialogRef<DialogsListComponent>;
@@ -33,7 +35,7 @@ export class CoursesStepComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit() {
+  ngOnChanges() {
     this.stepForm = this.fb.group(this.stepInfo);
     this.attachment = this.stepForm.controls.attachment.value;
   }
@@ -61,6 +63,14 @@ export class CoursesStepComponent implements OnInit {
       this.stepChange();
       this.dialogRef.close();
     };
+  }
+
+  moveUp() {
+    this.stepOrder.emit(this.stepNum - 2);
+  }
+
+  moveDown() {
+    this.stepOrder.emit(this.stepNum);
   }
 
 }
