@@ -149,4 +149,18 @@ export class CoursesAddComponent implements OnInit {
     this.router.navigate([ '/courses/exam' ]);
   }
 
+  removeStep(pos) {
+    this.steps.splice(pos, 1);
+  }
+
+  orderStep(oldPos, newPos) {
+    const tempStep = this.steps[oldPos];
+    this.steps.splice(oldPos, 1);
+    this.steps.splice(newPos, 0, tempStep);
+  }
+
+  stepTrackByFn(index, item) {
+    return index;
+  }
+
 }

@@ -76,8 +76,8 @@ export class UserService {
     return Object.assign({
       user: this.user.name,
       type: 'login',
-      login_time: this.sessionStart,
-      logout_time: logoutTime,
+      loginTime: this.sessionStart,
+      logoutTime: logoutTime,
     }, this.sessionRev ? {
       _rev: this.sessionRev
     } : {});
@@ -113,12 +113,12 @@ export class UserService {
     if (this.sessionId === undefined) {
       newObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
         { 'user': this.get().name },
-        [ '_id', '_rev', 'login_time' ],
-        [ { 'login_time': 'desc' } ]
+        [ '_id', '_rev', 'loginTime' ],
+        [ { 'loginTime': 'desc' } ]
       )).pipe(map(data => {
         this.sessionId = data.docs[0]['_id'];
         this.sessionRev = data.docs[0]['_rev'];
-        this.sessionStart = data.docs[0]['login_time'];
+        this.sessionStart = data.docs[0]['loginTime'];
       }));
     }
     return newObs.pipe(switchMap(() => {

@@ -60,8 +60,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getNotification();
     this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
-      if (language.served_url === document.baseURI) {
-        this.currentFlag = language.short_code;
+      if (language.servedUrl === document.baseURI) {
+        this.currentFlag = language.shortCode;
         this.currentLang = language.name;
       }
       return language;
@@ -123,7 +123,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       const obsArr = [ this.couchService.delete('_session', { withCredentials: true }) ];
       if (this.userService.getConfig().name === this.userService.get().name) {
         obsArr.push(
-          this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parent_domain }),
+          this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parentDomain }),
         );
       }
       return forkJoin(obsArr);

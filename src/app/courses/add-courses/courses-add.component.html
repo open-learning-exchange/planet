@@ -59,8 +59,11 @@
     </form>
     <div>
       <planet-courses-step
-        *ngFor="let step of steps; index as i"
+        *ngFor="let step of steps; index as i; trackBy: stepTrackByFn"
+        (stepRemove)="removeStep(i)"
+        (stepOrder)="orderStep(i, $event)"
         [(stepInfo)]="steps[i]"
+        [stepCount]="steps.length"
         [stepNum]="i+1"
         (examClick)="addExam($event)"></planet-courses-step>
     </div>
