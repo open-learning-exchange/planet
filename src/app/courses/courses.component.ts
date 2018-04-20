@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
@@ -27,7 +27,7 @@ import * as constants from './constants';
   ` ]
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -70,6 +70,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.setupList(courses, this.userShelf.courseIds || []);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+  }
+
+  ngOnDestroy() {
+    this.planetMessageService.setTimeout();
   }
 
   getShelf() {

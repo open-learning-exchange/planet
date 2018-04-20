@@ -4,9 +4,13 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 @Injectable()
 export class PlanetMessageService {
   private config: MatSnackBarConfig;
-  constructor( private snackBar: MatSnackBar ) { 
+  constructor( private snackBar: MatSnackBar ) {
     this.config = new MatSnackBarConfig();
     this.config.duration = 3000;
+  }
+
+  setTimeout() {
+    this.snackBar.dismiss();
   }
 
   showMessage(message: string) {
