@@ -7,6 +7,45 @@
   grid-template-areas: "header" "main";
   height: 100vh;
 
+
+  /deep/ mat-sidenav-container .active{
+    background-color: $primary-text;
+    color: $primary;
+    animation: 0.8s linear fade-in;
+    .mat-icon {
+      fill: $primary;
+    }
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; }  }
+
+  // // Ugly below interpolated color changes, looks almost same
+  // // Probably easy to solve if knowing scss scoping and functions better to pass in
+  // // but for testing it doesn't look much different than just setting opacity
+  // /deep/ mat-sidenav-container .active{
+  //   animation: 0.5s forwards fade1;
+  //   .mat-icon {
+  //     animation: 0.5s forwards fade2;
+  //   }
+  // }
+  // @keyframes fade1 {
+  //   0% {
+  //     background: $primary;
+  //   }
+  //   100% {
+  //     background: $primary-text;
+  //   }
+  // }
+
+  // @keyframes fade2 {
+  //   0% {
+  //     fill: $primary-text;
+  //   }
+  //   100% {
+  //     fill: $primary;
+  //   }
+  // }
+
+
   .header-nav {
     grid-area: header;
     position: relative;
