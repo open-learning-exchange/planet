@@ -60,10 +60,11 @@
     <div>
       <planet-courses-step
         *ngFor="let step of steps; index as i; trackBy: stepTrackByFn"
-        (stepRemove)="removeStep(i)"
+        (stepRemove)="removeStep(step)"
         (stepOrder)="orderStep(i, $event)"
         [(stepInfo)]="steps[i]"
         [stepCount]="steps.length"
+        [stepId]= "step.id"
         [stepNum]="i+1"></planet-courses-step>
     </div>
   </div>

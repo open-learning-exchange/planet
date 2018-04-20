@@ -126,12 +126,21 @@ export class CoursesAddComponent implements OnInit {
 
   addStep() {
     this.steps.push({
+      id: this.uniqueIdOfStep(),
       stepTitle: '',
       description: ''
     });
   }
 
+  uniqueIdOfStep() {
+     // Math.random should be unique because of its seeding algorithm.
+     // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return '_' + Math.random().toString(36).substr(2, 9);
+  }
+
   removeStep(pos) {
+    console.log('Call remover');
     this.steps.splice(pos, 1);
   }
 
@@ -146,7 +155,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   stepTrackByFn(index, item) {
-    return index;
+    return item.id;
   }
 
 }
