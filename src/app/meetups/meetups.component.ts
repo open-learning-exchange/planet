@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -34,6 +34,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
+  pageEvent: PageEvent;
 
   constructor(
     private couchService: CouchService,
@@ -64,6 +65,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const numRows = this.meetups.data.length;
     return numSelected === numRows;
   }
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
+  }
+
 
   masterToggle() {
     this.isAllSelected() ?
