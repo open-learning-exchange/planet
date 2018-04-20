@@ -136,12 +136,13 @@ export class CoursesAddComponent implements OnInit {
      // Math.random should be unique because of its seeding algorithm.
      // Convert it to base 36 (numbers + letters), and grab the first 9 characters
     // after the decimal.
-    return '_' + Math.random().toString(36).substr(2, 9);
-  }
+    return '_'+ Math.random().toString(36).substr(2, 9);
+  } 
 
-  removeStep(pos) {
-    console.log('Call remover');
-    this.steps.splice(pos, 1);
+  removeStep(step) {
+    this.steps = this.steps.filter(filteritem=>{
+      return filteritem.id !== step.id;
+    }) 
   }
 
   orderStep(oldPos, newPos) {
