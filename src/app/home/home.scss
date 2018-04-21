@@ -16,7 +16,8 @@
       fill: $primary;
     }
     .mat-button-focus-overlay{
-      display: none;
+      background-color: rgba(0, 0, 0, 0.06);
+      transition: background-color 1s ease-in;
     }
   }
 
