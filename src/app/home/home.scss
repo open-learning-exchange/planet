@@ -7,6 +7,17 @@
   grid-template-areas: "header" "main";
   height: 100vh;
 
+  // Animates pulsating movement before route being fully activated
+  /deep/ mat-sidenav-container .mat-button.pulsate{
+      svg:first-of-type{
+          animation: pulsate 1000ms linear alternate-reverse infinite;
+    }
+  }
+
+  @keyframes pulsate {
+    100% {transform: scale(1.1)}
+  }
+
   // takes the left sidenav and alters color of text, background and svg-fill on .active class
   /deep/ mat-sidenav-container .active{
     background-color: $primary-text;

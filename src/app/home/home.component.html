@@ -37,41 +37,27 @@
   </a>
   <a routerLink="/notifications" mat-menu-item>See All</a>
 </mat-menu>
-
+<!--Left sidebar-->
 <mat-sidenav-container class="main-content" #content>
   <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
+    <!--Top part, user content etc.-->
+    <!-- Less readable prevous class setting method: -->
+    <!-- [ngClass]="{'active': rlaRef.isActive, 'pulsate': route.title === pulsatingClassed && !rla.isActive}" -->
     <ul class="top-nav">
-      <li>
-        <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n-title title="Home">
-          <mat-icon svgIcon="home"></mat-icon>
-          <label i18n>Home</label>
-        </a>
-      </li>
-      <li>
-        <a mat-button routerLink="/resources" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n-title title="Resources">
-         <mat-icon svgIcon="myLibrary"></mat-icon>
-         <label i18n>Library</label>
-        </a>
-      </li>
-      <li>
-        <a mat-button routerLink="/courses" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n-title title="Courses">
-          <mat-icon svgIcon="myCourses"></mat-icon>
-          <label i18n>Courses</label>
-        </a>
-      </li>
-      <li>
-        <a mat-button routerLink="/meetups" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n-title title="Meetups">
-          <mat-icon svgIcon="myMeetups"></mat-icon>
-          <label i18n>Meetups</label>
-        </a>
-      </li>
-      <li>
-        <a mat-button routerLink="/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n-title title="Users">
-          <mat-icon svgIcon="myTeams"></mat-icon>
-          <label i18n>Members</label>
+      <li *ngFor="let route of topNavEls">
+        <a mat-button routerLink={{route.routerLink}} 
+          routerLinkActive #rlaRef="routerLinkActive"
+          [class.active]="rlaRef.isActive"
+          [class.pulsate]= "!rlaRef.isActive && route.title === pulsatingClassed"  
+          (click)="updatePulseClassed($event)"
+          [routerLinkActiveOptions]="{ exact: true }" 
+          i18n-title title={{route.title}}>
+         <mat-icon svgIcon={{route.svgIcon}}></mat-icon>
+         <label i18n>{{route.label}}</label>
         </a>
       </li>
     </ul>
+    <!--Bottom part-->
     <ul class="bottom-nav">
       <li>
         <a mat-button routerLink="/" i18n-title title="Surveys">
