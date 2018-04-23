@@ -100,7 +100,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
-        userInfo.myTeamInfo = myTeamIds.indexOf(user._id) > -1 ? true : false;
+        userInfo.myTeamInfo = myTeamIds && myTeamIds.indexOf(user._id) > -1 ? true : false;
         newUsers.push(userInfo);
         return newUsers;
       }, []);
@@ -197,18 +197,19 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(
         map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [], myTeamIds: data.docs[0].myTeamIds || [] };
+          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [],
+            myTeamIds: data.docs[0].myTeamIds || [], courseIds: data.docs[0].courseIds || [] };
         }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
           // Observable of continues stream
-          return of({ rev: {}, resourceIds: [], myTeamIds: [] });
+          return of({ rev: {}, resourceIds: [], myTeamIds: [], courseIds: [] });
         }),
         switchMap(data => {
           const myTeamIds = userIdArray.concat(data.myTeamIds).reduce(this.dedupeShelfReduce, []);
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds } ));
+            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds, courseIds: data.courseIds } ));
         })
       ).subscribe((res) =>  {
         this.initializeData();
