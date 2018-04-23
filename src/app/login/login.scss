@@ -10,6 +10,14 @@
     overflow: hidden;
   }
 
+  .left-tile {
+    grid-area: lt;
+  }
+
+  .right-tile {
+    grid-area: rt;
+  }
+
   .login-left-tile::before {
     content: "";
     height: 80vh;
