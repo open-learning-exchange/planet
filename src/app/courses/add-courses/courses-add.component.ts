@@ -139,10 +139,8 @@ export class CoursesAddComponent implements OnInit {
     return '_' + Math.random().toString(36).substr(2, 9);
   }
 
-  removeStep(step) {
-    this.steps = this.steps.filter(filteritem => {
-      return filteritem.id !== step.id;
-    });
+  removeStep(pos) {
+    this.steps.splice(pos, 1);
   }
 
   orderStep(oldPos, newPos) {

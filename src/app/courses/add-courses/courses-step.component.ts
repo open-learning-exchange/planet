@@ -15,12 +15,11 @@ export class CoursesStepComponent implements OnChanges {
   @Input() stepInfo: any = {
     id: '',
     stepTitle: '',
-    description: '',
+    description: ''
   };
   @Output() stepInfoChange = new EventEmitter<any>();
   @Input() stepNum: number;
   @Input() stepCount: number;
-  @Input() stepId: string;
   @Output() stepOrder = new EventEmitter<any>();
   @Output() stepRemove = new EventEmitter<any>();
   stepForm: FormGroup;
