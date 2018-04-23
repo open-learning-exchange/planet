@@ -71,7 +71,7 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="info">
-      <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div>
           <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span i18n>at</span>{{ ' ' + element.startTime + ' - ' + element.endTime }}</p>
