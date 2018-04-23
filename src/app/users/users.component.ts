@@ -8,6 +8,8 @@ import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { switchMap, catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   templateUrl: './users.component.html',
@@ -62,12 +64,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   isAllSelected() {
-    this.selection.selected.map((user) => {
-      /** Adding roles to user are not alowed if admin is selected */
-      if (user.roles.indexOf('admin') === -1 && this.isUserAdmin) {
-        user.selected = true;
-      }
-    });
     const numSelected = this.selection.selected.length;
     const numRows = this.allUsers.data.length;
     return numSelected === numRows;
@@ -84,15 +80,28 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return this.couchService.allDocs('_users');
   }
 
+  getShelf() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
+  }
+
   initializeData() {
     this.selection.clear();
-    this.getUsers().debug('Getting user list').subscribe((data) => {
-      this.allUsers.data = data.reduce((users: any[], user: any) => {
+    forkJoin([ this.getUsers(), this.getShelf() ])
+    .debug('Getting user list').subscribe(([ users, shelfRes ]) => {
+      const myTeamIds = shelfRes.docs[0].myTeamIds;
+      this.allUsers.data = users.reduce((newUsers: any[], user: any) => {
+        const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
-          user.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
+          userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
-        users.push({ ...user });
-        return users;
+        userInfo.myTeamInfo = myTeamIds.indexOf(user._id) > -1 ? true : false;
+        newUsers.push(userInfo);
+        return newUsers;
       }, []);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
@@ -110,6 +119,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
       tempUser = { ...tempUser, oldRoles: [] };
       this.allUsers.data.forEach(row => this.updateOldRole(row, position, tempUser));
     }
+    /* Set in master but not used in this component so need to check other places
+    this.selectedRolesMap.set(tempUser.name, tempUser.roles);
+    */
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       user.roles.splice(index, 1);
@@ -154,13 +166,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   roleSubmit(users: any[], role: string) {
-    forkJoin(users.reduce((observers, user, index) => {
+    forkJoin(users.reduce((observers, userInfo) => {
+      const user = userInfo.doc;
       // Do not add role if it already exists on user and also not allow an admin to be given another role
-      if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
+      if (user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
         const tempUser = { ...user, roles: [ ...user.roles ] };
-        // Remove selected property so it doesn't get saved to DB
-        delete tempUser.selected;
         tempUser.roles.push(role);
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
@@ -168,8 +179,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, []))
     .debug('Adding role to users')
     .subscribe((responses) => {
-      users.map((user) => {
-        if (user.selected && user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
+      users.map((userInfo) => {
+        const user = userInfo.doc;
+        if (user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
           user.roles.push(role);
           const res: any = responses.find((response: any) => response.id === user._id);
@@ -181,6 +193,50 @@ export class UsersComponent implements OnInit, AfterViewInit {
       console.log('Error!');
       console.log(error);
     });
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  addTeams(userId) {
+    const userIdArray = userId.map((data) => {
+      return data._id;
+    });
+    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
+      .pipe(
+        map(data => {
+          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [], myTeamIds: data.docs[0].myTeamIds || [] };
+        }),
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", and it needs to be created
+        catchError(err => {
+          // Observable of continues stream
+          return of({ rev: {}, resourceIds: [], myTeamIds: [] });
+        }),
+        switchMap(data => {
+          const myTeamIds = userIdArray.concat(data.myTeamIds).reduce(this.dedupeShelfReduce, []);
+          return this.couchService.put('shelf/' + this.userService.get()._id,
+            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds } ));
+        })
+      ).subscribe((res) =>  {
+        this.initializeData();
+        const msg = userIdArray.length === 1 ? 'User' : 'Users';
+        this.planetMessageService.showAlert(msg + ' added to your shelf');
+    }, (error) => (error));
+  }
+
+  removeTeam (teamId) {
+    this.getShelf().pipe(switchMap(data => {
+      data.docs[0].myTeamIds.splice(data.docs[0].myTeamIds.indexOf(teamId), 1);
+      return this.couchService.put('shelf/' + this.userService.get()._id, data.docs[0]);
+    })).subscribe(data => {
+      this.initializeData();
+      this.planetMessageService.showAlert('User removed from shelf');
+    }, (error) => (error));
   }
 
   back() {

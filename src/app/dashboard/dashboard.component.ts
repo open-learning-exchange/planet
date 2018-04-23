@@ -13,7 +13,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
     <planet-dashboard-tile [cardTitle]="'myLibrary'" class="planet-library-theme" [itemData]="data.resources"></planet-dashboard-tile>
     <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme" [itemData]="data.courses"></planet-dashboard-tile>
     <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme" [itemData]="data.meetups"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme" [itemData]="data.myTeams"></planet-dashboard-tile>
   `,
   styles: [ `
     :host {
@@ -25,7 +25,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
   ` ]
 })
 export class DashboardComponent implements OnInit {
-  data = { resources: [], courses: [], meetups: [] };
+  data = { resources: [], courses: [], meetups: [], myTeams: [] };
 
   constructor(
     private userService: UserService,
@@ -35,30 +35,24 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.getShelf().pipe(switchMap(shelf => {
       return forkJoin([
-        this.getDataShelf('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-        this.getDataShelf('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-        this.getDataShelf('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true })
+        this.getData('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
+        this.getData('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
+        this.getData('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
+        this.getData('_users', shelf.docs[0].myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
       ]);
     })).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
+      this.data.myTeams = dashboardItems[3];
     });
-  }
-
-  getData(db: string, { linkPrefix, addId = false, titleField = 'title' }) {
-    return this.couchService.get(db + '/_all_docs?include_docs=true').pipe(map((response) => {
-      // Sets data, adding the text to display in the dashboard as the 'title' field and
-      // link with or without doc id based on addId
-      return response.rows.map((item) => ({ ...item.doc, title: item.doc[titleField], link: linkPrefix + (addId ? item.id : '') }));
-    }));
   }
 
   getShelf() {
     return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
   }
 
-  getDataShelf(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
+  getData(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
       .pipe(map(response => {
         return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
