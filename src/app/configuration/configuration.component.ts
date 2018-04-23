@@ -126,7 +126,7 @@ export class ConfigurationComponent implements OnInit {
             userDetail['requestId'] =  data.id;
             userDetail['isUserAdmin'] =  false;
             return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
-              userDetail, { domain: configuration.parent_domain });
+              userDetail, { domain: configuration.parentDomain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
