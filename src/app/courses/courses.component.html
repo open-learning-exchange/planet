@@ -45,7 +45,7 @@
         </mat-checkbox>
       </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="title">
+    <ng-container matColumnDef="courseTitle">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
       <mat-cell  *matCellDef="let element" class="list-content-menu">
         <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
