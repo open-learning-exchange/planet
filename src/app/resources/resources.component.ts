@@ -79,12 +79,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
-    this.resources.sortingDataAccessor = (item, property) => {
+    this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
         case 'rating':
-                    return item['rating']['totalRating'];
+          return item.rating.totalRating;
         default:
-                return item[property];
+          return item[property];
       }
     };
   }
