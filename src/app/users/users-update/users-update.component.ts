@@ -93,7 +93,8 @@ export class UsersUpdateComponent implements OnInit {
 
   onSubmit() {
     if (this.editForm.valid) {
-      this.handleAttachment(this.user, this.editForm.value);
+      const attachment = this.file ? this.createAttachmentObj() : {};
+      this.updateUser(Object.assign({}, this.user, this.editForm.value, attachment));
     } else {
         Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
@@ -119,18 +120,6 @@ export class UsersUpdateComponent implements OnInit {
     };
 
     return { '_attachments': attachments };
-  }
-
-  handleAttachment(user, formValue) {
-    let fileObs: Observable<any>;
-    if (this.file) {
-      fileObs = of(this.createAttachmentObj());
-    } else {
-      fileObs = of({});
-    }
-    fileObs.subscribe((memberImage) => {
-      this.updateUser(Object.assign({}, user, formValue, memberImage));
-    });
   }
 
   updateUser(userInfo) {
