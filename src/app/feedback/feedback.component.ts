@@ -39,7 +39,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
-    this.feedback.filter = filterValue.trim().toLowerCase();
+    this.feedback.filter = filterValue;
   }
 
   getFeedback() {

@@ -1,7 +1,7 @@
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
     for (let i = 0; i < filterFields.length; i++) {
-      if (data[filterFields[i]].toLowerCase().indexOf(filter.trim()) > -1) {
+      if (data[filterFields[i]].toLowerCase().indexOf(filter.trim().toLowerCase()) > -1) {
         return true;
       }
     }
