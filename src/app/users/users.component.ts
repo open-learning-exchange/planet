@@ -198,18 +198,18 @@ export class UsersComponent implements OnInit, AfterViewInit {
       .pipe(
         map(data => {
           return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [],
-            myTeamIds: data.docs[0].myTeamIds || [], courseIds: data.docs[0].courseIds || [] };
+            myTeamIds: data.docs[0].myTeamIds || [], courseIds: data.docs[0].courseIds || [], meeupIds: data.docs[0].meeupIds || [] };
         }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
           // Observable of continues stream
-          return of({ rev: {}, resourceIds: [], myTeamIds: [], courseIds: [] });
+          return of({ rev: {}, resourceIds: [], myTeamIds: [], courseIds: [], meeupIds: [] });
         }),
         switchMap(data => {
           const myTeamIds = userIdArray.concat(data.myTeamIds).reduce(this.dedupeShelfReduce, []);
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds, courseIds: data.courseIds } ));
+            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds, courseIds: data.courseIds, meeupIds: data.meeupIds } ));
         })
       ).subscribe((res) =>  {
         this.initializeData();
