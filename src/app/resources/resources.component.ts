@@ -242,7 +242,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(data => {
           const resourceIds = resourceIdArray.concat(data.resourceIds).reduce(this.dedupeShelfReduce, []);
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { resourceIds, myTeamIds: data.meeupIds, courseIds: data.courseIds, meetupIds: data.meetupIds }));
+            Object.assign(data.rev, { resourceIds, myTeamIds: data.myTeamIds, courseIds: data.courseIds, meetupIds: data.meetupIds }));
         })
       ).subscribe((res) =>  {
         this.updateAddLibrary();
