@@ -44,7 +44,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'info', 'rating' ] : [ 'select', 'info', 'rating' ];
+  displayedColumns = this.parent ? [ 'title', 'rating' ] : [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   subjectList: any = constants.subjectList;
   levelList: any = constants.levelList;
@@ -79,6 +79,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
+    this.resources.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'rating':
+                    return item['rating']['totalRating'];
+        default:
+                return item[property];
+      }
+    };
   }
 
   setupList(resourcesRes, myLibrarys) {
