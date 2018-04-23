@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -54,6 +54,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
   userId = this.userService.get()._id;
   userShelf: any = [];
+  pageEvent: PageEvent;
 
   constructor(
     private couchService: CouchService,
@@ -104,6 +105,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
   }
 
   searchFilter(filterValue: string) {

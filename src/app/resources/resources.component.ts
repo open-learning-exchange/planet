@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -36,6 +36,7 @@ import * as constants from './resources-constants';
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
+  pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   readonly dbName = 'resources';
@@ -100,6 +101,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return { ...resource,  libraryInfo: false };
     });
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
   }
 
   ngAfterViewInit() {
