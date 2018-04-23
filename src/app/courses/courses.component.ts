@@ -107,7 +107,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   searchFilter(filterValue: string) {
-    this.courses.filter = filterValue.trim().toLowerCase();
+    this.courses.filter = filterValue;
   }
 
   updateCourse(course) {

@@ -56,7 +56,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
-    this.allUsers.filter = filterValue.trim().toLowerCase();
+    this.allUsers.filter = filterValue;
   }
 
   ngAfterViewInit() {

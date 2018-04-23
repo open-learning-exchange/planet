@@ -112,7 +112,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyResFilter(filterResValue: string) {
-    this.resources.filter = filterResValue.trim().toLowerCase();
+    this.resources.filter = filterResValue;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */

@@ -75,8 +75,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.meetups.filter = filterValue;
   }
 
