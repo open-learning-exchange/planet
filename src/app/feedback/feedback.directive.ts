@@ -51,6 +51,7 @@ export class FeedbackDirective {
       };
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
+      this.userService.setfeedback();
       this.message = 'Thank you, your feedback is submitted!';
     },
     (error) => {

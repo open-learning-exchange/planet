@@ -7,6 +7,8 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -19,6 +21,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   user: any = {};
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -26,7 +29,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService
-  ) { }
+  ) {
+    this.userService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.getFeedback();
+      });
+   }
 
   ngOnInit() {
     this.user = this.userService.get();
