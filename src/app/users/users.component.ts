@@ -82,7 +82,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find' { 'selector': { } });
+    return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
   }
 
   getShelf() {
@@ -117,7 +117,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   promote(user, isAdmin) {
     // Only add manager role and set isUserAdmin true
-    let selectedRolesArray = isAdmin ? [ 'manager' ] : [ 'learner' ];
+    const selectedRolesArray = isAdmin ? [ 'manager' ] : [ 'learner' ];
     const tempUser = { ...user, roles: selectedRolesArray, isUserAdmin: isAdmin };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
