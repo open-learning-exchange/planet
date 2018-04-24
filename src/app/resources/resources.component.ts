@@ -261,6 +261,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, (error) => (error));
   }
 
+  removeResources(resourceId) {
+    this.getAddedLibrary().pipe(switchMap(data => {
+      data.docs[0].resourceIds.splice(data.docs[0].resourceIds.indexOf(resourceId), 1);
+      return this.couchService.put('shelf/' + this.userService.get()._id,
+      Object.assign({ resourceIds: data.docs[0].resourceIds, _rev: data.docs[0]._rev }));
+    })).subscribe(data => {
+      this.updateAddLibrary();
+      this.planetMessageService.showAlert('Resource removed from MyLibrary');
+    }, (error) => (error));
+  }
+
   updateAddLibrary() {
     this.getAddedLibrary().subscribe((res) => {
       this.setupList(this.resources.data, res.docs[0].resourceIds);
