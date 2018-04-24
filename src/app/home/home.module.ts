@@ -15,6 +15,9 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
+import { SharedHomeModule } from './shared-home.module';
+
+
 @NgModule({
   imports: [
     HomeRouterModule,
@@ -25,7 +28,8 @@ import { NotificationsComponent } from '../notifications/notifications.component
     MaterialModule,
     PlanetDialogsModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    SharedHomeModule
   ],
   declarations: [
     HomeComponent,

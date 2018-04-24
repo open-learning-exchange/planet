@@ -34,6 +34,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('content') private mainContent;
   user: any = {};
   userImgSrc = '';
+  test = '';
 
   // Keep track of currently set to pulsating directly on click
   pulsatingClassed = '';
@@ -67,6 +68,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.test = 'lteltlele';
     this.getNotification();
     this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
