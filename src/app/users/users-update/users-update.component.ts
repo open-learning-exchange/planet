@@ -125,7 +125,7 @@ export class UsersUpdateComponent implements OnInit {
     this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
       userInfo._rev = res.rev;
       this.userService.set(userInfo);
-      this.router.navigate([ '/users/profile/' + this.user.name ]);
+      this.router.navigate(['/']);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
