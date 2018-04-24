@@ -115,12 +115,19 @@ export class CoursesAddComponent implements OnInit {
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...courseInfo, steps: [ this.mockStep ] }).subscribe(() => {
+    this.deleteStepIdProperty();
+    this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
       this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
+    });
+  }
+
+  deleteStepIdProperty() {
+    this.steps.forEach(step => {
+      delete step.id;
     });
   }
 
