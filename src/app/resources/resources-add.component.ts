@@ -55,8 +55,10 @@ export class ResourcesAddComponent implements OnInit {
     this.userDetail = this.userService.get();
     // update resource url check
     console.log(this.route.snapshot.url[0].path);
+    //eventually in here i will check for an _attachment like in users-update
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
+<<<<<<< HEAD
       .subscribe((data) => {
         this.revision = data._rev;
         this.id = data._id;
@@ -66,6 +68,18 @@ export class ResourcesAddComponent implements OnInit {
       }, (error) => {
         console.log(error);
       });
+=======
+        .subscribe((data) => {
+          this.revision = data._rev;
+          this.id = data._id;
+          console.log('this' + this.route.snapshot.url[0].path);
+          console.log('My DATA', data._attachments);
+          console.log('My FORM',this.resourceForm);
+          this.resourceForm.patchValue(data);
+        }, (error) => {
+          console.log(error);
+        });
+>>>>>>> minor fixes
     }
 
   }
@@ -148,6 +162,7 @@ export class ResourcesAddComponent implements OnInit {
       let fileObs: Observable<any>;
       // If file doesn't exist, mediaType will be undefined
       const mediaType = this.file && this.simpleMediaType(this.file.type);
+      console.log('Media Type',mediaType)
       switch (mediaType) {
         case undefined:
           // Creates an observable that immediately returns an empty object

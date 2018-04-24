@@ -53,7 +53,7 @@ constructor(
       switchMap(() => this.couchService.post(
         `${dbName}/_find`,
         findDocuments(
-          { fieldName : ac.value },
+          { [fieldName] : ac.value },
           [ '_id', fieldName ]
         )
       )),
