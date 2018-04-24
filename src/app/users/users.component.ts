@@ -196,20 +196,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(
-        map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [],
-            myTeamIds: data.docs[0].myTeamIds || [], courseIds: data.docs[0].courseIds || [], meeupIds: data.docs[0].meeupIds || [] };
-        }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
-          // Observable of continues stream
-          return of({ rev: {}, resourceIds: [], myTeamIds: [], courseIds: [], meeupIds: [] });
+          // Observable of continues stream, send fake response with empty myTeamIds array
+          return of({ docs: [ { _rev: '', myTeamIds: [] } ] });
         }),
         switchMap(data => {
-          const myTeamIds = userIdArray.concat(data.myTeamIds).reduce(this.dedupeShelfReduce, []);
+          const oldShelf = data.docs[0];
+          const myTeamIds = userIdArray.concat(oldShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { myTeamIds, resourceIds: data.resourceIds, courseIds: data.courseIds, meeupIds: data.meeupIds } ));
+            Object.assign(oldShelf, { myTeamIds }));
         })
       ).subscribe((res) =>  {
         this.initializeData();
