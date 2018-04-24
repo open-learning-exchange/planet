@@ -82,7 +82,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.allDocs('_users');
+    return this.couchService.post(this.dbName + '/_find' { 'selector': { } });
   }
 
   getShelf() {
@@ -99,7 +99,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     forkJoin([ this.getUsers(), this.getShelf() ])
     .debug('Getting user list').subscribe(([ users, shelfRes ]) => {
       const myTeamIds = shelfRes.docs[0].myTeamIds;
-      this.allUsers.data = users.reduce((newUsers: any[], user: any) => {
+      this.allUsers.data = users.docs.reduce((newUsers: any[], user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -111,6 +111,18 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
+      console.log(error);
+    });
+  }
+
+  promote(user, isAdmin) {
+    // Only add manager role and set isUserAdmin true
+    let selectedRolesArray = isAdmin ? [ 'manager' ] : [ 'learner' ];
+    const tempUser = { ...user, roles: selectedRolesArray, isUserAdmin: isAdmin };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
       console.log(error);
     });
   }

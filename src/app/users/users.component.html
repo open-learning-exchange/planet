@@ -64,7 +64,7 @@
             {{role}}
             <mat-icon matChipRemove *ngIf="!element.doc.isUserAdmin">cancel</mat-icon>
           </mat-chip>
-          <mat-chip *ngIf="element.doc.isUserAdmin">admin</mat-chip>
+          <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
       </mat-chip-list>
       </mat-cell>
     </ng-container>
@@ -78,6 +78,7 @@
           <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>View Profile
             <mat-icon>folder_open</mat-icon>
           </a>
+          <a *ngIf="element.doc.roles.length > 0" (click)="promote(element.doc, false)" mat-raised-button color="primary" i18n>Demote</a>
         </div>
         <div *ngIf="!element.doc.isUserAdmin">
           <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="addRole(element.doc)">
@@ -91,6 +92,7 @@
           <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
             <mat-icon>folder_open</mat-icon>
           </a>
+          <a (click)="promote(element.doc, true)" mat-raised-button color="primary" i18n>Promote</a>
         </div>
       </mat-cell>
     </ng-container>

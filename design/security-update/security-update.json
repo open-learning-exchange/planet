@@ -1,10 +1,49 @@
 [
 	{
+		"dbName": "_users",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "communityregistrationrequests",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "configurations",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
 		"dbName": "courses",
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["admin"]
+				"roles": ["manager"]
 			},
 			"members": {
 				"names": [],
@@ -13,11 +52,37 @@
 		}
 	},
 	{
+		"dbName": "feedback",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "login_activities",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
 		"dbName": "meetups",
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["admin"]
+				"roles": ["manager"]
 			},
 			"members": {
 				"names": [],
@@ -30,7 +95,7 @@
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["admin"]
+				"roles": ["manager"]
 			},
 			"members": {
 				"names": [],
@@ -39,11 +104,63 @@
 		}
 	},
 	{
+		"dbName": "notifications",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "ratings",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
+		"dbName": "resource_activities",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
 		"dbName": "resources",
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["admin"]
+				"roles": ["manager"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["intern", "learner", "teacher"]
+			}
+		}
+	},
+	{
+		"dbName": "shelf",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["manager"]
 			},
 			"members": {
 				"names": [],
