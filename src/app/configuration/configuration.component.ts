@@ -86,7 +86,6 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onChange(selectedValue: string) {
-    console.log('changed');
     this.nationOrCommunity = selectedValue;
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
