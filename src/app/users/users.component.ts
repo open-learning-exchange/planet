@@ -117,12 +117,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   deleteRole(user: any, index: number, position: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
-    let tempUser = user;
+    let tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     delete tempUser.selected;
     if (tempUser.roles.length === 0) {
       tempUser = { ...tempUser, oldRoles: [] };
-      this.allUsers.data.forEach(row => this.updateOldRole(row, position, tempUser));
     }
     /* Set in master but not used in this component so need to check other places
     this.selectedRolesMap.set(tempUser.name, tempUser.roles);
@@ -131,17 +130,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
       console.log('Success!');
       user.roles.splice(index, 1);
       user._rev = response.rev;
+      user.oldRoles = response.oldRoles;
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
       console.log(error);
     });
-  }
-
-  updateOldRole(row: any, position: number, tempUser: any) {
-     if ( this.allUsers.data.indexOf(row) === position ) {
-        row.oldRoles = tempUser.oldRoles;
-     }
   }
 
   addRole(user) {
