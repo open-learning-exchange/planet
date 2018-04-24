@@ -46,15 +46,10 @@
     <ul class="top-nav">
       <li *ngFor="let route of topNavEls">
         <a mat-button
-
-          [planetHighlightRoute]="pulsatingClassed"
-
           routerLink={{route.routerLink}}
-          routerLinkActive #rlaRef="routerLinkActive"
-          [class.active]="rlaRef.isActive"
-          [class.pulsate]= "!rlaRef.isActive && route.title === pulsatingClassed"
-          (click)="updatePulseClassed($event)"
-          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive
+          #rlaRef="routerLinkActive"
+          [planetHighlightRoute]="{title: route.title, routerLinkActive: rlaRef, pulsatingClassed: pulsatingClassed}"
           i18n-title title={{route.title}}>
          <mat-icon svgIcon={{route.svgIcon}}></mat-icon>
          <label i18n>{{route.label}}</label>

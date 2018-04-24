@@ -34,10 +34,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('content') private mainContent;
   user: any = {};
   userImgSrc = '';
-  test = '';
+
 
   // Keep track of currently set to pulsating directly on click
-  pulsatingClassed = '';
   topNavEls = [
     { title: 'Home', routerLink: '/', svgIcon: 'home', label: 'Home' },
     { title: 'Resources', routerLink: '/resources', svgIcon: 'myLibrary', label: 'Library' },
@@ -68,7 +67,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.test = 'lteltlele';
     this.getNotification();
     this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
@@ -121,16 +119,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.userImgSrc = '';
     }
-  }
-
-  // Make sure when having clicked upper left navbar, the state of which one to pulsate is set
-  updatePulseClassed(event) {
-    const clicked = event.target;
-    let curr = clicked;
-    while (!curr.classList.contains('mat-button')) {
-      curr = curr.parentElement;
-    }
-    this.pulsatingClassed = curr.title;
   }
 
   endAnimation() {
