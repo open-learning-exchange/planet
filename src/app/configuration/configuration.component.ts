@@ -57,7 +57,8 @@ export class ConfigurationComponent implements OnInit {
       name: [ '', Validators.required ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ]
+      code: [ '', Validators.required ],
+      createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],
@@ -124,7 +125,7 @@ export class ConfigurationComponent implements OnInit {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['requestId'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('/_users/org.couchdb.user:' + credentials.name,
+            return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
               userDetail, { domain: configuration.parentDomain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
