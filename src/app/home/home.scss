@@ -8,8 +8,8 @@
   height: 100vh;
 
   // Animates pulsating movement before route being fully activated
-  /deep/ mat-sidenav-container .mat-button.pulsate{
-      svg:first-of-type{
+  mat-sidenav-container .mat-button.pulsate{
+      ::ng-deep svg:first-of-type{
           animation: pulsate 1000ms linear alternate-reverse infinite;
     }
   }
@@ -19,16 +19,15 @@
   }
 
   // takes the left sidenav and alters color of text, background and svg-fill on .active class
-  /deep/ mat-sidenav-container .active{
-    background-color: $primary-text;
-    color: $primary;
-    transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
-    .mat-icon {
-      fill: $primary;
-    }
-    .mat-button-focus-overlay{
-      background-color: rgba(0, 0, 0, 0.06);
-      transition: background-color 1s ease-in;
+  /deep/ mat-sidenav-container {
+    ::ng-deep .active{
+      background-color: $primary-text;
+      color: $primary;
+      transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
+      .mat-button-focus-overlay{
+        background-color: rgba(0, 0, 0, 0.06);
+        transition: background-color 1s ease-in;
+      }
     }
   }
 
