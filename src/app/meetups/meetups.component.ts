@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { Subject } from 'rxjs/Subject';
+import { PlanetMatTableService } from '../shared/planet-mat-table.service';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -46,7 +47,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private meetupService: MeetupService
+    private meetupService: MeetupService,
+    private planetMatTableService: PlanetMatTableService
   ) { }
 
   ngOnInit() {
@@ -63,20 +65,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.sort = this.sort;
   }
 
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.meetups.data.length;
-    return numSelected === numRows;
-  }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
-  }
-
-
-  masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.meetups.data.forEach(row => this.selection.select(row));
   }
 
   applyFilter(filterValue: string) {
@@ -157,10 +147,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
     });
-  }
-
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
 }

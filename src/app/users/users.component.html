@@ -20,23 +20,23 @@
             <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRole.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
+        <button mat-button class="margin-lr-3" type="submit" [disabled]="!planetMatTableService.selection.selected.length || selectedRole.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
     </div>
-    <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
+    <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="planetMatTableService.!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
   </mat-toolbar>
 
   <mat-table #table [dataSource]="allUsers" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        <mat-checkbox (change)="$event ? planetMatTableService.masterToggle(allUsers) : null"
+          [checked]="planetMatTableService.selection.hasValue() && planetMatTableService.isAllSelected(allUsers)"
+          [indeterminate]="planetMatTableService.selection.hasValue() && !planetMatTableService.isAllSelected(allUsers)">
       </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
+        <mat-checkbox (change)="$event ? planetMatTableService.selection.toggle(row) : null"
+          [checked]="planetMatTableService.selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -94,7 +94,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:planetMatTableService.selection.isSelected(row)}" ></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="10"

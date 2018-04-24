@@ -11,6 +11,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
+import { PlanetMatTableService } from '../shared/planet-mat-table.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -44,7 +45,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private planetMatTableService: PlanetMatTableService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -73,19 +75,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
-  }
-
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.allUsers.data.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.allUsers.data.forEach(row => this.selection.select(row));
   }
 
   getUsers() {

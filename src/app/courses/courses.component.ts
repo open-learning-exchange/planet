@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { PlanetMatTableService } from '../shared/planet-mat-table.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -63,7 +64,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private planetMatTableService: PlanetMatTableService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -179,24 +181,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.planetMessageService.showAlert('You have deleted selected courses');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
-  }
-
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
-  }
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.courses.data.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.courses.data.forEach(row => this.selection.select(row));
   }
 
   onFilterChange(filterValue: string, field: string) {

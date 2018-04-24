@@ -14,6 +14,7 @@ import { ResourcesService } from './resources.service';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
+import { PlanetMatTableService } from '../shared/planet-mat-table.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -69,7 +70,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private httpclient: HttpClient,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private planetMatTableService: PlanetMatTableService
   ) {}
 
   ngOnInit() {
@@ -121,22 +123,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.resources.data.length;
-    return numSelected === numRows;
-  }
-
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.resources.data.forEach(row => this.selection.select(row));
+  getAddedLibrary() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
   }
 
   // Keeping for reference.  Need to refactor for service.
@@ -218,10 +215,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.planetMessageService.showAlert('You have deleted all resources');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
-  }
-
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   dedupeShelfReduce(ids, id) {
