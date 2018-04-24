@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -38,7 +38,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'title', 'action' ] : [ 'select', 'title', 'action' ];
+  displayedColumns = this.parent ? [ 'courseTitle', 'action' ] : [ 'select', 'courseTitle', 'action' ];
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -54,6 +54,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
   userId = this.userService.get()._id;
   userShelf: any = [];
+  pageEvent: PageEvent;
 
   constructor(
     private couchService: CouchService,
@@ -106,8 +107,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.paginator = this.paginator;
   }
 
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
+  }
+
   searchFilter(filterValue: string) {
-    this.courses.filter = filterValue.trim().toLowerCase();
+    this.courses.filter = filterValue;
   }
 
   updateCourse(course) {

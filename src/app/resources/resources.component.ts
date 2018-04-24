@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -36,6 +36,7 @@ import * as constants from './resources-constants';
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
+  pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   readonly dbName = 'resources';
@@ -44,7 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'info', 'rating' ] : [ 'select', 'info', 'rating' ];
+  displayedColumns = this.parent ? [ 'title', 'rating' ] : [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   subjectList: any = constants.subjectList;
   levelList: any = constants.levelList;
@@ -79,6 +80,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
+    this.resources.sortingDataAccessor = (item: any, property: string) => {
+      switch (property) {
+        case 'rating':
+          return item.rating.rateSum / item.rating.totalRating;
+        default:
+          return item[property];
+      }
+    };
   }
 
   setupList(resourcesRes, myLibrarys) {
@@ -92,6 +101,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return { ...resource,  libraryInfo: false };
     });
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
   }
 
   ngAfterViewInit() {
@@ -112,7 +125,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyResFilter(filterResValue: string) {
-    this.resources.filter = filterResValue.trim().toLowerCase();
+    this.resources.filter = filterResValue;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -229,19 +242,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
       .pipe(
-        map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [] };
-        }),
         // If there are no matches, CouchDB throws an error
         // User has no "shelf", and it needs to be created
         catchError(err => {
-          // Observable of continues stream
-          return of({ rev: {}, resourceIds: [] });
+          // Observable of continues stream, send fake response with empty resourceIds array
+          return of({ docs: [ { _rev: '', resourceIds: [] } ] });
         }),
         switchMap(data => {
-          const resourceIds = resourceIdArray.concat(data.resourceIds).reduce(this.dedupeShelfReduce, []);
+          const oldShelf = data.docs[0];
+          const resourceIds = resourceIdArray.concat(oldShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
           return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { resourceIds }));
+            Object.assign(oldShelf, { resourceIds }));
         })
       ).subscribe((res) =>  {
         this.updateAddLibrary();

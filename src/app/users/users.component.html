@@ -98,5 +98,9 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
   </mat-table>
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+  <mat-paginator #paginator
+    [pageSize]="10" 
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPaginateChange($event)">
+  </mat-paginator>
 </div>

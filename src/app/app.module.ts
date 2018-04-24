@@ -15,7 +15,7 @@ import { ValidatorService } from './validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlanetMessageService } from './shared/planet-message.service';
 import { MaterialModule } from './shared/material.module';
-
+import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
 
@@ -26,6 +26,7 @@ import { MatIconRegistry } from '@angular/material';
     HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
+    NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
