@@ -32,6 +32,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
+    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
