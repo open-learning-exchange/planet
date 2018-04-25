@@ -58,9 +58,9 @@
 
     <ng-container matColumnDef="roles">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
-      <mat-cell *matCellDef="let element; let k = index;">
+      <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (remove)="deleteRole(element.doc,i,k)">
+          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (remove)="deleteRole(element.doc,i)">
             {{role}}
             <mat-icon matChipRemove *ngIf="!element.doc.isUserAdmin">cancel</mat-icon>
           </mat-chip>
@@ -99,7 +99,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
   </mat-table>
   <mat-paginator #paginator
-    [pageSize]="10" 
+    [pageSize]="10"
     [pageSizeOptions]="[5, 10, 20]"
     (page)="onPaginateChange($event)">
   </mat-paginator>
