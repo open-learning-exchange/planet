@@ -54,22 +54,32 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', Validators.required ],
       description: [ '', Validators.required ],
-      startDate: [ '', CustomValidators.dateValidator ],
+      startDate: [ '', Validators.compose([
+        CustomValidators.dateValidator,
+        Validators.required
+        ]) ],
       endDate: [
         '',
         Validators.compose([
           // we are using a higher order function so we  need to call the validator function
           CustomValidators.endDateValidator(),
-          CustomValidators.dateValidator
+          CustomValidators.dateValidator,
+          Validators.required
         ])
       ],
       recurring: 'none',
-      startTime: [ '', CustomValidators.timeValidator ],
+      startTime: [
+        '', Validators.compose([
+        CustomValidators.timeValidator,
+        Validators.required
+        ])
+      ],
       endTime: [
         '',
         Validators.compose([
           CustomValidators.endTimeValidator(),
-          CustomValidators.timeValidator
+          CustomValidators.timeValidator,
+          Validators.required
         ])
       ],
       category: '',
@@ -95,7 +105,8 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   updateMeetup(meetupeInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision }).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision,
+     'startDate': this.getTimestamp(meetupeInfo.startDate), 'endDate': this.getTimestamp(meetupeInfo.endDate) }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup Updated Successfully');
     }, (err) => {
@@ -105,7 +116,8 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   addMeetup(meetupInfo) {
-    this.couchService.post(this.dbName, { ...meetupInfo }).subscribe(() => {
+    this.couchService.post(this.dbName, { ...meetupInfo, 'startDate': this.getTimestamp(meetupInfo.startDate),
+     'endDate': this.getTimestamp(meetupInfo.endDate) }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup created');
     }, (err) => console.log(err));
@@ -113,6 +125,11 @@ export class MeetupsAddComponent implements OnInit {
 
   cancel() {
     this.router.navigate([ '/meetups' ]);
+  }
+
+  getTimestamp(date) {
+    const myDate = date.split('-');
+    return new Date(Date.UTC(myDate[0], myDate[1] - 1, myDate[2])).getTime();
   }
 
 }
