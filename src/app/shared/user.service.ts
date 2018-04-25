@@ -26,6 +26,7 @@ export class UserService {
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
   userChange$ = this.userChange.asObservable();
+
   constructor(private couchService: CouchService) {}
 
   set(user: any): any {
