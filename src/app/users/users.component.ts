@@ -29,7 +29,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
-  selectedRolesMap = new Map<string, string[]>();
 
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
@@ -118,13 +117,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   deleteRole(user: any, index: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
-    const tempUser = { ...user, roles: [ ...user.roles ] };
+    let tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
-    this.selectedRolesMap.set(tempUser.name, tempUser.roles);
+    if (tempUser.roles.length === 0) {
+      tempUser = { ...tempUser, oldRoles: [] };
+    }
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       user.roles.splice(index, 1);
       user._rev = response.rev;
+      user.oldRoles = response.oldRoles;
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
@@ -133,12 +135,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   addRole(user) {
-    // If user has no previous role, add learner role
-    let selectedRolesArray = this.selectedRolesMap.get(user.name);
-    if (this.selectedRolesMap.get(user.name) === undefined || this.selectedRolesMap.get(user.name).length === 0) {
-      selectedRolesArray = [ 'learner' ];
+    let selectedUserRole: string[] = [];
+    if (user.oldRoles === undefined || user.oldRoles.length === 0) {
+      selectedUserRole = [ 'learner' ];
+    } else {
+      selectedUserRole = user.oldRoles;
     }
-    const tempUser = { ...user, roles: [ ...selectedRolesArray ] };
+    const tempUser = { ...user, roles: [ ...selectedUserRole ] };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -148,7 +151,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   removeRole(user) {
-    const tempUser = { ...user, roles: [ ] };
+    const tempUser = { ...user, roles: [ ], oldRoles: [ ...user.roles ]  };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -165,7 +168,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
         const tempUser = { ...user, roles: [ ...user.roles ] };
         tempUser.roles.push(role);
-        this.selectedRolesMap.set(tempUser.name, tempUser.roles);
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
