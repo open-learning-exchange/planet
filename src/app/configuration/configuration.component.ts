@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -76,9 +77,11 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.allDocs('nations', { domain: environment.centerAddress })
+    this.couchService.post('nations/_find',
+      findDocuments({ 'planetType': 'nation' }, 0 ),
+      { domain: environment.centerAddress })
       .subscribe((data) => {
-        this.nations = data;
+        this.nations = data.docs;
       }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
   }
 
