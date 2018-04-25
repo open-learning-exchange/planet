@@ -39,7 +39,4 @@ export class HighligtRouteDirective implements OnInit, AfterViewChecked {
       this.renderer.addClass(this.elRef.nativeElement, 'pulsate');
     }
 
-    // Comment up
-    // Say why can't have /deep/ fully removed with links
-
 }

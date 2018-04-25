@@ -36,15 +36,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   userImgSrc = '';
 
 
-  // Keep track of currently set to pulsating directly on click
-  topNavEls = [
-    { title: 'Home', routerLink: '/', svgIcon: 'home', label: 'Home' },
-    { title: 'Resources', routerLink: '/resources', svgIcon: 'myLibrary', label: 'Library' },
-    { title: 'Courses', routerLink: '/courses', svgIcon: 'myCourses', label: 'Courses' },
-    { title: 'Meetups', routerLink: '/meetups', svgIcon: 'myMeetups', label: 'Meetups' },
-    { title: 'Users', routerLink: '/users', svgIcon: 'myTeams', label: 'Members' }
-  ];
-
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
     this.mainContent._updateContentMargins();
