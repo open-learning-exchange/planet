@@ -8,18 +8,38 @@ import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { map } from 'rxjs/operators';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
+import { findDocuments } from '../../shared/mangoQueries';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 @Component({
-  templateUrl: './meetups-view.component.html'
+  templateUrl: './meetups-view.component.html',
+  styles: [ `
+  .view-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: "detail view";
+  }
+  .mem-enrolled {
+    grid-area: view;
+    * {
+      max-width: 100%;
+      max-height: 60vh;
+    }
+  }
+  .meetup-details {
+    grid-area: detail;
+    padding: 1rem;
+  }
+  ` ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
+  members = [];
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
 
@@ -36,6 +56,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.getMeetups();
     this.route.paramMap
       .debug('Getting meetup id from parameters')
       .pipe(takeUntil(this.onDestroy$))
@@ -56,6 +77,17 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  getMeetupUsers() {
+    // find meetupId on User shelf
+    return this.couchService.post('shelf/_find', findDocuments({
+      'meetupIds': { '$in': [ this.route.snapshot.paramMap.get('id') ] }
+    }, 0)). subscribe((data) => {
+      this.members = data.docs.map((res) => {
+        return res._id.split(':')[1];
+      });
+    });
   }
 
   joinMeetup() {

@@ -16,13 +16,20 @@
     </button>
   </mat-toolbar>
   <div class="view-container">
-    <p i18n>Meetup Title : {{meetupDetail.title}} </p>
-    <p i18n>Created By : <i>{{meetupDetail.createdBy}}</i></p>
-    <p i18n>Category : {{meetupDetail.category}} </p>
-    <p i18n>Meetup Date: {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
-    <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
-    <p i18n>Recurring: {{meetupDetail.recurring}}</p>
-    <p i18n>Location: {{meetupDetail.meetupLocation}}</p>
-    <p i18n>Description: {{meetupDetail.description}}</p>
+    <div class="meetup-details">
+      <p i18n>Meetup Title : {{meetupDetail.title}} </p>
+      <p i18n>Created By : <i>{{meetupDetail.createdBy}}</i></p>
+      <p i18n>Category : {{meetupDetail.category}} </p>
+      <p i18n>Meetup Date: {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
+      <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
+      <p i18n>Recurring: {{meetupDetail.recurring}}</p>
+      <p i18n>Location: {{meetupDetail.meetupLocation}}</p>
+      <p i18n>Description: {{meetupDetail.description}}</p>
+    </div>
+    <div class="mem-enrolled">
+      <span i18n><b>Joined Members:</b></span>
+      <p *ngIf="members.length === 0" i18n> - No member has Joined this Meetup</p>
+      <ol><p i18n *ngFor="let mem of members"><li>{{mem}}</li></p></ol>
+    </div>
   </div>
 </div>
