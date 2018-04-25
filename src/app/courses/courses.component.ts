@@ -228,6 +228,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   updateShelf(newShelf, message) {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
+      this.userShelf._rev = res.rev;
       this.updateAddLibrary();
       this.planetMessageService.showAlert(message);
     }, (error) => (error));
