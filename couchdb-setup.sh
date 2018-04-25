@@ -92,6 +92,7 @@ curl -X PUT $COUCHURL/_global_changes
 curl -X PUT $COUCHURL/meetups
 curl -X PUT $COUCHURL/resources
 curl -X PUT $COUCHURL/courses
+curl -X PUT $COUCHURL/exams
 curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/communityregistrationrequests
 curl -X PUT $COUCHURL/feedback
