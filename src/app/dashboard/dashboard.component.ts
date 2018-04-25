@@ -3,7 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 
@@ -52,10 +53,15 @@ export class DashboardComponent implements OnInit {
     return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
   }
 
-  getData(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
+  getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
-      .pipe(map(response => {
-        return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
-      }));
+      .pipe(
+        catchError(() => {
+          return of({ docs: [] });
+        }),
+        map(response => {
+          return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
+        })
+      );
   }
 }
