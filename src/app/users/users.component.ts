@@ -95,19 +95,42 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  getLoginActivities() {
+    return this.couchService.allDocs('login_activities');
+  }
+
   initializeData() {
     this.selection.clear();
-    forkJoin([ this.getUsers(), this.getShelf() ])
-    .debug('Getting user list').subscribe(([ users, shelfRes ]) => {
+    forkJoin([ this.getUsers(), this.getShelf(), this.getLoginActivities() ])
+    .debug('Getting user list').subscribe(([ users, shelfRes, loginActvities ]) => {
+      let loginTime: number;
+      let currentLoginUser: string;
+      loginTime = loginActvities[0].loginTime;
+      currentLoginUser = loginActvities[0].user;
+      // According to the latest login time, find the current login user
+      loginActvities.forEach((res: any) => {
+        if ( loginTime < res.loginTime) {
+          loginTime = res.loginTime;
+          currentLoginUser = res.user;
+        }
+      }, []);
+
       const myTeamIds = shelfRes.docs[0].myTeamIds;
       this.allUsers.data = users.reduce((newUsers: any[], user: any) => {
+        const compLen = (currentLoginUser.length !==  user.name.length);
+        const compStr = (currentLoginUser.indexOf(user.name) > -1) !== true;
+
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
         userInfo.myTeamInfo = myTeamIds && myTeamIds.indexOf(user._id) > -1 ? true : false;
-        newUsers.push(userInfo);
+        // If user is not the current login user, add user to list; else filter self from list
+        if (compLen || compStr) {
+          newUsers.push(userInfo);
+        }
         return newUsers;
+
       }, []);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
