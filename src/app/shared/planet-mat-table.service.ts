@@ -20,8 +20,4 @@ export class PlanetMatTableService {
     db.data.forEach(row => this.selection.select(row));
   }
 
-  goBack(parent) {
-    parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
-  }
-
 }

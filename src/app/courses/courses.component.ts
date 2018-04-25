@@ -183,6 +183,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     };
   }
 
+  goBack() {
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+  }
+
   onFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty

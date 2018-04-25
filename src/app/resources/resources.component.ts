@@ -136,6 +136,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
+  goBack() {
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+  }
+
   // Keeping for reference.  Need to refactor for service.
   /*
   getExternalResources() {

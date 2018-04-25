@@ -73,6 +73,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.filter = filterValue;
   }
 
+  goBack() {
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
