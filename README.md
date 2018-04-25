@@ -44,3 +44,36 @@ Also, the `npm start` command can include an additional `LNG` variable to serve 
 `LNG=es npm start`
 
 This would serve the app from the Spanish language files.
+
+## Troubleshooting
+
+### I switched branches and now I'm missing a dependency...
+
+The ideal solution would be to ssh into your vagrant and run npm install:
+
+```
+vagrant ssh
+cd /vagrant
+npm install
+```
+
+This doesn't always work.  If you're having trouble or need to revert to the exact dependencies listed on the package.json, you need to remove all packages then install (after cd /vagrant above, run the commands):
+
+```
+rm -rf node_modules/*
+npm install
+```
+
+The trailing `/*` will remove all files & sub-directories of node_modules.  You won't be able to remove node_modules because of the link between the vagrant VM and your host.
+
+### Cannot GET /
+
+There are two things you can try for this.  First involves the node-sass module which can be problematic.  You will need to rebuild it from the VM:
+
+```
+vagrant ssh
+cd /vagrant
+npm rebuild node-sass
+```
+
+The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'`.
