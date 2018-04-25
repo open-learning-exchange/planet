@@ -39,9 +39,6 @@ export class HighligtRouteDirective implements OnInit, AfterViewChecked {
       this.renderer.addClass(this.elRef.nativeElement, 'pulsate');
     }
 
-    // Make sure you clean up files a bit... (try to not have it as a shared module)
-    // Can get the following to come from component instead?
-    // [planetHighlightRoute]="{title: route.title, routerLinkActive: rlaRef, pulsatingClassed: pulsatingClassed}"
     // Comment up
     // Say why can't have /deep/ fully removed with links
 

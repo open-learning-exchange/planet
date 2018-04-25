@@ -15,7 +15,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
-import { SharedHomeModule } from './shared-home.module';
+import { HighligtRouteDirective } from './highlight-route.directive';
 
 
 @NgModule({
@@ -28,8 +28,7 @@ import { SharedHomeModule } from './shared-home.module';
     MaterialModule,
     PlanetDialogsModule,
     HttpClientModule,
-    HttpClientJsonpModule,
-    SharedHomeModule
+    HttpClientJsonpModule
   ],
   declarations: [
     HomeComponent,
@@ -37,7 +36,8 @@ import { SharedHomeModule } from './shared-home.module';
     CommunityComponent,
     NationComponent,
     DashboardTileComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    HighligtRouteDirective
   ]
 })
 export class HomeModule {}
