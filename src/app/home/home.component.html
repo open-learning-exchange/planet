@@ -41,18 +41,55 @@
 <mat-sidenav-container class="main-content" #content>
   <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
     <!--Top part, user content etc.-->
-    <!-- Less readable prevous class setting method: -->
-    <!-- [ngClass]="{'active': rlaRef.isActive, 'pulsate': route.title === pulsatingClassed && !rla.isActive}" -->
     <ul class="top-nav">
-      <li *ngFor="let route of topNavEls">
-        <a mat-button
-          routerLink={{route.routerLink}}
+      <li>
+        <a mat-button routerLink="/"
           routerLinkActive
-          #rlaRef="routerLinkActive"
-          [planetHighlightRoute]="{title: route.title, routerLinkActive: rlaRef, pulsatingClassed: pulsatingClassed}"
-          i18n-title title={{route.title}}>
-         <mat-icon svgIcon={{route.svgIcon}}></mat-icon>
-         <label i18n>{{route.label}}</label>
+          #rlaRefHm="routerLinkActive"
+          [planetHighlightRoute]="{title: 'Home', routerLinkActive: rlaRefHm}"
+          i18n-title title="Home">
+          <mat-icon svgIcon="home"></mat-icon>
+          <label i18n>Home</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/resources"
+          routerLinkActive
+          #rlaRefMl="routerLinkActive"
+          [planetHighlightRoute]="{title: 'Resources', routerLinkActive: rlaRefMl}"
+          i18n-title title="Resources">
+         <mat-icon svgIcon="myLibrary"></mat-icon>
+         <label i18n>Library</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/courses"
+          routerLinkActive
+          #rlaRefMc="routerLinkActive"
+          [planetHighlightRoute]="{title: 'Courses', routerLinkActive: rlaRefMc}"
+          i18n-title title="Courses">
+          <mat-icon svgIcon="myCourses"></mat-icon>
+          <label i18n>Courses</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/meetups"
+          routerLinkActive
+          #rlaRefMu="routerLinkActive"
+          [planetHighlightRoute]="{title: 'Meetups', routerLinkActive: rlaRefMu}"
+          i18n-title title="Meetups">
+          <mat-icon svgIcon="myMeetups"></mat-icon>
+          <label i18n>Meetups</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/users"
+          routerLinkActive
+          #rlaRefMem="routerLinkActive"
+          [planetHighlightRoute]="{title: 'Users', routerLinkActive: rlaRefMem}"
+          i18n-title title="Users">
+          <mat-icon svgIcon="myTeams"></mat-icon>
+          <label i18n>Members</label>
         </a>
       </li>
     </ul>
