@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
+import { FeedbackService } from './feedback.service';
 
 export class Message {
   message: string;
@@ -33,7 +34,8 @@ export class FeedbackDirective {
     private userService: UserService,
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
-    private router: Router
+    private router: Router,
+    private feedbackService: FeedbackService
   ) {}
 
   addFeedback(post: any) {
@@ -51,7 +53,7 @@ export class FeedbackDirective {
       };
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
-      this.userService.setfeedback();
+      this.feedbackService.setfeedback();
       this.message = 'Thank you, your feedback is submitted!';
     },
     (error) => {
