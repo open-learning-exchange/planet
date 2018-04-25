@@ -115,10 +115,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  promote(user, isAdmin) {
-    // Only add manager role and set isUserAdmin true
-    const selectedRolesArray = isAdmin ? [ 'manager' ] : [ 'learner' ];
-    const tempUser = { ...user, roles: selectedRolesArray, isUserAdmin: isAdmin };
+  setRoles(user, roles) {
+    const tempUser = {
+      ...user,
+      roles,
+      oldRoles: [ ...user.roles ] || [ 'learner' ],
+      isUserAdmin: roles.indexOf('manager') > -1
+    };
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
@@ -132,7 +135,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     let tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     if (tempUser.roles.length === 0) {
-      tempUser = { ...tempUser, oldRoles: [] };
+      tempUser = { ...tempUser, oldRoles: [ 'learner' ] };
     }
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
@@ -142,32 +145,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
-      console.log(error);
-    });
-  }
-
-  addRole(user) {
-    let selectedUserRole: string[] = [];
-    if (user.oldRoles === undefined || user.oldRoles.length === 0) {
-      selectedUserRole = [ 'learner' ];
-    } else {
-      selectedUserRole = user.oldRoles;
-    }
-    const tempUser = { ...user, roles: [ ...selectedUserRole ] };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-      console.log('Success!');
-      this.initializeData();
-    }, (error) => {
-      console.log(error);
-    });
-  }
-
-  removeRole(user) {
-    const tempUser = { ...user, roles: [ ], oldRoles: [ ...user.roles ]  };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-      console.log('Success!');
-      this.initializeData();
-    }, (error) => {
       console.log(error);
     });
   }
