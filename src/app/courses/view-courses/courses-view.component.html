@@ -1,4 +1,4 @@
-<ng-container *ngIf="courseView; else stepView">
+<ng-container>
   <mat-toolbar>
     <a mat-icon-button [routerLink]="parent ? ['/manager/courses'] : ['/courses']"><mat-icon>arrow_back</mat-icon></a>
     <span i18n>Course</span>
@@ -8,7 +8,7 @@
     <mat-toolbar class="primary-color font-size-1">
       <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
       <span class="toolbar-fill"></span>
-      <button mat-raised-button color="accent" (click)="courseView = false" i18n>View Step</button>
+      <button mat-raised-button color="accent" (click)="viewStep()" i18n>View Step</button>
     </mat-toolbar>
     <div class="view-container">
       <div class="course-detail bg-light-grey">
@@ -43,8 +43,3 @@
     </div>
   </div>
 </ng-container>
-<ng-template #stepView>
-  <ng-container *ngIf="courseDetail.steps">
-    <planet-courses-step-view [courseSteps]="courseDetail.steps" [stepNo]="0"></planet-courses-step-view>
-  </ng-container>
-</ng-template>

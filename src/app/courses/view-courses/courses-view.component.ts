@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
+import { CoursesService } from '../courses.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -34,12 +35,13 @@ export class CoursesViewComponent implements OnInit {
 
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
-  courseView = true;
 
   constructor(
+    private router: Router,
     private couchService: CouchService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private coursesService: CoursesService
   ) { }
 
   ngOnInit() {
@@ -55,6 +57,13 @@ export class CoursesViewComponent implements OnInit {
       return this.couchService.get('courses/' + id,  { domain: this.userService.getConfig().parentDomain } );
     }
     return this.couchService.get('courses/' + id);
+  }
+
+  viewStep() {
+    this.coursesService.returnUrl = this.router.url;
+    this.coursesService.course = this.courseDetail;
+    this.coursesService.stepIndex = 0;
+    this.router.navigate([ '/courses/step' ]);
   }
 
 }
