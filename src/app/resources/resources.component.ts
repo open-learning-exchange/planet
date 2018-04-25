@@ -268,7 +268,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       Object.assign({ resourceIds: data.docs[0].resourceIds, _rev: data.docs[0]._rev }));
     })).subscribe(data => {
       this.updateAddLibrary();
-      this.planetMessageService.showAlert('Resource removed from MyLibrary');
+      this.planetMessageService.showAlert('Resource removed your library');
     }, (error) => (error));
   }
 
