@@ -104,15 +104,6 @@ body {
     margin: 0 3px;
   }
 
-  // Helper classes for simple grid layouts for 2 tile horizontal cards
-  .left-tile {
-    grid-area: lt;
-  }
-
-  .right-tile {
-    grid-area: rt;
-  }
-
   // Style which places menu icon in upper right corner of table cell
   .list-content-menu {
     display: grid;
@@ -272,6 +263,13 @@ body {
   // Remove the underline from mat-form-field for custom fields
   .mat-form-field-type-no-underline .mat-input-underline {
     display: none;
+  }
+
+  .profile-image-update {
+    border-radius: 50%;
+    margin-left: 2rem;
+    width: 14rem;
+    height: 14rem;
   }
 
   .profile-image-large {
