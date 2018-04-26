@@ -1,21 +1,16 @@
 @import '../variables.scss';
 @import '../../planet-mat-theme.scss';
+@import '../mixins.scss';
 
 :host {
+
+  @include left-right-grid-areas;
 
   text-align: center;
 
   .login-container {
     padding: 10vh;
     overflow: hidden;
-  }
-
-  .left-tile {
-    grid-area: lt;
-  }
-
-  .right-tile {
-    grid-area: rt;
   }
 
   .login-left-tile::before {

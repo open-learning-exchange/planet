@@ -1,0 +1,9 @@
+@mixin left-right-grid-areas {
+  .left-tile {
+    grid-area: lt;
+  }
+
+  .right-tile {
+    grid-area: rt;
+  }
+}
