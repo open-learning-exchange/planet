@@ -1,4 +1,4 @@
-FROM node:6.11 as builder
+FROM ubuntu as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app
@@ -13,15 +13,9 @@ RUN bash ./crosscompile_planet.sh armv7 build
 #####
 
 FROM tobi312/rpi-nginx:alpine
-COPY docker/qemu/ /usr/bin/
+
 COPY docker/planet/default.conf /etc/nginx/conf.d/
-
-RUN [ "cross-build-start" ]
-
 RUN rm -rf /usr/share/nginx/html/*
-
-RUN [ "cross-build-end" ]
-
 
 COPY --from=builder /ng-app/dist /usr/share/nginx/html
 COPY docker/planet/docker-entrypoint.sh ./
