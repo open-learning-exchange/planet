@@ -10,7 +10,7 @@
         *ngFor="let item of itemData;let odd=odd"
         [ngClass]="{'bg-grey': odd}">
         <p [routerLink]="item.link">{{item.title}}</p>
-        <button mat-icon-button class="clear-item" (click)="onClick(item._id, cardTitle)">
+        <button *ngIf="cardTitle === 'myMeetups'" mat-icon-button class="clear-item" (click)="onClick(item._id, cardTitle)">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
