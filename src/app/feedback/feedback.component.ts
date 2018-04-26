@@ -7,6 +7,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { FeedbackService } from './feedback.service';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -25,8 +26,13 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
-  ) { }
+    private planetMessageService: PlanetMessageService,
+    private feedbackService: FeedbackService
+  ) {
+    this.feedbackService.feedbackUpdate$.subscribe(() => {
+      this.getFeedback();
+    });
+   }
 
   ngOnInit() {
     this.user = this.userService.get();

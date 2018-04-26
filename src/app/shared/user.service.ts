@@ -19,6 +19,7 @@ export class UserService {
   private user: any = { name: '' };
   private logsDb = 'login_activities';
   private configuration: any = { };
+  private shelf: any = { };
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
@@ -26,12 +27,19 @@ export class UserService {
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
   userChange$ = this.userChange.asObservable();
+  private shelfChange = new Subject<void>();
+  shelfChange$ = this.shelfChange.asObservable();
 
   constructor(private couchService: CouchService) {}
 
   set(user: any): any {
     this.user = user;
     this.userChange.next();
+  }
+
+  setShelf(shelf: any): any {
+    this.shelf = shelf;
+    this.shelfChange.next();
   }
 
   get(): any {
@@ -42,7 +50,11 @@ export class UserService {
     return this.configuration;
   }
 
-  setUserAndConfig(user: any) {
+  getUserShelf(): any {
+    return this.shelf;
+  }
+
+  setUserConfigAndShelf(user: any) {
     return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
         // If not found in users database, just use userCtx object
         this.user = user;
@@ -56,20 +68,41 @@ export class UserService {
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
-          return this.couchService.allDocs('configurations');
+          return forkJoin([
+            this.couchService.allDocs('configurations'),
+            this.getShelf()
+          ]);
         }
-        return of(false);
+        return of([]);
       }),
-      switchMap((configData) => {
-        if (configData) {
-          this.configuration = configData[0];
+      switchMap((configAndShelf) => {
+        if (configAndShelf.length > 0) {
+          // Assigns this.configuration to first array value, this.shelf to second
+          [ this.configuration, this.shelf ] = configAndShelf;
         }
         return of(true);
       }));
   }
 
+  getShelf() {
+    return this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.user._id } })
+      .pipe(
+        // If there are no matches, CouchDB throws an error
+        // User has no "shelf", so send empty object
+        catchError(err => {
+          // Observable of continues stream
+          return of({ docs: [ {} ] });
+        }),
+        // Combine with empty shelf in case all fields are not present
+        map(data => {
+          return Object.assign({ meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] }, data.docs[0]);
+        })
+      );
+  }
+
   unset(): any {
     this.user = { name: '' };
+    this.shelf = {};
   }
 
   logObj(logoutTime: number = 0) {

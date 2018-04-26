@@ -97,10 +97,12 @@ jobs:
         - docker logout
     - stage: docker-release
       script: #arm image building planet
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
 
     - stage: docker-release
       script: #arm image building planet
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
 
 

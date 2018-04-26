@@ -1,7 +1,10 @@
 @import '../variables.scss';
 @import '../../planet-mat-theme.scss';
+@import '../mixins.scss';
 
 :host {
+
+  @include left-right-grid-areas;
 
   text-align: center;
 

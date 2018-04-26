@@ -64,42 +64,40 @@
             {{role}}
             <mat-icon matChipRemove *ngIf="!element.doc.isUserAdmin">cancel</mat-icon>
           </mat-chip>
-          <mat-chip *ngIf="element.doc.isUserAdmin">admin</mat-chip>
+          <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
       </mat-chip-list>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
       <mat-cell  *matCellDef="let element">
-        <div *ngIf="element.doc.isUserAdmin">
-          <mat-icon>&nbsp;</mat-icon>
-          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addAdminAsTeam" (click)="addTeams([{'_id': element.doc._id}])">Add Team</button>
-          <ng-template #addAdminAsTeam><button mat-raised-button color="primary" *ngIf="element.myTeamInfo" (click)="removeTeam(element.doc._id)">Remove Team</button></ng-template>
-          <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>View Profile
-            <mat-icon>folder_open</mat-icon>
-          </a>
-        </div>
-        <div *ngIf="!element.doc.isUserAdmin">
-          <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="addRole(element.doc)">
+        <span *ngIf="!element.doc.isUserAdmin">
+          <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
             <mat-icon>lock</mat-icon>
           </button>
-          <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="removeRole(element.doc)">
+          <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [])">
             <mat-icon>lock_open</mat-icon>
           </button>
-          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([{'_id': element.doc._id}])">Add Team</button>
-          <ng-template #addTeam><button mat-raised-button color="primary" *ngIf="element.myTeamInfo" (click)="removeTeam(element.doc._id)">Remove Team</button></ng-template>
-          <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
-            <mat-icon>folder_open</mat-icon>
-          </a>
-        </div>
+        </span>
+        <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([{'_id': element.doc._id}])">Add Team</button>
+        <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id)">Remove Team</button></ng-template>
+        <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
+          <mat-icon>folder_open</mat-icon>
+        </a>
+        <a
+          *ngIf="element.doc.roles.length > 0"
+          (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
+          mat-raised-button color="primary" i18n>
+          <!--Convert boolean to number for i18n-->
+          {+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}
+        </a>
       </mat-cell>
     </ng-container>
-
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
   </mat-table>
   <mat-paginator #paginator
-    [pageSize]="10" 
+    [pageSize]="10"
     [pageSizeOptions]="[5, 10, 20]"
     (page)="onPaginateChange($event)">
   </mat-paginator>
