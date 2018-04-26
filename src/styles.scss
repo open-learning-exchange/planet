@@ -104,15 +104,6 @@ body {
     margin: 0 3px;
   }
 
-  // Helper classes for simple grid layouts for 2 tile horizontal cards
-  .left-tile {
-    grid-area: lt;
-  }
-
-  .right-tile {
-    grid-area: rt;
-  }
-
   // Style which places menu icon in upper right corner of table cell
   .list-content-menu {
     display: grid;

@@ -1,4 +1,8 @@
+@import '../mixins.scss';
+
 :host {
+
+  @include left-right-grid-areas;
 
   .dashboard-card {
     display: grid;
