@@ -126,10 +126,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   deleteSelected() {
     let amount = 'many',
-      okClick = this.deleteCourses(this.selection.selected),
+      okClick = this.deleteCourses(this.planetMatTableService.selection.selected),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const course = this.selection.selected[0];
+    if (this.planetMatTableService.selection.selected.length === 1) {
+      const course = this.planetMatTableService.selection.selected[0];
       amount = 'single';
       okClick = this.deleteCourse(course);
       displayName = course.courseTitle;
@@ -162,7 +162,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
@@ -176,7 +176,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
           this.getCourses();
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected courses');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');

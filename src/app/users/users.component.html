@@ -23,7 +23,7 @@
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!planetMatTableService.selection.selected.length || selectedRole.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
     </div>
-    <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!planetMatTableService.selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
+    <button mat-button class="margin-lr-3" (click)="addTeams(planetMatTableService.selection.selected)" [disabled]="!planetMatTableService.selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
   </mat-toolbar>
 
   <mat-table #table [dataSource]="allUsers" matSort>

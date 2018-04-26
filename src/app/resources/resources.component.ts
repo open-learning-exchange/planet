@@ -167,10 +167,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     let amount = 'many',
-      okClick = this.deleteResources(this.selection.selected),
+      okClick = this.deleteResources(this.planetMatTableService.selection.selected),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const resource = this.selection.selected[0];
+    if (this.planetMatTableService.selection.selected.length === 1) {
+      const resource = this.planetMatTableService.selection.selected[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
       displayName = resource.title;
@@ -214,7 +214,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
           this.resourcesService.updateResources({ opts: this.getOpts });
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted all resources');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');

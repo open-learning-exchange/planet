@@ -101,7 +101,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
@@ -117,7 +117,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
         .subscribe((data) => {
           this.meetupService.updateMeetups();
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected meetups');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting these meetups.');
@@ -126,10 +126,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     let amount = 'many',
-      okClick = this.deleteMeetups(this.selection.selected),
+      okClick = this.deleteMeetups(this.planetMatTableService.selection.selected),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const meetup = this.selection.selected[0];
+    if (this.planetMatTableService.selection.selected.length === 1) {
+      const meetup = this.planetMatTableService.selection.selected[0];
       amount = 'single';
       okClick = this.deleteMeetup(meetup);
       displayName = meetup.title;
