@@ -60,8 +60,10 @@
         </button>
         <mat-menu #resourceMenu="matMenu">
           <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addResourceId([{'_id': element._id}])">
-            <mat-icon>library_add</mat-icon>
-            <span i18n>Add to Library</span>
+            <mat-icon>library_add</mat-icon><span i18n>Add to Library</span>
+          </a>
+          <a mat-menu-item *ngIf="element.libraryInfo" (click)="removeResources(element._id)">
+            <mat-icon>clear</mat-icon><span i18n>Remove from Library</span>
           </a>
           <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
             <mat-icon>feedback</mat-icon>
@@ -88,7 +90,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
-    [pageSize]="10" 
+    [pageSize]="10"
     [pageSizeOptions]="[5, 10, 20]"
     (page)="onPaginateChange($event)">
   </mat-paginator>
