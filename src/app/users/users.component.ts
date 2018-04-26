@@ -82,7 +82,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.allDocs('_users');
+    return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
   }
 
   getShelf() {
@@ -99,7 +99,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     forkJoin([ this.getUsers(), this.getShelf() ])
     .debug('Getting user list').subscribe(([ users, shelfRes ]) => {
       const myTeamIds = shelfRes.docs[0].myTeamIds;
-      this.allUsers.data = users.reduce((newUsers: any[], user: any) => {
+      this.allUsers.data = users.docs.reduce((newUsers: any[], user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -115,12 +115,27 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
+  setRoles(user, roles) {
+    const tempUser = {
+      ...user,
+      roles,
+      oldRoles: [ ...user.roles ] || [ 'learner' ],
+      isUserAdmin: roles.indexOf('manager') > -1
+    };
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+      console.log('Success!');
+      this.initializeData();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
   deleteRole(user: any, index: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
     let tempUser = { ...user, roles: [ ...user.roles ] };
     tempUser.roles.splice(index, 1);
     if (tempUser.roles.length === 0) {
-      tempUser = { ...tempUser, oldRoles: [] };
+      tempUser = { ...tempUser, oldRoles: [ 'learner' ] };
     }
     this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
       console.log('Success!');
@@ -130,32 +145,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
       console.log('Error!');
-      console.log(error);
-    });
-  }
-
-  addRole(user) {
-    let selectedUserRole: string[] = [];
-    if (user.oldRoles === undefined || user.oldRoles.length === 0) {
-      selectedUserRole = [ 'learner' ];
-    } else {
-      selectedUserRole = user.oldRoles;
-    }
-    const tempUser = { ...user, roles: [ ...selectedUserRole ] };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-      console.log('Success!');
-      this.initializeData();
-    }, (error) => {
-      console.log(error);
-    });
-  }
-
-  removeRole(user) {
-    const tempUser = { ...user, roles: [ ], oldRoles: [ ...user.roles ]  };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-      console.log('Success!');
-      this.initializeData();
-    }, (error) => {
       console.log(error);
     });
   }
