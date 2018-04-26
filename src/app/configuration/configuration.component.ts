@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -52,11 +53,11 @@ export class ConfigurationComponent implements OnInit {
       ]
     });
     this.configurationFormGroup = this.formBuilder.group({
-      planet_type: [ '', Validators.required ],
-      local_domain: [ localDomain, Validators.required ],
+      planetType: [ '', Validators.required ],
+      localDomain: [ localDomain, Validators.required ],
       name: [ '', Validators.required ],
-      parent_domain: [ '', Validators.required ],
-      preferred_lang: [ '', Validators.required ],
+      parentDomain: [ '', Validators.required ],
+      preferredLang: [ '', Validators.required ],
       code: [ '', Validators.required ]
     });
     this.contactFormGroup = this.formBuilder.group({
@@ -76,9 +77,11 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.allDocs('nations', { domain: environment.centerAddress })
+    this.couchService.post('nations/_find',
+      findDocuments({ 'planetType': 'nation' }, 0 ),
+      { domain: environment.centerAddress })
       .subscribe((data) => {
-        this.nations = data;
+        this.nations = data.docs;
       }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
   }
 
@@ -86,13 +89,13 @@ export class ConfigurationComponent implements OnInit {
     this.nationOrCommunity = selectedValue;
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
-        planet_type: selectedValue,
-        parent_domain: environment.centerAddress
+        planetType: selectedValue,
+        parentDomain: environment.centerAddress
       });
     } else {
       this.configurationFormGroup.patchValue({
-        planet_type: selectedValue,
-        parent_domain: ''
+        planetType: selectedValue,
+        parentDomain: ''
       });
     }
   }
@@ -107,6 +110,7 @@ export class ConfigurationComponent implements OnInit {
         'roles': [],
         'type': 'user',
         'isUserAdmin': true,
+        'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
       forkJoin([
@@ -119,13 +123,13 @@ export class ConfigurationComponent implements OnInit {
         // then add configuration
         this.couchService.post('configurations', configuration),
         // then post configuration to parent planet's registration requests
-        this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parent_domain })
+        this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
           .pipe(switchMap(data => {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
-            userDetail['request_id'] =  data.id;
+            userDetail['requestId'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('/_users/org.couchdb.user:' + credentials.name,
-              userDetail, { domain: configuration.parent_domain });
+            return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
+              userDetail, { domain: configuration.parentDomain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));

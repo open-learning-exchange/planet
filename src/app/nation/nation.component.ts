@@ -27,7 +27,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   selectFilter = false;
   filter = {
     'registrationRequest': '',
-    'parent_domain': ''
+    'parentDomain': ''
   };
 
   constructor(
@@ -54,10 +54,10 @@ export class NationComponent implements OnInit, AfterViewInit {
       .subscribe((data) => {
         this.nations.data = data.map(nation => {
           if (nation.name === this.route.snapshot.paramMap.get('nation')) {
-            this.filter.parent_domain = nation.local_domain;
+            this.filter.parentDomain = nation.localDomain;
           }
           if (this.route.snapshot.paramMap.get('nation') !== null) {
-            this.getCommunity(this.filter.parent_domain);
+            this.getCommunity(this.filter.parentDomain);
             this.selectFilter = true;
           }
           return nation;
@@ -128,7 +128,7 @@ export class NationComponent implements OnInit, AfterViewInit {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Changing the filter string to trigger filterPredicate
     this.nations.filter = filterValue;
-    if (field === 'parent_domain') {
+    if (field === 'parentDomain') {
       this.getCommunity(filterValue);
     }
   }

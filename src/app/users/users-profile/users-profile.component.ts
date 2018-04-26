@@ -17,10 +17,6 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
     .space-container {
       margin: 64px 30px;
     }
-    .view-container {
-      background-color: #FFFFFF;
-      padding: 3rem;
-    }
     .profile-container {
       max-width: 900px;
       display: grid;
@@ -87,12 +83,12 @@ export class UsersProfileComponent implements OnInit {
       this.couchService.put(this.dbName + '/' + userData._id, userData)
     ];
     if (isUserAdmin) {
-      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parent_domain })
+      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
         .pipe(switchMap((data) => {
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
           profile.password = userData.password;
           return this.couchService.put(this.dbName + '/' + profile._id, profile,
-          { domain: this.userService.getConfig().parent_domain });
+          { domain: this.userService.getConfig().parentDomain });
         })));
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)

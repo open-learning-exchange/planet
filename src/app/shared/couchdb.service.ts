@@ -17,7 +17,7 @@ export class CouchService {
   }
 
   private couchDBReq(type: string, db: string, [ domain, opts ]: any[], data?: any) {
-    const url = domain ? 'http://' + domain + '/' + db : this.baseUrl + db;
+    const url = domain ? environment.centerProtocol + '://' + domain + '/' + db : this.baseUrl + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
       httpReq = this.http[type](url, data, opts);

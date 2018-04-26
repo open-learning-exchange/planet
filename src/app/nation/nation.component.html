@@ -5,9 +5,9 @@
     <span class="toolbar-fill"></span>
     <div *ngIf="selectFilter">
       <mat-form-field>
-        <mat-select [value]="filter.name || 'All'" (change)="onFilterChange($event.value, 'parent_domain')">
+        <mat-select [value]="filter.name || 'All'" (change)="onFilterChange($event.value, 'parentDomain')">
           <mat-option i18n value="All">All</mat-option>
-          <mat-option *ngFor="let nationName of nationsList;" value={{nationName.local_domain}}> {{nationName.name}} </mat-option>
+          <mat-option *ngFor="let nationName of nationsList;" value={{nationName.localDomain}}> {{nationName.name}} </mat-option>
         </mat-select>
       </mat-form-field> &nbsp;
       <mat-form-field>
@@ -43,7 +43,7 @@
     <!-- URL Column -->
     <ng-container matColumnDef="url">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.local_domain}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.localDomain}}</mat-cell>
     </ng-container>
     <!-- Status Column -->
     <ng-container matColumnDef="status">
