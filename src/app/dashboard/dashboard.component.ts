@@ -31,7 +31,12 @@ export class DashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private couchService: CouchService
-  ) {}
+  ) {
+    this.userService.shelfChange$.pipe()
+      .subscribe(() => {
+        this.ngOnInit();
+      });
+  }
 
   ngOnInit() {
     const userShelf = this.userService.getUserShelf();

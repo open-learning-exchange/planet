@@ -5,12 +5,14 @@
   </div>
   <div class="right-tile" #items>
     <div class="dashboard-items" [ngStyle]="{'transform':itemTranslate()}">
-      <span
+      <div
         class="dashboard-item cursor-pointer"
         *ngFor="let item of itemData;let odd=odd"
         [ngClass]="{'bg-grey': odd}"
-        [routerLink]="item.link"
-        >{{item.title}}</span>
+        >
+        <span [routerLink]="item.link">{{item.title}}</span>
+        <button mat-icon-button (click)="onClick(item._id, cardTitle)">X</button>
+      </div>
     </div>
   </div>
   <div class="dashboard-arrows bg-grey">

@@ -14,6 +14,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { MeetupService } from '../meetups/meetups.service';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { NotificationsComponent } from '../notifications/notifications.component
     NationComponent,
     DashboardTileComponent,
     NotificationsComponent
-  ]
+  ],
+  providers: [ MeetupService ]
 })
 export class HomeModule {}
