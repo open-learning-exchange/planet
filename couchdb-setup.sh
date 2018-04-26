@@ -126,3 +126,9 @@ SECURITY=$(add_security_admin_roles ./design/security-update/security-update.jso
 multi_db_update $SECURITY _security
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
+
+# Make user database public
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'
+# Specify user public fields
+#upsert_doc is not working for String array
+curl -H 'Content-Type: application/json' -X PUT $COUCHURL/_node/nonode@nohost/_config/couch_httpd_auth/public_fields -d '"name, firstName, middleName, lastName, roles, isUserAdmin, joinDate, email, phoneNumber, gender"'
