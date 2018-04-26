@@ -34,23 +34,18 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getShelf().pipe(switchMap(shelf => {
-      return forkJoin([
-        this.getData('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-        this.getData('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-        this.getData('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-        this.getData('_users', shelf.docs[0].myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
-      ]);
-    })).subscribe(dashboardItems => {
+    const userShelf = this.userService.getUserShelf();
+    forkJoin([
+      this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
+      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
+      this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
+      this.getData('_users', userShelf.myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
+    ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
-  }
-
-  getShelf() {
-    return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
