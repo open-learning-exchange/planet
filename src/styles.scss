@@ -301,4 +301,13 @@ body {
     flex-direction: column;
   }
 
+  .alert-snackbar {
+    background-color:#ff0000;
+    color: $primary-text;
+  }
+
+  .show-snackbar {
+    background-color: $accent;
+    color: $accent-text;
+  }
 }

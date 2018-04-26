@@ -28,7 +28,7 @@ import { Subject } from 'rxjs/Subject';
   ` ]
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -78,6 +78,19 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+  }
+
+  ngOnDestroy() {
+    this.planetMessageService.setTimeout();
+  }
+
+  getShelf() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userId } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so courses can be displayed.
+      return of({ docs: [ { courseIds: [] } ] });
+    }));
   }
 
   setupList(courseRes, myCourses) {
@@ -161,7 +174,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle, 2000, 'X');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
