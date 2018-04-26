@@ -1,4 +1,4 @@
-FROM node:6.11 as builder
+FROM ubuntu as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 COPY docker/db-init/crosscompile_db-init.sh .
@@ -7,18 +7,13 @@ RUN bash ./crosscompile_db-init.sh armv7 install
 #####
 
 FROM hypriot/rpi-node:6.10.0-alpine
-COPY docker/qemu/ /usr/bin/
-
-RUN [ "cross-build-start" ]
 
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates;\
     mkdir -p /usr/local/lib/node_modules; \
     ln -s /usr/local/lib/node_modules/add-cors-to-couchdb/bin.js /usr/local/bin/add-cors-to-couchdb
 
-COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
-
-RUN [ "cross-build-end" ]
+COPY --from=builder /usr/lib/node_modules /usr/local/lib/node_modules
 
 WORKDIR /root
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -36,6 +36,7 @@ import * as constants from './resources-constants';
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
+  pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   readonly dbName = 'resources';
@@ -44,7 +45,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'info', 'rating' ] : [ 'select', 'info', 'rating' ];
+  displayedColumns = this.parent ? [ 'title', 'rating' ] : [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   subjectList: any = constants.subjectList;
   levelList: any = constants.levelList;
@@ -75,10 +76,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((resources) => {
       this.resources.data = resources;
-      this.updateAddLibrary();
+      this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
+    this.resources.sortingDataAccessor = (item: any, property: string) => {
+      switch (property) {
+        case 'rating':
+          return item.rating.rateSum / item.rating.totalRating;
+        default:
+          return item[property];
+      }
+    };
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
+      });
   }
 
   setupList(resourcesRes, myLibrarys) {
@@ -92,6 +105,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return { ...resource,  libraryInfo: false };
     });
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
   }
 
   ngAfterViewInit() {
@@ -112,7 +129,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyResFilter(filterResValue: string) {
-    this.resources.filter = filterResValue.trim().toLowerCase();
+    this.resources.filter = filterResValue;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -120,15 +137,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isAllSelected() ?
     this.selection.clear() :
     this.resources.data.forEach(row => this.selection.select(row));
-  }
-
-  getAddedLibrary() {
-    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
-    .pipe(catchError(err => {
-      // If there's an error, return a fake couchDB empty response
-      // so resources can be displayed.
-      return of({ docs: [] });
-    }));
   }
 
   // Keeping for reference.  Need to refactor for service.
@@ -223,37 +231,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return ids.concat(id);
   }
 
-  addResourceId(resourceId) {
-    const resourceIdArray = resourceId.map((data) => {
-      return data._id;
-    });
-    this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.userService.get()._id } })
-      .pipe(
-        map(data => {
-          return { rev: { _rev: data.docs[0]._rev }, resourceIds: data.docs[0].resourceIds || [] };
-        }),
-        // If there are no matches, CouchDB throws an error
-        // User has no "shelf", and it needs to be created
-        catchError(err => {
-          // Observable of continues stream
-          return of({ rev: {}, resourceIds: [] });
-        }),
-        switchMap(data => {
-          const resourceIds = resourceIdArray.concat(data.resourceIds).reduce(this.dedupeShelfReduce, []);
-          return this.couchService.put('shelf/' + this.userService.get()._id,
-            Object.assign(data.rev, { resourceIds }));
-        })
-      ).subscribe((res) =>  {
-        this.updateAddLibrary();
-        this.selection.clear();
-        this.planetMessageService.showAlert('Resource added to your library');
+  updateShelf(newShelf, msg: string) {
+    this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
+      newShelf._rev = res.rev;
+      this.userService.setShelf(newShelf);
+      this.selection.clear();
+      this.planetMessageService.showAlert(msg + ' your library');
     }, (error) => (error));
   }
 
-  updateAddLibrary() {
-    this.getAddedLibrary().subscribe((res) => {
-      this.setupList(this.resources.data, res.docs[0].resourceIds);
-    });
+  addToLibrary(resources) {
+    const currentShelf = this.userService.getUserShelf();
+    const resourceIds = resources.map((data) => {
+      return data._id;
+    }).concat(currentShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
+    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), 'Resource added to ');
+  }
+
+  removeFromLibrary(resourceId) {
+    const currentShelf = this.userService.getUserShelf();
+    const resourceIds = [ ...currentShelf.resourceIds ];
+    resourceIds.splice(resourceIds.indexOf(resourceId), 1);
+    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), 'Resource removed from ');
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {

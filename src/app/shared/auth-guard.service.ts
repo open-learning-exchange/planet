@@ -21,7 +21,7 @@ export class AuthService {
           if (res.userCtx.name === this.userService.get().name) {
             return of(true);
           }
-          return this.userService.setUserAndConfig(res.userCtx);
+          return this.userService.setUserConfigAndShelf(res.userCtx);
         }
         this.userService.unset();
         this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
