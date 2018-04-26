@@ -58,6 +58,13 @@
       align-items: center;
       grid-auto-rows: 50%;
     }
+
+    .clear-item {
+      position: absolute;
+      display: block;
+      top: 0;
+      margin-left: 115px;
+    }
   }
 
 }

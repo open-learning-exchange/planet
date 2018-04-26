@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, AfterViewChecked, HostListener, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { MeetupService } from '../meetups/meetups.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -32,7 +33,10 @@ export class DashboardTileComponent implements OnInit, AfterViewChecked {
     itemWidth: 150
   };
 
-  constructor(private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private meetupService: MeetupService
+  ) { }
 
   ngOnInit() {
     if (!this.itemData) {
@@ -78,6 +82,15 @@ export class DashboardTileComponent implements OnInit, AfterViewChecked {
   // Disable the right button if there is no more content.
   checkRightDisable() {
     return this.displayProps.displayIndex > this.itemData.length - this.tilesInView() - 1;
+  }
+
+  onClick(itemId, group) {
+    // switch is used since we have other group as well which will be implemented later...
+    switch (group) {
+      case 'myMeetups' :
+                        this.meetupService.attendMeetup(itemId, 'left');
+                        break;
+    }
   }
 
 }
