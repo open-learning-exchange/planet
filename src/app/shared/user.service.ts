@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
+import { PlanetMessageService } from './planet-message.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
@@ -30,7 +31,8 @@ export class UserService {
   private shelfChange = new Subject<void>();
   shelfChange$ = this.shelfChange.asObservable();
 
-  constructor(private couchService: CouchService) {}
+  constructor(private couchService: CouchService,
+              private planetMessageService: PlanetMessageService) {}
 
   set(user: any): any {
     this.user = user;
@@ -39,7 +41,7 @@ export class UserService {
 
   setShelf(shelf: any): any {
     this.shelf = shelf;
-    this.shelfChange.next();
+    this.shelfChange.next(this.shelf);
   }
 
   get(): any {
@@ -52,6 +54,37 @@ export class UserService {
 
   getUserShelf(): any {
     return this.shelf;
+  }
+
+  updateShelfData(ids, fields, addOrRemove, message?: any ) {
+    if (addOrRemove === 'remove') {
+      const fieldIds = [ ...this.shelf[fields] ];
+      fieldIds.splice(fieldIds.indexOf(ids[0]._id), 1);
+      this.shelf[fields] = fieldIds;
+      console.log('This is shelf after', this.shelf);
+      this.upDateOnDataBase(Object.assign({}, this.shelf, { fieldIds }), message.remove);
+    } else {
+      const itemIds = ids.map((data) => {
+        return data._id;
+      }).concat(this.shelf[fields]).reduce(this.dedupeShelfReduce, []);
+      this.shelf[fields] = itemIds;
+      this.upDateOnDataBase(this.shelf, message.add);
+    }
+  }
+
+  upDateOnDataBase(newShelf, message) {
+    this.couchService.put('shelf/' + this.get()._id, newShelf).subscribe((res) => {
+      this.shelf._rev = res.rev;
+      this.setShelf(this.shelf);
+      this.planetMessageService.showAlert(message);
+    }, error => console.log(error));
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
   }
 
   setUserConfigAndShelf(user: any) {

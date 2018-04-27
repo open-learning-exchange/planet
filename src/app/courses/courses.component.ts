@@ -224,26 +224,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  updateShelf(newShelf, message) {
-    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
-      newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
-      this.setupList(this.courses.data,  this.userShelf.courseIds);
-      this.planetMessageService.showAlert(message);
-    }, (error) => (error));
-  }
-
-  courseResign(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
-    userShelf.courseIds.splice(myCourseIndex, 1);
-    this.updateShelf(userShelf, 'Course successfully resigned');
-  }
-
-  courseAdmission(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    userShelf.courseIds.push(courseId);
-    this.updateShelf(userShelf, 'Course added to your dashboard');
+  updateShelf(courseId, addOrRemove) {
+    const message = {
+      add: 'Course added to your dashboard',
+      remove: 'Course successfully resigned'
+    };
+    this.userService.updateShelfData(courseId, 'courseIds', addOrRemove, message);
   }
 
 }
