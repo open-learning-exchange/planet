@@ -10,6 +10,7 @@ export class DashboardTileComponent implements OnInit, AfterViewChecked {
   @Input() cardTitle: string;
   @Input() color: string;
   @Input() itemData;
+  @Input() emptyLink: string = '/';
   @ViewChild('items') itemDiv: ElementRef;
   mockItems = Array(100).fill(0).map((val, ind, arr) => {
     return { title: 'Item ' + ind, link: '/' };
