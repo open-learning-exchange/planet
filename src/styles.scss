@@ -301,4 +301,8 @@ body {
     flex-direction: column;
   }
 
+  .filter-option > .mat-pseudo-checkbox {
+    display: none !important;
+  }
+
 }
