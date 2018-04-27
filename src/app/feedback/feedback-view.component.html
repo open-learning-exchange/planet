@@ -6,6 +6,11 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
+      <ng-container [ngSwitch]="feedback.type">
+        <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
+        <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
+        <mat-icon *ngSwitchCase="'Suggestion'">lighbulb_outline</mat-icon>
+      </ng-container>
       <span>{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
       <span class="toolbar-fill"></span>
       <a (click)="setTitle()" mat-icon-button>
@@ -27,7 +32,7 @@
       <mat-form-field>
         <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
       </mat-form-field>
-      <button mat-raised-button color="accent" (click)="postMessage()">Reply</button>
+      <button mat-raised-button color="accent" (click)="postMessage()"><mat-icon>reply</mat-icon>Reply</button>
     </div>
   </div>
 </div>
