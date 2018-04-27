@@ -56,7 +56,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   postMessage() {
-    const newFeedback = Object.assign({}, this.feedback);
+    let reopen = {};
+    if(this.feedback.status === 'Closed') {
+      reopen = { status: 'Reopened', closeTime: '' };
+    }
+    const newFeedback = Object.assign({}, this.feedback, reopen);
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
     newFeedback.messages = [].concat(this.feedback.messages, { message: this.newMessage, user: this.user.name, time: Date.now() });
     this.couchService.put(this.dbName + '/' + this.feedback._id, newFeedback)

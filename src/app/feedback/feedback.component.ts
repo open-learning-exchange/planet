@@ -122,9 +122,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.couchService.get(this.dbName + '/' + feedback.id)
       .subscribe((data) => {
         data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.user.name });
-        this.couchService.put(this.dbName + '/' + data._id, {  ...data })
+        let reopen = { };
+        if(data.status === 'Closed') {
+          reopen = { status: 'ReOpened', closeTime: '' };
+        }
+        this.couchService.put(this.dbName + '/' + data._id, {  ...data, ...reopen })
         .subscribe(() => {
           this.planetMessageService.showMessage('Reply success.');
+          this.getFeedback();
         }, (error) => this.message = '');
       }, (error) => this.message = 'There is a problem of getting data.');
   }
@@ -133,6 +138,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     const updateFeedback =  { ...feedback, 'closeTime': Date.now(),  'status': 'Closed' };
     this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
       this.planetMessageService.showMessage('You closed this feedback.');
+      this.getFeedback();
+    },  (err) => console.log(err));
+  }
+
+  openFeedback(feedback: any) {
+    const updateFeedback =  { ...feedback, closeTime: '',  status: 'ReOpened' };
+    this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
+      this.planetMessageService.showMessage('You re-opened this feedback.');
       this.getFeedback();
     },  (err) => console.log(err));
   }

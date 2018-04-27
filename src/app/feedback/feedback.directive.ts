@@ -47,6 +47,7 @@ export class FeedbackDirective {
         owner: user,
         ...feedbackInfo,
         openTime: Date.now(),
+        status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
         ...this.feedbackOf

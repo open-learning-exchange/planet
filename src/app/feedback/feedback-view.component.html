@@ -6,7 +6,7 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <span>{{feedback.type + ' regarding ' + feedback.url}}</span>
+      <span>{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container">
