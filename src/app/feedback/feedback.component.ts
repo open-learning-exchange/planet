@@ -85,7 +85,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted feedback.');
+          this.planetMessageService.showMessage('You have deleted feedback.');
         }, (error) => this.deleteDialog.componentInstance.message = 'There is a problem deleting this feedback.');
     };
   }

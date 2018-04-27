@@ -99,7 +99,7 @@ export class LoginFormComponent {
         return forkJoin(obsArr);
       })).subscribe((res) => {
 
-      }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
+      }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
 }
 
