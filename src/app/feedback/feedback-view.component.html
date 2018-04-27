@@ -7,6 +7,10 @@
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
       <span>{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
+      <span class="toolbar-fill"></span>
+      <a (click)="setTitle()" mat-icon-button>
+        <mat-icon>edit</mat-icon>
+      </a>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container">

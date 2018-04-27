@@ -123,7 +123,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       .subscribe((data) => {
         data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.user.name });
         let reopen = { };
-        if(data.status === 'Closed') {
+        if (data.status === 'Closed') {
           reopen = { status: 'ReOpened', closeTime: '' };
         }
         this.couchService.put(this.dbName + '/' + data._id, {  ...data, ...reopen })

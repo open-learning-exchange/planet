@@ -7,6 +7,7 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -25,6 +26,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
+    private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService
   ) {}
 
@@ -57,7 +59,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   postMessage() {
     let reopen = {};
-    if(this.feedback.status === 'Closed') {
+    if (this.feedback.status === 'Closed') {
       reopen = { status: 'Reopened', closeTime: '' };
     }
     const newFeedback = Object.assign({}, this.feedback, reopen);
@@ -69,6 +71,38 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         return this.getFeedback(res.id);
       }))
       .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
+  }
+
+  setTitle() {
+    const title = 'Change feedback title';
+    const fields =
+      [
+        {
+          'label': 'Title',
+          'type': 'textarea',
+          'name': 'title',
+          'placeholder': 'Feedback title',
+          'required': false
+        }
+      ];
+    const formGroup = {
+      id: [ this.feedback._id ],
+      title: [ this.feedback.title ]
+    };
+    this.dialogsFormService
+      .confirm(title, fields, formGroup)
+      .debug('Dialog confirm')
+      .subscribe((ret) => {
+        if (ret !== undefined) {
+          this.feedback.title = ret.title;
+          this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback)
+          .pipe(switchMap((res) => {
+            return this.getFeedback(res.id);
+          }))
+          .subscribe(this.setFeedback.bind(this),
+          error => this.planetMessageService.showAlert('There was an error changing title'));
+        }
+      });
   }
 
   setCouchListener(id) {
