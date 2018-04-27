@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { PlanetMatTableService } from '../shared/planet-mat-table.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -63,7 +64,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private planetMatTableService: PlanetMatTableService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -106,7 +108,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
   }
 
   searchFilter(filterValue: string) {
@@ -124,10 +126,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   deleteSelected() {
     let amount = 'many',
-      okClick = this.deleteCourses(this.selection.selected),
+      okClick = this.deleteCourses(this.planetMatTableService.selection.selected),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const course = this.selection.selected[0];
+    if (this.planetMatTableService.selection.selected.length === 1) {
+      const course = this.planetMatTableService.selection.selected[0];
       amount = 'single';
       okClick = this.deleteCourse(course);
       displayName = course.courseTitle;
@@ -160,7 +162,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
@@ -174,7 +176,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
           this.getCourses();
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted selected courses');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
@@ -183,20 +185,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   goBack() {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
-  }
-
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.courses.data.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.courses.data.forEach(row => this.selection.select(row));
   }
 
   onFilterChange(filterValue: string, field: string) {

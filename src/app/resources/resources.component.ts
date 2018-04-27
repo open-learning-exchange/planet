@@ -14,6 +14,7 @@ import { ResourcesService } from './resources.service';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
+import { PlanetMatTableService } from '../shared/planet-mat-table.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -69,7 +70,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private httpclient: HttpClient,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private planetMatTableService: PlanetMatTableService
   ) {}
 
   ngOnInit() {
@@ -108,7 +110,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
   }
 
   ngAfterViewInit() {
@@ -121,22 +123,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.resources.data.length;
-    return numSelected === numRows;
-  }
-
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.resources.data.forEach(row => this.selection.select(row));
+  getAddedLibrary() {
+    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userService.get()._id } })
+    .pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of({ docs: [] });
+    }));
+  }
+
+  goBack() {
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   // Keeping for reference.  Need to refactor for service.
@@ -166,10 +167,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     let amount = 'many',
-      okClick = this.deleteResources(this.selection.selected),
+      okClick = this.deleteResources(this.planetMatTableService.selection.selected),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const resource = this.selection.selected[0];
+    if (this.planetMatTableService.selection.selected.length === 1) {
+      const resource = this.planetMatTableService.selection.selected[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
       displayName = resource.title;
@@ -213,15 +214,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
           this.resourcesService.updateResources({ opts: this.getOpts });
-          this.selection.clear();
+          this.planetMatTableService.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showAlert('You have deleted all resources');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
-  }
-
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   dedupeShelfReduce(ids, id) {
@@ -235,7 +232,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
-      this.selection.clear();
+      this.planetMatTableService.selection.clear();
       this.planetMessageService.showAlert(msg + ' your library');
     }, (error) => (error));
   }

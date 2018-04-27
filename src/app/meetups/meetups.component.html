@@ -15,7 +15,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
-      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <button mat-button (click)="deleteSelected()" [disabled]="!planetMatTableService.selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
         <span i18n>Delete</span>
       </button>
@@ -27,12 +27,15 @@
   <mat-table #table [dataSource]="meetups" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
+        <mat-checkbox (change)="$event ? planetMatTableService.masterToggle(meetups) : null"
+        [checked]="planetMatTableService.selection.hasValue() && planetMatTableService.isAllSelected(meetups)"
+        [indeterminate]="planetMatTableService.selection.hasValue() && !planetMatTableService.isAllSelected(meetups)"
           i18n>
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        <mat-checkbox (change)="$event ? planetMatTableService.selection.toggle(row) : null"
+        [checked]="planetMatTableService.selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -81,7 +84,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:planetMatTableService.selection.isSelected(row)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="5" 

@@ -24,10 +24,10 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
-      <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
+      <button mat-button [disabled]="!planetMatTableService.selection.selected.length" (click)="addToLibrary(planetMatTableService.selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
       </button>
-      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <button mat-button (click)="deleteSelected()" [disabled]="!planetMatTableService.selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
       </button>
       <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
@@ -37,14 +37,14 @@
   <mat-table #table [dataSource]="resources" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-        [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
+        <mat-checkbox (change)="$event ? planetMatTableService.masterToggle(resources) : null"
+        [checked]="planetMatTableService.selection.hasValue() && planetMatTableService.isAllSelected(resources)"
+        [indeterminate]="planetMatTableService.selection.hasValue() && !planetMatTableService.isAllSelected(resources)" i18n>
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
+        <mat-checkbox (change)="$event ? planetMatTableService.selection.toggle(row) : null"
+          [checked]="planetMatTableService.selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -87,7 +87,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:planetMatTableService.selection.isSelected(row)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="10"
