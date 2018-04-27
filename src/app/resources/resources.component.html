@@ -59,10 +59,10 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
-          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addToLibrary([{'_id': element._id}])">
+          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addToLibrary([{'_id': element._id, 'title': element.title}])">
             <mat-icon>library_add</mat-icon><span i18n>Add to Library</span>
           </a>
-          <a mat-menu-item *ngIf="element.libraryInfo" (click)="removeFromLibrary(element._id)">
+          <a mat-menu-item *ngIf="element.libraryInfo" (click)="removeFromLibrary(element._id, element.title)">
             <mat-icon>clear</mat-icon><span i18n>Remove from Library</span>
           </a>
           <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">

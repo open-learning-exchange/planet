@@ -245,14 +245,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const resourceIds = resources.map((data) => {
       return data._id;
     }).concat(currentShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
-    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), 'Resource added to ');
+    const msg = resources.length === 1 ? resources[0].title + ' have been added to' : resources.length + ' resources have been added to';
+    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), msg);
   }
 
-  removeFromLibrary(resourceId) {
+  removeFromLibrary(resourceId, resourceTitle) {
     const currentShelf = this.userService.getUserShelf();
     const resourceIds = [ ...currentShelf.resourceIds ];
     resourceIds.splice(resourceIds.indexOf(resourceId), 1);
-    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), 'Resource removed from ');
+    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {
