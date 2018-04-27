@@ -75,6 +75,9 @@ export class CoursesAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
+        data.steps.forEach(step => {
+          step['id'] = this.uniqueIdOfStep();
+        });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
         this.courseForm.patchValue(data);
@@ -86,6 +89,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
+    this.deleteStepIdProperty();
     this.couchService.put(
       this.dbName + '/' + this.documentInfo.id,
       { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
