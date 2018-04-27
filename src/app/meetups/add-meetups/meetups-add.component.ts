@@ -40,12 +40,14 @@ export class MeetupsAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
+        data.startDate = this.convertSimpleDateFormat(data.startDate);
+        data.endDate = this.convertSimpleDateFormat(data.endDate);
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
         this.meetupForm.patchValue(data);
       }, (error) => {
-        console.log(error);
+        console.log('This is error' + error);
       });
     }
   }
@@ -129,7 +131,23 @@ export class MeetupsAddComponent implements OnInit {
 
   getTimestamp(date) {
     const myDate = date.split('-');
-    return new Date(Date.UTC(myDate[0], myDate[1] - 1, myDate[2])).getTime();
+    const day = (parseInt(myDate[2], 10) + 1);
+    const d = new Date(myDate[0], myDate[1] - 1, day);
+    return d.setTime((d.getTime() + d.getTimezoneOffset() * 60 * 1000));
+  }
+
+  convertSimpleDateFormat(timeStampDate) {
+    const mydate = new Date(timeStampDate);
+    let dd = mydate.getDate().toString();
+    let mm = (mydate.getMonth() + 1).toString();
+    const yyyy = mydate.getFullYear().toString();
+    if (dd.length === 1) {
+      dd = '0' + dd;
+    }
+    if (mm.length === 1) {
+      mm = '0' + mm;
+    }
+    return yyyy + '-' + mm + '-' + dd;
   }
 
 }
