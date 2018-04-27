@@ -110,7 +110,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
   }
 
   ngAfterViewInit() {
@@ -232,7 +232,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
-      this.selection.clear();
+      this.planetMatTableService.selection.clear();
       this.planetMessageService.showAlert(msg + ' your library');
     }, (error) => (error));
   }

@@ -24,7 +24,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
-      <button mat-button [disabled]="!planetMatTableService.selection.selected.length" (click)="addResourceId(selection.selected)">
+      <button mat-button [disabled]="!planetMatTableService.selection.selected.length" (click)="addToLibrary(planetMatTableService.selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
       </button>
       <button mat-button (click)="deleteSelected()" [disabled]="!planetMatTableService.selection.selected.length">

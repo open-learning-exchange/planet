@@ -74,7 +74,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
   }
 
   getUsers() {
@@ -82,7 +82,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   initializeData() {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
     this.getUsers().debug('Getting user list').subscribe(users => {
       users = users.docs.map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
@@ -180,7 +180,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   updateShelf(myTeamIds: string[] = [], userShelf: any, msg: string) {
     this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
       this.userService.setShelf({ ...userShelf, _rev: res.rev, myTeamIds });
-
+      this.planetMatTableService.selection.clear();
       this.planetMessageService.showAlert(msg + ' your shelf');
     }, (error) => (error));
   }

@@ -66,7 +66,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
   }
 
   applyFilter(filterValue: string) {

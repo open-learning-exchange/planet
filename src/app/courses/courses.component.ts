@@ -108,7 +108,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
+    this.planetMatTableService.selection.clear();
   }
 
   searchFilter(filterValue: string) {
