@@ -29,12 +29,18 @@ export class UserService {
   userChange$ = this.userChange.asObservable();
   private shelfChange = new Subject<void>();
   shelfChange$ = this.shelfChange.asObservable();
+  private notificationStateChange = new Subject<void>();
+  notificationStateChange$ = this.notificationStateChange.asObservable();
 
   constructor(private couchService: CouchService) {}
 
   set(user: any): any {
     this.user = user;
     this.userChange.next();
+  }
+
+  setNotificationStateChange() {
+    this.notificationStateChange.next();
   }
 
   setShelf(shelf: any): any {

@@ -68,6 +68,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }).filter(lang  => {
       return lang['active'] !== 'N';
     });
+    this.userService.notificationStateChange$.subscribe(() => {
+      this.getNotification();
+    });
   }
 
   ngAfterViewInit() {
@@ -147,7 +150,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   readNotification(notification) {
     const updateNotificaton =  { ...notification, 'status': 'read' };
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
-      console.log(data);
+      this.getNotification();
+      this.userService.setNotificationStateChange();
     },  (err) => console.log(err));
   }
 
