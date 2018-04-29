@@ -124,7 +124,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
         data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.user.name });
         let reopen = { };
         if (data.status === 'Closed') {
-          reopen = { status: 'ReOpened', closeTime: '' };
+          reopen = { status: 'Reopened', closeTime: '' };
         }
         this.couchService.put(this.dbName + '/' + data._id, {  ...data, ...reopen })
         .subscribe(() => {
@@ -143,7 +143,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   openFeedback(feedback: any) {
-    const updateFeedback =  { ...feedback, closeTime: '',  status: 'ReOpened' };
+    const updateFeedback =  { ...feedback, closeTime: '',  status: 'Reopened' };
     this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
       this.planetMessageService.showMessage('You re-opened this feedback.');
       this.getFeedback();
