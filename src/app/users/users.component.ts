@@ -11,7 +11,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
-import { NgModel } from '@angular/forms';
 
 @Component({
   templateUrl: './users.component.html',
@@ -31,10 +30,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
-  updatedRole = [];
   // List of all possible roles to add to users
   roleList: string[] = [ 'intern', 'learner', 'teacher' ];
-  selectedRole = '';
+  selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + this.dbName + '/';
@@ -152,16 +150,15 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  roleSubmit(users: any[], role: any[]) {
+  roleSubmit(users: any[], roles: string[]) {
     forkJoin(users.reduce((observers, userInfo) => {
       const user = userInfo.doc;
       // Do not add role if it already exists on user and also not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const tempUser = { ...user, roles: [ ...user.roles ] };
-        this.updatedRole = role.length === 0 ? user.roles : role.concat(tempUser.roles).reduce(this.dedupeShelfReduce, []);
-        user.roles = this.updatedRole;
-        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, user));
+        const newRoles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+        const tempUser = { ...user, roles: newRoles };
+        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
     }, []))
@@ -171,7 +168,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         const user = userInfo.doc;
         if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = this.updatedRole;
+          user.roles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
         }
@@ -218,12 +215,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/' ]);
   }
 
-  selectAll(select: NgModel, values, array) {
-    select.update.emit(values);
-  }
-
-  deselectAll(select: NgModel) {
-    select.update.emit([]);
+  updateSelectedRoles(newSelection: string[]) {
+    this.selectedRoles = newSelection;
   }
 
 }
