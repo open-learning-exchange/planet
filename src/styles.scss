@@ -301,8 +301,9 @@ body {
     flex-direction: column;
   }
 
-  .filter-option > .mat-pseudo-checkbox {
-    display: none !important;
+  // Add to a mat-option to remove the checkbox
+  .hide-checkbox > .mat-pseudo-checkbox {
+    display: none;
   }
 
 }
