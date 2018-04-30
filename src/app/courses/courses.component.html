@@ -60,11 +60,11 @@
               <mat-icon>lock_open</mat-icon>
               <span i18n>Open</span>
             </a>
-            <a mat-menu-item *ngIf="!element.admission" (click)="updateShelf([{'_id': element._id}],'add')"  >
+            <a mat-menu-item *ngIf="!element.admission" (click)="updateShelf([{'_id': element._id}], 'add')">
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
             </a>
-            <a mat-menu-item *ngIf="element.admission" (click)="updateShelf([{'_id': element._id}],'remove')">
+            <a mat-menu-item *ngIf="element.admission" (click)="updateShelf([{'_id': element._id}], 'remove')">
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>

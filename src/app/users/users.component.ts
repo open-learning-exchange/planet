@@ -189,11 +189,26 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   updateShelf(usersIds, addOrRemove) {
+    const myuserIds = [];
     const message = {
       add: 'User added to your shelf',
       remove: 'User removed from your shelf'
     };
-    this.userService.updateShelfData(usersIds, 'myTeamIds', addOrRemove, message);
+    if (this.selection.selected.length > 1) {
+      usersIds.forEach( myusers => {
+        myuserIds.push(myusers.doc);
+      });
+      this.selection.clear();
+      message.add = 'Users added to your shelf';
+    } else if (this.selection.selected.length === 1) {
+      myuserIds.push(usersIds[0]);
+      this.selection.clear();
+    } else {
+      console.log('Call me ');
+      myuserIds.push(usersIds[0]);
+    }
+    console.log('This is my userIds', myuserIds[0]);
+    this.userService.updateShelfData(myuserIds, 'myTeamIds', addOrRemove, message);
   }
 
   back() {

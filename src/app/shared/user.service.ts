@@ -31,8 +31,10 @@ export class UserService {
   private shelfChange = new Subject<void>();
   shelfChange$ = this.shelfChange.asObservable();
 
-  constructor(private couchService: CouchService,
-              private planetMessageService: PlanetMessageService) {}
+  constructor(
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
+  ) {}
 
   set(user: any): any {
     this.user = user;
@@ -56,12 +58,11 @@ export class UserService {
     return this.shelf;
   }
 
-  updateShelfData(ids, fields, addOrRemove, message?: any ) {
+  updateShelfData(ids, fields, addOrRemove, message) {
     if (addOrRemove === 'remove') {
       const fieldIds = [ ...this.shelf[fields] ];
       fieldIds.splice(fieldIds.indexOf(ids[0]._id), 1);
       this.shelf[fields] = fieldIds;
-      console.log('This is shelf after', this.shelf);
       this.upDateOnDataBase(Object.assign({}, this.shelf, { fieldIds }), message.remove);
     } else {
       const itemIds = ids.map((data) => {

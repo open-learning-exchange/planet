@@ -236,8 +236,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       add: 'Resource added to your library',
       remove: 'Resource removed from your library'
     };
+    if (this.selection.selected.length > 1) {
+      this.selection.clear();
+      message.add = 'Resources added to your library';
+    } else if (this.selection.selected.length === 1) {
+      this.selection.clear();
+    }
     this.userService.updateShelfData(ids, 'resourceIds', addOrRemove, message);
-    this.selection.clear();
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {
