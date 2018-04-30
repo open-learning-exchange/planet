@@ -195,7 +195,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       remove: 'User removed from your shelf'
     };
     if (this.selection.selected.length > 1) {
-      usersIds.forEach( myusers => {
+      usersIds.forEach(myusers => {
         myuserIds.push(myusers.doc);
       });
       this.selection.clear();
@@ -204,10 +204,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
       myuserIds.push(usersIds[0]);
       this.selection.clear();
     } else {
-      console.log('Call me ');
       myuserIds.push(usersIds[0]);
     }
-    console.log('This is my userIds', myuserIds[0]);
     this.userService.updateShelfData(myuserIds, 'myTeamIds', addOrRemove, message);
   }
 
