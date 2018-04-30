@@ -31,11 +31,15 @@ export class ResourcesAddComponent implements OnInit {
   resourceType: string[];
   currentDate = new Date(); // might be forced to change date format using "toISOString().split('T')[0]"
   file: any;
+  existingAttachment: any;
+  deleteAttachment: boolean = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
   id = '';
   revision = '';
+  pageType = 'Add new';
+
 
   constructor(
     private router: Router,
@@ -53,9 +57,6 @@ export class ResourcesAddComponent implements OnInit {
 
   ngOnInit() {
     this.userDetail = this.userService.get();
-    // update resource url check
-    console.log(this.route.snapshot.url[0].path);
-    //eventually in here i will check for an _attachment like in users-update
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
 <<<<<<< HEAD
@@ -70,18 +71,24 @@ export class ResourcesAddComponent implements OnInit {
       });
 =======
         .subscribe((data) => {
+          this.pageType = 'Update';
           this.revision = data._rev;
           this.id = data._id;
-          console.log('this' + this.route.snapshot.url[0].path);
-          console.log('My DATA', data._attachments);
-          console.log('My FORM',this.resourceForm);
+          if (data._attachments) { 
+            // If there is already an attachment associated with the resource grab it.
+            // Will a resource ever have more than one file associated with it?
+            // I need to grab a value when I dont know the key
+            for (let x in data._attachments) {
+              this.existingAttachment = {[x]:data._attachments[x]}
+            }  
+              this.existingAttachment = {_attachments:this.existingAttachment}
+          };
           this.resourceForm.patchValue(data);
         }, (error) => {
           console.log(error);
         });
 >>>>>>> minor fixes
     }
-
   }
 
   createForm() {
@@ -147,22 +154,11 @@ export class ResourcesAddComponent implements OnInit {
     return obs;
   }
 
-  updateResource(resourceInfo) {
-    console.log( this.revision );
-    this.couchService.put(this.dbName + '/' + this.id, { ...resourceInfo, '_rev': this.revision }).subscribe(() => {
-      this.router.navigate([ '/resources' ]);
-      this.planetMessageService.showMessage('Resource Updated Successfully');
-    }, (err) => {
-      console.log(err);
-    });
-  }
-
   onSubmit() {
     if (this.resourceForm.valid) {
       let fileObs: Observable<any>;
       // If file doesn't exist, mediaType will be undefined
       const mediaType = this.file && this.simpleMediaType(this.file.type);
-      console.log('Media Type',mediaType)
       switch (mediaType) {
         case undefined:
           // Creates an observable that immediately returns an empty object
@@ -176,10 +172,17 @@ export class ResourcesAddComponent implements OnInit {
       }
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
         // Start with empty object so this.resourceForm.value does not change
-
         if (this.route.snapshot.url[0].path === 'update') {
-          console.log(this.resourceForm);
-          this.updateResource(this.resourceForm.value);
+          if (this.deleteAttachment) {
+            // Update to remove an attachment
+            this.updateResource(this.resourceForm.value);
+          } else if (this.existingAttachment && !this.file) {
+            // Update and preserve the existingAttachment
+            this.updateResource(Object.assign({},this.resourceForm.value, this.existingAttachment))
+          } else {
+            // Update with a new attachment
+            this.updateResource(Object.assign({},this.resourceForm.value, resource))
+          }
         } else {
           this.addResource(Object.assign({}, this.resourceForm.value, resource));
         }
@@ -203,6 +206,19 @@ export class ResourcesAddComponent implements OnInit {
     });
   }
 
+  updateResource(resourceInfo) {
+    this.couchService.put(this.dbName + '/' + this.id, { ...resourceInfo, '_rev': this.revision }).subscribe(() => {
+      this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('Resource Updated Successfully');
+    }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
+      console.log(err);
+    });
+  }
+
+  handleDeleteAttachment(event) {
+    (event.checked === true) ? this.deleteAttachment = true : this.deleteAttachment = false;
+  }
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
   private processZip(zipFile) {
