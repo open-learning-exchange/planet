@@ -57,7 +57,7 @@ export class MeetupsAddComponent implements OnInit {
       startDate: [ '',
       Validators.compose([
         CustomValidators.dateValidator,
-        CustomValidators.startDateValidator
+        CustomValidators.notDateInPast
         ])
       ],
       endDate: [
