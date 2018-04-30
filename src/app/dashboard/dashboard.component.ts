@@ -11,10 +11,10 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   template: `
-    <planet-dashboard-tile [cardTitle]="'myLibrary'" class="planet-library-theme" [itemData]="data.resources"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme" [itemData]="data.courses"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme" [itemData]="data.meetups"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme" [itemData]="data.myTeams"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myLibrary'" class="planet-library-theme" [itemData]="data.resources" [emptyLink]="'/resources'"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme" [itemData]="data.courses" [emptyLink]="'/courses'"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme" [itemData]="data.meetups" [emptyLink]="'/meetups'"></planet-dashboard-tile>
+    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme" [itemData]="data.myTeams" [emptyLink]="'/users'"></planet-dashboard-tile>
   `,
   styles: [ `
     :host {
