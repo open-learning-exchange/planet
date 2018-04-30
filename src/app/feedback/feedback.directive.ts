@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class Message {
   message: string;
@@ -35,7 +36,8 @@ export class FeedbackDirective {
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private router: Router,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   addFeedback(post: any) {
@@ -55,9 +57,11 @@ export class FeedbackDirective {
     .subscribe((data) => {
       this.feedbackService.setfeedback();
       this.message = 'Thank you, your feedback is submitted!';
+      this.planetMessageService.showMessage(this.message);
     },
     (error) => {
       this.message = 'Error, your  feedback cannot be submitted';
+      this.planetMessageService.showMessage(this.message);
     });
   }
 
