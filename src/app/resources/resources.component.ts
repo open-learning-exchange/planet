@@ -85,7 +85,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         case 'rating':
           return item.rating.rateSum / item.rating.totalRating;
         default:
-          return item[property];
+          return item[property].toLowerCase();
       }
     };
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
