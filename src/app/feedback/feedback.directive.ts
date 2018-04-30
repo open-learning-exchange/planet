@@ -61,7 +61,7 @@ export class FeedbackDirective {
     },
     (error) => {
       this.message = 'Error, your  feedback cannot be submitted';
-      this.planetMessageService.showMessage(this.message);
+      this.planetMessageService.showAlert(this.message);
     });
   }
 
