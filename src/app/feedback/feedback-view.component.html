@@ -11,11 +11,25 @@
         <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
         <mat-icon *ngSwitchCase="'Suggestion'">lighbulb_outline</mat-icon>
       </ng-container>
-      <span>{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
-      <span class="toolbar-fill"></span>
-      <a (click)="setTitle()" mat-icon-button>
-        <mat-icon>edit</mat-icon>
-      </a>
+      <ng-container *ngIf="!editMode">
+        <span>{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
+        <span class="toolbar-fill"></span>
+        <a (click)="editTitle(true)" mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="editMode">
+        <mat-form-field>
+          <input matInput [(ngModel)]="feedback.title" placeholder="Feedback title" i18n-placeholder />
+        </mat-form-field>
+        <span class="toolbar-fill"></span>
+        <a (click)="setTitle()" mat-icon-button>
+          <mat-icon>check</mat-icon>
+        </a>
+        <a (click)="editTitle(false)" mat-icon-button>
+          <mat-icon>clear</mat-icon>
+        </a>
+      </ng-container>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container">

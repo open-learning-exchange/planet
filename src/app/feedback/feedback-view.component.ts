@@ -20,6 +20,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   user: any = {};
   newMessage = '';
   isActive = true;
+  editMode = false;
   @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
@@ -49,6 +50,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   setFeedback(result) {
     this.feedback = result.docs[0];
+    this.editTitle(false);
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
     this.scrollToBottom();
   }
@@ -73,34 +75,15 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
   }
 
+  editTitle(mode) {
+    this.editMode = mode;
+  }
+
   setTitle() {
-    const title = 'Change feedback title';
-    const fields =
-      [
-        {
-          'label': 'Title',
-          'type': 'textarea',
-          'name': 'title',
-          'placeholder': 'Feedback title',
-          'required': false
-        }
-      ];
-    const formGroup = {
-      id: [ this.feedback._id ],
-      title: [ this.feedback.title ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((ret) => {
-        if (ret !== undefined) {
-          this.feedback.title = ret.title;
-          this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
-            () => {},
-            error => this.planetMessageService.showAlert('There was an error changing title')
-          );
-        }
-      });
+    this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
+      () => {},
+      error => this.planetMessageService.showAlert('There was an error changing title')
+    );
   }
 
   setCouchListener(id) {
