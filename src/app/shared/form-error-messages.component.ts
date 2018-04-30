@@ -23,6 +23,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidDate {Date is invalid}
       invalidEndDate {End date cannot be before start date}
       invalidEndTime {End time cannot be before start time}
+      invalidStartDate {Start Date cannot be before current Date}
     }</span>
   `
 })
