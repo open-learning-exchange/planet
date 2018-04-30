@@ -119,6 +119,8 @@ export class CoursesAddComponent implements OnInit {
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
+    // By deleting the id property, ngFor trackBy will break
+    // If user is not rerouted after update moving steps will no longer work
     this.deleteStepIdProperty();
     this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
       this.router.navigate([ '/courses' ]);
@@ -144,9 +146,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   uniqueIdOfStep() {
-     // Math.random should be unique because of its seeding algorithm.
-     // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-    // after the decimal.
+    // Highly unlikely random numbers will not be unique for practical amount of course steps
     return '_' + Math.random().toString(36).substr(2, 9);
   }
 
