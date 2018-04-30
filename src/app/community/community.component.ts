@@ -30,6 +30,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCommunityList();
+    this.communities.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {

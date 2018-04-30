@@ -42,6 +42,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.nations.filterPredicate = filterDropdowns(this.filter);
     this.getNationList();
+    this.nations.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {

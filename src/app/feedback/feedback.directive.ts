@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class Message {
   message: string;
@@ -27,7 +28,6 @@ export class Feedback {
   selector: '[planetFeedback]'
 })
 export class FeedbackDirective {
-  message: string;
   @Input() feedbackOf: any = {};
 
   constructor(
@@ -35,11 +35,11 @@ export class FeedbackDirective {
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private router: Router,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   addFeedback(post: any) {
-    this.message = '';
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: Date.now(), user },
@@ -47,6 +47,7 @@ export class FeedbackDirective {
         owner: user,
         ...feedbackInfo,
         openTime: Date.now(),
+        status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
         ...this.feedbackOf
@@ -54,10 +55,10 @@ export class FeedbackDirective {
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
       this.feedbackService.setfeedback();
-      this.message = 'Thank you, your feedback is submitted!';
+      this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
     },
     (error) => {
-      this.message = 'Error, your  feedback cannot be submitted';
+      this.planetMessageService.showAlert('Error, your feedback cannot be submitted');
     });
   }
 

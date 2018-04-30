@@ -76,9 +76,13 @@
             <mat-icon>delete_forever</mat-icon>
             <span i18n>Delete</span>
           </button>
-          <button mat-menu-item (click)="closeFeedback(element)">
+          <button mat-menu-item *ngIf="element.status !== 'Closed'" (click)="closeFeedback(element)">
             <mat-icon>close</mat-icon>
             <span i18n>Close</span>
+          </button>
+          <button mat-menu-item *ngIf="element.status === 'Closed'" (click)="openFeedback(element)">
+            <mat-icon>lock_open</mat-icon>
+            <span i18n>Re-open</span>
           </button>
         </mat-menu>
       </mat-cell>
