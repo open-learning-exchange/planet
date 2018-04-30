@@ -28,7 +28,6 @@ export class Feedback {
   selector: '[planetFeedback]'
 })
 export class FeedbackDirective {
-  message: string;
   @Input() feedbackOf: any = {};
 
   constructor(
@@ -41,7 +40,6 @@ export class FeedbackDirective {
   ) {}
 
   addFeedback(post: any) {
-    this.message = '';
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: Date.now(), user },
@@ -56,12 +54,10 @@ export class FeedbackDirective {
     this.couchService.post('feedback/', newFeedback)
     .subscribe((data) => {
       this.feedbackService.setfeedback();
-      this.message = 'Thank you, your feedback is submitted!';
-      this.planetMessageService.showMessage(this.message);
+      this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
     },
     (error) => {
-      this.message = 'Error, your  feedback cannot be submitted';
-      this.planetMessageService.showAlert(this.message);
+      this.planetMessageService.showAlert('Error, your feedback cannot be submitted');
     });
   }
 
