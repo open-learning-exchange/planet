@@ -236,7 +236,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
       this.selection.clear();
-      this.planetMessageService.showAlert(msg + ' your library');
+      this.planetMessageService.showAlert(msg + ' myLibrary');
     }, (error) => (error));
   }
 
