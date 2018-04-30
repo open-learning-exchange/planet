@@ -31,7 +31,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'intern', 'learner', 'teacher' ];
+  roleList: string[] = [ 'learner', 'leader' ];
   selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
