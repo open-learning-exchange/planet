@@ -33,22 +33,12 @@ export class CustomValidators {
   }
 
   static startDateValidator(ac: AbstractControl): ValidationErrors {
-    const today = new Date();
-    let dd = today.getDate().toString();
-    let mm = (today.getMonth() + 1).toString();
-    const yyyy = today.getFullYear().toString();
-    if (dd.length === 1) {
-      dd = '0' + dd;
-    }
-    if (mm.length === 1) {
-      mm = '0' + mm;
-    }
-    if (yyyy + '-' + mm + '-' + dd === ac.value) {
-      return null;
-    } else {
-      if (new Date(ac.value).getTime() < today.getTime()) {
-        return { invalidStartDate: true };
-      }
+    const now = new Date(),
+      today = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+      // Add time as midnight to ensure new Date() does not return different day than input
+      formVal = new Date(ac.value + 'T00:00:00');
+    if (formVal < today) {
+      return { invalidStartDate: true };
     }
   }
 
