@@ -20,8 +20,8 @@
   </mat-step>
 
   <mat-step [stepControl]="configurationFormGroup">
+    <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
     <form [formGroup]="configurationFormGroup">
-      <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planetType" required>
           <mat-option value="nation" i18n>Nation</mat-option>
@@ -52,11 +52,20 @@
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
-      <div>
-        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-        <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+      <div *ngIf="showAdvancedOptions">
+        <span>Advanced Options:</span>
+        <mat-form-field *ngIf="showAdvancedOptions">
+          <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain">
+        </mat-form-field>
       </div>
     </form>
+    <div>
+      <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n>Show Advanced Options</mat-slide-toggle>
+    </div>
+    <div>
+      <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+    </div>
   </mat-step>
 
   <mat-step [stepControl]="contactFormGroup">

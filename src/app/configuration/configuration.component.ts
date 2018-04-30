@@ -24,6 +24,7 @@ export class ConfigurationComponent implements OnInit {
   configurationFormGroup: FormGroup;
   contactFormGroup: FormGroup;
   nations = [];
+  showAdvancedOptions = false;
 
   constructor(
     private formBuilder: FormBuilder,
