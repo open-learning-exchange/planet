@@ -23,7 +23,7 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <span *ngIf="!parent"><!-- (click)="addToLibrary(selection.selected)" -->
+    <span *ngIf="!parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="updateShelf(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
       </button>
