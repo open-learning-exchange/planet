@@ -209,7 +209,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = [ ...userShelf.myTeamIds ];
     myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    this.updateShelf(myTeamIds, userShelf, userName + ' is been removed from');
+    this.updateShelf(myTeamIds, userShelf, userName + ' has been removed from');
   }
 
   back() {
