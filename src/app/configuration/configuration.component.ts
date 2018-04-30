@@ -58,7 +58,8 @@ export class ConfigurationComponent implements OnInit {
       name: [ '', Validators.required ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ]
+      code: [ '', Validators.required ],
+      createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],
