@@ -199,11 +199,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
   addTeams(users) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = users.map((data) => {
-      return data._id || data.doc._id;
+      return data.doc._id;
     }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
     const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
     const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
-    const msg = (users.length === 1 ? users[0].name + ' has been' : addedNum + ' ' + subjectVerbAgreement + ' been') + ' added to';
+    const msg = (users.length === 1 && addedNum === 1 ?
+      users[0].doc.name + ' has been'
+      : addedNum + ' ' + subjectVerbAgreement + ' been')
+      + ' added to';
     this.updateShelf(myTeamIds, userShelf, msg);
   }
 
