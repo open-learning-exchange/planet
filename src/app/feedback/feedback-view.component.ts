@@ -20,7 +20,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   user: any = {};
   newMessage = '';
   isActive = true;
-  editMode = false;
+  editTitleMode = false;
   @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
@@ -50,7 +50,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   setFeedback(result) {
     this.feedback = result.docs[0];
-    this.editTitle(false);
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
     this.scrollToBottom();
   }
@@ -76,12 +75,14 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   editTitle(mode) {
-    this.editMode = mode;
+    this.editTitleMode = mode;
   }
 
   setTitle() {
     this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
-      () => {},
+      () => {
+        this.editTitleMode = false;
+      },
       error => this.planetMessageService.showAlert('There was an error changing title')
     );
   }
