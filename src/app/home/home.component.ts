@@ -150,7 +150,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   readNotification(notification) {
     const updateNotificaton =  { ...notification, 'status': 'read' };
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
-      this.getNotification();
       this.userService.setNotificationStateChange();
     },  (err) => console.log(err));
   }
