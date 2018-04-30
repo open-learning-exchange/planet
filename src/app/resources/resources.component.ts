@@ -75,6 +75,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((resources) => {
+       // Sort in descending articleDate order, so the new resource can be shown on the top
+      resources.sort((a, b) => b.articleDate - a.articleDate);
       this.resources.data = resources;
       this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
     });
