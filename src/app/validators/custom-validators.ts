@@ -32,7 +32,7 @@ export class CustomValidators {
     return isValidTime ? null : { invalidTime: true };
   }
 
-  static dateValidator(ac: AbstractControl): ValidationErrors {
+  static startDateValidator(ac: AbstractControl): ValidationErrors {
     const today = new Date();
     let dd = today.getDate().toString();
     let mm = (today.getMonth() + 1).toString();
@@ -40,18 +40,19 @@ export class CustomValidators {
     if (dd.length === 1) {
       dd = '0' + dd;
     }
-
     if (mm.length === 1) {
       mm = '0' + mm;
     }
-
     if (yyyy + '-' + mm + '-' + dd === ac.value) {
       return null;
     } else {
-      if (new Date(ac.value).getTime() < new Date().getTime()) {
+      if (new Date(ac.value).getTime() < today.getTime()) {
         return { invalidStartDate: true };
       }
     }
+  }
+
+  static dateValidator(ac: AbstractControl): ValidationErrors {
 
     if (!ac.value) {
       return null;
