@@ -26,7 +26,7 @@
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
       </button>
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
@@ -61,10 +61,10 @@
         </button>
         <mat-menu #resourceMenu="matMenu">
           <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addToLibrary([{'_id': element._id, 'title': element.title}])">
-            <mat-icon>library_add</mat-icon><span i18n>Add to Library</span>
+            <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
           </a>
           <a mat-menu-item *ngIf="element.libraryInfo" (click)="removeFromLibrary(element._id, element.title)">
-            <mat-icon>clear</mat-icon><span i18n>Remove from Library</span>
+            <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
           </a>
           <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
             <mat-icon>feedback</mat-icon>
