@@ -31,6 +31,9 @@ export class ConfigurationComponent implements OnInit {
   contactFormGroup: FormGroup;
   nations = [];
   showAdvancedOptions = false;
+  advConfirm = true;
+  showConfirm = false;
+  defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,7 +44,7 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const localDomain = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
+
     this.loginForm = this.formBuilder.group({
       name: [ '', Validators.required ],
       password: [
@@ -61,7 +64,7 @@ export class ConfigurationComponent implements OnInit {
     });
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
-      localDomain: localDomain,
+      localDomain: this.defaultLocal,
       name: [ '', Validators.required ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
@@ -81,7 +84,27 @@ export class ConfigurationComponent implements OnInit {
       ],
       phoneNumber: [ '', Validators.required ]
     });
+    this.configurationFormGroup.get('localDomain').valueChanges
+        .subscribe(term => {
+          this.advConfirm = (this.defaultLocal === term);
+        });
     this.getNationList();
+
+  }
+
+  moveNext() {
+    if (this.configurationFormGroup.valid) {
+      if (!this.advConfirm) {
+        this.showConfirm = true;
+      } else {
+        this.stepper.next();
+      }
+    }
+  }
+
+  resetDefault() {
+    this.showConfirm = false;
+    this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
   }
 
   getNationList() {
