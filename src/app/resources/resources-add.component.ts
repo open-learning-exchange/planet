@@ -132,20 +132,7 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
-      let fileObs: Observable<any>;
-      // If file doesn't exist, mediaType will be undefined
-      const mediaType = this.file && this.simpleMediaType(this.file.type);
-      switch (mediaType) {
-        case undefined:
-          // Creates an observable that immediately returns an empty object
-          fileObs = of({});
-          break;
-        case 'zip':
-          fileObs = this.zipObs(this.file);
-          break;
-        default:
-          fileObs = this.fileReaderObs(this.file, mediaType);
-      }
+      let fileObs: Observable<any> = this.createFileObs();
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
         const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
@@ -163,6 +150,20 @@ export class ResourcesAddComponent implements OnInit {
         const control = this.resourceForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+    }
+  }
+
+  createFileObs() {
+    // If file doesn't exist, mediaType will be undefined
+    const mediaType = this.file && this.simpleMediaType(this.file.type);
+    switch (mediaType) {
+      case undefined:
+        // Creates an observable that immediately returns an empty object
+        return of({});
+      case 'zip':
+        return this.zipObs(this.file);
+      default:
+        return this.fileReaderObs(this.file, mediaType);
     }
   }
 
