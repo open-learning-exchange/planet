@@ -15,7 +15,7 @@ login_docker(){
 
 prepare_ci(){
   DOCKER_ORG=treehouses
-  DOCKER_REPO=planet
+  DOCKER_REPO=planet-tags
   DOCKER_REPO_TEST=planet-test
   VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
   BRANCH=$TRAVIS_BRANCH

@@ -56,7 +56,7 @@ prepare_var(){
     DOCKER_PASS="$dpass"
     RANDOM_FINGERPRINT=$(random_generator)
     DOCKER_ORG=treehouses
-    DOCKER_REPO=planet
+    DOCKER_REPO=planet-tags
     DOCKER_REPO_DEV=planet-dev
     BRANCH=$branch
     COMMIT=${commit::8}
