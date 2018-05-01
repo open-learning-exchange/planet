@@ -56,6 +56,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
+    this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {

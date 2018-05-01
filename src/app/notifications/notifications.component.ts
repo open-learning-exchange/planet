@@ -22,7 +22,11 @@ export class NotificationsComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private userService: UserService
-    ) { }
+    ) {
+    this.userService.notificationStateChange$.subscribe(() => {
+      this.getNotifications();
+    });
+  }
 
   ngOnInit() {
     this.getNotifications();
@@ -53,6 +57,7 @@ export class NotificationsComponent implements OnInit {
           }
           return n;
         });
+        this.userService.setNotificationStateChange();
       }, (err) => console.log(err));
     }
   }

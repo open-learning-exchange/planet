@@ -78,6 +78,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+    this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
