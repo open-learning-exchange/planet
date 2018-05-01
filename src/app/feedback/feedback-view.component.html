@@ -6,7 +6,28 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <span>{{feedback.type + ' regarding ' + feedback.url}}</span>
+      <ng-container [ngSwitch]="feedback.type">
+        <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
+        <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
+        <mat-icon *ngSwitchCase="'Suggestion'">lighbulb_outline</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="!editTitleMode; else editTitleBlock">
+        <span class="margin-lr-3">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
+        <a (click)="editTitle(true)" mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </a>
+      </ng-container>
+      <ng-template #editTitleBlock>
+        <mat-form-field color="accent" class="margin-lr-3">
+          <input matInput [(ngModel)]="feedback.title" placeholder="Feedback title" i18n-placeholder />
+        </mat-form-field>
+        <a (click)="setTitle()" mat-icon-button>
+          <mat-icon>check</mat-icon>
+        </a>
+        <a (click)="editTitle(false)" mat-icon-button>
+          <mat-icon>clear</mat-icon>
+        </a>
+      </ng-template>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container">
@@ -23,7 +44,7 @@
       <mat-form-field>
         <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
       </mat-form-field>
-      <button mat-raised-button color="accent" (click)="postMessage()">Reply</button>
+      <button mat-raised-button color="accent" (click)="postMessage()"><mat-icon>reply</mat-icon>Reply</button>
     </div>
   </div>
 </div>

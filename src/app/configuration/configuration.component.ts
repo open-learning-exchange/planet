@@ -24,6 +24,7 @@ export class ConfigurationComponent implements OnInit {
   configurationFormGroup: FormGroup;
   contactFormGroup: FormGroup;
   nations = [];
+  showAdvancedOptions = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -54,11 +55,12 @@ export class ConfigurationComponent implements OnInit {
     });
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
-      localDomain: [ localDomain, Validators.required ],
+      localDomain: localDomain,
       name: [ '', Validators.required ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ]
+      code: [ '', Validators.required ],
+      createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],
