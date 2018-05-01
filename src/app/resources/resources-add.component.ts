@@ -26,12 +26,11 @@ export class ResourcesAddComponent implements OnInit {
   currentDate = new Date(); // might be forced to change date format using "toISOString().split('T')[0]"
   file: any;
   existingResource: any = {};
-  deleteAttachment: boolean = false;
+  deleteAttachment = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
   pageType = 'Add new';
-
 
   constructor(
     private router: Router,
@@ -87,8 +86,7 @@ export class ResourcesAddComponent implements OnInit {
       addedBy: '',
       openUrl: [],
       openWhichFile: '',
-      isDownloadable: '',
-      filename: ''
+      isDownloadable: ''
     });
   }
 
@@ -126,7 +124,7 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
-      let fileObs: Observable<any> = this.createFileObs();
+      const fileObs: Observable<any> = this.createFileObs();
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
         const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
@@ -188,7 +186,7 @@ export class ResourcesAddComponent implements OnInit {
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
   private processZip(zipFile) {
-    return function (fileName) {
+    return function(fileName) {
       return Observable.create((observer) => {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
