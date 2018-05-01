@@ -61,9 +61,9 @@ prepare_db_init_tags(){
   # temporary
   local DOCKER_REPO=planet-tags
   build_message prepare db-init tags docker...
-  DOCKER_DB_INIT_TAGS=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
-  DOCKER_DB_INIT_TAGS_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
-  DOCKER_DB_INIT_TAGS_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init
+  DOCKER_DB_INIT_TAGS=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_TAGS_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION
+  DOCKER_DB_INIT_TAGS_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
 }
 
 prepare_planet_rpi(){
