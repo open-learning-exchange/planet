@@ -1,30 +1,16 @@
-<button  class="close" mat-dialog-close aria-label="Close">
+<button class="close" mat-dialog-close aria-label="Close">
   <span aria-hidden="true">&times;</span>
 </button>
 <h3>{{data.title}}</h3>
-<form class="field-form">
-  <mat-form-field class="field-details">
-    <label i18n>Nation Name</label>
-    <input matInput disabled value={{data.allData.name}}>
-  </mat-form-field>
-  <mat-form-field class="field-details">
-    <label i18n>Code</label>
-    <input matInput disabled value={{data.allData.code}}>
-  </mat-form-field>
-  <mat-form-field class="field-details">
-    <label i18n>Current Language</label>
-    <input matInput disabled value={{data.allData.currentLanguage}}>
-  </mat-form-field>
-  <mat-form-field class="field-details">
-    <label i18n>Center Name</label>
-    <input matInput disabled value={{data.allData.nationName}}>
-  </mat-form-field>
-  <mat-form-field class="field-details">
-    <label i18n>Center Url</label>
-    <input matInput disabled value={{data.allData.register}}>
-  </mat-form-field>
-  <mat-form-field class="field-details">
-    <label i18n>Version</label>
-    <input matInput disabled value={{data.allData.version}}>
-  </mat-form-field>
-</form>
+<div>
+  <p i18n>Name: {{data.allData.name}} </p>
+  <p i18n>Code: {{data.allData.code}}</p>
+  <p i18n>Local URL: {{data.allData.localDomain}}</p>
+  <p i18n>Parent URL: {{data.allData.parentDomain}}</p>
+  <p i18n>Planet Type: {{data.allData.planetType}} </p>
+  <p i18n>Created Date: {{data.allData.createdDate | date: 'fullDate'}}</p>
+  <p i18n>Language: {{data.allData.preferredLang}}</p>
+  <p i18n>Status: {{data.allData.registrationRequest}}</p>
+  <p i18n>Email: {{data.allData.email}}</p>
+  <p i18n>Phone Number: {{data.allData.phoneNumber}}</p>
+</div>

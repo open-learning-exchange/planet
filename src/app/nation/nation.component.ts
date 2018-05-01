@@ -110,18 +110,19 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   view(url) {
     if (url) {
-      this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
-      .debug('jsonp request to external nation')
-      .subscribe((res: any) => {
-        this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
-          data: {
-            allData : res.rows.length > 0 ? res.rows[0].doc : [],
-            title : 'Nation Details'
-          }
-        });
-      });
+      this.couchService.allDocs('configurations', { domain: url })
+        .debug('Request data from external planet')
+        .subscribe((res: any) => {
+          this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+            width: '600px',
+            data: {
+              allData : res.length > 0 ? res[0] : [],
+              title : res.length > 0 && res[0].planetType === 'nation' ? 'Nation Details' : 'Community Details'
+             }
+          });
+        }, (error) => this.planetMessageService.showAlert('There was a problem getting parent details'));
     } else {
-      this.message = 'There is no data.';
+      this.planetMessageService.showAlert('There was a problem getting parent details');
     }
   }
 
