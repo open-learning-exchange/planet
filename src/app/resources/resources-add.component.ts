@@ -180,9 +180,10 @@ export class ResourcesAddComponent implements OnInit {
     });
   }
 
-  handleDeleteAttachment(event) {
-    (event.checked === true) ? this.deleteAttachment = true : this.deleteAttachment = false;
+  deleteAttachmentToggle(event) {
+    this.deleteAttachment = event.checked;
   }
+
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
   private processZip(zipFile) {
