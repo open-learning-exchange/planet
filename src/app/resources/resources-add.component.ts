@@ -59,21 +59,11 @@ export class ResourcesAddComponent implements OnInit {
     this.userDetail = this.userService.get();
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
-<<<<<<< HEAD
-      .subscribe((data) => {
-        this.revision = data._rev;
-        this.id = data._id;
-        data.articleDate = new Date(data.articleDate); // convert epoch back to date
-      //  this.fileName = (data.hasOwnProperty('_attachments')) ? data._attachments[0] : ''; TODO:Work on file reupload
-        this.resourceForm.patchValue(data);
-      }, (error) => {
-        console.log(error);
-      });
-=======
         .subscribe((data) => {
           this.pageType = 'Update';
           this.revision = data._rev;
           this.id = data._id;
+          data.articleDate = new Date(data.articleDate); // convert epoch back to date
           if (data._attachments) { 
             // If there is already an attachment associated with the resource grab it.
             // Will a resource ever have more than one file associated with it?
@@ -87,7 +77,6 @@ export class ResourcesAddComponent implements OnInit {
         }, (error) => {
           console.log(error);
         });
->>>>>>> minor fixes
     }
   }
 
