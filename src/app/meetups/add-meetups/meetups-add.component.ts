@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
+import * as moment from 'moment';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -40,8 +41,8 @@ export class MeetupsAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
-        data.startDate = this.convertSimpleDateFormat(data.startDate);
-        data.endDate = this.convertSimpleDateFormat(data.endDate);
+        data.startDate = moment(data.startDate).format('YYYY-MM-DD');
+        data.endDate = moment(data.endDate).format('YYYY-MM-DD');
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
@@ -134,20 +135,6 @@ export class MeetupsAddComponent implements OnInit {
     const day = (parseInt(myDate[2], 10) + 1);
     const d = new Date(myDate[0], myDate[1] - 1, day);
     return d.setTime((d.getTime() + d.getTimezoneOffset() * 60 * 1000));
-  }
-
-  convertSimpleDateFormat(timeStampDate) {
-    const mydate = new Date(timeStampDate);
-    let dd = mydate.getDate().toString();
-    let mm = (mydate.getMonth() + 1).toString();
-    const yyyy = mydate.getFullYear().toString();
-    if (dd.length === 1) {
-      dd = '0' + dd;
-    }
-    if (mm.length === 1) {
-      mm = '0' + mm;
-    }
-    return yyyy + '-' + mm + '-' + dd;
   }
 
 }

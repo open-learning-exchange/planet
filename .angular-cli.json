@@ -17,6 +17,7 @@
       "prefix": "app",
       "styles": [
         "../node_modules/material-design-icons/iconfont/material-icons.css",
+        "../node_modules/moment/min/moment.min.js",
         "styles.scss"
       ],
       "environmentSource": "environments/environment.ts",
