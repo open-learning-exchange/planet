@@ -96,7 +96,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   getCourses() {
     let opts: any = {};
     if (this.parent) {
-      opts = { domain: this.userService.getConfig().parentDomain };
+      opts = { domain: this.userService.getConfig()[0].parentDomain };
     }
     return this.couchService.allDocs('courses', opts);
   }
