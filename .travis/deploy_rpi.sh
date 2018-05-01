@@ -78,11 +78,19 @@ if [[ $image = db-init ]]
   prepare_db_init_rpi
   deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_LATEST
   deploy_tag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
+  # temporary
+  prepare_planet_tags_rpi
+  deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_LATEST
+  deploy_tag $DOCKER_DB_INIT_RPI $DOCKER_DB_INIT_RPI_VERSIONED
 fi
 
 if [[ $image = planet ]]
   then
   prepare_planet_rpi
-  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
-  deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
+  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_TAGS_RPI $PLANET_TAGS_RPI_LATEST
+  deploy_tag $PLANET_TAGS_RPI $PLANET_TAGS_RPI_VERSIONED
+  # temporary
+  prepare_db_init_tags_rpi
+  deploy_docker './docker/planet/rpi-Dockerfile' $DOCKER_DB_INIT_TAGS_RPI $DOCKER_DB_INIT_TAGS_RPI_LATEST
+  deploy_tag $DOCKER_DB_INIT_TAGS_RPI $DOCKER_DB_INIT_TAGS_RPI_VERSIONED
 fi
