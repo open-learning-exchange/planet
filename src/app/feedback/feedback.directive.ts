@@ -52,7 +52,7 @@ export class FeedbackDirective {
         url: this.router.url,
         ...this.feedbackOf
       };
-    this.couchService.post('feedback/', newFeedback)
+    this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
     .subscribe((data) => {
       this.feedbackService.setfeedback();
       this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
