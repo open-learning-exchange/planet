@@ -22,13 +22,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 })
 
 export class ResourcesAddComponent implements OnInit {
-  subjects = new FormControl();
-  levels = new FormControl();
-  subjectList: string[];
-  levelList: string[];
-  media: string[];
-  openWith: string[];
-  resourceType: string[];
+  constants = constants;
   currentDate = new Date(); // might be forced to change date format using "toISOString().split('T')[0]"
   file: any;
   existingResource: any = {};
