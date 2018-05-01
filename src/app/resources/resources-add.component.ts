@@ -63,14 +63,13 @@ export class ResourcesAddComponent implements OnInit {
           this.pageType = 'Update';
           this.revision = data._rev;
           this.id = data._id;
-          data.articleDate = new Date(data.articleDate); // convert epoch back to date
-          if (data._attachments) { 
+          if (data._attachments) {
             // If there is already an attachment associated with the resource grab it.
             // Will a resource ever have more than one file associated with it?
             // I need to grab a value when I dont know the key
             for (let x in data._attachments) {
               this.existingAttachment = {[x]:data._attachments[x]}
-            }  
+            }
               this.existingAttachment = {_attachments:this.existingAttachment}
           };
           this.resourceForm.patchValue(data);
