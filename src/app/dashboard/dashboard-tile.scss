@@ -1,4 +1,8 @@
+@import '../mixins.scss';
+
 :host {
+
+  @include left-right-grid-areas;
 
   .dashboard-card {
     display: grid;
@@ -30,6 +34,10 @@
       display: grid;
       overflow: hidden;
 
+      .dashboard-items.dashboard-empty {
+        grid-auto-columns: auto;
+      }
+      
       .dashboard-items {
         display: grid;
         grid-auto-columns: 150px;

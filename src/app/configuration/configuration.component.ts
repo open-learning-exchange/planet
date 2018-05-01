@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -23,6 +24,7 @@ export class ConfigurationComponent implements OnInit {
   configurationFormGroup: FormGroup;
   contactFormGroup: FormGroup;
   nations = [];
+  showAdvancedOptions = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -53,11 +55,12 @@ export class ConfigurationComponent implements OnInit {
     });
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
-      localDomain: [ localDomain, Validators.required ],
+      localDomain: localDomain,
       name: [ '', Validators.required ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ]
+      code: [ '', Validators.required ],
+      createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],
@@ -76,9 +79,11 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.allDocs('nations', { domain: environment.centerAddress })
+    this.couchService.post('nations/_find',
+      findDocuments({ 'planetType': 'nation' }, 0 ),
+      { domain: environment.centerAddress })
       .subscribe((data) => {
-        this.nations = data;
+        this.nations = data.docs;
       }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
   }
 
@@ -107,6 +112,7 @@ export class ConfigurationComponent implements OnInit {
         'roles': [],
         'type': 'user',
         'isUserAdmin': true,
+        'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
       forkJoin([
@@ -124,7 +130,7 @@ export class ConfigurationComponent implements OnInit {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['requestId'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('/_users/org.couchdb.user:' + credentials.name,
+            return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
               userDetail, { domain: configuration.parentDomain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {

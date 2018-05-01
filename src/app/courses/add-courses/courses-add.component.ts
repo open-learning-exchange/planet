@@ -133,7 +133,8 @@ export class CoursesAddComponent implements OnInit {
   addStep() {
     this.steps.push({
       stepTitle: '',
-      description: ''
+      description: '',
+      attachment: ''
     });
   }
 

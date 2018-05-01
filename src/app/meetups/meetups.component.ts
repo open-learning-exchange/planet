@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -19,6 +19,9 @@ import { Subject } from 'rxjs/Subject';
     .mat-column-select {
       max-width: 44px;
     }
+    .mat-column-info {
+      max-width: 225px;
+    }
   ` ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -32,8 +35,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title' ];
+  displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
+  pageEvent: PageEvent;
 
   constructor(
     private couchService: CouchService,
@@ -52,6 +56,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
+    this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
@@ -64,6 +69,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const numRows = this.meetups.data.length;
     return numSelected === numRows;
   }
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
+  }
+
 
   masterToggle() {
     this.isAllSelected() ?
@@ -72,8 +81,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.meetups.filter = filterValue;
   }
 

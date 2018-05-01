@@ -1,36 +1,10 @@
 [
 	{
-		"dbName": "courses",
+		"dbName": "_users",
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["admin"]
-			},
-			"members": {
-				"names": [],
-				"roles": ["intern", "learner", "teacher"]
-			}
-		}
-	},
-	{
-		"dbName": "meetups",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": ["admin"]
-			},
-			"members": {
-				"names": [],
-				"roles": ["intern", "learner", "teacher"]
-			}
-		}
-	},
-	{
-		"dbName": "nations",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": ["admin"]
+				"roles": []
 			},
 			"members": {
 				"names": [],
@@ -39,15 +13,158 @@
 		}
 	},
 	{
+		"dbName": "communityregistrationrequests",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "configurations",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "courses",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": ["learner", "leader"]
+			}
+		}
+	},
+	{
+		"dbName": "feedback",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "login_activities",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "meetups",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": ["learner", "leader"]
+			}
+		}
+	},
+	{
+		"dbName": "nations",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "notifications",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+	},
+	{
+		"dbName": "ratings",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": ["learner", "leader"]
+			}
+		}
+	},
+	{
+		"dbName": "resource_activities",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": ["learner", "leader"]
+			}
+		}
+	},
+	{
 		"dbName": "resources",
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["admin"]
+				"roles": []
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": ["learner", "leader"]
+			}
+		}
+	},
+	{
+		"dbName": "shelf",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
 			}
 		}
 	}

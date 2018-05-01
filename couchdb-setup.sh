@@ -73,14 +73,20 @@ insert_attachments() {
 multi_db_update() {
   DOC_LOC=$1
   DOC_NAME=$2
-  # Use echo $(<$DOC_LOC) to be able to run in Windows
-  INPUTS=$(echo $(<$DOC_LOC) | jq -c '.[]')
+  INPUTS=$(echo $DOC_LOC | jq -c '.[]')
   for i in $INPUTS
   do
     JSON=$(echo $i | jq -c '. | .json' )
     DB_NAME=$(echo $i | jq -r '. | .dbName')
     upsert_doc $DB_NAME $DOC_NAME $JSON
   done
+}
+
+add_security_admin_roles() {
+  JSON=$1
+  ROLE_NAME=$2
+  NEW_DOCS=$(echo $(<$JSON) | jq '.[].json.admins.roles += ["'$ROLE_NAME'"]')
+  echo $NEW_DOCS | jq -c '.'
 }
 
 # Add CouchDB standard databases
@@ -117,4 +123,5 @@ insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachments resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
-multi_db_update ./design/security-update/security-update.json _security
+SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
+multi_db_update $SECURITY _security

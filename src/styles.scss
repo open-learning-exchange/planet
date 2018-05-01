@@ -104,15 +104,6 @@ body {
     margin: 0 3px;
   }
 
-  // Helper classes for simple grid layouts for 2 tile horizontal cards
-  .left-tile {
-    grid-area: lt;
-  }
-
-  .right-tile {
-    grid-area: rt;
-  }
-
   // Style which places menu icon in upper right corner of table cell
   .list-content-menu {
     display: grid;
@@ -274,6 +265,13 @@ body {
     display: none;
   }
 
+  .profile-image-update {
+    border-radius: 50%;
+    margin-left: 2rem;
+    width: 14rem;
+    height: 14rem;
+  }
+
   .profile-image-large {
     border-radius: 50%;
     width: 70%;
@@ -301,6 +299,11 @@ body {
   .vertical-form {
     display: flex;
     flex-direction: column;
+  }
+
+  // Add to a mat-option to remove the checkbox
+  .hide-checkbox > .mat-pseudo-checkbox {
+    display: none;
   }
 
 }
