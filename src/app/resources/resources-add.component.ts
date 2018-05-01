@@ -23,7 +23,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class ResourcesAddComponent implements OnInit {
   constants = constants;
-  currentDate = new Date(); // might be forced to change date format using "toISOString().split('T')[0]"
+  currentDate = new Date();
   file: any;
   existingResource: any = {};
   deleteAttachment = false;
