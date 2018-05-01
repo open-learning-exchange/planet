@@ -7,9 +7,7 @@ import { ResourcesAddComponent } from './resources-add.component';
 const routes: Routes = [
   { path: '', component: ResourcesComponent },
   { path: 'view/:id', component: ResourcesViewComponent },
-  { path: 'view/:nationname/:id', component: ResourcesViewComponent },
   { path: 'add', component: ResourcesAddComponent },
-  { path: 'parent', component: ResourcesComponent, data: { parent: true } },
   { path: 'update/:id', component: ResourcesAddComponent }
 ];
 
