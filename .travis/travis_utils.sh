@@ -74,6 +74,12 @@ prepare_db_init_test(){
   DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init
 }
 
+prepare_multiarch_manifest_tool(){
+  build_message Prepare Manifest tool
+  wget -O /tmp/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+  chmod +x /tmp/manifest_tool
+}
+
 prepare_everything(){
   prepare_ci
   prepare_planet
