@@ -31,13 +31,11 @@ export class ResourcesAddComponent implements OnInit {
   resourceType: string[];
   currentDate = new Date(); // might be forced to change date format using "toISOString().split('T')[0]"
   file: any;
-  existingAttachment: any;
+  existingResource: any = {};
   deleteAttachment: boolean = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
-  id = '';
-  revision = '';
   pageType = 'Add new';
 
 
@@ -61,17 +59,7 @@ export class ResourcesAddComponent implements OnInit {
       this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
         .subscribe((data) => {
           this.pageType = 'Update';
-          this.revision = data._rev;
-          this.id = data._id;
-          if (data._attachments) {
-            // If there is already an attachment associated with the resource grab it.
-            // Will a resource ever have more than one file associated with it?
-            // I need to grab a value when I dont know the key
-            for (let x in data._attachments) {
-              this.existingAttachment = {[x]:data._attachments[x]}
-            }
-              this.existingAttachment = {_attachments:this.existingAttachment}
-          };
+          this.existingResource = data;
           this.resourceForm.patchValue(data);
         }, (error) => {
           console.log(error);
@@ -159,20 +147,15 @@ export class ResourcesAddComponent implements OnInit {
           fileObs = this.fileReaderObs(this.file, mediaType);
       }
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
+        const { _id, _rev } = this.existingResource;
+        // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
+        const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
         // Start with empty object so this.resourceForm.value does not change
+        const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         if (this.route.snapshot.url[0].path === 'update') {
-          if (this.deleteAttachment) {
-            // Update to remove an attachment
-            this.updateResource(this.resourceForm.value);
-          } else if (this.existingAttachment && !this.file) {
-            // Update and preserve the existingAttachment
-            this.updateResource(Object.assign({},this.resourceForm.value, this.existingAttachment))
-          } else {
-            // Update with a new attachment
-            this.updateResource(Object.assign({},this.resourceForm.value, resource))
-          }
+          this.updateResource(newResource);
         } else {
-          this.addResource(Object.assign({}, this.resourceForm.value, resource));
+          this.addResource(newResource);
         }
       });
     } else {
@@ -195,7 +178,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   updateResource(resourceInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...resourceInfo, '_rev': this.revision }).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo }).subscribe(() => {
       this.router.navigate([ '/resources' ]);
       this.planetMessageService.showMessage('Resource Updated Successfully');
     }, (err) => {
