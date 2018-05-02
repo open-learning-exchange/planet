@@ -12,6 +12,12 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { switchMap } from 'rxjs/operators';
 
+const removeProtocol = (str: string) => {
+  // RegEx grabs the fragment of the string between '//' and '/'
+  // First match includes characters, second does not (so we use second)
+  return /\/\/(.*?)\//.exec(str)[1];
+};
+
 @Component({
   selector: 'planet-configuration',
   templateUrl: './configuration.component.html'
@@ -141,9 +147,3 @@ export class ConfigurationComponent implements OnInit {
   }
 
 }
-
-const removeProtocol = (str: string) => {
-  // RegEx grabs the fragment of the string between '//' and '/'
-  // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)\//.exec(str)[1];
-};

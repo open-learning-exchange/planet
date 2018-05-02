@@ -7,6 +7,8 @@ import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { catchError } from 'rxjs/operators';
 
+const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
+
 @Injectable()
 export class ResourcesService {
   private resourcesDb = 'resources';
@@ -91,5 +93,3 @@ export class ResourcesService {
   }
 
 }
-
-const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };

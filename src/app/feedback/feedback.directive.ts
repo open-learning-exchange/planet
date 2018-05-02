@@ -24,6 +24,36 @@ export class Feedback {
   messages: Array<Message>;
 }
 
+const dialogFieldOptions = [
+  {
+    'label': 'Is your feedback Urgent?',
+    'type': 'radio',
+    'name': 'priority',
+    'options': [
+      'Yes',
+      'No',
+    ],
+    'required': true
+  },
+  {
+    'label': 'Feedback Type:',
+    'type': 'radio',
+    'name': 'type',
+    'options': [
+      'Question',
+      'Bug',
+      'Suggestion',
+    ],
+    'required': true
+  },
+  {
+    'type': 'textarea',
+    'name': 'message',
+    'placeholder': 'Your Feedback',
+    'required': true
+  }
+];
+
 @Directive({
   selector: '[planetFeedback]'
 })
@@ -83,33 +113,3 @@ export class FeedbackDirective {
   }
 
 }
-
-const dialogFieldOptions = [
-  {
-    'label': 'Is your feedback Urgent?',
-    'type': 'radio',
-    'name': 'priority',
-    'options': [
-      'Yes',
-      'No',
-    ],
-    'required': true
-  },
-  {
-    'label': 'Feedback Type:',
-    'type': 'radio',
-    'name': 'type',
-    'options': [
-      'Question',
-      'Bug',
-      'Suggestion',
-    ],
-    'required': true
-  },
-  {
-    'type': 'textarea',
-    'name': 'message',
-    'placeholder': 'Your Feedback',
-    'required': true
-  }
-];
