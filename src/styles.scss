@@ -296,6 +296,11 @@ body {
     padding: 1rem;
   }
 
+  // Width of a form with 3 standard matInputs (180px + 10px of padding)
+  .form-width-3 {
+    width: 550px;
+  }
+
   .vertical-form {
     display: flex;
     flex-direction: column;
