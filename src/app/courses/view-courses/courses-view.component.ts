@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -31,8 +32,9 @@ import { CoursesService } from '../courses.service';
   ` ]
 })
 
-export class CoursesViewComponent implements OnInit {
+export class CoursesViewComponent implements OnInit, OnDestroy {
 
+  onDestroy$ = new Subject<void>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
 
@@ -45,11 +47,16 @@ export class CoursesViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.subscribe(course => this.courseDetail = course);
-    this.route.paramMap.subscribe(
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(course => this.courseDetail = course);
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
       (params: ParamMap) => this.coursesService.requestCourse(params.get('id')),
       error => console.log(error)
     );
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   viewStep() {

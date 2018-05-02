@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './courses-step-view.component.html'
 })
 
-export class CoursesStepViewComponent implements OnInit {
+export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
+  onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '' };
   maxStep = 1;
@@ -19,15 +21,20 @@ export class CoursesStepViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.subscribe((course: any) => {
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
       this.maxStep = course.steps.length;
     });
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
       this.coursesService.requestCourse(params.get('id'));
     });
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   // direction = -1 for previous, 1 for next
