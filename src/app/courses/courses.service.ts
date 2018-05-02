@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Subject } from 'rxjs/Subject';
 
-// Used to communicate between add exam component and add course component.
-// One way communication which gives exam component access to current course
-// being added.
+// Service for updating and storing active course for single course views.
 @Injectable()
 export class CoursesService {
 
