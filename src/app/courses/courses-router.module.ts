@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'request', component: CoursesRequestComponent },
   { path: 'update/:id', component: CoursesAddComponent },
   { path: 'view/:id', component: CoursesViewComponent },
-  { path: 'step', component: CoursesStepViewComponent }
+  { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent }
 ];
 
 @NgModule({

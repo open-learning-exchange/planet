@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button [routerLink]="[returnUrl]"><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button (click)="backToCourseDetail()"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>Course</span>
 </mat-toolbar>
 
@@ -7,9 +7,9 @@
   <mat-toolbar class="primary-color font-size-1">
       <span class="margin-lr-3"><h3>{{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
-    <span i18n>{{stepNo+1}}/{{courseSteps.length}}</span>
-    <button mat-icon-button [disabled]="!stepNo" (click)="prev()"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="stepNo === courseSteps.length-1" (click)="next()"><mat-icon>navigate_next</mat-icon></button>
+    <span i18n>{{stepNum}}/{{maxStep}}</span>
+    <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
+    <button mat-icon-button [disabled]="stepNum === maxStep" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container">
     {{stepDetail.description}}

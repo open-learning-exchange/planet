@@ -45,25 +45,15 @@ export class CoursesViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getCourse(params.get('id'))))
-      .debug('Getting course id from parameters')
-      .subscribe((course) => {
-        this.courseDetail = course;
-      }, error => console.log(error));
-  }
-
-  getCourse(id: string) {
-    if (this.parent) {
-      return this.couchService.get('courses/' + id,  { domain: this.userService.getConfig().parentDomain } );
-    }
-    return this.couchService.get('courses/' + id);
+    this.coursesService.courseUpdated$.subscribe(course => this.courseDetail = course);
+    this.route.paramMap.subscribe(
+      (params: ParamMap) => this.coursesService.requestCourse(params.get('id')),
+      error => console.log(error)
+    );
   }
 
   viewStep() {
-    this.coursesService.returnUrl = this.router.url;
-    this.coursesService.course = this.courseDetail;
-    this.coursesService.stepIndex = 0;
-    this.router.navigate([ '/courses/step' ]);
+    this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
 
 }

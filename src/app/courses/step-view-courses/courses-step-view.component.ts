@@ -1,48 +1,42 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CoursesService } from '../courses.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
-  selector: 'planet-courses-step-view',
   templateUrl: './courses-step-view.component.html'
 })
 
 export class CoursesStepViewComponent implements OnInit {
 
-  @Input() courseSteps: any;
-  @Input() stepNo: any;
-
-  stepDetail: any;
-  returnUrl = '/courses';
+  stepNum = 0;
+  stepDetail: any = { stepTitle: '', description: '' };
+  maxStep = 1;
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private coursesService: CoursesService
   ) { }
 
   ngOnInit() {
-    if(this.coursesService.course) {
-      this.returnUrl = this.coursesService.returnUrl;
-      this.courseSteps = this.coursesService.course.steps;
-      this.stepNo = this.coursesService.stepIndex;
-    } else {
-      this.router.navigate([this.returnUrl]);
-    }
-    this.setStepDetail();
+    this.coursesService.courseUpdated$.subscribe((course: any) => {
+      // To be readable by non-technical people stepNum param will start at 1
+      this.stepDetail = course.steps[this.stepNum - 1];
+      this.maxStep = course.steps.length;
+    });
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
+      this.coursesService.requestCourse(params.get('id'));
+    });
   }
 
-  setStepDetail() {
-    this.stepDetail = this.courseSteps[this.stepNo];
+  // direction = -1 for previous, 1 for next
+  changeStep(direction) {
+    this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
   }
 
-  next() {
-    this.stepNo = this.stepNo+1;
-    this.setStepDetail();
-  }
-
-  prev() {
-    this.stepNo = this.stepNo-1;
-    this.setStepDetail();
+  backToCourseDetail() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
 }
