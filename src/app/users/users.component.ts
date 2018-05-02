@@ -91,31 +91,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
   }
 
-  getLoginActivities() {
-    return this.couchService.allDocs('login_activities');
-  }
-
   initializeData() {
+    const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    forkJoin([ this.getUsers(), this.getLoginActivities() ])
-      .debug('Getting user list').subscribe(([ users, loginActvities ]) => {
-        let loginTime: number;
-        let currentLoginUser: string;
-        loginTime = loginActvities[0].loginTime;
-        currentLoginUser = loginActvities[0].user;
-        // According to the latest login time, find the current login user
-        loginActvities.forEach((res: any) => {
-          if ( loginTime < res.loginTime) {
-            loginTime = res.loginTime;
-            currentLoginUser = res.user;
-          }
-        }, []);
-
+    this.getUsers().debug('Getting user list').subscribe(users => {
         users = users.docs.filter((user: any) => {
-          const compLen = (currentLoginUser.length !==  user.name.length);
-          const compStr = (currentLoginUser.indexOf(user.name) > -1) !== true;
           // If user is not the current login user, add user to list; else filter self from list
-          if (compLen || compStr) {
+          if (currentLoginUser !== user.name) {
             return user;
           }
         }).map((user: any) => {
