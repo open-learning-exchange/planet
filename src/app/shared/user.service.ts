@@ -79,12 +79,12 @@ export class UserService {
             this.getShelf()
           ]);
         }
-        return of([ [], [] ]);
+        return of([ [], {} ]);
       }),
-      switchMap(([ config, shelf ]) => {
-        if (config.length > 0) {
-          this.configuration = config[0];
-          this.shelf = shelf;
+      switchMap((configAndShelf: [ [any], any ]) => {
+        if (configAndShelf.length > 0) {
+          // Assigns this.configuration to first value of first array, this.shelf to second
+          [ [ this.configuration ], this.shelf ] = configAndShelf;
         }
         return of(true);
       }));
