@@ -44,7 +44,6 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.loginForm = this.formBuilder.group({
       name: [ '', Validators.required ],
       password: [
@@ -84,12 +83,7 @@ export class ConfigurationComponent implements OnInit {
       ],
       phoneNumber: [ '', Validators.required ]
     });
-    this.configurationFormGroup.get('localDomain').valueChanges
-        .subscribe(term => {
-          this.advConfirm = (this.defaultLocal === term);
-        });
     this.getNationList();
-
   }
 
   moveNext() {
@@ -100,6 +94,10 @@ export class ConfigurationComponent implements OnInit {
         this.stepper.next();
       }
     }
+  }
+
+  localDomainChange(event) {
+    this.advConfirm = (this.defaultLocal === event.target.value);
   }
 
   resetDefault() {

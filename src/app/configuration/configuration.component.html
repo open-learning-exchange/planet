@@ -55,7 +55,7 @@
       <div *ngIf="showAdvancedOptions">
         <span>Advanced Options:</span>
         <mat-form-field *ngIf="showAdvancedOptions">
-          <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain">
+          <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
         </mat-form-field>
       </div>
     </form>
