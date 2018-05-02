@@ -167,12 +167,12 @@ bell() {
 
 create_multiarch_manifest_planet(){
     build_message Creating Planet Multiarch Manifests
-    if [ "$BRANCH" = "master" ]
+    if [ "$BRANCH" = "multiarch_suport" ]
     then
         build_message Creating Planet Multiarch Manifest for Latest
         # $1: latest arm
         # $2: latest amd64        
-        yq n image treehouses/planet:latest | \
+        yq n image treehouses/planet-test:latest | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
@@ -187,7 +187,7 @@ create_multiarch_manifest_planet(){
             build_message Creating Planet Multiarch Manifest for Versioned
             # $3: versioned arm
             # $4: versioned amd64
-            yq n image treehouses/planet:$VERSION | \
+            yq n image treehouses/planet-test:$VERSION | \
             yq w - manifests[0].image $3 | \
             yq w - manifests[0].platform.architecture arm | \
             yq w - manifests[0].platform.os linux | \
@@ -203,12 +203,12 @@ create_multiarch_manifest_planet(){
 
 create_multiarch_manifest_dbinit(){
     build_message Creating db init Multiarch Manifests
-    if [ "$BRANCH" = "master" ]
+    if [ "$BRANCH" = "multiarch_suport" ]
     then
         build_message Creating Multiarch Manifest for db-init
         # $1: db-init arm
         # $2: db-init amd64        
-        yq n image treehouses/planet:db-init | \
+        yq n image treehouses/planet-test:db-init | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
@@ -223,7 +223,7 @@ create_multiarch_manifest_dbinit(){
             build_message Creating Multiarch Manifest for db-init Versioned
             # $3: db-init versioned arm
             # $4: db-init versioned amd64
-            yq n image treehouses/planet:db-init-$VERSION | \
+            yq n image treehouses/planet-test:db-init-$VERSION | \
             yq w - manifests[0].image $3 | \
             yq w - manifests[0].platform.architecture arm | \
             yq w - manifests[0].platform.os linux | \
@@ -239,7 +239,7 @@ create_multiarch_manifest_dbinit(){
 
 push_multiarch_manifests(){
     build_message Pushing Multiarch Manifests to cloud
-    if [ "$BRANCH" = "master" ]
+    if [ "$BRANCH" = "multiarch_suport" ]
     then
         /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
         /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
