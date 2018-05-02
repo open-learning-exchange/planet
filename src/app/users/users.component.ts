@@ -191,7 +191,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
       this.userService.setShelf({ ...userShelf, _rev: res.rev, myTeamIds });
 
-      this.planetMessageService.showAlert(msg + ' your shelf');
+      this.planetMessageService.showMessage(msg + ' your shelf');
     }, (error) => (error));
   }
 

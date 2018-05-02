@@ -84,7 +84,7 @@ export class ConfigurationComponent implements OnInit {
       { domain: environment.centerAddress })
       .subscribe((data) => {
         this.nations = data.docs;
-      }, (error) => this.planetMessageService.showMessage('There is a problem getting the list of nations'));
+      }, (error) => this.planetMessageService.showAlert('There is a problem getting the list of nations'));
   }
 
   onChange(selectedValue: string) {
@@ -136,7 +136,7 @@ export class ConfigurationComponent implements OnInit {
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
-      }, (error) => this.planetMessageService.showMessage('There was an error creating planet'));
+      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
   }
 

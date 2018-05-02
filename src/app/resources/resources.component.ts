@@ -205,7 +205,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe((data) => {
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted resource: ' + resource.title);
+          this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
   }
@@ -220,7 +220,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.resourcesService.updateResources({ opts: this.getOpts });
           this.selection.clear();
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted all resources');
+          this.planetMessageService.showMessage('You have deleted all resources');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
     };
   }
@@ -241,7 +241,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
       this.selection.clear();
-      this.planetMessageService.showAlert(msg + ' myLibrary');
+      this.planetMessageService.showMessage(msg + ' mylibrary');
     }, (error) => (error));
   }
 
