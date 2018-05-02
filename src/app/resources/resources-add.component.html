@@ -3,7 +3,7 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" i18n>New resource</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{{pageType}} resource</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
       <mat-grid-list cols="3">
@@ -41,19 +41,19 @@
       <mat-grid-list cols="3">
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple>
-            <mat-option *ngFor="let subject of subjectList" [value]="subject">{{subject}}</mat-option>
+            <mat-option *ngFor="let subject of constants.subjectList" [value]="subject">{{subject}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple>
-            <mat-option *ngFor="let level of levelList" [value]="level">{{level}}</mat-option>
+            <mat-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
-            <mat-option *ngFor="let open of openWith" [value]="open">
+            <mat-option *ngFor="let open of constants.openWith" [value]="open">
             {{ open }}
             </mat-option>
           </mat-select>
@@ -69,19 +69,19 @@
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Media" formControlName="medium">
-            <mat-option *ngFor="let medium of media" [value]="medium">
+            <mat-option *ngFor="let medium of constants.media" [value]="medium">
             {{ medium }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput value="{{resourceForm.value.articleDate | date}}" i18n-placeholder placeholder="Article Date" readonly>
+          <input matInput [value]="resourceForm.controls.articleDate.value | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
         </mat-form-field>
       </mat-grid-list>
       <mat-grid-list cols="3">
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
-            <mat-option *ngFor="let type of resourceType" [value]="type">
+            <mat-option *ngFor="let type of constants.resourceType" [value]="type">
             {{ type }}
             </mat-option>
           </mat-select>
@@ -103,6 +103,9 @@
       <mat-grid-list cols="1">
         <mat-checkbox formControlName="isDownloadable">File downloadable</mat-checkbox>
       </mat-grid-list>
+      <div *ngIf="pageType==='Update'">
+        <mat-checkbox (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
+      </div>
       <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </form>

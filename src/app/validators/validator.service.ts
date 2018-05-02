@@ -47,20 +47,20 @@ constructor(
     dbName: string,
     fieldName: string,
     ac: AbstractControl,
-    courseId: string
+    id: string
   ): Observable<ValidationErrors | null> {
     return timer(500).pipe(
       switchMap(() => this.couchService.post(
         `${dbName}/_find`,
         findDocuments(
-          { 'courseTitle' : ac.value },
-          [ '_id', 'courseTitle' ]
+          { [fieldName] : ac.value },
+          [ '_id', fieldName ]
         )
       )),
       map(exists => {
         if (exists.docs.length > 0) {
           return exists.docs.reduce((isMatch, c) => {
-            if (courseId === c._id) {
+            if (id === c._id) {
               return null;
             }
             return isMatch;

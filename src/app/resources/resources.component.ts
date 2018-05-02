@@ -160,6 +160,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   */
 
+  updateResource(resource) {
+    const { _id: resourceId } = resource;
+    this.router.navigate([ '/resources/update/' + resource._id ]);
+  }
+
   deleteClick(resource) {
     this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
   }

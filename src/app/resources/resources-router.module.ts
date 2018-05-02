@@ -7,7 +7,8 @@ import { ResourcesAddComponent } from './resources-add.component';
 const routes: Routes = [
   { path: '', component: ResourcesComponent },
   { path: 'view/:id', component: ResourcesViewComponent },
-  { path: 'add', component: ResourcesAddComponent }
+  { path: 'add', component: ResourcesAddComponent },
+  { path: 'update/:id', component: ResourcesAddComponent }
 ];
 
 @NgModule({
