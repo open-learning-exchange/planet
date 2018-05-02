@@ -7,7 +7,7 @@ _prepare_deploy: &_prepare_deploy
     - docker pull $DOCKER_DB_INIT_TEST
 _prepare_multiarch: &_prepare_multiarch
   before_script:
-    - snap install yq
+    - sudo snap install yq
     - source ./.travis/travis_utils.sh
     - login_docker
     - prepare_everything    
