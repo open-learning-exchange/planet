@@ -55,9 +55,9 @@ vagrant_status=$(vagrant status --machine-readable | grep state,running)
 
 echo "Running Linters:"
 if [ "$vagrant_status" = "" ]; then
-  tslint=$(ng lint)
+  tslint=$(npm run lint)
 else
-  tslint=$(vagrant ssh -- -t 'cd /vagrant;ng lint')
+  tslint=$(vagrant ssh -- -t 'cd /vagrant;npm run lint')
 fi
 
 ret_code_tslint=$?
