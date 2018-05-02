@@ -38,7 +38,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   get urlPrefix()  {
     let domain = environment.couchAddress;
     if (this.parent) {
-      domain = 'http://' + this.userService.getConfig()[0].parentDomain + '/';
+      domain = 'http://' + this.userService.getConfig().parentDomain + '/';
     }
     return domain + this.dbName + '/';
   }
@@ -54,7 +54,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         const resourceId = params.get('id');
         const getOpts: any = { resourceIds: [ resourceId ] };
         if (this.parent) {
-          getOpts.opts = { domain: this.userService.getConfig()[0].parentDomain };
+          getOpts.opts = { domain: this.userService.getConfig().parentDomain };
         }
         this.resourceActivity(resourceId, 'visit');
         this.resourcesService.updateResources(getOpts);
