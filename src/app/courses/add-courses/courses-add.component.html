@@ -57,7 +57,7 @@
         <button type="button" mat-raised-button color="warn" (click)="cancel()" i18n>Cancel</button>
       </div>
     </form>
-    <div>
+    <div class="step-grid">
       <planet-courses-step
         *ngFor="let step of steps; index as i; trackBy: stepTrackByFn"
         (stepRemove)="removeStep(i)"
