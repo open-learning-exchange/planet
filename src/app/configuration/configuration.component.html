@@ -55,16 +55,24 @@
       <div *ngIf="showAdvancedOptions">
         <span>Advanced Options:</span>
         <mat-form-field *ngIf="showAdvancedOptions">
-          <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain">
+          <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
         </mat-form-field>
       </div>
     </form>
     <div>
       <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n>Show Advanced Options</mat-slide-toggle>
     </div>
+    <div *ngIf="showConfirmAdvancedOptions">
+      <mat-icon>warning</mat-icon><span i18n>You have changed the advanced option. Please confirm that you wanted to change it.</span><br/>
+      <mat-checkbox [(ngModel)]="advConfirm" i18n>I confirm the changes.</mat-checkbox><br/>
+      <span>I accidently changed it, Please reset to default</span>
+      <button mat-mini-fab (click)="resetDefault()">
+          <mat-icon>replay</mat-icon>
+        </button>
+    </div>
     <div>
       <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+      <button mat-raised-button color="primary" (click)="confirmConfigurationFormGroup()" i18n>Next</button>
     </div>
   </mat-step>
 
