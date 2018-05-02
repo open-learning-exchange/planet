@@ -48,6 +48,42 @@ prepare_db_init(){
   DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
 }
 
+prepare_planet_tags(){
+  # temporary
+  local DOCKER_REPO=planet-tags
+  build_message prepare planet tags docker...
+  PLANET_TAGS=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT
+  PLANET_TAGS_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:$VERSION
+  PLANET_TAGS_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest
+}
+
+prepare_db_init_tags(){
+  # temporary
+  local DOCKER_REPO=planet-tags
+  build_message prepare db-init tags docker...
+  DOCKER_DB_INIT_TAGS=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_TAGS_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION
+  DOCKER_DB_INIT_TAGS_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init
+}
+
+prepare_planet_tags_rpi(){
+  # temporary
+  local DOCKER_REPO=planet-tags
+  build_message prepare planet tags docker...
+  PLANET_TAGS_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
+  PLANET_TAGS_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
+  PLANET_TAGS_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-latest
+}
+
+prepare_db_init_tags_rpi(){
+  # temporary
+  local DOCKER_REPO=planet-tags
+  build_message prepare db-init tags docker...
+  DOCKER_DB_INIT_TAGS_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_TAGS_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init-$VERSION
+  DOCKER_DB_INIT_TAGS_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init
+}
+
 prepare_planet_rpi(){
   build_message prepare planet docker...
   PLANET_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
@@ -82,6 +118,11 @@ prepare_everything(){
   prepare_db_init_test
   prepare_planet_rpi
   prepare_db_init_rpi
+  # temporary
+  prepare_planet_tags
+  prepare_db_init_tags
+  prepare_planet_tags_rpi
+  prepare_db_init_tags_rpi
 }
 
 package_docker(){

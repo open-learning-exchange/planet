@@ -92,8 +92,20 @@ jobs:
         - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
         - push_docker $PLANET $PLANET_LATEST
         - push_docker $DOCKER_DB_INIT $DOCKER_DB_INIT_LATEST
+
+        # for moving to planet-tags
+        - tag_docker $PLANET_TEST $PLANET_TAGS $PLANET_TAGS_LATEST
+        - tag_docker $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TAGS $DOCKER_DB_INIT_TAGS_LATEST
+        - push_docker $PLANET_TAGS $PLANET_TAGS_LATEST
+        - push_docker $DOCKER_DB_INIT_TAGS $DOCKER_DB_INIT_TAGS_LATEST
+
+        # for tagging new version
         - deploy_tag $PLANET_TEST $PLANET_VERSIONED
         - deploy_tag $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_VERSIONED
+
+        # for moving to planet-tags
+        - deploy_tag $PLANET_TEST $PLANET_TAGS_VERSIONED
+        - deploy_tag $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TAGS_VERSIONED
         - docker logout
     - stage: docker-release
       script: #arm image building planet
