@@ -197,7 +197,8 @@ create_multiarch_manifest_planet(){
             tee /tmp/MA_manifests/MA_planet_versioned.yaml
         fi
     else
-        build_message Branch is Not master so no need to create Multiarch manifests for planet. 
+        build_message Branch is Not master so no need to create Multiarch manifests for planet.
+    fi
 }
 
 create_multiarch_manifest_dbinit(){
@@ -232,14 +233,20 @@ create_multiarch_manifest_dbinit(){
             tee /tmp/MA_manifests/MA_db_init_versioned.yaml
         fi
     else
-        build_message Branch is Not master so no need to create Multiarch manifests for db-init. 
+        build_message Branch is Not master so no need to create Multiarch manifests for db-init.
+    fi
 }
 
 push_multiarch_manifests(){
     build_message Pushing Multiarch Manifests to cloud
-    /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
-    /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
-    /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml
-    /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
-    build_message Successfully Pushed Multiarch Manifests to cloud
+    if [ "$BRANCH" = "master" ]
+    then
+        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
+        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
+        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml
+        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
+        build_message Successfully Pushed Multiarch Manifests to cloud
+    else
+         build_message Branch is Not master so no need to Push Multiarch Manifests to cloud
+    fi  
 }
