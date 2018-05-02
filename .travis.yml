@@ -6,8 +6,7 @@ _prepare_deploy: &_prepare_deploy
     - docker pull $PLANET_TEST
     - docker pull $DOCKER_DB_INIT_TEST
 _prepare_multiarch: &_prepare_multiarch
-  before_script:
-    - sudo snap install yq
+  before_script:    
     - source ./.travis/travis_utils.sh
     - login_docker
     - prepare_everything    
@@ -119,6 +118,7 @@ jobs:
     - stage: multiarch-release
       <<: *_prepare_multiarch
       script: #Pushing multiarch
+        - sudo snap install yq
         - set -e
         - create_multiarch_manifest_planet $PLANET_RPI_LATEST $PLANET_LATEST $PLANET_RPI_VERSIONED $PLANET_VERSIONED
         - create_multiarch_manifest_dbinit $DOCKER_DB_INIT_RPI_LATEST $DOCKER_DB_INIT_LATEST $DOCKER_DB_INIT_RPI_VERSIONED $DOCKER_DB_INIT_VERSIONED
