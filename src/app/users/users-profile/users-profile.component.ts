@@ -67,7 +67,7 @@ export class UsersProfileComponent implements OnInit {
   onSubmit(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
     this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
-      if (responses.reduce((ok, r) => r.ok && ok, true)) {
+      if (responses[0].ok === true) {
         this.userDetail._rev = responses[0].rev;
         return this.reinitSession(userDetail.name, credentialData.password);
       }
@@ -85,13 +85,13 @@ export class UsersProfileComponent implements OnInit {
       this.couchService.put(this.dbName + '/' + userData._id, userData)
     ];
     if (isUserAdmin) {
-      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
+     /*  observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
         .pipe(switchMap((data) => {
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
           profile.password = userData.password;
           return this.couchService.put(this.dbName + '/' + profile._id, profile,
           { domain: this.userService.getConfig().parentDomain });
-        })));
+        }))); */
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
       );
