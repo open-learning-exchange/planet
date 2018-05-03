@@ -47,31 +47,9 @@ build_message(){
     echo
 }
 
-random_generator(){
-    awk -v min=10000000 -v max=99999999 'BEGIN{srand(); print int(min+rand()*(max-min+1))}'
-}
-
-prepare_var(){
-    DOCKER_USER="$duser"
-    DOCKER_PASS="$dpass"
-    RANDOM_FINGERPRINT=$(random_generator)
-    DOCKER_ORG=treehouses
-    DOCKER_REPO=planet
-    DOCKER_REPO_DEV=planet-dev
-    BRANCH=$branch
-    COMMIT=${commit::8}
-}
-
-prepare_var_post_clone(){
-    VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
-    FILENAME=$VERSION-$BRANCH-$COMMIT
-}
-
 echo "The current directory is: $(pwd)"
-prepare_var
-prepare_var_post_clone
-
 source ./.travis/travis_utils.sh
+prepare_ci
 
 if [[ $image = db-init ]]
   then
