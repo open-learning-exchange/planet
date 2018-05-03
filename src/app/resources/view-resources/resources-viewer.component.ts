@@ -1,13 +1,9 @@
-import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
+import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output } from '@angular/core';
 
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
-import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 
 @Component({
@@ -19,6 +15,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
   @Input() resource: any;
+  @Output() resourceUrl = new EventEmitter<any>();
   mediaType: string;
   contentType: string;
   resourceSrc: string;
@@ -62,6 +59,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
+    // Emit resource src so parent component can use for links
+    this.resourceUrl.emit(this.resourceSrc);
   }
 
 }

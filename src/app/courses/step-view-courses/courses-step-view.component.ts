@@ -15,6 +15,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '' };
   maxStep = 1;
+  resourceUrl = '';
 
   constructor(
     private router: Router,
@@ -46,6 +47,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  setResourceUrl(resourceUrl: string) {
+    this.resourceUrl = resourceUrl;
   }
 
 }
