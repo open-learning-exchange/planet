@@ -62,7 +62,7 @@
     <div>
       <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n>Show Advanced Options</mat-slide-toggle>
     </div>
-    <div *ngIf="showConfirmAdvancedOptions">
+    <div *ngIf="isAdvancedOptionsChanged">
       <mat-icon>warning</mat-icon><span i18n>You have changed the advanced option. Please confirm that you wanted to change it.</span><br/>
       <mat-checkbox [(ngModel)]="isAdvancedOptionConfirmed" i18n>I confirm the changes.</mat-checkbox><br/>
       <span>I accidently changed it, Please reset to default</span>
