@@ -1,11 +1,13 @@
+@import '../variables';
+
 :host {
-  height: calc(100% - 64px);
+  height: $dashboard-height;
   padding: 2rem;
   display: grid;
   grid-template-areas: "card" "card" "card" "card";
   grid-template-columns: 200px;
   grid-auto-columns: 1fr;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: $dashboard-tile-height;
   grid-auto-flow: column;
   grid-gap: 1rem;
 
@@ -14,7 +16,7 @@
     max-width: 200px;
     padding: 0;
     display: grid;
-    grid-template-rows: min-content min-content;
+    grid-template-rows: min-content;
     grid-auto-rows: 1fr;
     grid-auto-columns: 1fr;
     position: relative;
