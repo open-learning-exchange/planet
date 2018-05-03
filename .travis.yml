@@ -35,7 +35,6 @@ addons:
   apt:
     packages:
       - docker-ce
-      - snapd
 env:
   global:
     # DOCKER_USER
