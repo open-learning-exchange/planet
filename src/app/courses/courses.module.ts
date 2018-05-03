@@ -13,6 +13,7 @@ import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { CoursesStepComponent } from './add-courses/courses-step.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
 import { CoursesService } from './courses.service';
+import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
 
 @NgModule({
   imports: [
@@ -30,7 +31,8 @@ import { CoursesService } from './courses.service';
     CoursesRequestComponent,
     CoursesViewComponent,
     CoursesStepComponent,
-    CoursesStepViewComponent
+    CoursesStepViewComponent,
+    ResourcesViewerComponent
   ],
   providers: [
     CoursesService

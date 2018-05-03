@@ -19,6 +19,7 @@ import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
 import { FeedbackService } from './feedback/feedback.service';
+import { ResourcesService } from './resources/resources.service';
 
 @NgModule({
   imports: [
@@ -36,7 +37,7 @@ import { FeedbackService } from './feedback/feedback.service';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService, ResourcesService
   ],
   bootstrap: [ AppComponent ]
 })
