@@ -5,7 +5,8 @@ import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  templateUrl: './courses-step-view.component.html'
+  templateUrl: './courses-step-view.component.html',
+  styleUrls: [ './courses-step-view.scss' ]
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
@@ -14,6 +15,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '' };
   maxStep = 1;
+  resourceUrl = '';
 
   constructor(
     private router: Router,
@@ -29,7 +31,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.coursesService.requestCourse(params.get('id'));
+      this.coursesService.requestCourse({ courseId: params.get('id') });
     });
   }
 
@@ -45,6 +47,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  setResourceUrl(resourceUrl: string) {
+    this.resourceUrl = resourceUrl;
   }
 
 }

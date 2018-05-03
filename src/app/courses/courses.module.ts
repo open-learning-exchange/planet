@@ -15,6 +15,7 @@ import { ExamsAddComponent } from '../exams/exams-add.component';
 import { ExamsQuestionComponent } from '../exams/exams-question.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
 import { CoursesService } from './courses.service';
+import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
 
 @NgModule({
   imports: [
@@ -32,9 +33,10 @@ import { CoursesService } from './courses.service';
     CoursesRequestComponent,
     CoursesViewComponent,
     CoursesStepComponent,
+    CoursesStepViewComponent,
+    ResourcesViewerComponent,
     ExamsAddComponent,
-    ExamsQuestionComponent,
-    CoursesStepViewComponent
+    ExamsQuestionComponent
   ],
   providers: [
     CoursesService
