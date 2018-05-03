@@ -92,6 +92,7 @@ export class ExamsAddComponent implements OnInit {
       header: '',
       body: '',
       type: 'input',
+      choices: this.fb.array([])
     }));
   }
 

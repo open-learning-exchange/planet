@@ -12,6 +12,12 @@
       <input matInput i18n-placeholder placeholder="Question Title" formControlName="header">
     </mat-form-field>
     <mat-form-field>
+      <mat-select i18n-placeholder placeholder="Type" formControlName="type">
+        <mat-option value="input" i18n>Input</mat-option>
+        <mat-option value="select" i18n>Multiplce Choice</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
       <textarea
         matInput
         i18n-placeholder
@@ -23,5 +29,12 @@
         matAutosizeMinRows="4">
       </textarea>
     </mat-form-field>
+    <div *ngIf="questionForm.controls.type.value === 'select'">
+      <button type="button" mat-button (click)="addChoice()">Add Choice</button>
+      <mat-form-field *ngFor="let choice of choices.controls; index as i">
+        <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice">
+        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
+      </mat-form-field>
+    </div>
   </form>
 </mat-expansion-panel>
