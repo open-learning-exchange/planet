@@ -76,9 +76,15 @@ prepare_db_init_test(){
 
 prepare_multiarch_manifest_tool(){
   build_message Prepare Manifest tool
-  wget -O /tmp/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
-  chmod +x /tmp/manifest_tool
+  sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+  sudo chmod +x /usr/local/bin/manifest_tool
   mkdir -p /tmp/MA_manifests
+}
+
+prepare_yq(){
+  build_message Prepare yq
+  sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/1.14.1/yq_linux_amd64
+  sudo chmod +x /usr/local/bin/yq
 }
 
 prepare_everything(){
@@ -241,10 +247,10 @@ push_multiarch_manifests(){
     build_message Pushing Multiarch Manifests to cloud
     if [ "$BRANCH" = "master" ]
     then
-        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
-        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
-        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml
-        /tmp/manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
+        manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
+        manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
+        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml
+        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
         build_message Successfully Pushed Multiarch Manifests to cloud
     else
          build_message Branch is Not master so no need to Push Multiarch Manifests to cloud

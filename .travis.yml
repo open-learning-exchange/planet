@@ -9,7 +9,8 @@ _prepare_multiarch: &_prepare_multiarch
   before_script:    
     - source ./.travis/travis_utils.sh
     - login_docker
-    - prepare_everything    
+    - prepare_everything
+    - prepare_yq
     - prepare_multiarch_manifest_tool
     - prepare_db_init_rpi
     - prepare_planet_rpi
@@ -118,12 +119,10 @@ jobs:
     - stage: multiarch-release
       <<: *_prepare_multiarch
       script: #Pushing multiarch
-        - sudo snap install yq
         - set -e
         - create_multiarch_manifest_planet $PLANET_RPI_LATEST $PLANET_LATEST $PLANET_RPI_VERSIONED $PLANET_VERSIONED
         - create_multiarch_manifest_dbinit $DOCKER_DB_INIT_RPI_LATEST $DOCKER_DB_INIT_LATEST $DOCKER_DB_INIT_RPI_VERSIONED $DOCKER_DB_INIT_VERSIONED
         - push_multiarch_manifests
-
 
 notifications:
   webhooks:
