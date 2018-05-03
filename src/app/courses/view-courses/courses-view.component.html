@@ -7,7 +7,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
     <span class="toolbar-fill"></span>
-    <button mat-raised-button color="accent" (click)="viewStep()" i18n>View Step</button>
+    <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container">
     <div class="course-detail bg-light-grey">
