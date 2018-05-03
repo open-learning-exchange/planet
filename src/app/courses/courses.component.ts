@@ -162,7 +162,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+          this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
@@ -177,7 +177,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.getCourses();
           this.selection.clear();
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted selected courses');
+          this.planetMessageService.showMessage('You have deleted selected courses');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
@@ -230,7 +230,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
       this.setupList(this.courses.data,  this.userShelf.courseIds);
-      this.planetMessageService.showAlert(message);
+      this.planetMessageService.showMessage(message);
     }, (error) => (error));
   }
 

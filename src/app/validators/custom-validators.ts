@@ -32,6 +32,16 @@ export class CustomValidators {
     return isValidTime ? null : { invalidTime: true };
   }
 
+  static notDateInPast(ac: AbstractControl): ValidationErrors {
+    const now = new Date(),
+      today = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+      // Add time as midnight to ensure new Date() does not return different day than input
+      formVal = new Date(ac.value + 'T00:00:00');
+    if (formVal < today) {
+      return { dateInPast: true };
+    }
+  }
+
   static dateValidator(ac: AbstractControl): ValidationErrors {
 
     if (!ac.value) {
