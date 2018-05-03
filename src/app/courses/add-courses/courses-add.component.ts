@@ -80,15 +80,21 @@ export class CoursesAddComponent implements OnInit {
       .subscribe((data) => {
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
-        this.courseForm.patchValue(data);
-        this.steps = data.steps || [];
+        if (!storedCourse.form) {
+          this.setFormAndSteps({ form: data, steps: data.steps });
+        }
       }, (error) => {
         console.log(error);
       });
-    } else if (storedCourse) {
-      this.courseForm.patchValue(storedCourse.form);
-      this.steps = storedCourse.steps;
     }
+    if (storedCourse.form) {
+      this.setFormAndSteps(storedCourse);
+    }
+  }
+
+  setFormAndSteps(course: any) {
+    this.courseForm.patchValue(course.form);
+    this.steps = course.steps || [];
   }
 
   updateCourse(courseInfo) {
