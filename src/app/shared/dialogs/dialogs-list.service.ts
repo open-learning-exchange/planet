@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
 import { map } from 'rxjs/operators';
 
+const listColumns = {
+  'resources': [ 'title' ]
+};
+
 @Injectable()
 export class DialogsListService {
 
@@ -16,7 +20,3 @@ export class DialogsListService {
   }
 
 }
-
-const listColumns = {
-  'resources': [ 'title' ]
-};

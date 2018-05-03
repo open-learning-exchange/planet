@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
+import { CoursesService } from '../courses.service';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -30,30 +32,35 @@ import { UserService } from '../../shared/user.service';
   ` ]
 })
 
-export class CoursesViewComponent implements OnInit {
+export class CoursesViewComponent implements OnInit, OnDestroy {
 
+  onDestroy$ = new Subject<void>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
 
   constructor(
+    private router: Router,
     private couchService: CouchService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private coursesService: CoursesService
   ) { }
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getCourse(params.get('id'))))
-      .debug('Getting course id from parameters')
-      .subscribe((course) => {
-        this.courseDetail = course;
-      }, error => console.log(error));
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(course => this.courseDetail = course);
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
+      (params: ParamMap) => this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true }),
+      error => console.log(error)
+    );
   }
 
-  getCourse(id: string) {
-    if (this.parent) {
-      return this.couchService.get('courses/' + id,  { domain: this.userService.getConfig().parentDomain } );
-    }
-    return this.couchService.get('courses/' + id);
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  viewStep() {
+    this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
 
 }

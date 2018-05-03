@@ -8,7 +8,7 @@
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </mat-toolbar>
-  <div class="view-container">
+  <div class="view-container view-full-height">
     <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
       <mat-form-field class="full-width">
         <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
