@@ -6,7 +6,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span i18n>Add Course</span>
     <span class="toolbar-fill"></span>
-    <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
+    <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
   </mat-toolbar>
   <div class="view-container">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
@@ -14,14 +14,15 @@
         <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      <div>
+        <planet-exam-question
+          *ngFor="let question of questionsFormArray.controls"
+          [questionForm]="question"
+          (questionRemove)="removeQuestion(i)"
+          ></planet-exam-question>
+      </div>
       <button mat-raised-button color="primary" type="submit">Add Exam</button>
     </form>
-    <div>
-      <planet-exam-question
-        *ngFor="let question of questionsFormArray.controls"
-        [questionForm]="question"
-        ></planet-exam-question>
-    </div>
   </div>
   <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>
 </div>

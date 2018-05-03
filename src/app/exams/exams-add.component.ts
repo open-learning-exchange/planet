@@ -87,13 +87,17 @@ export class ExamsAddComponent implements OnInit {
     });
   }
 
-  addStep() {
+  addQuestion() {
     this.questionsFormArray.push(this.fb.group({
       header: '',
       body: '',
       type: 'input',
       choices: this.fb.array([])
     }));
+  }
+
+  removeQuestion(index) {
+    this.questionsFormArray.removeAt(index);
   }
 
   cancel() {

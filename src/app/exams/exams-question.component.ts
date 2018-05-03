@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -12,6 +12,7 @@ import {
 export class ExamsQuestionComponent implements OnInit {
 
   @Input() questionForm: FormGroup;
+  @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
 
   constructor() {}
@@ -26,6 +27,10 @@ export class ExamsQuestionComponent implements OnInit {
 
   removeChoice(index: number) {
     this.choices.removeAt(index);
+  }
+
+  deleteQuestion() {
+    this.questionRemove.emit();
   }
 
 }
