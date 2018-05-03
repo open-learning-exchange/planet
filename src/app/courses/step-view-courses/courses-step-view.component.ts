@@ -30,7 +30,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.coursesService.requestCourse(params.get('id'));
+      this.coursesService.requestCourse({ courseId: params.get('id') });
     });
   }
 
