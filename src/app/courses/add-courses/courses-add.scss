@@ -5,6 +5,9 @@
     display: grid;
     grid-template-columns: 550px auto;
     grid-column-gap: 1rem;
+    > * {
+      overflow-y: auto;
+    }
   }
 
   form {
