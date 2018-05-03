@@ -38,6 +38,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
+    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
@@ -84,7 +85,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted feedback.');
+          this.planetMessageService.showMessage('You have deleted feedback.');
         }, (error) => this.deleteDialog.componentInstance.message = 'There is a problem deleting this feedback.');
     };
   }
@@ -122,9 +123,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.couchService.get(this.dbName + '/' + feedback.id)
       .subscribe((data) => {
         data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.user.name });
-        this.couchService.put(this.dbName + '/' + data._id, {  ...data })
+        let reopen = { };
+        if (data.status === 'Closed') {
+          reopen = { status: 'Reopened', closeTime: '' };
+        }
+        this.couchService.put(this.dbName + '/' + data._id, {  ...data, ...reopen })
         .subscribe(() => {
           this.planetMessageService.showMessage('Reply success.');
+          this.getFeedback();
         }, (error) => this.message = '');
       }, (error) => this.message = 'There is a problem of getting data.');
   }
@@ -133,6 +139,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     const updateFeedback =  { ...feedback, 'closeTime': Date.now(),  'status': 'Closed' };
     this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
       this.planetMessageService.showMessage('You closed this feedback.');
+      this.getFeedback();
+    },  (err) => console.log(err));
+  }
+
+  openFeedback(feedback: any) {
+    const updateFeedback =  { ...feedback, closeTime: '',  status: 'Reopened' };
+    this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
+      this.planetMessageService.showMessage('You re-opened this feedback.');
       this.getFeedback();
     },  (err) => console.log(err));
   }

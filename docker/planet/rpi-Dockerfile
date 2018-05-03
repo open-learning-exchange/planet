@@ -1,4 +1,4 @@
-FROM ubuntu as builder
+FROM ubuntu:xenial as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app

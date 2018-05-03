@@ -10,6 +10,22 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 
+const repeatPassword = {
+  password: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('repeatPassword', false)
+    ]) ],
+  repeatPassword: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('password', true)
+    ]) ]
+};
+
+const loginForm = {
+  name: [ '', Validators.required ],
+  password: [ '', Validators.required ]
+};
+
 @Component({
   templateUrl: './login-form.component.html',
   styleUrls: [ './login.scss' ]
@@ -99,22 +115,6 @@ export class LoginFormComponent {
         return forkJoin(obsArr);
       })).subscribe((res) => {
 
-      }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
+      }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
 }
-
-const repeatPassword = {
-  password: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('repeatPassword', false)
-    ]) ],
-  repeatPassword: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('password', true)
-    ]) ]
-};
-
-const loginForm = {
-  name: [ '', Validators.required ],
-  password: [ '', Validators.required ]
-};

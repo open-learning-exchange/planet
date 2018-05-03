@@ -72,6 +72,7 @@ export class MeetupService {
       remove: 'You have left selected meetup.'
     };
     this.userService.updateShelfData(ids, 'meetupIds', addOrRemove, message);
+
   }
 
 }

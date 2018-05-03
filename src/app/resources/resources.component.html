@@ -22,6 +22,7 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
+    <span *ngIf="selection.selected.length" class="margin-lr-3"><h3>{{selection.selected.length}}{{(selection.selected.length === 1 ) ? ' item' : ' items'}} selected</h3></span>
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="updateShelf(selection.selected, 'add')">
@@ -68,6 +69,10 @@
           <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
             <mat-icon>feedback</mat-icon>
             <span i18n>Feedback</span>
+          </a>
+          <a mat-menu-item (click)="updateResource(element)">
+            <mat-icon>folder</mat-icon>
+            <span i18n>Manage</span>
           </a>
           <button mat-menu-item (click)="deleteClick(element)">
             <mat-icon>delete_forever</mat-icon>
