@@ -178,7 +178,7 @@ create_multiarch_manifest_planet(){
         build_message Creating Planet Multiarch Manifest for Latest
         # $1: latest arm
         # $2: latest amd64        
-        yq n image treehouses/planet-test:multi | \
+        yq n image treehouses/planet-multi:latest | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
