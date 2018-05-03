@@ -87,7 +87,7 @@ export class UsersProfileComponent implements OnInit {
     ];
     if (isUserAdmin) {
       // Update user in parent planet
-      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig()[0].parentDomain })
+      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
         .pipe(catchError(() => {
           return of({ ok: false, reason: 'Error changing password in parent planet' });
         }),
@@ -98,7 +98,7 @@ export class UsersProfileComponent implements OnInit {
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
           profile.password = userData.password;
           return this.couchService.put(this.dbName + '/' + profile._id, profile,
-            { domain: this.userService.getConfig()[0].parentDomain });
+            { domain: this.userService.getConfig().parentDomain });
         }))
       );
       // Add response ok if there is not error on changing admin password
@@ -118,7 +118,7 @@ export class UsersProfileComponent implements OnInit {
     return forkJoin([
       this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
       this.couchService.post('_session', { 'name': username, 'password': password },
-        {withCredentials: true, domain: this.userService.getConfig()[0].parentDomain })
+        {withCredentials: true, domain: this.userService.getConfig().parentDomain })
     ]);
   }
 
