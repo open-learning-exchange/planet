@@ -9,7 +9,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 
-// Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
@@ -19,6 +18,7 @@ export class DashboardComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   displayName = this.userService.get().firstName + ' ' + this.userService.get().lastName;
   dateNow = Date.now();
+  visits = 0;
 
   constructor(
     private userService: UserService,
@@ -38,6 +38,14 @@ export class DashboardComponent implements OnInit {
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
+    this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
+      .pipe(
+        catchError(() => {
+          return of({ docs: [] });
+        })
+      ).subscribe((res: any) => {
+        this.visits = res.docs.length;
+      });
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
