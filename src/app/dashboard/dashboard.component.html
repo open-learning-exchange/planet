@@ -7,7 +7,7 @@
   <div class="lower-list">
     <mat-list>
       <mat-list-item *ngFor="let item of [ 'Submissions', 'Calendar', 'Email', 'Surveys', 'Documents' ]; last as last">
-        <span mat-line>{{item}}</span>
+        <span>{{item}}</span>
         <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
       </mat-list-item>
     </mat-list>

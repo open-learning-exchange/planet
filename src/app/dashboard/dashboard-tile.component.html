@@ -1,17 +1,19 @@
 <mat-card class="dashboard-card">
-  <div class="upper-tile accent-color">
+  <div class="left-tile accent-color">
     <mat-icon svgIcon={{cardTitle}}></mat-icon>
     <span class="margin-lr-5">{{cardTitle}}</span>
   </div>
-  <div class="lower-tile" #items>
-    <mat-list class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}">
-      <mat-list-item *ngFor="let item of itemData;last as last">
-        <a mat-line [routerLink]="item.link">{{item.title}}</a>
-        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-      </mat-list-item>
-      <mat-list-item *ngIf="itemData.length === 0" class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]">
+  <div class="right-tile" #items>
+    <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" [ngStyle]="{'transform':itemTranslate()}">
+      <span
+        class="dashboard-item cursor-pointer"
+        *ngFor="let item of itemData;let odd=odd"
+        [ngClass]="{'bg-grey': odd}"
+        [routerLink]="item.link"
+      >{{item.title}}</span>
+      <span *ngIf="itemData.length === 0" class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]">
         Add item to {{cardTitle}}
-      </mat-list-item>
-    </mat-list>
+      </span>
+    </div>
   </div>
 </mat-card>

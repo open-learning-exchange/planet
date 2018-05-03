@@ -8,19 +8,17 @@
 
   .dashboard-card {
     display: grid;
-    grid-template-areas: "ut" "lt";
-    grid-template-rows: 3rem 1fr;
-    grid-template-columns: 1fr;
+    grid-template-areas: "lt rt";
+    grid-template-rows: 1fr;
+    grid-template-columns: 150px 1fr;
     padding: 0;
-    height: 100%;
+    height: 18vh;
 
-    .upper-tile {
-      grid-area: ut;
+    .left-tile {
       border-radius: 2px 0 0 2px;
       display: flex;
       justify-content: center;
       align-items: center;
-      align-content: center;
       flex-direction: column;
       flex-wrap: wrap;
       font-size: 1.25rem;
@@ -33,17 +31,29 @@
 
     }
 
-    .lower-tile {
-      grid-area: lt;
+    .right-tile {
       display: grid;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
 
       .dashboard-items.dashboard-empty {
         grid-auto-columns: auto;
       }
 
       .dashboard-items {
-        overflow: auto;
+        display: grid;
+        grid-auto-columns: 150px;
+        transition: transform 0.5s;
+
+        .dashboard-item {
+          grid-column-end: span 1;
+          grid-row-end: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          padding: 0.5rem;
+        }
       }
     }
   }
