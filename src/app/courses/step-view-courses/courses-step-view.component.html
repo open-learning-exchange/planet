@@ -5,13 +5,14 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-      <span class="margin-lr-3"><h3>{{stepDetail.stepTitle}}</h3></span>
+      <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}: {{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
     <span i18n>{{stepNum}}/{{maxStep}}</span>
     <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="stepNum === maxStep" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
-  <div class="view-container">
-    {{stepDetail.description}}
+  <div class="view-container view-full-height">
+    <div>{{stepDetail.description}}</div>
+    <planet-resources-viewer *ngIf="stepDetail.attachment" [resourceId]="stepDetail.attachment.doc._id"></planet-resources-viewer>
   </div>
 </div>

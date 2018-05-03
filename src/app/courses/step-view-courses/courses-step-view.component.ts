@@ -5,7 +5,8 @@ import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  templateUrl: './courses-step-view.component.html'
+  templateUrl: './courses-step-view.component.html',
+  styleUrls: [ './courses-step-view.scss' ]
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
