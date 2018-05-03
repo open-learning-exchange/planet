@@ -300,7 +300,7 @@ body {
   // 352px = 5 * 64px toolbars + 32px of padding
   // Overflow must be set on children
   .view-container.view-full-height {
-    height: calc(100vh - 352px);
+    height: $view-container-height;
   }
 
   // Width of a form with 3 standard matInputs (180px + 10px of padding)

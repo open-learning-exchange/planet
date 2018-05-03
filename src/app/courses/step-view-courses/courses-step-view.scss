@@ -1,0 +1,19 @@
+:host {
+
+  .view-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
+    grid-template-rows: 1fr;
+    grid-column-gap: 1rem;
+
+    > * {
+      overflow-y: auto;
+    }
+
+  }
+
+  planet-resources-viewer * {
+    max-width: 100%;
+  }
+
+}
