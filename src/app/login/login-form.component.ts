@@ -108,9 +108,9 @@ export class LoginFormComponent {
         // Post new session info to login_activity
         const obsArr = [ this.userService.newSessionLog() ];
         // If not in e2e test, also add session to parent domain
-        if (!environment.test && this.userService.getConfig().name === name.toLowerCase()) {
+        if (!environment.test && this.userService.getConfig()[0].name === name.toLowerCase()) {
           obsArr.push(this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
-            { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
+            { withCredentials: true, domain: this.userService.getConfig()[0].parentDomain }));
         }
         return forkJoin(obsArr);
       })).subscribe((res) => {

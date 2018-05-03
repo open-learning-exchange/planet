@@ -7,7 +7,7 @@ import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -73,7 +73,7 @@ export class UsersProfileComponent implements OnInit {
       }
       return of({ ok: false, reason: 'Error changing password' });
     })).subscribe((res) => {
-      if (res.ok === true) {
+      if (res.reduce((ok, r) => r.ok && ok, true)) {
         this.planetMessageService.showMessage('Password successfully updated');
       }
     }, (error) => this.planetMessageService.showAlert('Error changing password'));
@@ -87,14 +87,20 @@ export class UsersProfileComponent implements OnInit {
     ];
     if (isUserAdmin) {
       // Update user in parent planet
-      /* observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
-        .pipe(switchMap((data) => {
+      observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig()[0].parentDomain })
+        .pipe(catchError(() => {
+          return of({ ok: false, reason: 'Error changing password in parent planet' });
+        }),
+        switchMap((data) => {
+          if(data.ok === false) {
+            return of({ ok: false, reason: 'Error changing password in parent planet' });
+          }
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
           profile.password = userData.password;
           return this.couchService.put(this.dbName + '/' + profile._id, profile,
-          { domain: this.userService.getConfig().parentDomain });
-        }))); */
-
+            { domain: this.userService.getConfig()[0].parentDomain });
+        }))
+      );
       // Add response ok if there is not error on changing admin password
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
@@ -109,7 +115,11 @@ export class UsersProfileComponent implements OnInit {
   }
 
   reinitSession(username, password) {
-    return this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true });
+    return forkJoin([
+      this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
+      this.couchService.post('_session', { 'name': username, 'password': password },
+        {withCredentials: true, domain: this.userService.getConfig()[0].parentDomain })
+    ]);
   }
 
   changePasswordForm(userDetail) {
