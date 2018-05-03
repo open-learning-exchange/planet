@@ -56,6 +56,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
+    this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
@@ -109,7 +110,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
           this.selection.clear();
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted Meetup ' + meetup.title);
+          this.planetMessageService.showMessage('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
     };
   }
@@ -125,7 +126,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
           this.meetupService.updateMeetups();
           this.selection.clear();
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted selected meetups');
+          this.planetMessageService.showMessage('You have deleted selected meetups');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting these meetups.');
       };
     }

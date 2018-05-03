@@ -10,6 +10,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -39,6 +40,7 @@ export class UsersProfileComponent implements OnInit {
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService,
     private router: Router
   ) { }
 
@@ -74,7 +76,7 @@ export class UsersProfileComponent implements OnInit {
       if (res.ok === true) {
         this.planetMessageService.showMessage('Password successfully updated');
       }
-    }, (error) => this.planetMessageService.showMessage('Error changing password'));
+    }, (error) => this.planetMessageService.showAlert('Error changing password'));
   }
 
   changePasswordRequest(userData) {
@@ -118,6 +120,14 @@ export class UsersProfileComponent implements OnInit {
   newChangePasswordFormFields() {
     return [
       {
+        'label': 'Old Password',
+        'type': 'textbox',
+        'inputType': 'password',
+        'name': 'oldPassword',
+        'placeholder': 'Old Password',
+        'required': true
+      },
+      {
         'label': 'Password',
         'type': 'textbox',
         'inputType': 'password',
@@ -138,6 +148,7 @@ export class UsersProfileComponent implements OnInit {
 
   newChangePasswordFormGroup() {
     return {
+      oldPassword: [ '', Validators.required, ac => this.validatorService.checkOldPassword$(ac) ],
       password: [
         '',
         Validators.compose([

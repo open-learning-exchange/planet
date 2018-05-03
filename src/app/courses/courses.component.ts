@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, PageEvent } from '@angular/material';
@@ -9,10 +9,11 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -54,7 +55,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
   userId = this.userService.get()._id;
   userShelf: any = [];
-  pageEvent: PageEvent;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -63,23 +64,21 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService
-  ) { }
+  ) {
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.userShelf = this.userService.getUserShelf();
+        this.setupList(this.courses.data, this.userShelf.courseIds);
+      });
+   }
 
   ngOnInit() {
-    forkJoin([ this.getCourses(), this.getShelf() ]).subscribe(([ courses, shelfRes ]: [ any, any ]) => {
-      this.userShelf = shelfRes.docs[0];
-      this.setupList(courses, this.userShelf.courseIds || []);
+    this.getCourses().subscribe((courses: any) => {
+      this.userShelf = this.userService.getUserShelf();
+      this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
-  }
-
-  getShelf() {
-    return this.couchService.post('shelf/_find', { 'selector': { '_id': this.userId } })
-    .pipe(catchError(err => {
-      // If there's an error, return a fake couchDB empty response
-      // so courses can be displayed.
-      return of({ docs: [ { courseIds: [] } ] });
-    }));
+    this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
@@ -163,7 +162,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+          this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
@@ -178,7 +177,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.getCourses();
           this.selection.clear();
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted selected courses');
+          this.planetMessageService.showMessage('You have deleted selected courses');
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
@@ -228,8 +227,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   updateShelf(newShelf, message) {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
-      this.updateAddLibrary();
-      this.planetMessageService.showAlert(message);
+      newShelf._rev = res.rev;
+      this.userService.setShelf(newShelf);
+      this.setupList(this.courses.data,  this.userShelf.courseIds);
+      this.planetMessageService.showMessage(message);
     }, (error) => (error));
   }
 
@@ -241,17 +242,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   courseAdmission(courseId) {
-    // If courseIds is undefined on shelf, set to empty array
-    this.userShelf.courseIds = this.userShelf.courseIds || [];
     const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     userShelf.courseIds.push(courseId);
     this.updateShelf(userShelf, 'Course added to your dashboard');
-  }
-
-  updateAddLibrary() {
-    this.getShelf().subscribe((res) => {
-      this.setupList(this.courses.data, res.docs[0].courseIds);
-    });
   }
 
 }

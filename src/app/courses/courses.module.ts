@@ -11,6 +11,9 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { CoursesStepComponent } from './add-courses/courses-step.component';
+import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
+import { CoursesService } from './courses.service';
+import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
 
 @NgModule({
   imports: [
@@ -27,7 +30,12 @@ import { CoursesStepComponent } from './add-courses/courses-step.component';
     CoursesAddComponent,
     CoursesRequestComponent,
     CoursesViewComponent,
-    CoursesStepComponent
+    CoursesStepComponent,
+    CoursesStepViewComponent,
+    ResourcesViewerComponent
+  ],
+  providers: [
+    CoursesService
   ]
 })
 export class CoursesModule {}

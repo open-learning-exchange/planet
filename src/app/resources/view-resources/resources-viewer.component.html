@@ -1,0 +1,15 @@
+<div [ngSwitch]="mediaType">
+  <img [src]="resourceSrc" *ngSwitchCase="'image'">
+  <video controls *ngSwitchCase="'video'">
+    <source [src]="resourceSrc" [type]="contentType" />
+    Browser not supported
+  </video>
+  <audio controls *ngSwitchCase="'audio'">
+    <source [src]="resourceSrc" [type]="contentType" />
+    Browser not supported
+  </audio>
+  <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
+    oallowfullscreen msallowfullscreen ></iframe>
+  <div *ngSwitchCase="'other'"><a mat-button-raised href={{resourceSrc}}>Open File</a></div>
+  <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
+</div>

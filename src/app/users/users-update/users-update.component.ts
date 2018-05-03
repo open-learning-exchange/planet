@@ -40,6 +40,7 @@ export class UsersUpdateComponent implements OnInit {
   uploadImage = false;
   urlPrefix = environment.couchAddress + this.dbName + '/';
   urlName = '';
+  redirectUrl = '/';
   file: any;
   roles: string[] = [];
 
@@ -59,6 +60,9 @@ export class UsersUpdateComponent implements OnInit {
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
+        if (this.user.gender) {
+          this.redirectUrl = '/users/profile/' + this.user.name;
+        }
         this.editForm.patchValue(data);
         if (data['_attachments']) {
           // If multiple attachments this could break? Entering the if-block as well
@@ -125,7 +129,7 @@ export class UsersUpdateComponent implements OnInit {
     this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
       userInfo._rev = res.rev;
       this.userService.set(userInfo);
-      this.router.navigate([ '/users/profile/' + this.user.name ]);
+      this.router.navigate([ this.redirectUrl ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -133,7 +137,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ '/users/profile', this.user.name ]);
+    this.router.navigate([ this.redirectUrl ]);
   }
 
   onImageSelect(img) {

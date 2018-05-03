@@ -1,3 +1,12 @@
+const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
+  // If field is an array field, check if one value matches.  If not check if values match exactly.
+  const noMatch = data[field] instanceof Array ? data[field].indexOf(val) === -1 : val.toLowerCase() !== data[field].toLowerCase();
+  if (val && noMatch) {
+    return false;
+  }
+  return includeItem;
+});
+
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
     for (let i = 0; i < filterFields.length; i++) {
@@ -23,12 +32,3 @@ export const composeFilterFunctions = (filterFunctions: any[]) => {
     }, true);
   };
 };
-
-const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
-  // If field is an array field, check if one value matches.  If not check if values match exactly.
-  const noMatch = data[field] instanceof Array ? data[field].indexOf(val) === -1 : val.toLowerCase() !== data[field].toLowerCase();
-  if (val && noMatch) {
-    return false;
-  }
-  return includeItem;
-});
