@@ -1,3 +1,19 @@
+<mat-card>
+  <img [src]="profileImg">
+  <div class="primary-color dashboard-name mat-typography">
+    <h2>{{displayName}}</h2>
+    <p class="caption">{{dateNow | date:'longDate'}}</p>
+    <p class="caption">{{visits | number}} <ng-container i18n>Visits</ng-container></p>
+  </div>
+  <div class="lower-list">
+    <mat-list>
+      <mat-list-item *ngFor="let item of [ 'Submissions', 'Calendar', 'Email', 'Surveys', 'Documents' ]; last as last">
+        <span>{{item}}</span>
+        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</mat-card>
 <planet-dashboard-tile
   [cardTitle]="'myLibrary'"
   class="planet-library-theme"
