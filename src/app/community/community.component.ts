@@ -4,6 +4,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { of } from 'rxjs/observable/of';
 @Component({
   templateUrl: './community.component.html'
 })
@@ -102,13 +103,32 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      const { _id: id, _rev: rev } = community;
-      this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
-          this.editDialog.close();
-        }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
+      const { _id: id, _rev: rev, code: communityCode } = community;
+      forkJoin([
+        this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev),
+        // Find nation with code as registration request code
+        this.couchService.post('nations/_find', { 'selector': { 'code': communityCode } })
+          .pipe(switchMap((nationData) => {
+            if ( !nationData.docs.length ) {
+              return of({ ok: true });
+            }
+            const nation = nationData.docs[0];
+            return this.couchService.delete('nations/' + nation._id + '?rev=' + nation._rev);
+          })),
+        // Find user with requestId as registration Id
+        this.couchService.post('_users/_find', { 'selector': { 'requestId': id } })
+          .pipe(switchMap((userData) => {
+            if ( !userData.docs.length ) {
+              return of({ ok: true });
+            }
+            const user = userData.docs[0];
+            return this.couchService.delete('_users/org.couchdb.user:' + user.name);
+          }))
+      ]).subscribe((data) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.communities.data = this.communities.data.filter((comm: any) => data[0].id !== comm._id);
+        this.editDialog.close();
+      }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
     };
   }
 
