@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'planet-app',
   template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>'
 })
 export class AppComponent {
-  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router) {
     iconRegistry.addSvgIcon(
       'myLibrary',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/library.svg'));
@@ -41,5 +42,12 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'home',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/home.svg'));
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        gtag('config', 'UA-118745384-1', { 'page_path': event.urlAfterRedirects });
+      }
+    });
   }
+
 }
