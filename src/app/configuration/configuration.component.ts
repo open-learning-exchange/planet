@@ -32,7 +32,7 @@ export class ConfigurationComponent implements OnInit {
   nations = [];
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
-  showConfirmAdvancedOptions = false;
+  isAdvancedOptionConfirmed = false;
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
@@ -88,9 +88,7 @@ export class ConfigurationComponent implements OnInit {
 
   confirmConfigurationFormGroup() {
     if (this.configurationFormGroup.valid) {
-      if (this.isAdvancedOptionsChanged) {
-        this.showConfirmAdvancedOptions = true;
-      } else {
+      if (!this.isAdvancedOptionsChanged || this.isAdvancedOptionConfirmed) {
         this.stepper.next();
       }
     }
@@ -101,7 +99,8 @@ export class ConfigurationComponent implements OnInit {
   }
 
   resetDefault() {
-    this.showConfirmAdvancedOptions = false;
+    this.isAdvancedOptionConfirmed = false;
+    this.isAdvancedOptionsChanged = false;
     this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
   }
 
