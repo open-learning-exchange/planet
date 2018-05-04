@@ -20,7 +20,8 @@
             "backgroundColor": "",
             "foregroundColor": "",
             "members": [],
-            "name": "OLE Test 1"
+            "name": "OLE Test 1",
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -42,7 +43,8 @@
             "backgroundColor": "",
             "foregroundColor": "",
             "members": [],
-            "name": "Git Quiz"
+            "name": "Git Quiz",
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -65,7 +67,8 @@
             "backgroundColor": "#000000",
             "foregroundColor": "",
             "members": [],
-            "name": "Test 1"
+            "name": "Test 1",
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -87,7 +90,8 @@
             "backgroundColor": "",
             "foregroundColor": "",
             "members": [],
-            "name": "Computer Basics 01"
+            "name": "Computer Basics 01",
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -109,7 +113,8 @@
             "backgroundColor": "",
             "foregroundColor": "",
             "members": [],
-            "name": "BeLL-Apps"
+            "name": "BeLL-Apps",
+            "createdDate": 1505019600000
          }
     ]
 }

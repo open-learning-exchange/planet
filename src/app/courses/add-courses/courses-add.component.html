@@ -52,6 +52,9 @@
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Method" formControlName="method">
       </mat-form-field>
+      <mat-form-field>
+        <input matInput [value]="courseForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Created Date" formControlName="createdDate" readonly>
+      </mat-form-field>
       <div>
         <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
         <button type="button" mat-raised-button color="warn" (click)="cancel()" i18n>Cancel</button>

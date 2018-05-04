@@ -68,6 +68,7 @@ export class CoursesAddComponent implements OnInit {
       method: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
+      createdDate: Date.now()
     });
   }
 
