@@ -23,8 +23,10 @@ export class CoursesStepComponent implements OnChanges {
   @Output() stepInfoChange = new EventEmitter<any>();
   @Input() stepNum: number;
   @Input() stepCount: number;
+  @Output() examClick = new EventEmitter<any>();
   @Output() stepOrder = new EventEmitter<any>();
   @Output() stepRemove = new EventEmitter<any>();
+
   stepForm: FormGroup;
   dialogRef: MatDialogRef<DialogsListComponent>;
   attachment: any;
@@ -42,6 +44,10 @@ export class CoursesStepComponent implements OnChanges {
 
   stepChange() {
     this.stepInfoChange.emit(this.stepForm.value);
+  }
+
+  addExam(stepNum: number) {
+    this.examClick.emit(stepNum - 1);
   }
 
   deleteStep() {

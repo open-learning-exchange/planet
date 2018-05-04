@@ -5,6 +5,7 @@ import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesComponent } from './courses.component';
 import { CoursesRequestComponent } from './request-courses/courses-request.component';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
+import { ExamsAddComponent } from '../exams/exams-add.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'request', component: CoursesRequestComponent },
   { path: 'update/:id', component: CoursesAddComponent },
   { path: 'view/:id', component: CoursesViewComponent },
+  { path: 'exam', component: ExamsAddComponent },
   { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent }
 ];
 
