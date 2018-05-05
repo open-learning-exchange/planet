@@ -204,6 +204,8 @@ create_multiarch_manifest_planet(){
         yq w - manifests[1].platform.architecture amd64 | \
         yq w - manifests[1].platform.os linux | \
         tee /tmp/MA_manifests/MA_planet_versioned.yaml
+    else
+        build_message No tag present so no need to create Versioned Multiarch manifests for planet.
     fi
 }
 
@@ -240,6 +242,8 @@ create_multiarch_manifest_dbinit(){
         yq w - manifests[1].platform.architecture amd64 | \
         yq w - manifests[1].platform.os linux | \
         tee /tmp/MA_manifests/MA_db_init_versioned.yaml
+      else
+        build_message No tag present so no need to create Versioned Multiarch manifests for db-init.
      fi
 }
 
