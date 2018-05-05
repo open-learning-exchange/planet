@@ -263,5 +263,7 @@ push_multiarch_manifests(){
          manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
          manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
          build_message Successfully Pushed Versioned Multiarch Manifests to cloud
+    else
+         build_message No tag present so no need to Push Versioned Multiarch Manifests to cloud
     fi
 }
