@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import {
@@ -11,6 +11,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
+import * as SimpleMDE from 'simplemde';
+import { MarkDownOptionsService } from '../../shared/markdown-options.service';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -24,6 +26,7 @@ export class MeetupsAddComponent implements OnInit {
   pageType = 'Add new';
   revision = null;
   id = null;
+  options = this.markDownOptions.options;
 
   constructor(
     private couchService: CouchService,
@@ -31,7 +34,8 @@ export class MeetupsAddComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private markDownOptions: MarkDownOptionsService
   ) {
     this.createForm();
   }
