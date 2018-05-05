@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 import { Router, NavigationEnd } from '@angular/router';
+declare let gtag: Function;
 
 @Component({
   selector: 'planet-app',
