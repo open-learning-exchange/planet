@@ -248,7 +248,8 @@ push_multiarch_manifests(){
     if [ "$BRANCH" = "master" ]
     then
         manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
-        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml        
+        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml
+        build_message Successfully Pushed Multiarch Manifests to cloud
     else
          build_message Branch is Not master so no need to Push Multiarch Manifests to cloud
     fi
@@ -257,6 +258,6 @@ push_multiarch_manifests(){
     then
          manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
          manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
+         build_message Successfully Pushed Versioned Multiarch Manifests to cloud
     fi
-    build_message Successfully Pushed Multiarch Manifests to cloud  
 }
