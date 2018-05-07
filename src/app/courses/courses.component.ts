@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { SwitchView } from '@angular/common/src/directives/ng_switch';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -173,12 +174,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-        .subscribe((data) => {
-          this.getCourses();
-          this.selection.clear();
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted selected courses');
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+      .pipe(switchMap(data => {
+        return this.getCourses();
+      })).subscribe((data: any) => {
+        this.userShelf = this.userService.getUserShelf();
+        this.setupList(data, this.userShelf.courseIds);
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted selected courses');
+      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }
 
