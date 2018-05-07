@@ -1,6 +1,6 @@
 {
   "name": "ang-bell-app",
-  "version": "0.1.6",
+  "version": "0.1.9",
   "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -12,9 +12,10 @@
     "v-test": "vagrant ssh -- -t 'cd /vagrant;ng test'",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
-    "lint": "npm run sass-lint && ng lint && npm run htmlhint",
+    "lint": "ng lint --type-check",
+    "lint-all": "npm run sass-lint && ng lint --type-check && npm run htmlhint",
     "v-lint": "vagrant ssh -- -t 'cd /vagrant;npm run lint -s'",
-    "v-lint-fix": "vagrant ssh -- -t 'cd /vagrant;ng lint --fix'",
+    "v-lint-fix": "vagrant ssh -- -t 'cd /vagrant;ng lint --fix --type-check'",
     "e2e": "ng e2e --environment test",
     "v-e2e": "vagrant ssh -- -t 'cd /vagrant;ng e2e --environment test'",
     "install-hooks": "cp -a git-hooks/. .git/hooks/"

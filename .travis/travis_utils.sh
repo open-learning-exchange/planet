@@ -15,7 +15,7 @@ login_docker(){
 
 prepare_ci(){
   DOCKER_ORG=treehouses
-  DOCKER_REPO=planet
+  DOCKER_REPO=planet-tags
   DOCKER_REPO_TEST=planet-test
   VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
   BRANCH=$TRAVIS_BRANCH
@@ -72,6 +72,19 @@ prepare_db_init_test(){
   build_message prepare db-init test docker...
   DOCKER_DB_INIT_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init-$VERSION-$BRANCH-$COMMIT
   DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init
+}
+
+prepare_multiarch_manifest_tool(){
+  build_message Prepare Manifest tool
+  sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+  sudo chmod +x /usr/local/bin/manifest_tool
+  mkdir -p /tmp/MA_manifests
+}
+
+prepare_yq(){
+  build_message Prepare yq
+  sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/1.14.1/yq_linux_amd64
+  sudo chmod +x /usr/local/bin/yq
 }
 
 prepare_everything(){
@@ -156,4 +169,94 @@ bell() {
     echo -e "\a"
     sleep 60
   done
+}
+
+create_multiarch_manifest_planet(){
+    build_message Creating Planet Multiarch Manifests
+    if [ "$BRANCH" = "master" ]
+    then
+        build_message Creating Planet Multiarch Manifest for Latest
+        # $1: latest arm
+        # $2: latest amd64        
+        yq n image treehouses/planet-multi:latest | \
+        yq w - manifests[0].image $1 | \
+        yq w - manifests[0].platform.architecture arm | \
+        yq w - manifests[0].platform.os linux | \
+        yq w - manifests[1].image $2 | \
+        yq w - manifests[1].platform.architecture amd64 | \
+        yq w - manifests[1].platform.os linux | \
+        tee /tmp/MA_manifests/MA_planet_latest.yaml        
+        
+        #Building for versioned
+        if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
+        then
+            build_message Creating Planet Multiarch Manifest for Versioned
+            # $3: versioned arm
+            # $4: versioned amd64
+            yq n image treehouses/planet-multi:$VERSION | \
+            yq w - manifests[0].image $3 | \
+            yq w - manifests[0].platform.architecture arm | \
+            yq w - manifests[0].platform.os linux | \
+            yq w - manifests[1].image $4 | \
+            yq w - manifests[1].platform.architecture amd64 | \
+            yq w - manifests[1].platform.os linux | \
+            tee /tmp/MA_manifests/MA_planet_versioned.yaml
+        fi
+    else
+        build_message Branch is Not master so no need to create Multiarch manifests for planet.
+    fi
+}
+
+create_multiarch_manifest_dbinit(){
+    build_message Creating db init Multiarch Manifests
+    if [ "$BRANCH" = "master" ]
+    then
+        build_message Creating Multiarch Manifest for db-init
+        # $1: db-init arm
+        # $2: db-init amd64        
+        yq n image treehouses/planet-multi:db-init | \
+        yq w - manifests[0].image $1 | \
+        yq w - manifests[0].platform.architecture arm | \
+        yq w - manifests[0].platform.os linux | \
+        yq w - manifests[1].image $2 | \
+        yq w - manifests[1].platform.architecture amd64 | \
+        yq w - manifests[1].platform.os linux | \
+        tee /tmp/MA_manifests/MA_db_init.yaml        
+        
+        #Building for versioned
+        if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
+        then
+            build_message Creating Multiarch Manifest for db-init Versioned
+            # $3: db-init versioned arm
+            # $4: db-init versioned amd64
+            yq n image treehouses/planet-multi:db-init-$VERSION | \
+            yq w - manifests[0].image $3 | \
+            yq w - manifests[0].platform.architecture arm | \
+            yq w - manifests[0].platform.os linux | \
+            yq w - manifests[1].image $4 | \
+            yq w - manifests[1].platform.architecture amd64 | \
+            yq w - manifests[1].platform.os linux | \
+            tee /tmp/MA_manifests/MA_db_init_versioned.yaml
+        fi
+    else
+        build_message Branch is Not master so no need to create Multiarch manifests for db-init.
+    fi
+}
+
+push_multiarch_manifests(){
+    build_message Pushing Multiarch Manifests to cloud
+    if [ "$BRANCH" = "master" ]
+    then
+        manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
+        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml        
+        #Building for versioned
+        if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
+        then
+             manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
+             manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
+        fi
+        build_message Successfully Pushed Multiarch Manifests to cloud
+    else
+         build_message Branch is Not master so no need to Push Multiarch Manifests to cloud
+    fi  
 }

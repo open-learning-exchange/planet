@@ -7,6 +7,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
     <span class="toolbar-fill"></span>
+    <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container">
     <div class="course-detail bg-light-grey">
@@ -16,7 +17,7 @@
       <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
       <p i18n>Method: {{courseDetail.method}}</p>
       <p i18n>Frequency/Days: {{courseDetail.day}}</p>
-      <p i18n>Schedule - 
+      <p i18n>Schedule -
         Date: {{courseDetail.startDate | date }}
         Time: {{courseDetail.startTime }}</p>
       <p i18n>Location: {{courseDetail.location}}</p>

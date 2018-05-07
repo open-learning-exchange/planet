@@ -98,6 +98,7 @@ curl -X PUT $COUCHURL/_global_changes
 curl -X PUT $COUCHURL/meetups
 curl -X PUT $COUCHURL/resources
 curl -X PUT $COUCHURL/courses
+curl -X PUT $COUCHURL/exams
 curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/communityregistrationrequests
 curl -X PUT $COUCHURL/feedback
@@ -124,3 +125,5 @@ insert_attachments resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
+# Increase session timeout
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'

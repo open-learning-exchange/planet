@@ -42,6 +42,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.nations.filterPredicate = filterDropdowns(this.filter);
     this.getNationList();
+    this.nations.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
@@ -89,7 +90,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted nation: ' + nation.name);
+          this.planetMessageService.showMessage('You have deleted nation: ' + nation.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };
   }

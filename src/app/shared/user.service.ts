@@ -29,12 +29,18 @@ export class UserService {
   userChange$ = this.userChange.asObservable();
   private shelfChange = new Subject<void>();
   shelfChange$ = this.shelfChange.asObservable();
+  private notificationStateChange = new Subject<void>();
+  notificationStateChange$ = this.notificationStateChange.asObservable();
 
   constructor(private couchService: CouchService) {}
 
   set(user: any): any {
     this.user = user;
     this.userChange.next();
+  }
+
+  setNotificationStateChange() {
+    this.notificationStateChange.next();
   }
 
   setShelf(shelf: any): any {
@@ -73,12 +79,12 @@ export class UserService {
             this.getShelf()
           ]);
         }
-        return of([]);
+        return of([ [], {} ]);
       }),
-      switchMap((configAndShelf) => {
+      switchMap((configAndShelf: [ [any], any ]) => {
         if (configAndShelf.length > 0) {
-          // Assigns this.configuration to first array value, this.shelf to second
-          [ this.configuration, this.shelf ] = configAndShelf;
+          // Assigns this.configuration to first value of first array, this.shelf to second
+          [ [ this.configuration ], this.shelf ] = configAndShelf;
         }
         return of(true);
       }));

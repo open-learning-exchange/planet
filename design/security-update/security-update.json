@@ -47,7 +47,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": ["learner", "leader"]
 			}
 		}
 	},
@@ -86,7 +86,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": ["learner", "leader"]
 			}
 		}
 	},
@@ -125,7 +125,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": ["learner", "leader"]
 			}
 		}
 	},
@@ -138,7 +138,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": ["learner", "leader"]
 			}
 		}
 	},
@@ -151,7 +151,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": ["learner", "leader"]
 			}
 		}
 	},
@@ -164,7 +164,7 @@
 			},
 			"members": {
 				"names": [],
-				"roles": ["intern", "learner", "teacher"]
+				"roles": []
 			}
 		}
 	}

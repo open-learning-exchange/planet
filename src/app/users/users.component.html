@@ -14,13 +14,17 @@
       <h1 i18n>All Users</h1>
     </span>
     <div class="margin-lr-3">
-      <form (ngSubmit)="roleSubmit(selection.selected,selectedRole)" #rolesForm="ngForm">
+      <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm">
         <mat-form-field>
-          <mat-select [(ngModel)]="selectedRole" name="role">
+          <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
+            <mat-option disabled="disabled" class="hide-checkbox">
+              <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
+              <button mat-raised-button i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
+            </mat-option>
             <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRole.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
+        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
     </div>
     <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>

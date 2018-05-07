@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
@@ -22,17 +22,15 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 })
 
 export class ResourcesAddComponent implements OnInit {
-  subjects = new FormControl();
-  levels = new FormControl();
-  subjectList: string[];
-  levelList: string[];
-  media: string[];
-  openWith: string[];
-  resourceType: string[];
+  constants = constants;
+  currentDate = new Date();
   file: any;
+  existingResource: any = {};
+  deleteAttachment = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
+  pageType = 'Add new';
 
   constructor(
     private router: Router,
@@ -40,7 +38,8 @@ export class ResourcesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private route: ActivatedRoute
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -49,6 +48,16 @@ export class ResourcesAddComponent implements OnInit {
 
   ngOnInit() {
     this.userDetail = this.userService.get();
+    if (this.route.snapshot.url[0].path === 'update') {
+      this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
+        .subscribe((data) => {
+          this.pageType = 'Update';
+          this.existingResource = data;
+          this.resourceForm.patchValue(data);
+        }, (error) => {
+          console.log(error);
+        });
+    }
   }
 
   createForm() {
@@ -57,7 +66,9 @@ export class ResourcesAddComponent implements OnInit {
         '',
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
+        this.route.snapshot.url[0].path === 'update'
+          ? ac => this.validatorService.isNameAvailible$(this.dbName, 'title', ac, this.route.snapshot.params.id)
+          : ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
       ],
       author: '',
       year: '',
@@ -81,13 +92,13 @@ export class ResourcesAddComponent implements OnInit {
 
   // Function which takes a MIME Type as a string and returns whether the file is an
   // image, audio file, video, pdf, or zip.  If none of those five returns 'other'
-  private simpleMediaType (mimeType: string) {
+  private simpleMediaType(mimeType: string) {
     const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
     return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
   }
 
   // Creates an observer which reads one file then outputs its data
-  private fileReaderObs (file, mediaType) {
+  private fileReaderObs(file, mediaType) {
     const reader = new FileReader();
     const obs = Observable.create((observer) => {
       reader.onload = () => {
@@ -113,29 +124,38 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
-      let fileObs: Observable<any>;
-      // If file doesn't exist, mediaType will be undefined
-      const mediaType = this.file && this.simpleMediaType(this.file.type);
-      switch (mediaType) {
-        case undefined:
-          // Creates an observable that immediately returns an empty object
-          fileObs = of({});
-          break;
-        case 'zip':
-          fileObs = this.zipObs(this.file);
-          break;
-        default:
-          fileObs = this.fileReaderObs(this.file, mediaType);
-      }
+      const fileObs: Observable<any> = this.createFileObs();
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
+        const { _id, _rev } = this.existingResource;
+        // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
+        const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
         // Start with empty object so this.resourceForm.value does not change
-        this.addResource(Object.assign({}, this.resourceForm.value, resource));
+        const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
+        if (this.route.snapshot.url[0].path === 'update') {
+          this.updateResource(newResource);
+        } else {
+          this.addResource(newResource);
+        }
       });
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+    }
+  }
+
+  createFileObs() {
+    // If file doesn't exist, mediaType will be undefined
+    const mediaType = this.file && this.simpleMediaType(this.file.type);
+    switch (mediaType) {
+      case undefined:
+        // Creates an observable that immediately returns an empty object
+        return of({});
+      case 'zip':
+        return this.zipObs(this.file);
+      default:
+        return this.fileReaderObs(this.file, mediaType);
     }
   }
 
@@ -150,9 +170,23 @@ export class ResourcesAddComponent implements OnInit {
     });
   }
 
+  updateResource(resourceInfo) {
+    this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo }).subscribe(() => {
+      this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('Resource Updated Successfully');
+    }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
+      console.log(err);
+    });
+  }
+
+  deleteAttachmentToggle(event) {
+    this.deleteAttachment = event.checked;
+  }
+
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
-  private processZip (zipFile) {
+  private processZip(zipFile) {
     return function(fileName) {
       return Observable.create((observer) => {
         // When file was not read error block wasn't called from async so added try...catch block
