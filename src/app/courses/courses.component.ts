@@ -14,7 +14,6 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
-import { SwitchView } from '@angular/common/src/directives/ng_switch';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -150,6 +149,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     // Reset the message when the dialog closes
     this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
+      this.selection.clear();
     });
   }
 
@@ -177,7 +177,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       .pipe(switchMap(data => {
         return this.getCourses();
       })).subscribe((data: any) => {
-        this.userShelf = this.userService.getUserShelf();
         this.setupList(data, this.userShelf.courseIds);
         this.selection.clear();
         this.deleteDialog.close();
@@ -235,6 +234,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.userService.setShelf(newShelf);
       this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
+      // Clear selection if multiple item selected for single action
+      this.selection.clear();
     }, (error) => (error));
   }
 
