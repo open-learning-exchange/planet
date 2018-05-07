@@ -12,11 +12,12 @@ import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
 import { CovalentTextEditorModule } from '@covalent/text-editor';
 import { MarkDownOptionsService } from '../shared/markdown-options.service';
+import { MarkdownModule } from 'angular2-markdown';
 
 @NgModule({
   imports: [
     MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule
-    , CovalentTextEditorModule
+    , CovalentTextEditorModule, MarkdownModule
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
