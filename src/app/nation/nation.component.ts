@@ -96,9 +96,9 @@ export class NationComponent implements OnInit, AfterViewInit {
           ];
           // Search user if registration request found
           if ( requestData.docs.length) {
-            const request = requestData.docs[0];
+            const registrationReq = requestData.docs[0];
             observables.push(
-              this.couchService.post('_users/_find', { 'selector': { 'requestId': request._id } })
+              this.couchService.post('_users/_find', { 'selector': { 'requestId': registrationReq._id } })
               .pipe(switchMap((userData) => {
                 // Return ok if user not found
                 if ( !userData.docs.length) {
@@ -108,7 +108,9 @@ export class NationComponent implements OnInit, AfterViewInit {
                 return this.couchService.delete('_users/org.couchdb.user:' + user.name);
               }))
             );
-            observables.push(this.couchService.delete('communityregistrationrequests/' + request._id + '?rev=' + request._rev));
+            observables.push(
+              this.couchService.delete('communityregistrationrequests/' + registrationReq._id + '?rev=' + registrationReq._rev)
+            );
           }
           return forkJoin(observables);
         })).subscribe((data) => {
