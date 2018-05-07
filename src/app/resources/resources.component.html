@@ -25,8 +25,8 @@
     <span *ngIf="selection.selected.length" class="margin-lr-3"><h3>{{selection.selected.length}}{{(selection.selected.length === 1 ) ? ' item' : ' items'}} selected</h3></span>
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
-      <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
+      <button mat-button [disabled]="!selection.selected.length" (click)="updateShelf(selection.selected, 'add')">
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
       </button>
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
@@ -60,11 +60,11 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
-          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addToLibrary([{'_id': element._id, 'title': element.title}])">
-            <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
+          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="updateShelf([{'_id': element._id}], 'add')">
+            <mat-icon>library_add</mat-icon><span i18n>Add to Library</span>
           </a>
-          <a mat-menu-item *ngIf="element.libraryInfo" (click)="removeFromLibrary(element._id, element.title)">
-            <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
+          <a mat-menu-item *ngIf="element.libraryInfo" (click)="updateShelf([{'_id': element._id}], 'remove')">
+            <mat-icon>clear</mat-icon><span i18n>Remove from Library</span>
           </a>
           <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
             <mat-icon>feedback</mat-icon>

@@ -50,7 +50,7 @@
         </button>
         <mat-cell>
           <mat-menu #meetupMenu="matMenu">
-            <a mat-menu-item (click)="meetupService.attendMeetup(element._id, element.participate)">
+            <a mat-menu-item (click)="meetupService.attendMeetup([{'_id': element._id}], element.participate)">
               <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
               <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
             </a>

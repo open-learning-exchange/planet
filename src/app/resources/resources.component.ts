@@ -236,29 +236,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return ids.concat(id);
   }
 
-  updateShelf(newShelf, msg: string) {
-    this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
-      newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
+  updateShelf(ids, addOrRemove) {
+    const message = {
+      add: 'Resource added to your library',
+      remove: 'Resource removed from your library'
+    };
+    if (this.selection.selected.length > 1) {
       this.selection.clear();
-      this.planetMessageService.showMessage(msg + ' mylibrary');
-    }, (error) => (error));
-  }
-
-  addToLibrary(resources) {
-    const currentShelf = this.userService.getUserShelf();
-    const resourceIds = resources.map((data) => {
-      return data._id;
-    }).concat(currentShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
-    const msg = resources.length === 1 ? resources[0].title + ' have been added to' : resources.length + ' resources have been added to';
-    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), msg);
-  }
-
-  removeFromLibrary(resourceId, resourceTitle) {
-    const currentShelf = this.userService.getUserShelf();
-    const resourceIds = [ ...currentShelf.resourceIds ];
-    resourceIds.splice(resourceIds.indexOf(resourceId), 1);
-    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
+      message.add = 'Resources added to your library';
+    } else if (this.selection.selected.length === 1) {
+      this.selection.clear();
+    }
+    this.userService.updateShelfData(ids, 'resourceIds', addOrRemove, message);
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {

@@ -187,28 +187,25 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return ids.concat(id);
   }
 
-  updateShelf(myTeamIds: string[] = [], userShelf: any, msg: string) {
-    this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
-      this.userService.setShelf({ ...userShelf, _rev: res.rev, myTeamIds });
-
-      this.planetMessageService.showMessage(msg + ' your shelf');
-    }, (error) => (error));
-  }
-
-  addTeams(users) {
-    const userShelf = this.userService.getUserShelf();
-    const myTeamIds = users.map((data) => {
-      return data._id || data.doc._id;
-    }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
-    const msg = (myTeamIds.length === 1 ? 'User' : 'Users') + ' added to';
-    this.updateShelf(myTeamIds, userShelf, msg);
-  }
-
-  removeTeam(teamId) {
-    const userShelf = this.userService.getUserShelf();
-    const myTeamIds = [ ...userShelf.myTeamIds ];
-    myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    this.updateShelf(myTeamIds, userShelf, 'User removed from ');
+  updateShelf(usersIds, addOrRemove) {
+    const myuserIds = [];
+    const message = {
+      add: 'User added to your shelf',
+      remove: 'User removed from your shelf'
+    };
+    if (this.selection.selected.length > 1) {
+      usersIds.forEach(myusers => {
+        myuserIds.push(myusers.doc);
+      });
+      this.selection.clear();
+      message.add = 'Users added to your shelf';
+    } else if (this.selection.selected.length === 1) {
+      myuserIds.push(usersIds[0]);
+      this.selection.clear();
+    } else {
+      myuserIds.push(usersIds[0]);
+    }
+    this.userService.updateShelfData(myuserIds, 'myTeamIds', addOrRemove, message);
   }
 
   back() {

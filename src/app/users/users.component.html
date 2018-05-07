@@ -27,7 +27,7 @@
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
     </div>
-    <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
+    <button mat-button class="margin-lr-3" (click)="updateShelf(selection.selected, 'add')" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
   </mat-toolbar>
 
   <mat-table #table [dataSource]="allUsers" matSort>
@@ -83,9 +83,9 @@
             <mat-icon>lock_open</mat-icon>
           </button>
         </span>
-        <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([{'_id': element.doc._id}])">Add Team</button>
-        <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id)">Remove Team</button></ng-template>
-        <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>View Profile
+        <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="updateShelf([{'_id': element.doc._id}] , 'add')">Add Team</button>
+        <ng-template #addTeam><button mat-raised-button color="primary" (click)="updateShelf([{'_id': element.doc._id}], 'remove')">Remove Team</button></ng-template>
+        <a routerLink="/users/profile/{{element.name}}" mat-raised-button color="primary" i18n>View Profile
           <mat-icon>folder_open</mat-icon>
         </a>
         <a
