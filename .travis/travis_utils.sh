@@ -185,25 +185,27 @@ create_multiarch_manifest_planet(){
         yq w - manifests[1].image $2 | \
         yq w - manifests[1].platform.architecture amd64 | \
         yq w - manifests[1].platform.os linux | \
-        tee /tmp/MA_manifests/MA_planet_latest.yaml        
-        
-        #Building for versioned
-        if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
-        then
-            build_message Creating Planet Multiarch Manifest for Versioned
-            # $3: versioned arm
-            # $4: versioned amd64
-            yq n image treehouses/planet-multi:$VERSION | \
-            yq w - manifests[0].image $3 | \
-            yq w - manifests[0].platform.architecture arm | \
-            yq w - manifests[0].platform.os linux | \
-            yq w - manifests[1].image $4 | \
-            yq w - manifests[1].platform.architecture amd64 | \
-            yq w - manifests[1].platform.os linux | \
-            tee /tmp/MA_manifests/MA_planet_versioned.yaml
-        fi
+        tee /tmp/MA_manifests/MA_planet_latest.yaml
     else
         build_message Branch is Not master so no need to create Multiarch manifests for planet.
+    fi
+        
+    #Building for versioned
+    if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
+    then
+        build_message Creating Planet Multiarch Manifest for Versioned.
+        # $3: versioned arm
+        # $4: versioned amd64
+        yq n image treehouses/planet-multi:$VERSION | \
+        yq w - manifests[0].image $3 | \
+        yq w - manifests[0].platform.architecture arm | \
+        yq w - manifests[0].platform.os linux | \
+        yq w - manifests[1].image $4 | \
+        yq w - manifests[1].platform.architecture amd64 | \
+        yq w - manifests[1].platform.os linux | \
+        tee /tmp/MA_manifests/MA_planet_versioned.yaml
+    else
+        build_message No tag present so no need to create Versioned Multiarch manifests for planet.
     fi
 }
 
@@ -221,26 +223,28 @@ create_multiarch_manifest_dbinit(){
         yq w - manifests[1].image $2 | \
         yq w - manifests[1].platform.architecture amd64 | \
         yq w - manifests[1].platform.os linux | \
-        tee /tmp/MA_manifests/MA_db_init.yaml        
-        
-        #Building for versioned
-        if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
-        then
-            build_message Creating Multiarch Manifest for db-init Versioned
-            # $3: db-init versioned arm
-            # $4: db-init versioned amd64
-            yq n image treehouses/planet-multi:db-init-$VERSION | \
-            yq w - manifests[0].image $3 | \
-            yq w - manifests[0].platform.architecture arm | \
-            yq w - manifests[0].platform.os linux | \
-            yq w - manifests[1].image $4 | \
-            yq w - manifests[1].platform.architecture amd64 | \
-            yq w - manifests[1].platform.os linux | \
-            tee /tmp/MA_manifests/MA_db_init_versioned.yaml
-        fi
-    else
+        tee /tmp/MA_manifests/MA_db_init.yaml
+     else
         build_message Branch is Not master so no need to create Multiarch manifests for db-init.
-    fi
+     fi       
+        
+     #Building for versioned
+     if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
+     then
+        build_message Creating Multiarch Manifest for db-init Versioned
+        # $3: db-init versioned arm
+        # $4: db-init versioned amd64
+        yq n image treehouses/planet-multi:db-init-$VERSION | \
+        yq w - manifests[0].image $3 | \
+        yq w - manifests[0].platform.architecture arm | \
+        yq w - manifests[0].platform.os linux | \
+        yq w - manifests[1].image $4 | \
+        yq w - manifests[1].platform.architecture amd64 | \
+        yq w - manifests[1].platform.os linux | \
+        tee /tmp/MA_manifests/MA_db_init_versioned.yaml
+      else
+        build_message No tag present so no need to create Versioned Multiarch manifests for db-init.
+     fi
 }
 
 push_multiarch_manifests(){
@@ -248,15 +252,18 @@ push_multiarch_manifests(){
     if [ "$BRANCH" = "master" ]
     then
         manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
-        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml        
-        #Building for versioned
-        if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
-        then
-             manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
-             manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
-        fi
+        manifest_tool push from-spec /tmp/MA_manifests/MA_db_init.yaml
         build_message Successfully Pushed Multiarch Manifests to cloud
     else
          build_message Branch is Not master so no need to Push Multiarch Manifests to cloud
-    fi  
+    fi
+    #Building for versioned
+    if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
+    then
+         manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
+         manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
+         build_message Successfully Pushed Versioned Multiarch Manifests to cloud
+    else
+         build_message No tag present so no need to Push Versioned Multiarch Manifests to cloud
+    fi
 }
