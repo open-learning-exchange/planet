@@ -110,7 +110,6 @@ curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/shelf
 
 # Add or update design docs
-upsert_doc courses _design/course-validators @./design/courses/course-validators.json
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
