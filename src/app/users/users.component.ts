@@ -4,13 +4,14 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './users.component.html',
@@ -30,6 +31,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
+  deleteDialog: any;
   // List of all possible roles to add to users
   roleList: string[] = [ 'learner', 'leader' ];
   selectedRoles: string[] = [];
@@ -40,6 +42,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   private onDestroy$ = new Subject<void>();
 
   constructor(
+    private dialog: MatDialog,
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
@@ -107,6 +110,36 @@ export class UsersComponent implements OnInit, AfterViewInit {
       console.log('Error initializing data!');
       console.log(error);
     });
+  }
+
+  deleteClick(user) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteUser(user),
+        amount: 'single',
+        changeType: 'delete',
+        type: 'user',
+        displayName: user.name
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+      this.message = '';
+    });
+  }
+
+  deleteUser(user) {
+    // Return a function with user on its scope to pass to delete dialog
+    return () => {
+      this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev)
+        .subscribe((data) => {
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.allUsers.data = this.allUsers.data.filter((u: any) => data.id !== u.doc._id);
+          this.deleteDialog.close();
+          this.selection.clear();
+          this.planetMessageService.showMessage('User deleted: ' + user.name);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+    };
   }
 
   setRoles(user, roles) {
