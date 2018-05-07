@@ -122,7 +122,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
               return of({ ok: true });
             }
             const user = userData.docs[0];
-            return this.couchService.delete('_users/org.couchdb.user:' + user.name);
+            return this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev);
           }))
       ]).subscribe((data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index

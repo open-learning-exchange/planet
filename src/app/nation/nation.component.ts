@@ -105,7 +105,7 @@ export class NationComponent implements OnInit, AfterViewInit {
                   return of({ ok: true });
                 }
                 const user = userData.docs[0];
-                return this.couchService.delete('_users/org.couchdb.user:' + user.name);
+                return this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev);
               }))
             );
             observables.push(
