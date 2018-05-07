@@ -43,7 +43,7 @@
           <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content">
-          <p>{{ element.description }}</p>
+          <p><markdown [data]="element.description"></markdown></p>
         </div>
         <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
           <mat-icon>more_vert</mat-icon>

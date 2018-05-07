@@ -20,6 +20,6 @@
     <p i18n>Meetup Time: {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
     <p i18n>Recurring: {{meetupDetail.recurring}}</p>
     <p i18n>Location: {{meetupDetail.meetupLocation}}</p>
-    <p i18n>Description: {{meetupDetail.description}}</p>
+    <p i18n>Description:<markdown [data]="meetupDetail.description"></markdown></p>
   </div>
 </div>

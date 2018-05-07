@@ -3,7 +3,6 @@
     <mat-icon>arrow_back</mat-icon>
   </a>
 </mat-toolbar>
-
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
   <div class="view-container">
@@ -17,12 +16,13 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
-          <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
+        <td-text-editor matInput [options]="options" 
+        i18n-placeholder placeholder="Description" 
+        formControlName="description" required></td-text-editor>
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.description">
+          </planet-form-error-messages>
+        </mat-error>
       </div>
       <div>
         <mat-form-field>

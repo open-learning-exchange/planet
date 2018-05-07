@@ -10,14 +10,18 @@ import { MeetupsRouterModule } from './meetups-router.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
+import { CovalentTextEditorModule } from '@covalent/text-editor';
+import { MarkDownOptionsService } from '../shared/markdown-options.service';
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
   imports: [
     MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule
+    , CovalentTextEditorModule, MarkdownModule.forRoot()
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
   ],
-  providers: [ MeetupService ]
+  providers: [ MeetupService, MarkDownOptionsService ]
 })
 export class MeetupsModule {}
