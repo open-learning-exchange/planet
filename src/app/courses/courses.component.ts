@@ -149,7 +149,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     // Reset the message when the dialog closes
     this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
       this.message = '';
-      this.selection.clear();
     });
   }
 
@@ -234,7 +233,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.userService.setShelf(newShelf);
       this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
-      // Clear selection if multiple item selected for single action
+      // Clear selection because setupList breaks Material Table selection
       this.selection.clear();
     }, (error) => (error));
   }
