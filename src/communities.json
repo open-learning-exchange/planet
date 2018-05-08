@@ -1,0 +1,50 @@
+{
+  "_id": "6f7b1d7a7c9c73e736b38657bc00adc6",
+  "_rev": "1-0f715076be0a549d3de2dc6d5302fdbc",
+  "registrationRequest": "pending",
+  "planetType": "nation",
+  "localDomain": "127.0.0.1:2200",
+  "name": "lucy",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "english",
+  "code": "1234",
+  "firstName": "lucy",
+  "lastName": "chen",
+  "middleName": "",
+  "email": "3948@gmail.com",
+  "phoneNumber": "937"
+}
+
+{
+  "_id": "6f7b1d7a7c9c73e736b38657bc00c0f0",
+  "_rev": "1-418f33003493cc59ef810e15e30a92c0",
+  "registrationRequest": "pending",
+  "planetType": "nation",
+  "localDomain": "127.0.0.1:2200",
+  "name": "lucy",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "english",
+  "code": "1234",
+  "firstName": "lucy",
+  "lastName": "chen",
+  "middleName": "",
+  "email": "3948@gmail.com",
+  "phoneNumber": "92837"
+}
+
+{
+  "_id": "6f7b1d7a7c9c73e736b38657bc00f273",
+  "_rev": "1-6d85c1f5f2c542ec287780fc2435e728",
+  "registrationRequest": "accepted",
+  "planetType": "nation",
+  "localDomain": "paulbert.media.mit.edu:2200",
+  "name": "Paul",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "English",
+  "code": "paul",
+  "firstName": "Paul",
+  "lastName": "Albert",
+  "middleName": "",
+  "email": "paul@ole.org",
+  "phoneNumber": "paul"
+}

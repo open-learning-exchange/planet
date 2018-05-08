@@ -1,0 +1,86 @@
+{
+  "_id": "668544a4972c9736c4e78cf0d7001f11",
+  "_rev": "1-6d85c1f5f2c542ec287780fc2435e728",
+  "registrationRequest": "accepted",
+  "planetType": "nation",
+  "localDomain": "paulbert.media.mit.edu:2200",
+  "name": "Paul",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "English",
+  "code": "paul",
+  "firstName": "Paul",
+  "lastName": "Albert",
+  "middleName": "",
+  "email": "paul@ole.org",
+  "phoneNumber": "paul"
+}
+
+{
+  "_id": "6f7b1d7a7c9c73e736b38657bc02dcbe",
+  "_rev": "1-122736a121ae613b86efbaa8907b702f",
+  "registrationRequest": "accepted",
+  "planetType": "nation",
+  "localDomain": "127.0.0.1:2200",
+  "name": "a",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "a",
+  "code": "a",
+  "firstName": "a",
+  "lastName": "a",
+  "middleName": "a",
+  "email": "a@aaa",
+  "phoneNumber": "a"
+}
+
+{
+  "_id": "6f7b1d7a7c9c73e736b38657bc032f9c",
+  "_rev": "1-03b457a606ee09ae87f75e72853b0ef5",
+  "registrationRequest": "accepted",
+  "planetType": "nation",
+  "localDomain": "vi.media.mit.edu:2200",
+  "name": "vi",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "vi",
+  "code": "vi",
+  "firstName": "vi",
+  "lastName": "vi",
+  "middleName": "vi",
+  "email": "vi@vi",
+  "phoneNumber": "vi"
+}
+
+{
+  "_id": "6f7b1d7a7c9c73e736b38657bc03cac4",
+  "_rev": "1-f03eef978ebeda7e479f62b4d2901ee9",
+  "registrationRequest": "accepted",
+  "planetType": "nation",
+  "localDomain": "127.0.0.1:2200",
+  "name": "a",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "a",
+  "code": "a",
+  "createdDate": 1525150805300,
+  "firstName": "Rupesh",
+  "lastName": "Manandhar",
+  "middleName": "",
+  "email": "a@a.com",
+  "phoneNumber": "987662343"
+}
+
+{
+  "_id": "b031ff311d33d44ca46fa6e90c007051",
+  "_rev": "1-07e7b63df58e7aa6ec4a0dea9e0bfe30",
+  "registrationRequest": "accepted",
+  "planetType": "nation",
+  "localDomain": "127.0.0.1:2200",
+  "name": "planet",
+  "parentDomain": "earth.ole.org:2200",
+  "preferredLang": "planet",
+  "code": "0.1.7",
+  "createdDate": 1525321040920,
+  "firstName": "planet",
+  "lastName": "planet",
+  "middleName": "",
+  "email": "p@p.com",
+  "phoneNumber": "98416521312"
+}
