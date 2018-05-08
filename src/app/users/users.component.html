@@ -88,8 +88,8 @@
         <button mat-raised-button color="primary" (click)="deleteClick(element.doc)">
           <mat-icon>delete</mat-icon>Delete
         </button>
-        <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>View Profile
-          <mat-icon>folder_open</mat-icon>
+        <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
+          <mat-icon>folder_open</mat-icon> View Profile
         </a>
         <a
           *ngIf="element.doc.roles.length > 0"
