@@ -101,7 +101,7 @@
         <input type="file" (change)="bindFile($event)" />
       </mat-grid-list>
       <mat-grid-list cols="1">
-        <mat-checkbox formControlName="isDownloadable">File downloadable</mat-checkbox>
+        <mat-checkbox [disabled]="!file" formControlName="isDownloadable">File downloadable</mat-checkbox>
       </mat-grid-list>
       <div *ngIf="pageType==='Update'">
         <mat-checkbox (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>

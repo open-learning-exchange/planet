@@ -128,7 +128,7 @@ export class ResourcesAddComponent implements OnInit {
       fileObs.debug('Preparing file for upload').subscribe((resource) => {
         const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
-        const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
+        const existingData = this.deleteAttachment ? (this.resourceForm.value.isDownloadable = '', { _id, _rev })   : this.existingResource;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         if (this.route.snapshot.url[0].path === 'update') {
