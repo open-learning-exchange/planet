@@ -1,16 +1,18 @@
 @import '../mixins.scss';
+@import '../variables';
 
 :host {
 
   @include left-right-grid-areas;
+  // For Firefox.  Otherwise grid tile will expand to fit text.
+  min-width: 0;
 
   .dashboard-card {
     display: grid;
-    grid-template-areas: "lt rt arrows";
-    grid-template-columns: 150px 1fr 50px;
-    grid-auto-rows: 1fr;
-    height: 18vh;
-    min-height: 100px;
+    grid-template-areas: "lt rt";
+    grid-template-rows: 1fr;
+    grid-template-columns: 150px 1fr;
+    height: $dashboard-tile-height;
     padding: 0;
 
     .left-tile {
@@ -32,12 +34,13 @@
 
     .right-tile {
       display: grid;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
 
       .dashboard-items.dashboard-empty {
         grid-auto-columns: auto;
       }
-      
+
       .dashboard-items {
         display: grid;
         grid-auto-columns: 150px;
@@ -53,14 +56,6 @@
           padding: 0.5rem;
         }
       }
-    }
-
-    .dashboard-arrows {
-      grid-area: arrows;
-      display: grid;
-      justify-content: center;
-      align-items: center;
-      grid-auto-rows: 50%;
     }
   }
 

@@ -9,6 +9,8 @@ export class CoursesService {
   course: any = { _id: '' };
   private courseUpdated = new Subject<any[]>();
   courseUpdated$ = this.courseUpdated.asObservable();
+  stepIndex: any;
+  returnUrl: string;
 
   constructor(
     private couchService: CouchService
@@ -30,6 +32,12 @@ export class CoursesService {
       this.course = course;
       this.courseUpdated.next(course);
     });
+  }
+
+  reset() {
+    this.course = { _id: '' };
+    this.stepIndex = -1;
+    this.returnUrl = '';
   }
 
 }

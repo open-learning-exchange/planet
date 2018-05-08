@@ -32,6 +32,9 @@ $screen-sm: 780px;
 
 // Maximum full height of view container (avoiding vertical overflow)
 $view-container-height: calc(100vh - 352px);
+// Height of dashboard
+$dashboard-height: calc(100vh - 128px);
+$dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);
 
 /*
  * Old Planet Material Colors
