@@ -14,6 +14,7 @@ import { ResourcesService } from './resources.service';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -59,6 +60,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+  }
+  get urlPrefix()  {
+    let domain = environment.couchAddress;
+    if (this.parent) {
+      domain = 'http://' + this.userService.getConfig().parentDomain + '/';
+    }
+    return domain + this.dbName + '/';
   }
 
   constructor(
@@ -284,6 +292,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return emptySpace;
     }, '');
+  }
+
+  resourceUrl(elem) {
+    const fileName = Object.keys(elem._attachments)[0];
+    return this.urlPrefix + elem._id + '/' + fileName;
   }
 
 }
