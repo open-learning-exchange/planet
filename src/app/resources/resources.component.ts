@@ -284,33 +284,4 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, '');
   }
 
-  sync(stream) {
-    const repData = {
-      '_id': 'sync_down_' + this.dbName,
-      'source': {
-        'headers': {
-          'Authorization': "Basic dmk6aXY="
-        },
-        'url': 'https://' + this.userService.getConfig().parentDomain + '/' + this.dbName,
-      },
-      'target': {
-        'headers': {
-          'Authorization': "Basic dmk6aXY="
-        },
-        'url': environment.couchAddress + this.dbName
-      },
-      'create_target':  false,
-      'continuous': false,
-      'user_ctx': {
-        'name': this.userService.get().name,
-        'roles': this.userService.get().roles
-      },
-      'owner': this.userService.get().name
-    };
-    this.couchService.post('_replicator', repData)
-    .subscribe((data) => {
-      this.planetMessageService.showMessage('Replication successful');
-    }, (error) => this.planetMessageService.showMessage('Replication failed'));
-  }
-
 }
