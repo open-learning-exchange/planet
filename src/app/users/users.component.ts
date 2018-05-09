@@ -95,19 +95,20 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().debug('Getting user list').subscribe(users => {
-        users = users.docs.filter((user: any) => {
-          // If user is not the current login user, add user to list; else filter self from list
-          if (currentLoginUser !== user.name) {
-            return user;
-          }
-        }).map((user: any) => {
-          const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
-          if (user._attachments) {
-            userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
-          }
-          return userInfo;
-        });
-        this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
+      users = users.docs.filter((user: any) => {
+        // Removes current user from list.  Users should not be able to change their own roles,
+        // so this protects from that.  May need to unhide in the future.
+        if (currentLoginUser !== user.name) {
+          return user;
+        }
+      }).map((user: any) => {
+        const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
+        if (user._attachments) {
+          userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
+        }
+        return userInfo;
+      });
+      this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
