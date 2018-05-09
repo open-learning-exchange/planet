@@ -1,4 +1,4 @@
-<mat-table #table [dataSource]="tableData">
+<mat-table [dataSource]="tableData">
   <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element[column]}}</mat-cell>
