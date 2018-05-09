@@ -73,14 +73,20 @@ insert_attachments() {
 multi_db_update() {
   DOC_LOC=$1
   DOC_NAME=$2
-  # Use echo $(<$DOC_LOC) to be able to run in Windows
-  INPUTS=$(echo $(<$DOC_LOC) | jq -c '.[]')
+  INPUTS=$(echo $DOC_LOC | jq -c '.[]')
   for i in $INPUTS
   do
     JSON=$(echo $i | jq -c '. | .json' )
     DB_NAME=$(echo $i | jq -r '. | .dbName')
     upsert_doc $DB_NAME $DOC_NAME $JSON
   done
+}
+
+add_security_admin_roles() {
+  JSON=$1
+  ROLE_NAME=$2
+  NEW_DOCS=$(echo $(<$JSON) | jq '.[].json.admins.roles += ["'$ROLE_NAME'"]')
+  echo $NEW_DOCS | jq -c '.'
 }
 
 # Add CouchDB standard databases
@@ -92,6 +98,7 @@ curl -X PUT $COUCHURL/_global_changes
 curl -X PUT $COUCHURL/meetups
 curl -X PUT $COUCHURL/resources
 curl -X PUT $COUCHURL/courses
+curl -X PUT $COUCHURL/exams
 curl -X PUT $COUCHURL/nations
 curl -X PUT $COUCHURL/communityregistrationrequests
 curl -X PUT $COUCHURL/feedback
@@ -103,7 +110,6 @@ curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/shelf
 
 # Add or update design docs
-upsert_doc courses _design/course-validators @./design/courses/course-validators.json
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
@@ -116,4 +122,7 @@ insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachments resources ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
-multi_db_update ./design/security-update/security-update.json _security
+SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
+multi_db_update $SECURITY _security
+# Increase session timeout
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'

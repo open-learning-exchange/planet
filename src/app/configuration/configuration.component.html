@@ -20,8 +20,8 @@
   </mat-step>
 
   <mat-step [stepControl]="configurationFormGroup">
+    <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
     <form [formGroup]="configurationFormGroup">
-      <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Select Nation/Community" (change)="onChange($event.value)" formControlName="planetType" required>
           <mat-option value="nation" i18n>Nation</mat-option>
@@ -29,27 +29,16 @@
         </mat-select>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planetType"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      <mat-form-field *ngIf="nationOrCommunity === 'community'">
+        <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" required>
+          <mat-option *ngFor="let nation of nations" [value]="nation.localDomain">{{nation.name}}</mat-option>
+        </mat-select>
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field *ngIf="nationOrCommunity === 'nation'">
+        <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
+      </mat-form-field>
       <div>
-        <div *ngIf="nationOrCommunity === 'community'">
-          <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Local Url" formControlName="localDomain" readonly required>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" required>
-              <mat-option *ngFor="let nation of nations" [value]="nation.localDomain">{{nation.name}}</mat-option>
-            </mat-select>
-            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
-          </mat-form-field>
-        </div>
-        <div *ngIf="nationOrCommunity === 'nation'">
-          <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Local Url" formControlName="localDomain" required>
-            <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.localDomain"></planet-form-error-messages></mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
-          </mat-form-field>
-        </div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Name" formControlName="name" required>
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
@@ -63,11 +52,28 @@
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
-      <div>
-        <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-        <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+      <div *ngIf="showAdvancedOptions">
+        <span>Advanced Options:</span>
+        <mat-form-field *ngIf="showAdvancedOptions">
+          <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
+        </mat-form-field>
       </div>
     </form>
+    <div>
+      <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n>Show Advanced Options</mat-slide-toggle>
+    </div>
+    <div *ngIf="isAdvancedOptionsChanged">
+      <mat-icon>warning</mat-icon><span i18n>You have changed the advanced option. Please confirm that you wanted to change it.</span><br/>
+      <mat-checkbox [(ngModel)]="isAdvancedOptionConfirmed" i18n>I confirm the changes.</mat-checkbox><br/>
+      <span>I accidently changed it, Please reset to default</span>
+      <button mat-mini-fab (click)="resetDefault()">
+          <mat-icon>replay</mat-icon>
+        </button>
+    </div>
+    <div>
+      <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+      <button mat-raised-button color="primary" (click)="confirmConfigurationFormGroup()" i18n>Next</button>
+    </div>
   </mat-step>
 
   <mat-step [stepControl]="contactFormGroup">

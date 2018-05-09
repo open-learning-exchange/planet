@@ -22,10 +22,11 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
+    <span *ngIf="selection.selected.length" class="margin-lr-3"><h3>{{selection.selected.length}}{{(selection.selected.length === 1 ) ? ' item' : ' items'}} selected</h3></span>
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
-      <button mat-button [disabled]="!selection.selected.length" (click)="addResourceId(selection.selected)">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to Library</span>
+      <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
       </button>
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
@@ -48,7 +49,7 @@
         </mat-checkbox>
       </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="info">
+    <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
       <mat-cell *matCellDef="let element" class="list-content-menu">
         <h3 class="header">
@@ -59,13 +60,19 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
-          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addResourceId([{'_id': element._id}])">
-            <mat-icon>library_add</mat-icon>
-            <span i18n>Add to Library</span>
+          <a *ngIf="!element.libraryInfo" mat-menu-item (click)="addToLibrary([{'_id': element._id, 'title': element.title}])">
+            <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
+          </a>
+          <a mat-menu-item *ngIf="element.libraryInfo" (click)="removeFromLibrary(element._id, element.title)">
+            <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
           </a>
           <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
             <mat-icon>feedback</mat-icon>
             <span i18n>Feedback</span>
+          </a>
+          <a mat-menu-item (click)="updateResource(element)">
+            <mat-icon>folder</mat-icon>
+            <span i18n>Manage</span>
           </a>
           <button mat-menu-item (click)="deleteClick(element)">
             <mat-icon>delete_forever</mat-icon>
@@ -87,5 +94,9 @@
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
   </mat-table>
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+  <mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPaginateChange($event)">
+  </mat-paginator>
 </div>

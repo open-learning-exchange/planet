@@ -7,6 +7,23 @@ import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { ResourcesService } from '../resources.service';
 
+const popupFormFields = [
+  {
+    'label': 'Rate',
+    'type': 'rating',
+    'name': 'rate',
+    'placeholder': 'Your Rating',
+    'required': false
+  },
+  {
+    'label': 'Comment',
+    'type': 'textarea',
+    'name': 'comment',
+    'placeholder': 'Leave your comment',
+    'required': false
+  }
+];
+
 @Component({
   templateUrl: './resources-rating.component.html',
   selector: 'planet-resources-rating'
@@ -119,20 +136,3 @@ export class ResourcesRatingComponent implements OnChanges {
     }
   }
 }
-
-const popupFormFields = [
-  {
-    'label': 'Rate',
-    'type': 'rating',
-    'name': 'rate',
-    'placeholder': 'Your Rating',
-    'required': false
-  },
-  {
-    'label': 'Comment',
-    'type': 'textarea',
-    'name': 'comment',
-    'placeholder': 'Leave your comment',
-    'required': false
-  }
-];

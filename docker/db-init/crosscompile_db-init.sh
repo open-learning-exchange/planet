@@ -22,8 +22,10 @@ export ZMQ_BUILD_OPTIONS="--host=${TRIPLE}"
 echo "Building db-init for ${ARCH}"
 
 if [[ "${ACT}" == "install" ]]; then
-  apt-get -qq update
-  apt-get install -y ${PACKAGES}
+  apt-get update -qq
+  apt-get install -y curl gnupg
+  curl -sL https://deb.nodesource.com/setup_6.x | bash -
+  apt-get install -y nodejs build-essential ${PACKAGES}
   npm install "--arch=${TRIPLE}" -g add-cors-to-couchdb
 else
   echo "Error: No action Specified"

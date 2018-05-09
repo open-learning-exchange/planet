@@ -14,6 +14,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CoursesService } from '../courses.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -40,7 +41,8 @@ export class CoursesAddComponent implements OnInit {
     private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private coursesService: CoursesService
   ) {
     this.createForm();
   }
@@ -72,6 +74,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    const storedCourse = this.coursesService.course;
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
@@ -80,12 +83,21 @@ export class CoursesAddComponent implements OnInit {
         });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
-        this.courseForm.patchValue(data);
-        this.steps = data.steps || [];
+        if (!storedCourse.form) {
+          this.setFormAndSteps({ form: data, steps: data.steps });
+        }
       }, (error) => {
         console.log(error);
       });
     }
+    if (storedCourse.form) {
+      this.setFormAndSteps(storedCourse);
+    }
+  }
+
+  setFormAndSteps(course: any) {
+    this.courseForm.patchValue(course.form);
+    this.steps = course.steps || [];
   }
 
   updateCourse(courseInfo) {
@@ -94,7 +106,7 @@ export class CoursesAddComponent implements OnInit {
       this.dbName + '/' + this.documentInfo.id,
       { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
     ).subscribe(() => {
-      this.router.navigate([ '/courses' ]);
+      this.navigateBack();
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -123,7 +135,7 @@ export class CoursesAddComponent implements OnInit {
     // If user is not rerouted after update moving steps will no longer work
     this.deleteStepIdProperty();
     this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
-      this.router.navigate([ '/courses' ]);
+      this.navigateBack();
       this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -141,13 +153,25 @@ export class CoursesAddComponent implements OnInit {
     this.steps.push({
       id: this.uniqueIdOfStep(),
       stepTitle: '',
-      description: ''
+      description: '',
+      attachment: ''
     });
   }
 
   uniqueIdOfStep() {
     // Highly unlikely random numbers will not be unique for practical amount of course steps
     return '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  navigateBack() {
+    this.coursesService.reset();
+    this.router.navigate([ '/courses' ]);
+  }
+
+  addExam(stepIndex) {
+    this.coursesService.returnUrl = this.router.url;
+    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    this.coursesService.stepIndex = stepIndex;
   }
 
   removeStep(pos) {
@@ -158,10 +182,6 @@ export class CoursesAddComponent implements OnInit {
     const tempStep = this.steps[oldPos];
     this.steps.splice(oldPos, 1);
     this.steps.splice(newPos, 0, tempStep);
-  }
-
-  cancel() {
-    this.router.navigate([ '/courses' ]);
   }
 
   stepTrackByFn(index, item) {

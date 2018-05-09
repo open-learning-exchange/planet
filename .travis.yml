@@ -5,6 +5,15 @@ _prepare_deploy: &_prepare_deploy
     - prepare_everything
     - docker pull $PLANET_TEST
     - docker pull $DOCKER_DB_INIT_TEST
+_prepare_multiarch: &_prepare_multiarch
+  before_script:    
+    - source ./.travis/travis_utils.sh
+    - login_docker
+    - prepare_everything
+    - prepare_yq
+    - prepare_multiarch_manifest_tool
+    - prepare_db_init_rpi
+    - prepare_planet_rpi
 _use_chrome: &_use_chrome
   addons:
     apt:
@@ -41,6 +50,7 @@ stages:
   - docker-creation
   - automated-test
   - docker-release
+  - multiarch-release
 
 jobs:
   include:
@@ -82,7 +92,7 @@ jobs:
       script:
         - set -e
         - echo  "Waiting for couchdb to start"; WAIT_TIME=0; until curl http://127.0.0.1:5984/_all_dbs || [ $WAIT_TIME -eq 180 ]; do echo "..."; sleep 5; WAIT_TIME=$(expr $WAIT_TIME + 5); done
-        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 15 ]; then exit 1; fi
+        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 16 ]; then exit 1; fi
         - ng e2e --environment test
     - stage: docker-release
       <<: *_prepare_deploy
@@ -97,12 +107,21 @@ jobs:
         - docker logout
     - stage: docker-release
       script: #arm image building planet
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
 
     - stage: docker-release
       script: #arm image building planet
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
-
+        
+    - stage: multiarch-release
+      <<: *_prepare_multiarch
+      script: #Pushing multiarch
+        - set -e
+        - create_multiarch_manifest_planet $PLANET_RPI_LATEST $PLANET_LATEST $PLANET_RPI_VERSIONED $PLANET_VERSIONED
+        - create_multiarch_manifest_dbinit $DOCKER_DB_INIT_RPI_LATEST $DOCKER_DB_INIT_LATEST $DOCKER_DB_INIT_RPI_VERSIONED $DOCKER_DB_INIT_VERSIONED
+        - push_multiarch_manifests
 
 notifications:
   webhooks:

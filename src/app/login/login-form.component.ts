@@ -10,6 +10,22 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 
+const repeatPassword = {
+  password: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('repeatPassword', false)
+    ]) ],
+  repeatPassword: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('password', true)
+    ]) ]
+};
+
+const loginForm = {
+  name: [ '', Validators.required ],
+  password: [ '', Validators.required ]
+};
+
 @Component({
   templateUrl: './login-form.component.html',
   styleUrls: [ './login.scss' ]
@@ -65,7 +81,7 @@ export class LoginFormComponent {
 
   createUser({ name, password }: {name: string, password: string}) {
     this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false })
+      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false, joinDate: Date.now() })
     .pipe(switchMap(() => {
       return this.couchService.put('shelf/org.couchdb.user:' + name, { });
     })).subscribe((response: any) => {
@@ -99,22 +115,6 @@ export class LoginFormComponent {
         return forkJoin(obsArr);
       })).subscribe((res) => {
 
-      }, (error) => this.planetMessageService.showMessage('Username and/or password do not match'));
+      }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
 }
-
-const repeatPassword = {
-  password: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('repeatPassword', false)
-    ]) ],
-  repeatPassword: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('password', true)
-    ]) ]
-};
-
-const loginForm = {
-  name: [ '', Validators.required ],
-  password: [ '', Validators.required ]
-};

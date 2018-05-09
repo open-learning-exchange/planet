@@ -3,29 +3,22 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { environment } from '../../environments/environment';
 
-// Main page once logged in.  At this stage is more of a placeholder.
 @Component({
-  template: `
-    <planet-dashboard-tile [cardTitle]="'myLibrary'" class="planet-library-theme" [itemData]="data.resources"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myCourses'" class="planet-courses-theme" [itemData]="data.courses"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myMeetups'" class="planet-meetups-theme" [itemData]="data.meetups"></planet-dashboard-tile>
-    <planet-dashboard-tile [cardTitle]="'myTeams'" class="planet-teams-theme" [itemData]="data.myTeams"></planet-dashboard-tile>
-  `,
-  styles: [ `
-    :host {
-      padding: 2rem;
-      display: grid;
-      grid-auto-columns: 100%;
-      grid-gap: 1rem;
-    }
-  ` ]
+  templateUrl: './dashboard.component.html',
+  styleUrls: [ './dashboard.scss' ]
 })
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
+  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
+  displayName = this.userService.get().firstName + ' ' + this.userService.get().lastName;
+  dateNow = Date.now();
+  visits = 0;
 
   constructor(
     private userService: UserService,
@@ -33,29 +26,45 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getShelf().pipe(switchMap(shelf => {
-      return forkJoin([
-        this.getData('resources', shelf.docs[0].resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-        this.getData('courses', shelf.docs[0].courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-        this.getData('meetups', shelf.docs[0].meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-        this.getData('_users', shelf.docs[0].myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
-      ]);
-    })).subscribe(dashboardItems => {
+    const userShelf = this.userService.getUserShelf();
+    forkJoin([
+      this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
+      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
+      this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
+      this.getData('_users', userShelf.myTeamIds, { titleField: 'name' , linkPrefix: 'users' })
+    ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
+    this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
+      .pipe(
+        catchError(() => {
+          return of({ docs: [] });
+        })
+      ).subscribe((res: any) => {
+        this.visits = res.docs.length;
+      });
   }
 
-  getShelf() {
-    return this.couchService.post(`shelf/_find`, findDocuments({ '_id': this.userService.get()._id }, 0 ));
-  }
-
-  getData(db: string, shelf: string[], { linkPrefix, addId = false, titleField = 'title' }) {
+  getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
-      .pipe(map(response => {
-        return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
-      }));
+      .pipe(
+        catchError(() => {
+          return of({ docs: [] });
+        }),
+        map(response => {
+          return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
+        })
+      );
+  }
+
+  get profileImg() {
+    const attachments = this.userService.get()._attachments;
+    if (attachments) {
+      return this.urlPrefix + Object.keys(attachments)[0];
+    }
+    return 'assets/image.png';
   }
 }

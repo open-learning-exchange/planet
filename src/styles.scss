@@ -104,15 +104,6 @@ body {
     margin: 0 3px;
   }
 
-  // Helper classes for simple grid layouts for 2 tile horizontal cards
-  .left-tile {
-    grid-area: lt;
-  }
-
-  .right-tile {
-    grid-area: rt;
-  }
-
   // Style which places menu icon in upper right corner of table cell
   .list-content-menu {
     display: grid;
@@ -274,6 +265,13 @@ body {
     display: none;
   }
 
+  .profile-image-update {
+    border-radius: 50%;
+    margin-left: 2rem;
+    width: 14rem;
+    height: 14rem;
+  }
+
   .profile-image-large {
     border-radius: 50%;
     width: 70%;
@@ -298,9 +296,30 @@ body {
     padding: 1rem;
   }
 
+  // Style to make the view-container fill the available screen space
+  // 352px = 5 * 64px toolbars + 32px of padding
+  // Overflow must be set on children
+  .view-container.view-full-height {
+    height: $view-container-height;
+  }
+
+  // Width of a form with 3 standard matInputs (180px + 10px of padding)
+  .form-width-3 {
+    width: 550px;
+  }
+
   .vertical-form {
     display: flex;
     flex-direction: column;
+  }
+
+  // Add to a mat-option to remove the checkbox
+  .hide-checkbox > .mat-pseudo-checkbox {
+    display: none;
+  }
+
+  .ole-logo {
+    filter: brightness(0) invert(1);
   }
 
 }

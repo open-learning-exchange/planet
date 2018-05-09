@@ -15,9 +15,11 @@ import { ValidatorService } from './validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlanetMessageService } from './shared/planet-message.service';
 import { MaterialModule } from './shared/material.module';
-
+import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
+import { FeedbackService } from './feedback/feedback.service';
+import { ResourcesService } from './resources/resources.service';
 
 @NgModule({
   imports: [
@@ -26,6 +28,7 @@ import { MatIconRegistry } from '@angular/material';
     HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
+    NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
@@ -34,7 +37,7 @@ import { MatIconRegistry } from '@angular/material';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService, ResourcesService
   ],
   bootstrap: [ AppComponent ]
 })
