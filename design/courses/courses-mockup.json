@@ -23,8 +23,8 @@
 					"attachment": ""
 				}
 			]
-         },
-         {
+        },
+        {
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "Git Quiz",
@@ -47,8 +47,8 @@
 					"attachment": ""
 				}
             ]
-         },
-         {
+        },
+        {
             "kind": "Course",
             "languageOfInstruction": "",
             "courseTitle": "Test 1",
@@ -76,8 +76,8 @@
 					"attachment": ""
 				}
             ]
-         },
-         {
+        },
+        {
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "Computer Basics 01",
@@ -105,8 +105,8 @@
 					"attachment": ""
 				}
             ]
-         },
-         {
+        },
+        {
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "BeLL-Apps",
@@ -124,6 +124,6 @@
 					"attachment": ""
 				}
             ]
-         }
+        }
     ]
 }
