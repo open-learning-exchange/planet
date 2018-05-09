@@ -3,14 +3,9 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 @Component({
   templateUrl: './dialogs-view.component.html',
   styles: [ `
-  	.field-details {
-      width: 100%;
+  	.close {
+      float: right;
     }
-    .field-form {
-	  min-width: 150px;
-	  max-width: 500px;
-	  width: 100%;
-	}
   ` ]
 })
 export class DialogsViewComponent {
