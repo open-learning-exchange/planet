@@ -128,17 +128,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getMyuserObject(userid) {
-   return this.couchService.allDocs('shelf').pipe(map((data: any) => {
-         return data.map((user: any) => {
-          return user;
-        }).filter((filteruser: any) => {
-          return filteruser._id === userid;
-        });
-    }));
-  }
-
-
   deleteUser(user) {
     // Return a function with user on its scope to pass to delete dialog
     return () => {
