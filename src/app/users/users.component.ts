@@ -9,6 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { filterSpecificFields } from '../shared/table-helpers';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -95,9 +96,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   initializeData() {
+    const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().debug('Getting user list').subscribe(users => {
-      users = users.docs.map((user: any) => {
+      users = users.docs.filter((user: any) => {
+        // Removes current user from list.  Users should not be able to change their own roles,
+        // so this protects from that.  May need to unhide in the future.
+        if (currentLoginUser !== user.name) {
+          return user;
+        }
+      }).map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -105,6 +113,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         return userInfo;
       });
       this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
+      this.allUsers.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
@@ -231,17 +240,22 @@ export class UsersComponent implements OnInit, AfterViewInit {
   addTeams(users) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = users.map((data) => {
-      return data._id || data.doc._id;
+      return data.doc._id;
     }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
-    const msg = (myTeamIds.length === 1 ? 'User' : 'Users') + ' added to';
+    const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
+    const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
+    const msg = (users.length === 1 && addedNum === 1 ?
+      users[0].doc.name + ' has been'
+      : addedNum + ' ' + subjectVerbAgreement + ' been')
+      + ' added to';
     this.updateShelf(myTeamIds, userShelf, msg);
   }
 
-  removeTeam(teamId) {
+  removeTeam(teamId, userName) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = [ ...userShelf.myTeamIds ];
     myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    this.updateShelf(myTeamIds, userShelf, 'User removed from ');
+    this.updateShelf(myTeamIds, userShelf, userName + ' has been removed from');
   }
 
   back() {

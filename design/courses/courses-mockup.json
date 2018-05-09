@@ -22,7 +22,8 @@
                     "description": "A container platform is a complete solution that allows organizations to solve multiple problems across a diverse set of requirements. It is more than a piece of technology and orchestration - it delivers sustainable benefits throughout your organization by providing all the pieces an enterprise operation requires including security, governance, automation, support and certification over the entire application lifecycle.",
                     "attachment": ""
                 }
-            ]
+            ],
+            "createdDate": 1505019600000
         },
         {
             "kind": "Course",
@@ -46,7 +47,8 @@
                     "description": "GitHub provides desktop clients that include a graphical user interface for the most common repository actions and an automatically updating command line edition of Git for advanced scenarios.",
                     "attachment": ""
                 }
-            ]
+            ],
+            "createdDate": 1505019600000
         },
         {
             "kind": "Course",
@@ -75,7 +77,8 @@
                     "description": "Review Vagrant Instructions on how to interact with Vagrant through the command-line interface. You should be familiar with this since you will need to use it to control virtual machines during your internship.",
                     "attachment": ""
                 }
-            ]
+            ],
+            "createdDate": 1505019600000
         },
         {
             "kind": "Course",
@@ -104,7 +107,8 @@
                     "description": "As you learn more and more about computing, you will also become familiar with jargon. The jargon of any discipline just means the particular words that have specific meanings in this context. Software and hardware are two of the most frequently used computer jargon words. Hardware is the physical (touchable) computer itself, the keyboard, disk drive, monitor, etc. Software is made up of the instructions that tell the hardware what to do. You may have heard about Microsoft Word. This is a software program that allows you to create and edit text documents",
                     "attachment": ""
                 }
-            ]
+            ],
+            "createdDate": 1505019600000
         },
         {
             "kind": "Course",
@@ -123,7 +127,8 @@
                     "description": "Angular is a platform that makes it easy to build applications with the web. Angular combines declarative templates, dependency injection, end to end tooling, and integrated best practices to solve development challenges. Angular empowers developers to build applications that live on the web, mobile, or the desktop.",
                     "attachment": ""
                 }
-            ]
+            ],
+            "createdDate": 1505019600000
         }
     ]
 }
