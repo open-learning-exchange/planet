@@ -83,8 +83,8 @@
             <mat-icon>lock_open</mat-icon>
           </button>
         </span>
-        <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([{'_id': element.doc._id}])">Add Team</button>
-        <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id)">Remove Team</button></ng-template>
+        <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([element])">Add Team</button>
+        <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id, element.doc.name)">Remove Team</button></ng-template>
         <button mat-raised-button color="primary" (click)="deleteClick(element.doc)">
           <mat-icon>delete</mat-icon>Delete
         </button>
