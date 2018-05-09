@@ -4,8 +4,8 @@
             "kind": "Meetup",
             "title": "Happy Hacking Hangout",
             "description": "this is our Team Meeting",
-            "startDate": "1529842215440",
-            "endDate": "1532434215440",
+            "startDate": 1529842215440,
+            "endDate": 1532434215440,
             "recurring": "Weekly",
             "Day": [ ],
             "startTime": "3:00pm",
@@ -13,14 +13,14 @@
             "category": "ICT",
             "meetupLocation": "virtual",
             "creator": "",
-            "createdDate": "1519624800000"
+            "createdDate": 1519624800000
          },
          {
             "kind": "Meetup",
             "title": "Angular Hangout",
             "description": "this is our Angular Meeting",
-            "startDate": "1527855015440",
-            "endDate": "1528200615440",
+            "startDate": 1527855015440,
+            "endDate": 1528200615440,
             "recurring": "Weekly",
             "Day": [ ],
             "startTime": "1:00pm",
@@ -28,14 +28,14 @@
             "category": "ICT",
             "meetupLocation": "virtual",
             "creator": "",
-            "createdDate": "1519624800000"
+            "createdDate": 1519624800000
          },
          {
             "kind": "Meetup",
             "title": "Social Awareness",
             "description": "Social Awareness program",
-            "startDate": "1537791015440",
-            "endDate": "1540383015440",
+            "startDate": 1537791015440,
+            "endDate": 1540383015440,
             "recurring": "Weekly",
             "Day": [ ],
             "startTime": "1:00pm",
@@ -43,14 +43,14 @@
             "category": "ICT",
             "meetupLocation": "virtual",
             "creator": "",
-            "createdDate": "1519624800000"
+            "createdDate": 1519624800000
          },
          {
             "kind": "Meetup",
             "title": "Demo",
             "description": "Demo about the projects",
-            "startDate": "1528459815440",
-            "endDate": "1528632615440",
+            "startDate": 1528459815440,
+            "endDate": 1528632615440,
             "recurring": "Weekly",
             "Day": [ ],
             "startTime": "4:00pm",
@@ -58,14 +58,14 @@
             "category": "ICT",
             "meetupLocation": "nepal",
             "creator": "",
-            "createdDate": "1519624800000"
+            "createdDate": 1519624800000
          },
          {
             "kind": "Meetup",
             "title": "Meeting",
             "description": "To discuss about planet issue",
-            "startDate": "1543061415440",
-            "endDate": "1543147815440",
+            "startDate": 1543061415440,
+            "endDate": 1543147815440,
             "recurring": "Weekly",
             "Day": [ ],
             "startTime": "2:00pm",
@@ -73,7 +73,7 @@
             "category": "ICT",
             "meetupLocation": "nepal",
             "creator": "",
-            "createdDate": "1519624800000"
+            "createdDate": 1519624800000
          }
     ]
 }
