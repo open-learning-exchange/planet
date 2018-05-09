@@ -14,7 +14,7 @@
       <h1 i18n>All Users</h1>
     </span>
     <div class="margin-lr-3">
-      <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm">
+      <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form">
         <mat-form-field>
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
             <mat-option disabled="disabled" class="hide-checkbox">
@@ -25,8 +25,8 @@
           </mat-select>
         </mat-form-field>
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
-        <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
       </form>
+      <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
     </div>
   </mat-toolbar>
 

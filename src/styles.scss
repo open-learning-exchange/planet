@@ -54,6 +54,11 @@ body {
     flex: 1 1 auto;
   }
 
+  // Add to forms within toolbars to display next to other content
+  .toolbar-form {
+    display: inline-block;
+  }
+
   // Use to reset font size to base
   .font-size-1 {
     font-size: 1rem;
