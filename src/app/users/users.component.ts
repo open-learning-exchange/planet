@@ -128,18 +128,52 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getMyuserObject(userid) {
+   return this.couchService.allDocs('shelf').pipe(map((data: any) => {
+         return data.map((user: any) => {
+          return user;
+        }).filter((filteruser: any) => {
+          return filteruser._id === userid;
+        });
+    }));
+  }
+
+
   deleteUser(user) {
     // Return a function with user on its scope to pass to delete dialog
     return () => {
-      this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev)
-        .subscribe((data) => {
+      this.couchService.allDocs('shelf').pipe(map((data: any) => {
+        return data.map((shelfUser: any) => {
+          return shelfUser;
+        }).filter((filteruser: any) => {
+          return filteruser._id === user._id;
+        });
+    })).subscribe(mydata => {
+      forkJoin([ this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev),
+       this.couchService.delete('shelf/org.couchdb.user:' + user.name + '?rev=' + mydata[0]._rev)
+      ]).subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.allUsers.data = this.allUsers.data.filter((u: any) => data.id !== u.doc._id);
+          this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
           this.deleteDialog.close();
           this.selection.clear();
+          this.removeDeleatedUserIdfromShelf(user._id);
           this.planetMessageService.showMessage('User deleted: ' + user.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+      });
     };
+  }
+
+  removeDeleatedUserIdfromShelf(idShouldBeRemove) {
+    this.couchService.allDocs('shelf').subscribe(shelfUser => {
+      shelfUser.forEach(user => {
+        if ('myTeamIds' in user) {
+          user.myTeamIds = user.myTeamIds.filter(userIds => {
+            return userIds !== idShouldBeRemove;
+        });
+          this.couchService.put('shelf/' + user._id + '?rev=' + user._rev, user).subscribe(data => {});
+        }
+      });
+    });
   }
 
   setRoles(user, roles) {
