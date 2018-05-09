@@ -16,6 +16,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 export class CoursesStepComponent implements OnChanges {
 
   @Input() stepInfo: any = {
+    id: '',
     stepTitle: '',
     description: '',
     attachment: ''

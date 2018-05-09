@@ -110,7 +110,6 @@ curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/shelf
 
 # Add or update design docs
-upsert_doc courses _design/course-validators @./design/courses/course-validators.json
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
@@ -127,3 +126,8 @@ SECURITY=$(add_security_admin_roles ./design/security-update/security-update.jso
 multi_db_update $SECURITY _security
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
+
+# Make user database public
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'
+# Specify user public fields (note: adding spaces to string breaks upsert_doc)
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/public_fields '"name,firstName,middleName,lastName,roles,isUserAdmin,joinDate,email,phoneNumber,gender"'

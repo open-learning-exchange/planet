@@ -78,6 +78,9 @@ export class CoursesAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
+        data.steps.forEach(step => {
+          step['id'] = this.uniqueIdOfStep();
+        });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
         if (!storedCourse.form) {
@@ -98,6 +101,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   updateCourse(courseInfo) {
+    this.deleteStepIdProperty();
     this.couchService.put(
       this.dbName + '/' + this.documentInfo.id,
       { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
@@ -127,6 +131,9 @@ export class CoursesAddComponent implements OnInit {
 
   addCourse(courseInfo) {
     // ...is the rest syntax for object destructuring
+    // By deleting the id property, ngFor trackBy will break
+    // If user is not rerouted after update moving steps will no longer work
+    this.deleteStepIdProperty();
     this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
       this.navigateBack();
       this.planetMessageService.showMessage('New Course Added');
@@ -136,12 +143,24 @@ export class CoursesAddComponent implements OnInit {
     });
   }
 
+  deleteStepIdProperty() {
+    this.steps.forEach(step => {
+      delete step.id;
+    });
+  }
+
   addStep() {
     this.steps.push({
+      id: this.uniqueIdOfStep(),
       stepTitle: '',
       description: '',
       attachment: ''
     });
+  }
+
+  uniqueIdOfStep() {
+    // Highly unlikely random numbers will not be unique for practical amount of course steps
+    return '_' + Math.random().toString(36).substr(2, 9);
   }
 
   navigateBack() {
@@ -153,7 +172,6 @@ export class CoursesAddComponent implements OnInit {
     this.coursesService.returnUrl = this.router.url;
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
     this.coursesService.stepIndex = stepIndex;
-    this.router.navigate([ '/courses/exam' ]);
   }
 
   removeStep(pos) {
@@ -167,7 +185,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   stepTrackByFn(index, item) {
-    return index;
+    return item.id;
   }
 
 }

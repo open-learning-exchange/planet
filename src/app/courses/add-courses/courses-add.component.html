@@ -9,7 +9,7 @@
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" novalidate>
+    <form [formGroup]="courseForm" novalidate>
       <mat-form-field class="full-width">
         <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
         <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
@@ -52,10 +52,6 @@
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Method" formControlName="method">
       </mat-form-field>
-      <div>
-        <button type="submit" mat-raised-button color="primary" i18n>Submit</button>
-        <button type="button" mat-raised-button color="warn" (click)="navigateBack()" i18n>Cancel</button>
-      </div>
     </form>
     <div>
       <planet-courses-step
@@ -66,6 +62,10 @@
         [stepCount]="steps.length"
         [stepNum]="i+1"
         (examClick)="addExam($event)"></planet-courses-step>
+    </div>
+    <div>
+      <button type="submit" (click)="onSubmit()" mat-raised-button color="primary" i18n>Submit</button>
+      <button type="button" mat-raised-button color="warn" (click)="navigateBack()" i18n>Cancel</button>
     </div>
   </div>
 </div>

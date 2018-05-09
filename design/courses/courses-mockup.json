@@ -4,112 +4,66 @@
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "OLE Test 1",
-            "memberLimit": "",
+            "memberLimit": 10,
             "courseLeader": [],
             "description": "First test for VIs",
             "method": "",
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
-            "startDate": "",
-            "endDate": "",
-            "day": [
-            ],
-            "startTime": "",
-            "endTime": "",
-            "location": "",
-            "backgroundColor": "",
-            "foregroundColor": "",
             "members": [],
-            "name": "OLE Test 1"
+            "steps": []
          },
          {
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "Git Quiz",
-            "memberLimit": "",
+            "memberLimit": 10,
             "courseLeader": [],
             "description": "Testing basic knowledge about GItHub",
             "method": "",
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
-            "startDate": "",
-            "endDate": "",
-            "day": [
-            ],
-            "startTime": "",
-            "endTime": "",
-            "location": "",
-            "backgroundColor": "",
-            "foregroundColor": "",
             "members": [],
-            "name": "Git Quiz"
+            "steps": []
          },
          {
             "kind": "Course",
             "languageOfInstruction": "",
             "courseTitle": "Test 1",
-            "memberLimit": "",
+            "memberLimit": 2,
             "courseLeader": [],
             "description": "This is used to test skills of Aspiring Virtual Interns",
             "method": "",
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
-            "startDate": "",
-            "endDate": "",
-            "day": [
-                "Friday"
-            ],
-            "startTime": "9:00am",
-            "endTime": "9:30am",
-            "location": "",
-            "backgroundColor": "#000000",
-            "foregroundColor": "",
             "members": [],
-            "name": "Test 1"
+            "steps": []
          },
          {
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "Computer Basics 01",
-            "memberLimit": "20",
+            "memberLimit": 20,
             "courseLeader": [],
             "description": "Computer Basics 01 Sample Course  ",
             "method": "",
             "gradeLevel": "5",
             "subjectLevel": "Beginner",
-            "startDate": "11/03/2017",
-            "endDate": "",
-            "Day": [
-            ],
-            "startTime": "",
-            "endTime": "",
-            "location": "",
-            "backgroundColor": "",
-            "foregroundColor": "",
             "members": [],
-            "name": "Computer Basics 01"
+            "steps": []
          },
          {
             "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "BeLL-Apps",
-            "memberLimit": "",
+            "memberLimit": 1,
             "courseLeader": [],
             "description": "some Videos which will explain BeLL-Apps ...  ",
             "method": "",
             "gradeLevel": "Pre-Kindergarten",
             "subjectLevel": "Beginner",
-            "startDate": "",
-            "endDate": "",
-            "day": [
-            ],
-            "startTime": "",
-            "endTime": "",
-            "location": "",
-            "backgroundColor": "",
-            "foregroundColor": "",
             "members": [],
-            "name": "BeLL-Apps"
+            "steps": []
          }
     ]
 }

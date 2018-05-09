@@ -12,7 +12,6 @@ import { Subject } from 'rxjs/Subject';
   styles: [ `
   .view-container {
     display: grid;
-    height: calc(100vh - 352px);
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "detail view";
   }

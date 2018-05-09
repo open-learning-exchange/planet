@@ -8,12 +8,14 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { LoginFormComponent } from './login-form.component';
 import { LowercaseDirective } from '../shared/lowercase.directive';
+import { ConfigurationGuard } from '../configuration/configuration-guard.service';
 
 @NgModule({
   imports: [
     LoginRouterModule, FormsModule, CommonModule, MaterialModule, ReactiveFormsModule, PlanetFormsModule ],
   declarations: [
     LoginComponent, LoginFormComponent, ConfigurationComponent, LowercaseDirective
-  ]
+  ],
+  providers: [ ConfigurationGuard ]
 })
 export class LoginModule { }
