@@ -11,7 +11,8 @@
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
             "members": [],
-            "steps": []
+            "steps": [],
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -24,7 +25,8 @@
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
             "members": [],
-            "steps": []
+            "steps": [],
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -37,7 +39,8 @@
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
             "members": [],
-            "steps": []
+            "steps": [],
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -50,7 +53,8 @@
             "gradeLevel": "5",
             "subjectLevel": "Beginner",
             "members": [],
-            "steps": []
+            "steps": [],
+            "createdDate": 1505019600000
          },
          {
             "kind": "Course",
@@ -63,7 +67,8 @@
             "gradeLevel": "Pre-Kindergarten",
             "subjectLevel": "Beginner",
             "members": [],
-            "steps": []
+            "steps": [],
+            "createdDate": 1505019600000
          }
     ]
 }
