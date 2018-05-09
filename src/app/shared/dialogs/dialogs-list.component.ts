@@ -3,22 +3,28 @@
  *  list, rendered as a Material table
  */
 
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { MatTableDataSource, MAT_DIALOG_DATA, MatPaginator, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   templateUrl: './dialogs-list.component.html'
 })
-export class DialogsListComponent {
+export class DialogsListComponent implements AfterViewInit {
 
   tableData: any = [];
   tableColumns: string[] = [];
   selection = new SelectionModel(false, []);
+  pageEvent: PageEvent;
+  @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    this.tableData = this.data.tableData;
+    this.tableData = new MatTableDataSource(this.data.tableData)
     this.tableColumns = this.data.columns;
+  }
+
+  ngAfterViewInit() {
+    this.tableData.paginator = this.paginator;
   }
 
   ok() {

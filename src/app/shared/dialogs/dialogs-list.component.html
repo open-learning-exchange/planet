@@ -1,4 +1,4 @@
-<mat-table [dataSource]="tableData">
+<mat-table #table [dataSource]="tableData">
   <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element[column]}}</mat-cell>
@@ -11,6 +11,10 @@
     class="cursor-pointer">
   </mat-row>
 </mat-table>
+<mat-paginator #paginator
+  [pageSize]="5"
+  [pageSizeOptions]="[5, 10, 20]">
+</mat-paginator>
 <mat-dialog-actions>
   <button mat-button (click)="ok()" [disabled]="!selection.hasValue()" i18n>OK</button>
   <button mat-button mat-dialog-close i18n>Cancel</button>
