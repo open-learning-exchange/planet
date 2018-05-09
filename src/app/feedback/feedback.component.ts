@@ -90,51 +90,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     };
   }
 
-  reply(feedback) {
-    const title = 'Reply to: ' + feedback.owner;
-    const type = 'feedback';
-    const fields =
-      [
-        {
-          'label': 'Message',
-          'type': 'textarea',
-          'name': 'message',
-          'placeholder': 'Leave a comment',
-          'required': true
-        }
-      ];
-    const formGroup = {
-      id: [ feedback._id ],
-      replyTo: [ feedback.owner ],
-      message: [ '', Validators.required ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.addMessageToFeedback(res);
-        }
-      });
-  }
-
-  addMessageToFeedback(feedback) {
-    const messages = [];
-    this.couchService.get(this.dbName + '/' + feedback.id)
-      .subscribe((data) => {
-        data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.user.name });
-        let reopen = { };
-        if (data.status === 'Closed') {
-          reopen = { status: 'Reopened', closeTime: '' };
-        }
-        this.couchService.put(this.dbName + '/' + data._id, {  ...data, ...reopen })
-        .subscribe(() => {
-          this.planetMessageService.showMessage('Reply success.');
-          this.getFeedback();
-        }, (error) => this.message = '');
-      }, (error) => this.message = 'There is a problem of getting data.');
-  }
-
   closeFeedback(feedback: any) {
     const updateFeedback =  { ...feedback, 'closeTime': Date.now(),  'status': 'Closed' };
     this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
