@@ -129,6 +129,5 @@ upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
 
 # Make user database public
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'
-# Specify user public fields
-#upsert_doc is not working for String array
-curl -H 'Content-Type: application/json' -X PUT $COUCHURL/_node/nonode@nohost/_config/couch_httpd_auth/public_fields -d '"name, firstName, middleName, lastName, roles, isUserAdmin, joinDate, email, phoneNumber, gender"'
+# Specify user public fields (note: adding spaces to string breaks upsert_doc)
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/public_fields '"name,firstName,middleName,lastName,roles,isUserAdmin,joinDate,email,phoneNumber,gender"'
