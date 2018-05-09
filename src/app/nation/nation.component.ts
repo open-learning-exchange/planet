@@ -108,22 +108,15 @@ export class NationComponent implements OnInit, AfterViewInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  view(url) {
-    if (url) {
-      this.couchService.allDocs('configurations', { domain: url })
-        .debug('Request data from external planet')
-        .subscribe((res: any) => {
-          this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
-            width: '600px',
-            data: {
-              allData : res.length > 0 ? res[0] : [],
-              title : res.length > 0 && res[0].planetType === 'nation' ? 'Nation Details' : 'Community Details'
-             }
-          });
-        }, (error) => this.planetMessageService.showAlert('There was a problem getting parent details'));
-    } else {
-      this.planetMessageService.showAlert('There was a problem getting parent details');
-    }
+  view(planet) {
+    this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+      width: '600px',
+      autoFocus: false,
+      data: {
+        allData: planet,
+        title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
+      }
+    });
   }
 
   onFilterChange(filterValue: string, field: string) {

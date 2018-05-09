@@ -19,7 +19,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-  </mat-toolbar-row>  
+  </mat-toolbar-row>
 </mat-toolbar>
 
 <div class="space-container">
@@ -28,7 +28,7 @@
       <span i18n>Your Current Lists of {{ parentType === 'nation' ? 'Nation' : 'Community' }}</span>
       <span class="toolbar-fill"></span>
     </mat-toolbar-row>
-  </mat-toolbar>  
+  </mat-toolbar>
   <mat-table #table [dataSource]="nations" matSort>
     <!-- Name Column -->
     <ng-container matColumnDef="name">
@@ -54,7 +54,7 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button mat-raised-button color="primary" (click)="view(element.localDomain)" i18n>View</button>
+        <button mat-raised-button color="primary" (click)="view(element)" i18n>View</button>
         <button *ngIf="parentType === 'nation'" mat-raised-button color="primary" (click)="communityList(element.name)" i18n> Communities </button>
         <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n> Delete </button>
       </mat-cell>
@@ -63,4 +63,4 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
-</div>  
+</div>
