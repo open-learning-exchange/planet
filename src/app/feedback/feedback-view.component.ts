@@ -104,7 +104,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   scrollToBottom() {
-    this.chatListElement.nativeElement.scrollTo({ left: 0, top: this.chatListElement.nativeElement.scrollHeight, behavior: 'smooth' });
+    this.chatListElement.nativeElement.scrollTo({ top: this.chatListElement.nativeElement.scrollHeight, behavior: 'smooth' });
   }
 
 }
