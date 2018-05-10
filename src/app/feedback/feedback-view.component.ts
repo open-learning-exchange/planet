@@ -7,6 +7,7 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -19,12 +20,14 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   user: any = {};
   newMessage = '';
   isActive = true;
+  editTitleMode = false;
   @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
+    private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService
   ) {}
 
@@ -56,7 +59,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   postMessage() {
-    const newFeedback = Object.assign({}, this.feedback);
+    let reopen = {};
+    if (this.feedback.status === 'Closed') {
+      reopen = { status: 'Reopened', closeTime: '' };
+    }
+    const newFeedback = Object.assign({}, this.feedback, reopen);
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
     newFeedback.messages = [].concat(this.feedback.messages, { message: this.newMessage, user: this.user.name, time: Date.now() });
     this.couchService.put(this.dbName + '/' + this.feedback._id, newFeedback)
@@ -65,6 +72,19 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         return this.getFeedback(res.id);
       }))
       .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
+  }
+
+  editTitle(mode) {
+    this.editTitleMode = mode;
+  }
+
+  setTitle() {
+    this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
+      () => {
+        this.editTitleMode = false;
+      },
+      error => this.planetMessageService.showAlert('There was an error changing title')
+    );
   }
 
   setCouchListener(id) {

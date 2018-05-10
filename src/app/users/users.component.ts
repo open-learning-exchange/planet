@@ -4,13 +4,15 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { filterSpecificFields } from '../shared/table-helpers';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './users.component.html',
@@ -30,10 +32,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
-
+  deleteDialog: any;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'intern', 'learner', 'teacher' ];
-  selectedRole = '';
+  roleList: string[] = [ 'learner', 'leader' ];
+  selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + this.dbName + '/';
@@ -41,6 +43,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   private onDestroy$ = new Subject<void>();
 
   constructor(
+    private dialog: MatDialog,
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
@@ -93,9 +96,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   initializeData() {
+    const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().debug('Getting user list').subscribe(users => {
-      users = users.docs.map((user: any) => {
+      users = users.docs.filter((user: any) => {
+        // Removes current user from list.  Users should not be able to change their own roles,
+        // so this protects from that.  May need to unhide in the future.
+        if (currentLoginUser !== user.name) {
+          return user;
+        }
+      }).map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -103,11 +113,42 @@ export class UsersComponent implements OnInit, AfterViewInit {
         return userInfo;
       });
       this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
+      this.allUsers.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
       console.log(error);
     });
+  }
+
+  deleteClick(user) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteUser(user),
+        amount: 'single',
+        changeType: 'delete',
+        type: 'user',
+        displayName: user.name
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+      this.message = '';
+    });
+  }
+
+  deleteUser(user) {
+    // Return a function with user on its scope to pass to delete dialog
+    return () => {
+      this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev)
+        .subscribe((data) => {
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.allUsers.data = this.allUsers.data.filter((u: any) => data.id !== u.doc._id);
+          this.deleteDialog.close();
+          this.selection.clear();
+          this.planetMessageService.showMessage('User deleted: ' + user.name);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+    };
   }
 
   setRoles(user, roles) {
@@ -151,14 +192,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  roleSubmit(users: any[], role: string) {
+  roleSubmit(users: any[], roles: string[]) {
     forkJoin(users.reduce((observers, userInfo) => {
       const user = userInfo.doc;
       // Do not add role if it already exists on user and also not allow an admin to be given another role
-      if (user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
+      if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const tempUser = { ...user, roles: [ ...user.roles ] };
-        tempUser.roles.push(role);
+        const newRoles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+        const tempUser = { ...user, roles: newRoles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
@@ -167,9 +208,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
     .subscribe((responses) => {
       users.map((userInfo) => {
         const user = userInfo.doc;
-        if (user.roles.indexOf(role) === -1 && user.isUserAdmin === false) {
+        if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles.push(role);
+          user.roles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
         }
@@ -192,28 +233,37 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
       this.userService.setShelf({ ...userShelf, _rev: res.rev, myTeamIds });
 
-      this.planetMessageService.showAlert(msg + ' your shelf');
+      this.planetMessageService.showMessage(msg + ' your shelf');
     }, (error) => (error));
   }
 
   addTeams(users) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = users.map((data) => {
-      return data._id || data.doc._id;
+      return data.doc._id;
     }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
-    const msg = (myTeamIds.length === 1 ? 'User' : 'Users') + ' added to';
+    const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
+    const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
+    const msg = (users.length === 1 && addedNum === 1 ?
+      users[0].doc.name + ' has been'
+      : addedNum + ' ' + subjectVerbAgreement + ' been')
+      + ' added to';
     this.updateShelf(myTeamIds, userShelf, msg);
   }
 
-  removeTeam(teamId) {
+  removeTeam(teamId, userName) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = [ ...userShelf.myTeamIds ];
     myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    this.updateShelf(myTeamIds, userShelf, 'User removed from ');
+    this.updateShelf(myTeamIds, userShelf, userName + ' has been removed from');
   }
 
   back() {
     this.router.navigate([ '/' ]);
+  }
+
+  updateSelectedRoles(newSelection: string[]) {
+    this.selectedRoles = newSelection;
   }
 
 }

@@ -23,7 +23,7 @@ echo "Building db-init for ${ARCH}"
 
 if [[ "${ACT}" == "install" ]]; then
   apt-get update -qq
-  apt-get install -y curl
+  apt-get install -y curl gnupg
   curl -sL https://deb.nodesource.com/setup_6.x | bash -
   apt-get install -y nodejs build-essential ${PACKAGES}
   npm install "--arch=${TRIPLE}" -g add-cors-to-couchdb

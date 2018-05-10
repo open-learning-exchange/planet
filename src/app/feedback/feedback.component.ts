@@ -38,6 +38,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
+    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
@@ -84,55 +85,23 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted feedback.');
+          this.planetMessageService.showMessage('You have deleted feedback.');
         }, (error) => this.deleteDialog.componentInstance.message = 'There is a problem deleting this feedback.');
     };
-  }
-
-  reply(feedback) {
-    const title = 'Reply to: ' + feedback.owner;
-    const type = 'feedback';
-    const fields =
-      [
-        {
-          'label': 'Message',
-          'type': 'textarea',
-          'name': 'message',
-          'placeholder': 'Leave a comment',
-          'required': true
-        }
-      ];
-    const formGroup = {
-      id: [ feedback._id ],
-      replyTo: [ feedback.owner ],
-      message: [ '', Validators.required ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.addMessageToFeedback(res);
-        }
-      });
-  }
-
-  addMessageToFeedback(feedback) {
-    const messages = [];
-    this.couchService.get(this.dbName + '/' + feedback.id)
-      .subscribe((data) => {
-        data.messages.push({ 'message': feedback.message, 'time': Date.now(), 'user': this.user.name });
-        this.couchService.put(this.dbName + '/' + data._id, {  ...data })
-        .subscribe(() => {
-          this.planetMessageService.showMessage('Reply success.');
-        }, (error) => this.message = '');
-      }, (error) => this.message = 'There is a problem of getting data.');
   }
 
   closeFeedback(feedback: any) {
     const updateFeedback =  { ...feedback, 'closeTime': Date.now(),  'status': 'Closed' };
     this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
       this.planetMessageService.showMessage('You closed this feedback.');
+      this.getFeedback();
+    },  (err) => console.log(err));
+  }
+
+  openFeedback(feedback: any) {
+    const updateFeedback =  { ...feedback, closeTime: '',  status: 'Reopened' };
+    this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
+      this.planetMessageService.showMessage('You re-opened this feedback.');
       this.getFeedback();
     },  (err) => console.log(err));
   }

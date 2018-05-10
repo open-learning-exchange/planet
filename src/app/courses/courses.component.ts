@@ -74,10 +74,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses().subscribe((courses: any) => {
+      // Sort in descending createdDate order, so the new courses can be shown on the top
+      courses.sort((a, b) => b.createdDate - a.createdDate);
       this.userShelf = this.userService.getUserShelf();
       this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+    this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
@@ -161,7 +164,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showAlert('Course deleted: ' + course.courseTitle);
+          this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
@@ -172,12 +175,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-        .subscribe((data) => {
-          this.getCourses();
-          this.selection.clear();
-          this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted selected courses');
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+      .pipe(switchMap(data => {
+        return this.getCourses();
+      })).subscribe((data: any) => {
+        this.setupList(data, this.userShelf.courseIds);
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted selected courses');
+      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }
 
@@ -229,7 +234,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
       this.setupList(this.courses.data,  this.userShelf.courseIds);
-      this.planetMessageService.showAlert(message);
+      this.planetMessageService.showMessage(message);
+      // Clear selection because setupList breaks Material Table selection
+      this.selection.clear();
     }, (error) => (error));
   }
 

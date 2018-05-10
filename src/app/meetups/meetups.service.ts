@@ -79,7 +79,7 @@ export class MeetupService {
         this.userShelf._rev = res.rev;
         this.userService.setShelf(this.userShelf);
         const msg = participate ? 'left' : 'joined';
-        this.planetMessageService.showAlert('You have ' + msg + ' selected meetup.');
+        this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
   }
 

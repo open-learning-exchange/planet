@@ -42,6 +42,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.nations.filterPredicate = filterDropdowns(this.filter);
     this.getNationList();
+    this.nations.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
@@ -89,7 +90,7 @@ export class NationComponent implements OnInit, AfterViewInit {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
           this.deleteDialog.close();
-          this.planetMessageService.showAlert('You have deleted nation: ' + nation.name);
+          this.planetMessageService.showMessage('You have deleted nation: ' + nation.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };
   }
@@ -107,21 +108,15 @@ export class NationComponent implements OnInit, AfterViewInit {
       }, (error) => this.message = 'There was a problem getting NationList');
   }
 
-  view(url) {
-    if (url) {
-      this.http.jsonp('http://' + url + '/configurations/_all_docs?include_docs=true&callback=JSONP_CALLBACK', 'callback')
-      .debug('jsonp request to external nation')
-      .subscribe((res: any) => {
-        this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
-          data: {
-            allData : res.rows.length > 0 ? res.rows[0].doc : [],
-            title : 'Nation Details'
-          }
-        });
-      });
-    } else {
-      this.message = 'There is no data.';
-    }
+  view(planet) {
+    this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+      width: '600px',
+      autoFocus: false,
+      data: {
+        allData: planet,
+        title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
+      }
+    });
   }
 
   onFilterChange(filterValue: string, field: string) {

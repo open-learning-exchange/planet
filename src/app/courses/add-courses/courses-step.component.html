@@ -24,9 +24,12 @@
       </textarea>
     </mat-form-field>
   </form>
+  <div *ngIf="attachment"><span i18n>Attached {attachment.type, select, resources {resource}}:</span> {{attachment.doc.title}}</div>
   <mat-action-row>
+    <a mat-raised-button color="primary" (click)="addExam(stepNum)">Add exam</a>
+    <button mat-raised-button color="primary" (click)="attachItem('resources')">Add Resource</button>
     <button mat-icon-button *ngIf="stepNum !== 1" (click)="moveUp()"><mat-icon>arrow_upward</mat-icon></button>
     <button mat-icon-button *ngIf="stepCount !== stepNum" (click)="moveDown()"><mat-icon>arrow_downward</mat-icon></button>
-    <button mat-icon-button><mat-icon (click)="deleteStep()">delete</mat-icon></button>
+    <button mat-icon-button (click)="deleteStep()"><mat-icon>delete</mat-icon></button>
   </mat-action-row>
 </mat-expansion-panel>
