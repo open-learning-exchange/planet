@@ -60,7 +60,8 @@ export class CoursesStepComponent implements OnChanges {
       const data = { okClick: this.dialogOkClick(db).bind(this), ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
-        height: '400px'
+        height: '500px',
+        width: '600px'
       });
     });
   }

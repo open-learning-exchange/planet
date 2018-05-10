@@ -12,14 +12,14 @@ import { SelectionModel } from '@angular/cdk/collections';
 })
 export class DialogsListComponent implements AfterViewInit {
 
-  tableData: any = [];
+  tableData = new MatTableDataSource();
   tableColumns: string[] = [];
   selection = new SelectionModel(false, []);
   pageEvent: PageEvent;
   @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    this.tableData = new MatTableDataSource(this.data.tableData)
+    this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
   }
 
@@ -29,6 +29,10 @@ export class DialogsListComponent implements AfterViewInit {
 
   ok() {
     this.data.okClick(this.selection.selected[0]);
+  }
+
+  applyFilter(filterValue: string) {
+    this.tableData.filter = filterValue;
   }
 
 }
