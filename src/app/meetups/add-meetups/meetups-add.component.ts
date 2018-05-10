@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
+import * as moment from 'moment';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -40,12 +41,14 @@ export class MeetupsAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
+        data.startDate = moment(data.startDate).format('YYYY-MM-DD');
+        data.endDate = moment(data.endDate).format('YYYY-MM-DD');
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
         this.meetupForm.patchValue(data);
       }, (error) => {
-        console.log(error);
+        console.log('This is error' + error);
       });
     }
   }
@@ -54,27 +57,32 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', Validators.required ],
       description: [ '', Validators.required ],
-      startDate: [ '',
-      Validators.compose([
+      startDate: [ '', Validators.compose([
         CustomValidators.dateValidator,
-        CustomValidators.notDateInPast
-        ])
-      ],
+        Validators.required
+        ]) ],
       endDate: [
         '',
         Validators.compose([
           // we are using a higher order function so we  need to call the validator function
           CustomValidators.endDateValidator(),
-          CustomValidators.dateValidator
+          CustomValidators.dateValidator,
+          Validators.required
         ])
       ],
       recurring: 'none',
-      startTime: [ '', CustomValidators.timeValidator ],
+      startTime: [
+        '', Validators.compose([
+        CustomValidators.timeValidator,
+        Validators.required
+        ])
+      ],
       endTime: [
         '',
         Validators.compose([
           CustomValidators.endTimeValidator(),
-          CustomValidators.timeValidator
+          CustomValidators.timeValidator,
+          Validators.required
         ])
       ],
       category: '',
@@ -100,7 +108,8 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   updateMeetup(meetupeInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision }).subscribe(() => {
+    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision,
+     'startDate': this.getTimestamp(meetupeInfo.startDate), 'endDate': this.getTimestamp(meetupeInfo.endDate) }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup Updated Successfully');
     }, (err) => {
@@ -110,7 +119,8 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   addMeetup(meetupInfo) {
-    this.couchService.post(this.dbName, { ...meetupInfo }).subscribe(() => {
+    this.couchService.post(this.dbName, { ...meetupInfo, 'startDate': this.getTimestamp(meetupInfo.startDate),
+     'endDate': this.getTimestamp(meetupInfo.endDate) }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup created');
     }, (err) => console.log(err));
@@ -118,6 +128,13 @@ export class MeetupsAddComponent implements OnInit {
 
   cancel() {
     this.router.navigate([ '/meetups' ]);
+  }
+
+  getTimestamp(date) {
+    const myDate = date.split('-');
+    const day = (parseInt(myDate[2], 10) + 1);
+    const d = new Date(myDate[0], myDate[1] - 1, day);
+    return d.setTime((d.getTime() + d.getTimezoneOffset() * 60 * 1000));
   }
 
 }
