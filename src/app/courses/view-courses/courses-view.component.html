@@ -31,8 +31,8 @@
               {{step.stepTitle || 'Step ' + stepNum}}
             </mat-panel-title>
             <mat-panel-description>
-              <!-- TODO: show icons based on what step contains such as resource/test -->
-              <mat-icon>attach_file</mat-icon>
+              <mat-icon *ngIf="step.attachment">attach_file</mat-icon>
+              <mat-icon *ngIf="step.exam">assignment</mat-icon>
             </mat-panel-description>
           </mat-expansion-panel-header>
           {{step.description}}
