@@ -178,7 +178,7 @@ create_multiarch_manifest_planet(){
         build_message Creating Planet Multiarch Manifest for Latest
         # $1: latest arm
         # $2: latest amd64        
-        yq n image treehouses/planet-multi:latest | \
+        yq n image treehouses/planet:latest | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
@@ -196,7 +196,7 @@ create_multiarch_manifest_planet(){
         build_message Creating Planet Multiarch Manifest for Versioned.
         # $3: versioned arm
         # $4: versioned amd64
-        yq n image treehouses/planet-multi:$VERSION | \
+        yq n image treehouses/planet:$VERSION | \
         yq w - manifests[0].image $3 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
@@ -216,7 +216,7 @@ create_multiarch_manifest_dbinit(){
         build_message Creating Multiarch Manifest for db-init
         # $1: db-init arm
         # $2: db-init amd64        
-        yq n image treehouses/planet-multi:db-init | \
+        yq n image treehouses/planet:db-init | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
@@ -234,7 +234,7 @@ create_multiarch_manifest_dbinit(){
         build_message Creating Multiarch Manifest for db-init Versioned
         # $3: db-init versioned arm
         # $4: db-init versioned amd64
-        yq n image treehouses/planet-multi:db-init-$VERSION | \
+        yq n image treehouses/planet:db-init-$VERSION | \
         yq w - manifests[0].image $3 | \
         yq w - manifests[0].platform.architecture arm | \
         yq w - manifests[0].platform.os linux | \
