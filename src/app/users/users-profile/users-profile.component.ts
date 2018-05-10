@@ -92,7 +92,7 @@ export class UsersProfileComponent implements OnInit {
           return of({ ok: false, reason: 'Error changing password in parent planet' });
         }),
         switchMap((data) => {
-          if(data.ok === false) {
+          if (data.ok === false) {
             return of({ ok: false, reason: 'Error changing password in parent planet' });
           }
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
@@ -118,7 +118,7 @@ export class UsersProfileComponent implements OnInit {
     return forkJoin([
       this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
       this.couchService.post('_session', { 'name': username, 'password': password },
-        {withCredentials: true, domain: this.userService.getConfig().parentDomain })
+        { withCredentials: true, domain: this.userService.getConfig().parentDomain })
     ]);
   }
 
