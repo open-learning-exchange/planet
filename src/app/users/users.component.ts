@@ -129,23 +129,24 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   deleteUser(user) {
+    const userId = 'org.couchdb.user:' + user.name;
+    /* RemoveTeam is already updating userServiceShelf but it is also display removed from team message
+    if(user.myTeamInfo) {
+      this.removeTeam(userId);
+    }
+    */
     // Return a function with user on its scope to pass to delete dialog
     return () => {
-      this.couchService.allDocs('shelf').pipe(map((data: any) => {
-        return data.map((shelfUser: any) => {
-          return shelfUser;
-        }).filter((filteruser: any) => {
-          return filteruser._id === user._id;
-        });
-    })).subscribe(mydata => {
-      forkJoin([ this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev),
-       this.couchService.delete('shelf/org.couchdb.user:' + user.name + '?rev=' + mydata[0]._rev)
-      ]).subscribe((data) => {
+      this.couchService.get('shelf/' + userId).subscribe(shelfUser => {
+        forkJoin([
+          this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+          this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
+        ]).subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.removeDeleatedUserIdfromShelf(user._id);
+          this.removeDeleatedUserIdfromShelf(userId);
           this.planetMessageService.showMessage('User deleted: ' + user.name);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
       });
@@ -153,15 +154,30 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   removeDeleatedUserIdfromShelf(idShouldBeRemove) {
+    const myUserId = '_users/org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('shelf').subscribe(shelfUser => {
-      shelfUser.forEach(user => {
-        if ('myTeamIds' in user) {
-          user.myTeamIds = user.myTeamIds.filter(userIds => {
-            return userIds !== idShouldBeRemove;
-        });
-          this.couchService.put('shelf/' + user._id + '?rev=' + user._rev, user).subscribe(data => {});
+      shelfUser.map(shelf => {
+        const myTeamIds = [ ...shelf.myTeamIds ] || [];
+        if(myTeamIds.indexOf(idShouldBeRemove)) {
+          myTeamIds.splice(myTeamIds.indexOf(idShouldBeRemove), 1);
+          this.couchService.put('shelf/' + shelf.get()._id, { ...shelf, myTeamIds }).subscribe(res => {
+            // This code will not be required if we call removeTeam
+            if(res._id === myUserId) {
+              this.userService.setShelf({ ...shelf, _rev: res.rev, myTeamIds });
+            }
+          });
+          
         }
       });
+      /* This code is updating or all users which is not right
+      shelfUser.forEach(shelf => {
+        if ('myTeamIds' in shelf) {
+          shelf.myTeamIds = shelf.myTeamIds.filter(userIds => {
+            return userIds !== idShouldBeRemove;
+          });
+          this.couchService.put('shelf/' + user._id + '?rev=' + user._rev, user).subscribe(data => {});
+        }
+       }); */
     });
   }
 
