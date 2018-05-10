@@ -57,11 +57,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    if (this.isUserAdmin) {
+    if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
     } else {
-      // A non-admin user cannot receive all user docs
-      this.planetMessageService.showAlert('Access restricted to admins');
+      // Inactive users cannot receive all user docs
+      this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
     }
   }
 
