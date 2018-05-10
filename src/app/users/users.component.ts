@@ -157,27 +157,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const myUserId = '_users/org.couchdb.user:' + this.userService.get().name;
     this.couchService.allDocs('shelf').subscribe(shelfUser => {
       shelfUser.map(shelf => {
-        const myTeamIds = [ ...shelf.myTeamIds ] || [];
-        if(myTeamIds.indexOf(idShouldBeRemove)) {
+        if ('myTeamIds' in shelf) {
+          const myTeamIds = [ ...shelf.myTeamIds ] || [];
           myTeamIds.splice(myTeamIds.indexOf(idShouldBeRemove), 1);
-          this.couchService.put('shelf/' + shelf.get()._id, { ...shelf, myTeamIds }).subscribe(res => {
+          this.couchService.put('shelf/' + shelf._id, { ...shelf, myTeamIds }).subscribe(res => {
             // This code will not be required if we call removeTeam
-            if(res._id === myUserId) {
+            if (res._id === myUserId) {
               this.userService.setShelf({ ...shelf, _rev: res.rev, myTeamIds });
             }
           });
-          
         }
       });
-      /* This code is updating or all users which is not right
-      shelfUser.forEach(shelf => {
-        if ('myTeamIds' in shelf) {
-          shelf.myTeamIds = shelf.myTeamIds.filter(userIds => {
-            return userIds !== idShouldBeRemove;
-          });
-          this.couchService.put('shelf/' + user._id + '?rev=' + user._rev, user).subscribe(data => {});
-        }
-       }); */
     });
   }
 
