@@ -24,11 +24,11 @@
       <p i18n>Description: {{courseDetail.description}}</p>
     </div>
     <div class="course-view">
-      <ng-container *ngFor="let step of courseDetail.steps">
+      <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
         <mat-expansion-panel hideToggle="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              {{step.stepTitle || 'Step ' + stepNum}}
+              {{step.stepTitle || 'Step ' + (stepNum + 1)}}
             </mat-panel-title>
             <mat-panel-description>
               <!-- TODO: show icons based on what step contains such as resource/test -->
