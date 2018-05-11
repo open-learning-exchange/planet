@@ -67,8 +67,18 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
+        const rows = this.selection.selected;
+        const rIds = rows.map(data => {
+          return data._id;
+        });
         this.userShelf = this.userService.getUserShelf();
         this.setupList(this.courses.data, this.userShelf.courseIds);
+        this.selection.clear();
+        this.courses.data.forEach(row => {
+          if (rIds.indexOf(row['_id']) > -1) {
+            this.selection.select(row);
+          }
+        });
       });
    }
 
@@ -233,10 +243,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
-      this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
-      // Clear selection because setupList breaks Material Table selection
-      this.selection.clear();
     }, (error) => (error));
   }
 
