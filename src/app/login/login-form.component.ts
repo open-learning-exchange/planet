@@ -22,7 +22,7 @@ const repeatPassword = {
 };
 
 const loginForm = {
-  name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9]+$/i) ] ],
+  name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
   password: [ '', Validators.required ]
 };
 
