@@ -10,7 +10,8 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 
-const repeatPassword = {
+const registerForm = {
+  name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
   password: [ '', Validators.compose([
     Validators.required,
     CustomValidators.matchPassword('repeatPassword', false)
@@ -22,7 +23,7 @@ const repeatPassword = {
 };
 
 const loginForm = {
-  name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
+  name: [ '', Validators.required ],
   password: [ '', Validators.required ]
 };
 
@@ -40,7 +41,7 @@ export class LoginFormComponent {
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService
   ) {
-    const formObj = this.createMode ? Object.assign({}, loginForm, repeatPassword) : loginForm;
+    const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
 
