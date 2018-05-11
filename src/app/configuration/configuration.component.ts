@@ -64,7 +64,11 @@ export class ConfigurationComponent implements OnInit {
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
       localDomain: this.defaultLocal,
-      name: [ '', Validators.required ],
+      name: [
+        '',
+        Validators.required,
+        ac => this.validatorService.isUnique$('communityregistrationrequests', 'name', ac, { domainControl: 'parentDomain' })
+      ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [ '', Validators.required ],
