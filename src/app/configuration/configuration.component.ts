@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -71,7 +71,11 @@ export class ConfigurationComponent implements OnInit {
       ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ],
+      code: [
+        '',
+        Validators.required,
+        ac => this.validatorService.isUnique$('communityregistrationrequests', 'code', ac, { domainControl: 'parentDomain' })
+      ],
       createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
@@ -106,6 +110,15 @@ export class ConfigurationComponent implements OnInit {
     this.isAdvancedOptionConfirmed = false;
     this.isAdvancedOptionsChanged = false;
     this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
+  }
+
+  planetNameChange(event) {
+    let code = this.configurationFormGroup.get('name').value;
+    // convert special character to dot except last character
+    code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
+    // skip special character if comes as last character
+    code = code.replace(/\W+$/, '').toLowerCase();
+    this.configurationFormGroup.get('code').setValue(code);
   }
 
   getNationList() {
