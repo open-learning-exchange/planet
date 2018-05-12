@@ -1,5 +1,5 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
-  <mat-step [stepControl]="loginForm">
+  <mat-step *ngIf="!configurationType === 'update'" [stepControl]="loginForm" [optional]="configurationType === 'update'">
     <ng-template matStepLabel i18n>Create Admin</ng-template>
     <form [formGroup]="loginForm">
       <mat-form-field>

@@ -6,7 +6,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap  } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
@@ -20,10 +20,12 @@ const removeProtocol = (str: string) => {
 
 @Component({
   selector: 'planet-configuration',
-  templateUrl: './configuration.component.html'
+  templateUrl: './configuration.component.html',
+  styleUrls: [ './configuration.styles.css' ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
+  configurationType = 'new'
   nationOrCommunity = 'community';
   message = '';
   loginForm: FormGroup;
@@ -40,10 +42,18 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    if(this.route.snapshot._routerState.url.split('/')[3]==='update'){
+      //this.stepper.next(); //this causes a cannot read length of undefined.
+      this.configurationType = 'update';
+      //this.stepper.selectedIndex = 1;
+      console.log(this.stepper.selectedIndex)
+    }
+
     this.loginForm = this.formBuilder.group({
       name: [ '', Validators.required ],
       password: [
@@ -165,5 +175,12 @@ export class ConfigurationComponent implements OnInit {
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
   }
+
+  onUpdateConfigurations() {
+    if(this.configurationFormGroup.valid && this.contactFormGroup.valid){
+
+    }
+  }
+
 
 }

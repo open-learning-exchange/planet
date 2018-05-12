@@ -1,0 +1,5 @@
+/* this rule does not work as intended*/
+.mat-horizontal-stepper-header-container{
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
