@@ -44,10 +44,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     if (questionNum === this.maxQuestions) {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
+      this.goBack();
     } else {
       this.router.navigate([ '../', this.questionNum + 1 ], { relativeTo: this.route });
     }
+  }
+
+  goBack() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
 }
