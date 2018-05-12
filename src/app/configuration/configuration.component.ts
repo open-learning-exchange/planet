@@ -176,9 +176,9 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  onUpdateConfigurations() {
+  updateConfiguration() {
     if(this.configurationFormGroup.valid && this.contactFormGroup.valid){
-
+      console.log('Hello World')
     }
   }
 

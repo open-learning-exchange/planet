@@ -77,7 +77,7 @@
   </mat-step>
 
   <mat-step [stepControl]="contactFormGroup">
-    <form [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
+    <form [formGroup]="contactFormGroup" (ngSubmit)="configurationType === 'new' ? onSubmitConfiguration() : updateConfiguration()">
       <ng-template matStepLabel i18n>Contact Details</ng-template>
       <div>
         <mat-form-field>

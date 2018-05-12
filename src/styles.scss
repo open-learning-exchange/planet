@@ -323,12 +323,3 @@ body {
   }
 
 }
-
-// The rule below will hide the 1-2-3 in the stepper form
-// I wanted to remove it for Update Configuration, but it only works
-// in this stylesheet not the component specific one. Will try to 
-// find alternate solution. 
-// .mat-horizontal-stepper-header-container{
-//   pointer-events: none !important;
-//   visibility: hidden !important;
-// }
