@@ -2,6 +2,8 @@
  * Centralized component for all form error messages
  * MUST BE WRAPPED IN A mat-error ELEMENT
  * Takes a form control as input and outputs a span element with the error message
+ * NOTE: Pattern validator is only used for username as of v0.1.13
+ * Message will need update if used for other situations
  */
 
 import { Component, Input } from '@angular/core';
@@ -25,6 +27,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidEndTime {End time cannot be before start time}
       dateInPast {Cannot be before current date}
       invalidOldPassword {Old password isn't valid}
+      pattern {Only letters and numbers allowed}
     }</span>
   `
 })
