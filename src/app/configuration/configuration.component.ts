@@ -67,14 +67,14 @@ export class ConfigurationComponent implements OnInit {
       name: [
         '',
         Validators.required,
-        ac => this.validatorService.isUnique$('communityregistrationrequests', 'name', ac, { domainControl: 'parentDomain' })
+        ac => this.validatorService.isUnique$('communityregistrationrequests', 'name', ac, { domain: ac.parent.get('parentDomain').value })
       ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [
         '',
         Validators.required,
-        ac => this.validatorService.isUnique$('communityregistrationrequests', 'code', ac, { domainControl: 'parentDomain' })
+        ac => this.validatorService.isUnique$('communityregistrationrequests', 'code', ac, { domain: ac.parent.get('parentDomain').value })
       ],
       createdDate: Date.now()
     });

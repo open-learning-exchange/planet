@@ -32,15 +32,9 @@ constructor(
     ac: AbstractControl,
     opts: any = {}
   ): Observable<ValidationErrors | null> {
-    const { domainControl, ...tempOpts } = opts;
-    if (ac.parent && domainControl) {
-      const domainCntrl = ac.parent.get(domainControl);
-      tempOpts.domain = domainCntrl.value ;
-    }
-
     // calls service every .5s for input change
     return timer(500).pipe(
-      switchMap(() => this.checkUnique$(dbName, fieldName, ac.value, tempOpts)),
+      switchMap(() => this.checkUnique$(dbName, fieldName, ac.value, opts)),
       map(exists => {
         if (exists) {
           return { duplicate: true };
