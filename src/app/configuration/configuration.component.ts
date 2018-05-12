@@ -67,14 +67,14 @@ export class ConfigurationComponent implements OnInit {
       name: [
         '',
         Validators.required,
-        ac => this.validatorService.isUnique$('communityregistrationrequests', 'name', ac, { domain: ac.parent.get('parentDomain').value })
+        this.parentUniqueValidator('name')
       ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [
         '',
         Validators.required,
-        ac => this.validatorService.isUnique$('communityregistrationrequests', 'code', ac, { domain: ac.parent.get('parentDomain').value })
+        this.parentUniqueValidator('code')
       ],
       createdDate: Date.now()
     });
@@ -92,6 +92,15 @@ export class ConfigurationComponent implements OnInit {
       phoneNumber: [ '', Validators.required ]
     });
     this.getNationList();
+  }
+
+  parentUniqueValidator(controlName: string) {
+    return ac => this.validatorService.isUnique$(
+      'communityregistrationrequests',
+      controlName,
+      ac,
+      { domain: ac.parent.get('parentDomain').value }
+    );
   }
 
   confirmConfigurationFormGroup() {
