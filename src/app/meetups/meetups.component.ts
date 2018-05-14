@@ -47,7 +47,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private meetupService: MeetupService
-  ) { }
+  ) {
+    this.meetupService.updateSelectionClear$.subscribe(() => {
+      this.selection.clear();
+    });
+  }
 
   ngOnInit() {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))

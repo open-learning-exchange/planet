@@ -18,6 +18,8 @@ export class MeetupService {
   meetups = [];
   userShelf = this.userService.getUserShelf();
   private onDestroy$ = new Subject<void>();
+  private updateSelectionClear = new Subject<void>();
+  updateSelectionClear$ = this.updateSelectionClear.asObservable();
 
   constructor(
     private couchService: CouchService,
@@ -72,6 +74,7 @@ export class MeetupService {
       .subscribe((res) => {
         this.userShelf._rev = res.rev;
         this.userService.setShelf(this.userShelf);
+        this.updateSelectionClear.next();
         const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
