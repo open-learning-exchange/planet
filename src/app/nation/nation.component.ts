@@ -86,7 +86,7 @@ export class NationComponent implements OnInit, AfterViewInit {
 
   // Checks response and creates couch call if a doc was returned
   addDeleteObservable(res, db) {
-    if (res.docs > 0) {
+    if (res.docs.length > 0) {
       const doc = res.docs[0];
       return [ this.couchService.delete(db + doc._id + '?rev=' + doc._rev) ];
     }
