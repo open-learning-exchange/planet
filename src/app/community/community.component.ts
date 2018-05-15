@@ -86,8 +86,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           forkJoin([
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
-            // add registrant's information to this database,
-            this.couchService.post('nations', { ...communityInfo, registrationRequest: 'accepted' }),
+            // add registrant's information to the nation database with same id,
+            this.couchService.post('nations/' + communityId, { ...communityInfo, registrationRequest: 'accepted' }),
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
@@ -99,32 +99,30 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
+  // Checks response and creates couch call if a doc was returned
+  addDeleteObservable(res, db) {
+    if (res.docs > 0) {
+      const doc = res.docs[0];
+      return [ this.couchService.delete(db + doc._id + '?rev=' + doc._rev) ];
+    }
+    return [];
+  }
+
   deleteCommunity(community) {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      const { _id: id, _rev: rev, code: communityCode } = community;
+      const { _id: id, _rev: rev } = community;
       forkJoin([
-        this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev),
-        // Find nation with code as registration request code
-        this.couchService.post('nations/_find', { 'selector': { 'code': communityCode } })
-          .pipe(switchMap((nationData) => {
-            if ( !nationData.docs.length ) {
-              return of({ ok: true });
-            }
-            const nation = nationData.docs[0];
-            return this.couchService.delete('nations/' + nation._id + '?rev=' + nation._rev);
-          })),
-        // Find user with requestId as registration Id
-        this.couchService.post('_users/_find', { 'selector': { 'requestId': id } })
-          .pipe(switchMap((userData) => {
-            if ( !userData.docs.length ) {
-              return of({ ok: true });
-            }
-            const user = userData.docs[0];
-            return this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev);
-          }))
-      ]).subscribe((data) => {
+        this.couchService.post('nations/_find', { 'selector': { '_id': id } }),
+        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+      ]).pipe(switchMap(([ nation, user ]) => {
+        const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
+          this.addDeleteObservable(nation, 'nations/'),
+          this.addDeleteObservable(user, '_users/')
+        );
+        return forkJoin(deleteObs);
+      }).subscribe((data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.communities.data = this.communities.data.filter((comm: any) => data[0].id !== comm._id);
         this.editDialog.close();
