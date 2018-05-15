@@ -25,6 +25,11 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     HttpClientJsonpModule,
     PlanetDialogsModule
   ],
-  declarations: [ ConfigurationComponent ]
+  declarations: [
+    ConfigurationComponent
+  ],
+  exports: [
+    ConfigurationComponent
+  ]
 })
 export class ConfigurationModule {}

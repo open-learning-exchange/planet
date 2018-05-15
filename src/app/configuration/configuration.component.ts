@@ -46,7 +46,7 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(this.route.snapshot._routerState.url.split('/')[3]==='update'){
+    if(this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[3]==='update'){
       //this.stepper.next(); //this causes a cannot read length of undefined.
       this.configurationType = 'update';
       //this.stepper.selectedIndex = 1;
