@@ -59,7 +59,10 @@ export class CoursesStepComponent implements OnChanges {
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
       const data = { okClick: this.dialogOkClick(db).bind(this), ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
       });
     });
   }
