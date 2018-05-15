@@ -66,7 +66,6 @@ export class CoursesAddComponent implements OnInit {
           Validators.min(1)
         ])
       ],
-      courseLeader: [ '' ],
       method: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
