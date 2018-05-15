@@ -12,6 +12,7 @@ import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './users.component.html',
@@ -130,45 +131,44 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    /* RemoveTeam is already updating userServiceShelf but it is also display removed from team message
-    if(user.myTeamInfo) {
-      this.removeTeam(userId);
-    }
-    */
     // Return a function with user on its scope to pass to delete dialog
     return () => {
-      this.couchService.get('shelf/' + userId).subscribe(shelfUser => {
-        forkJoin([
-          this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
-          this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
-        ]).subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
+      this.couchService.get('shelf/' + userId).pipe(
+        switchMap(shelfUser => {
+          return forkJoin([
+            this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+            this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
+          ]);
+        }),
+        catchError(() => {
+          this.planetMessageService.showAlert('There was a problem deleting this user.');
+        }),
+        switchMap((data) => {
+          this.planetMessageService.showMessage('User deleted: ' + user.name);
           this.deleteDialog.close();
           this.selection.clear();
-          this.removeDeleatedUserIdfromShelf(userId);
-          this.planetMessageService.showMessage('User deleted: ' + user.name);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
-      });
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
+          return this.removeDeletedUserFromShelves(userId);
+        })
+      ).subscribe(() => { });
     };
   }
 
-  removeDeleatedUserIdfromShelf(idShouldBeRemove) {
-    const myUserId = '_users/org.couchdb.user:' + this.userService.get().name;
-    this.couchService.allDocs('shelf').subscribe(shelfUser => {
-      shelfUser.map(shelf => {
-        if ('myTeamIds' in shelf) {
-          const myTeamIds = [ ...shelf.myTeamIds ] || [];
-          myTeamIds.splice(myTeamIds.indexOf(idShouldBeRemove), 1);
-          this.couchService.put('shelf/' + shelf._id, { ...shelf, myTeamIds }).subscribe(res => {
-            // This code will not be required if we call removeTeam
-            if (res._id === myUserId) {
-              this.userService.setShelf({ ...shelf, _rev: res.rev, myTeamIds });
-            }
-          });
-        }
-      });
-    });
+  removeDeletedUserFromShelves(userId) {
+    const myUserId = 'org.couchdb.user:' + this.userService.get().name;
+    return this.couchService.post('shelf/_find', findDocuments({ 'myTeamIds': { '$in': [ userId ] } })).pipe(
+      map(shelves => {
+        return shelves.docs.map(shelf => {
+          const myTeamIds = [ ...shelf.myTeamIds ];
+          myTeamIds.splice(myTeamIds.indexOf(userId), 1);
+          return { ...shelf, myTeamIds };
+        });
+      }),
+      switchMap(newShelves => {
+        return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
+      })
+    );
   }
 
   setRoles(user, roles) {
