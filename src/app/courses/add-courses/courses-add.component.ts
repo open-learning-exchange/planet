@@ -63,7 +63,7 @@ export class CoursesAddComponent implements OnInit {
         10, // need to compose validators if we use more than one
         Validators.compose([
           CustomValidators.integerValidator,
-          Validators.min(1)
+          CustomValidators.positiveNumberValidator
         ])
       ],
       method: '',
