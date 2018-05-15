@@ -1,16 +1,13 @@
 {
     "docs":[
         {
-            "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "OLE Test 1",
             "memberLimit": 10,
-            "courseLeader": [],
             "description": "First test for VIs",
             "method": "",
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
-            "members": [],
             "steps": [
                 {
                     "stepTitle": "Docker",
@@ -26,16 +23,13 @@
             "createdDate": 1505019600000
         },
         {
-            "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "Git Quiz",
             "memberLimit": 10,
-            "courseLeader": [],
             "description": "Testing basic knowledge about GItHub",
             "method": "",
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
-            "members": [],
             "steps": [
                 {
                     "stepTitle": "Git",
@@ -51,16 +45,13 @@
             "createdDate": 1505019600000
         },
         {
-            "kind": "Course",
             "languageOfInstruction": "",
             "courseTitle": "Test 1",
             "memberLimit": 2,
-            "courseLeader": [],
             "description": "This is used to test skills of Aspiring Virtual Interns",
             "method": "",
             "gradeLevel": "College",
             "subjectLevel": "Beginner",
-            "members": [],
             "steps": [
                 {
                     "stepTitle": "Introductory Steps",
@@ -81,16 +72,13 @@
             "createdDate": 1505019600000
         },
         {
-            "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "Computer Basics 01",
             "memberLimit": 20,
-            "courseLeader": [],
             "description": "Computer Basics 01 Sample Course  ",
             "method": "",
             "gradeLevel": "5",
             "subjectLevel": "Beginner",
-            "members": [],
             "steps": [
                 {
                     "stepTitle": "Your Mouse Can Be a Very Versatile Helper",
@@ -111,16 +99,13 @@
             "createdDate": 1505019600000
         },
         {
-            "kind": "Course",
             "languageOfInstruction": "English",
             "courseTitle": "BeLL-Apps",
             "memberLimit": 1,
-            "courseLeader": [],
             "description": "some Videos which will explain BeLL-Apps ...  ",
             "method": "",
             "gradeLevel": "Pre-Kindergarten",
             "subjectLevel": "Beginner",
-            "members": [],
             "steps": [
                 {
                     "stepTitle": "Angular",
