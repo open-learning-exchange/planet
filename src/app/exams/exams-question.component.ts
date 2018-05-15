@@ -20,11 +20,12 @@ export class ExamsQuestionComponent implements OnInit {
 
   ngOnInit() {
     this.choices = <FormArray>this.questionForm.controls.choices;
-    const questionData = this.question || { choices: [] };
-    questionData.choices.map((ch, i) => {
-      this.addChoice();
-    });
-    this.questionForm.patchValue(questionData);
+    if (this.question.choices) {
+      this.question.choices.map((ch, i) => {
+        this.addChoice();
+      });
+      this.questionForm.patchValue(this.question);
+    }
   }
 
   addChoice() {
