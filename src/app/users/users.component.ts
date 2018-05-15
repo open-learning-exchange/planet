@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { _throw } from 'rxjs/observable/throw';
 import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { findDocuments } from '../shared/mangoQueries';
@@ -140,8 +141,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
             this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
           ]);
         }),
-        catchError(() => {
+        catchError((err) => {
+          // If deleting user fails, do not continue stream and show error
           this.planetMessageService.showAlert('There was a problem deleting this user.');
+          return _throw(err);
         }),
         switchMap((data) => {
           this.planetMessageService.showMessage('User deleted: ' + user.name);
