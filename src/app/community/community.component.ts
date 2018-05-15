@@ -87,7 +87,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
             // add registrant's information to the nation database with same id,
-            this.couchService.post('nations/' + communityId, { ...communityInfo, registrationRequest: 'accepted' }),
+            this.couchService.put('nations/' + communityId, { ...communityInfo, registrationRequest: 'accepted' }),
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
