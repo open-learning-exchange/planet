@@ -14,6 +14,7 @@ import { ResourcesService } from './resources.service';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -53,6 +54,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     'subject': '',
     'level': ''
   };
+  // As of v0.1.13 ResourcesComponent does not have download link available on parent view
+  urlPrefix = environment.couchAddress + this.dbName + '/';
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
