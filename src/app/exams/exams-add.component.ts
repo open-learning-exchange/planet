@@ -68,7 +68,11 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit() {
     if (this.examForm.valid) {
-      this.addExam(this.examForm.value);
+      if (this.route.snapshot.url[0].path === 'update') {
+        this.addExam(this.examForm.value);
+      } else {
+        this.addExam(this.examForm.value);
+      }
     } else {
       Object.keys(this.examForm.controls).forEach(field => {
         const control = this.examForm.get(field);
@@ -83,6 +87,21 @@ export class ExamsAddComponent implements OnInit {
       this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
       this.router.navigate([ this.coursesService.returnUrl ]);
       this.planetMessageService.showMessage('New exam added');
+    }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
+      console.log(err);
+    });
+  }
+
+  updateExam(examInfo) {
+    this.couchService.put(
+      this.dbName + '/' + this.documentInfo.id,
+      { ...examInfo, '_rev': this.documentInfo.rev, steps: this.steps }
+    ).subscribe((res) => {
+      const courseExam = { _id: res.id, _rev: res.rev, ...examInfo };
+      this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
+      this.router.navigate([ this.coursesService.returnUrl ]);
+      this.planetMessageService.showMessage('Exam updated successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
