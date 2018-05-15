@@ -42,7 +42,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private coursesService: CoursesService
+    public coursesService: CoursesService
   ) { }
 
   ngOnInit() {
@@ -61,7 +61,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       this.courseDetail = courseArray[0];
     });
   }
-
 
   ngOnDestroy() {
     this.onDestroy$.next();

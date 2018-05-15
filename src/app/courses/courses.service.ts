@@ -39,7 +39,9 @@ export class CoursesService {
   // Or will get new version if forceLatest set to true
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
     if (!forceLatest && courseId === this.course._id) {
-      this.courseUpdated.next(this.course);
+      const courseArray = [];
+      courseArray[0] = this.course;
+      this.courseUpdated.next(courseArray);
     } else {
       this.getCourse(courseId, opts);
     }
@@ -48,7 +50,9 @@ export class CoursesService {
   private getCourse(courseId: string, opts) {
     this.couchService.get('courses/' + courseId, opts).subscribe(course => {
       this.course = course;
-      this.courseUpdated.next(course);
+      const courseArray = [];
+      courseArray[0] = course;
+      this.courseUpdated.next(courseArray);
     });
   }
 

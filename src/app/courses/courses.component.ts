@@ -66,7 +66,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private coursesService: CoursesService
+    public coursesService: CoursesService
   ) {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((course) => {
