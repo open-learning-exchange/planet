@@ -7,6 +7,12 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
     <span class="toolbar-fill"></span>
+    <button mat-button class="margin-lr-3" (click)="coursesService.admitCourse(courseDetail._id, courseDetail.admission)">
+    <span *ngIf="!parent">
+        <span *ngIf = "courseDetail.admission; else admission" i18n>Resigin</span>
+        <ng-template #admission><span i18n>Admission</span></ng-template>
+    </span>
+  </button>
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
