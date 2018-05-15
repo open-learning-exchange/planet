@@ -54,19 +54,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     'subject': '',
     'level': ''
   };
+  // As of v0.1.13 ResourcesComponent does not have download link available on parent view
+  urlPrefix = environment.couchAddress + this.dbName + '/';
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
-  }
-  get urlPrefix()  {
-    let domain = environment.couchAddress;
-    if (this.parent) {
-      domain = 'http://' + this.userService.getConfig().parentDomain + '/';
-    }
-    return domain + this.dbName + '/';
   }
 
   constructor(
@@ -292,11 +287,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return emptySpace;
     }, '');
-  }
-
-  resourceUrl(elem) {
-    const fileName = Object.keys(elem._attachments)[0];
-    return this.urlPrefix + elem._id + '/' + fileName;
   }
 
 }
