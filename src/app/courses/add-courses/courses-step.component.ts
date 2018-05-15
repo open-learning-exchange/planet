@@ -61,7 +61,8 @@ export class CoursesStepComponent implements OnChanges {
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
         height: '500px',
-        width: '600px'
+        width: '600px',
+        autoFocus: false
       });
     });
   }

@@ -1,10 +1,9 @@
-<mat-toolbar>
-  <span class="toolbar-fill"></span>
+<div class="search-bar">
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
   </mat-form-field>
-</mat-toolbar>
+</div>
 <mat-table #table [dataSource]="tableData">
   <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>

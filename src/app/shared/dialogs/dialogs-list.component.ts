@@ -8,7 +8,14 @@ import { MatTableDataSource, MAT_DIALOG_DATA, MatPaginator, PageEvent } from '@a
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
-  templateUrl: './dialogs-list.component.html'
+  templateUrl: './dialogs-list.component.html',
+  styles: [ `
+    .search-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  ` ]
 })
 export class DialogsListComponent implements AfterViewInit {
 
