@@ -36,6 +36,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
+  userShelf: any = [];
 
   constructor(
     private router: Router,
@@ -51,6 +52,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       (params: ParamMap) => this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true }),
       error => console.log(error)
     );
+    this.userShelf = this.userService.getUserShelf();
   }
 
   ngOnDestroy() {
@@ -60,6 +62,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   viewStep() {
     this.router.navigate([ './step/1' ], { relativeTo: this.route });
+  }
+
+  courseAdmission() {
+    this.coursesService.setCourseAdmission(this.route.snapshot.paramMap.get('id'));
+  }
+
+  courseResigin() {
+    this.coursesService.setCourseResigin(this.route.snapshot.paramMap.get('id'));
+  }
+
+  isAdmission() {
+     if (this.userShelf.courseIds.includes(this.route.snapshot.paramMap.get('id'))) {
+       return true;
+     } else {
+       return false;
+     }
   }
 
 }

@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { CoursesService } from './courses.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -63,7 +64,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private coursesService: CoursesService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -81,6 +83,17 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.coursesService.shelfUpdate$.subscribe(data => {
+      this.updateShelf(data[0], data[1]);
+    });
+    this.coursesService.updateCourseAdmission$.subscribe(id => {
+      this.courseAdmission(id);
+    });
+    this.coursesService.updateCourseResigin$.subscribe(id => {
+      console.log('This is course resigin id', id);
+      this.courseResign(id);
+    });
+
   }
 
   setupList(courseRes, myCourses) {
