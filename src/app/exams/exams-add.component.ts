@@ -23,6 +23,7 @@ export class ExamsAddComponent implements OnInit {
   documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
   steps = [];
+  questions = [];
 
   constructor(
     private router: Router,
@@ -57,6 +58,7 @@ export class ExamsAddComponent implements OnInit {
       .subscribe((data) => {
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
+        data.questions.map(question => { this.addQuestion(question); });
         this.examForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -87,13 +89,14 @@ export class ExamsAddComponent implements OnInit {
     });
   }
 
-  addQuestion() {
+  addQuestion(question: any) {
     this.questionsFormArray.push(this.fb.group({
       header: '',
       body: '',
       type: 'input',
       choices: this.fb.array([])
     }));
+    this.questions.push(question);
   }
 
   removeQuestion(index) {

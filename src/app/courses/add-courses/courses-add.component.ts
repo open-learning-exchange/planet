@@ -172,7 +172,7 @@ export class CoursesAddComponent implements OnInit {
     this.coursesService.returnUrl = this.router.url;
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
     this.coursesService.stepIndex = stepIndex;
-    this.router.navigate([ '/courses/exam' ]);
+    this.router.navigate([ '/courses/update/exam/', this.steps[stepIndex].exam._id ]);
   }
 
   removeStep(pos) {
