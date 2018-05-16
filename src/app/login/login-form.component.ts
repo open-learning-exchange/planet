@@ -93,7 +93,7 @@ export class LoginFormComponent {
       this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
       this.welcomeNotification(response.id);
       this.login(this.userForm.value, true);
-    }, error => this.planetMessageService.showAlert('An Error Occurred Please Try Again'));
+    }, error => this.planetMessageService.showAlert('An error occurred please try again'));
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
