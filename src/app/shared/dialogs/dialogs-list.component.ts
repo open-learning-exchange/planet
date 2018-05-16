@@ -6,7 +6,7 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MAT_DIALOG_DATA, MatPaginator, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { filterSpecificFields } from '../table-helpers';
+
 @Component({
   templateUrl: './dialogs-list.component.html',
   styles: [ `
@@ -28,7 +28,9 @@ export class DialogsListComponent implements AfterViewInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
-    this.tableData.filterPredicate = filterSpecificFields([ 'title' ]);
+    if (this.data.filterPredicate) {
+      this.tableData.filterPredicate = this.data.filterPredicate;
+    }
   }
 
   ngAfterViewInit() {
