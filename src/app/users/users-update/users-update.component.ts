@@ -12,6 +12,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { NgxImgModule } from 'ngx-img';
+import { languages } from '../../shared/languages';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -43,7 +44,10 @@ export class UsersUpdateComponent implements OnInit {
   redirectUrl = '/';
   file: any;
   roles: string[] = [];
-
+  languages = [];
+  currentFlag = 'en';
+  currentLang = 'English';
+  sidenavState = 'closed';
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
@@ -52,8 +56,17 @@ export class UsersUpdateComponent implements OnInit {
     private userService: UserService
   ) {
     this.userData();
+    this.languages = (<any>languages).map(language => {
+      if (language.servedUrl === document.baseURI) {
+        this.currentFlag = language.shortCode;
+        this.currentLang = language.name;
+      }
+      return language;
+    }).filter(lang  => {
+      return lang['active'] !== 'N';
+    });
+    this.languages = [ { name : 'System language (English)', value: 'English' }, ...this.languages ];
   }
-
 
   ngOnInit() {
     this.urlName = this.route.snapshot.paramMap.get('name');
