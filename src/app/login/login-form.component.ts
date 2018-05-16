@@ -9,18 +9,7 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
-
-const registerForm = {
-  name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
-  password: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('repeatPassword', false)
-    ]) ],
-  repeatPassword: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('password', true)
-    ]) ]
-};
+import { ValidatorService } from '../validators/validator.service';
 
 const loginForm = {
   name: [ '', Validators.required ],
@@ -39,8 +28,21 @@ export class LoginFormComponent {
     private route: ActivatedRoute,
     private userService: UserService,
     private formBuilder: FormBuilder,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService
   ) {
+    const registerForm = {
+      name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ],
+        ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ],
+      password: [ '', Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('repeatPassword', false)
+        ]) ],
+      repeatPassword: [ '', Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('password', true)
+        ]) ]
+    };
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
@@ -89,11 +91,7 @@ export class LoginFormComponent {
       this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
       this.welcomeNotification(response.id);
       this.login(this.userForm.value, true);
-    }, error => {
-      if (error.error.error === 'conflict') {
-        this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
-      }
-    });
+    }, error => this.planetMessageService.showAlert('An Error Occurred Please Try Again'));
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
