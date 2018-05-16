@@ -81,15 +81,11 @@ export class UsersProfileComponent implements OnInit {
   changePasswordRequest(userData) {
     // Manager role also has isUserAdmin true so check role to be empty
     const isUserAdmin = (this.userService.get().isUserAdmin && !this.userService.get().roles.length);
-    const observables = [
-      this.couchService.put(this.dbName + '/' + userData._id, userData)
-    ];
+    const observables = [ this.couchService.put(this.dbName + '/' + userData._id, userData) ];
     if (isUserAdmin) {
       // Update user in parent planet
       observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
-        .pipe(catchError(() => {
-          return of({ ok: false, reason: 'Error changing password in parent planet' });
-        }),
+        .pipe(catchError(this.passwordError('Error changing password in parent planet')),
         switchMap((data) => {
           if (data.ok === false) {
             return of(data);
@@ -103,15 +99,19 @@ export class UsersProfileComponent implements OnInit {
       // Add response ok if there is not error on changing admin password
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
-        .pipe(catchError(() => {
-          return of({ ok: false, reason: 'Error changing admin password' });
-        }),
+        .pipe(catchError(this.passwordError('Error changing admin password')),
         switchMap((response) => {
           return of(response);
         }))
       );
     }
     return forkJoin(observables);
+  }
+
+  passwordError(reason: string) {
+    return () => {
+      return of({ ok: false, reason: reason });
+    };
   }
 
   reinitSession(username, password) {
