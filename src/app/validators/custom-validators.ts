@@ -13,7 +13,7 @@ export class CustomValidators {
     if (!ac.value) {
       return null;
     }
-    return (ac.value < 0) ? null : { invalidPositive : true };
+    return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
   static hexValidator(ac: AbstractControl): ValidationErrors {
