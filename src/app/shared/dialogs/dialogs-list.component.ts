@@ -16,7 +16,7 @@ import { SelectionModel } from '@angular/cdk/collections';
       justify-content: flex-end;
     }
     mat-table {
-      overflow-x: scroll;
+      overflow-y: auto;
       height: calc(100% - 160px);
     }
   ` ]
