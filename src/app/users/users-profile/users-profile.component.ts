@@ -67,14 +67,13 @@ export class UsersProfileComponent implements OnInit {
   onSubmit(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
     this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
-      if (responses.reduce((ok, r) => r.ok && ok, true)) {
-        this.userDetail._rev = responses[0].rev;
-        return this.reinitSession(userDetail.name, credentialData.password);
-      }
-      return of({ ok: false, reason: 'Error changing password' });
-    })).subscribe((res) => {
-      if (res.reduce((ok, r) => r.ok && ok, true)) {
+      return forkJoin([ ...responses.map(r => of(r)), this.reinitSession(userDetail.name, credentialData.password) ]);
+    })).subscribe((responses) => {
+      const errors = responses.filter(r => !r.ok);
+      if (errors.length === 0) {
         this.planetMessageService.showMessage('Password successfully updated');
+      } else {
+        this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
       }
     }, (error) => this.planetMessageService.showAlert('Error changing password'));
   }
@@ -93,7 +92,7 @@ export class UsersProfileComponent implements OnInit {
         }),
         switchMap((data) => {
           if (data.ok === false) {
-            return of({ ok: false, reason: 'Error changing password in parent planet' });
+            return of(data);
           }
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
           profile.password = userData.password;
@@ -104,10 +103,11 @@ export class UsersProfileComponent implements OnInit {
       // Add response ok if there is not error on changing admin password
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
-        .pipe(switchMap((response) => {
-          if (!response.error) {
-            return of({ ok: true, reason: 'Error changing admin password' });
-          }
+        .pipe(catchError(() => {
+          return of({ ok: false, reason: 'Error changing admin password' });
+        }),
+        switchMap((response) => {
+          return of(response);
         }))
       );
     }
@@ -119,7 +119,10 @@ export class UsersProfileComponent implements OnInit {
       this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
       this.couchService.post('_session', { 'name': username, 'password': password },
         { withCredentials: true, domain: this.userService.getConfig().parentDomain })
-    ]);
+    ]).pipe(catchError(() => {
+      // Silent error for now so other specific messages are shown
+      return of({ ok: true });
+    }));
   }
 
   changePasswordForm(userDetail) {
