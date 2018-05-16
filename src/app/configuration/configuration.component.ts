@@ -156,9 +156,9 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const configuration = Object.assign({ registrationRequest: 'pending' },
-        this.configurationFormGroup.value, this.contactFormGroup.value);
       const { confirmPassword, ...credentials } = this.loginForm.value;
+      const configuration = Object.assign({ registrationRequest: 'pending', adminName: credentials.name },
+        this.configurationFormGroup.value, this.contactFormGroup.value);
       const userDetail: any = {
         ...credentials,
         'roles': [],
