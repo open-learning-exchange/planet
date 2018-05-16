@@ -17,7 +17,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
-  displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
+  displayedColumns = this.userService.getConfig().planetType !== 'community' ?
+    [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ]
+    : [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   user: any = {};
 
