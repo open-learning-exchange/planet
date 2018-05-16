@@ -11,7 +11,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 
 const registerForm = {
-  name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
+  name: [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ] ],
   password: [ '', Validators.compose([
     Validators.required,
     CustomValidators.matchPassword('repeatPassword', false)
