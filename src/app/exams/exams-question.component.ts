@@ -11,7 +11,6 @@ import {
 })
 export class ExamsQuestionComponent implements OnInit {
 
-  @Input() question: any;
   @Input() questionForm: FormGroup;
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
@@ -20,12 +19,6 @@ export class ExamsQuestionComponent implements OnInit {
 
   ngOnInit() {
     this.choices = <FormArray>this.questionForm.controls.choices;
-    if (this.question.choices) {
-      this.question.choices.map((ch, i) => {
-        this.addChoice();
-      });
-      this.questionForm.patchValue(this.question);
-    }
   }
 
   addChoice() {
