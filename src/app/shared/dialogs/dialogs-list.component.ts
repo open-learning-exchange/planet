@@ -15,6 +15,10 @@ import { SelectionModel } from '@angular/cdk/collections';
       align-items: center;
       justify-content: flex-end;
     }
+    mat-table {
+      overflow-y: auto;
+      height: calc(100% - 160px);
+    }
   ` ]
 })
 export class DialogsListComponent implements AfterViewInit {
