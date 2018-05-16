@@ -11,6 +11,18 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 
+const registerForm = {
+  name: [],
+  password: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('repeatPassword', false)
+    ]) ],
+  repeatPassword: [ '', Validators.compose([
+    Validators.required,
+    CustomValidators.matchPassword('password', true)
+    ]) ]
+};
+
 const loginForm = {
   name: [ '', Validators.required ],
   password: [ '', Validators.required ]
@@ -31,18 +43,8 @@ export class LoginFormComponent {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
-    const registerForm = {
-      name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ],
-        ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ],
-      password: [ '', Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('repeatPassword', false)
-        ]) ],
-      repeatPassword: [ '', Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('password', true)
-        ]) ]
-    };
+    registerForm.name = [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ],
+      ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
