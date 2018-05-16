@@ -57,7 +57,6 @@ export class CoursesStepComponent implements OnChanges {
   }
 
   attachItem(db: string) {
-
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
       const data = { okClick: this.dialogOkClick(db).bind(this),
         filterPredicate: filterSpecificFields([ 'title' ]),
