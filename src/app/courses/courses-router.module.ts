@@ -7,6 +7,7 @@ import { CoursesRequestComponent } from './request-courses/courses-request.compo
 import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { ExamsAddComponent } from '../exams/exams-add.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
+import { ExamsViewComponent } from '../exams/exams-view.component';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: 'update/:id', component: CoursesAddComponent },
   { path: 'view/:id', component: CoursesViewComponent },
   { path: 'exam', component: ExamsAddComponent },
-  { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent }
+  { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent, },
+  { path: 'view/:id/step/:stepNum/exam/:questionNum', component: ExamsViewComponent }
 ];
 
 @NgModule({
