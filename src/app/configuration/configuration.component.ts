@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { switchMap } from 'rxjs/operators';
+import { UserService } from '../shared/user.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -34,6 +35,7 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
+  documentInfo = { rev: '', id: '' };
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
@@ -42,15 +44,24 @@ export class ConfigurationComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
-    if(this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[3]==='update'){
-      //this.stepper.next(); //this causes a cannot read length of undefined.
+    if(this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[1]==='manager'){
       this.configurationType = 'update';
-      //this.stepper.selectedIndex = 1;
-      console.log(this.stepper.selectedIndex)
+      let configurationId = this.userService.getConfig()._id;
+
+      this.couchService.get('configurations/'+configurationId)
+      .subscribe((data)=>{
+        this.documentInfo = { rev: data._rev, id: data._id };
+        console.log('muh datah', data)
+        this.configurationFormGroup.patchValue(data);
+        this.contactFormGroup.patchValue(data);
+      }, (error) => {
+        console.log(error);
+      })
     }
 
     this.loginForm = this.formBuilder.group({

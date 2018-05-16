@@ -10,7 +10,7 @@ import { UserService } from '../shared/user.service';
           i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
       </span>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
-      <a routerLink="configuration/update/{{configurationId}}" il8n mat-raised-button>Configuration</a>
+      <a routerLink="configuration" il8n mat-raised-button>Configuration</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
@@ -27,7 +27,7 @@ export class ManagerDashboardComponent implements OnInit {
   displayDashboard = true;
   message = '';
   planetType = this.userService.getConfig().planetType;
-  configurationId = this.userService.getConfig()._id
+  //configurationId = this.userService.getConfig()._id
 
   constructor(
     private userService: UserService
