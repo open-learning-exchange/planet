@@ -28,6 +28,9 @@ export class DialogsListComponent implements AfterViewInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
+    if (this.data.filterPredicate) {
+      this.tableData.filterPredicate = this.data.filterPredicate;
+    }
   }
 
   ngAfterViewInit() {
