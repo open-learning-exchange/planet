@@ -69,11 +69,6 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <div class="hidden">
-        <mat-form-field>
-          <input matInput [value]="meetupForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Created Date" formControlName="createdDate" readonly>
-        </mat-form-field>
-      </div>
       <button mat-raised-button type="submit" color="primary" i18n>Save</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </form>
