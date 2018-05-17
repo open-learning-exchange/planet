@@ -9,7 +9,7 @@
     <span class="toolbar-fill"></span>
     <button mat-button class="margin-lr-3" (click)="coursesService.admitCourse(courseDetail._id, courseDetail.admission)">
     <span *ngIf="!parent">
-        <span *ngIf = "courseDetail.admission; else admission" i18n>Resigin</span>
+        <span *ngIf="courseDetail.admission; else admission" i18n>Resigin</span>
         <ng-template #admission><span i18n>Admission</span></ng-template>
     </span>
   </button>

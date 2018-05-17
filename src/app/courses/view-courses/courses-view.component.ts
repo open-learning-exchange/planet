@@ -42,24 +42,19 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
-    public coursesService: CoursesService
+    private coursesService: CoursesService
   ) { }
 
   ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$))
-    .subscribe((params: ParamMap) => {
-      const courseId = params.get('id');
-      const getOpts: any = { courseIds: [ courseId ] };
-      if (this.parent) {
-        getOpts.opts = { domain: this.userService.getConfig().parentDomain };
-      }
-      this.coursesService.updateCourses(getOpts);
-      this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true });
-    }, error => (error));
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((courseArray) => {
-      this.courseDetail = courseArray[0];
-    });
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(course => this.courseDetail = course[0]);
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
+      (params: ParamMap) => {
+        const courseId = params.get('id');
+        const getOpts: any = { courseIds: [ courseId ] };
+        this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true });
+        this.coursesService.updateCourses(getOpts);
+      }, error => console.log(error)
+    );
   }
 
   ngOnDestroy() {

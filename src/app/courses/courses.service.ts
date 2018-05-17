@@ -3,8 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject } from 'rxjs/Subject';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { Router } from '@angular/router';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 
 
@@ -20,12 +19,12 @@ export class CoursesService {
   courses = [];
   userShelf = this.userService.getUserShelf();
   private onDestroy$ = new Subject<void>();
+  courseArray = [];
 
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
-    private userService: UserService,
-    private router: Router
+    private userService: UserService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -39,9 +38,7 @@ export class CoursesService {
   // Or will get new version if forceLatest set to true
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
     if (!forceLatest && courseId === this.course._id) {
-      const courseArray = [];
-      courseArray[0] = this.course;
-      this.courseUpdated.next(courseArray);
+      this.courseUpdated.next([ this.course ]);
     } else {
       this.getCourse(courseId, opts);
     }
@@ -50,9 +47,7 @@ export class CoursesService {
   private getCourse(courseId: string, opts) {
     this.couchService.get('courses/' + courseId, opts).subscribe(course => {
       this.course = course;
-      const courseArray = [];
-      courseArray[0] = course;
-      this.courseUpdated.next(courseArray);
+      this.courseUpdated.next([ course ]);
     });
   }
 
@@ -96,8 +91,6 @@ export class CoursesService {
   }
 
   admitCourse(courseId, participate) {
-    console.log('CourseId', courseId);
-    console.log('participate', participate);
     participate ? this.userShelf.courseIds.splice(courseId, 1)
       : this.userShelf.courseIds.push(courseId);
     console.log('This is usershelf', this.userShelf);
