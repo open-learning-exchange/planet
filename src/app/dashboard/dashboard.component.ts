@@ -65,6 +65,6 @@ export class DashboardComponent implements OnInit {
     if (attachments) {
       return this.urlPrefix + Object.keys(attachments)[0];
     }
-    return 'assets/image.png';
+    return require('../../../image.png');
   }
 }
