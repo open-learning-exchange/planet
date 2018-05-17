@@ -9,9 +9,10 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
+import { ValidatorService } from '../validators/validator.service';
 
 const registerForm = {
-  name: [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ] ],
+  name: [],
   password: [ '', Validators.compose([
     Validators.required,
     CustomValidators.matchPassword('repeatPassword', false)
@@ -39,8 +40,11 @@ export class LoginFormComponent {
     private route: ActivatedRoute,
     private userService: UserService,
     private formBuilder: FormBuilder,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService
   ) {
+    registerForm.name = [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ],
+      ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
@@ -89,11 +93,7 @@ export class LoginFormComponent {
       this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
       this.welcomeNotification(response.id);
       this.login(this.userForm.value, true);
-    }, error => {
-      if (error.error.error === 'conflict') {
-        this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
-      }
-    });
+    }, error => this.planetMessageService.showAlert('An error occurred please try again'));
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {

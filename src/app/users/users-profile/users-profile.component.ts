@@ -7,7 +7,7 @@ import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -67,40 +67,62 @@ export class UsersProfileComponent implements OnInit {
   onSubmit(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
     this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
-      if (responses.reduce((ok, r) => r.ok && ok, true)) {
-        this.userDetail._rev = responses[0].rev;
-        return this.reinitSession(userDetail.name, credentialData.password);
-      }
-      return of({ ok: false, reason: 'Error changing password' });
-    })).subscribe((res) => {
-      if (res.ok === true) {
+      return forkJoin([ ...responses.map(r => of(r)), this.reinitSession(userDetail.name, credentialData.password) ]);
+    })).subscribe((responses) => {
+      const errors = responses.filter(r => !r.ok);
+      if (errors.length === 0) {
         this.planetMessageService.showMessage('Password successfully updated');
+      } else {
+        this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
       }
     }, (error) => this.planetMessageService.showAlert('Error changing password'));
   }
 
   changePasswordRequest(userData) {
-    const isUserAdmin = this.userService.get().isUserAdmin;
-    const observables = [
-      this.couchService.put(this.dbName + '/' + userData._id, userData)
-    ];
+    // Manager role also has isUserAdmin true so check role to be empty
+    const isUserAdmin = (this.userService.get().isUserAdmin && !this.userService.get().roles.length);
+    const observables = [ this.couchService.put(this.dbName + '/' + userData._id, userData) ];
     if (isUserAdmin) {
+      // Update user in parent planet
       observables.push(this.couchService.get('_users/' + userData._id , { domain: this.userService.getConfig().parentDomain })
-        .pipe(switchMap((data) => {
+        .pipe(catchError(this.passwordError('Error changing password in parent planet')),
+        switchMap((data) => {
+          if (data.ok === false) {
+            return of(data);
+          }
           const { derived_key, iterations, password_scheme, salt, ...profile } = data;
           profile.password = userData.password;
           return this.couchService.put(this.dbName + '/' + profile._id, profile,
-          { domain: this.userService.getConfig().parentDomain });
-        })));
+            { domain: this.userService.getConfig().parentDomain });
+        }))
+      );
+      // Add response ok if there is not error on changing admin password
       observables.push(
         this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
+        .pipe(catchError(this.passwordError('Error changing admin password')),
+        switchMap((response) => {
+          return of(response);
+        }))
       );
     }
     return forkJoin(observables);
   }
 
+  passwordError(reason: string) {
+    return () => {
+      return of({ ok: false, reason: reason });
+    };
+  }
+
   reinitSession(username, password) {
-    return this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true });
+    return forkJoin([
+      this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
+      this.couchService.post('_session', { 'name': username, 'password': password },
+        { withCredentials: true, domain: this.userService.getConfig().parentDomain })
+    ]).pipe(catchError(() => {
+      // Silent error for now so other specific messages are shown
+      return of({ ok: true });
+    }));
   }
 
   changePasswordForm(userDetail) {
