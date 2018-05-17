@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, containerRefreshEnd } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -25,7 +25,7 @@ const removeProtocol = (str: string) => {
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
-  configurationType = 'new'
+  configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
   loginForm: FormGroup;
@@ -49,19 +49,18 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[1]==='manager'){
+    if (this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[1] === 'manager') {
       this.configurationType = 'update';
-      let configurationId = this.userService.getConfig()._id;
+      const configurationId = this.userService.getConfig()._id;
 
-      this.couchService.get('configurations/'+configurationId)
-      .subscribe((data)=>{
+      this.couchService.get('configurations/' + configurationId)
+      .subscribe((data) => {
         this.documentInfo = { rev: data._rev, id: data._id };
-        console.log('muh datah', data)
         this.configurationFormGroup.patchValue(data);
         this.contactFormGroup.patchValue(data);
       }, (error) => {
         console.log(error);
-      })
+      });
     }
 
     this.loginForm = this.formBuilder.group({
@@ -187,10 +186,9 @@ export class ConfigurationComponent implements OnInit {
   }
 
   updateConfiguration() {
-    if(this.configurationFormGroup.valid && this.contactFormGroup.valid){
-      console.log('Hello World')
+    if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+      console.log('Hello World');
     }
   }
-
 
 }
