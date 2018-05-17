@@ -68,7 +68,6 @@ export class MeetupService {
   attendMeetup(meetupId, participate) {
     participate ? this.userShelf.meetupIds.splice(meetupId, 1)
       : this.userShelf.meetupIds.push(meetupId);
-    console.log('This is usershelf', this.userShelf);
     this.couchService.put('shelf/' + this.userService.get()._id, this.userShelf)
       .subscribe((res) => {
         this.userShelf._rev = res.rev;
