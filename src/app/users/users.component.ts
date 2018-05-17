@@ -9,9 +9,12 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { filterSpecificFields } from '../shared/table-helpers';
 import { of } from 'rxjs/observable/of';
+import { _throw } from 'rxjs/observable/throw';
 import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './users.component.html',
@@ -56,11 +59,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    if (this.isUserAdmin) {
+    if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
     } else {
-      // A non-admin user cannot receive all user docs
-      this.planetMessageService.showAlert('Access restricted to admins');
+      // Inactive users cannot receive all user docs
+      this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
     }
   }
 
@@ -95,9 +98,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   initializeData() {
+    const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().debug('Getting user list').subscribe(users => {
-      users = users.docs.map((user: any) => {
+      users = users.docs.filter((user: any) => {
+        // Removes current user from list.  Users should not be able to change their own roles,
+        // so this protects from that.  May need to unhide in the future.
+        if (currentLoginUser !== user.name) {
+          return user;
+        }
+      }).map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -105,6 +115,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         return userInfo;
       });
       this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
+      this.allUsers.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
@@ -129,17 +140,47 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   deleteUser(user) {
+    const userId = 'org.couchdb.user:' + user.name;
     // Return a function with user on its scope to pass to delete dialog
     return () => {
-      this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.allUsers.data = this.allUsers.data.filter((u: any) => data.id !== u.doc._id);
+      this.couchService.get('shelf/' + userId).pipe(
+        switchMap(shelfUser => {
+          return forkJoin([
+            this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+            this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
+          ]);
+        }),
+        catchError((err) => {
+          // If deleting user fails, do not continue stream and show error
+          this.planetMessageService.showAlert('There was a problem deleting this user.');
+          return _throw(err);
+        }),
+        switchMap((data) => {
+          this.planetMessageService.showMessage('User deleted: ' + user.name);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showMessage('User deleted: ' + user.name);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
+          return this.removeDeletedUserFromShelves(userId);
+        })
+      ).subscribe(() => { });
     };
+  }
+
+  removeDeletedUserFromShelves(userId) {
+    const myUserId = 'org.couchdb.user:' + this.userService.get().name;
+    return this.couchService.post('shelf/_find', findDocuments({ 'myTeamIds': { '$in': [ userId ] } })).pipe(
+      map(shelves => {
+        return shelves.docs.map(shelf => {
+          const myTeamIds = [ ...shelf.myTeamIds ];
+          myTeamIds.splice(myTeamIds.indexOf(userId), 1);
+          return { ...shelf, myTeamIds };
+        });
+      }),
+      switchMap(newShelves => {
+        return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
+      })
+    );
   }
 
   setRoles(user, roles) {
@@ -231,17 +272,22 @@ export class UsersComponent implements OnInit, AfterViewInit {
   addTeams(users) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = users.map((data) => {
-      return data._id || data.doc._id;
+      return data.doc._id;
     }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
-    const msg = (myTeamIds.length === 1 ? 'User' : 'Users') + ' added to';
+    const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
+    const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
+    const msg = (users.length === 1 && addedNum === 1 ?
+      users[0].doc.name + ' has been'
+      : addedNum + ' ' + subjectVerbAgreement + ' been')
+      + ' added to';
     this.updateShelf(myTeamIds, userShelf, msg);
   }
 
-  removeTeam(teamId) {
+  removeTeam(teamId, userName) {
     const userShelf = this.userService.getUserShelf();
     const myTeamIds = [ ...userShelf.myTeamIds ];
     myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    this.updateShelf(myTeamIds, userShelf, 'User removed from ');
+    this.updateShelf(myTeamIds, userShelf, userName + ' has been removed from');
   }
 
   back() {

@@ -40,11 +40,11 @@
       </mat-form-field>
       <div>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Name" formControlName="name" required>
+          <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Code" formControlName="code" required>
+          <input matInput i18n-placeholder placeholder="Code" formControlName="code" required readonly>
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>

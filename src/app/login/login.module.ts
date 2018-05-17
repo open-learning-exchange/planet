@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfigurationModule } from '../configuration/configuration.module';
-import { ConfigurationComponent } from '../configuration/configuration.component'; //this has been replaced by configuration.module
+// this has been replaced by configuration.module
+import { ConfigurationComponent } from '../configuration/configuration.component';
 import { LoginComponent } from './login.component';
 import { LoginRouterModule } from './login-router.module';
 import { MaterialModule } from '../shared/material.module';
