@@ -27,7 +27,6 @@ export class ManagerDashboardComponent implements OnInit {
   displayDashboard = true;
   message = '';
   planetType = this.userService.getConfig().planetType;
-  //configurationId = this.userService.getConfig()._id
 
   constructor(
     private userService: UserService

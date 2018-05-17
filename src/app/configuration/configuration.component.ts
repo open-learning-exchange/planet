@@ -49,14 +49,13 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[1]==='manager'){
+    if(this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[1]==='manager') {
       this.configurationType = 'update';
-      let configurationId = this.userService.getConfig()._id;
+      const configurationId = this.userService.getConfig()._id;
 
       this.couchService.get('configurations/'+configurationId)
-      .subscribe((data)=>{
+      .subscribe((data) => {
         this.documentInfo = { rev: data._rev, id: data._id };
-        console.log('muh datah', data)
         this.configurationFormGroup.patchValue(data);
         this.contactFormGroup.patchValue(data);
       }, (error) => {
