@@ -67,7 +67,7 @@ export class ConfigurationComponent implements OnInit {
       name: [
         '',
         [ Validators.required,
-        Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ],
+        Validators.pattern(/^[A-Za-z0-9]/i) ],
         this.parentUniqueValidator('name')
       ],
       parentDomain: [ '', Validators.required ],
