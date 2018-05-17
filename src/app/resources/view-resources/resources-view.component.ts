@@ -77,13 +77,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       this.mediaType = resource.mediaType;
       this.contentType = resource._attachments[filename].content_type;
       this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
-      if (!this.mediaType) {
-        const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
-        this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
-      }
-      if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
-        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-      }
+    }
+    if (resource._attachments && !this.mediaType) {
+      const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
+      this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
+    }
+    if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
   }
 
