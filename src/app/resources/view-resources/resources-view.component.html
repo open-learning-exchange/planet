@@ -17,14 +17,14 @@
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-resources-rating [rating]="resource.rating" [resourceId]="resource._id"></planet-resources-rating>
-      <p>Author: <i>{{resource.author}}</i></p>
-      <p>Published by: {{resource.Publisher}} on {{resource.year}}</p>
-      <p>Media: {{ resource.medium }}</p>
-      <p>Language: {{ resource.language }}</p>
-      <p>Subject/s: {{resource.subject}}</p>
-      <p>Link to License: <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
-      <p>Resource: {{ resource.resourceFor }}</p>
-      <p>Resource Type: {{ resource.resourceType }}</p>
+      <p><b>Author:</b> <i>{{resource.author}}</i></p>
+      <p><b>Published by:</b> {{resource.Publisher}} on {{resource.year}}</p>
+      <p><b>Media:</b> {{ resource.medium }}</p>
+      <p><b>Language:</b> {{ resource.language }}</p>
+      <p><b>Subject/s:</b> {{resource.subject}}</p>
+      <p><b>to License:</b> <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
+      <p><b>Resource:</b> {{ resource.resourceFor }}</p>
+      <p><b>Type:</b> {{ resource.resourceType }}</p>
       <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
     <div class="resource-view" [ngSwitch]="mediaType">

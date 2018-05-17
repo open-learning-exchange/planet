@@ -11,17 +11,17 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-detail bg-light-grey">
-      <p i18n>Course Leader: {{courseDetail.courseLeader}} </p>
-      <p i18n>Subject Level: {{courseDetail.subjectLevel}}</p>
-      <p i18n>Grade Level: {{courseDetail.gradeLevel}}</p>
-      <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
-      <p i18n>Method: {{courseDetail.method}}</p>
-      <p i18n>Frequency/Days: {{courseDetail.day}}</p>
-      <p i18n>Schedule -
-        Date: {{courseDetail.startDate | date }}
-        Time: {{courseDetail.startTime }}</p>
-      <p i18n>Location: {{courseDetail.location}}</p>
-      <p i18n>Description: {{courseDetail.description}}</p>
+      <p i18n><b>Course Leader:</b> {{courseDetail.courseLeader}} </p>
+      <p i18n><b>Level:</b> {{courseDetail.subjectLevel}}</p>
+      <p i18n><b>Level:</b> {{courseDetail.gradeLevel}}</p>
+      <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
+      <p i18n><b>Method:</b> {{courseDetail.method}}</p>
+      <p i18n><b>Frequency/Days:</b> {{courseDetail.day}}</p>
+      <p i18n><b>Schedule -
+        Date:</b> {{courseDetail.startDate | date }}
+        <b>Time:</b> {{courseDetail.startTime }}</p>
+      <p i18n><b>Location:</b> {{courseDetail.location}}</p>
+      <p i18n><b>Description:</b> {{courseDetail.description}}</p>
     </div>
     <div class="course-view">
       <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
