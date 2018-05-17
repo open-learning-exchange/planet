@@ -41,17 +41,17 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  private newSubmission({ courseId, examId, user }) {
-    this.submission = { courseId, examId, user, answers: [], status: 'pending' };
+  private newSubmission({ parentId, parent, user, type }) {
+    this.submission = { parentId, parent, user, type, answers: [], status: 'pending' };
   }
 
-  openSubmission({ courseId, examId, user }) {
-    this.couchService.post('submissions/_find', { 'selector': { courseId, examId, user, status: 'pending' } })
+  openSubmission({ parentId, parent, user, type }) {
+    this.couchService.post('submissions/_find', { 'selector': { parentId, user, status: 'pending' } })
       .subscribe((res) => {
         if (res.docs.length > 0) {
           this.submission = res.docs[0];
         } else {
-          this.newSubmission({ courseId, examId, user });
+          this.newSubmission({ parentId, parent, user, type });
         }
       });
   }

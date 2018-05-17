@@ -33,7 +33,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const questions = step.exam.questions;
       this.question = questions[this.questionNum - 1];
       this.maxQuestions = questions.length;
-      this.coursesService.openSubmission({ courseId: course._id, examId: step.exam._id, user: this.userService.get().name });
+      this.coursesService.openSubmission({
+        parentId: step.exam._id + '@' + course._id,
+        parent: step.exam,
+        user: this.userService.get().name,
+        type: 'exam' });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.questionNum = +params.get('questionNum'); // Leading + forces string to number
