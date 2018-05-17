@@ -32,9 +32,10 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="chat-list" #chatList>
-      <div class="chat-list-item" *ngFor="let message of feedback.messages">
+      <div class="chat-list-item" *ngFor="let message of feedback.messages; let last = last">
         <div class="chat-list-user">
           <p>{{message.user}}</p>
+          {{last ? scrollToBottom() : ''}}
           <p class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</p>
         </div>
         <div class="chat-list-message"><mat-card [ngClass]="{'primary-color':message.user!==user.name}">{{message.message}}</mat-card></div>
