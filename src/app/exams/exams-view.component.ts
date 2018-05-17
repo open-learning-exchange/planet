@@ -16,6 +16,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
+  answer: string | number = '';
 
   constructor(
     private router: Router,
