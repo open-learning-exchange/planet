@@ -18,9 +18,9 @@ constructor(
   private userService: UserService
 ) {}
 
-  public checkUnique$(db: string, field: string, value: any): Observable<boolean> {
+  public checkUnique$(db: string, field: string, value: any, opts?: any): Observable<boolean> {
     return this.couchService
-      .post(`${db}/_find`, findOneDocument(field, value))
+      .post(`${db}/_find`, findOneDocument(field, value), opts)
       .pipe(map(data => {
         return data.docs.length > 0;
       }));
@@ -30,10 +30,11 @@ constructor(
     dbName: string,
     fieldName: string,
     ac: AbstractControl,
+    opts: any = {}
   ): Observable<ValidationErrors | null> {
     // calls service every .5s for input change
     return timer(500).pipe(
-      switchMap(() => this.checkUnique$(dbName, fieldName, ac.value)),
+      switchMap(() => this.checkUnique$(dbName, fieldName, ac.value, opts)),
       map(exists => {
         if (exists) {
           return { duplicate: true };

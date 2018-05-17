@@ -16,7 +16,7 @@
       </mat-form-field>
       <div>
         <planet-exam-question
-          *ngFor="let question of questionsFormArray.controls"
+          *ngFor="let question of questionsFormArray.controls; let i = index"
           [questionForm]="question"
           (questionRemove)="removeQuestion(i)"
           ></planet-exam-question>

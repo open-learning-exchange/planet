@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, containerRefreshEnd } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -64,7 +64,7 @@ export class ConfigurationComponent implements OnInit {
     }
 
     this.loginForm = this.formBuilder.group({
-      name: [ '', Validators.required ],
+      name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
       password: [
         '',
         Validators.compose([
@@ -83,10 +83,18 @@ export class ConfigurationComponent implements OnInit {
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
       localDomain: this.defaultLocal,
-      name: [ '', Validators.required ],
+      name: [
+        '',
+        Validators.required,
+        this.parentUniqueValidator('name')
+      ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ],
+      code: [
+        '',
+        Validators.required,
+        this.parentUniqueValidator('code')
+      ],
       createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
@@ -105,6 +113,15 @@ export class ConfigurationComponent implements OnInit {
     this.getNationList();
   }
 
+  parentUniqueValidator(controlName: string) {
+    return ac => this.validatorService.isUnique$(
+      'communityregistrationrequests',
+      controlName,
+      ac,
+      { domain: ac.parent.get('parentDomain').value }
+    );
+  }
+
   confirmConfigurationFormGroup() {
     if (this.configurationFormGroup.valid) {
       if (!this.isAdvancedOptionsChanged || this.isAdvancedOptionConfirmed) {
@@ -121,6 +138,15 @@ export class ConfigurationComponent implements OnInit {
     this.isAdvancedOptionConfirmed = false;
     this.isAdvancedOptionsChanged = false;
     this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
+  }
+
+  planetNameChange(event) {
+    let code = this.configurationFormGroup.get('name').value;
+    // convert special character to dot except last character
+    code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
+    // skip special character if comes as last character
+    code = code.replace(/\W+$/, '').toLowerCase();
+    this.configurationFormGroup.get('code').setValue(code);
   }
 
   getNationList() {
@@ -149,9 +175,9 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const configuration = Object.assign({ registrationRequest: 'pending' },
-        this.configurationFormGroup.value, this.contactFormGroup.value);
       const { confirmPassword, ...credentials } = this.loginForm.value;
+      const configuration = Object.assign({ registrationRequest: 'pending', adminName: credentials.name },
+        this.configurationFormGroup.value, this.contactFormGroup.value);
       const userDetail: any = {
         ...credentials,
         'roles': [],
