@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { takeUntil } from 'rxjs/operators';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './exams-view.component.html'
@@ -21,15 +22,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
       // To be readable by non-technical people stepNum & questionNum param will start at 1
-      const questions = course.steps[this.stepNum - 1].exam.questions;
+      const step = course.steps[this.stepNum - 1];
+      const questions = step.exam.questions;
       this.question = questions[this.questionNum - 1];
       this.maxQuestions = questions.length;
+      this.coursesService.openSubmission({ courseId: course._id, examId: step.exam._id, user: this.userService.get().name });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.questionNum = +params.get('questionNum'); // Leading + forces string to number
@@ -44,7 +48,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion(questionNum: number) {
-    if (questionNum === this.maxQuestions) {
+    const close = questionNum === this.maxQuestions;
+    this.coursesService.updateSubmission(this.answer, this.questionNum - 1, close);
+    this.answer = '';
+    if (close) {
       this.goBack();
     } else {
       this.router.navigate([ '../', this.questionNum + 1 ], { relativeTo: this.route });
