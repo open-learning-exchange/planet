@@ -52,6 +52,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((meetups) => {
+      // Sort in descending createdDate order, so the new meetup can be shown on the top
+      meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });

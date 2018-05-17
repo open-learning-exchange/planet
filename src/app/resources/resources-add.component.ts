@@ -31,6 +31,7 @@ export class ResourcesAddComponent implements OnInit {
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
   pageType = 'Add new';
+  disableDownload = true;
 
   constructor(
     private router: Router,
@@ -53,6 +54,8 @@ export class ResourcesAddComponent implements OnInit {
         .subscribe((data) => {
           this.pageType = 'Update';
           this.existingResource = data;
+          // If the resource does not have an attachment, disable file downloadable toggle
+          this.disableDownload = !this.existingResource._attachments;
           this.resourceForm.patchValue(data);
         }, (error) => {
           console.log(error);
@@ -182,6 +185,9 @@ export class ResourcesAddComponent implements OnInit {
 
   deleteAttachmentToggle(event) {
     this.deleteAttachment = event.checked;
+    // Also disable downloadable toggle if user is removing file
+    this.disableDownload = event.checked;
+    this.resourceForm.patchValue({ isDownloadable: false });
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
@@ -243,6 +249,7 @@ export class ResourcesAddComponent implements OnInit {
 
   bindFile(event) {
     this.file = event.target.files[0];
+    this.disableDownload = false;
   }
 
 }

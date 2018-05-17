@@ -9,6 +9,13 @@ export class CustomValidators {
     return isValidInt ? null : { invalidInt: true };
   }
 
+  static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    return (ac.value > 0) ? null : { invalidPositive : true };
+  }
+
   static hexValidator(ac: AbstractControl): ValidationErrors {
 
     if (!ac.value) {
