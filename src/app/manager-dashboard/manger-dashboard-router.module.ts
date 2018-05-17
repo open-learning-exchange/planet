@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule', data: { parent: true } },
   { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule', data: { parent: true } },
   { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },
-  //{ path: 'configuration/update/', component:ConfigurationComponent }
+  // { path: 'configuration/update/', component:ConfigurationComponent }
   { path: 'configuration', loadChildren: '../configuration/configuration.module#ConfigurationModule', data: { parent: true } }
   ];
 
