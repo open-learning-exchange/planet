@@ -10,6 +10,8 @@ export class CoursesService {
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<any[]>();
   courseUpdated$ = this.courseUpdated.asObservable();
+  private submissionUpdated = new Subject<any[]>();
+  submissionUpdated$ = this.submissionUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;
 
@@ -53,6 +55,7 @@ export class CoursesService {
         } else {
           this.newSubmission({ parentId, parent, user, type });
         }
+        this.submissionUpdated.next(this.submission);
       });
   }
 
