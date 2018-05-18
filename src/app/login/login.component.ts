@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { tap, catchError } from 'rxjs/operators';
-
+import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 @Component({
@@ -14,6 +13,7 @@ import { of } from 'rxjs/observable/of';
 export class LoginComponent implements OnInit {
 
   version: string = require( '../../../package.json').version;
+  online = 'off';
 
   constructor(
     private couchService: CouchService,
@@ -27,6 +27,15 @@ export class LoginComponent implements OnInit {
         // false means there is admin
         if (noAdmin) {
           this.router.navigate([ '/login/configuration' ]);
+        } else {
+          this.couchService.allDocs('configurations').pipe(
+            switchMap(data => {
+              if (data[0].planetType === 'center') {
+                return of(false);
+              }
+              return this.couchService.get('', { domain: data[0].parentDomain });
+            })
+          ).subscribe(data => { this.online = (data) ? 'on' : ''; });
         }
       });
     }
