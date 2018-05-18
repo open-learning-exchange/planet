@@ -66,4 +66,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
 
+  admitCourse(id, admission) {
+    this.coursesService.admitCourse(id, admission);
+  }
+
 }
