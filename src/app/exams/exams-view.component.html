@@ -4,10 +4,11 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{{question.header}}</span>
+    <span i18n>Question {{questionNum}} of {{maxQuestions}}</span>
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container">
+    <b>{{question.header}}</b>
     <p>{{question.body}}</p>
     <ng-container [ngSwitch]="question.type">
       <mat-form-field *ngSwitchCase="'input'">
