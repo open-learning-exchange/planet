@@ -9,6 +9,7 @@ import { interval } from 'rxjs/observable/interval';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './home.component.html',
@@ -137,14 +138,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNotification() {
-    const userId = 'org.couchdb.user:' + this.userService.get().name;
-    this.couchService.allDocs('notifications')
-      .subscribe((data) => {
-        data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
-        this.notifications = data.filter((nt: any)  => {
-          return nt.user === userId;
-        });
-      }, (error) => console.log(error));
+    const userFilter = [ {
+      'user': 'org.couchdb.user:' + this.userService.get().name
+    } ];
+    if (this.userService.get().isUserAdmin) {
+      userFilter.push({ 'user': 'SYSTEM' });
+    }
+    this.couchService.post('notifications/_find', findDocuments(
+      { '$or': userFilter,
+      // The sorted item must be included in the selector for sort to work
+        'time': { '$gt': 0 }
+      },
+      0,
+      [ { 'time': 'desc' } ]))
+    .subscribe(data => {
+      this.notifications = data.docs;
+    }, (error) => console.log(error));
   }
 
   readNotification(notification) {
