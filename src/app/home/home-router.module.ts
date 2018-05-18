@@ -5,6 +5,7 @@ import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { SubmissionsComponent } from '../submissions/submissions.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -19,7 +20,8 @@ const routes: Routes = [
       { path: 'feedback', loadChildren: '../feedback/feedback.module#FeedbackModule' },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
-      { path: 'notifications', component: NotificationsComponent }
+      { path: 'notifications', component: NotificationsComponent },
+      { path: 'submissions', component: SubmissionsComponent }
     ]
   }
 ];

@@ -14,6 +14,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { SubmissionsComponent } from '../submissions/submissions.component';
 
 import { PulsateIconDirective } from './pulsate-icon.directive';
 
@@ -36,7 +37,8 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     NationComponent,
     DashboardTileComponent,
     NotificationsComponent,
-    PulsateIconDirective
+    PulsateIconDirective,
+    SubmissionsComponent
   ]
 })
 export class HomeModule {}
