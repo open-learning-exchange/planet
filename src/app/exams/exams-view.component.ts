@@ -4,7 +4,6 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { takeUntil } from 'rxjs/operators';
-import { Location } from '@angular/common';
 
 @Component({
   templateUrl: './exams-view.component.html'
@@ -21,8 +20,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private coursesService: CoursesService,
-    private location: Location
+    private coursesService: CoursesService
   ) { }
 
   ngOnInit() {
@@ -53,7 +51,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
 }
