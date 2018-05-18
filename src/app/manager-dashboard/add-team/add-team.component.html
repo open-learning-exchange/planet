@@ -1,0 +1,32 @@
+<mat-toolbar>
+    <a mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></a>
+    <span class="toolbar-fill" i18>Add Team</span>
+</mat-toolbar>
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1" i18n>
+    <span class="toolbar-fill"><button mat-button class="margin-lr-3" routerLink= "createteam"><mat-icon>library_add</mat-icon><span i18n>Create Team</span></button>
+    </span>
+  </mat-toolbar>
+
+<mat-table #table [dataSource]="users">
+    <!-- Position Column -->
+    <ng-container matColumnDef="_id">
+      <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
+      <mat-cell *matCellDef="let element"> 
+        <mat-checkbox ></mat-checkbox>
+      </mat-cell>
+    </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef i18n>Member Name</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]">
+</mat-paginator>
+</div>

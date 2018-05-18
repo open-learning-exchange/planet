@@ -7,6 +7,8 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardRouterModule } from './manger-dashboard-router.module';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
+import { AddTeamComponent } from './add-team/add-team.component';
+import { CreateNewTeamComponent } from './create-new-team/create-new-team.component';
 
 @NgModule({
   imports: [
@@ -21,7 +23,9 @@ import { ManagerDashboardComponent } from './manager-dashboard.component';
     HttpClientJsonpModule
   ],
   declarations: [
-    ManagerDashboardComponent
+    ManagerDashboardComponent,
+    AddTeamComponent,
+    CreateNewTeamComponent
   ]
 })
 export class ManagerDashboardModule {}
