@@ -5,6 +5,7 @@ import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { of } from 'rxjs/observable/of';
+import { findDocuments } from '../shared/mangoQueries';
 @Component({
   templateUrl: './community.component.html'
 })
@@ -39,10 +40,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   getCommunityList() {
-     this.couchService.allDocs('communityregistrationrequests')
+    this.couchService.post('communityregistrationrequests/_find',
+      findDocuments({ 'registrationRequest': { '$ne': 'accepted' } }, 0 ))
       .subscribe((data) => {
         this.communities.data = data;
       }, (error) => this.message = 'There was a problem getting Communities');
+
   }
 
   updateRev(item, array) {
@@ -86,8 +89,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           forkJoin([
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
-            // add registrant's information to the nation database with same id,
-            this.couchService.put('nations/' + communityId, { ...communityInfo, registrationRequest: 'accepted' }),
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
@@ -113,12 +114,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       const { _id: id, _rev: rev } = community;
-      forkJoin([
-        this.couchService.post('nations/_find', { 'selector': { '_id': id } }),
-        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
-      ]).pipe(switchMap(([ nation, user ]) => {
+      this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+      .pipe(switchMap((user) => {
         const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
-          this.addDeleteObservable(nation, 'nations/'),
           this.addDeleteObservable(user, '_users/')
         );
         return forkJoin(deleteObs);
