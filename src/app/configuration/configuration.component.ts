@@ -11,7 +11,6 @@ import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { switchMap } from 'rxjs/operators';
-import { CustomValidators } from '../../validators/custom-validators';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
