@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { CoursesService } from './courses.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -56,6 +57,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   userId = this.userService.get()._id;
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
+  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
 
   constructor(
     private couchService: CouchService,
@@ -63,36 +65,23 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    public coursesService: CoursesService
   ) {
-    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.userShelf = this.userService.getUserShelf();
-        this.setupList(this.courses.data, this.userShelf.courseIds);
-      });
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe((course) => {
+      this.courses.data = course;
+    });
+    this.coursesService.updateCourses({ opts: this.getOpts });
    }
 
   ngOnInit() {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.getUserShelf();
-      this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-  }
-
-  setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
-      const myCourseIndex = myCourses.findIndex(courseId => {
-        return course._id === courseId;
-      });
-      if (myCourseIndex > -1) {
-        return { ...course, admission: true };
-      }
-      return { ...course, admission: false };
-    });
   }
 
   getCourses() {
@@ -178,7 +167,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       .pipe(switchMap(data => {
         return this.getCourses();
       })).subscribe((data: any) => {
-        this.setupList(data, this.userShelf.courseIds);
+        this.coursesService.setupList(data, this.userShelf.courseIds);
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted selected courses');
@@ -227,30 +216,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       }
       return emptySpace;
     }, '');
-  }
-
-  updateShelf(newShelf, message) {
-    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
-      newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
-      this.setupList(this.courses.data,  this.userShelf.courseIds);
-      this.planetMessageService.showMessage(message);
-      // Clear selection because setupList breaks Material Table selection
-      this.selection.clear();
-    }, (error) => (error));
-  }
-
-  courseResign(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
-    userShelf.courseIds.splice(myCourseIndex, 1);
-    this.updateShelf(userShelf, 'Course successfully resigned');
-  }
-
-  courseAdmission(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    userShelf.courseIds.push(courseId);
-    this.updateShelf(userShelf, 'Course added to your dashboard');
   }
 
 }

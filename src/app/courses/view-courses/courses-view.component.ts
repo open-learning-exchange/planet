@@ -46,10 +46,14 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(course => this.courseDetail = course);
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(course => this.courseDetail = course[0]);
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (params: ParamMap) => this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true }),
-      error => console.log(error)
+      (params: ParamMap) => {
+        const courseId = params.get('id');
+        const getOpts: any = { courseIds: [ courseId ] };
+        this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true });
+        this.coursesService.updateCourses(getOpts);
+      }, error => console.log(error)
     );
   }
 
@@ -60,6 +64,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   viewStep() {
     this.router.navigate([ './step/1' ], { relativeTo: this.route });
+  }
+
+  admitCourse(id, admission) {
+    this.coursesService.admitCourse(id, admission);
   }
 
 }
