@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchDBAuth from 'pouchdb-authentication';
+import PouchDBFind from 'pouchdb-find';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 PouchDB.plugin(PouchDBAuth);
+PouchDB.plugin(PouchDBFind);
 
 type RemoteDatabases = 'courses';
 
@@ -22,6 +24,14 @@ export class PouchDBService {
 
   constructor() {
     this.localDB = new PouchDB('local-pouchdb');
+
+    // indexes the field for faster lookup
+    this.localDB.createIndex({
+      index: {
+        fields: ['kind']
+      },
+      sort: [{ createdAt: 'desc' }]
+    });
 
     // test is a placeholder temp database
     // we need a central remote database
