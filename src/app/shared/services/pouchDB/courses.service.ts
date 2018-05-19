@@ -35,7 +35,7 @@ export class CoursesService {
     this.localDB = this.pouchDBService.getLocalPouchDB();
   }
 
-  getCourses() {
+  getCourses(): Observable<Course[]> {
     // need to use gte because some documents do not have createdAt field
     return Observable.fromPromise(
       this.localDB.find({
