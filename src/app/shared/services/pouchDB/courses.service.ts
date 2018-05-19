@@ -48,6 +48,10 @@ export class CoursesService {
     ).pipe(map((data: { docs: Course[] }) => data.docs));
   }
 
+  getCourse(id): Observable<Course> {
+    return Observable.fromPromise(this.localDB.get(id));
+  }
+
   replicateRemoteCoursesToLocal() {
     return this.pouchDBService.replicateRemoteToLocal('courses');
   }
