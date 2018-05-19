@@ -332,7 +332,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.onDestroy$.next(false);
+    this.onDestroy$.next(true);
     this.onDestroy$.unsubscribe();
   }
 }
