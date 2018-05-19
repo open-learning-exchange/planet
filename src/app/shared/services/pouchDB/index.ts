@@ -3,5 +3,6 @@ import { AuthService } from './auth.service';
 
 export { PouchDBService } from './pouchDB.service';
 export { AuthService } from './auth.service';
+export { CoursesService } from './courses.service';
 
 export const SHARED_SERVICES = [PouchDBService, AuthService];
