@@ -6,11 +6,20 @@ import { PouchDBService } from './pouchDB.service';
 
 @Injectable()
 export class CoursesService {
-  private baseUrl = environment.couchAddress;
-  private coursesDB;
+  private localDB;
 
   constructor(private pouchDBService: PouchDBService) {
-    this.coursesDB = this.pouchDBService.getLocalPouchDB();
+    this.localDB = this.pouchDBService.getLocalPouchDB();
+  }
+
+  getCourses() {
+    return Observable.fromPromise(
+      this.localDB.find({
+        selector: {
+          kind: 'Course'
+        }
+      })
+    );
   }
 
   replicateRemoteCoursesToLocal() {
