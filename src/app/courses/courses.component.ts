@@ -62,7 +62,7 @@ import { CoursesService, Course } from '../shared/services';
 })
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
-  courses = new MatTableDataSource();
+  courses: MatTableDataSource<Course> = new MatTableDataSource<Course>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   message = '';
