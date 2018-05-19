@@ -28,9 +28,8 @@ export class PouchDBService {
     // indexes the field for faster lookup
     this.localDB.createIndex({
       index: {
-        fields: ['kind']
-      },
-      sort: [{ createdAt: 'desc' }]
+        fields: ['kind', 'createdAt']
+      }
     });
 
     // test is a placeholder temp database

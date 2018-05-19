@@ -13,11 +13,14 @@ export class CoursesService {
   }
 
   getCourses() {
+    // need to use gte because some documents do not have createdAt field
     return Observable.fromPromise(
       this.localDB.find({
         selector: {
-          kind: 'Course'
-        }
+          kind: 'Course',
+          createdAt: { $gte: null }
+        },
+        sort: [{ kind: 'desc' }, { createdAt: 'desc' }]
       })
     );
   }
