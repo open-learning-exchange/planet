@@ -5,6 +5,12 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { PouchDBService } from './pouchDB.service';
 
+interface SessionInfo {
+  userCtx: {
+    name: String;
+    roles: String[];
+  };
+}
 @Injectable()
 export class AuthService {
   private authDB;
@@ -13,7 +19,7 @@ export class AuthService {
     this.authDB = this.pouchdbService.getAuthDB();
   }
 
-  getSessionInfo() {
+  getSessionInfo(): Observable<SessionInfo> {
     return Observable.fromPromise(this.authDB.getSession()).pipe(
       catchError(this.handleError)
     );
