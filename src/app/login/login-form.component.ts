@@ -5,32 +5,44 @@ import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormBuilder,
+  Validators
+} from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
+import { AuthService } from '../shared/services';
 
 const registerForm = {
   name: [],
-  password: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('repeatPassword', false)
-    ]) ],
-  repeatPassword: [ '', Validators.compose([
-    Validators.required,
-    CustomValidators.matchPassword('password', true)
-    ]) ]
+  password: [
+    '',
+    Validators.compose([
+      Validators.required,
+      CustomValidators.matchPassword('repeatPassword', false)
+    ])
+  ],
+  repeatPassword: [
+    '',
+    Validators.compose([
+      Validators.required,
+      CustomValidators.matchPassword('password', true)
+    ])
+  ]
 };
 
 const loginForm = {
-  name: [ '', Validators.required ],
-  password: [ '', Validators.required ]
+  name: ['', Validators.required],
+  password: ['', Validators.required]
 };
 
 @Component({
   templateUrl: './login-form.component.html',
-  styleUrls: [ './login.scss' ]
+  styleUrls: ['./login.scss']
 })
 export class LoginFormComponent {
   public userForm: FormGroup;
@@ -41,10 +53,14 @@ export class LoginFormComponent {
     private userService: UserService,
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private authService: AuthService
   ) {
-    registerForm.name = [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ],
-      ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ];
+    registerForm.name = [
+      '',
+      [Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i)],
+      ac => this.validatorService.isUnique$('_users', 'name', ac, {})
+    ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
@@ -68,56 +84,97 @@ export class LoginFormComponent {
 
   welcomeNotification(userId) {
     const data = {
-      'user': userId,
-      'message': 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
-      'link': '',
-      'type': 'register',
-      'priority': 1,
-      'status': 'unread',
-      'time': Date.now()
+      user: userId,
+      message:
+        'Welcome ' +
+        userId.replace('org.couchdb.user:', '') +
+        ' to the Planet Learning',
+      link: '',
+      type: 'register',
+      priority: 1,
+      status: 'unread',
+      time: Date.now()
     };
-    this.couchService.post('notifications', data)
-      .subscribe();
+    this.couchService.post('notifications', data).subscribe();
   }
 
   reRoute() {
-    return this.router.navigate([ this.returnUrl ]);
+    return this.router.navigate([this.returnUrl]);
   }
 
-  createUser({ name, password }: {name: string, password: string}) {
-    this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false, joinDate: Date.now() })
-    .pipe(switchMap(() => {
-      return this.couchService.put('shelf/org.couchdb.user:' + name, { });
-    })).subscribe((response: any) => {
-      this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
-      this.welcomeNotification(response.id);
-      this.login(this.userForm.value, true);
-    }, error => this.planetMessageService.showAlert('An error occurred please try again'));
+  createUser({ name, password }: { name: string; password: string }) {
+    const opts = {
+      roles: [],
+      type: 'user',
+      isUserAdmin: false,
+      joinDate: Date.now()
+    };
+
+    this.authService
+      .signupUser(name, password, opts)
+      .pipe(
+        switchMap(() => {
+          return this.couchService.put('shelf/org.couchdb.user:' + name, {});
+        })
+      )
+      .subscribe(
+        (response: any) => {
+          this.planetMessageService.showMessage(
+            'User created: ' + response.id.replace('org.couchdb.user:', '')
+          );
+          this.welcomeNotification(response.id);
+          this.login(this.userForm.value, true);
+        },
+        error =>
+          this.planetMessageService.showAlert(
+            'An error occurred please try again'
+          )
+      );
   }
 
-  login({ name, password }: {name: string, password: string}, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
-      .pipe(switchMap((data) => {
-        // Navigate into app
-        if (isCreate) {
-          return fromPromise(this.router.navigate( [ 'users/update/' + name ]));
-        } else {
-          return fromPromise(this.reRoute());
-        }
-      }), switchMap((routeSuccess) => {
-        // Post new session info to login_activity
-        const obsArr = [ this.userService.newSessionLog() ];
-        const localAdminName = this.userService.getConfig().adminName.split('@')[0];
-        // If not in e2e test, also add session to parent domain
-        if (!environment.test && localAdminName === name) {
-          obsArr.push(this.couchService.post('_session',
-            { 'name': this.userService.getConfig().adminName, 'password': password },
-            { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
-        }
-        return forkJoin(obsArr);
-      })).subscribe((res) => {
-
-      }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
+  login(
+    { name, password }: { name: string; password: string },
+    isCreate: boolean
+  ) {
+    this.authService
+      .login(name, password)
+      .pipe(
+        switchMap(data => {
+          // Navigate into app
+          if (isCreate) {
+            return fromPromise(this.router.navigate(['users/update/' + name]));
+          } else {
+            return fromPromise(this.reRoute());
+          }
+        }),
+        switchMap(routeSuccess => {
+          // Post new session info to login_activity
+          const obsArr = [this.userService.newSessionLog()];
+          // If not in e2e test, also add session to parent domain
+          if (
+            !environment.test &&
+            this.userService.getConfig().name === name.toLowerCase()
+          ) {
+            obsArr.push(
+              this.couchService.post(
+                '_session',
+                { name: name.toLowerCase(), password: password },
+                {
+                  withCredentials: true,
+                  domain: this.userService.getConfig().parentDomain
+                }
+              )
+            );
+          }
+          return forkJoin(obsArr);
+        })
+      )
+      .subscribe(
+        res => {},
+        error =>
+          this.planetMessageService.showAlert(
+            'Username and/or password do not match'
+          )
+      );
   }
 }
