@@ -44,7 +44,7 @@ import {
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
-import { CoursesService } from '../shared/services';
+import { CoursesService, Course } from '../shared/services';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -123,11 +123,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         takeUntil(this.onDestroy$)
       )
       .subscribe(
-        (courses: any) => {
+        courses => {
           console.log('fetching courses...');
           console.log(courses);
           this.userShelf = this.userService.getUserShelf();
-          this.setupList(courses.docs, this.userShelf.courseIds);
+          this.setupList(courses, this.userShelf.courseIds);
         },
         error => console.log(error)
       );
@@ -139,8 +139,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       item[property].toLowerCase();
   }
 
-  setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
+  setupList(courseRes: Course[], myCourses) {
+    this.courses.data = courseRes.map(course => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
