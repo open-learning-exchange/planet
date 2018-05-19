@@ -60,7 +60,7 @@ import { CoursesService } from '../shared/services';
   `
   ]
 })
-export class CoursesComponent implements OnInit, AfterViewInit {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -81,6 +81,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     subjectLevel: ''
   };
   private _titleSearch = '';
+
   get titleSearch(): string {
     return this._titleSearch;
   }
@@ -91,7 +92,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
   userId = this.userService.get()._id;
   userShelf: any = [];
-  private onDestroy$ = new Subject<void>();
+  private onDestroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private couchService: CouchService,
@@ -118,7 +119,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
           console.log('syncing from courses...');
           console.log(res);
           return this.getCourses();
-        })
+        }),
+        takeUntil(this.onDestroy$)
       )
       .subscribe(
         (courses: any) => {
@@ -327,5 +329,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     };
     userShelf.courseIds.push(courseId);
     this.updateShelf(userShelf, 'Course added to your dashboard');
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next(false);
+    this.onDestroy$.unsubscribe();
   }
 }
