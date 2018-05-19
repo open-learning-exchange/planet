@@ -44,6 +44,7 @@
     "ngx-img": "^10.15.0",
     "pouchdb": "^6.4.3",
     "pouchdb-authentication": "^1.1.2",
+    "pouchdb-find": "^6.4.3",
     "rxjs": "5.5.2",
     "zone.js": "^0.8.18"
   },
