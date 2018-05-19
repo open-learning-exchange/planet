@@ -17,6 +17,7 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { CoursesService } from './courses.service';
 import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
 import { ExamsViewComponent } from '../exams/exams-view.component';
+import { CoursesService as PouchDBCoursesService } from '../shared/services';
 
 @NgModule({
   imports: [
@@ -40,8 +41,6 @@ import { ExamsViewComponent } from '../exams/exams-view.component';
     ExamsQuestionComponent,
     ExamsViewComponent
   ],
-  providers: [
-    CoursesService
-  ]
+  providers: [CoursesService, PouchDBCoursesService]
 })
 export class CoursesModule {}
