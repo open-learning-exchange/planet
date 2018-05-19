@@ -188,7 +188,7 @@ export class CustomValidators {
     if (!ac.value) {
       return null;
     }
-    const invalidPhoneNo = /^\s*(?:\+?(\d{1,3}))?[- (]*(\d{3})[- )]*(\d{3})[- ]*(\d{4})(?: *[x/#]{1}(\d+))?\s*$/i.test(ac.value);
+    const invalidPhoneNo = /^\+?\d+$/i.test(ac.value);
     return invalidPhoneNo ? null : { invalidPhoneNo: true };
   }
 
