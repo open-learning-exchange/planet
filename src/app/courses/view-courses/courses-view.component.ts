@@ -1,15 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
-import { UserService } from '../../shared/user.service';
-import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs/Subject';
+import { CoursesService } from '../../shared/services';
 
 @Component({
   templateUrl: './courses-view.component.html',
-  styles: [ `
+  styles: [
+    `
   .view-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -28,38 +27,38 @@ import { Subject } from 'rxjs/Subject';
   .course-detail, .course-view {
     overflow: auto;
   }
-  ` ]
+  `
+  ]
 })
-
 export class CoursesViewComponent implements OnInit, OnDestroy {
-
-  onDestroy$ = new Subject<void>();
+  private onDestroy$: Subject<boolean> = new Subject<boolean>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
 
   constructor(
     private router: Router,
-    private couchService: CouchService,
-    private userService: UserService,
     private route: ActivatedRoute,
-    private coursesService: CoursesService
-  ) { }
+    private courseService: CoursesService
+  ) {}
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(course => this.courseDetail = course);
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (params: ParamMap) => this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true }),
-      error => console.log(error)
-    );
+    this.route.paramMap
+      .pipe(
+        switchMap((params: ParamMap) =>
+          this.courseService.getCourse(params.get('id'))
+        )
+      )
+      .subscribe(course => {
+        this.courseDetail = course;
+      });
   }
 
   ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
+    this.onDestroy$.next(true);
+    this.onDestroy$.unsubscribe();
   }
 
   viewStep() {
-    this.router.navigate([ './step/1' ], { relativeTo: this.route });
+    this.router.navigate(['./step/1'], { relativeTo: this.route });
   }
-
 }
