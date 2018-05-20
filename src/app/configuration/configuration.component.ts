@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, containerRefreshEnd } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -49,13 +49,16 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.route.snapshot._routerState && this.route.snapshot._routerState.url.split('/')[1] === 'manager') {
-      this.configurationType = 'update';
+    if (this.route.snapshot.data.update) {
+      console.log("updating");
+      this.configurationType = "update";
       const configurationId = this.userService.getConfig()._id;
 
       this.couchService.get('configurations/' + configurationId)
       .subscribe((data) => {
         this.documentInfo = { rev: data._rev, id: data._id };
+        console.log("data",data);
+        this.nationOrCommunity = data.planetType;
         this.configurationFormGroup.patchValue(data);
         this.contactFormGroup.patchValue(data);
       }, (error) => {
@@ -91,9 +94,9 @@ export class ConfigurationComponent implements OnInit {
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [
-        '',
-        Validators.required,
-        this.parentUniqueValidator('code')
+        ''//,
+        //Validators.required,//removed validator because we create this for them now.
+        //this.parentUniqueValidator('code')
       ],
       createdDate: Date.now()
     });
@@ -114,12 +117,19 @@ export class ConfigurationComponent implements OnInit {
   }
 
   parentUniqueValidator(controlName: string) {
-    return ac => this.validatorService.isUnique$(
-      'communityregistrationrequests',
-      controlName,
-      ac,
-      { domain: ac.parent.get('parentDomain').value }
-    );
+    // To validate the planet name on update
+    // we need to check communityregistrationrequests 
+    // for a document with the same planet name
+    if(this.configurationType === "update"){ 
+      console.log('validation for update');
+    } else {
+      return ac => this.validatorService.isUnique$(
+        'communityregistrationrequests',
+        controlName,
+        ac,
+        { domain: ac.parent.get('parentDomain').value }
+      );
+    }
   }
 
   confirmConfigurationFormGroup() {
@@ -174,7 +184,9 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
-    if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+    if(this.configurationType === "update"){
+      this.updateConfiguration();
+    } else if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const { confirmPassword, ...credentials } = this.loginForm.value;
       const configuration = Object.assign({ registrationRequest: 'pending', adminName: credentials.name },
         this.configurationFormGroup.value, this.contactFormGroup.value);

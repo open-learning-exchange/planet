@@ -71,7 +71,7 @@
         </button>
     </div>
     <div>
-      <button mat-raised-button type="button" color="primary" *ngIf="!configurationType === 'update'" matStepperPrevious i18n>Back</button>
+      <button mat-raised-button type="button" color="primary" *ngIf="configurationType === 'new'" matStepperPrevious i18n>Back</button>
       <button mat-raised-button color="primary" (click)="confirmConfigurationFormGroup()" i18n>Next</button>
     </div>
   </mat-step>
