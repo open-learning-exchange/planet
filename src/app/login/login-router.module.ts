@@ -11,7 +11,7 @@ const routes: Routes = [
     children: [
       { path: '', component: LoginFormComponent },
       { path: 'newuser', component: LoginFormComponent },
-      { path: 'configuration', loadChildren:'../configuration/configuration.module#ConfigurationModule' , canActivate: [ ConfigurationGuard ] }
+      { path: 'configuration', loadChildren: '../configuration/configuration.module#ConfigurationModule', canActivate: [ ConfigurationGuard ] }
     ]
   }
 ];

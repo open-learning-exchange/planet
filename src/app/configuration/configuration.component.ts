@@ -103,7 +103,7 @@ export class ConfigurationComponent implements OnInit {
     this.getNationList();
   }
 
-  initUpdate(){
+  initUpdate() {
     this.configurationType = "update";
     const configurationId = this.userService.getConfig()._id;
 
@@ -120,7 +120,7 @@ export class ConfigurationComponent implements OnInit {
 
   parentUniqueValidator(controlName: string) { 
     return ac => {
-      if (this.configurationType === "update"){
+      if (this.configurationType === "update") {
         return this.validatorService.isNameAvailible$(
           'communityregistrationrequests',
           'code',
@@ -236,7 +236,7 @@ export class ConfigurationComponent implements OnInit {
         'configurations/' + this.documentInfo.id,
         configuration 
       ).subscribe(() => {
-        //navigate back to the manager dashboard
+        // Navigate back to the manager dashboard
         this.router.navigate([ '/manager' ]);
         this.planetMessageService.showMessage('Course Updated Successfully');
       }, (err) => {
