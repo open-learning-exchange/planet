@@ -34,7 +34,9 @@ import { SHARED_SERVICES } from './shared/services';
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
   ],
-  declarations: [AppComponent, PageNotFoundComponent],
+  declarations: [
+    AppComponent, PageNotFoundComponent
+  ],
   providers: [
     CouchService,
     AuthService,
@@ -46,6 +48,6 @@ import { SHARED_SERVICES } from './shared/services';
     ResourcesService,
     ...SHARED_SERVICES
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule {}

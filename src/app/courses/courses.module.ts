@@ -41,6 +41,8 @@ import { CoursesService as PouchDBCoursesService } from '../shared/services';
     ExamsQuestionComponent,
     ExamsViewComponent
   ],
-  providers: [CoursesService, PouchDBCoursesService]
+  providers: [
+    CoursesService, PouchDBCoursesService
+  ]
 })
 export class CoursesModule {}
