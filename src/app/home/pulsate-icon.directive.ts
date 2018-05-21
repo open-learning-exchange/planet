@@ -10,10 +10,11 @@ export class PulsateIconDirective {
 
     @HostBinding('class.pulsate') isPulsating = false;
 
-    // Set which class is to pulsate (bf becoming .active) and save it as state var
+    // On click, set class to pulsate for one second
+    // pulsate class triggers a one second animation (which will repeat if not removed)
     @HostListener('click') onClick() {
       this.isPulsating = true;
-      const sub = timer(1000, 1000).subscribe(() => {
+      const sub = timer(1000).subscribe(() => {
         this.isPulsating = false;
         sub.unsubscribe();
       });
