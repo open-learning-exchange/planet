@@ -15,7 +15,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
-import { HighligtRouteDirective } from './highlight-route.directive';
+import { PulsateIconDirective } from './pulsate-icon.directive';
 
 @NgModule({
   imports: [
@@ -36,7 +36,7 @@ import { HighligtRouteDirective } from './highlight-route.directive';
     NationComponent,
     DashboardTileComponent,
     NotificationsComponent,
-    HighligtRouteDirective
+    PulsateIconDirective
   ]
 })
 export class HomeModule {}
