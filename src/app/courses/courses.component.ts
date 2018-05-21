@@ -132,11 +132,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(course) {
-    this.openDeleteDialog(
-      this.deleteCourse(course),
-      'single',
-      course.courseTitle
-    );
+    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle);
   }
 
   deleteSelected() {
@@ -173,13 +169,13 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     return () => {
       const { _id: courseId, _rev: courseRev } = course;
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
-        .subscribe(data => {
+        .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
           this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
-        }, error => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
 
@@ -190,15 +186,13 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
       .pipe(switchMap(data => {
-          return this.getCourses();
+        return this.getCourses();
       })).subscribe((data: any) => {
         this.setupList(data, this.userShelf.courseIds);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage(
-          'You have deleted selected courses'
-        );
-      }, error => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
+        this.planetMessageService.showMessage('You have deleted selected courses');
+      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }
 
@@ -264,10 +258,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   courseAdmission(courseId) {
-    const userShelf: any = {
-      courseIds: [ ...this.userShelf.courseIds ],
-      ...this.userShelf
-    };
+    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     userShelf.courseIds.push(courseId);
     this.updateShelf(userShelf, 'Course added to your dashboard');
   }

@@ -70,13 +70,13 @@ export class LoginFormComponent {
 
   welcomeNotification(userId) {
     const data = {
-      user: userId,
-      message: 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
-      link: '',
-      type: 'register',
-      priority: 1,
-      status: 'unread',
-      time: Date.now()
+      'user': userId,
+      'message': 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
+      'link': '',
+      'type': 'register',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
     };
     this.couchService.post('notifications', data)
       .subscribe();
@@ -94,71 +94,38 @@ export class LoginFormComponent {
       joinDate: Date.now()
     };
 
-    this.authService
-      .signupUser(name, password, opts)
-      .pipe(
-        switchMap(() => {
-          return this.couchService.put('shelf/org.couchdb.user:' + name, {});
-        })
-      )
-      .subscribe(
-        (response: any) => {
-          this.planetMessageService.showMessage(
-            'User created: ' + response.id.replace('org.couchdb.user:', '')
-          );
-          this.welcomeNotification(response.id);
-          this.login(this.userForm.value, true);
-        },
-        error =>
-          this.planetMessageService.showAlert(
-            'An error occurred please try again'
-          )
-      );
+    this.authService.signupUser(name, password, opts)
+    .pipe(switchMap(() => {
+      return this.couchService.put('shelf/org.couchdb.user:' + name, { });
+    }))
+    .subscribe((response: any) => {
+      this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
+      this.welcomeNotification(response.id);
+      this.login(this.userForm.value, true);
+    }, error => this.planetMessageService.showAlert('An error occurred please try again'));
   }
 
-  login(
-    { name, password }: { name: string; password: string },
-    isCreate: boolean
-  ) {
+  login({ name, password }: { name: string; password: string }, isCreate: boolean) {
     this.authService
       .login(name, password)
-      .pipe(
-        switchMap(data => {
-          // Navigate into app
-          if (isCreate) {
-            return fromPromise(this.router.navigate([ 'users/update/' + name ]));
-          } else {
-            return fromPromise(this.reRoute());
-          }
-        }),
-        switchMap(routeSuccess => {
-          // Post new session info to login_activity
-          const obsArr = [ this.userService.newSessionLog() ];
-          // If not in e2e test, also add session to parent domain
-          if (
-            !environment.test &&
-            this.userService.getConfig().name === name.toLowerCase()
-          ) {
-            obsArr.push(
-              this.couchService.post(
-                '_session',
-                { name: name.toLowerCase(), password: password },
-                {
-                  withCredentials: true,
-                  domain: this.userService.getConfig().parentDomain
-                }
-              )
-            );
-          }
-          return forkJoin(obsArr);
-        })
-      )
-      .subscribe(
-        res => {},
-        error =>
-          this.planetMessageService.showAlert(
-            'Username and/or password do not match'
-          )
-      );
+      .pipe(switchMap(data => {
+        // Navigate into app
+        if (isCreate) {
+          return fromPromise(this.router.navigate( [ 'users/update/' + name ]));
+        } else {
+          return fromPromise(this.reRoute());
+        }
+      }), switchMap(routeSuccess => {
+        // Post new session info to login_activity
+        const obsArr = [ this.userService.newSessionLog() ];
+        // If not in e2e test, also add session to parent domain
+        if (!environment.test && this.userService.getConfig().name === name.toLowerCase()) {
+          obsArr.push(this.couchService.post('_session', { name: name.toLowerCase(), password: password },
+            { withCredentials: true, domain: this.userService.getConfig().parentDomain });
+        }
+        return forkJoin(obsArr);
+      })).subscribe((res) => {
+
+      }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
 }
