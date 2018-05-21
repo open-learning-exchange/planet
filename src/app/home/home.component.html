@@ -44,9 +44,9 @@
     <ul class="top-nav">
       <li>
         <a mat-button routerLink="/"
-          routerLinkActive
-          #rlaRefHm="routerLinkActive"
-          [planetHighlightRoute]="{title: 'Home', routerLinkActive: rlaRefHm}"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}"
+          planetPulsateIcon
           i18n-title title="Home">
           <mat-icon svgIcon="home"></mat-icon>
           <label i18n>Home</label>
@@ -54,19 +54,17 @@
       </li>
       <li>
         <a mat-button routerLink="/resources"
-          routerLinkActive
-          #rlaRefMl="routerLinkActive"
-          [planetHighlightRoute]="{title: 'Resources', routerLinkActive: rlaRefMl}"
+          routerLinkActive="active"
+          planetPulsateIcon
           i18n-title title="Resources">
-         <mat-icon svgIcon="myLibrary"></mat-icon>
-         <label i18n>Library</label>
+          <mat-icon svgIcon="myLibrary"></mat-icon>
+          <label i18n>Library</label>
         </a>
       </li>
       <li>
         <a mat-button routerLink="/courses"
-          routerLinkActive
-          #rlaRefMc="routerLinkActive"
-          [planetHighlightRoute]="{title: 'Courses', routerLinkActive: rlaRefMc}"
+          routerLinkActive="active"
+          planetPulsateIcon
           i18n-title title="Courses">
           <mat-icon svgIcon="myCourses"></mat-icon>
           <label i18n>Courses</label>
@@ -74,9 +72,8 @@
       </li>
       <li>
         <a mat-button routerLink="/meetups"
-          routerLinkActive
-          #rlaRefMu="routerLinkActive"
-          [planetHighlightRoute]="{title: 'Meetups', routerLinkActive: rlaRefMu}"
+          routerLinkActive="active"
+          planetPulsateIcon
           i18n-title title="Meetups">
           <mat-icon svgIcon="myMeetups"></mat-icon>
           <label i18n>Meetups</label>
@@ -84,9 +81,8 @@
       </li>
       <li>
         <a mat-button routerLink="/users"
-          routerLinkActive
-          #rlaRefMem="routerLinkActive"
-          [planetHighlightRoute]="{title: 'Users', routerLinkActive: rlaRefMem}"
+          routerLinkActive="active"
+          planetPulsateIcon
           i18n-title title="Users">
           <mat-icon svgIcon="myTeams"></mat-icon>
           <label i18n>Members</label>
