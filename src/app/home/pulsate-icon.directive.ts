@@ -8,7 +8,7 @@ export class PulsateIconDirective {
 
     constructor() {}
 
-    @HostBinding('class.pulsate') isPulsating: boolean = false;
+    @HostBinding('class.pulsate') isPulsating = false;
 
     // Set which class is to pulsate (bf becoming .active) and save it as state var
     @HostListener('click') onClick() {
