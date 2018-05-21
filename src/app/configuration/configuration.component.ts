@@ -50,20 +50,7 @@ export class ConfigurationComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.data.update) {
-      console.log("updating");
-      this.configurationType = "update";
-      const configurationId = this.userService.getConfig()._id;
-
-      this.couchService.get('configurations/' + configurationId)
-      .subscribe((data) => {
-        this.documentInfo = { rev: data._rev, id: data._id };
-        console.log("data",data);
-        this.nationOrCommunity = data.planetType;
-        this.configurationFormGroup.patchValue(data);
-        this.contactFormGroup.patchValue(data);
-      }, (error) => {
-        console.log(error);
-      });
+      this.initUpdate();
     }
 
     this.loginForm = this.formBuilder.group({
@@ -94,9 +81,9 @@ export class ConfigurationComponent implements OnInit {
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [
-        ''//,
-        //Validators.required,//removed validator because we create this for them now.
-        //this.parentUniqueValidator('code')
+        '',
+        Validators.required,
+        this.parentUniqueValidator('code')
       ],
       createdDate: Date.now()
     });
@@ -116,19 +103,38 @@ export class ConfigurationComponent implements OnInit {
     this.getNationList();
   }
 
-  parentUniqueValidator(controlName: string) {
-    // To validate the planet name on update
-    // we need to check communityregistrationrequests 
-    // for a document with the same planet name
-    if(this.configurationType === "update"){ 
-      console.log('validation for update');
-    } else {
-      return ac => this.validatorService.isUnique$(
-        'communityregistrationrequests',
-        controlName,
-        ac,
-        { domain: ac.parent.get('parentDomain').value }
-      );
+  initUpdate(){
+    this.configurationType = "update";
+    const configurationId = this.userService.getConfig()._id;
+
+    this.couchService.get('configurations/' + configurationId)
+    .subscribe((data) => {
+      this.documentInfo = { rev: data._rev, id: data._id };
+      this.nationOrCommunity = data.planetType;
+      this.configurationFormGroup.patchValue(data);
+      this.contactFormGroup.patchValue(data);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
+
+  parentUniqueValidator(controlName: string) { 
+    return ac => {
+      if (this.configurationType === "update"){
+        return this.validatorService.isNameAvailible$(
+          'communityregistrationrequests',
+          'code',
+          ac,
+          this.configurationFormGroup.value.code
+        );
+      } else {
+        return this.validatorService.isUnique$(
+          'communityregistrationrequests',
+          controlName,
+          ac,
+          { domain: ac.parent.get('parentDomain').value }
+        );
+      }
     }
   }
 
