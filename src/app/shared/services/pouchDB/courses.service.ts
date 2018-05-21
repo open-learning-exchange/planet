@@ -43,7 +43,7 @@ export class CoursesService {
           kind: 'Course',
           createdAt: { $gte: null }
         },
-        sort: [{ kind: 'desc' }, { createdAt: 'desc' }]
+        sort: [ { kind: 'desc' }, { createdAt: 'desc' } ]
       })
     ).pipe(map((data: { docs: Course[] }) => data.docs));
   }

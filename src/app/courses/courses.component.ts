@@ -1,55 +1,24 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  OnDestroy
-} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import {
-  MatTableDataSource,
-  MatSort,
-  MatPaginator,
-  MatFormField,
-  MatFormFieldControl,
-  MatDialog,
-  PageEvent
-} from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import {
-  switchMap,
-  catchError,
-  map,
-  takeUntil,
-  mergeMap
-} from 'rxjs/operators';
+import { switchMap, catchError, map, takeUntil, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
-import {
-  filterDropdowns,
-  filterSpecificFields,
-  composeFilterFunctions
-} from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
 import { CoursesService, Course } from '../shared/services';
 
 @Component({
   templateUrl: './courses.component.html',
-  styles: [
-    `
+  styles: [ `
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
@@ -57,8 +26,7 @@ import { CoursesService, Course } from '../shared/services';
     .mat-column-action {
       max-width: 225px;
     }
-  `
-  ]
+  ` ]
 })
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
@@ -71,20 +39,15 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent
-    ? ['courseTitle', 'action']
-    : ['select', 'courseTitle', 'action'];
+  displayedColumns = this.parent ? [ 'courseTitle', 'action' ] : [ 'select', 'courseTitle', 'action' ];
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
-    gradeLevel: '',
-    subjectLevel: ''
+    'gradeLevel': '',
+    'subjectLevel': ''
   };
   private _titleSearch = '';
-
-  get titleSearch(): string {
-    return this._titleSearch;
-  }
+  get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
@@ -92,7 +55,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   userId = this.userService.get()._id;
   userShelf: any = [];
-  private onDestroy$: Subject<boolean> = new Subject<boolean>();
+  private onDestroy$ = new Subject<boolean>();
 
   constructor(
     private couchService: CouchService,
@@ -103,8 +66,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private coursesService: CoursesService
   ) {
-    this.userService.shelfChange$
-      .pipe(takeUntil(this.onDestroy$))
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.userShelf = this.userService.getUserShelf();
         this.setupList(this.courses.data, this.userShelf.courseIds);
@@ -131,12 +93,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error => console.log(error)
       );
-    this.courses.filterPredicate = composeFilterFunctions([
-      filterDropdowns(this.filter),
-      filterSpecificFields(['courseTitle'])
-    ]);
-    this.courses.sortingDataAccessor = (item, property) =>
-      item[property].toLowerCase();
+    this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+    this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes: Course[], myCourses) {
@@ -170,7 +128,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateCourse(course) {
     const { _id: courseId } = course;
-    this.router.navigate(['/courses/update/' + course._id]);
+    this.router.navigate([ '/courses/update/' + course._id ]);
   }
 
   deleteClick(course) {
@@ -205,61 +163,47 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog
-      .afterClosed()
-      .debug('Closing dialog')
-      .subscribe(() => {
-        this.message = '';
-      });
+    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+      this.message = '';
+    });
   }
 
   deleteCourse(course) {
     // Return a function with course on its scope to pass to delete dialog
     return () => {
       const { _id: courseId, _rev: courseRev } = course;
-      this.couchService
-        .delete('courses/' + courseId + '?rev=' + courseRev)
+      this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
         .subscribe(data => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.courses.data = this.courses.data.filter(
-            (c: any) => data.id !== c._id
-          );
+          this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showMessage(
-            'Course deleted: ' + course.courseTitle
-          );
-        }, error => (this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.'));
+          this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
+        }, error => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
   }
 
   deleteCourses(courses) {
     return () => {
-      const deleteArray = courses.map(course => {
+      const deleteArray = courses.map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
-      this.couchService
-        .post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-        .pipe(
-          switchMap(data => {
-            return this.getCourses();
-          })
-        )
-        .subscribe((data: any) => {
-          this.setupList(data, this.userShelf.courseIds);
-          this.selection.clear();
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage(
-            'You have deleted selected courses'
-          );
-        }, error => (this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.'));
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
+      .pipe(switchMap(data => {
+          return this.getCourses();
+      })).subscribe((data: any) => {
+        this.setupList(data, this.userShelf.courseIds);
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage(
+          'You have deleted selected courses'
+        );
+      }, error => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }
 
   goBack() {
-    this.parent
-      ? this.router.navigate(['/manager'])
-      : this.router.navigate(['/']);
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -271,9 +215,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.courses.data.forEach(row => this.selection.select(row));
+    this.isAllSelected() ?
+    this.selection.clear() :
+    this.courses.data.forEach(row => this.selection.select(row));
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -284,8 +228,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetSearch() {
     this.filter = {
-      gradeLevel: '',
-      subjectLevel: ''
+      'gradeLevel': '',
+      'subjectLevel': ''
     };
     this.titleSearch = '';
   }
@@ -293,7 +237,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return Object.entries(this.filter).reduce((emptySpace, [field, val]) => {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
       if (val) {
         return ' ';
       }
@@ -302,21 +246,18 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateShelf(newShelf, message) {
-    this.couchService.put('shelf/' + this.userId, newShelf).subscribe(res => {
+    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
       // Clear selection because setupList breaks Material Table selection
       this.selection.clear();
-    }, error => error);
+    }, (error) => (error));
   }
 
   courseResign(courseId) {
-    const userShelf: any = {
-      courseIds: [...this.userShelf.courseIds],
-      ...this.userShelf
-    };
+    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     const myCourseIndex = userShelf.courseIds.indexOf(courseId);
     userShelf.courseIds.splice(myCourseIndex, 1);
     this.updateShelf(userShelf, 'Course successfully resigned');
@@ -324,7 +265,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   courseAdmission(courseId) {
     const userShelf: any = {
-      courseIds: [...this.userShelf.courseIds],
+      courseIds: [ ...this.userShelf.courseIds ],
       ...this.userShelf
     };
     userShelf.courseIds.push(courseId);

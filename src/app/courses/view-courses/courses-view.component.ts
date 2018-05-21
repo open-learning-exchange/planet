@@ -7,8 +7,7 @@ import { CoursesService } from '../../shared/services';
 
 @Component({
   templateUrl: './courses-view.component.html',
-  styles: [
-    `
+  styles: [ `
   .view-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -27,10 +26,10 @@ import { CoursesService } from '../../shared/services';
   .course-detail, .course-view {
     overflow: auto;
   }
-  `
-  ]
+  ` ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
+
   private onDestroy$: Subject<boolean> = new Subject<boolean>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
@@ -39,7 +38,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private courseService: CoursesService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.paramMap
@@ -59,6 +58,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate(['./step/1'], { relativeTo: this.route });
+    this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
+
 }
