@@ -2,28 +2,62 @@
     <a mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></a>
     <span class="toolbar-fill" i18>Add Team</span>
 </mat-toolbar>
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" i18n>
-    <span class="toolbar-fill"><button mat-button class="margin-lr-3" routerLink= "createteam"><mat-icon>library_add</mat-icon><span i18n>Create Team</span></button>
-    </span>
+<div class="space-container primary-link-hover">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill"></span>
+      <button mat-button class="margin-lr-3">
+        <mat-icon>library_add</mat-icon>
+        <span i18n>Create New Team</span>
+      </button>
+    <button mat-button class="margin-lr-3" [disabled]="!selection.selected.length" i18n routerLink= "createteam">Create New user on Selected Team</button>
   </mat-toolbar>
 
-<mat-table #table [dataSource]="users">
+  <mat-table [dataSource]="teams">
     <!-- Position Column -->
     <ng-container matColumnDef="_id">
-      <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Team list</mat-header-cell>
       <mat-cell *matCellDef="let element"> 
-        <mat-checkbox ></mat-checkbox>
+        <mat-checkbox (change)="$event ? selection.toggle(element) : null" 
+        [checked]="selection.isSelected(element)">
+      </mat-checkbox>
       </mat-cell>
     </ng-container>
     <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef i18n>Member Name</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    <ng-container matColumnDef="teamName">
+      <mat-header-cell *matHeaderCellDef i18n>Team Name</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.teamName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef i18n>Add user to team</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-button mat-raised-button color="primary" 
+        (click)="attachUserList(element, '_users')">
+          Add users on team
+        </button>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef = "userList">
+      <mat-header-cell *matHeaderCellDef i18n>Added User list</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <div>
+          <div class="user-list-menu" >
+              <span
+              *ngFor="let user of element.userList; let odd=odd"
+              [ngClass]="{'bg-grey': odd}"
+            >{{user.name}}
+          </span>
+          </div>
+        </div><!--  
+        <div *ngFor= "let user of element.userList">
+          {{user.name}}
+        </div> -->
+      </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" 
+    [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+  </mat-table>
 
 <mat-paginator #paginator
     [pageSize]="10"
