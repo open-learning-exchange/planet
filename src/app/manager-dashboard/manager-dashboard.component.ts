@@ -75,11 +75,11 @@ export class ManagerDashboardComponent implements OnInit {
         return forkJoin([
           this.couchService.put('_users/org.couchdb.user:' + userDetail.name,
             userDetail, { domain: this.userService.getConfig().parentDomain }),
-          this.couchService.put('_shelf/org.couchdb.user:' + userDetail.name,
+          this.couchService.put('shelf/org.couchdb.user:' + userDetail.name,
             {}, { domain: this.userService.getConfig().parentDomain })
         ]);
       })).subscribe((res: any) => {
-        this.planetMessageService.showMessage('Registration request has been send successfully.');
+        this.planetMessageService.showMessage('Registration request has been sent successfully.');
         this.showResendConfiguration = false;
       }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
   }
