@@ -157,7 +157,8 @@ export class ConfigurationComponent implements OnInit {
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const { confirmPassword, ...credentials } = this.loginForm.value;
-      const configuration = Object.assign({ registrationRequest: 'pending', adminName: credentials.name },
+      const adminName = credentials.name + '@' + this.configurationFormGroup.controls.code.value;
+      const configuration = Object.assign({ registrationRequest: 'pending', adminName },
         this.configurationFormGroup.value, this.contactFormGroup.value);
       const userDetail: any = {
         ...credentials,
@@ -182,8 +183,8 @@ export class ConfigurationComponent implements OnInit {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['requestId'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('_users/org.couchdb.user:' + credentials.name + '@' + configuration.code,
-              userDetail, { domain: configuration.parentDomain });
+            return this.couchService.put('_users/org.couchdb.user:' + adminName,
+              { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
           })),
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));

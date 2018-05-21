@@ -108,10 +108,11 @@ export class LoginFormComponent {
       }), switchMap((routeSuccess) => {
         // Post new session info to login_activity
         const obsArr = [ this.userService.newSessionLog() ];
+        const localAdminName = this.userService.getConfig().adminName.split('@')[0];
         // If not in e2e test, also add session to parent domain
-        if (!environment.test && this.userService.getConfig().name === name.toLowerCase()) {
+        if (!environment.test && localAdminName === name) {
           obsArr.push(this.couchService.post('_session',
-            { 'name': name.toLowerCase() + '@' + this.userService.getConfig().code, 'password': password },
+            { 'name': this.userService.getConfig().adminName, 'password': password },
             { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
         }
         return forkJoin(obsArr);
