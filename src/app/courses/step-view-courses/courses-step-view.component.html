@@ -17,6 +17,16 @@
       Take exam
     </a>
     <a
+      *ngIf="showCourseAddLink && stepDetail.exam"
+      mat-rised-button
+      color="accent"
+      class="margin-lr-10"
+      routerLink="/courses/view/{{courseId}}"
+      i18n
+    >
+    Add to myCourse
+    </a>
+    <a
       mat-raised-button
       color="accent"
       class="margin-lr-10"
