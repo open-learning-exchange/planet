@@ -17,7 +17,6 @@ import { NotificationsComponent } from '../notifications/notifications.component
 
 import { HighligtRouteDirective } from './highlight-route.directive';
 
-
 @NgModule({
   imports: [
     HomeRouterModule,

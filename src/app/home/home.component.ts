@@ -35,7 +35,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any = {};
   userImgSrc = '';
 
-
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).debug('Menu animation').pipe(tap(() => {
     this.mainContent._updateContentMargins();
