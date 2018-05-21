@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { findOneDocument } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
@@ -14,7 +15,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
         <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
           i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
       </span>
-      <button *ngIf="planetType !== center" (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
+      <button *ngIf="planetType !== center && showResendConfiguration"
+        (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
@@ -32,6 +34,7 @@ export class ManagerDashboardComponent implements OnInit {
   displayDashboard = true;
   message = '';
   planetType = this.userService.getConfig().planetType;
+  showResendConfiguration = false;
 
   constructor(
     private userService: UserService,
@@ -46,35 +49,38 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
+    // Check parent if configuration exists
+    this.couchService.post(`communityregistrationrequests/_find`, findOneDocument('name', this.userService.get().name),
+      { domain: this.userService.getConfig().parentDomain }).subscribe((data: any) => {
+        if (data.docs.length === 0) {
+          this.showResendConfiguration = true;
+        }
+      });
   }
 
   resendConfig() {
     const { _id, _rev, ...config } = this.userService.getConfig();
-    this.couchService.post(`communityregistrationrequests/_find`, findOneDocument('name', this.userService.get().name),
-      { domain: this.userService.getConfig().parentDomain }).pipe(switchMap((data: any) => {
-        if (data.docs.length === 0) {
-          return this.couchService.post('communityregistrationrequests', config, { domain: this.userService.getConfig().parentDomain })
-            .pipe(switchMap((res: any) => {
-              const userDetail = this.userService.get();
-              delete userDetail['_rev'];
-              userDetail['requestId'] =  res.id;
-              userDetail['isUserAdmin'] =  false;
-              return this.couchService.post(`_users/_find`,
-                { 'selector': { '_id': this.userService.get()._id }, 'fields': [ '_id', '_rev' ] },
-                  { domain: this.userService.getConfig().parentDomain })
-                    .pipe(switchMap((user: any) => {
-                      if (user.docs[0]) {
-                        userDetail['_rev'] = user.docs[0]._rev;
-                      }
-                      return this.couchService.put('_users/org.couchdb.user:' + userDetail.name,
-                        userDetail , { domain: this.userService.getConfig().parentDomain });
-                    }));
-             }));
+    const { _rev: userRev, ...userDetail } = this.userService.get();
+    return this.couchService.post('communityregistrationrequests', config, { domain: this.userService.getConfig().parentDomain })
+      .pipe(switchMap((res: any) => {
+        userDetail.requestId = res.id;
+        return this.couchService.post(`_users/_find`,
+          { 'selector': { '_id': userDetail._id }, 'fields': [ '_id', '_rev' ] },
+          { domain: this.userService.getConfig().parentDomain });
+      }), switchMap((user) => {
+        if (user.docs[0]) {
+          userDetail._rev = user.docs[0]._rev;
         }
-        return of({ ok: false });
+        userDetail.isUserAdmin = false;
+        return forkJoin([
+          this.couchService.put('_users/org.couchdb.user:' + userDetail.name,
+            userDetail, { domain: this.userService.getConfig().parentDomain }),
+          this.couchService.put('_shelf/org.couchdb.user:' + userDetail.name,
+            {}, { domain: this.userService.getConfig().parentDomain })
+        ]);
       })).subscribe((res: any) => {
-        res && res.ok ? this.planetMessageService.showMessage('Registration request has been send successfully.')
-          : this.planetMessageService.showMessage('Registration request has already been send.');
+        this.planetMessageService.showMessage('Registration request has been send successfully.');
+        this.showResendConfiguration = false;
       }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
   }
 
