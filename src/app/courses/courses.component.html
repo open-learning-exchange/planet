@@ -68,7 +68,7 @@
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
-            <a mat-menu-item *ngIf="userService.get().isUserAdmin || element.creator === userService.get().name" (click)="updateCourse(element)">
+            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>
@@ -84,7 +84,7 @@
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
-            <button mat-menu-item (click)="deleteClick(element)">
+            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>

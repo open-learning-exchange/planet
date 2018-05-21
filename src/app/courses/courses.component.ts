@@ -88,6 +88,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
+      course.canManage = this.userService.get().isUserAdmin ||
+       (course.creator === this.userService.get().name + '@' + this.userService.getConfig().code);
       if (myCourseIndex > -1) {
         return { ...course, admission: true };
       }
@@ -171,7 +173,11 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   deleteCourses(courses) {
     return () => {
-      const deleteArray = courses.map((course) => {
+      const deleteArray = courses.filter((course) => {
+        if (course.canManage) {
+          return course;
+        }
+      }).map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
@@ -181,7 +187,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         this.setupList(data, this.userShelf.courseIds);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted selected courses');
+        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
       }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }

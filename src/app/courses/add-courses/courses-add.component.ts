@@ -72,7 +72,7 @@ export class CoursesAddComponent implements OnInit {
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: Date.now(),
-      creator: this.userService.get().name
+      creator: this.userService.get().name + '@' + this.userService.getConfig().code
     });
   }
 
