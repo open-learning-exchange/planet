@@ -33,6 +33,7 @@ branches:
   - l10n_master
 addons:
   apt:
+    update: true
     packages:
       - docker-ce
 env:
