@@ -231,7 +231,18 @@ export class ConfigurationComponent implements OnInit {
 
   updateConfiguration() {
     if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      console.log('Hello World');
+      const configuration = Object.assign(this.configurationFormGroup.value, this.contactFormGroup.value, {'_rev': this.documentInfo.rev})
+      this.couchService.put(
+        'configurations/' + this.documentInfo.id,
+        configuration 
+      ).subscribe(() => {
+        //navigate back to the manager dashboard
+        this.router.navigate([ '/manager' ]);
+        this.planetMessageService.showMessage('Course Updated Successfully');
+      }, (err) => {
+        // Connect to an error display component to show user that an error has occurred
+        console.log(err);
+      });
     }
   }
 
