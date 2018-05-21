@@ -23,21 +23,22 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
-      this.checkAdminExistence().subscribe((noAdmin) => {
-        // false means there is admin
-        if (noAdmin) {
-          this.router.navigate([ '/login/configuration' ]);
-        } else {
-          this.couchService.allDocs('configurations').pipe(
-            switchMap(data => {
-              if (data[0].planetType === 'center') {
-                return of(false);
-              }
-              return this.couchService.get('', { domain: data[0].parentDomain });
-            })
-          ).subscribe(data => { this.online = (data) ? 'on' : ''; });
-        }
-      });
+      this.checkAdminExistence().pipe(
+        switchMap(noAdmin => {
+          // false means there is admin
+          if (noAdmin) {
+            this.router.navigate([ '/login/configuration' ]);
+            return of([]);
+          }
+          return this.couchService.allDocs('configurations');
+        }),
+        switchMap(data => {
+          if (!data[0] || data[0].planetType === 'center') {
+            return of(false);
+          }
+          return this.couchService.get('', { domain: data[0].parentDomain });
+        })
+      ).subscribe(data => { this.online = (data) ? 'on' : ''; });
     }
   }
 
