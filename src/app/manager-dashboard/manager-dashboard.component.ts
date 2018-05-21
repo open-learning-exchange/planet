@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findOneDocument } from '../shared/mangoQueries';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
