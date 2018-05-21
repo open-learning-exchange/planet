@@ -3,52 +3,52 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>Create New Team</span>
+    <span i18n>Create New Member of Team </span>
   </mat-toolbar>
   <div class="view-container">
-    <form [formGroup]="newTeamForm">
+    <form [formGroup]="newMemberForm">
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.firstName"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.firstName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
         </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.lastName"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Password" formControlName="password" required type="password">
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.password"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.password"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.email"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.language"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput type="date" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" required>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.birthDate"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
             <mat-option value="male">Male</mat-option>
             <mat-option value="female">Female</mat-option>
           </mat-select>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.gender"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.gender"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
@@ -58,7 +58,7 @@
               {{level}}
             </mat-option>
           </mat-select>
-          <mat-error><planet-form-error-messages [control]="newTeamForm.controls.level"></planet-form-error-messages></mat-error>
+          <mat-error><planet-form-error-messages [control]="newMemberForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>

@@ -1,18 +1,24 @@
 .mat-column-_id {
-    max-width: 44px;
+  max-width: 44px;
+  min-height: 24px;
+}
+
+.mat-cloumn-teamName {
+  max-width: 44px;
+  min-height: 24px;
 }
 
 div.user-list-menu {
-    overflow: auto;
-    white-space: nowrap;
+  overflow: auto;
+  white-space: nowrap;
 }
 
 div.user-list-menu span {
-    display: inline-block;
-    text-align: center;
-    padding-top: 14px;
-    padding-bottom: 14px;
-    padding-right: 40px;
-    padding-left: 40px; 
-    text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  padding-top: 14px; 
+  padding-bottom: 14px;
+  padding-right: 40px; 
+  padding-left: 40px; 
+  text-decoration: none;
 }

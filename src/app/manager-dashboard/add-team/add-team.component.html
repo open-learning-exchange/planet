@@ -5,21 +5,22 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-      <button mat-button class="margin-lr-3">
+      <button mat-button class="margin-lr-3"
+      (click)= "createNewTeamForm()"
+      >
         <mat-icon>library_add</mat-icon>
         <span i18n>Create New Team</span>
       </button>
-    <button mat-button class="margin-lr-3" [disabled]="!selection.selected.length" i18n routerLink= "createteam">Create New user on Selected Team</button>
+    <button mat-button class="margin-lr-3" [disabled]="!selection.selected.length" i18n 
+     (click)="routeToAddNewMemberOnTeam()">Create New user on Selected Team</button>
   </mat-toolbar>
 
   <mat-table [dataSource]="teams">
     <!-- Position Column -->
-    <ng-container matColumnDef="_id">
-      <mat-header-cell *matHeaderCellDef i18n>Team list</mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
-        <mat-checkbox (change)="$event ? selection.toggle(element) : null" 
-        [checked]="selection.isSelected(element)">
-      </mat-checkbox>
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef i18n>Team No</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{element.id}}
       </mat-cell>
     </ng-container>
     <!-- Name Column -->
@@ -32,9 +33,23 @@
       <mat-header-cell *matHeaderCellDef i18n>Add user to team</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <button mat-button mat-raised-button color="primary" 
-        (click)="attachUserList(element, '_users')">
+        (click)="attachUserList(element, '_users')"
+        >
           Add users on team
         </button>
+        <button  class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #meetupMenu="matMenu">
+          <a mat-menu-item>
+            <mat-icon>visibility</mat-icon>
+            <span i18n>View Team details</span>
+          </a>
+          <button mat-menu-item >
+            <mat-icon>delete_forever</mat-icon>
+            <span i18n>Delete Team</span>
+          </button>
+        </mat-menu>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef = "userList">
@@ -42,25 +57,25 @@
       <mat-cell *matCellDef="let element">
         <div>
           <div class="user-list-menu" >
-              <span
-              *ngFor="let user of element.userList; let odd=odd"
-              [ngClass]="{'bg-grey': odd}"
+            <span
+            *ngFor="let user of element.userList; let odd=odd"
+            [ngClass]="{'bg-grey': odd}"
             >{{user.name}}
           </span>
           </div>
-        </div><!--  
-        <div *ngFor= "let user of element.userList">
-          {{user.name}}
-        </div> -->
+        </div>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" 
-    [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    <mat-row 
+    *matRowDef="let row; columns: displayedColumns"
+    (click)="selection.toggle(row)" 
+    [ngClass]="{highlight:selection.isSelected(row)}"
+    ></mat-row>
   </mat-table>
 
-<mat-paginator #paginator
+  <mat-paginator #paginator
     [pageSize]="10"
     [pageSizeOptions]="[5, 10, 20]">
-</mat-paginator>
+  </mat-paginator>
 </div>

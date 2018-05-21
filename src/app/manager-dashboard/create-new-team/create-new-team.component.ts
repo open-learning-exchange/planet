@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: [ './create-new-team.component.scss' ]
 })
 export class CreateNewTeamComponent implements OnInit {
-  newTeamForm: FormGroup;
+  newMemberForm: FormGroup;
   educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
   constructor(
     private router: Router,
@@ -19,7 +19,7 @@ export class CreateNewTeamComponent implements OnInit {
   }
 
   userData() {
-    this.newTeamForm = this.fb.group({
+    this.newMemberForm = this.fb.group({
       firstName: [ '', Validators.required ],
       middleName: '',
       lastName: [ '', Validators.required ],

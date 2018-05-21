@@ -1,17 +1,21 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { MatTableDataSource, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
+  Validators,
 } from '@angular/forms';
+import { DialogsFormComponent } from '../../shared/dialogs/dialogs-form.component';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './add-team.component.html',
@@ -22,13 +26,14 @@ export class AddTeamComponent implements OnInit, AfterViewInit {
     return { id: ind.toString(), teamName: 'Team ' + ind, userList: [] };
   });
   teams: any = new MatTableDataSource();
-  displayedColumns = [ '_id', 'teamName', 'action', 'userList' ];
-  selection = new SelectionModel(true, []);
+  displayedColumns = [ 'id', 'teamName', 'action', 'userList' ];
+  selection = new SelectionModel(false, []);
   dialogRef: MatDialogRef<DialogsListComponent>;
-    userInfo: any = {
+  userInfo: any = {
     id: '',
     name: '',
-    };
+  };
+  dialogRefCreateNewTeam: MatDialogRef<DialogsFormComponent>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   userForm: FormGroup;
   constructor(
@@ -36,7 +41,9 @@ export class AddTeamComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialogsFormService: DialogsFormService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -60,7 +67,7 @@ export class AddTeamComponent implements OnInit, AfterViewInit {
         height: '500px',
         width: '600px',
         autoFocus: false
-      };
+      });
     });
   }
 
@@ -74,5 +81,31 @@ export class AddTeamComponent implements OnInit, AfterViewInit {
       this.dialogRef.close();
     };
   }
-}
 
+  createNewTeamForm() {
+    const title = 'New Team';
+    const fields = [ {
+      'label': 'Team Name',
+      'type': 'textbox',
+      'inputType': 'text',
+      'name': 'teamName',
+      'placeholder': 'Team Name',
+      'required': true
+    } ];
+    const formGroup = {
+      teamName: [ '', Validators.required ]
+    };
+    this.dialogsFormService.confirm(title, fields, formGroup)
+    .subscribe((res: any) => {
+      res.id = '6',
+      res.userList = [];
+      this.mockTeams.push(res);
+      this.teams.paginator = this.paginator;
+    });
+  }
+
+  routeToAddNewMemberOnTeam() {
+    this.router.navigate([ 'manager/manageteam/createnewmember', this.selection.selected[0].id ]);
+  }
+
+}

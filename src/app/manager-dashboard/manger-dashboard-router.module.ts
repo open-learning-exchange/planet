@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule', data: { parent: true } },
   { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },
   { path: 'manageteam', component: AddTeamComponent },
-  { path: 'manageteam/createteam', component: CreateNewTeamComponent }
+  { path: 'manageteam/createnewmember/:teamid', component: CreateNewTeamComponent }
   ];
 
 @NgModule({
