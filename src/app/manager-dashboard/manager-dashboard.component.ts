@@ -40,7 +40,7 @@ export class ManagerDashboardComponent implements OnInit {
   message = '';
   planetType = this.userService.getConfig().planetType;
   showResendConfiguration = false;
-  showParentList= false;
+  showParentList = false;
 
   constructor(
     private userService: UserService,
