@@ -84,6 +84,7 @@ export class ResourcesRatingComponent implements OnChanges {
       } else {
         this.rateForm.setValue({ rate: this.popupForm.controls.rate.value });
         this.isPopupOpen = false;
+        this.planetMessage.showMessage('Thank you, your rating is submitted!');
       }
     }, (err) => {
       this.ratingError();
