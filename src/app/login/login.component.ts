@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { tap, catchError } from 'rxjs/operators';
-
+import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 @Component({
@@ -14,6 +13,7 @@ import { of } from 'rxjs/observable/of';
 export class LoginComponent implements OnInit {
 
   version: string = require( '../../../package.json').version;
+  online = 'off';
 
   constructor(
     private couchService: CouchService,
@@ -23,12 +23,22 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
-      this.checkAdminExistence().subscribe((noAdmin) => {
-        // false means there is admin
-        if (noAdmin) {
-          this.router.navigate([ '/login/configuration' ]);
-        }
-      });
+      this.checkAdminExistence().pipe(
+        switchMap(noAdmin => {
+          // false means there is admin
+          if (noAdmin) {
+            this.router.navigate([ '/login/configuration' ]);
+            return of([]);
+          }
+          return this.couchService.allDocs('configurations');
+        }),
+        switchMap(data => {
+          if (!data[0] || data[0].planetType === 'center') {
+            return of(false);
+          }
+          return this.couchService.get('', { domain: data[0].parentDomain });
+        })
+      ).subscribe(data => { this.online = (data) ? 'on' : ''; });
     }
   }
 
