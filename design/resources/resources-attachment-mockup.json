@@ -1,27 +1,32 @@
 [
 	{
 		"doc_id": "0216c7208a72e79b29997d0fd400be3c",
-		"file_name": "./src/assets/image.png",
+    "file_name": "image.png",
+    "file_location": "./design/resources/attachments/image.png",
 		"file_type": "image/jpg"
 	},
 	{
 		"doc_id": "0216c7208a72e79b29997d0fd400beac",
-		"file_name": "./src/assets/github.txt",
+    "file_name": "github.txt",
+    "file_location": "./design/resources/attachments/github.txt",
 		"file_type": "text/plain"
 	},
 	{
 		"doc_id": "0216c7208a72e79b29997ded400beac",
-		"file_name": "./src/assets/tenses.pdf",
+    "file_name": "tenses.pdf",
+    "file_location": "./design/resources/attachments//tenses.pdf",
 		"file_type": "application/pdf"
 	},
 	{
 		"doc_id": "0216c7208a7ss79b29997d0fd400beac",
-		"file_name": "./src/assets/sample_document.doc",
+    "file_name": "document.doc",
+    "file_location": "./design/resources/attachments/document.doc",
 		"file_type": "application/msword"
 	},
 	{
 		"doc_id": "0216s208a72e79b29997d0fd400beac",
-		"file_name":  "./src/assets/sample_csv.csv",
+    "file_name": "sample_csv.csv",
+    "file_location": "./design/resources/attachments/sample_csv.csv",
 		"file_type": "application/vnd.ms-excel"
 	}
 ]

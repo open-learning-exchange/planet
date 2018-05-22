@@ -45,7 +45,7 @@ export class ConfigurationComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      name: [ '', [ Validators.required, Validators.pattern(/^[a-z0-9_.-]+$/i) ] ],
+      name: [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ] ],
       password: [
         '',
         Validators.compose([
@@ -66,7 +66,8 @@ export class ConfigurationComponent implements OnInit {
       localDomain: this.defaultLocal,
       name: [
         '',
-        Validators.required,
+        [ Validators.required,
+        Validators.pattern(/^[A-Za-z0-9]/i) ],
         this.parentUniqueValidator('name')
       ],
       parentDomain: [ '', Validators.required ],
@@ -185,7 +186,19 @@ export class ConfigurationComponent implements OnInit {
             userDetail['isUserAdmin'] =  false;
             return this.couchService.put('_users/org.couchdb.user:' + adminName,
               { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
-          })),
+          }), switchMap(data => {
+            const requestNotification = {
+              'user': 'SYSTEM',
+              'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
+              'link': '/requests',
+              'type': 'request',
+              'priority': 1,
+              'status': 'unread',
+              'time': Date.now()
+            };
+            // Send notification to parent
+            return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
+          }))
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
