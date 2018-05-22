@@ -9,11 +9,12 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { switchMap, catchError, map, takeUntil, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { CoursesService, Course } from '../shared/services';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -27,10 +28,9 @@ import { Subject } from 'rxjs/Subject';
     }
   ` ]
 })
-
-export class CoursesComponent implements OnInit, AfterViewInit {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
-  courses = new MatTableDataSource();
+  courses: MatTableDataSource<Course> = new MatTableDataSource<Course>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   message = '';
@@ -63,28 +63,42 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private coursesService: CoursesService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.userShelf = this.userService.getUserShelf();
         this.setupList(this.courses.data, this.userShelf.courseIds);
       });
-   }
+  }
 
   ngOnInit() {
-    this.getCourses().subscribe((courses: any) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.getUserShelf();
-      this.setupList(courses, this.userShelf.courseIds);
-    }, (error) => console.log(error));
+    this.coursesService
+      .replicateRemoteCoursesToLocal()
+      .pipe(
+        mergeMap(res => {
+          console.log('syncing from courses...');
+          console.log(res);
+          return this.getCourses();
+        }),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe(
+        courses => {
+          console.log('fetching courses...');
+          console.log(courses);
+          this.userShelf = this.userService.getUserShelf();
+          this.setupList(courses, this.userShelf.courseIds);
+        },
+        error => console.log(error)
+      );
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
-  setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
+  setupList(courseRes: Course[], myCourses) {
+    this.courses.data = courseRes.map(course => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
@@ -96,11 +110,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   getCourses() {
-    let opts: any = {};
-    if (this.parent) {
-      opts = { domain: this.userService.getConfig().parentDomain };
-    }
-    return this.couchService.allDocs('courses', opts);
+    return this.coursesService.getCourses();
   }
 
   ngAfterViewInit() {
@@ -233,7 +243,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
-      this.setupList(this.courses.data,  this.userShelf.courseIds);
+      this.setupList(this.courses.data, this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
       // Clear selection because setupList breaks Material Table selection
       this.selection.clear();
@@ -253,4 +263,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.updateShelf(userShelf, 'Course added to your dashboard');
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

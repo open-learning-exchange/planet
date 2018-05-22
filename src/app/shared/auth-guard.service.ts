@@ -4,18 +4,23 @@ import { UserService } from './user.service';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { switchMap, map } from 'rxjs/operators';
+import { AuthService as PouchDBAuthService } from './services';
 
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 @Injectable()
 export class AuthService {
 
-  constructor(private couchService: CouchService, private userService: UserService, private router: Router) {}
+  constructor(
+    private couchService: CouchService,
+    private userService: UserService,
+    private router: Router,
+    private authService: PouchDBAuthService
+  ) {}
 
   private checkUser(url: any): Observable<boolean> {
-    return this.couchService
-      .get('_session', { withCredentials: true })
-      .pipe(switchMap((res: any) => {
+    return this.authService.getSessionInfo()
+      .pipe(switchMap(res => {
         if (res.userCtx.name) {
           // If user already matches one on the user service, do not make additional call to CouchDB
           if (res.userCtx.name === this.userService.get().name) {
@@ -40,7 +45,7 @@ export class AuthService {
 
   // For login route will redirect to main app if there is an active session
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.couchService.get('_session', { withCredentials: true }).pipe(map(res => {
+    return this.authService.getSessionInfo().pipe(map(res => {
       if (res.userCtx.name) {
         this.router.navigate([ '' ]);
         return false;
@@ -48,5 +53,4 @@ export class AuthService {
       return true;
     }));
   }
-
 }
