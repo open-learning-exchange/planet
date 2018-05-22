@@ -35,6 +35,7 @@ export class ManagerDashboardComponent implements OnInit {
   message = '';
   planetType = this.userService.getConfig().planetType;
   showResendConfiguration = false;
+  userDetail: any;
 
   constructor(
     private userService: UserService,
@@ -44,6 +45,7 @@ export class ManagerDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.getUserDetail();
     if (!this.isUserAdmin) {
       // A non-admin user cannot receive all user docs
       this.displayDashboard = false;
@@ -60,7 +62,7 @@ export class ManagerDashboardComponent implements OnInit {
 
   resendConfig() {
     const { _id, _rev, ...config } = this.userService.getConfig();
-    const { _rev: userRev, ...userDetail } = this.userService.get();
+    const { _rev: userRev, ...userDetail } = this.userDetail;
     return this.couchService.post('communityregistrationrequests', config, { domain: this.userService.getConfig().parentDomain })
       .pipe(switchMap((res: any) => {
         userDetail.requestId = res.id;
@@ -75,8 +77,16 @@ export class ManagerDashboardComponent implements OnInit {
         return forkJoin([
           this.couchService.put('_users/org.couchdb.user:' + userDetail.name,
             userDetail, { domain: this.userService.getConfig().parentDomain }),
-          this.couchService.put('shelf/org.couchdb.user:' + userDetail.name,
-            {}, { domain: this.userService.getConfig().parentDomain })
+          this.couchService.post(`shelf/_find`,
+            { 'selector': { '_id': userDetail._id } },
+            { domain: this.userService.getConfig().parentDomain })
+              .pipe(switchMap((shelf: any) => {
+                if (shelf.docs[0]) {
+                  return of(false);
+                }
+                return this.couchService.put('shelf/org.couchdb.user:' + userDetail.name,
+                {}, { domain: this.userService.getConfig().parentDomain });
+              }))
         ]);
       })).subscribe((res: any) => {
         this.planetMessageService.showMessage('Registration request has been sent successfully.');
@@ -84,4 +94,10 @@ export class ManagerDashboardComponent implements OnInit {
       }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
   }
 
+  getUserDetail() {
+    this.couchService.get('_users/org.couchdb.user:' + this.userService.get().name)
+      .subscribe((data) => {
+        this.userDetail = data;
+      });
+  }
 }
