@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs/Subject';
+import { environment } from '../../../environments/environment';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -62,4 +63,14 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
 
+  goToExam(stepNum) {
+    this.router.navigate([ './step/' + (stepNum + 1) + '/exam', 1 ], { relativeTo: this.route });
+  }
+
+  resourceUrl(stepDetail) {
+    if (Object.keys(stepDetail.attachment.doc._attachments)[0]) {
+      const filename = stepDetail.openWhichFile || Object.keys(stepDetail.attachment.doc._attachments)[0];
+      return environment.couchAddress + 'resources/' + stepDetail.attachment.doc._id + '/' + filename;
+    }
+  }
 }
