@@ -185,7 +185,19 @@ export class ConfigurationComponent implements OnInit {
             userDetail['isUserAdmin'] =  false;
             return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
               userDetail, { domain: configuration.parentDomain });
-          })),
+          }), switchMap(data => {
+            const requestNotification = {
+              'user': 'SYSTEM',
+              'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
+              'link': '/requests',
+              'type': 'request',
+              'priority': 1,
+              'status': 'unread',
+              'time': Date.now()
+            };
+            // Send notification to parent
+            return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
+          }))
       ]).debug('Sending request to parent planet').subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
