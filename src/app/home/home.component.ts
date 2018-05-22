@@ -161,9 +161,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       this.userService.setNotificationStateChange();
     },  (err) => console.log(err));
-    if (notification.link) {
-      this.router.navigate([ notification.link ]);
-    }
   }
 
 }
