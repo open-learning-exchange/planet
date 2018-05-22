@@ -221,7 +221,7 @@ export class ConfigurationComponent implements OnInit {
           })
         )
       ]).debug('Sending request to parent planet').subscribe((data) => {
-        this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
+        this.planetMessageService.showMessage('Admin created: ' + data[2].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
