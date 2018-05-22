@@ -31,7 +31,7 @@ import { CoursesService } from '../../shared/services';
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
-  private onDestroy$: Subject<boolean> = new Subject<boolean>();
+  private onDestroy$ = new Subject<void>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
 
@@ -54,8 +54,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.onDestroy$.next(true);
-    this.onDestroy$.unsubscribe();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   viewStep() {

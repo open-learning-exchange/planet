@@ -55,7 +55,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   userId = this.userService.get()._id;
   userShelf: any = [];
-  private onDestroy$ = new Subject<boolean>();
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -264,7 +264,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.onDestroy$.next(true);
-    this.onDestroy$.unsubscribe();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
