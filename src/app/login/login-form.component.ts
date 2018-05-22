@@ -119,9 +119,9 @@ export class LoginFormComponent {
         return forkJoin(obsArr).pipe(catchError(error => {
           // 401 is for Unauthorized
           if (error.status === 401) {
-            this.planetMessageService.showMessage('Error login with parent planet.');
+            this.planetMessageService.showMessage('Can not login to parent planet.');
           } else {
-            this.planetMessageService.showMessage('Login successful with some error.');
+            this.planetMessageService.showMessage('Error connecting to parent.');
           }
           return of(error);
         }));
