@@ -60,10 +60,11 @@ insert_attachments() {
   for i in $INPUTS
   do
     ID=$(echo $i | jq -r '.doc_id' )
-    FILE_LOCATION=$(echo $i | jq -r '.file_name')
+    FILE_NAME=$(echo $i | jq -r '.file_name')
+    FILE_LOCATION=$(echo $i | jq -r '.file_location')
     FILE_TYPE=$(echo $i | jq -r '.file_type')
     REV=$(curl $COUCHURL/$DB/$ID | jq -r '._rev')
-    curl -X PUT $COUCHURL/$DB/$ID/$FILE_LOCATION?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE
+    curl -X PUT $COUCHURL/$DB/$ID/$FILE_NAME?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE
   done
 }
 
