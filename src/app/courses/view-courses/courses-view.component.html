@@ -38,7 +38,7 @@
           {{step.description}}
           <mat-action-row>
             <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step.attachment" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
-            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step.exam" (click)="goToExam(stepNum)" i18n>Take exam</a>
+            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length" (click)="goToExam(stepNum)" i18n>Take exam</a>
           </mat-action-row>
         </mat-expansion-panel>
       </ng-container>
