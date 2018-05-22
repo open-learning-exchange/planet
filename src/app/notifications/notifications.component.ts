@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { Router } from '@angular/router';
 @Component({
   template: `
     <p i18n>Your Notifications</p>
@@ -21,7 +22,8 @@ export class NotificationsComponent implements OnInit {
   notifications = [];
   constructor(
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
     ) {
     this.userService.notificationStateChange$.subscribe(() => {
       this.getNotifications();
@@ -64,6 +66,9 @@ export class NotificationsComponent implements OnInit {
         });
         this.userService.setNotificationStateChange();
       }, (err) => console.log(err));
+    }
+    if (notification.link) {
+      this.router.navigate([ notification.link ]);
     }
   }
 }
