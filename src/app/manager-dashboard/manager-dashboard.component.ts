@@ -22,12 +22,12 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
       <div *ngIf="showParentList">
-      <a routerLink="resources" i18n mat-raised-button>List Resources</a>
-      <a routerLink="courses" i18n mat-raised-button>List Courses</a>
-      <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
+        <a routerLink="resources" i18n mat-raised-button>List Resources</a>
+        <a routerLink="courses" i18n mat-raised-button>List Courses</a>
+        <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
       </div>
       <div *ngIf="!showParentList">
-        <p i18n>Your request has not been accepted by parents </p>
+        <p i18n>Your request has not been accepted by parent</p>
       </div>
     </div>
     <div>{{message}}</div>
@@ -92,17 +92,9 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   checkRequestAcceptedOrNot() {
-    this.couchService.allDocs('communityregistrationrequests', { domain: this.userService.getConfig().parentDomain }) .subscribe(data => {
-      data.forEach(element => {
-         if (element.code === this.userService.getConfig().code) {
-            if (element.registrationRequest === 'accepted') {
-              this.showParentList = true;
-            }
-         }
-      });
-    }, error => {
-      this.showParentList = false;
-    });
+    if (this.userService.getConfig().registrationRequest === 'accepted') {
+      this.showParentList = true;
+    }
   }
 
 }
