@@ -45,7 +45,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       .subscribe((data) => {
         this.communities.data = data;
       }, (error) => this.message = 'There was a problem getting Communities');
-
   }
 
   updateRev(item, array) {
