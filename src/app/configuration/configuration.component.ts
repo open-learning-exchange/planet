@@ -187,6 +187,8 @@ export class ConfigurationComponent implements OnInit {
             return this.couchService.put('_users/org.couchdb.user:' + adminName,
               { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
           }), switchMap(data => {
+            return this.couchService.put('shelf/org.couchdb.user:' + adminName, { }, { domain: configuration.parentDomain });
+          }), switchMap(data => {
             const requestNotification = {
               'user': 'SYSTEM',
               'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
