@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
+import * as moment from 'moment';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -40,6 +41,7 @@ export class MeetupsAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
+        data.createdDate = moment(data.createdDate).format('YYYY-MM-DD');
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
