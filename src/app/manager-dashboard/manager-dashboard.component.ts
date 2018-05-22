@@ -20,10 +20,15 @@ import { PlanetMessageService } from '../shared/planet-message.service';
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
-      <h3 i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
+      <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
+      <div *ngIf="showParentList">
       <a routerLink="resources" i18n mat-raised-button>List Resources</a>
       <a routerLink="courses" i18n mat-raised-button>List Courses</a>
       <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
+      </div>
+      <div *ngIf="!showParentList">
+        <p i18n>Your request has not been accepted by parents </p>
+      </div>
     </div>
     <div>{{message}}</div>
   `
@@ -35,6 +40,7 @@ export class ManagerDashboardComponent implements OnInit {
   message = '';
   planetType = this.userService.getConfig().planetType;
   showResendConfiguration = false;
+  showParentList= false;
 
   constructor(
     private userService: UserService,
@@ -43,6 +49,7 @@ export class ManagerDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.checkRequestAcceptedOrNot();
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
       // A non-admin user cannot receive all user docs
@@ -82,6 +89,20 @@ export class ManagerDashboardComponent implements OnInit {
         this.planetMessageService.showMessage('Registration request has been sent successfully.');
         this.showResendConfiguration = false;
       }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
+  }
+
+  checkRequestAcceptedOrNot() {
+    this.couchService.allDocs('communityregistrationrequests', { domain: this.userService.getConfig().parentDomain }) .subscribe(data => {
+      data.forEach(element => {
+         if (element.code === this.userService.getConfig().code) {
+            if (element.registrationRequest === 'accepted') {
+              this.showParentList = true;
+            }
+         }
+      });
+    }, error => {
+      this.showParentList = false;
+    });
   }
 
 }
