@@ -15,15 +15,15 @@ You can get on overview of our concept of planet learning here.
 
 # Our Development Cycle/On-Boarding
 
-OLE software is build using JavaScript, CouchDB, Angular
+OLE software is built using JavaScript, CouchDB, Angular
 
 OLE maintains an on-boarding exercise for virtual interns that provides a foundation in both our software and our workflow on GitHub. Please find it here. 
 
 For those comfortable with GitHub and with the above languages please jump right into the following repositories and look for issues:
 
 * [open-learning-exchange.github.io](https://github.com/open-learning-exchange/open-learning-exchange.github.io) - Our Wiki good for starter
-* [Planet](https://github.com/open-learning-exchange/planet) 	New iteration of our BeLL Apps planet learning written in TypeScript and Angular4
-* [Treehouse Project](https://github.com/treehouses/)  - A image builder for planet learning deployment in raspberry pi
+* [Planet](https://github.com/open-learning-exchange/planet) - New iteration of our BeLL Apps planet learning written in TypeScript and Angular 6
+* [Treehouse Project](https://github.com/treehouses/) - A image builder for planet learning deployment in raspberry pi
 * [Pirateship](https://github.com/ole-vi/pirateship) - Our homebrew system CLI tool
 
 # Asking for help // OLE support communities
