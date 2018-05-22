@@ -60,7 +60,7 @@ export class CoursesService {
   }
 
   updateSubmission(answer, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    const submission = { ...this.submission, answers: this.submission.answers ? [ ...this.submission.answers ] : [] };
     submission.answers[index] = answer;
     submission.status = close ? 'complete' : 'pending';
     this.couchService.post('submissions', submission).subscribe((res) => {
