@@ -176,7 +176,6 @@ export class ConfigurationComponent implements OnInit {
         this.couchService.put('shelf/org.couchdb.user:' + credentials.name, { }),
         // then add configuration
         this.couchService.post('configurations', configuration),
-
         // then post configuration to parent planet's registration requests
         this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
           .pipe(switchMap(data => {
