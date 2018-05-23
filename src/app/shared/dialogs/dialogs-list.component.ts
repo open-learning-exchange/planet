@@ -49,7 +49,7 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   ok() {
-    this.data.okClick(this.selection.selected[0]);
+    this.data.okClick(this.selection.selected);
   }
 
   applyFilter(filterValue: string) {
