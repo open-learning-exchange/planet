@@ -56,4 +56,18 @@ export class DialogsListComponent implements AfterViewInit {
     this.tableData.filter = filterValue;
   }
 
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.tableData.data.length;
+    return numSelected === numRows ? 'yes' : 'no';
+  }
+
+  masterToggle() {
+    if (this.isAllSelected() === 'yes') {
+      this.selection.clear();
+    } else {
+      this.tableData.data.forEach(row => this.selection.select(row));
+    }
+  }
+
 }
