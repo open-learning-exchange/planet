@@ -129,6 +129,12 @@ export class ConfigurationComponent implements OnInit {
     // skip special character if comes as last character
     code = code.replace(/\W+$/, '').toLowerCase();
     this.configurationFormGroup.get('code').setValue(code);
+    if (this.configurationFormGroup.get('code').value !== '' ) {
+      this.configurationFormGroup.controls.name.markAsTouched();
+      this.configurationFormGroup.controls.code.markAsTouched();
+    } else {
+       this.configurationFormGroup.controls.code.markAsUntouched();
+    }
   }
 
   getNationList() {
@@ -152,6 +158,13 @@ export class ConfigurationComponent implements OnInit {
         planetType: selectedValue,
         parentDomain: ''
       });
+    }
+  }
+
+  onChangeNation() {
+    if (this.configurationFormGroup.get('name').value !== '') {
+      this.configurationFormGroup.controls.name.updateValueAndValidity();
+      this.configurationFormGroup.controls.code.updateValueAndValidity();
     }
   }
 
