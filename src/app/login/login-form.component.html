@@ -2,7 +2,10 @@
   <mat-form-field class="example-full-width">
     <input matInput i18n-placeholder placeholder="Username" name="name" formControlName = "name" planetLowercase/>
     <mat-error>
-      <planet-form-error-messages [control]="userForm.controls.name"></planet-form-error-messages>
+      <planet-form-error-messages 
+      matTooltip="only letters, numbers and _.- allowed"
+      aria-label="Button that displays a tooltip when focused or hovered over"
+      [control]="userForm.controls.name"></planet-form-error-messages>
     </mat-error>
   </mat-form-field>
   <mat-form-field class="example-full-width">

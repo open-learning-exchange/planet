@@ -25,7 +25,7 @@ const registerForm = {
 };
 
 const loginForm = {
-  name: [ '', Validators.required ],
+  name: [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]*$/i) ], ],
   password: [ '', Validators.required ]
 };
 
