@@ -44,7 +44,7 @@
       <mat-form-field>
         <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
       </mat-form-field>
-      <button mat-raised-button color="accent" (click)="postMessage()"><mat-icon>reply</mat-icon>Reply</button>
+      <button mat-raised-button color="accent" (click)="postMessage()" [disabled]="!newMessage.trim()"><mat-icon>reply</mat-icon>Reply</button>
     </div>
   </div>
 </div>

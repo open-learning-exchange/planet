@@ -169,7 +169,27 @@ export class ConfigurationComponent implements OnInit {
         'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
+      const feedbackSyncUp = {
+        '_id': 'feedback_from_parent',
+        'source': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+          },
+          'url': environment.couchAddress + 'feedback'
+        },
+        'target': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+          },
+          'url': 'https://' + configuration.parentDomain + '/feedback'
+        },
+        'create_target':  false,
+        'continuous': true,
+        'owner': credentials.name
+      };
       forkJoin([
+        // create replicator at first as we do not have session
+        this.couchService.post('_replicator', feedbackSyncUp),
         // When creating a planet, add admin
         this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
         // then add user with same credentials
@@ -187,6 +207,8 @@ export class ConfigurationComponent implements OnInit {
             return this.couchService.put('_users/org.couchdb.user:' + adminName,
               { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
           }), switchMap(data => {
+            return this.couchService.put('shelf/org.couchdb.user:' + adminName, { }, { domain: configuration.parentDomain });
+          }), switchMap(data => {
             const requestNotification = {
               'user': 'SYSTEM',
               'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
@@ -198,9 +220,10 @@ export class ConfigurationComponent implements OnInit {
             };
             // Send notification to parent
             return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
-          }))
+          })
+        )
       ]).debug('Sending request to parent planet').subscribe((data) => {
-        this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
+        this.planetMessageService.showMessage('Admin created: ' + data[2].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
