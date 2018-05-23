@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -45,7 +45,7 @@ export class ConfigurationComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      name: [ '', Validators.required ],
+      name: [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]*$/i) ] ],
       password: [
         '',
         Validators.compose([
@@ -64,10 +64,19 @@ export class ConfigurationComponent implements OnInit {
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
       localDomain: this.defaultLocal,
-      name: [ '', Validators.required ],
+      name: [
+        '',
+        [ Validators.required,
+        Validators.pattern(/^[A-Za-z0-9]/i) ],
+        this.parentUniqueValidator('name')
+      ],
       parentDomain: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required ],
+      code: [
+        '',
+        Validators.required,
+        this.parentUniqueValidator('code')
+      ],
       createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
@@ -86,6 +95,15 @@ export class ConfigurationComponent implements OnInit {
     this.getNationList();
   }
 
+  parentUniqueValidator(controlName: string) {
+    return ac => this.validatorService.isUnique$(
+      'communityregistrationrequests',
+      controlName,
+      ac,
+      { domain: ac.parent.get('parentDomain').value }
+    );
+  }
+
   confirmConfigurationFormGroup() {
     if (this.configurationFormGroup.valid) {
       if (!this.isAdvancedOptionsChanged || this.isAdvancedOptionConfirmed) {
@@ -102,6 +120,15 @@ export class ConfigurationComponent implements OnInit {
     this.isAdvancedOptionConfirmed = false;
     this.isAdvancedOptionsChanged = false;
     this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
+  }
+
+  planetNameChange(event) {
+    let code = this.configurationFormGroup.get('name').value;
+    // convert special character to dot except last character
+    code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
+    // skip special character if comes as last character
+    code = code.replace(/\W+$/, '').toLowerCase();
+    this.configurationFormGroup.get('code').setValue(code);
   }
 
   getNationList() {
@@ -130,9 +157,10 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const configuration = Object.assign({ registrationRequest: 'pending' },
-        this.configurationFormGroup.value, this.contactFormGroup.value);
       const { confirmPassword, ...credentials } = this.loginForm.value;
+      const adminName = credentials.name + '@' + this.configurationFormGroup.controls.code.value;
+      const configuration = Object.assign({ registrationRequest: 'pending', adminName },
+        this.configurationFormGroup.value, this.contactFormGroup.value);
       const userDetail: any = {
         ...credentials,
         'roles': [],
@@ -141,7 +169,27 @@ export class ConfigurationComponent implements OnInit {
         'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
+      const feedbackSyncUp = {
+        '_id': 'feedback_from_parent',
+        'source': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+          },
+          'url': environment.couchAddress + 'feedback'
+        },
+        'target': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+          },
+          'url': 'https://' + configuration.parentDomain + '/feedback'
+        },
+        'create_target':  false,
+        'continuous': true,
+        'owner': credentials.name
+      };
       forkJoin([
+        // create replicator at first as we do not have session
+        this.couchService.post('_replicator', feedbackSyncUp),
         // When creating a planet, add admin
         this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
         // then add user with same credentials
@@ -156,11 +204,26 @@ export class ConfigurationComponent implements OnInit {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['requestId'] =  data.id;
             userDetail['isUserAdmin'] =  false;
-            return this.couchService.put('_users/org.couchdb.user:' + credentials.name,
-              userDetail, { domain: configuration.parentDomain });
-          })),
+            return this.couchService.put('_users/org.couchdb.user:' + adminName,
+              { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
+          }), switchMap(data => {
+            return this.couchService.put('shelf/org.couchdb.user:' + adminName, { }, { domain: configuration.parentDomain });
+          }), switchMap(data => {
+            const requestNotification = {
+              'user': 'SYSTEM',
+              'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
+              'link': '/requests',
+              'type': 'request',
+              'priority': 1,
+              'status': 'unread',
+              'time': Date.now()
+            };
+            // Send notification to parent
+            return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
+          })
+        )
       ]).debug('Sending request to parent planet').subscribe((data) => {
-        this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
+        this.planetMessageService.showMessage('Admin created: ' + data[2].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }

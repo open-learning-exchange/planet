@@ -24,18 +24,22 @@
       <p i18n>Description: {{courseDetail.description}}</p>
     </div>
     <div class="course-view">
-      <ng-container *ngFor="let step of courseDetail.steps">
+      <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
         <mat-expansion-panel hideToggle="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              {{step.stepTitle || 'Step ' + stepNum}}
+              {{step.stepTitle || 'Step ' + (stepNum + 1)}}
             </mat-panel-title>
             <mat-panel-description>
-              <!-- TODO: show icons based on what step contains such as resource/test -->
-              <mat-icon>attach_file</mat-icon>
+              <mat-icon *ngIf="step.attachment">attach_file</mat-icon>
+              <mat-icon *ngIf="step.exam">assignment</mat-icon>
             </mat-panel-description>
           </mat-expansion-panel-header>
           {{step.description}}
+          <mat-action-row>
+            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step.attachment" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
+            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length" (click)="goToExam(stepNum)" i18n>Take exam</a>
+          </mat-action-row>
         </mat-expansion-panel>
       </ng-container>
     </div>

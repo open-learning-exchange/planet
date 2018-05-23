@@ -63,10 +63,9 @@ export class CoursesAddComponent implements OnInit {
         10, // need to compose validators if we use more than one
         Validators.compose([
           CustomValidators.integerValidator,
-          Validators.min(1)
+          CustomValidators.positiveNumberValidator
         ])
       ],
-      courseLeader: [ '' ],
       method: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
@@ -173,6 +172,11 @@ export class CoursesAddComponent implements OnInit {
     this.coursesService.returnUrl = this.router.url;
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
     this.coursesService.stepIndex = stepIndex;
+    if (this.steps[stepIndex].exam) {
+      this.router.navigate([ '/courses/update/exam/', this.steps[stepIndex].exam._id ]);
+    } else {
+      this.router.navigate([ '/courses/exam/' ]);
+    }
   }
 
   removeStep(pos) {

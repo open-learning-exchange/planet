@@ -4,6 +4,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { of } from 'rxjs/observable/of';
 @Component({
   templateUrl: './community.component.html'
 })
@@ -85,8 +86,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           forkJoin([
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
-            // add registrant's information to this database,
-            this.couchService.post('nations', { ...communityInfo, registrationRequest: 'accepted' }),
+            // add registrant's information to the nation database with same id,
+            this.couchService.put('nations/' + communityId, { ...communityInfo, registrationRequest: 'accepted' }),
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
@@ -98,17 +99,36 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     };
   }
 
+  // Checks response and creates couch call if a doc was returned
+  addDeleteObservable(res, db) {
+    if (res.docs.length > 0) {
+      const doc = res.docs[0];
+      return [ this.couchService.delete(db + doc._id + '?rev=' + doc._rev) ];
+    }
+    return [];
+  }
+
   deleteCommunity(community) {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       const { _id: id, _rev: rev } = community;
-      this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
-          this.editDialog.close();
-        }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
+      forkJoin([
+        this.couchService.post('nations/_find', { 'selector': { '_id': id } }),
+        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
+        this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+      ]).pipe(switchMap(([ nation, user, shelf ]) => {
+        const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
+          this.addDeleteObservable(nation, 'nations/'),
+          this.addDeleteObservable(user, '_users/'),
+          this.addDeleteObservable(shelf, 'shelf/')
+        );
+        return forkJoin(deleteObs);
+      })).subscribe((data) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.communities.data = this.communities.data.filter((comm: any) => data[0].id !== comm._id);
+        this.editDialog.close();
+      }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
     };
   }
 
