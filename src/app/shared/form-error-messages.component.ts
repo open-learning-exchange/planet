@@ -30,7 +30,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       dateInPast {Cannot be before current date}
       invalidOldPassword {Old password isn't valid}
       pattern {Only letters and numbers allowed}
-      invalidFirstCharacter {First character is required to be a letter or number}
+      invalidFirstCharacter {Must start with letter or number}
     }</span>
   `
 })
