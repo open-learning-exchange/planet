@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 
@@ -28,12 +28,7 @@ export class CustomValidators {
   }
 
   static firstCharacterValidator(ac: AbstractControl): ValidationErrors {
-    if (!ac.value) {
-      return null;
-    }
-    const firstCharacter = ac.value.charAt(0);
-    const isValidFirstCharacter = firstCharacter.match('[a-z || A-Z || 0-9]');
-    return isValidFirstCharacter ? null : { invalidFirstCharacter: true };
+    return Validators.pattern(/^[A-Za-z0-9]/i)(ac) ? { invalidFirstCharacter: true } : null;
   }
 
   static timeValidator(ac: AbstractControl): ValidationErrors {
