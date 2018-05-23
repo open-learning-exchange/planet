@@ -9,6 +9,9 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Rx';
+import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
+import { FormBuilder } from '@angular/forms';
 
 @Injectable()
 export class MeetupService {
@@ -23,7 +26,9 @@ export class MeetupService {
     private couchService: CouchService,
     private userService: UserService,
     private router: Router,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialog: MatDialog,
+    private fb: FormBuilder
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
