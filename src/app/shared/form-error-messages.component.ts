@@ -12,7 +12,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 @Component({
   selector: 'planet-form-error-messages',
   template: `
-    <span *ngIf="shouldShowError()" i18n>{updateError(), select,
+    <span *ngIf="shouldShowError()" [matTooltip]="tooltipText()" i18n>{updateError(), select,
       required {This field is required}
       min {The number cannot be below {{number}}}
       max {The number cannot exceed {{number}}}
@@ -29,7 +29,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidEndTime {End time cannot be before start time}
       dateInPast {Cannot be before current date}
       invalidOldPassword {Old password isn't valid}
-      pattern {Invalid input. Please check info}
+      pattern {Invalid input. Hover for more info}
     }</span>
   `
 })
@@ -53,6 +53,15 @@ export class FormErrorMessagesComponent {
     const errorType = Object.keys(this.control.errors)[0];
     this.number = this.control.errors[errorType].min || this.control.errors[errorType].max || 0;
     return errorType;
+  }
+
+  tooltipText() {
+    switch(this.updateError()) {
+      case 'pattern':
+        return 'Letters, numbers and _ . - allowed.';
+      default:
+        return '';
+    }
   }
 
 }
