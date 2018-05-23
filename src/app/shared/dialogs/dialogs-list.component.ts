@@ -29,7 +29,14 @@ export class DialogsListComponent implements AfterViewInit {
   pageEvent: PageEvent;
   @ViewChild('paginator') paginator: MatPaginator;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: {
+    tableData: any[],
+    columns: string[],
+    okClick: any,
+    filterPredicate?: any,
+    allowMulti?: boolean,
+  }) {
+    this.selection = new SelectionModel(this.data.allowMulti || false, []);
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
     if (this.data.filterPredicate) {

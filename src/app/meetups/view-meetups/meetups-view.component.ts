@@ -46,6 +46,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   inviteMemberDialog() {
     this.meetupService
     .inviteMember()
@@ -90,9 +95,5 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       }, error => this.planetMessageService.showAlert('Sorry,there is a problem with sending request.'));
   }
 
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
 
 }
