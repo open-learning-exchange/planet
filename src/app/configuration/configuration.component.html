@@ -4,6 +4,9 @@
     <form [formGroup]="loginForm">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase>
+        <span *ngIf="loginForm.controls.name.invalid" matSuffix>
+          <mat-icon matTooltip="Alphabet, numbers and _ . - allowed. First character must be alphabet or number.">info</mat-icon>
+        </span>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
@@ -41,6 +44,9 @@
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
+          <span *ngIf="configurationFormGroup.controls.name.invalid" matSuffix>
+            <mat-icon matTooltip="First character must be alphabet or number.">info</mat-icon>
+          </span>
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>

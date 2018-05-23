@@ -29,7 +29,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidEndTime {End time cannot be before start time}
       dateInPast {Cannot be before current date}
       invalidOldPassword {Old password isn't valid}
-      pattern {Only letters and numbers allowed}
+      pattern {Invalid input. Please check info}
     }</span>
   `
 })
