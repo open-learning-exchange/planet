@@ -8,7 +8,6 @@ import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class MeetupService {
@@ -22,7 +21,6 @@ export class MeetupService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private router: Router
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
