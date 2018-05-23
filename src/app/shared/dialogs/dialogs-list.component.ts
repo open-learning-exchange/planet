@@ -29,7 +29,14 @@ export class DialogsListComponent implements AfterViewInit {
   pageEvent: PageEvent;
   @ViewChild('paginator') paginator: MatPaginator;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: {
+    tableData: any[],
+    columns: string[],
+    okClick: any,
+    filterPredicate?: any,
+    allowMulti?: boolean,
+  }) {
+    this.selection = new SelectionModel(this.data.allowMulti || false, []);
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
     if (this.data.filterPredicate) {
@@ -42,11 +49,25 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   ok() {
-    this.data.okClick(this.selection.selected[0]);
+    this.data.okClick(this.selection.selected);
   }
 
   applyFilter(filterValue: string) {
     this.tableData.filter = filterValue;
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.tableData.data.length;
+    return numSelected === numRows ? 'yes' : 'no';
+  }
+
+  masterToggle() {
+    if (this.isAllSelected() === 'yes') {
+      this.selection.clear();
+    } else {
+      this.tableData.data.forEach(row => this.selection.select(row));
+    }
   }
 
 }

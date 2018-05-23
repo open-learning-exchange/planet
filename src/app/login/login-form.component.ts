@@ -44,8 +44,12 @@ export class LoginFormComponent {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
-    registerForm.name = [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]*$/i) ],
-      ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ];
+    registerForm.name = [ '', [
+      Validators.required,
+      CustomValidators.pattern(/^[A-Za-z0-9]/i, 'invalidFirstCharacter'),
+      Validators.pattern(/^[a-z0-9_.-]*$/i) ],
+      ac => this.validatorService.isUnique$('_users', 'name', ac, {})
+    ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
