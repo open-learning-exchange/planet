@@ -79,6 +79,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
             .subscribe((data) => {
               this.updateRev(data, this.communities.data);
+              this.ngOnInit();
               this.editDialog.close();
             }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
           break;
@@ -93,6 +94,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           ]).subscribe((data) => {
             community.registrationRequest = 'accepted';
             this.updateRev(data, this.communities.data);
+            this.ngOnInit();
             this.editDialog.close();
           }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
       }
