@@ -27,8 +27,11 @@ export class CustomValidators {
     return isValidHex ? null : { invalidHex: true };
   }
 
-  static firstCharacterValidator(ac: AbstractControl): ValidationErrors {
-    return Validators.pattern(/^[A-Za-z0-9]/i)(ac) ? { invalidFirstCharacter: true } : null;
+  // Allows us to supply a different errorType for specific patterns
+  static pattern(pattern, errorType = 'pattern') {
+    return (ac: AbstractControl): ValidationErrors => {
+      return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
+    };
   }
 
   static timeValidator(ac: AbstractControl): ValidationErrors {
