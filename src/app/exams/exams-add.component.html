@@ -21,7 +21,7 @@
           (questionRemove)="removeQuestion(i)"
           ></planet-exam-question>
       </div>
-      <button mat-raised-button color="primary" type="submit">Add Exam</button>
+      <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
     </form>
   </div>
   <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>
