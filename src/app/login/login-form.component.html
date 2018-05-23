@@ -1,9 +1,6 @@
 <form (ngSubmit)="onSubmit()" class="login-form" [formGroup]="userForm">
   <mat-form-field class="example-full-width">
     <input matInput i18n-placeholder placeholder="Username" name="name" formControlName = "name" planetLowercase/>
-    <span matSuffix *ngIf="userForm.controls.name.invalid">
-      <mat-icon matTooltip="Alphabet, numbers and _ . - allowed. First character must be alphabet or number.">info</mat-icon>
-    </span>
     <mat-error>
       <planet-form-error-messages [control]="userForm.controls.name"></planet-form-error-messages>
     </mat-error>
