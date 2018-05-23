@@ -92,9 +92,14 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   checkRequestAcceptedOrNot() {
-    if (this.userService.getConfig().registrationRequest === 'accepted') {
-      this.showParentList = true;
-    }
+    this.couchService.post(`communityregistrationrequests/_find`,
+     { 'selector': { 'code': this.userService.getConfig().code },
+      'fields': [ 'registrationRequest' ] },
+       { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
+         if (data.docs[0].registrationRequest === 'accepted') {
+           this.showParentList = true;
+         }
+      });
   }
 
 }
