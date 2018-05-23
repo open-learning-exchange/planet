@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './meetups-view.component.html'
@@ -18,9 +19,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    // meetupService made public because of error Property is private and only accessible within class during prod build
-    public meetupService: MeetupService,
-    private userService: UserService
+    private meetupService: MeetupService,
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -44,6 +45,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  joinMeetup() {
+    this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
+      const msg = res.participate ? 'left' : 'joined';
+      this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+    });
   }
 
 }

@@ -22,8 +22,7 @@ export class MeetupService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private router: Router,
-    private planetMessageService: PlanetMessageService
+    private router: Router
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -68,13 +67,12 @@ export class MeetupService {
   attendMeetup(meetupId, participate) {
     participate ? this.userShelf.meetupIds.splice(meetupId, 1)
       : this.userShelf.meetupIds.push(meetupId);
-    this.couchService.put('shelf/' + this.userService.get()._id, this.userShelf)
-      .subscribe((res) => {
-        this.userShelf._rev = res.rev;
+    return this.couchService.put('shelf/' + this.userService.get()._id, this.userShelf)
+      .pipe(map((response) => {
+        this.userShelf._rev = response.rev;
         this.userService.setShelf(this.userShelf);
-        const msg = participate ? 'left' : 'joined';
-        this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
-    }, (error) => (error));
+        return { response, participate };
+    }));
   }
 
 }
