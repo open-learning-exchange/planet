@@ -1,6 +1,7 @@
 import { Directive, HostBinding, HostListener } from '@angular/core';
 import { timer } from 'rxjs/observable/timer';
 import 'rxjs/add/operator/take';
+
 @Directive({
   selector: '[planetPulsateIcon]'
 })
