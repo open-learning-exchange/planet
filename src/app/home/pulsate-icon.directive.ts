@@ -1,6 +1,6 @@
 import { Directive, HostBinding, HostListener } from '@angular/core';
 import { timer } from 'rxjs/observable/timer';
-
+import 'rxjs/add/operator/take';
 @Directive({
   selector: '[planetPulsateIcon]'
 })
@@ -14,10 +14,7 @@ export class PulsateIconDirective {
     // pulsate class triggers a one second animation (which will repeat if not removed)
     @HostListener('click') onClick() {
       this.isPulsating = true;
-      const sub = timer(1000).subscribe(() => {
-        this.isPulsating = false;
-        sub.unsubscribe();
-      });
+      timer(1000).take(1).subscribe(() => this.isPulsating = false);
     }
 
 }
