@@ -170,7 +170,7 @@ export class ConfigurationComponent implements OnInit {
         ...this.contactFormGroup.value
       };
       const feedbackSyncUp = {
-        '_id': 'feedback_from_parent',
+        '_id': 'feedback_to_parent',
         'source': {
           'headers': {
             'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
@@ -187,9 +187,18 @@ export class ConfigurationComponent implements OnInit {
         'continuous': true,
         'owner': credentials.name
       };
+      const feedbackSyncDown = Object.assign({}, feedbackSyncUp, {
+        '_id': 'feedback_from_parent',
+        'source': feedbackSyncUp.target,
+        'target': feedbackSyncUp.source,
+        'selector': {
+          'source': configuration.code
+        }
+      });
       forkJoin([
         // create replicator at first as we do not have session
         this.couchService.post('_replicator', feedbackSyncUp),
+        this.couchService.post('_replicator', feedbackSyncDown),
         // When creating a planet, add admin
         this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
         // then add user with same credentials
@@ -223,7 +232,7 @@ export class ConfigurationComponent implements OnInit {
           })
         )
       ]).debug('Sending request to parent planet').subscribe((data) => {
-        this.planetMessageService.showMessage('Admin created: ' + data[2].id.replace('org.couchdb.user:', ''));
+        this.planetMessageService.showMessage('Admin created: ' + data[3].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
