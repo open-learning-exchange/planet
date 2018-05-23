@@ -45,7 +45,7 @@ export class ConfigurationComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      name: [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ] ],
+      name: [ '', [ Validators.required, CustomValidators.firstCharacterValidator, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ] ],
       password: [
         '',
         Validators.compose([

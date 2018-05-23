@@ -27,6 +27,15 @@ export class CustomValidators {
     return isValidHex ? null : { invalidHex: true };
   }
 
+  static firstCharacterValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    const firstCharacter = ac.value.charAt(0);
+    const isValidFirstCharacter = firstCharacter.match('[a-z || A-Z || 0-9]');
+    return isValidFirstCharacter ? null : { invalidFirstCharacter: true };
+  }
+
   static timeValidator(ac: AbstractControl): ValidationErrors {
 
     if (!ac.value) {
