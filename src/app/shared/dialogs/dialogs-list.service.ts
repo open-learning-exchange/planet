@@ -4,7 +4,8 @@ import { map } from 'rxjs/operators';
 import { findDocuments } from '../mangoQueries';
 
 const listColumns = {
-  'resources': [ 'title' ]
+  'resources': [ 'title' ],
+  '_users': [ 'name']
 };
 
 @Injectable()
