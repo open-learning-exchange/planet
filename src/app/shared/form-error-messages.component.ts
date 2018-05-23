@@ -56,7 +56,7 @@ export class FormErrorMessagesComponent {
   }
 
   tooltipText() {
-    switch(this.updateError()) {
+    switch (this.updateError()) {
       case 'pattern':
         return 'Letters, numbers and _ . - allowed.';
       default:
