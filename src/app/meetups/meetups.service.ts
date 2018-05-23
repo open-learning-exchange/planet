@@ -7,7 +7,6 @@ import { Subject } from 'rxjs/Subject';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Injectable()
 export class MeetupService {
