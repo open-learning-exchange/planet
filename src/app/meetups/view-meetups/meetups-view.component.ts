@@ -79,7 +79,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     });
     this.couchService.post('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.dialogRef.close();
-      this.planetMessageService.showAlert('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
+      this.planetMessageService.showMessage('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
     });
   }
 
