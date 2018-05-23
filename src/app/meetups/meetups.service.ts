@@ -10,7 +10,6 @@ import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
-import { MeetupsInvitationComponent } from './invitation-meetups/meetups-invitation.component';
 import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { FormBuilder } from '@angular/forms';
 
@@ -81,14 +80,6 @@ export class MeetupService {
         const msg = participate ? 'left' : 'joined';
         this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
     }, (error) => (error));
-  }
-
-  public inviteMember(): Observable<boolean> {
-    let dialogRef: MatDialogRef<MeetupsInvitationComponent>;
-    dialogRef = this.dialog.open(MeetupsInvitationComponent, {
-      width: '600px'
-    });
-    return dialogRef.afterClosed();
   }
 
 }

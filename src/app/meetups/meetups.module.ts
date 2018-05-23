@@ -5,7 +5,6 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { MeetupsComponent } from './meetups.component';
 import { MeetupsAddComponent } from './add-meetups/meetups-add.component';
 import { MeetupsViewComponent } from './view-meetups/meetups-view.component';
-import { MeetupsInvitationComponent } from './invitation-meetups/meetups-invitation.component';
 import { MeetupsRouterModule } from './meetups-router.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
@@ -18,11 +17,8 @@ import { MatDialogModule } from '@angular/material/dialog';
      MatDialogModule
   ],
   declarations: [
-    MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent, MeetupsInvitationComponent
+    MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
   ],
-  providers: [ MeetupService ],
-  entryComponents: [
-    MeetupsInvitationComponent
-  ]
+  providers: [ MeetupService ]
 })
 export class MeetupsModule {}
