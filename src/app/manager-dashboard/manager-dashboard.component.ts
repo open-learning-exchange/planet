@@ -26,7 +26,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
         <a routerLink="courses" i18n mat-raised-button>List Courses</a>
         <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
       </div>
-      <div *ngIf="!showParentList">
+      <div *ngIf="!showParentList && isDataLoaded">
         <p i18n>Your request has not been accepted by parent</p>
       </div>
     </div>
@@ -41,6 +41,7 @@ export class ManagerDashboardComponent implements OnInit {
   planetType = this.userService.getConfig().planetType;
   showResendConfiguration = false;
   showParentList = false;
+  isDataLoaded = false;
 
   constructor(
     private userService: UserService,
@@ -93,13 +94,14 @@ export class ManagerDashboardComponent implements OnInit {
 
   checkRequestAcceptedOrNot() {
     this.couchService.post(`communityregistrationrequests/_find`,
-     { 'selector': { 'code': this.userService.getConfig().code },
+     { 'selector': { 'code': this.userService.getConfig().code, 'registrationRequest': 'accepted' },
       'fields': [ 'registrationRequest' ] },
        { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
-         if (data.docs[0].registrationRequest === 'accepted') {
+         if (data.docs.length === 1) {
            this.showParentList = true;
          }
-      });
+         this.isDataLoaded = true;
+      }, error => (error));
   }
 
 }
