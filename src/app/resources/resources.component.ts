@@ -16,6 +16,7 @@ import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -74,7 +75,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private resourcesService: ResourcesService,
-    private dialogsFormService: DialogsFormService
+    private syncService: SyncService
   ) {}
 
   ngOnInit() {
@@ -257,65 +258,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), msg);
   }
 
-  fetchResource(resources) {
-    const title = 'Confirmation';
-    const fields = [
-      {
-        'label': 'Old Password',
-        'type': 'textbox',
-        'inputType': 'password',
-        'name': 'password',
-        'placeholder': 'Password',
-        'required': true
-      }
-    ];
-    const formGroup = {
-      password: [ '', Validators.required ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
-      .subscribe((response) => {
-        if (response !== undefined) {
-          const adminPassword = response.password;
-          const resourceIds = resources.map((res) => {
-            return { _id: res._id, _rev: res._rev };
-          });
-          this.couchService.post('_session', { name: this.userService.get().name, password: adminPassword })
-          .pipe(switchMap(data => {
-            const adminName = this.userService.get().name + '@' + this.userService.getConfig().code;
-            const resourceFetchDown = {
-              '_id': 'resource_from_parent' + Date.now(),
-              'source': {
-                'headers': {
-                  'Authorization': 'Basic ' + btoa(adminName + ':' + adminPassword)
-                },
-                'url': 'https://' + this.userService.getConfig().parentDomain + '/resources'
-              },
-              'target': {
-                'headers': {
-                  'Authorization': 'Basic ' + btoa(this.userService.get().name + ':' + adminPassword)
-                },
-                'url': environment.couchAddress + 'resources'
-              },
-              'document': resourceIds,
-              'create_target':  false,
-              'continuous': false,
-              'owner': this.userService.get().name
-            };
-            return this.couchService.post('_replicator', resourceFetchDown);
-          })).subscribe(data => {
-            this.planetMessageService.showMessage(resourceIds.length + ' ' + 'resources queued to fetch');
-          }, error => this.planetMessageService.showMessage('Invalid password'));
-        }
-      });
-  }
-
   removeFromLibrary(resourceId, resourceTitle) {
     const currentShelf = this.userService.shelf;
     const resourceIds = [ ...currentShelf.resourceIds ];
     resourceIds.splice(resourceIds.indexOf(resourceId), 1);
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
+  }
+
+  fetchResource(resources) {
+    const syncData = {
+      dbName: this.dbName,
+      items: resources,
+      type: 'fetch'
+    };
+    this.syncService.openConfirmation(syncData);
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {
