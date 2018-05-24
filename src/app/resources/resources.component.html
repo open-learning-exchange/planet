@@ -23,6 +23,11 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
+    <span *ngIf="parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="fetchResource(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
+      </button>
+    </span>
     <span *ngIf="!parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
