@@ -15,25 +15,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './meetups-view.component.html',
-  styles: [ `
-  .view-container {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-areas: "detail view";
-  }
-  .mem-enrolled {
-    grid-area: view;
-    * {
-      max-width: 100%;
-      max-height: 60vh;
-      overflow: auto;
-    }
-  }
-  .meetup-details {
-    grid-area: detail;
-    padding: 1rem;
-  }
-  ` ]
+  styleUrls: [ './meetups-view.scss' ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {

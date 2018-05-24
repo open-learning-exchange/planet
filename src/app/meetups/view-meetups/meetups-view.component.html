@@ -16,7 +16,7 @@
     </button>
   </mat-toolbar>
   <div class="view-container">
-    <div class="meetup-details">
+    <div class="left-tile">
       <p i18n>Meetup Title : {{meetupDetail.title}} </p>
       <p i18n>Created By : <i>{{meetupDetail.createdBy}}</i></p>
       <p i18n>Category : {{meetupDetail.category}} </p>
@@ -26,7 +26,7 @@
       <p i18n>Location: {{meetupDetail.meetupLocation}}</p>
       <p i18n>Description: {{meetupDetail.description}}</p>
     </div>
-    <div class="mem-enrolled">
+    <div class="right-tile">
       <span i18n><b>Joined Members: ( {{members.length}} )</b></span>
       <p *ngIf="members.length === 0; else memberList" i18n> - No member has Joined this Meetup</p>
       <ng-template #memberList>
