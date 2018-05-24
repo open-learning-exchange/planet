@@ -72,10 +72,19 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  fixEnrolledList(remove: boolean, userName: string) {
+    if (remove) {
+      this.members = this.members.filter(name => name !== userName);
+    } else {
+      this.members.push(userName);
+    }
+  }
+
   joinMeetup() {
     this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+      this.fixEnrolledList(res.participate, this.userService.get().name);
     });
   }
 
