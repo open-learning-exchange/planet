@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -18,12 +19,14 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
+  attempt = 0;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private userService: UserService
+    private userService: UserService,
+    private couchService: CouchService
   ) { }
 
   ngOnInit() {
@@ -37,6 +40,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           parent: this.stepDetail.exam,
           user: this.userService.get().name,
           type: 'exam' });
+        this.couchService.post('submissions/_find',
+          { 'selector': { parentId: this.stepDetail.exam._id + '@' + course._id, user: this.userService.get().name, status: 'complete' } })
+            .subscribe((res) => {
+              this.attempt = res.docs.length;
+            });
       }
       this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submission: any) => {
         this.examStart = submission.answers.length + 1;
