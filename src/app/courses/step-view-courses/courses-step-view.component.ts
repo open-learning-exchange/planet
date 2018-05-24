@@ -4,7 +4,6 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -21,14 +20,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   examStart = 1;
   showCourseAddLink = false;
   courseId;
+  showExamButton = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private userService: UserService,
-    private planetMessageService: PlanetMessageService
-  ) { }
+    private userService: UserService
+  ) {
+    this.isExamButtonTrue();
+  }
 
   ngOnInit() {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
@@ -70,15 +71,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resourceUrl = resourceUrl;
   }
 
-  goToExam() {
+  isExamButtonTrue() {
     const myCourseUrl = this.router.url.split('/');
     const mycourseId = myCourseUrl[3];
     this.courseId = mycourseId;
     if (this.userService.getUserShelf().courseIds.includes(mycourseId)) {
-      this.router.navigate([ 'exam', this.examStart ], { relativeTo: this.route });
-    } else {
-      this.planetMessageService.showAlert('You have not added this course on myCourse, please add this course on myCourse');
-      this.showCourseAddLink = true;
+      this.showExamButton = true;
     }
+  }
+
+  goToExam() {
+    this.router.navigate([ 'exam', this.examStart ], { relativeTo: this.route });
   }
 }
