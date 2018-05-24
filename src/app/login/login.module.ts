@@ -9,6 +9,7 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { LoginFormComponent } from './login-form.component';
 import { LowercaseDirective } from '../shared/lowercase.directive';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
+import { MatTooltipModule } from '@angular/material';
 
 @NgModule({
   imports: [
