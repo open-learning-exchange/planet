@@ -113,10 +113,13 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     return () => {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       const { _id: id, _rev: rev } = community;
-      this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
-      .pipe(switchMap((user) => {
+      forkJoin([
+        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
+        this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+      ]).pipe(switchMap(([ nation, user, shelf ]) => {
         const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
-          this.addDeleteObservable(user, '_users/')
+          this.addDeleteObservable(user, '_users/'),
+          this.addDeleteObservable(shelf, 'shelf/')
         );
         return forkJoin(deleteObs);
       })).subscribe((data) => {

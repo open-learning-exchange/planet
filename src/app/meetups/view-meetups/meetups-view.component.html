@@ -5,10 +5,13 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
     <span class="toolbar-fill"></span>
-    <button mat-button class="margin-lr-3" (click)="meetupService.attendMeetup(meetupDetail._id, meetupDetail.participate)">
+    <button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()">
+      <span i18n>Invite Member</span>
+    </button>
+    <button mat-button class="margin-lr-3" (click)="joinMeetup()">
       <span *ngIf="!parent">
-        <span *ngIf="meetupDetail.participate; else joinMeetup" i18n>Leave</span>
-        <ng-template #joinMeetup><span i18n>Join</span></ng-template>
+        <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
+        <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
       </span>
     </button>
   </mat-toolbar>

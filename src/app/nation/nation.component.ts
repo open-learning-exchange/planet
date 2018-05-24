@@ -99,10 +99,12 @@ export class NationComponent implements OnInit, AfterViewInit {
       const { _id: nationId, _rev: nationRev, code: nationCode } = nation;
       // Search for registration request with same code
       forkJoin([
-        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } })
-      ]).pipe(switchMap(([ user ]) => {
+        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } }),
+        this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } })
+      ]).pipe(switchMap(([ community, user, shelf ]) => {
         const deleteObs = [ this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev) ].concat(
-          this.addDeleteObservable(user, '_users/')
+          this.addDeleteObservable(user, '_users/'),
+          this.addDeleteObservable(shelf, 'shelf/')
         );
         return forkJoin(deleteObs);
       })).subscribe((data) => {

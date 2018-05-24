@@ -4,17 +4,18 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{{question.header}}</span>
+    <span i18n>Question {{questionNum}} of {{maxQuestions}}</span>
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container">
+    <b>{{question.header}}</b>
     <p>{{question.body}}</p>
     <ng-container [ngSwitch]="question.type">
       <mat-form-field *ngSwitchCase="'input'">
-        <input matInput i18n-placeholder placeholder="Enter answer here">
+        <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer">
       </mat-form-field>
-      <mat-radio-group *ngSwitchCase="'select'" class="planet-radio-group">
-        <mat-radio-button *ngFor="let option of question.choices" value="option" class="planet-radio-button">
+      <mat-radio-group *ngSwitchCase="'select'" class="planet-radio-group" [(ngModel)]="answer">
+        <mat-radio-button *ngFor="let option of question.choices" [value]="option" class="planet-radio-button">
           {{option}}
         </mat-radio-button>
       </mat-radio-group>
