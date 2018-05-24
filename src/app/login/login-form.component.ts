@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -10,6 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
+import { of } from 'rxjs/observable/of';
 
 const registerForm = {
   name: [],
@@ -43,8 +44,12 @@ export class LoginFormComponent {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
-    registerForm.name = [ '', [ Validators.required, Validators.pattern(/^[A-Za-z0-9][a-z0-9_.-]+$/i) ],
-      ac => this.validatorService.isUnique$('_users', 'name', ac, {}) ];
+    registerForm.name = [ '', [
+      Validators.required,
+      CustomValidators.pattern(/^[A-Za-z0-9]/i, 'invalidFirstCharacter'),
+      Validators.pattern(/^[a-z0-9_.-]*$/i) ],
+      ac => this.validatorService.isUnique$('_users', 'name', ac, {})
+    ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
@@ -115,7 +120,15 @@ export class LoginFormComponent {
             { 'name': this.userService.getConfig().adminName, 'password': password },
             { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
         }
-        return forkJoin(obsArr);
+        return forkJoin(obsArr).pipe(catchError(error => {
+          // 401 is for Unauthorized
+          if (error.status === 401) {
+            this.planetMessageService.showMessage('Can not login to parent planet.');
+          } else {
+            this.planetMessageService.showMessage('Error connecting to parent.');
+          }
+          return of(error);
+        }));
       })).subscribe((res) => {
 
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));

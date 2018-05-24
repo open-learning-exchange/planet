@@ -21,7 +21,7 @@ export class ExamsAddComponent implements OnInit {
   examForm: FormGroup;
   questionsFormArray: FormArray;
   documentInfo: any = {};
-  pageType = 'Add new';
+  pageType = 'Add';
   successMessage = 'New exam added';
   steps = [];
 

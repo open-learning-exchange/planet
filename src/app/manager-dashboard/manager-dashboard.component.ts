@@ -68,24 +68,25 @@ export class ManagerDashboardComponent implements OnInit {
 
   resendConfig() {
     const { _id, _rev, ...config } = this.userService.getConfig();
-    const { _rev: userRev, ...userDetail } = this.userService.get();
-    return this.couchService.post('communityregistrationrequests', config, { domain: this.userService.getConfig().parentDomain })
-      .pipe(switchMap((res: any) => {
+    let userDetail: any, userRev;
+    this.couchService.get('_users/org.couchdb.user:' + this.userService.get().name)
+      .pipe(switchMap((user: any) => {
+        // Outer parenthesis allow for object destructuring on existing variables
+        ({ _rev: userRev, ...userDetail } = user);
+        userDetail.isUserAdmin = false;
+        return this.couchService.post('communityregistrationrequests', config, { domain: config.parentDomain });
+      }), switchMap((res: any) => {
         userDetail.requestId = res.id;
-        return this.couchService.post(`_users/_find`,
-          { 'selector': { '_id': userDetail._id }, 'fields': [ '_id', '_rev' ] },
-          { domain: this.userService.getConfig().parentDomain });
-      }), switchMap((user) => {
+        return forkJoin([ this.findOnParent('_users', userDetail), this.findOnParent('shelf', userDetail) ]);
+      }), switchMap(([ user, shelf ]) => {
         if (user.docs[0]) {
           userDetail._rev = user.docs[0]._rev;
         }
-        userDetail.isUserAdmin = false;
-        return forkJoin([
-          this.couchService.put('_users/org.couchdb.user:' + userDetail.name,
-            userDetail, { domain: this.userService.getConfig().parentDomain }),
-          this.couchService.put('shelf/org.couchdb.user:' + userDetail.name,
-            {}, { domain: this.userService.getConfig().parentDomain })
-        ]);
+        const obs = [ this.couchService.put('_users/org.couchdb.user:' + userDetail.name, userDetail, { domain: config.parentDomain }) ];
+        if (!shelf) {
+          obs.push(this.couchService.put('shelf/org.couchdb.user:' + userDetail.name, {}, { domain: config.parentDomain }));
+        }
+        return forkJoin(obs);
       })).subscribe((res: any) => {
         this.planetMessageService.showMessage('Registration request has been sent successfully.');
         this.showResendConfiguration = false;
@@ -102,6 +103,13 @@ export class ManagerDashboardComponent implements OnInit {
          }
          this.isDataLoaded = true;
       }, error => (error));
+  }
+
+  // Find on the user or shelf db (which have matching ids)
+  findOnParent(db: string, user: any) {
+    return this.couchService.post(`${db}/_find`,
+      { 'selector': { '_id': user._id }, 'fields': [ '_id', '_rev' ] },
+      { domain: this.userService.getConfig().parentDomain });
   }
 
 }

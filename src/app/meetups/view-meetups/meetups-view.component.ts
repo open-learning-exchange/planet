@@ -1,11 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { map } from 'rxjs/operators';
+import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
+import { filterSpecificFields } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './meetups-view.component.html'
@@ -15,12 +21,18 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
   parent = this.route.snapshot.data.parent;
+  dialogRef: MatDialogRef<DialogsListComponent>;
+
   constructor(
+    public dialog: MatDialog,
     private couchService: CouchService,
+    private router: Router,
     private route: ActivatedRoute,
     // meetupService made public because of error Property is private and only accessible within class during prod build
     public meetupService: MeetupService,
-    private userService: UserService
+    public planetMessageService: PlanetMessageService,
+    private userService: UserService,
+    private dialogsListService: DialogsListService
   ) { }
 
   ngOnInit() {
@@ -44,6 +56,51 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  joinMeetup() {
+    this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
+      const msg = res.participate ? 'left' : 'joined';
+      this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+    });
+  }
+
+  openInviteMemberDialog() {
+    this.dialogsListService.getListAndColumns('_users', { '$not': { '_id': this.userService.get()._id } }).subscribe((res) => {
+      const data = { okClick: this.sendInvitations.bind(this),
+        filterPredicate: filterSpecificFields([ 'name' ]),
+        allowMulti: true,
+        ...res };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
+    });
+  }
+
+  sendInvitations(selected: string[]) {
+    const invites = selected.map((user: any) => {
+      return this.inviteNotification(user._id, this.meetupDetail);
+    });
+    this.couchService.post('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
+      this.dialogRef.close();
+      this.planetMessageService.showMessage('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
+    });
+  }
+
+  inviteNotification(userId, meetupDetail) {
+    return {
+      'user': userId,
+      'message': this.userService.get().name + ' would like you to join ' + meetupDetail.title + ' at ' + meetupDetail.meetupLocation,
+      'link': this.router.url,
+      'item': meetupDetail._id,
+      'type': 'meetup',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
   }
 
 }

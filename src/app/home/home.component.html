@@ -26,7 +26,7 @@
 </mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-  <a routerLink="/notifications"
+  <a [routerLink]="notification.link || '/notifications'"
     class="menu-item-notification"
     [ngClass]="{'primary-text-color':notification.status==='unread'}"
     mat-menu-item

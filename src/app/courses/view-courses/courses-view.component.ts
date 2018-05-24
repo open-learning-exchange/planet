@@ -63,8 +63,16 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
 
-  goToExam(stepNum) {
-    this.router.navigate([ './step/' + (stepNum + 1) + '/exam', 1 ], { relativeTo: this.route });
+  goToExam(stepDetail, stepNum) {
+    this.coursesService.openSubmission({
+      parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
+      parent: stepDetail.exam,
+      user: this.userService.get().name,
+      type: 'exam' });
+    this.coursesService.submissionUpdated$.subscribe((submission: any) => {
+      this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
+        (submission.answers.length + 1) ], { relativeTo: this.route });
+    });
   }
 
   resourceUrl(stepDetail) {
