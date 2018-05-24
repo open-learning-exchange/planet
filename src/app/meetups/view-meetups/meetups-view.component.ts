@@ -58,6 +58,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  joinMeetup() {
+    this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
+      const msg = res.participate ? 'left' : 'joined';
+      this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+    });
+  }
+
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users', { '$not': { '_id': this.userService.get()._id } }).subscribe((res) => {
       const data = { okClick: this.sendInvitations.bind(this),
@@ -95,6 +102,5 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       'time': Date.now()
     };
   }
-
 
 }
