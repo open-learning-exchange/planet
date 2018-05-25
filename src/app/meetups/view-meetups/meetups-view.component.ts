@@ -88,28 +88,24 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users',
-      {
-        '_id' : {
-          '$ne': this.userService.get()._id
-        },
-        'roles' : {
-          '$in': [ 'learner', 'leader' ]
-        }
-     }).subscribe((res) => {
-      const data = { okClick: this.sendInvitations.bind(this),
+    this.dialogsListService.getListAndColumns('_users', {
+      '_id' : { '$ne': this.userService.get()._id },
+      'roles' : { '$in': [ 'learner', 'leader' ] }
+    }).subscribe((res) => {
+      const data = {
+        okClick: this.sendInvitations.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
-        ...res };
+        ...res
+      };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
         height: '500px',
         width: '600px',
         autoFocus: false
-        });
       });
+    });
   }
 
   sendInvitations(selected: string[]) {
