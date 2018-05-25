@@ -19,11 +19,11 @@ add-cors-to-couchdb $COUCHDB_HOST
 
 #MIGRATOR
 if [[ -z "${COUCHDB_USER}" ]]; then
-    ./couchdb-setup.sh -p 5984 -h couchdb
+    ./couchdb-setup.sh -p 5984 -h $COUCHDB_HOST
   else
     if [[ -z "${COUCHDB_PASS}" ]]; then
       echo "The COUCHDB_PASS is not set. Exiting..."
     else
-      ./couchdb-setup.sh -p 5984 -h couchdb -u $COUCHDB_USER -w $COUCHDB_PASS
+      ./couchdb-setup.sh -p 5984 -h $COUCHDB_HOST -u $COUCHDB_USER -w $COUCHDB_PASS
     fi
 fi
