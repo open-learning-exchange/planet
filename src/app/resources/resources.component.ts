@@ -92,30 +92,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
-        const rows = this.selection.selected;
-        const rowIds = rows.map(data => {
-          return data._id;
-        });
         this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
-        this.selection.clear();
-        this.resources.data.forEach(row => {
-          if (rowIds.indexOf(row['_id']) > -1) {
-            this.selection.select(row);
-          }
-        });
       });
   }
 
   setupList(resourcesRes, myLibrarys) {
-    this.resources.data = resourcesRes.map((r: any) => {
-      const resource = r.doc || r;
+    resourcesRes.forEach((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
-      if (myLibraryIndex > -1) {
-        return { ...resource, libraryInfo: true };
-      }
-      return { ...resource,  libraryInfo: false };
+      resource.libraryInfo = myLibraryIndex > -1;
     });
   }
 

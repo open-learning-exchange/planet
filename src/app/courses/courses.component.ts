@@ -67,18 +67,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
-        const rows = this.selection.selected;
-        const rIds = rows.map(data => {
-          return data._id;
-        });
         this.userShelf = this.userService.getUserShelf();
         this.setupList(this.courses.data, this.userShelf.courseIds);
-        this.selection.clear();
-        this.courses.data.forEach(row => {
-          if (rIds.indexOf(row['_id']) > -1) {
-            this.selection.select(row);
-          }
-        });
       });
    }
 
@@ -87,21 +77,19 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
       this.userShelf = this.userService.getUserShelf();
-      this.setupList(courses, this.userShelf.courseIds);
+      this.courses.data = courses;
+      this.setupList(this.courses.data, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
+    courseRes.forEach((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
-      if (myCourseIndex > -1) {
-        return { ...course, admission: true };
-      }
-      return { ...course, admission: false };
+      course.admission = myCourseIndex > -1;
     });
   }
 
