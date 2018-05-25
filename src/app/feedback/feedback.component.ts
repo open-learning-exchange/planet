@@ -11,6 +11,12 @@ import { FeedbackService } from './feedback.service';
 
 @Component({
   templateUrl: './feedback.component.html',
+  styles: [ `
+    .mat-column-type {
+      display: flex;
+      align-items: center;
+    }
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
   readonly dbName = 'feedback';

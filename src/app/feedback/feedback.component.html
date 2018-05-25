@@ -30,9 +30,9 @@
         <ng-container [ngSwitch]="element.type">
           <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
           <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
-          <mat-icon *ngSwitchCase="'Suggestion'">lighbulb_outline</mat-icon>
+          <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
         </ng-container>
-        {{element.type}}
+        <span>{{element.type}}</span>
       </mat-cell>
     </ng-container>
     <!-- Priorty Column -->
