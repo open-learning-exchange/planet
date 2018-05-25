@@ -6,7 +6,8 @@
         nation {nation}
         course {course}
         resource {resource}
-        meetup {meetup}}?
+        meetup {meetup}
+        user {user}}?
       }
       many
       {selected {data.type, select,
@@ -18,7 +19,8 @@
       }
     }
   </p>
-  <p>{{data.displayName}}</p>
+  <p>{{data.extraMessage}}</p>
+  <b>{{data.displayName}}</b>
   <div class="alert alert-danger" *ngIf="message">
     {{message}}
     <button type="button" class="close" (click)="closeAlert()" aria-label="Close">

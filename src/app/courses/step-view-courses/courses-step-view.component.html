@@ -11,10 +11,10 @@
       mat-raised-button
       color="accent"
       class="margin-lr-10"
-      *ngIf="stepDetail.exam"
+      *ngIf="stepDetail?.exam?.questions.length"
       (click)="goToExam()"
       i18n>
-      Take exam
+      {{examStart === 1 ? "Take Exam" : "Continue Exam"}}
     </a>
     <a
       mat-raised-button

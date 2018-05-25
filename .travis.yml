@@ -6,7 +6,7 @@ _prepare_deploy: &_prepare_deploy
     - docker pull $PLANET_TEST
     - docker pull $DOCKER_DB_INIT_TEST
 _prepare_multiarch: &_prepare_multiarch
-  before_script:    
+  before_script:
     - source ./.travis/travis_utils.sh
     - login_docker
     - prepare_everything
@@ -33,6 +33,7 @@ branches:
   - l10n_master
 addons:
   apt:
+    update: true
     packages:
       - docker-ce
 env:
@@ -92,7 +93,7 @@ jobs:
       script:
         - set -e
         - echo  "Waiting for couchdb to start"; WAIT_TIME=0; until curl http://127.0.0.1:5984/_all_dbs || [ $WAIT_TIME -eq 180 ]; do echo "..."; sleep 5; WAIT_TIME=$(expr $WAIT_TIME + 5); done
-        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 16 ]; then exit 1; fi
+        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 17 ]; then exit 1; fi
         - ng e2e --environment test
     - stage: docker-release
       <<: *_prepare_deploy
@@ -114,7 +115,7 @@ jobs:
       script: #arm image building planet
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
-        
+
     - stage: multiarch-release
       <<: *_prepare_multiarch
       script: #Pushing multiarch

@@ -80,6 +80,7 @@ export class FeedbackDirective {
         status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
+        source: this.userService.getConfig().code,
         ...this.feedbackOf
       };
     this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })

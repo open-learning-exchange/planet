@@ -15,6 +15,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
+import { PulsateIconDirective } from './pulsate-icon.directive';
+
 @NgModule({
   imports: [
     HomeRouterModule,
@@ -33,7 +35,8 @@ import { NotificationsComponent } from '../notifications/notifications.component
     CommunityComponent,
     NationComponent,
     DashboardTileComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    PulsateIconDirective
   ]
 })
 export class HomeModule {}

@@ -100,15 +100,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setupList(resourcesRes, myLibrarys) {
-    this.resources.data = resourcesRes.map((r: any) => {
-      const resource = r.doc || r;
+    resourcesRes.forEach((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
-      if (myLibraryIndex > -1) {
-        return { ...resource, libraryInfo: true };
-      }
-      return { ...resource,  libraryInfo: false };
+      resource.libraryInfo = myLibraryIndex > -1;
     });
   }
 
@@ -245,7 +241,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
-      this.selection.clear();
       this.planetMessageService.showMessage(msg + ' mylibrary');
     }, (error) => (error));
   }

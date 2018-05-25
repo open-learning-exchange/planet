@@ -3,6 +3,7 @@ import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -16,11 +17,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   stepDetail: any = { stepTitle: '', description: '' };
   maxStep = 1;
   resourceUrl = '';
+  examStart = 1;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -28,6 +31,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
       this.maxStep = course.steps.length;
+      if (this.stepDetail.exam) {
+        this.coursesService.openSubmission({
+          parentId: this.stepDetail.exam._id + '@' + course._id,
+          parent: this.stepDetail.exam,
+          user: this.userService.get().name,
+          type: 'exam' });
+      }
+      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submission: any) => {
+        this.examStart = submission.answers.length + 1;
+      });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
@@ -54,7 +67,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam() {
-    this.router.navigate([ 'exam', 1 ], { relativeTo: this.route });
+    this.router.navigate([ 'exam', this.examStart ], { relativeTo: this.route });
   }
 
 }
