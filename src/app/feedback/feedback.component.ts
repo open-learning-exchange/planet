@@ -8,6 +8,7 @@ import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -56,7 +57,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   getFeedback() {
-    this.couchService.post(this.dbName + '/_find', { 'selector': { 'openTime': { '$gt': 0 } }, 'sort': [ { 'openTime': 'desc' } ] } )
+    this.couchService.post(this.dbName + '/_find', findDocuments({
+        '_id': { '$gt': null }
+      }, 0, [ { 'openTime': 'desc' } ]))
       .subscribe((data) => {
         this.feedback.data = data.docs.filter(fback  => {
           if (!this.user.isUserAdmin) {
