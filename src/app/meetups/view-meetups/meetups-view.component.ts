@@ -89,7 +89,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users', { '$not': { '_id': this.userService.get()._id } }).subscribe((res) => {
+    this.dialogsListService.getListAndColumns('_users', { '$and': [ { '$not': { '_id': this.userService.get()._id } },
+    { '$or': [ { 'roles': [ 'leader' ] }, { 'roles': [ 'learner', 'leader' ] },
+    { 'roles': [ 'learner' ] }, { 'roles': [ 'leader', 'learner' ] } ]
+    } ]}).subscribe((res) => {
       const data = { okClick: this.sendInvitations.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
@@ -99,8 +102,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         height: '500px',
         width: '600px',
         autoFocus: false
+        });
       });
-    });
   }
 
   sendInvitations(selected: string[]) {
