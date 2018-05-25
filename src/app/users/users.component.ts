@@ -11,8 +11,10 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { of } from 'rxjs/observable/of';
+import { _throw } from 'rxjs/observable/throw';
 import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './users.component.html',
@@ -128,7 +130,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
         amount: 'single',
         changeType: 'delete',
         type: 'user',
-        displayName: user.name
+        displayName: user.name,
+        extraMessage: user.requestId ? '' : 'Planet associated with it will be disconnected.'
       }
     });
     // Reset the message when the dialog closes
@@ -138,17 +141,47 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   deleteUser(user) {
+    const userId = 'org.couchdb.user:' + user.name;
     // Return a function with user on its scope to pass to delete dialog
     return () => {
-      this.couchService.delete('_users/org.couchdb.user:' + user.name + '?rev=' + user._rev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.allUsers.data = this.allUsers.data.filter((u: any) => data.id !== u.doc._id);
+      this.couchService.get('shelf/' + userId).pipe(
+        switchMap(shelfUser => {
+          return forkJoin([
+            this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+            this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
+          ]);
+        }),
+        catchError((err) => {
+          // If deleting user fails, do not continue stream and show error
+          this.planetMessageService.showAlert('There was a problem deleting this user.');
+          return _throw(err);
+        }),
+        switchMap((data) => {
+          this.planetMessageService.showMessage('User deleted: ' + user.name);
           this.deleteDialog.close();
           this.selection.clear();
-          this.planetMessageService.showMessage('User deleted: ' + user.name);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+          // It's safer to remove the item from the array based on its id than to splice based on the index
+          this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
+          return this.removeDeletedUserFromShelves(userId);
+        })
+      ).subscribe(() => { });
     };
+  }
+
+  removeDeletedUserFromShelves(userId) {
+    const myUserId = 'org.couchdb.user:' + this.userService.get().name;
+    return this.couchService.post('shelf/_find', findDocuments({ 'myTeamIds': { '$in': [ userId ] } })).pipe(
+      map(shelves => {
+        return shelves.docs.map(shelf => {
+          const myTeamIds = [ ...shelf.myTeamIds ];
+          myTeamIds.splice(myTeamIds.indexOf(userId), 1);
+          return { ...shelf, myTeamIds };
+        });
+      }),
+      switchMap(newShelves => {
+        return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
+      })
+    );
   }
 
   setRoles(user, roles) {

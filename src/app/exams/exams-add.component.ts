@@ -20,8 +20,9 @@ export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
   examForm: FormGroup;
   questionsFormArray: FormArray;
-  documentInfo = { rev: '', id: '' };
-  pageType = 'Add new';
+  documentInfo: any = {};
+  pageType = 'Add';
+  successMessage = 'New exam added';
   steps = [];
 
   constructor(
@@ -53,11 +54,15 @@ export class ExamsAddComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
+      this.successMessage = 'Exam updated successfully';
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
-        this.documentInfo = { rev: data._rev, id: data._id };
+        this.documentInfo = { _rev: data._rev, _id: data._id };
         this.examForm.patchValue(data);
+        if (data.questions) {
+          data.questions.forEach((question) => this.addQuestion(question));
+        }
       }, (error) => {
         console.log(error);
       });
@@ -66,7 +71,7 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit() {
     if (this.examForm.valid) {
-      this.addExam(this.examForm.value);
+      this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
     } else {
       Object.keys(this.examForm.controls).forEach(field => {
         const control = this.examForm.get(field);
@@ -77,23 +82,29 @@ export class ExamsAddComponent implements OnInit {
 
   addExam(examInfo) {
     this.couchService.post(this.dbName, examInfo).subscribe((res) => {
-      const courseExam = { _id: res.id, _rev: res.rev, ...examInfo };
+      this.documentInfo = { _id: res.id, _rev: res.rev };
+      const courseExam = { ...this.documentInfo, ...examInfo };
       this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
       this.router.navigate([ this.coursesService.returnUrl ]);
-      this.planetMessageService.showMessage('New exam added');
+      this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
   }
 
-  addQuestion() {
-    this.questionsFormArray.push(this.fb.group({
-      header: '',
-      body: '',
-      type: 'input',
-      choices: this.fb.array([])
-    }));
+  addQuestion(question: any = {}) {
+    this.questionsFormArray.push(this.fb.group(Object.assign(
+      {
+        header: '',
+        body: '',
+        type: 'input',
+      },
+      question,
+      {
+        choices: this.fb.array(question.choices || [])
+      }
+    )));
   }
 
   removeQuestion(index) {

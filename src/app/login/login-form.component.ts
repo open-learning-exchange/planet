@@ -2,15 +2,18 @@ import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
+import { ValidatorService } from '../validators/validator.service';
+import { of } from 'rxjs/observable/of';
 
-const repeatPassword = {
+const registerForm = {
+  name: [],
   password: [ '', Validators.compose([
     Validators.required,
     CustomValidators.matchPassword('repeatPassword', false)
@@ -38,9 +41,16 @@ export class LoginFormComponent {
     private route: ActivatedRoute,
     private userService: UserService,
     private formBuilder: FormBuilder,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService
   ) {
-    const formObj = this.createMode ? Object.assign({}, loginForm, repeatPassword) : loginForm;
+    registerForm.name = [ '', [
+      Validators.required,
+      CustomValidators.pattern(/^[A-Za-z0-9]/i, 'invalidFirstCharacter'),
+      Validators.pattern(/^[a-z0-9_.-]*$/i) ],
+      ac => this.validatorService.isUnique$('_users', 'name', ac, {})
+    ];
+    const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
 
@@ -88,11 +98,7 @@ export class LoginFormComponent {
       this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
       this.welcomeNotification(response.id);
       this.login(this.userForm.value, true);
-    }, error => {
-      if (error.error.error === 'conflict') {
-        this.planetMessageService.showAlert('User name already exists. Please register with a different user name.');
-      }
-    });
+    }, error => this.planetMessageService.showAlert('An error occurred please try again'));
   }
 
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
@@ -107,12 +113,22 @@ export class LoginFormComponent {
       }), switchMap((routeSuccess) => {
         // Post new session info to login_activity
         const obsArr = [ this.userService.newSessionLog() ];
+        const localAdminName = this.userService.getConfig().adminName.split('@')[0];
         // If not in e2e test, also add session to parent domain
-        if (!environment.test && this.userService.getConfig().name === name.toLowerCase()) {
-          obsArr.push(this.couchService.post('_session', { 'name': name.toLowerCase(), 'password': password },
+        if (!environment.test && localAdminName === name) {
+          obsArr.push(this.couchService.post('_session',
+            { 'name': this.userService.getConfig().adminName, 'password': password },
             { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
         }
-        return forkJoin(obsArr);
+        return forkJoin(obsArr).pipe(catchError(error => {
+          // 401 is for Unauthorized
+          if (error.status === 401) {
+            this.planetMessageService.showMessage('Can not login to parent planet.');
+          } else {
+            this.planetMessageService.showMessage('Error connecting to parent.');
+          }
+          return of(error);
+        }));
       })).subscribe((res) => {
 
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));

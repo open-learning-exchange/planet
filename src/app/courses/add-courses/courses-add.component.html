@@ -32,11 +32,6 @@
         <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Course Leader" formControlName="courseLeader">
-          <mat-option *ngFor="let memb of members" value={{memb?.id}}>{{memb?.doc.firstName}} {{memb?.doc.middleName}} {{memb?.doc.lastName}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
         <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
       </mat-form-field>
       <mat-form-field>
@@ -52,9 +47,6 @@
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Method" formControlName="method">
       </mat-form-field>
-      <mat-form-field>
-        <input matInput [value]="courseForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Created Date" formControlName="createdDate" readonly>
-      </mat-form-field>
     </form>
     <div>
       <planet-courses-step
@@ -69,6 +61,7 @@
     <div>
       <button type="submit" (click)="onSubmit()" mat-raised-button color="primary" i18n>Submit</button>
       <button type="button" mat-raised-button color="warn" (click)="navigateBack()" i18n>Cancel</button>
+      <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
     </div>
   </div>
 </div>

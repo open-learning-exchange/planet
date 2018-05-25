@@ -4,7 +4,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>Add Course</span>
+    <span i18n>{{pageType}} Exam</span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
   </mat-toolbar>
@@ -16,12 +16,13 @@
       </mat-form-field>
       <div>
         <planet-exam-question
-          *ngFor="let question of questionsFormArray.controls"
+          *ngFor="let question of questionsFormArray.controls; let i = index"
           [questionForm]="question"
           (questionRemove)="removeQuestion(i)"
           ></planet-exam-question>
       </div>
-      <button mat-raised-button color="primary" type="submit">Add Exam</button>
+      <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
+      <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
     </form>
   </div>
   <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>

@@ -23,7 +23,8 @@ import {
   MatSnackBarModule,
   MatProgressBarModule,
   MatExpansionModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatTooltipModule
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
@@ -53,7 +54,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSnackBarModule,
     MatProgressBarModule,
     MatExpansionModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTooltipModule
   ]
 })
 export class MaterialModule {}

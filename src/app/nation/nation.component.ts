@@ -7,6 +7,9 @@ import { HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterDropdowns } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -81,17 +84,37 @@ export class NationComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Checks response and creates couch call if a doc was returned
+  addDeleteObservable(res, db) {
+    if (res.docs.length > 0) {
+      const doc = res.docs[0];
+      return [ this.couchService.delete(db + doc._id + '?rev=' + doc._rev) ];
+    }
+    return [];
+  }
+
   deleteNation(nation) {
     // Return a function with nation on its scope so it can be called from the dialog
     return () => {
-      const { _id: nationId, _rev: nationRev } = nation;
-      this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.nations.data = this.nations.data.filter((nat: any) => data.id !== nat._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted nation: ' + nation.name);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
+      const { _id: nationId, _rev: nationRev, code: nationCode } = nation;
+      // Search for registration request with same code
+      forkJoin([
+        this.couchService.post('communityregistrationrequests/_find', { 'selector': { '_id': nationId } }),
+        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } }),
+        this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } })
+      ]).pipe(switchMap(([ community, user, shelf ]) => {
+        const deleteObs = [ this.couchService.delete('nations/' + nationId + '?rev=' + nationRev) ].concat(
+          this.addDeleteObservable(community, 'communityregistrationrequests/'),
+          this.addDeleteObservable(user, '_users/'),
+          this.addDeleteObservable(shelf, 'shelf/')
+        );
+        return forkJoin(deleteObs);
+      })).subscribe((data) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.nations.data = this.nations.data.filter((nat: any) => data[0].id !== nat._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted nation: ' + nation.name);
+      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this nation');
     };
   }
 

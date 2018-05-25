@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 
@@ -7,6 +7,13 @@ export class CustomValidators {
   static integerValidator(ac: AbstractControl): ValidationErrors {
     const isValidInt = Number.isInteger(ac.value);
     return isValidInt ? null : { invalidInt: true };
+  }
+
+  static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
   static hexValidator(ac: AbstractControl): ValidationErrors {
@@ -18,6 +25,13 @@ export class CustomValidators {
     const isValidHex = /^#[A-F0-9]{6}$/i.test(ac.value);
 
     return isValidHex ? null : { invalidHex: true };
+  }
+
+  // Allows us to supply a different errorType for specific patterns
+  static pattern(pattern, errorType = 'pattern') {
+    return (ac: AbstractControl): ValidationErrors => {
+      return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
+    };
   }
 
   static timeValidator(ac: AbstractControl): ValidationErrors {

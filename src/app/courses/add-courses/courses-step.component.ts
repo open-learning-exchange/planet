@@ -8,6 +8,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
+import { filterSpecificFields } from '../../shared/table-helpers';
 
 @Component({
   selector: 'planet-courses-step',
@@ -57,15 +58,21 @@ export class CoursesStepComponent implements OnChanges {
 
   attachItem(db: string) {
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
-      const data = { okClick: this.dialogOkClick(db).bind(this), ...res };
+      const data = { okClick: this.dialogOkClick(db).bind(this),
+        filterPredicate: filterSpecificFields([ 'title' ]),
+        ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
       });
     });
   }
 
   dialogOkClick(db: string) {
-    return (item: any) => {
+    return (selected: any) => {
+      const item = selected[0];
       this.stepForm.patchValue({ attachment: { doc: item, type: db } });
       this.stepChange();
       this.dialogRef.close();
