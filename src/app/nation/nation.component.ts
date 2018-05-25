@@ -10,6 +10,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -79,7 +80,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }

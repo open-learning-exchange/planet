@@ -6,6 +6,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { debug } from '../debug-operator';
 
 export class Message {
   message: string;
@@ -105,7 +106,7 @@ export class FeedbackDirective {
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
+      .pipe(debug('Dialog confirm'))
       .subscribe((response) => {
         if (response !== undefined) {
           this.addFeedback(response);
