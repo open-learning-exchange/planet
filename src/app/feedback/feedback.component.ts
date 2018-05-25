@@ -11,13 +11,19 @@ import { FeedbackService } from './feedback.service';
 
 @Component({
   templateUrl: './feedback.component.html',
+  styles: [ `
+    .mat-column-type {
+      display: flex;
+      align-items: center;
+    }
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
-  displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
+  displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   user: any = {};
 
