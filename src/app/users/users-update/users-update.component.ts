@@ -44,10 +44,8 @@ export class UsersUpdateComponent implements OnInit {
   redirectUrl = '/';
   file: any;
   roles: string[] = [];
-  languages = [];
-  currentFlag = 'en';
-  currentLang = 'English';
-  sidenavState = 'closed';
+  languages = languages;
+
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
@@ -56,16 +54,6 @@ export class UsersUpdateComponent implements OnInit {
     private userService: UserService
   ) {
     this.userData();
-    this.languages = (<any>languages).map(language => {
-      if (language.servedUrl === document.baseURI) {
-        this.currentFlag = language.shortCode;
-        this.currentLang = language.name;
-      }
-      return language;
-    }).filter(lang  => {
-      return lang['active'] !== 'N';
-    });
-    this.languages = [ { name : 'System language (English)', value: 'English' }, ...this.languages ];
   }
 
   ngOnInit() {
