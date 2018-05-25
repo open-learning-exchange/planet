@@ -5,8 +5,8 @@ if [ -z $COUCHDB_HOST ]; then
   export COUCHDB_HOST='http://couchdb:5984'
 fi
 
-export COUCHDB_DOMAIN=$(basename $COUCHDB_HOST)
-export COUCHDB_PORT=$(cho $COUCHDB_HOST | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
+export COUCHDB_DOMAIN=$(sed -E -e 's_.*://([^/@]*@)?([^/:]+).*_\2_' <<< $COUCHDB_HOST)
+export COUCHDB_PORT=$(echo $COUCHDB_HOST | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')
 
 #WAIT_TIME
 echo  "Waiting for couchdb to start"
