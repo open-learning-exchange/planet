@@ -169,7 +169,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   attendMeetup(id, participate) {
     this.meetupService.attendMeetup(id, participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
-      this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
     });
   }
 
