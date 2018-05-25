@@ -77,21 +77,19 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
       this.userShelf = this.userService.getUserShelf();
-      this.setupList(courses, this.userShelf.courseIds);
+      this.courses.data = courses;
+      this.setupList(this.courses.data, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
+    courseRes.forEach((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
-      if (myCourseIndex > -1) {
-        return { ...course, admission: true };
-      }
-      return { ...course, admission: false };
+      course.admission = myCourseIndex > -1;
     });
   }
 
@@ -233,10 +231,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.setShelf(newShelf);
-      this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
-      // Clear selection because setupList breaks Material Table selection
-      this.selection.clear();
     }, (error) => (error));
   }
 

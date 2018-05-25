@@ -14,8 +14,8 @@
       *ngIf="stepDetail?.exam?.questions.length && showExamButton"
       (click)="goToExam()"
       i18n>
-      Take exam
-    </a>  
+      {{examStart === 1 ? "Take Exam" : "Continue Exam"}}
+    </a>
     <a
       mat-raised-button
       color="accent"

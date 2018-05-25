@@ -29,6 +29,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService
   ) {
+    if (this.userService.getConfig().planetType === 'community') {
+      // Remove source from displayed columns for communities
+      this.displayedColumns.splice(this.displayedColumns.indexOf('source'), 1);
+    }
     this.feedbackService.feedbackUpdate$.subscribe(() => {
       this.getFeedback();
     });
