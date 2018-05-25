@@ -308,7 +308,7 @@ body {
     height: $view-container-height;
   }
 
-  planet-resources-viewer div * {
+  planet-resources-viewer div > video {
     max-height: calc(#{$view-container-height} - 4px);
   }
 
