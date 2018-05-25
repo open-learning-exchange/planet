@@ -41,7 +41,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + this.dbName + '/';
-  userShelf = this.userService.getUserShelf();
+  userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -52,8 +52,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.setMyTeams(this.allUsers.data, this.userService.getUserShelf().myTeamIds);
+      .subscribe((shelf: any) => {
+        this.setMyTeams(this.allUsers.data, shelf.myTeamIds);
       });
     }
 
@@ -114,7 +114,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         }
         return userInfo;
       });
-      this.setMyTeams(users, this.userService.getUserShelf().myTeamIds);
+      this.setMyTeams(users, this.userService.shelf.myTeamIds);
       this.allUsers.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
@@ -264,14 +264,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   updateShelf(myTeamIds: string[] = [], userShelf: any, msg: string) {
     this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
-      this.userService.setShelf({ ...userShelf, _rev: res.rev, myTeamIds });
+      this.userService.shelf = { ...userShelf, _rev: res.rev, myTeamIds };
 
       this.planetMessageService.showMessage(msg + ' your shelf');
     }, (error) => (error));
   }
 
   addTeams(users) {
-    const userShelf = this.userService.getUserShelf();
+    const userShelf = this.userService.shelf;
     const myTeamIds = users.map((data) => {
       return data.doc._id;
     }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
@@ -285,7 +285,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   removeTeam(teamId, userName) {
-    const userShelf = this.userService.getUserShelf();
+    const userShelf = this.userService.shelf;
     const myTeamIds = [ ...userShelf.myTeamIds ];
     myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
     this.updateShelf(myTeamIds, userShelf, userName + ' has been removed from');
