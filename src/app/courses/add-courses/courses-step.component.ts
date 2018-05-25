@@ -58,10 +58,12 @@ export class CoursesStepComponent implements OnChanges {
   }
 
   attachItem(db: string) {
+    const initialSelection = this.resources.map(resource => resource._id);
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
       const data = { okClick: this.dialogOkClick(db).bind(this),
         filterPredicate: filterSpecificFields([ 'title' ]),
         allowMulti: true,
+        initialSelection,
         ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,

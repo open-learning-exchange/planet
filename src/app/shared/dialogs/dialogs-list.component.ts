@@ -37,7 +37,7 @@ export class DialogsListComponent implements AfterViewInit {
     allowMulti?: boolean,
     initialSelection?: any[]
   }) {
-    this.selection = new SelectionModel(this.data.allowMulti || false, []);
+    this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
     if (this.data.filterPredicate) {
