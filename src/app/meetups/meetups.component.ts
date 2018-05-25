@@ -79,7 +79,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.meetups.data.forEach(row => this.selection.select(row._id));
+    this.meetups.data.forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {
