@@ -42,7 +42,7 @@ export class ResourcesRatingComponent implements OnChanges {
     return { rate: this.rating.userRating.rate || 0 };
   }
   get commentField() {
-    return { comment: this.rating.userRating.comment || '' };
+    return { comment: '' };
   }
 
   private dbName = 'ratings';
