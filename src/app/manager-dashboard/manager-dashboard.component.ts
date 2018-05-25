@@ -50,7 +50,7 @@ export class ManagerDashboardComponent implements OnInit {
       this.message = 'Access restricted to admins';
     }
     // Check parent if configuration exists
-    this.couchService.post(`communityregistrationrequests/_find`, findOneDocument('name', this.userService.getConfig().name),
+    this.couchService.post(`communityregistrationrequests/_find`, findOneDocument('code', this.userService.getConfig().code),
       { domain: this.userService.getConfig().parentDomain }).subscribe((data: any) => {
         if (data.docs.length === 0) {
           this.showResendConfiguration = true;
