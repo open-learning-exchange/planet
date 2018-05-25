@@ -57,16 +57,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   getFeedback() {
-    this.couchService.post(this.dbName + '/_find', findDocuments({
-        '_id': { '$gt': null }
-      }, 0, [ { 'openTime': 'desc' } ]))
+    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
+    this.couchService.post(this.dbName + '/_find', findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
       .subscribe((data) => {
-        this.feedback.data = data.docs.filter(fback  => {
-          if (!this.user.isUserAdmin) {
-            return fback.owner === this.user.name;
-          }
-          return fback;
-        });
+        this.feedback.data = data.docs;
       }, (error) => this.message = 'There is a problem of getting data.');
   }
 
