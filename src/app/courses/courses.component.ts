@@ -84,14 +84,11 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
+    courseRes.forEach((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
-      if (myCourseIndex > -1) {
-        return { ...course, admission: true };
-      }
-      return { ...course, admission: false };
+      course.admission = myCourseIndex > -1;
     });
   }
 
@@ -235,8 +232,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       this.userService.shelf = newShelf;
       this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
-      // Clear selection because setupList breaks Material Table selection
-      this.selection.clear();
     }, (error) => (error));
   }
 

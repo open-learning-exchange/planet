@@ -28,7 +28,11 @@
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Language" formControlName="language" required>
+          <mat-select i18n-placeholder placeholder="Language" formControlName="language" required>
+            <mat-option *ngFor="let language of languages" [value]="language.name">
+              {{language.name}}
+            </mat-option>
+          </mat-select>
           <mat-error><planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>

@@ -12,6 +12,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { NgxImgModule } from 'ngx-img';
+import { languages } from '../../shared/languages';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -43,6 +44,7 @@ export class UsersUpdateComponent implements OnInit {
   redirectUrl = '/';
   file: any;
   roles: string[] = [];
+  languages = languages;
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +55,6 @@ export class UsersUpdateComponent implements OnInit {
   ) {
     this.userData();
   }
-
 
   ngOnInit() {
     this.urlName = this.route.snapshot.paramMap.get('name');
