@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z $COUCHDB_HOST ]; then
   echo '$COUCHDB_HOST is not set, defaulting to' 'http://couchdb:5984'
