@@ -308,10 +308,6 @@ body {
     height: $view-container-height;
   }
 
-  planet-resources-viewer div > video {
-    max-height: calc(#{$view-container-height} - 4px);
-  }
-
   // Width of a form with 3 standard matInputs (180px + 10px of padding)
   .form-width-3 {
     width: 550px;
