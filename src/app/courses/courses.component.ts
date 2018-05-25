@@ -76,6 +76,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
+      this.courses.data = courses;
       this.userShelf = this.userService.shelf;
       this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
