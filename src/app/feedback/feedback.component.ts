@@ -19,6 +19,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   feedback = new MatTableDataSource();
   displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   user: any = {};
 
   constructor(
@@ -42,11 +43,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
-    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.feedback.sort = this.sort;
   }
 
   ngAfterViewInit() {
     this.feedback.paginator = this.paginator;
+    this.feedback.sortingDataAccessor = (item, property) => item[property];
   }
 
   applyFilter(filterValue: string) {
@@ -54,9 +56,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   getFeedback() {
-    this.couchService.allDocs(this.dbName)
+    this.couchService.post(this.dbName + '/_find', { 'selector': { 'openTime': { '$gt': 0 } }, 'sort': [ { 'openTime': 'desc' } ] } )
       .subscribe((data) => {
-        this.feedback.data = data.filter(fback  => {
+        this.feedback.data = data.docs.filter(fback  => {
           if (!this.user.isUserAdmin) {
             return fback.owner === this.user.name;
           }
