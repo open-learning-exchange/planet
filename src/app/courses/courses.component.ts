@@ -66,9 +66,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private userService: UserService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.userShelf = this.userService.getUserShelf();
-        this.setupList(this.courses.data, this.userShelf.courseIds);
+      .subscribe((shelf: any) => {
+        this.userShelf = this.userService.shelf;
+        this.setupList(this.courses.data, shelf.courseIds);
       });
    }
 
@@ -76,9 +76,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.getUserShelf();
-      this.courses.data = courses;
-      this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.userShelf = this.userService.shelf;
+      this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
@@ -230,7 +229,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   updateShelf(newShelf, message) {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
+      this.userService.shelf = newShelf;
+      this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
     }, (error) => (error));
   }
