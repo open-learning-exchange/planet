@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
+import { debug } from '../debug-operator';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -203,9 +204,11 @@ export class ConfigurationComponent implements OnInit {
       // create replicator at first as we do not have session
       this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
+        debug('Creating replicator'),
         switchMap(res => {
           return this.couchService.post('_replicator', feedbackSyncDown);
         }),
+        debug('Sending request to parent planet'),
         switchMap(res => {
           return forkJoin([
             // When creating a planet, add admin
@@ -240,9 +243,9 @@ export class ConfigurationComponent implements OnInit {
                 return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
               })
             )
-          ]).debug('Sending request to parent planet');
+          ]);
         })
-      ).debug('Creating replicator').subscribe((data) => {
+      ).subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));

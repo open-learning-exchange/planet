@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { Subject } from 'rxjs/Subject';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -157,7 +158,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }

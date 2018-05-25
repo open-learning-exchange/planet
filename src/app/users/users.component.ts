@@ -15,6 +15,7 @@ import { _throw } from 'rxjs/observable/throw';
 import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { findDocuments } from '../shared/mangoQueries';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './users.component.html',
@@ -100,7 +101,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsers().debug('Getting user list').subscribe(users => {
+    this.getUsers().pipe(debug('Getting user list')).subscribe(users => {
       users = users.docs.filter((user: any) => {
         // Removes current user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
@@ -135,7 +136,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
@@ -237,7 +238,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       }
       return observers;
     }, []))
-    .debug('Adding role to users')
+    .pipe(debug('Adding role to users'))
     .subscribe((responses) => {
       users.map((userInfo) => {
         const user = userInfo.doc;

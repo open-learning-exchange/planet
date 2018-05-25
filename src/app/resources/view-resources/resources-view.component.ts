@@ -9,6 +9,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
+import { debug } from '../../debug-operator';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -47,8 +48,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap
-      .debug('Getting resource id from parameters')
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const resourceId = params.get('id');
         const getOpts: any = { resourceIds: [ resourceId ] };

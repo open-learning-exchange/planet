@@ -15,6 +15,7 @@ import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -194,7 +195,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }

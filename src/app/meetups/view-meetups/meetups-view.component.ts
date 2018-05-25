@@ -12,6 +12,7 @@ import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
+import { debug } from '../../debug-operator';
 
 @Component({
   templateUrl: './meetups-view.component.html',
@@ -40,8 +41,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getEnrolledUsers();
     this.route.paramMap
-      .debug('Getting meetup id from parameters')
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(debug('Getting meetup id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
         const getOpts: any = { meetupIds: [ meetupId ] };

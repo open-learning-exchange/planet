@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -147,7 +148,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }

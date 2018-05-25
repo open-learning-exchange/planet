@@ -8,6 +8,7 @@ import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -81,7 +82,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
