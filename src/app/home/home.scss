@@ -127,6 +127,11 @@
   white-space: unset;
 }
 
+// Override of default background to make border glitch issue less obvious
+.mat-drawer-container {
+  background-color: $primary;
+}
+
 // Top toolbar is smaller on small screens
 @media (max-width: 600px) {
   :host {
