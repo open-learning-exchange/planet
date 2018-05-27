@@ -22,12 +22,12 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
       <ng-container [ngSwitch]="requestStatus">
-        <ng-container *ngSwitchCase="accepted">
+        <ng-container *ngSwitchCase="'accepted'">
           <a routerLink="resources" i18n mat-raised-button>List Resources</a>
           <a routerLink="courses" i18n mat-raised-button>List Courses</a>
           <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
         </ng-container>
-        <p *ngSwitchCase="loading" i18n>Checking request status...</p>
+        <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
         <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
       </ng-container>
     </div>
