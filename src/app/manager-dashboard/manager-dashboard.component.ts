@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { findOneDocument } from '../shared/mangoQueries';
+import { findOneDocument, findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
@@ -21,14 +21,15 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <div *ngIf="showParentList">
-        <a routerLink="resources" i18n mat-raised-button>List Resources</a>
-        <a routerLink="courses" i18n mat-raised-button>List Courses</a>
-        <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
-      </div>
-      <div *ngIf="!showParentList && isDataLoaded">
-        <p i18n>Your request has not been accepted by parent</p>
-      </div>
+      <ng-container [ngSwitch]="requestStatus">
+        <ng-container *ngSwitchCase="accepted">
+          <a routerLink="resources" i18n mat-raised-button>List Resources</a>
+          <a routerLink="courses" i18n mat-raised-button>List Courses</a>
+          <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
+        </ng-container>
+        <p *ngSwitchCase="loading" i18n>Checking request status...</p>
+        <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
+      </ng-container>
     </div>
     <div>{{message}}</div>
   `
@@ -40,8 +41,7 @@ export class ManagerDashboardComponent implements OnInit {
   message = '';
   planetType = this.userService.getConfig().planetType;
   showResendConfiguration = false;
-  showParentList = false;
-  isDataLoaded = false;
+  requestStatus = 'loading';
 
   constructor(
     private userService: UserService,
@@ -50,7 +50,7 @@ export class ManagerDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.checkRequestAcceptedOrNot();
+    this.checkRequestStatus();
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
       // A non-admin user cannot receive all user docs
@@ -93,15 +93,11 @@ export class ManagerDashboardComponent implements OnInit {
       }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
   }
 
-  checkRequestAcceptedOrNot() {
+  checkRequestStatus() {
     this.couchService.post(`communityregistrationrequests/_find`,
-     { 'selector': { 'code': this.userService.getConfig().code, 'registrationRequest': 'accepted' },
-      'fields': [ 'registrationRequest' ] },
-       { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
-         if (data.docs.length === 1) {
-           this.showParentList = true;
-         }
-         this.isDataLoaded = true;
+      findDocuments({ 'code': this.userService.getConfig().code }, [ 'registrationRequest' ]),
+      { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
+        this.requestStatus = data.docs[0].registrationRequest;
       }, error => (error));
   }
 
