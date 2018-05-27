@@ -16,6 +16,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './resources-add.component.html'
@@ -128,7 +129,7 @@ export class ResourcesAddComponent implements OnInit {
   onSubmit() {
     if (this.resourceForm.valid) {
       const fileObs: Observable<any> = this.createFileObs();
-      fileObs.debug('Preparing file for upload').subscribe((resource) => {
+      fileObs.pipe(debug('Preparing file for upload')).subscribe((resource) => {
         const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
@@ -224,7 +225,7 @@ export class ResourcesAddComponent implements OnInit {
           }
         }
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
-        forkJoin(fileNames.map(this.processZip(zip))).debug('Unpacking zip file').subscribe((filesArray) => {
+        forkJoin(fileNames.map(this.processZip(zip))).pipe(debug('Unpacking zip file')).subscribe((filesArray) => {
           // Create object in format for multiple attachment upload to CouchDB
           const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
             // Default to text/plain if no mime type found

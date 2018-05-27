@@ -6,6 +6,7 @@ import { UserService } from '../../shared/user.service';
 import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { ResourcesService } from '../resources.service';
+import { debug } from '../../debug-operator';
 
 const popupFormFields = [
   {
@@ -121,7 +122,7 @@ export class ResourcesRatingComponent implements OnChanges {
     this.isPopupOpen = true;
     this.dialogsForm
       .confirm('Rating', popupFormFields, this.popupForm)
-      .debug('Dialog confirm')
+      .pipe(debug('Dialog confirm'))
       .subscribe((res) => {
         if (res) {
           this.onStarClick(this.popupForm);

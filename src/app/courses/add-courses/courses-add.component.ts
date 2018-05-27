@@ -154,7 +154,7 @@ export class CoursesAddComponent implements OnInit {
       id: this.uniqueIdOfStep(),
       stepTitle: '',
       description: '',
-      attachment: ''
+      resources: []
     });
   }
 
