@@ -18,6 +18,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
       <button *ngIf="planetType !== center && showResendConfiguration"
         (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+      <a routerLink="manageteam" i18n mat-raised-button>Add Team</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />

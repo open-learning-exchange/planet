@@ -7,6 +7,12 @@
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
   </mat-form-field>
 </div>
+
+<mat-toolbar class="primary-color font-size-1">
+  <span class="toolbar-fill"></span>
+  <span i18n>{{data.teamName}}</span>
+</mat-toolbar>
+
 <mat-table #table [dataSource]="tableData">
   <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
