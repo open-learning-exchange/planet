@@ -25,10 +25,8 @@ export class MeetupsAddComponent implements OnInit {
   pageType = 'Add new';
   revision = null;
   id = null;
-  showDaysCheckBox = true; // for toggling the days checkbox
   days = constants.days;
   meetupFrequency = [];
-  radio = '';
 
   constructor(
     private couchService: CouchService,
@@ -42,18 +40,14 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   ngOnInit() {
-
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
-        this.meetupFrequency = data.day || [];
+        this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
         this.meetupForm.patchValue(data);
-        this.radio = data.recurring;
-        this.radio === 'weekly' ? (this.showDaysCheckBox = false) && (this.meetupForm.value.day.concat(this.meetupFrequency))
-          : (this.showDaysCheckBox = true) && (this.meetupFrequency = []);
       }, (error) => {
         console.log(error);
       });
@@ -97,11 +91,6 @@ export class MeetupsAddComponent implements OnInit {
 
   onSubmit() {
     if (this.meetupForm.valid) {
-      if (this.meetupForm.value.recurring  === 'daily') {
-        this.meetupForm.value.day = this.days;
-      } else if (this.meetupForm.value.recurring  === 'weekly') {
-        this.meetupForm.value.day = this.meetupFrequency;
-      }
       if (this.route.snapshot.url[0].path === 'update') {
         this.updateMeetup(this.meetupForm.value);
       } else {
@@ -141,20 +130,29 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   onDayChange(day: string, isChecked: boolean) {
+    const dayFormArray = <FormArray>this.meetupForm.controls.day;
     if (isChecked) {
       // add to day array if checked
-      if (!this.meetupFrequency.includes(day)) {
-        this.meetupFrequency.push(day);
-      }
+      dayFormArray.push(new FormControl(day));
     } else {
       // remove from day array if unchecked
-      const index = this.meetupFrequency.findIndex(x => x.value === day);
-      this.meetupFrequency.splice(index);
+      const index = dayFormArray.controls.findIndex(x => x.value === day);
+      dayFormArray.removeAt(index);
     }
   }
 
-  toggleDaily(val) {
-    this.showDaysCheckBox = val;
+  toggleDaily(val, showCheckbox) {
+    // empty the array
+    this.meetupForm.setControl('day', this.fb.array([]));
+    switch (val)  {
+      case 'daily':
+        // add all days to the array if the course is daily
+        this.meetupForm.setControl('day', this.fb.array(this.days));
+        break;
+      case 'weekly':
+        this.meetupForm.setControl('day', this.fb.array(this.meetupFrequency));
+        break;
+    }
   }
 
 }
