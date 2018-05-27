@@ -25,6 +25,7 @@
       <p i18n>Recurring: {{meetupDetail.recurring}}</p>
       <p i18n>Location: {{meetupDetail.meetupLocation}}</p>
       <p i18n>Description: {{meetupDetail.description}}</p>
+      <p *ngIf="meetupDetail.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
     </div>
     <div class="right-tile">
       <span i18n><b>Joined Members: ( {{members.length}} )</b></span>

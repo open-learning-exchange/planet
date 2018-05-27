@@ -5,6 +5,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormArray,
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -24,6 +25,8 @@ export class MeetupsAddComponent implements OnInit {
   pageType = 'Add new';
   revision = null;
   id = null;
+  days = constants.days;
+  meetupFrequency = [];
 
   constructor(
     private couchService: CouchService,
@@ -43,6 +46,7 @@ export class MeetupsAddComponent implements OnInit {
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
+        this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
         this.meetupForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -68,7 +72,8 @@ export class MeetupsAddComponent implements OnInit {
           CustomValidators.dateValidator
         ])
       ],
-      recurring: 'none',
+      recurring: '',
+      day: this.fb.array([]),
       startTime: [ '', CustomValidators.timeValidator ],
       endTime: [
         '',
@@ -118,6 +123,36 @@ export class MeetupsAddComponent implements OnInit {
 
   cancel() {
     this.router.navigate([ '/meetups' ]);
+  }
+
+  isClassDay(day) {
+    return this.meetupFrequency.includes(day) ? true : false;
+  }
+
+  onDayChange(day: string, isChecked: boolean) {
+    const dayFormArray = <FormArray>this.meetupForm.controls.day;
+    if (isChecked) {
+      // add to day array if checked
+      dayFormArray.push(new FormControl(day));
+    } else {
+      // remove from day array if unchecked
+      const index = dayFormArray.controls.findIndex(x => x.value === day);
+      dayFormArray.removeAt(index);
+    }
+  }
+
+  toggleDaily(val, showCheckbox) {
+    // empty the array
+    this.meetupForm.setControl('day', this.fb.array([]));
+    switch (val)  {
+      case 'daily':
+        // add all days to the array if the course is daily
+        this.meetupForm.setControl('day', this.fb.array(this.days));
+        break;
+      case 'weekly':
+        this.meetupForm.setControl('day', this.fb.array(this.meetupFrequency));
+        break;
+    }
   }
 
 }
