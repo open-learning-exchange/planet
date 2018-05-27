@@ -9,6 +9,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { debug } from '../debug-operator';
 
 @Injectable()
 export class ValidatorService {
@@ -41,7 +42,7 @@ constructor(
         }
         return null;
       })
-    ).debug('Checking uniqueness of ' + fieldName + ' in ' + dbName);
+    ).pipe(debug('Checking uniqueness of ' + fieldName + ' in ' + dbName));
   }
 
   public isNameAvailible$(
@@ -69,7 +70,7 @@ constructor(
         }
       })
 
-    ).debug('Checking availibility of ' + fieldName + ' in ' + dbName);
+    ).pipe(debug('Checking availibility of ' + fieldName + ' in ' + dbName));
   }
 
   public checkOldPassword$(ac: AbstractControl): Observable<boolean> {

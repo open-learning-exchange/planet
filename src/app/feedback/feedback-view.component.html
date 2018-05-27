@@ -32,19 +32,19 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="chat-list" #chatList>
-      <div class="chat-list-item" *ngFor="let message of feedback.messages">
+      <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
         <div class="chat-list-user">
           <p>{{message.user}}</p>
           <p class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</p>
         </div>
-        <div class="chat-list-message"><mat-card [ngClass]="{'primary-color':message.user!==user.name}">{{message.message}}</mat-card></div>
+        <div class="chat-list-message"><mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card></div>
       </div>
     </div>
     <div class="chat-reply">
       <mat-form-field>
         <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
       </mat-form-field>
-      <button mat-raised-button color="accent" (click)="postMessage()"><mat-icon>reply</mat-icon>Reply</button>
+      <button mat-raised-button color="accent" (click)="postMessage()" [disabled]="!newMessage.trim()"><mat-icon>reply</mat-icon>Reply</button>
     </div>
   </div>
 </div>

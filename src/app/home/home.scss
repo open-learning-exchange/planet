@@ -7,6 +7,33 @@
   grid-template-areas: "header" "main";
   height: 100vh;
 
+  mat-sidenav li {
+    a {
+      border-radius: 0;
+    }
+
+    // takes the left sidenav and alters color of text, background and svg-fill on .active class
+    a.active {
+      background-color: $primary-text;
+      color: $primary;
+      transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1),
+        color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
+      .mat-button-focus-overlay {
+        background-color: rgba(0, 0, 0, 0.06);
+        transition: background-color 1s ease-in;
+      }
+    }
+
+    // Animates pulsating icon when navbar link clicked
+    a.pulsate mat-icon {
+      animation: pulsate 1000ms linear alternate-reverse infinite;
+    }
+  }
+
+  @keyframes pulsate {
+    100% { transform: scale(1.1) }
+  }
+
   .header-nav {
     grid-area: header;
     position: relative;
@@ -73,6 +100,7 @@
       padding: 0 24px;
 
       label {
+        cursor: pointer;
         margin: 0 24px;
       }
     }

@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs/Subject';
+import { environment } from '../../../environments/environment';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -62,4 +63,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/1' ], { relativeTo: this.route });
   }
 
+  goToExam(stepDetail, stepNum) {
+    this.coursesService.openSubmission({
+      parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
+      parent: stepDetail.exam,
+      user: this.userService.get().name,
+      type: 'exam' });
+    this.coursesService.submissionUpdated$.subscribe((submission: any) => {
+      this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
+        (submission.answers.length + 1) ], { relativeTo: this.route });
+    });
+  }
+
+  resourceUrl(stepDetail) {
+    if (Object.keys(stepDetail.attachment.doc._attachments)[0]) {
+      const filename = stepDetail.openWhichFile || Object.keys(stepDetail.attachment.doc._attachments)[0];
+      return environment.couchAddress + 'resources/' + stepDetail.attachment.doc._id + '/' + filename;
+    }
+  }
 }

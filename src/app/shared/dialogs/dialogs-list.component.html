@@ -1,4 +1,7 @@
 <div class="search-bar">
+  <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3" *ngIf="data.allowMulti">
+    {isAllSelected(), select, yes {Deselect} no {Select}} all
+  </button>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
@@ -12,8 +15,8 @@
   <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>
   <mat-row
     *matRowDef="let row; columns: tableColumns"
-    (click)="selection.toggle(row)"
-    [ngClass]="{highlight:selection.isSelected(row)}"
+    (click)="selection.toggle(row._id)"
+    [ngClass]="{highlight:selection.isSelected(row._id)}"
     class="cursor-pointer">
   </mat-row>
 </mat-table>

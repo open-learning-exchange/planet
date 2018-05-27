@@ -3,6 +3,7 @@ import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
+import { debug } from '../debug-operator';
 
 @Injectable()
 export class CouchService {
@@ -25,7 +26,7 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return httpReq.debug('Http ' + type + ' ' + this.reqNum + ' request');
+    return httpReq.pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'));
   }
 
   constructor(private http: HttpClient) {}

@@ -115,11 +115,13 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       const { _id: id, _rev: rev } = community;
       forkJoin([
         this.couchService.post('nations/_find', { 'selector': { '_id': id } }),
-        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
-      ]).pipe(switchMap(([ nation, user ]) => {
+        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
+        this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+      ]).pipe(switchMap(([ nation, user, shelf ]) => {
         const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
           this.addDeleteObservable(nation, 'nations/'),
-          this.addDeleteObservable(user, '_users/')
+          this.addDeleteObservable(user, '_users/'),
+          this.addDeleteObservable(shelf, 'shelf/')
         );
         return forkJoin(deleteObs);
       })).subscribe((data) => {
