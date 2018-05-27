@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { findOneDocument, findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
