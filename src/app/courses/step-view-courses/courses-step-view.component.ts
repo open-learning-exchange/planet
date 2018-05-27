@@ -18,8 +18,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
-  showCourseAddLink = false;
-  courseId;
   showExamButton = false;
 
   constructor(
@@ -27,9 +25,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private userService: UserService
-  ) {
-    this.isExamButtonTrue();
-  }
+  ) {}
 
   ngOnInit() {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
@@ -37,6 +33,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.stepDetail = course.steps[this.stepNum - 1];
       this.maxStep = course.steps.length;
       if (this.stepDetail.exam) {
+        this.showExamButton = this.checkMyCourses(course._id);
         this.coursesService.openSubmission({
           parentId: this.stepDetail.exam._id + '@' + course._id,
           parent: this.stepDetail.exam,
@@ -71,16 +68,12 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resourceUrl = resourceUrl;
   }
 
-  isExamButtonTrue() {
-    const myCourseUrl = this.router.url.split('/');
-    const mycourseId = myCourseUrl[3];
-    this.courseId = mycourseId;
-    if (this.userService.getUserShelf().courseIds.includes(mycourseId)) {
-      this.showExamButton = true;
-    }
+  checkMyCourses(courseId: string) {
+    return this.userService.getUserShelf().courseIds.includes(courseId);
   }
 
   goToExam() {
     this.router.navigate([ 'exam', this.examStart ], { relativeTo: this.route });
   }
+
 }
