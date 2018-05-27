@@ -57,13 +57,6 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
-    // Check parent if configuration exists
-    this.couchService.post(`communityregistrationrequests/_find`, findOneDocument('name', this.userService.get().name),
-      { domain: this.userService.getConfig().parentDomain }).subscribe((data: any) => {
-        if (data.docs.length === 0) {
-          this.showResendConfiguration = true;
-        }
-      });
   }
 
   resendConfig() {
@@ -97,6 +90,9 @@ export class ManagerDashboardComponent implements OnInit {
     this.couchService.post(`communityregistrationrequests/_find`,
       findDocuments({ 'code': this.userService.getConfig().code }, [ 'registrationRequest' ]),
       { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
+        if (data.docs.length === 0) {
+          this.showResendConfiguration = true;
+        }
         this.requestStatus = data.docs[0].registrationRequest;
       }, error => (error));
   }
