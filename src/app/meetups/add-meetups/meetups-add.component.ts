@@ -154,7 +154,7 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   toggleDaily(val) {
-    val ? this.showDaysCheckBox = val : this.showDaysCheckBox = val;
+    this.showDaysCheckBox = val;
   }
 
 }
