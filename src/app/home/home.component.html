@@ -26,7 +26,7 @@
 </mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-  <a routerLink="/notifications"
+  <a [routerLink]="notification.link || '/notifications'"
     class="menu-item-notification"
     [ngClass]="{'primary-text-color':notification.status==='unread'}"
     mat-menu-item
@@ -37,41 +37,59 @@
   </a>
   <a routerLink="/notifications" mat-menu-item>See All</a>
 </mat-menu>
-
+<!--Left sidebar-->
 <mat-sidenav-container class="main-content" #content>
   <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
+    <!--Top part, user content etc.-->
     <ul class="top-nav">
       <li>
-        <a mat-button routerLink="/" i18n-title title="Home">
+        <a mat-button routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}"
+          planetPulsateIcon
+          i18n-title title="Home">
           <mat-icon svgIcon="home"></mat-icon>
           <label i18n>Home</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/resources" i18n-title title="Resources">
-         <mat-icon svgIcon="myLibrary"></mat-icon>
-         <label i18n>Library</label>
+        <a mat-button routerLink="/resources"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Resources">
+          <mat-icon svgIcon="myLibrary"></mat-icon>
+          <label i18n>Library</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/courses" i18n-title title="Courses">
+        <a mat-button routerLink="/courses"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Courses">
           <mat-icon svgIcon="myCourses"></mat-icon>
           <label i18n>Courses</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/meetups" i18n-title title="Meetups">
+        <a mat-button routerLink="/meetups"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Meetups">
           <mat-icon svgIcon="myMeetups"></mat-icon>
           <label i18n>Meetups</label>
         </a>
       </li>
       <li>
-        <a mat-button routerLink="/users" i18n-title title="Users">
+        <a mat-button routerLink="/users"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Users">
           <mat-icon svgIcon="myTeams"></mat-icon>
           <label i18n>Members</label>
         </a>
       </li>
     </ul>
+    <!--Bottom part-->
     <ul class="bottom-nav">
       <li>
         <a mat-button routerLink="/" i18n-title title="Surveys">

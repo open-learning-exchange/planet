@@ -18,6 +18,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
+  resource: any;
 
   constructor(
     private router: Router,
@@ -38,6 +39,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           user: this.userService.get().name,
           type: 'exam' });
       }
+      this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
       this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submission: any) => {
         this.examStart = submission.answers.length + 1;
       });
@@ -64,6 +66,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   setResourceUrl(resourceUrl: string) {
     this.resourceUrl = resourceUrl;
+  }
+
+  onResourceChange(value) {
+    this.resource = value;
   }
 
   goToExam() {

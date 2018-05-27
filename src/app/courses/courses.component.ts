@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -66,9 +67,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private userService: UserService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.userShelf = this.userService.getUserShelf();
-        this.setupList(this.courses.data, this.userShelf.courseIds);
+      .subscribe((shelf: any) => {
+        this.userShelf = this.userService.shelf;
+        this.setupList(this.courses.data, shelf.courseIds);
       });
    }
 
@@ -76,7 +77,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.getUserShelf();
+      this.courses.data = courses;
+      this.userShelf = this.userService.shelf;
       this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
@@ -84,16 +86,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   setupList(courseRes, myCourses) {
-    this.courses.data = courseRes.map((course: any) => {
+    courseRes.forEach((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
       course.canManage = this.userService.get().isUserAdmin ||
-       (course.creator === this.userService.get().name + '@' + this.userService.getConfig().code);
-      if (myCourseIndex > -1) {
-        return { ...course, admission: true };
-      }
-      return { ...course, admission: false };
+        (course.creator === this.userService.get().name + '@' + this.userService.getConfig().code);
+      course.admission = myCourseIndex > -1;
     });
   }
 
@@ -151,7 +150,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
@@ -238,11 +237,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   updateShelf(newShelf, message) {
     this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
+      this.userService.shelf = newShelf;
       this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
-      // Clear selection because setupList breaks Material Table selection
-      this.selection.clear();
     }, (error) => (error));
   }
 

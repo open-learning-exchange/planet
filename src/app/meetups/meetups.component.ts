@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { Subject } from 'rxjs/Subject';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -79,7 +80,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.meetups.data.forEach(row => this.selection.select(row));
+    this.meetups.data.forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {
@@ -157,13 +158,20 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
 
   goBack() {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+  }
+
+  attendMeetup(id, participate) {
+    this.meetupService.attendMeetup(id, participate).subscribe((res) => {
+      const msg = res.participate ? 'left' : 'joined';
+      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+    });
   }
 
 }
