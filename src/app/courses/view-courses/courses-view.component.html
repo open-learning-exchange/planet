@@ -11,16 +11,10 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-detail bg-light-grey">
-      <p i18n><b>Course Leader:</b> {{courseDetail.courseLeader}} </p>
-      <p i18n><b>Level:</b> {{courseDetail.subjectLevel}}</p>
-      <p i18n><b>Level:</b> {{courseDetail.gradeLevel}}</p>
+      <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
+      <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
       <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
       <p i18n><b>Method:</b> {{courseDetail.method}}</p>
-      <p i18n><b>Frequency/Days:</b> {{courseDetail.day}}</p>
-      <p i18n><b>Schedule -
-        Date:</b> {{courseDetail.startDate | date }}
-        <b>Time:</b> {{courseDetail.startTime }}</p>
-      <p i18n><b>Location:</b> {{courseDetail.location}}</p>
       <p i18n><b>Description:</b> {{courseDetail.description}}</p>
     </div>
     <div class="course-view">
