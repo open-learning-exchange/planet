@@ -10,19 +10,11 @@ const logger = (args: any[]) => {
   }
 };
 
-export const debug = <T>(message: string) => (source: Observable<T>) => new Observable<T>((subscriber) => {
-  source.subscribe({
-    next(value) {
-      logger([ message, value ]);
-      subscriber.next(value);
-    },
-    error(err) {
-      logger([ 'ERROR >>> ', message, err ]);
-      subscriber.error(err);
-    },
-    complete() {
-      logger([ message, 'Completed.' ]);
-      subscriber.complete();
-    }
-  });
-});
+export const debug = <T>(message: string) => (source: Observable<T>) =>
+  source.pipe(tap(
+    value => logger([ message, value ]),
+    err => logger([ 'ERROR >>> ', message, err ]),
+    () => logger([ message, 'Completed.' ])
+  ));
+
+
