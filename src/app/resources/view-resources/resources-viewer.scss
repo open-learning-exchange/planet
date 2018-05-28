@@ -11,4 +11,8 @@
     width: 100%;
     height: $view-container-height;
   }
+
+  div > video {
+    max-height: calc(#{$view-container-height} - 4px);
+  }
 }
