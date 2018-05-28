@@ -46,6 +46,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   private onDestroy$ = new Subject<void>();
   childPlanetUsers = [];
   selectedChildUsers = [];
+  userConfig = this.userService.getConfig();
 
   constructor(
     private dialog: MatDialog,
