@@ -15,6 +15,7 @@ import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -81,7 +82,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
        // Sort in descending articleDate order, so the new resource can be shown on the top
       resources.sort((a, b) => b.articleDate - a.articleDate);
       this.resources.data = resources;
-      this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
+      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
@@ -94,8 +95,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     };
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
+      .subscribe((shelf: any) => {
+        this.setupList(this.resources.data, shelf.resourceIds);
       });
   }
 
@@ -194,7 +195,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
@@ -240,13 +241,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   updateShelf(newShelf, msg: string) {
     this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
       newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
+      this.userService.shelf = newShelf;
       this.planetMessageService.showMessage(msg + ' mylibrary');
     }, (error) => (error));
   }
 
   addToLibrary(resources) {
-    const currentShelf = this.userService.getUserShelf();
+    const currentShelf = this.userService.shelf;
     const resourceIds = resources.map((data) => {
       return data._id;
     }).concat(currentShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
@@ -255,7 +256,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFromLibrary(resourceId, resourceTitle) {
-    const currentShelf = this.userService.getUserShelf();
+    const currentShelf = this.userService.shelf;
     const resourceIds = [ ...currentShelf.resourceIds ];
     resourceIds.splice(resourceIds.indexOf(resourceId), 1);
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');

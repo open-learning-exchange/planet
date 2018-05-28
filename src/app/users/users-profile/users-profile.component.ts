@@ -11,6 +11,7 @@ import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
+import { debug } from '../../debug-operator';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -131,7 +132,7 @@ export class UsersProfileComponent implements OnInit {
     const formGroup = this.newChangePasswordFormGroup();
     this.dialogsFormService
       .confirm(title, fields, formGroup)
-      .debug('Dialog confirm')
+      .pipe(debug('Dialog confirm'))
       .subscribe((res) => {
         if (res !== undefined) {
           this.onSubmit(res, userDetail);
