@@ -2,6 +2,15 @@
   <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Users</span>
   <span class="toolbar-fill"></span>
+  <mat-form-field *ngIf="userService.getConfig().planetType !== 'center' && childPlanetUsers.length">
+    <mat-select name="role" [(ngModel)]="selectedChildUsers" (change)="onFilterChange($event.value)" multiple>
+      <mat-option disabled="disabled" class="hide-checkbox">
+        <button mat-raised-button i18n color="primary" (click)="onFilterChange(childPlanetUsers)">Select All</button>
+        <button mat-raised-button i18n color="accent" (click)="onFilterChange([])">Deselect All</button>
+      </mat-option>
+      <mat-option *ngFor="let user of childPlanetUsers" [value]="user">{{user.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
