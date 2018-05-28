@@ -5,6 +5,7 @@ import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
 import { NationComponent } from '../nation/nation.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { ConnectComponent } from '../configuration/connect.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -21,6 +22,8 @@ const routes: Routes = [
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
       { path: 'notifications', component: NotificationsComponent }
     ]
+  }, {
+    path: 'connect', component: ConnectComponent
   }
 ];
 

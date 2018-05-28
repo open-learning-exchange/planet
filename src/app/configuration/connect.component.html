@@ -1,0 +1,16 @@
+<div class="login-container gradient-background">
+  <mat-card class="login-card">
+    <div class="login-tile left-tile primary-color">
+      <div class="login-left-tile-container">
+        <img class="ole-logo" src="assets/OLE_Logo1.png">
+        <h1 i18n>Planet Learning</h1>
+        <h3 i18n>Version {{ version }}</h3>
+        <span i18n>{online, select, on {Connected} off {Offline}}</span>
+      </div>
+    </div>
+    <div class="login-tile right-tile">
+      Do you want to connect with parent planet now?
+      <button (click)="openConfirmation()">Connect</button>
+    </div>
+  </mat-card>
+</div>
