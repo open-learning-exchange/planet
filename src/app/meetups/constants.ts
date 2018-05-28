@@ -9,3 +9,13 @@ export const categories = [
   'Academic Help',
   'Awareness'
 ];
+
+export const days = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
