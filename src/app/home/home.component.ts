@@ -36,17 +36,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   userImgSrc = '';
 
   // Sets the margin for the main content to match the sidenav width
-  animEndSubj = new Subject();
   animObs = interval(15).pipe(
-    takeUntil(this.animEndSubj),
-    // Needed location to ensure interval gets completed/unsubscribed
-    // Had to introduce subject to ensure more control with this..
     debug('Menu animation'),
     tap(() => {
       this.mainContent._updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     }
   ));
+  // For disposable returned by observer to unsubscribe
+  animDisp: any;
 
   private onDestroy$ = new Subject<void>();
 
@@ -103,7 +101,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleNav() {
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
-    this.animObs.subscribe();
+    this.animDisp = this.animObs.subscribe();
   }
 
   onUserUpdate() {
@@ -117,7 +115,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   endAnimation() {
-    this.animEndSubj.next();
+    if (this.animDisp) {
+      this.animDisp.unsubscribe();
+    }
   }
 
   switchLanguage(servedUrl) {
