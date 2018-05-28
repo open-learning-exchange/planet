@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { debug } from '../debug-operator';
 
 @Component({
   template: `
@@ -141,7 +142,7 @@ export class ManagerDashboardComponent implements OnInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteCommunityDialog.afterClosed().debug('Closing dialog').subscribe();
+    this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog').subscribe());
   }
 
 }
