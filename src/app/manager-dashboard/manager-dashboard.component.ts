@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, isDevMode } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -6,10 +6,10 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { isDevMode } from '@angular/core';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+
 @Component({
   template: `
     <div *ngIf="displayDashboard">
