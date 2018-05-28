@@ -18,6 +18,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
+  attempts = 0;
   showExamButton = false;
   resource: any;
 
@@ -42,8 +43,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           type: 'exam' });
       }
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submission: any) => {
+      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
         this.examStart = submission.answers.length + 1;
+        this.attempts = attempts;
       });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
