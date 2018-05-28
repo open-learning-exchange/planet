@@ -16,7 +16,6 @@ import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
 import { PulsateIconDirective } from './pulsate-icon.directive';
-import { ConnectComponent } from '../configuration/connect.component';
 
 @NgModule({
   imports: [
@@ -37,8 +36,7 @@ import { ConnectComponent } from '../configuration/connect.component';
     NationComponent,
     DashboardTileComponent,
     NotificationsComponent,
-    PulsateIconDirective,
-    ConnectComponent
+    PulsateIconDirective
   ]
 })
 export class HomeModule {}

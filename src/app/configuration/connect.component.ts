@@ -12,6 +12,7 @@ import { UserService } from '../shared/user.service';
 import { of } from 'rxjs/observable/of';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { fromPromise } from 'rxjs/observable/fromPromise';
+import { debug } from '../debug-operator';
 
 @Component({
   selector: 'planet-connect',
@@ -47,17 +48,16 @@ export class ConnectComponent implements OnInit {
     const formGroup = {
       password: [ '', Validators.required ]
     };
-    const confirmDialog = this.dialogsFormService
+    this.dialogsFormService
     .confirm(title, fields, formGroup)
-    .debug('Dialog confirm')
-    .subscribe((response) => {
+    .pipe(debug('Dialog confirm'))
+    .subscribe((response: any) => {
       if (response !== undefined) {
         this.couchService.post('_session', { name: this.userService.get().name, password: response.password })
         .pipe(switchMap(data => {
           return this.connectNation(response.password);
         }))
         .subscribe(data => {
-          confirmDialog.close();
           this.planetMessageService.showMessage('Request sent to parent');
           this.router.navigate([ '/' ]);
         }, error => this.planetMessageService.showMessage('Invalid password'));
@@ -71,7 +71,7 @@ export class ConnectComponent implements OnInit {
     return forkJoin([
       this.couchService.allDocs('configurations'),
       this.couchService.get('_users/org.couchdb.user:' + credentials.name)
-    ]).pipe(switchMap((data: [ [any], any ]) => {
+    ]).pipe(switchMap((data: [[any], any]) => {
       // truncate extra records before pushing to parent
       const { _id: confId, _rev: confRev, ...configuration } = data[0][0];
       const { _id: userId, _rev: userRev,
@@ -111,15 +111,15 @@ export class ConnectComponent implements OnInit {
         this.couchService.post('_replicator', feedbackSyncDown),
         // then post configuration to parent planet's registration requests
         this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
-          .pipe(mergeMap(requestData => {
+          .pipe(switchMap(requestData => {
             // then add user to parent planet with id of configuration and isUserAdmin set to false
             userDetail['requestId'] =  requestData.id;
             userDetail['isUserAdmin'] =  false;
             return this.couchService.put('_users/org.couchdb.user:' + adminName,
               { ...userDetail, name: adminName, password: adminPassword }, { domain: configuration.parentDomain });
-          }), mergeMap(requestData => {
+          }), switchMap(requestData => {
             return this.couchService.put('shelf/org.couchdb.user:' + adminName, { }, { domain: configuration.parentDomain });
-          }), mergeMap(requestData => {
+          }), switchMap(requestData => {
             const requestNotification = {
               'user': 'SYSTEM',
               'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
@@ -131,11 +131,13 @@ export class ConnectComponent implements OnInit {
             };
             // Send notification to parent
             return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
+          }),
+          catchError(err => {
+            this.planetMessageService.showAlert('There was an error creating planet');
+            return of(false);
           })
         )
-      ]).debug('Sending request to parent planet').subscribe((responseData) => {
-        return of(true);
-      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+      ]).pipe(debug('Sending request to parent planet'));
     }));
   }
 

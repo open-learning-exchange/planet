@@ -187,12 +187,12 @@ export class ConfigurationComponent implements OnInit {
         this.couchService.put('shelf/org.couchdb.user:' + credentials.name, { }),
         // then add configuration
         this.couchService.post('configurations', configuration)
-      ]).debug('Setting up planet').pipe(switchMap(data => {
-        return this.couchService.post('_session', { 'name': credentials.name, 'password': credentials.password }, { withCredentials: true })
+      ]).pipe(debug('Setting up planet')).pipe(switchMap(data => {
+        return this.couchService.post('_session', credentials, { withCredentials: true })
         .pipe(switchMap((session) => {
           // Navigate into app
-          const routePath = configuration.parentDomain ? '/connect' : '/';
-          return fromPromise( this.router.navigate([ routePath ]) );
+          const routePath = configuration.parentDomain ? [ '/manager/configuration/connect' ] : [ '/' ];
+          return fromPromise( this.router.navigate( routePath ) );
         }), switchMap((routeSuccess) => {
           // Post new session info to login_activity
           return this.userService.newSessionLog();
