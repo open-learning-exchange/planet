@@ -115,12 +115,16 @@ export class ManagerDashboardComponent implements OnInit {
 
   deleteCommunity() {
      return () => {
-      forkJoin([
-        this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.getUserShelf()._rev ),
-        this.couchService.delete('configurations/' + this.userService.getConfig()._id + '?rev=' + this.userService.getConfig()._rev ),
-        this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
-        this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true })
-      ]).subscribe((res: any) => {
+      this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
+        const replicators = docs.map(doc => ({ ...doc, '_deleted': true }));
+        return forkJoin([
+          this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.getUserShelf()._rev ),
+          this.couchService.delete('configurations/' + this.userService.getConfig()._id + '?rev=' + this.userService.getConfig()._rev ),
+          this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
+          this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
+          this.couchService.post('_replicator/_bulk_docs', { 'docs': replicators })
+        ]);
+      })).subscribe((res: any) => {
         this.deleteCommunityDialog.close();
         this.router.navigate([ '/login/configuration' ]);
       }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
