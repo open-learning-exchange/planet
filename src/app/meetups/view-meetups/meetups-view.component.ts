@@ -1,25 +1,28 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { map } from 'rxjs/operators';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
+import { findDocuments } from '../../shared/mangoQueries';
+import { debug } from '../../debug-operator';
 
 @Component({
-  templateUrl: './meetups-view.component.html'
+  templateUrl: './meetups-view.component.html',
+  styleUrls: [ './meetups-view.scss' ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   meetupDetail: any = {};
+  members = [];
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
 
@@ -36,9 +39,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.getEnrolledUsers();
     this.route.paramMap
-      .debug('Getting meetup id from parameters')
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(debug('Getting meetup id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
         const getOpts: any = { meetupIds: [ meetupId ] };
@@ -58,10 +61,30 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  getEnrolledUsers() {
+    // find meetupId on User shelf
+    return this.couchService.post('shelf/_find', findDocuments({
+      'meetupIds': { '$in': [ this.route.snapshot.paramMap.get('id') ] }
+    }, 0)). subscribe((data) => {
+      this.members = data.docs.map((res) => {
+        return res._id.split(':')[1];
+      });
+    });
+  }
+
+  fixEnrolledList(remove: boolean, userName: string) {
+    if (remove) {
+      this.members = this.members.filter(name => name !== userName);
+    } else {
+      this.members.push(userName);
+    }
+  }
+
   joinMeetup() {
     this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
-      this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+      this.fixEnrolledList(res.participate, this.userService.get().name);
     });
   }
 
