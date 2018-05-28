@@ -33,6 +33,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   allUsers = new MatTableDataSource();
   message = '';
   filterAssociated = false;
+  planetType = '';
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
@@ -65,6 +66,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       this.filterAssociated = true;
       this.displayedColumns = [ 'profile', 'name', 'action' ];
     }
+    this.planetType = this.userService.getConfig().planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
@@ -106,7 +108,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    const selector = this.filterAssociated ? { requestId: { $gt: null } } : {};
+    const selector = this.filterAssociated ? { requestId: { $gt: null } } : { requestId: { $exists: true } };
     return this.couchService.post(this.dbName + '/_find', { 'selector': selector });
   }
 
