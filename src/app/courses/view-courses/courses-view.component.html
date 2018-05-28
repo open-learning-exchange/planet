@@ -11,11 +11,11 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-detail bg-light-grey">
-      <p i18n>Subject Level: {{courseDetail.subjectLevel}}</p>
-      <p i18n>Grade Level: {{courseDetail.gradeLevel}}</p>
-      <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
-      <p i18n>Method: {{courseDetail.method}}</p>
-      <p i18n>Description: {{courseDetail.description}}</p>
+      <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
+      <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
+      <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
+      <p i18n><b>Method:</b> {{courseDetail.method}}</p>
+      <p i18n><b>Description:</b> {{courseDetail.description}}</p>
     </div>
     <div class="course-view">
       <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
