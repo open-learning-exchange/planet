@@ -10,7 +10,6 @@ const logger = (args: any[]) => {
   }
 };
 
-
 export const debug = <T>(message: string) => (source: Observable<T>) =>
   source.pipe(tap(
     value => logger([ message, value ]),
