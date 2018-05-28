@@ -6,7 +6,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -32,6 +32,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allUsers = new MatTableDataSource();
   message = '';
+  filterAssociated = false;
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
@@ -50,6 +51,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
+    private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
@@ -59,6 +61,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }
 
   ngOnInit() {
+    if (this.route.snapshot.data.associated) {
+      this.filterAssociated = true;
+      this.displayedColumns = [ 'profile', 'name', 'action' ];
+    }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
@@ -66,6 +72,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
       // Inactive users cannot receive all user docs
       this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
     }
+  }
+
+  changeFilter(type) {
+    const route = (type === 'associated') ? [ '/users', type ] : [ '/users' ];
+    this.router.navigate(route);
   }
 
   applyFilter(filterValue: string) {
@@ -95,7 +106,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
+    const selector = this.filterAssociated ? { requestId: { $gt: null } } : {};
+    return this.couchService.post(this.dbName + '/_find', { 'selector': selector });
   }
 
   initializeData() {
