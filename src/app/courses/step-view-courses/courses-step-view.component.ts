@@ -71,7 +71,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   checkMyCourses(courseId: string) {
-    return this.userService.getUserShelf().courseIds.includes(courseId);
+    return this.userService.shelf.courseIds.includes(courseId);
   }
 
   onResourceChange(value) {
