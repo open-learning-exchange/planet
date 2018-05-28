@@ -129,12 +129,6 @@ export class ConfigurationComponent implements OnInit {
     // skip special character if comes as last character
     code = code.replace(/\W+$/, '').toLowerCase();
     this.configurationFormGroup.get('code').setValue(code);
-    if (this.configurationFormGroup.get('code').value !== '' ) {
-      this.configurationFormGroup.controls.name.markAsTouched();
-      this.configurationFormGroup.controls.code.markAsTouched();
-    } else {
-       this.configurationFormGroup.controls.code.markAsUntouched();
-    }
   }
 
   getNationList() {
