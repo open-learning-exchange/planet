@@ -12,6 +12,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
+import { UserService } from '../shared/user.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -41,7 +42,8 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -220,8 +222,8 @@ export class ConfigurationComponent implements OnInit {
             // then add configuration
             this.couchService.post('configurations', configuration),
             // then post configuration to parent planet's registration requests
-            this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
-              .pipe(mergeMap(data => {
+            this.userService.sendConfig()
+              .pipe(mergeMap((data: any) => {
                 // then add user to parent planet with id of configuration and isUserAdmin set to false
                 userDetail['requestId'] =  data.id;
                 userDetail['isUserAdmin'] =  false;

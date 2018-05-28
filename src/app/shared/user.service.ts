@@ -7,6 +7,7 @@ import { Subject } from 'rxjs/Subject';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
+import { PlanetMessageService } from './planet-message.service';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -39,7 +40,10 @@ export class UserService {
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
 
-  constructor(private couchService: CouchService) {}
+  constructor(
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
+  ) {}
 
   set(user: any): any {
     this.user = user;
@@ -161,6 +165,38 @@ export class UserService {
     return newObs.pipe(switchMap(() => {
       return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
     }));
+  }
+
+  sendConfig() {
+    const { _id, _rev, ...config } = this.getConfig();
+    let userDetail: any, userRev;
+    return this.couchService.get('_users/org.couchdb.user:' + this.get().name)
+      .pipe(switchMap((user: any) => {
+        // Outer parenthesis allow for object destructuring on existing variables
+        ({ _rev: userRev, ...userDetail } = user);
+        userDetail.isUserAdmin = false;
+        config.name = '@' + config.name;
+        return this.couchService.post('communityregistrationrequests', config, { domain: config.parentDomain });
+      }), switchMap((res: any) => {
+        userDetail.requestId = res.id;
+        return forkJoin([ this.findOnParent('_users', userDetail), this.findOnParent('shelf', userDetail) ]);
+      }), switchMap(([ user, shelf ]) => {
+        if (user.docs[0]) {
+          userDetail._rev = user.docs[0]._rev;
+        }
+        const obs = [ this.couchService.put('_users/org.couchdb.user:' + userDetail.name, userDetail, { domain: config.parentDomain }) ];
+        if (!shelf) {
+          obs.push(this.couchService.put('shelf/org.couchdb.user:' + userDetail.name, {}, { domain: config.parentDomain }));
+        }
+        return forkJoin(obs);
+      }));
+  }
+
+  // Find on the user or shelf db (which have matching ids)
+  findOnParent(db: string, user: any) {
+    return this.couchService.post(`${db}/_find`,
+      { 'selector': { '_id': user._id }, 'fields': [ '_id', '_rev' ] },
+      { domain: this.getConfig().parentDomain });
   }
 
 }
