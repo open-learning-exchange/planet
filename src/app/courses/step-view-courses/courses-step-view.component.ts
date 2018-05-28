@@ -19,7 +19,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
-  attempt = 0;
+  attempts = 0;
 
   constructor(
     private router: Router,
@@ -40,14 +40,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           parent: this.stepDetail.exam,
           user: this.userService.get().name,
           type: 'exam' });
-        this.couchService.post('submissions/_find',
-          { 'selector': { parentId: this.stepDetail.exam._id + '@' + course._id, user: this.userService.get().name, status: 'complete' } })
-            .subscribe((res) => {
-              this.attempt = res.docs.length;
-            });
       }
-      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submission: any) => {
+      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
         this.examStart = submission.answers.length + 1;
+        this.attempts = attempts;
       });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
