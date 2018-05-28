@@ -22,7 +22,7 @@
           ></planet-exam-question>
       </div>
       <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
-      <a mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</a>
+      <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n>Add Question</button>
     </form>
   </div>
   <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>
