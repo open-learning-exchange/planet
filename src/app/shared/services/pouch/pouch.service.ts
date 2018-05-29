@@ -28,7 +28,7 @@ export class PouchService {
     // indexes the field for faster lookup
     this.localDB.createIndex({
       index: {
-        fields: [ 'pouchIndex', 'createdAt' ]
+        fields: [ 'pouchIndex', 'createdDate' ]
       }
     });
 
