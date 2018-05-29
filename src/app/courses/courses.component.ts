@@ -86,12 +86,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   setupList(courseRes, myCourses) {
-    courseRes.forEach((course: any) => {
-      const myCourseIndex = myCourses.findIndex(courseId => {
-        return course._id === courseId;
+    if (myCourses) {
+      courseRes.forEach((course: any) => {
+        const myCourseIndex = myCourses.findIndex(courseId => {
+          return course._id === courseId;
+        });
+        course.admission = myCourseIndex > -1;
       });
-      course.admission = myCourseIndex > -1;
-    });
+    }
   }
 
   getCourses() {
