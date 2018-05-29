@@ -25,7 +25,7 @@ export interface Course {
   gradeLevel: string;
   subjectLevel: string;
   steps: Step[];
-  createdAt: number;
+  createdDate: number;
   admission: boolean;
 }
 
@@ -42,9 +42,9 @@ export class CoursesService {
       this.localDB.find({
         selector: {
           pouchIndex: 'courses',
-          createdAt: { $gte: null }
+          createdDate: { $gte: null }
         },
-        sort: [ { courses: 'desc' }, { createdAt: 'desc' } ]
+        sort: [ { pouchIndex: 'desc' }, { createdDate: 'desc' } ]
       })
     ).pipe(map((data: { docs: Course[] }) => data.docs));
   }
