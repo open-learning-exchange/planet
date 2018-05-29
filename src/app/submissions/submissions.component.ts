@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { SubmissionsService } from './submissions.service';
@@ -26,6 +26,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private submissionsService: SubmissionsService
   ) { }
 
@@ -55,6 +56,10 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '/' ]);
+  }
+
+  gradeSubmission(submission) {
+    this.router.navigate([ './exam', submission._id, { questionNum: 1 } ], { relativeTo: this.route });
   }
 
 }

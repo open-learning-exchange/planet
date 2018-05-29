@@ -19,6 +19,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   stepNum = 0;
   maxQuestions = 0;
   answer: string | number = '';
+  mode = 'take';
 
   constructor(
     private router: Router,
@@ -32,19 +33,29 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
       // To be readable by non-technical people stepNum & questionNum param will start at 1
       const step = course.steps[this.stepNum - 1];
-      const questions = step.exam.questions;
-      this.question = questions[this.questionNum - 1];
-      this.maxQuestions = questions.length;
+      this.setQuestion(step.exam.questions);
       this.submissionsService.openSubmission({
         parentId: step.exam._id + '@' + course._id,
         parent: step.exam,
         user: this.userService.get().name,
         type: 'exam' });
     });
+    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+      if (this.mode === 'grade') {
+        this.setQuestion(submission.parent.questions);
+      }
+    });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.questionNum = +params.get('questionNum'); // Leading + forces string to number
       this.stepNum = +params.get('stepNum');
-      this.coursesService.requestCourse({ courseId: params.get('id') });
+      const courseId = params.get('id');
+      const submissionId = params.get('submissionId');
+      if (courseId) {
+        this.coursesService.requestCourse({ courseId });
+      } else if (submissionId) {
+        this.mode = 'grade';
+        this.submissionsService.openSubmission({ submissionId, 'status': 'complete' });
+      }
     });
   }
 
@@ -55,7 +66,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
-    this.submissionsService.updateSubmission(this.answer, this.questionNum - 1, close);
+    this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
     this.answer = '';
     if (close) {
       this.goBack();
@@ -66,6 +77,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  setQuestion(questions: any[]) {
+    this.question = questions[this.questionNum - 1];
+    this.maxQuestions = questions.length;
   }
 
 }

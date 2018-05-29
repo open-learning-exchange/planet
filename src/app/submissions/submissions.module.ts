@@ -12,7 +12,7 @@ import { ExamsModule } from '../exams/exams.module';
 
 const routes: Routes = [
   { path: '', component: SubmissionsComponent },
-  { path: 'exam', component: ExamsViewComponent }
+  { path: 'exam/:submissionId', component: ExamsViewComponent }
 ];
 
 @NgModule({

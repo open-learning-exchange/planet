@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 @Injectable()
 export class SubmissionsService {
 
+  // Currently there are separate observables for the single submission for a specific exam
+  // and an array of submissions for the list of submissions
   private submissionsUpdated = new Subject<any[]>();
   submissionsUpdated$ = this.submissionsUpdated.asObservable();
   submissions = [];
@@ -42,14 +44,15 @@ export class SubmissionsService {
   }
 
   private newSubmission({ parentId, parent, user, type }) {
-    this.submission = { parentId, parent, user, type, answers: [], status: 'pending' };
+    this.submission = { parentId, parent, user, type, answers: [], grades: [], status: 'pending' };
   }
 
-  openSubmission({ parentId, parent, user, type }) {
-    this.couchService.post('submissions/_find', { 'selector': { parentId, user } })
+  openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
+    const selector = submissionId ? { '_id': submissionId } : { parentId, user };
+    this.couchService.post('submissions/_find', { selector })
       .subscribe((res) => {
         let attempts = res.docs.length - 1;
-        this.submission = res.docs.find(submission => submission.status === 'pending');
+        this.submission = res.docs.find(submission => submission.status === status);
         if (this.submission === undefined) {
           attempts += 1;
           this.newSubmission({ parentId, parent, user, type });
@@ -59,10 +62,20 @@ export class SubmissionsService {
       });
   }
 
-  updateSubmission(answer, index: number, close: boolean) {
+  submitAnswer(answer, index: number, close: boolean) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
     submission.answers[index] = answer;
     submission.status = close ? 'complete' : 'pending';
+    this.updateSubmission(submission);
+  }
+
+  submitGrade(grade, index: number) {
+    const submission = { ...this.submission, grades: [ ...this.submission.grades ] };
+    submission.grades[index] = grade;
+    this.updateSubmission(submission);
+  }
+
+  updateSubmission(submission: any) {
     this.couchService.post('submissions', submission).subscribe((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete') {

@@ -21,6 +21,7 @@ import { MatIconRegistry } from '@angular/material';
 import { FeedbackService } from './feedback/feedback.service';
 import { ResourcesService } from './resources/resources.service';
 import { SubmissionsService } from './submissions/submissions.service';
+import { CoursesService } from './courses/courses.service';
 
 @NgModule({
   imports: [
@@ -38,8 +39,16 @@ import { SubmissionsService } from './submissions/submissions.service';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService, ResourcesService,
-    SubmissionsService
+    CouchService,
+    AuthService,
+    UserService,
+    ValidatorService,
+    PlanetMessageService,
+    MatIconRegistry,
+    FeedbackService,
+    ResourcesService,
+    SubmissionsService,
+    CoursesService
   ],
   bootstrap: [ AppComponent ]
 })
