@@ -22,7 +22,7 @@
       <p i18n><b>Category:</b> {{meetupDetail.category}} </p>
       <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
       <p i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} - {{meetupDetail.endTime}}</p>
-      <p i18n><b>Recurring:</b> {{meetupDetail.recurring}}</p>
+      <p i18n><b>Recurring:</b> {{meetupDetail.recurring.substring(0,1).toUpperCase() + meetupDetail.recurring.substring(1)}}</p>
       <p i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
       <p i18n><b>Description:</b> {{meetupDetail.description}}</p>
       <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days:</b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
