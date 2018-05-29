@@ -26,6 +26,7 @@ export interface Course {
   subjectLevel: string;
   steps: Step[];
   createdAt: number;
+  admission: boolean;
 }
 
 @Injectable()
