@@ -35,6 +35,10 @@
       <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.registrationRequest}}</mat-cell>
     </ng-container>
+    <ng-container matColumnDef="createdDate">
+      <mat-header-cell *matHeaderCellDef i18n>Created Date</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.createdDate | date: 'fullDate'}}</mat-cell>
+    </ng-container>
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
       <mat-cell *matCellDef="let element">
