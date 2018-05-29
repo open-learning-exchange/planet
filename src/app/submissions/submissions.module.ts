@@ -19,7 +19,7 @@ const routes: Routes = [
   imports: [ RouterModule.forChild(routes) ],
   exports: [ RouterModule ]
 })
-class SubmissionsRouterModule {}
+export class SubmissionsRouterModule {}
 
 @NgModule({
   imports: [
