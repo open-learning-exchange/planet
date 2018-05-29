@@ -20,6 +20,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   maxQuestions = 0;
   answer: string | number = '';
   mode = 'take';
+  grade;
 
   constructor(
     private router: Router,
@@ -43,6 +44,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       if (this.mode === 'grade') {
         this.setQuestion(submission.parent.questions);
+        this.answer = submission.answers[this.questionNum - 1];
       }
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -54,6 +56,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.coursesService.requestCourse({ courseId });
       } else if (submissionId) {
         this.mode = 'grade';
+        this.grade = undefined;
         this.submissionsService.openSubmission({ submissionId, 'status': 'complete' });
       }
     });
@@ -66,12 +69,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
-    this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
+    switch (this.mode) {
+      case 'take':
+        this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
+        break;
+      case 'grade':
+        this.submissionsService.submitGrade(this.grade, this.questionNum - 1);
+        break;
+    }
     this.answer = '';
     if (close) {
       this.goBack();
     } else {
-      this.router.navigate([ '../', this.questionNum + 1 ], { relativeTo: this.route });
+      this.router.navigate([ { questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
     }
   }
 

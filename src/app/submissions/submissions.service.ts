@@ -66,19 +66,19 @@ export class SubmissionsService {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
     submission.answers[index] = answer;
     submission.status = close ? 'complete' : 'pending';
-    this.updateSubmission(submission);
+    this.updateSubmission(submission, true);
   }
 
   submitGrade(grade, index: number) {
     const submission = { ...this.submission, grades: [ ...this.submission.grades ] };
     submission.grades[index] = grade;
-    this.updateSubmission(submission);
+    this.updateSubmission(submission, false);
   }
 
-  updateSubmission(submission: any) {
+  updateSubmission(submission: any, takingExam: boolean) {
     this.couchService.post('submissions', submission).subscribe((res) => {
       let attempts = this.submissionAttempts;
-      if (submission.status === 'complete') {
+      if (submission.status === 'complete' && takingExam) {
         attempts += 1;
         this.newSubmission(submission);
       } else {
