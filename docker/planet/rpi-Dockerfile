@@ -17,7 +17,11 @@ FROM tobi312/rpi-nginx:alpine
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=builder /ng-app/dist /usr/share/nginx/html
+COPY --from=builder /ng-app/dist-ar /usr/share/nginx/html/ar
+COPY --from=builder /ng-app/dist-en /usr/share/nginx/html/en
+COPY --from=builder /ng-app/dist-es /usr/share/nginx/html/es
+COPY --from=builder /ng-app/dist-fr /usr/share/nginx/html/fr
+COPY --from=builder /ng-app/dist-ne /usr/share/nginx/html/ne
 COPY docker/planet/docker-entrypoint.sh ./
 
 CMD sh ./docker-entrypoint.sh
