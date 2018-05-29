@@ -83,7 +83,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam() {
-    this.router.navigate([ 'exam', this.examStart ], { relativeTo: this.route });
+    this.router.navigate([ 'exam', { questionNum: this.examStart } ], { relativeTo: this.route });
   }
 
 }

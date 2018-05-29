@@ -59,7 +59,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   gradeSubmission(submission) {
-    this.router.navigate([ './exam', submission._id, { questionNum: 1 } ], { relativeTo: this.route });
+    this.router.navigate([ './exam', { submissionId: submission._id, questionNum: 1 } ], { relativeTo: this.route });
   }
 
 }

@@ -81,12 +81,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (close) {
       this.goBack();
     } else {
-      this.router.navigate([ { questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
     }
   }
 
   goBack() {
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 
   setQuestion(questions: any[]) {
