@@ -119,7 +119,7 @@ export class ManagerDashboardComponent implements OnInit {
       this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
         const replicators = docs.map(doc => ({ ...doc, '_deleted': true }));
         return forkJoin([
-          this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.getUserShelf()._rev ),
+          this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
           this.couchService.delete('configurations/' + this.userService.getConfig()._id + '?rev=' + this.userService.getConfig()._rev ),
           this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
           this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
@@ -142,7 +142,7 @@ export class ManagerDashboardComponent implements OnInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog').subscribe());
+    this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
   }
 
 }
