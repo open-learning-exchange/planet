@@ -44,7 +44,7 @@ export class CoursesService {
           pouchIndex: 'courses',
           createdAt: { $gte: null }
         },
-        sort: [ { kind: 'desc' }, { createdAt: 'desc' } ]
+        sort: [ { courses: 'desc' }, { createdAt: 'desc' } ]
       })
     ).pipe(map((data: { docs: Course[] }) => data.docs));
   }
