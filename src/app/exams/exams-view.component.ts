@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
+import { SubmissionsService } from '../submissions/submissions.service';
 
 @Component({
   templateUrl: './exams-view.component.html'
@@ -23,6 +24,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
+    private submissionsService: SubmissionsService,
     private userService: UserService
   ) { }
 
@@ -33,7 +35,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const questions = step.exam.questions;
       this.question = questions[this.questionNum - 1];
       this.maxQuestions = questions.length;
-      this.coursesService.openSubmission({
+      this.submissionsService.openSubmission({
         parentId: step.exam._id + '@' + course._id,
         parent: step.exam,
         user: this.userService.get().name,
@@ -53,7 +55,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
-    this.coursesService.updateSubmission(this.answer, this.questionNum - 1, close);
+    this.submissionsService.updateSubmission(this.answer, this.questionNum - 1, close);
     this.answer = '';
     if (close) {
       this.goBack();

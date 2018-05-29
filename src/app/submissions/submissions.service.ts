@@ -16,6 +16,9 @@ export class SubmissionsService {
   submissionsUpdated$ = this.submissionsUpdated.asObservable();
   submissions = [];
   submission: any;
+  private submissionUpdated = new Subject<any>();
+  submissionUpdated$ = this.submissionUpdated.asObservable();
+  submissionAttempts = 0;
 
   constructor(
     private couchService: CouchService,
@@ -35,6 +38,40 @@ export class SubmissionsService {
   setSubmission(id: string) {
     this.submission = this.submissions.find((submission) => {
       return submission._id === id;
+    });
+  }
+
+  private newSubmission({ parentId, parent, user, type }) {
+    this.submission = { parentId, parent, user, type, answers: [], status: 'pending' };
+  }
+
+  openSubmission({ parentId, parent, user, type }) {
+    this.couchService.post('submissions/_find', { 'selector': { parentId, user } })
+      .subscribe((res) => {
+        let attempts = res.docs.length - 1;
+        this.submission = res.docs.find(submission => submission.status === 'pending');
+        if (this.submission === undefined) {
+          attempts += 1;
+          this.newSubmission({ parentId, parent, user, type });
+        }
+        this.submissionAttempts = attempts;
+        this.submissionUpdated.next({ submission: this.submission, attempts });
+      });
+  }
+
+  updateSubmission(answer, index: number, close: boolean) {
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    submission.answers[index] = answer;
+    submission.status = close ? 'complete' : 'pending';
+    this.couchService.post('submissions', submission).subscribe((res) => {
+      let attempts = this.submissionAttempts;
+      if (submission.status === 'complete') {
+        attempts += 1;
+        this.newSubmission(submission);
+      } else {
+        this.submission = { ...submission, _id: res.id, _rev: res.rev };
+      }
+      this.submissionUpdated.next({ submission: this.submission, attempts });
     });
   }
 
