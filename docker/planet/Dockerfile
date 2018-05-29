@@ -6,11 +6,11 @@ COPY package.json ./
 RUN npm i --silent
 
 COPY . .
-RUN $(npm bin)/ng build --prod --output-path=dist-ar --aot --i18n-file=src/i18n/messages.ar.xlf --i18n-locale=ar --i18n-format=xlf
-RUN $(npm bin)/ng build --prod --output-path=dist-en --aot --i18n-file=src/i18n/messages.en.xlf --i18n-locale=en --i18n-format=xlf
-RUN $(npm bin)/ng build --prod --output-path=dist-es --aot --i18n-file=src/i18n/messages.es.xlf --i18n-locale=es --i18n-format=xlf
-RUN $(npm bin)/ng build --prod --output-path=dist-fr --aot --i18n-file=src/i18n/messages.fr.xlf --i18n-locale=fr --i18n-format=xlf
-RUN $(npm bin)/ng build --prod --output-path=dist-ne --aot --i18n-file=src/i18n/messages.ne.xlf --i18n-locale=ne --i18n-format=xlf
+RUN $(npm bin)/ng build --prod --output-path=dist-ar --aot --i18n-file=src/i18n/messages.ar.xlf --locale=ar --i18n-format=xlf
+RUN $(npm bin)/ng build --prod --output-path=dist-en --aot --i18n-file=src/i18n/messages.en.xlf --locale=en --i18n-format=xlf
+RUN $(npm bin)/ng build --prod --output-path=dist-es --aot --i18n-file=src/i18n/messages.es.xlf --locale=es --i18n-format=xlf
+RUN $(npm bin)/ng build --prod --output-path=dist-fr --aot --i18n-file=src/i18n/messages.fr.xlf --locale=fr --i18n-format=xlf
+RUN $(npm bin)/ng build --prod --output-path=dist-ne --aot --i18n-file=src/i18n/messages.ne.xlf --locale=ne --i18n-format=xlf
 
 #####
 
