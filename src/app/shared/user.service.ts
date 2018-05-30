@@ -107,6 +107,8 @@ export class UserService {
   unset(): any {
     this.user = { name: '' };
     this.shelf = {};
+    this.sessionRev = undefined;
+    this.sessionId = undefined;
   }
 
   logObj(logoutTime: number = 0) {
