@@ -19,6 +19,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'language',
     'url',
     'status',
+    'createdDate',
     'action'
   ];
   editDialog: any;
