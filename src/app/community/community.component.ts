@@ -1,11 +1,13 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatDialog, MatSort } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { of } from 'rxjs/observable/of';
 import { findDocuments } from '../shared/mangoQueries';
+import { filterSpecificFields } from '../shared/table-helpers';
+
 @Component({
   templateUrl: './community.component.html'
 })
@@ -16,15 +18,16 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   displayedColumns = [
     'name',
     'code',
-    'language',
-    'url',
-    'status',
+    'preferredLang',
+    'localDomain',
+    'registrationRequest',
     'createdDate',
     'action'
   ];
   editDialog: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,
@@ -34,15 +37,21 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getCommunityList();
     this.communities.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.communities.filterPredicate = filterSpecificFields([ 'code', 'name' ]);
   }
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
+    this.communities.sort = this.sort;
+  }
+
+  requestListFilter(filterValue: string) {
+    this.communities.filter = filterValue;
   }
 
   getCommunityList() {
     this.couchService.post('communityregistrationrequests/_find',
-      findDocuments({ 'registrationRequest': { '$ne': 'accepted' } }, 0 ))
+      findDocuments({ 'registrationRequest': { '$ne': 'accepted' } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
         this.communities.data = data.docs;
       }, (error) => this.message = 'There was a problem getting Communities');
