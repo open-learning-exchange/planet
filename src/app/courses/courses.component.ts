@@ -177,6 +177,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       .pipe(switchMap(data => {
         return this.getCourses();
       })).subscribe((data: any) => {
+        data.sort((a, b) => b.createdDate - a.createdDate);
+        this.courses.data = data;
         this.setupList(data, this.userShelf.courseIds);
         this.selection.clear();
         this.deleteDialog.close();
