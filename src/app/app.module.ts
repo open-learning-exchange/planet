@@ -20,6 +20,7 @@ import { environment } from '../environments/environment';
 import { MatIconRegistry } from '@angular/material';
 import { FeedbackService } from './feedback/feedback.service';
 import { ResourcesService } from './resources/resources.service';
+import { SHARED_SERVICES } from './shared/services';
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import { ResourcesService } from './resources/resources.service';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService, ResourcesService
+    CouchService, AuthService, UserService, ValidatorService, PlanetMessageService, MatIconRegistry, FeedbackService, ResourcesService,
+    ...SHARED_SERVICES
   ],
   bootstrap: [ AppComponent ]
 })
