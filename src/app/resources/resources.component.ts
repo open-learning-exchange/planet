@@ -205,10 +205,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .subscribe((data) => {
+          this.selection.deselect(resource);
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
-          if (this.selection.selected.length) {
-            this.selection.deselect(resource)
-          }
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
