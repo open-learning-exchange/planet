@@ -56,10 +56,6 @@
         </button>
         <mat-cell>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="element.admission" routerLink="add">
-              <mat-icon>lock_open</mat-icon>
-              <span i18n>Open</span>
-            </a>
             <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission(element._id)"  >
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>

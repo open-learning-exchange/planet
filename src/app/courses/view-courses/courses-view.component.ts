@@ -69,7 +69,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       parent: stepDetail.exam,
       user: this.userService.get().name,
       type: 'exam' });
-    this.coursesService.submissionUpdated$.subscribe((submission: any) => {
+    this.coursesService.submissionUpdated$.subscribe(({ submission }) => {
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
         (submission.answers.length + 1) ], { relativeTo: this.route });
     });

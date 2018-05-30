@@ -6,11 +6,12 @@
   <mat-toolbar class="primary-color font-size-1">
       <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}: {{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
+    <span *ngIf="stepDetail?.exam?.questions.length" i18n><h3>Exam attempts: {{attempts}}</h3></span>
     <a
       mat-raised-button
       color="accent"
       class="margin-lr-10"
-      *ngIf="stepDetail?.exam?.questions.length"
+      *ngIf="stepDetail?.exam?.questions.length && showExamButton"
       (click)="goToExam()"
       i18n>
       {{examStart === 1 ? "Take Exam" : "Continue Exam"}}

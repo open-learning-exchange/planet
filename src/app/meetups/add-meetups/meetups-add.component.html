@@ -37,11 +37,15 @@
       <div>
         <label i18n>Recurring</label>
         <mat-radio-group formControlName="recurring">
-          <mat-radio-button value="daily">Daily</mat-radio-button>
-          <mat-radio-button value="weekly">Weekly</mat-radio-button>
-          <mat-radio-button value="none">None</mat-radio-button>
+          <label i18n>Frequency</label>
+          <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
+          <mat-radio-button value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
+          <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
+      </div>
+      <div *ngIf="meetupForm.controls.recurring.value==='weekly'">
+        <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
       <div>
         <mat-form-field>

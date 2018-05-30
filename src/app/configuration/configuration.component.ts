@@ -160,6 +160,13 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
+  onChangeNation() {
+    if (this.configurationFormGroup.get('name').value !== '') {
+      this.configurationFormGroup.controls.name.updateValueAndValidity();
+      this.configurationFormGroup.controls.code.updateValueAndValidity();
+    }
+  }
+
   onSubmitConfiguration() {
     if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const { confirmPassword, ...credentials } = this.loginForm.value;
