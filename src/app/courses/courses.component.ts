@@ -159,10 +159,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const { _id: courseId, _rev: courseRev } = course;
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
         .subscribe((data) => {
+          this.selection.deselect(course);
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-          this.selection.clear();
           this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
