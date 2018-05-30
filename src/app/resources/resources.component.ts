@@ -101,14 +101,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setupList(resourcesRes, myLibrarys) {
-    if (myLibrarys) {
-      resourcesRes.forEach((resource: any) => {
-        const myLibraryIndex = myLibrarys.findIndex(resourceId => {
-          return resource._id === resourceId;
-        });
-        resource.libraryInfo = myLibraryIndex > -1;
+    resourcesRes.forEach((resource: any) => {
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
+        return resource._id === resourceId;
       });
-    }
+      resource.libraryInfo = myLibraryIndex > -1;
+    });
   }
 
   onPaginateChange(e: PageEvent) {
