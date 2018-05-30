@@ -158,9 +158,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
           return _throw(err);
         }),
         switchMap((data) => {
+          if (this.selection.selected.length) {
+            this.selection.deselect(user)
+          }
           this.planetMessageService.showMessage('User deleted: ' + user.name);
           this.deleteDialog.close();
-          this.selection.clear();
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
           return this.removeDeletedUserFromShelves(userId);
