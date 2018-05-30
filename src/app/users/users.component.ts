@@ -91,7 +91,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.allUsers.data.forEach(row => this.selection.select(row));
+    this.allUsers.data.forEach((row: any) => this.selection.select(row.doc._id));
   }
 
   getUsers() {
@@ -158,7 +158,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
           return _throw(err);
         }),
         switchMap((data) => {
-          this.selection.deselect(user);
+          this.selection.deselect(user._id);
           this.planetMessageService.showMessage('User deleted: ' + user.name);
           this.deleteDialog.close();
           // It's safer to remove the item from the array based on its id than to splice based on the index
