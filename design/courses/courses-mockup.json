@@ -12,12 +12,12 @@
                 {
                     "stepTitle": "Docker",
                     "description": "Docker is the company driving the container movement and the only container platform provider to address every application across the hybrid cloud. Today’s businesses are under pressure to digitally transform but are constrained by existing applications and infrastructure while rationalizing an increasingly diverse portfolio of clouds, datacenters and application architectures. Docker enables true independence between applications and infrastructure and developers and IT ops to unlock their potential and creates a model for better collaboration and innovation.",
-                    "attachment": ""
+                    "resources": []
                 },
                 {
                     "stepTitle": "CONTAINER PLATFORM",
                     "description": "A container platform is a complete solution that allows organizations to solve multiple problems across a diverse set of requirements. It is more than a piece of technology and orchestration - it delivers sustainable benefits throughout your organization by providing all the pieces an enterprise operation requires including security, governance, automation, support and certification over the entire application lifecycle.",
-                    "attachment": ""
+                    "resources": []
                 }
             ],
             "createdDate": 1505019600000
@@ -34,12 +34,12 @@
                 {
                     "stepTitle": "Git",
                     "description": "Git is a version control system for tracking changes in computer files and coordinating work on those files among multiple people.",
-                    "attachment": ""
+                    "resources": []
                 },
                 {
                     "stepTitle": "INSTALL GIT",
                     "description": "GitHub provides desktop clients that include a graphical user interface for the most common repository actions and an automatically updating command line edition of Git for advanced scenarios.",
-                    "attachment": ""
+                    "resources": []
                 }
             ],
             "createdDate": 1505019600000
@@ -56,17 +56,17 @@
                 {
                     "stepTitle": "Introductory Steps",
                     "description": "Send us your resume again (along with a short description of yourself and what you would like to be called) to vi+resume@ole.org. Create a GitHub account then watch Open Learning Exchange and Follow Leonard and Dogi on GitHub. In GitHub we Watch organization repositories and Follow individuals. Look for the Watch button at the top right of the page when you are in a repository. Also follow each other to see what others in the group are doing.",
-                    "attachment": ""
+                    "resources": []
                 },
                 {
                     "stepTitle": "BeLL Installation",
                     "description": "The BeLL – Basic e-Learning Library is a virtual library that is deployed internationally to individuals in countries that typically do not have access to educational resources. we are currently rewriting BeLL using Angular. Please go to BeLL Installation for instructions on how to set up your own digital library. Once you have finished installing BeLL, go to the Configurations Guide to configure your Community BeLL.",
-                    "attachment": ""
+                    "resources": []
                 },
                 {
                     "stepTitle": "Vagrant Tutorial",
                     "description": "Review Vagrant Instructions on how to interact with Vagrant through the command-line interface. You should be familiar with this since you will need to use it to control virtual machines during your internship.",
-                    "attachment": ""
+                    "resources": []
                 }
             ],
             "createdDate": 1505019600000
@@ -83,17 +83,17 @@
                 {
                     "stepTitle": "Your Mouse Can Be a Very Versatile Helper",
                     "description": "The mouse gives you control over your computer. With the mouse in your hand you cause the onscreen arrow to move around your computer display. It is based on the “point and click” philosophy. You move your mouse to a point where you want something to happen, then you click to make that event take place. Sometimes you click once. Sometimes you click twice. And sometimes you hold down the mouse while your event is happening.",
-                    "attachment": ""
+                    "resources": []
                 },
                 {
                     "stepTitle": "Keyboard & Typing Tips",
                     "description": "Mistakes happen quickly on the computer keyboard. Because of its sensitivity, the keyboard offers both challenges and rewards. Those rewards come after a bit of practice and study to take advantage of what the keyboard gives you. Mostly those advantages will be learned through practice and additional instruction. At this point we just touch some basic points. Here are some tips to make life simpler, and your work more efficient.",
-                    "attachment": ""
+                    "resources": []
                 },
                 {
                     "stepTitle": "Opening & Closing Software Applications ",
                     "description": "As you learn more and more about computing, you will also become familiar with jargon. The jargon of any discipline just means the particular words that have specific meanings in this context. Software and hardware are two of the most frequently used computer jargon words. Hardware is the physical (touchable) computer itself, the keyboard, disk drive, monitor, etc. Software is made up of the instructions that tell the hardware what to do. You may have heard about Microsoft Word. This is a software program that allows you to create and edit text documents",
-                    "attachment": ""
+                    "resources": []
                 }
             ],
             "createdDate": 1505019600000
@@ -110,7 +110,7 @@
                 {
                     "stepTitle": "Angular",
                     "description": "Angular is a platform that makes it easy to build applications with the web. Angular combines declarative templates, dependency injection, end to end tooling, and integrated best practices to solve development challenges. Angular empowers developers to build applications that live on the web, mobile, or the desktop.",
-                    "attachment": ""
+                    "resources": []
                 }
             ],
             "createdDate": 1505019600000
