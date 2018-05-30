@@ -118,10 +118,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  deleteMeetups(meetups) {
+  deleteMeetups(meetupIds) {
     // Deletes multiple meetups
     return () => {
-      const deleteMeetupArr = meetups.map((meetup) => {
+      const deleteMeetupArr = meetupIds.map((meetupId) => {
+        const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
         return { _id: meetup._id, _rev: meetup._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
