@@ -49,6 +49,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   animDisp: any;
 
   private onDestroy$ = new Subject<void>();
+  private unSubscribeNotificationStateChange = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -73,7 +74,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }).filter(lang  => {
       return lang['active'] !== 'N';
     });
-    this.userService.notificationStateChange$.subscribe(() => {
+    this.userService.notificationStateChange$.pipe(takeUntil(this.unSubscribeNotificationStateChange)).subscribe(() => {
       this.getNotification();
     });
   }
@@ -86,6 +87,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.unSubscribeNotificationStateChange.next();
+    this.unSubscribeNotificationStateChange.complete();
   }
 
   // Used to swap in different background.

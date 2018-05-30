@@ -35,6 +35,7 @@ import { environment } from '../../../environments/environment';
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
+  unSubscribeSubmissionUpdated = new Subject<void>();
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
   showExamButton = false;
@@ -61,6 +62,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.unSubscribeSubmissionUpdated.next();
+    this.unSubscribeSubmissionUpdated.complete();
   }
 
   viewStep() {
@@ -73,7 +76,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       parent: stepDetail.exam,
       user: this.userService.get().name,
       type: 'exam' });
-    this.coursesService.submissionUpdated$.subscribe(({ submission }) => {
+    this.coursesService.submissionUpdated$.pipe(takeUntil(this.unSubscribeSubmissionUpdated)).subscribe(({ submission }) => {
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
         (submission.answers.length + 1) ], { relativeTo: this.route });
     });
