@@ -269,10 +269,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetFilter() {
-    this.filter = {
-      'subject': '',
-      'level': ''
-    };
+    this.filter.level = '';
+    this.filter.subject = '';
     this.titleSearch = '';
   }
 
