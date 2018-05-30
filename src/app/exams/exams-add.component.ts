@@ -103,10 +103,11 @@ export class ExamsAddComponent implements OnInit {
       {
         header: '',
         body: '',
-        type: 'input',
+        type: 'input'
       },
       question,
       {
+        marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(question.choices || [])
       }
     )));
