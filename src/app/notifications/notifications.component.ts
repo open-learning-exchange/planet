@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   template: `
@@ -18,13 +20,15 @@ import { findDocuments } from '../shared/mangoQueries';
     </mat-list>
   `
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
   notifications = [];
+  private unSubscribeNotificationStateChange = new Subject<void>();
   constructor(
     private couchService: CouchService,
     private userService: UserService
     ) {
-    this.userService.notificationStateChange$.subscribe(() => {
+    this.userService.notificationStateChange$.pipe(takeUntil(this.unSubscribeNotificationStateChange))
+    .subscribe(() => {
       this.getNotifications();
     });
   }
@@ -67,4 +71,10 @@ export class NotificationsComponent implements OnInit {
       }, (err) => console.log(err));
     }
   }
+
+  ngOnDestroy() {
+    this.unSubscribeNotificationStateChange.next();
+    this.unSubscribeNotificationStateChange.complete();
+  }
+
 }

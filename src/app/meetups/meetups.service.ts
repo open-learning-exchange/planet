@@ -15,13 +15,12 @@ export class MeetupService {
   meetupUpdated$ = this.meetupUpdated.asObservable();
   meetups = [];
   userShelf = this.userService.shelf;
-  private onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
   ) {
-    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
+    this.userService.shelfChange$
       .subscribe((shelf: any) => {
         this.userShelf = shelf;
         this.meetupUpdated.next(this.meetupList(this.meetups, shelf.meetupIds || []));

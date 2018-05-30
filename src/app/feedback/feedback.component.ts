@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -9,6 +9,8 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { debug } from '../debug-operator';
+import { Subject } from 'rxjs/Subject';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -19,7 +21,7 @@ import { debug } from '../debug-operator';
     }
   ` ]
 })
-export class FeedbackComponent implements OnInit, AfterViewInit {
+export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
@@ -27,6 +29,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   user: any = {};
+  private unSubscribFeedbackupdate = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -40,7 +43,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       // Remove source from displayed columns for communities
       this.displayedColumns.splice(this.displayedColumns.indexOf('source'), 1);
     }
-    this.feedbackService.feedbackUpdate$.subscribe(() => {
+    this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.unSubscribFeedbackupdate))
+    .subscribe(() => {
       this.getFeedback();
     });
    }
@@ -115,6 +119,11 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       this.planetMessageService.showMessage('You re-opened this feedback.');
       this.getFeedback();
     },  (err) => console.log(err));
+  }
+
+  ngOnDestroy() {
+    this.unSubscribFeedbackupdate.next();
+    this.unSubscribFeedbackupdate.complete();
   }
 
 }
