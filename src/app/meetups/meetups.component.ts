@@ -111,7 +111,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
-          this.selection.clear();
+          if (this.selection.selected.length) {
+            this.selection.deselect(meetup)
+          }
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
