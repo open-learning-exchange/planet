@@ -25,7 +25,9 @@ export class UserService {
   }
   set shelf(shelf: any) {
     this._shelf = shelf;
-    this.shelfChange.next(shelf);
+    if (shelf === {}) {
+      this.shelfChange.next(shelf);
+    }
   }
   sessionStart: number;
   sessionRev: string;
