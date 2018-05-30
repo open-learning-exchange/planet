@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Subject } from 'rxjs/Subject';
+import { CoursesService as PouchCoursesService, Course } from '../shared/services';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
 export class CoursesService {
-
-  course: any = { _id: '' };
+  course: any;
   submission: any = { courseId: '', examId: '' };
-  private courseUpdated = new Subject<any[]>();
+  private courseUpdated: Subject<Course> = new Subject<Course>();
   courseUpdated$ = this.courseUpdated.asObservable();
   private submissionUpdated = new Subject<any>();
   submissionUpdated$ = this.submissionUpdated.asObservable();
@@ -17,7 +17,8 @@ export class CoursesService {
   returnUrl: string;
 
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private pouchCourseService: PouchCoursesService
   ) {}
 
   // Components call this to get details of one course.
@@ -32,14 +33,14 @@ export class CoursesService {
   }
 
   private getCourse(courseId: string, opts) {
-    this.couchService.get('courses/' + courseId, opts).subscribe(course => {
+    this.pouchCourseService.getCourse(courseId).subscribe(course => {
       this.course = course;
       this.courseUpdated.next(course);
     });
   }
 
   reset() {
-    this.course = { _id: '' };
+    this.course = null;
     this.stepIndex = -1;
     this.returnUrl = '';
   }
