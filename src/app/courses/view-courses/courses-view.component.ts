@@ -90,5 +90,4 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return this.userService.shelf.courseIds.includes(courseId);
   }
 
-
 }
