@@ -40,7 +40,7 @@
       <mat-cell *matCellDef="let element">{{element.registrationRequest}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="createdDate">
-      <mat-header-cell *matHeaderCellDef i18n>Created Date</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.createdDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
