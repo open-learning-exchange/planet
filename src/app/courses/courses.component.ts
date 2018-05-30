@@ -210,10 +210,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   resetSearch() {
-    this.filter = {
-      'gradeLevel': '',
-      'subjectLevel': ''
-    };
+    this.filter.gradeLevel = '';
+    this.filter.subjectLevel = '';
     this.titleSearch = '';
   }
 
