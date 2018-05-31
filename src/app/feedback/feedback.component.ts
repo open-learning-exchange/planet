@@ -9,16 +9,23 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './feedback.component.html',
+  styles: [ `
+    .mat-column-type {
+      display: flex;
+      align-items: center;
+    }
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
-  displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
+  displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   user: any = {};
@@ -74,7 +81,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }

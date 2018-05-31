@@ -16,11 +16,25 @@
   </mat-toolbar>
 
   <mat-table #table [dataSource]="feedback" matSort>
+    <!-- Title Column -->
+    <ng-container matColumnDef="title">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <a [routerLink]="['view',element._id]">{{element.title}}</a>
+      </mat-cell>
+    </ng-container>
     <!-- Type Column -->
     <ng-container matColumnDef="type">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.type}}</mat-cell>
-      </ng-container>
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <ng-container [ngSwitch]="element.type">
+          <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
+          <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
+          <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
+        </ng-container>
+        <span>{{element.type}}</span>
+      </mat-cell>
+    </ng-container>
     <!-- Priorty Column -->
     <ng-container matColumnDef="priority">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
@@ -30,11 +44,6 @@
     <ng-container matColumnDef="owner">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Owner</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.owner}}</mat-cell>
-    </ng-container>
-    <!-- Title Column -->
-    <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
     </ng-container>
     <!-- Status Column -->
     <ng-container matColumnDef="status">
@@ -67,7 +76,7 @@
           <button mat-menu-item [routerLink]="['view',element._id]">
             <mat-icon></mat-icon>
             <span i18n>View</span>
-          </button>          
+          </button>
           <button mat-menu-item (click)="deleteClick(element)">
             <mat-icon>delete_forever</mat-icon>
             <span i18n>Delete</span>

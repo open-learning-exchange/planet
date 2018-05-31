@@ -11,6 +11,7 @@ import { of } from 'rxjs/observable/of';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { Subject } from 'rxjs/Subject';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -79,7 +80,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.meetups.data.forEach(row => this.selection.select(row));
+    this.meetups.data.forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {
@@ -108,19 +109,20 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: meetupId, _rev: meetupRev } = meetup;
       this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
         .subscribe((data) => {
+          this.selection.deselect(meetupId);
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
-          this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
     };
   }
 
-  deleteMeetups(meetups) {
+  deleteMeetups(meetupIds) {
     // Deletes multiple meetups
     return () => {
-      const deleteMeetupArr = meetups.map((meetup) => {
+      const deleteMeetupArr = meetupIds.map((meetupId) => {
+        const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
         return { _id: meetup._id, _rev: meetup._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
@@ -157,13 +159,20 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
 
   goBack() {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+  }
+
+  attendMeetup(id, participate) {
+    this.meetupService.attendMeetup(id, participate).subscribe((res) => {
+      const msg = res.participate ? 'left' : 'joined';
+      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+    });
   }
 
 }

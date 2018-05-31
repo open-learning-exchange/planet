@@ -32,7 +32,7 @@
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        <mat-checkbox (change)="$event ? selection.toggle(row._id) : null" [checked]="selection.isSelected(row._id)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -50,7 +50,7 @@
         </button>
         <mat-cell>
           <mat-menu #meetupMenu="matMenu">
-            <a mat-menu-item (click)="meetupService.attendMeetup(element._id, element.participate)">
+            <a mat-menu-item (click)="attendMeetup(element._id, element.participate)">
               <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
               <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
             </a>
@@ -75,7 +75,8 @@
       <mat-cell *matCellDef="let element">
         <div>
           <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span i18n>at</span>{{ ' ' + element.startTime + ' - ' + element.endTime }}</p>
-          <p><span i18n>Recurring:</span>{{ ' ' + element.recurring }}</p>
+          <p><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
+          <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
           <p><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
         </div>
       </mat-cell>
@@ -84,7 +85,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
-    [pageSize]="5" 
+    [pageSize]="5"
     [pageSizeOptions]="[5, 10, 20]"
     (page)="onPaginateChange($event)">
   </mat-paginator>

@@ -30,7 +30,7 @@
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planetType"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field *ngIf="nationOrCommunity === 'community'">
-        <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" required>
+        <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" (change)="onChangeNation()" required>
           <mat-option *ngFor="let nation of nations" [value]="nation.localDomain">{{nation.name}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>

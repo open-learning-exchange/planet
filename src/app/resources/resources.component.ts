@@ -15,6 +15,7 @@ import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -81,7 +82,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
        // Sort in descending articleDate order, so the new resource can be shown on the top
       resources.sort((a, b) => b.articleDate - a.articleDate);
       this.resources.data = resources;
-      this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
+      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
@@ -94,21 +95,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     };
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.setupList(this.resources.data, this.userService.getUserShelf().resourceIds);
+      .subscribe((shelf: any) => {
+        this.setupList(this.resources.data, shelf.resourceIds);
       });
   }
 
   setupList(resourcesRes, myLibrarys) {
-    this.resources.data = resourcesRes.map((r: any) => {
-      const resource = r.doc || r;
+    resourcesRes.forEach((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
-      if (myLibraryIndex > -1) {
-        return { ...resource, libraryInfo: true };
-      }
-      return { ...resource,  libraryInfo: false };
+      resource.libraryInfo = myLibraryIndex > -1;
     });
   }
 
@@ -198,7 +195,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
@@ -208,6 +205,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .subscribe((data) => {
+          this.selection.deselect(resource);
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
@@ -244,14 +242,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   updateShelf(newShelf, msg: string) {
     this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
       newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
-      this.selection.clear();
+      this.userService.shelf = newShelf;
       this.planetMessageService.showMessage(msg + ' mylibrary');
     }, (error) => (error));
   }
 
   addToLibrary(resources) {
-    const currentShelf = this.userService.getUserShelf();
+    const currentShelf = this.userService.shelf;
     const resourceIds = resources.map((data) => {
       return data._id;
     }).concat(currentShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
@@ -260,7 +257,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFromLibrary(resourceId, resourceTitle) {
-    const currentShelf = this.userService.getUserShelf();
+    const currentShelf = this.userService.shelf;
     const resourceIds = [ ...currentShelf.resourceIds ];
     resourceIds.splice(resourceIds.indexOf(resourceId), 1);
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
@@ -273,10 +270,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetFilter() {
-    this.filter = {
-      'subject': '',
-      'level': ''
-    };
+    this.filter.level = '';
+    this.filter.subject = '';
     this.titleSearch = '';
   }
 

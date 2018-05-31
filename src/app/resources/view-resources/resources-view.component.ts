@@ -9,6 +9,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
+import { debug } from '../../debug-operator';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -47,8 +48,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap
-      .debug('Getting resource id from parameters')
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const resourceId = params.get('id');
         const getOpts: any = { resourceIds: [ resourceId ] };
@@ -71,14 +71,14 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   setResource(resource: any) {
     this.resource = resource;
-    // openWhichFile is used to label which file to start with for HTML resources
-    const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
-    this.mediaType = resource.mediaType;
-    this.contentType = resource._attachments[filename].content_type;
-    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
-    if (!this.mediaType) {
+    if (resource._attachments) {
+      // openWhichFile is used to label which file to start with for HTML resources
+      const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+      this.contentType = resource._attachments[filename].content_type;
+      this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
+
       const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
-      this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
+      this.mediaType = resource.mediaType || mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
     }
     if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);

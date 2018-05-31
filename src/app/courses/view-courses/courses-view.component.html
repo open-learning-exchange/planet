@@ -11,17 +11,11 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-detail bg-light-grey">
-      <p i18n>Course Leader: {{courseDetail.courseLeader}} </p>
-      <p i18n>Subject Level: {{courseDetail.subjectLevel}}</p>
-      <p i18n>Grade Level: {{courseDetail.gradeLevel}}</p>
-      <p i18n>Language of Instruction: {{courseDetail.languageOfInstruction}}</p>
-      <p i18n>Method: {{courseDetail.method}}</p>
-      <p i18n>Frequency/Days: {{courseDetail.day}}</p>
-      <p i18n>Schedule -
-        Date: {{courseDetail.startDate | date }}
-        Time: {{courseDetail.startTime }}</p>
-      <p i18n>Location: {{courseDetail.location}}</p>
-      <p i18n>Description: {{courseDetail.description}}</p>
+      <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
+      <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
+      <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
+      <p i18n><b>Method:</b> {{courseDetail.method}}</p>
+      <p i18n><b>Description:</b> {{courseDetail.description}}</p>
     </div>
     <div class="course-view">
       <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
@@ -32,13 +26,13 @@
             </mat-panel-title>
             <mat-panel-description>
               <mat-icon *ngIf="step.attachment">attach_file</mat-icon>
-              <mat-icon *ngIf="step.exam">assignment</mat-icon>
+              <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
             </mat-panel-description>
           </mat-expansion-panel-header>
           {{step.description}}
           <mat-action-row>
             <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step.attachment" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
-            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
+            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
           </mat-action-row>
         </mat-expansion-panel>
       </ng-container>
