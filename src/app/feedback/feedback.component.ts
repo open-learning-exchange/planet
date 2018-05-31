@@ -12,6 +12,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -39,7 +40,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private router: Router
   ) {
     if (this.userService.getConfig().planetType === 'community') {
       // Remove source from displayed columns for communities
@@ -123,5 +125,13 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFeedback();
     },  (err) => console.log(err));
   }
+
+ goBack() {
+   if (this.userService.get().isUserAdmin) {
+    this.router.navigate([ '/manager' ]);
+   } else {
+     this.router.navigate([ '/' ]);
+   }
+ }
 
 }
