@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -8,7 +8,10 @@ import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
+import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -19,14 +22,16 @@ import { debug } from '../debug-operator';
     }
   ` ]
 })
-export class FeedbackComponent implements OnInit, AfterViewInit {
+export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   user: any = {};
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -40,7 +45,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       // Remove source from displayed columns for communities
       this.displayedColumns.splice(this.displayedColumns.indexOf('source'), 1);
     }
-    this.feedbackService.feedbackUpdate$.subscribe(() => {
+    this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getFeedback();
     });
    }
@@ -49,11 +54,17 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
-    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.feedback.sort = this.sort;
   }
 
   ngAfterViewInit() {
     this.feedback.paginator = this.paginator;
+    this.feedback.sortingDataAccessor = (item, property) => item[property];
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   applyFilter(filterValue: string) {
@@ -61,14 +72,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   getFeedback() {
-    this.couchService.allDocs(this.dbName)
+    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
+    this.couchService.post(this.dbName + '/_find', findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
       .subscribe((data) => {
-        this.feedback.data = data.filter(fback  => {
-          if (!this.user.isUserAdmin) {
-            return fback.owner === this.user.name;
-          }
-          return fback;
-        });
+        this.feedback.data = data.docs;
       }, (error) => this.message = 'There is a problem of getting data.');
   }
 

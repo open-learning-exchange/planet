@@ -1,10 +1,13 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatDialog, MatSort } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { of } from 'rxjs/observable/of';
+import { findDocuments } from '../shared/mangoQueries';
+import { filterSpecificFields } from '../shared/table-helpers';
+
 @Component({
   templateUrl: './community.component.html'
 })
@@ -15,14 +18,16 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   displayedColumns = [
     'name',
     'code',
-    'language',
-    'url',
-    'status',
+    'preferredLang',
+    'localDomain',
+    'registrationRequest',
+    'createdDate',
     'action'
   ];
   editDialog: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,
@@ -32,16 +37,23 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getCommunityList();
     this.communities.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.communities.filterPredicate = filterSpecificFields([ 'code', 'name' ]);
   }
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
+    this.communities.sort = this.sort;
+  }
+
+  requestListFilter(filterValue: string) {
+    this.communities.filter = filterValue;
   }
 
   getCommunityList() {
-     this.couchService.allDocs('communityregistrationrequests')
+    this.couchService.post('communityregistrationrequests/_find',
+      findDocuments({ 'registrationRequest': { '$ne': 'accepted' } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
-        this.communities.data = data;
+        this.communities.data = data.docs;
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
@@ -79,6 +91,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
             .subscribe((data) => {
               this.updateRev(data, this.communities.data);
+              this.getCommunityList();
               this.editDialog.close();
             }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
           break;
@@ -86,13 +99,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           forkJoin([
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
-            // add registrant's information to the nation database with same id,
-            this.couchService.put('nations/' + communityId, { ...communityInfo, registrationRequest: 'accepted' }),
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
             community.registrationRequest = 'accepted';
             this.updateRev(data, this.communities.data);
+            this.getCommunityList();
             this.editDialog.close();
           }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
       }
@@ -114,12 +126,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
       const { _id: id, _rev: rev } = community;
       forkJoin([
-        this.couchService.post('nations/_find', { 'selector': { '_id': id } }),
         this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
         this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
       ]).pipe(switchMap(([ nation, user, shelf ]) => {
         const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
-          this.addDeleteObservable(nation, 'nations/'),
           this.addDeleteObservable(user, '_users/'),
           this.addDeleteObservable(shelf, 'shelf/')
         );

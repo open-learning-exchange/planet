@@ -90,7 +90,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">77</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
@@ -172,7 +172,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">50</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
@@ -202,7 +202,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">82</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
@@ -601,7 +601,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">21</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
@@ -649,29 +649,29 @@
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
-        <source>Open</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/courses.component.ts</context>
-          <context context-type="linenumber">61</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
-          <context context-type="linenumber">55</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="0959cf719affa339c7223bcb273d12260028c47d" datatype="html">
         <source>Admission</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="26987e0e2a2962641a3a60791741ea5137a0fa1c" datatype="html">
         <source>Resign</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
+        <source>Open</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">69</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html">
@@ -735,83 +735,53 @@
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="02963c456f4179a1e9f99db3552aedcd3000d68f" datatype="html">
-        <source>Course Leader: <x id="INTERPOLATION" equiv-text="{{courseDetail.courseLeader}}"/> </source>
+      <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="12e2c34eebc79b08226d174079fa9f45358ebd76" datatype="html">
-        <source>Subject Level: <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
+      <trans-unit id="ef9ea2b8e0e20c3500a390e081cdfc53882cf55d" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Grade Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7c275f4d47c65080850484b56087fcf82488177d" datatype="html">
-        <source>Grade Level: <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></source>
+      <trans-unit id="c27c01ac14e3a79760322122760cff26db09077d" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Language of Instruction:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="33fc30075aab8d687146fa3e4ee0f9fa0abbc1c2" datatype="html">
-        <source>Language of Instruction: <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></source>
+      <trans-unit id="b576358946632f81322424330e303c059ae87ad4" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Method:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6eed004bb85bb9a7debb7cb690ac49538504e6d8" datatype="html">
-        <source>Method: <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></source>
+      <trans-unit id="115a3b6b95cfd78c2ef52edb47dfe6b8a57128c3" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.description}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="99ce26b84ce4a2c6792c0701153f782ebe1c783b" datatype="html">
-        <source>Frequency/Days: <x id="INTERPOLATION" equiv-text="{{courseDetail.day}}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="ec72b4743f6a01056bac256291b5383f2eed573f" datatype="html">
-        <source>Schedule -
-        Date: <x id="INTERPOLATION" equiv-text="{{courseDetail.startDate | date }}"/>
-        Time: <x id="INTERPOLATION_1" equiv-text="{{courseDetail.startTime }}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="e74054e27f4456864f91fd48fcb0c8666ea53f0c" datatype="html">
-        <source>Location: <x id="INTERPOLATION" equiv-text="{{courseDetail.location}}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
-          <context context-type="linenumber">23</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="9dbabd28714e62de46c3b2e0dded170a660a9251" datatype="html">
-        <source>Description: <x id="INTERPOLATION" equiv-text="{{courseDetail.description}}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
-          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5339e40170ef503b40f6dbd63d2ba88bcdbd95b8" datatype="html">
         <source>View Resource</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="01df8eb930f83e59444f915bad8b8e5197fb8af3" datatype="html">
         <source>Take exam</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ae235e4db384241bdf4bf293264ffe8968e60248" datatype="html">
@@ -847,7 +817,14 @@
         <source>Step</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ba73a84807e9f4f145b4fc35630159100b4a9d46" datatype="html">
+        <source><x id="START_HEADING_LEVEL3" ctype="x-h3" equiv-text="&lt;h3&gt;"/>Exam attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/><x id="CLOSE_HEADING_LEVEL3" ctype="x-h3" equiv-text="&lt;/h3&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
+          <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
       <trans-unit id="13c270db76cb28d7e1945a454ed60a5d5e5752df" datatype="html">
@@ -868,11 +845,18 @@
           <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html">
+        <source>List of Resources</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c87fc952938382700c1d2c56bdb02b8a55b4941d" datatype="html">
@@ -1014,15 +998,8 @@
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="339e84b49d95756c4b50abdfbd53032bb8ac9c36" datatype="html">
-        <source>Attached <x id="ICU" equiv-text="{attachment.type, select, resources {...}}"/>:</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="bd18f5d6f4e5b112af306995410ad59171d07eda" datatype="html">
-        <source>{VAR_SELECT, select, resources {resource} }</source>
+      <trans-unit id="9c00b704f800f910a8cc54de6074d9ff643586da" datatype="html">
+        <source>Attached resources: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">26</context>
@@ -1057,7 +1034,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="0e397f4323ef7fdf3ede2ad587b5d01e77077717" datatype="html">
@@ -1110,42 +1087,42 @@
         <source>Priority</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html">
         <source>Owner</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3ace7fac0ba373a88ada1663966bb78b5723478d" datatype="html">
         <source>Open Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2cab4f31f1acc2bfb5e4841afc24fc60a5a87e13" datatype="html">
         <source>Close Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html">
         <source>Source</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">70</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
@@ -1156,7 +1133,7 @@
         <source>View</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">78</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
@@ -1171,14 +1148,14 @@
         <source>Close</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
         <source>Re-open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html">
@@ -1469,21 +1446,35 @@
         <source>List Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html">
         <source>List Courses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html">
         <source>List Meetups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html">
+        <source>Checking request status...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="23299f2edacf5a10fea838d6328872ba4df8093b" datatype="html">
+        <source>Your request has not been accepted by parent</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d65fd97877969344d3a07afec5d0389b7aeea1aa" datatype="html">
@@ -1544,11 +1535,18 @@
           <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
+        <source>Recurring Days: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
         <source>Location:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
@@ -1579,39 +1577,67 @@
           <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="a507c06d9cbc346d9bb3c644c960230e1e0ebdc1" datatype="html">
+        <source>Frequency</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html">
+        <source>Daily</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html">
+        <source>Weekly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
+        <source>None</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html">
         <source>Start Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html">
         <source>End Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html">
         <source>Category</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html">
         <source>Location</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
-          <context context-type="linenumber">72</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html">
@@ -1628,74 +1654,81 @@
           <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="319b01c432ce8ed984c93ce432c57e20ef3072e8" datatype="html">
-        <source>Meetup Title : <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </source>
+      <trans-unit id="e30452c9df56f02f4f636337a0aa4266b1cad074" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2e412d71f8ab6c96831b5642f578f8be5d4a8a07" datatype="html">
-        <source>Created By : <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></source>
+      <trans-unit id="4619dcdae28d0d5d520e16dcaa69e297638f7a53" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="11c82221288f63474489d7ac852d35565840be34" datatype="html">
-        <source>Category : <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </source>
+      <trans-unit id="05d3883f5f3c6883a1910e55f010bd07ec4a87d1" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="82b90bdb559fe1269456c2b886ccc9df5afff9a8" datatype="html">
-        <source>Meetup Date: <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: &apos;fullDate&apos;}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: &apos;fullDate&apos;}}"/></source>
+      <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: &apos;fullDate&apos;}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: &apos;fullDate&apos;}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="a2625ee40b454eadd1272b4934a1da837e0cb991" datatype="html">
-        <source>Meetup Time: <x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></source>
+      <trans-unit id="f216acd1bbe77ddf9082913537c4f3b33ed36eac" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="948d5cb7b38fa03c3347f29ee914e0a4064716ca" datatype="html">
-        <source>Recurring: <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring}}"/></source>
+      <trans-unit id="cac4b6fa494585c609704424007095d081012922" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="928784084b206705e54840c52a7bf068a3c9adf2" datatype="html">
-        <source>Location: <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
+      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4ddb640a4d518125dba48f9ac65e0862411b4544" datatype="html">
-        <source>Description: <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
+      <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html">
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html">
+        <source>Recurring Days:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="14c4ba961a7806de5331bbd4fd85f9e28bbc5038" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html">
         <source> - No member has Joined this Meetup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html">

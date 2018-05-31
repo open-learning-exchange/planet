@@ -14,6 +14,10 @@
         <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      <mat-form-field class="full-width">
+        <input matInput type="number" i18n-placeholder placeholder="Passing Percentage" formControlName="passingPercentage" required>
+        <mat-error><planet-form-error-messages [control]="examForm.controls.passingPercentage"></planet-form-error-messages></mat-error>
+      </mat-form-field>
       <div>
         <planet-exam-question
           *ngFor="let question of questionsFormArray.controls; let i = index"
@@ -22,7 +26,7 @@
           ></planet-exam-question>
       </div>
       <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
-      <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
+      <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n>Add Question</button>
     </form>
   </div>
   <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>

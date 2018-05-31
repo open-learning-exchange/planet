@@ -26,7 +26,7 @@
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
       <span i18n>Request Courses</span>
     </button>
-    <button *ngIf="!parent" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+    <button *ngIf="!parent && user.isAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
     </button>
     <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
@@ -56,10 +56,6 @@
         </button>
         <mat-cell>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="element.admission" routerLink="add">
-              <mat-icon>lock_open</mat-icon>
-              <span i18n>Open</span>
-            </a>
             <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission(element._id)"  >
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
@@ -68,7 +64,7 @@
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
-            <a mat-menu-item (click)="updateCourse(element)">
+            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>
@@ -84,7 +80,7 @@
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
-            <button mat-menu-item (click)="deleteClick(element)">
+            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
@@ -106,7 +102,7 @@
   </mat-table>
 
   <mat-paginator #paginator
-    [pageSize]="10" 
+    [pageSize]="10"
     [pageSizeOptions]="[5, 10, 20]"
     (page)="onPaginateChange($event)">
   </mat-paginator>

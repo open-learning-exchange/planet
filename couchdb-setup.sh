@@ -118,6 +118,8 @@ upsert_doc nations _design/nation-validators @./design/nations/nation-validators
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
+upsert_doc feedback _index '{"index":{"fields":[{"openTime":"desc"}]},"name":"time-index"}' POST
+upsert_doc communityregistrationrequests _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"time-index"}' POST
 # Insert dummy data docs
 insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json

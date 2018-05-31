@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   template: `
@@ -20,11 +22,13 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class NotificationsComponent implements OnInit {
   notifications = [];
+  private onDestroy$ = new Subject<void>();
+
   constructor(
     private couchService: CouchService,
     private userService: UserService
     ) {
-    this.userService.notificationStateChange$.subscribe(() => {
+    this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
     });
   }

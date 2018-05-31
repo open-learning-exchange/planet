@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }).filter(lang  => {
       return lang['active'] !== 'N';
     });
-    this.userService.notificationStateChange$.subscribe(() => {
+    this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
     });
   }
@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated' ];
+    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
@@ -129,7 +129,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   logoutClick() {
     this.userService.endSessionLog().pipe(switchMap(() => {
       const obsArr = [ this.couchService.delete('_session', { withCredentials: true }) ];
-      if (this.userService.getConfig().name === this.userService.get().name) {
+      const localAdminName = this.userService.getConfig().adminName.split('@')[0];
+      if (localAdminName === this.userService.get().name) {
         obsArr.push(
           this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parentDomain }),
         );

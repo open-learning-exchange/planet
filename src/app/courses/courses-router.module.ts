@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'view/:id', component: CoursesViewComponent },
   { path: 'exam', component: ExamsAddComponent },
   { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent, },
-  { path: 'view/:id/step/:stepNum/exam/:questionNum', component: ExamsViewComponent },
+  { path: 'view/:id/step/:stepNum/exam', component: ExamsViewComponent },
   { path: 'update/exam/:id', component: ExamsAddComponent }
 ];
 

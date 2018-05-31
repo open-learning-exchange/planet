@@ -10,8 +10,6 @@ export class CoursesService {
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<any[]>();
   courseUpdated$ = this.courseUpdated.asObservable();
-  private submissionUpdated = new Subject<any[]>();
-  submissionUpdated$ = this.submissionUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;
 
@@ -41,31 +39,6 @@ export class CoursesService {
     this.course = { _id: '' };
     this.stepIndex = -1;
     this.returnUrl = '';
-  }
-
-  private newSubmission({ parentId, parent, user, type }) {
-    this.submission = { parentId, parent, user, type, answers: [], status: 'pending' };
-  }
-
-  openSubmission({ parentId, parent, user, type }) {
-    this.couchService.post('submissions/_find', { 'selector': { parentId, user, status: 'pending' } })
-      .subscribe((res) => {
-        if (res.docs.length > 0) {
-          this.submission = res.docs[0];
-        } else {
-          this.newSubmission({ parentId, parent, user, type });
-        }
-        this.submissionUpdated.next(this.submission);
-      });
-  }
-
-  updateSubmission(answer, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
-    submission.answers[index] = answer;
-    submission.status = close ? 'complete' : 'pending';
-    this.couchService.post('submissions', submission).subscribe((res) => {
-      this.submission = { ...submission, _id: res.id, _rev: res.rev };
-    });
   }
 
 }

@@ -141,8 +141,8 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.post('nations/_find',
-      findDocuments({ 'planetType': 'nation' }, 0 ),
+    this.couchService.post('communityregistrationrequests/_find',
+      findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
       { domain: environment.centerAddress })
       .subscribe((data) => {
         this.nations = data.docs;
@@ -161,6 +161,13 @@ export class ConfigurationComponent implements OnInit {
         planetType: selectedValue,
         parentDomain: ''
       });
+    }
+  }
+
+  onChangeNation() {
+    if (this.configurationFormGroup.get('name').value !== '') {
+      this.configurationFormGroup.controls.name.updateValueAndValidity();
+      this.configurationFormGroup.controls.code.updateValueAndValidity();
     }
   }
 
