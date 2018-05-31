@@ -12,7 +12,7 @@ export class CoursesService {
 
   course: any = { _id: '' };
   submission: any = { courseId: '', examId: '' };
-  private courseUpdated = new Subject<any[]>();
+  private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;
@@ -40,7 +40,7 @@ export class CoursesService {
     }
     forkJoin(obs).subscribe(([ progress, course ]) => {
       this.course = course;
-      this.courseUpdated.next({ progress, course });
+      this.courseUpdated.next({ progress: progress.docs[0], course });
     });
   }
 
@@ -48,6 +48,13 @@ export class CoursesService {
     this.course = { _id: '' };
     this.stepIndex = -1;
     this.returnUrl = '';
+  }
+
+  updateProgress({ courseId, stepNum, progress = {} }) {
+    const newProgress = { ...progress, stepNum, courseId, userId: this.userService.get()._id };
+    this.couchService.post('courses_progress', newProgress).subscribe(() => {
+      this.requestCourse({ courseId });
+    });
   }
 
 }
