@@ -126,12 +126,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     },  (err) => console.log(err));
   }
 
- goBack() {
-   if (this.userService.get().isUserAdmin) {
-    this.router.navigate([ '/manager' ]);
-   } else {
-     this.router.navigate([ '/' ]);
-   }
- }
+  goBack() {
+    if (this.userService.get().isUserAdmin) {
+      this.router.navigate([ '/manager' ]);
+    } else {
+      this.router.navigate([ '/' ]);
+    }
+  }
 
 }
