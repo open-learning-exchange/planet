@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated' ];
+    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground

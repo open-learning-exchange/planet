@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -26,7 +27,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private userService: UserService
+    private userService: UserService,
+    private submissionsService: SubmissionsService
   ) {}
 
   ngOnInit() {
@@ -36,14 +38,14 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.maxStep = course.steps.length;
       if (this.stepDetail.exam) {
         this.showExamButton = this.checkMyCourses(course._id);
-        this.coursesService.openSubmission({
+        this.submissionsService.openSubmission({
           parentId: this.stepDetail.exam._id + '@' + course._id,
           parent: this.stepDetail.exam,
           user: this.userService.get().name,
           type: 'exam' });
       }
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
         this.examStart = submission.answers.length + 1;
         this.attempts = attempts;
       });
@@ -81,7 +83,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam() {
-    this.router.navigate([ 'exam', this.examStart ], { relativeTo: this.route });
+    this.router.navigate([ 'exam', { questionNum: this.examStart } ], { relativeTo: this.route });
   }
 
 }

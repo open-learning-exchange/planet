@@ -7,6 +7,7 @@ import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs/Subject';
 import { environment } from '../../../environments/environment';
+import { SubmissionsService } from '../../submissions/submissions.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -44,7 +45,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private submissionsService: SubmissionsService
   ) { }
 
   ngOnInit() {
@@ -68,14 +70,14 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam(stepDetail, stepNum) {
-    this.coursesService.openSubmission({
+    this.submissionsService.openSubmission({
       parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
       parent: stepDetail.exam,
       user: this.userService.get().name,
       type: 'exam' });
-    this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
-        (submission.answers.length + 1) ], { relativeTo: this.route });
+        { questionNum: submission.answers.length + 1 } ], { relativeTo: this.route });
     });
   }
 
