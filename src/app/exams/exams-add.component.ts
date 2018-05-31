@@ -12,6 +12,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: 'exams-add.component.html'
@@ -46,6 +47,10 @@ export class ExamsAddComponent implements OnInit {
         this.route.snapshot.url[0].path === 'update'
         ? ac => this.validatorService.isNameAvailible$(this.dbName, 'name', ac, this.route.snapshot.params.id)
         : ac => this.validatorService.isUnique$(this.dbName, 'name', ac)
+      ],
+      passingPercentage: [
+        50,
+        [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
       questions: this.fb.array([])
     });
@@ -98,10 +103,11 @@ export class ExamsAddComponent implements OnInit {
       {
         header: '',
         body: '',
-        type: 'input',
+        type: 'input'
       },
       question,
       {
+        marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(question.choices || [])
       }
     )));
