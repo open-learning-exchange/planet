@@ -6,6 +6,7 @@ import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { debug } from '../debug-operator';
 
 @Injectable()
 export class SyncService {
@@ -44,8 +45,8 @@ export class SyncService {
     };
     this.dialogsFormService
     .confirm(title, fields, formGroup)
-    .debug('Dialog confirm')
-    .subscribe((response) => {
+    .pipe(debug('Dialog confirm'))
+    .subscribe((response: any) => {
       if (response !== undefined) {
         this.couchService.post('_session', { name: this.userService.get().name, password: response.password })
         .pipe(switchMap(data => {
