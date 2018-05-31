@@ -44,6 +44,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
+  childPlanetUsers = [];
+  selectedChildUsers = [];
+  userConfig = this.userService.getConfig();
 
   constructor(
     private dialog: MatDialog,
@@ -62,6 +65,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
+      this.getChildParentUsersList();
     } else {
       // Inactive users cannot receive all user docs
       this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
@@ -300,4 +304,32 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.selectedRoles = newSelection;
   }
 
+  getChildParentUsersList() {
+    this.couchService.post('_users/_find', findDocuments({ 'name': { '$regex': '(?i)@' } }))
+    .subscribe((data) => {
+      if (data.docs.length > 0) {
+        this.childPlanetUsers = data.docs;
+      }
+    });
+  }
+
+  onFilterChange(filterValue) {
+    if (this.childPlanetUsers.length === filterValue.length) {
+      this.selectedChildUsers = filterValue;
+    }
+    if (filterValue.length) {
+      const users = filterValue.map((user: any) => {
+      const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
+      if (user._attachments) {
+        userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
+      }
+      return userInfo;
+      });
+      this.setMyTeams(users, this.userService.shelf.myTeamIds);
+      this.allUsers.data = users;
+    } else {
+      this.selectedChildUsers = [];
+      this.initializeData();
+    }
+  }
 }
