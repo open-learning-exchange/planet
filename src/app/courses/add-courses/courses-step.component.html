@@ -23,7 +23,7 @@
       </textarea>
     </mat-form-field>
   </form>
-  <div *ngIf="attachment"><span i18n>Attached {attachment.type, select, resources {resource}}:</span> {{attachment.doc.title}}</div>
+  <div *ngIf="resources"><span i18n>Attached resources: </span><span *ngFor="let resource of resources; let isLast= last">{{resource.title}}{{isLast ? '' : ', '}}</span></div>
   <mat-action-row>
     <a mat-raised-button color="primary" (click)="addExam(stepNum)">{{stepInfo.exam ? 'Update' : 'Add' }} Exam</a>
     <button mat-raised-button color="primary" (click)="attachItem('resources')">Add Resource</button>

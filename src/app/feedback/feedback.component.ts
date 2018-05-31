@@ -8,17 +8,26 @@ import { UserService } from '../shared/user.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
+import { findDocuments } from '../shared/mangoQueries';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './feedback.component.html',
+  styles: [ `
+    .mat-column-type {
+      display: flex;
+      align-items: center;
+    }
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit {
   readonly dbName = 'feedback';
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
-  displayedColumns = [ 'type', 'priority', 'owner', 'title', 'status', 'openTime', 'closeTime', 'source', 'action' ];
+  displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   user: any = {};
 
   constructor(
@@ -42,11 +51,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
-    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.feedback.sort = this.sort;
   }
 
   ngAfterViewInit() {
     this.feedback.paginator = this.paginator;
+    this.feedback.sortingDataAccessor = (item, property) => item[property];
   }
 
   applyFilter(filterValue: string) {
@@ -54,14 +64,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
   }
 
   getFeedback() {
-    this.couchService.allDocs(this.dbName)
+    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
+    this.couchService.post(this.dbName + '/_find', findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
       .subscribe((data) => {
-        this.feedback.data = data.filter(fback  => {
-          if (!this.user.isUserAdmin) {
-            return fback.owner === this.user.name;
-          }
-          return fback;
-        });
+        this.feedback.data = data.docs;
       }, (error) => this.message = 'There is a problem of getting data.');
   }
 
@@ -75,7 +81,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }

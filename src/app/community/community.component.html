@@ -5,6 +5,10 @@
   </button>
   <span i18n>Requests List</span>
   <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="requestListFilter($event.target.value)" i18n-placeholder placeholder="Search">
+  </mat-form-field>
 </mat-toolbar>
 
 <div class="space-container">
@@ -14,26 +18,30 @@
     </mat-toolbar-row>
   </mat-toolbar>
 
-  <mat-table #table [dataSource]="communities">
+  <mat-table #table [dataSource]="communities" matSort>
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="code">
-      <mat-header-cell *matHeaderCellDef i18n>Code</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
     </ng-container>
-    <ng-container matColumnDef="language">
-      <mat-header-cell *matHeaderCellDef i18n>Language</mat-header-cell>
+    <ng-container matColumnDef="preferredLang">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Language</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.preferredLang}}</mat-cell>
     </ng-container>
-    <ng-container matColumnDef="url">
-      <mat-header-cell *matHeaderCellDef i18n>URL</mat-header-cell>
+    <ng-container matColumnDef="localDomain">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.localDomain}}</mat-cell>
     </ng-container>
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
+    <ng-container matColumnDef="registrationRequest">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.registrationRequest}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="createdDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.createdDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>

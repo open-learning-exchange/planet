@@ -12,6 +12,7 @@ import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
+import { debug } from '../../debug-operator';
 
 @Component({
   templateUrl: './meetups-view.component.html',
@@ -40,8 +41,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getEnrolledUsers();
     this.route.paramMap
-      .debug('Getting meetup id from parameters')
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(debug('Getting meetup id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         const meetupId = params.get('id');
         const getOpts: any = { meetupIds: [ meetupId ] };
@@ -83,7 +83,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   joinMeetup() {
     this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
-      this.planetMessageService.showMessage('You have ' + msg + ' selected meetup.');
+      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
       this.fixEnrolledList(res.participate, this.userService.get().name);
     });
   }

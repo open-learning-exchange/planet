@@ -10,6 +10,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './nation.component.html'
@@ -20,8 +21,8 @@ export class NationComponent implements OnInit, AfterViewInit {
   nations = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'code', 'url', 'status', 'action' ];
-  readonly dbName = 'nations';
+  displayedColumns = [ 'name', 'code', 'url', 'status', 'createdDate', 'action' ];
+  readonly dbName = 'communityregistrationrequests';
   message = '';
   deleteDialog: any;
   viewNationDetailDialog: any;
@@ -79,7 +80,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
@@ -99,12 +100,10 @@ export class NationComponent implements OnInit, AfterViewInit {
       const { _id: nationId, _rev: nationRev, code: nationCode } = nation;
       // Search for registration request with same code
       forkJoin([
-        this.couchService.post('communityregistrationrequests/_find', { 'selector': { '_id': nationId } }),
         this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } }),
         this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } })
       ]).pipe(switchMap(([ community, user, shelf ]) => {
-        const deleteObs = [ this.couchService.delete('nations/' + nationId + '?rev=' + nationRev) ].concat(
-          this.addDeleteObservable(community, 'communityregistrationrequests/'),
+        const deleteObs = [ this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev) ].concat(
           this.addDeleteObservable(user, '_users/'),
           this.addDeleteObservable(shelf, 'shelf/')
         );
@@ -123,7 +122,7 @@ export class NationComponent implements OnInit, AfterViewInit {
   }
 
   getCommunity(url) {
-    this.couchService.allDocs('nations', { domain: url })
+    this.couchService.allDocs(this.dbName, { domain: url })
       .subscribe((res: any) => {
         this.nations.data = res.rows.map(nations => {
           return nations;

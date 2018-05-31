@@ -14,6 +14,7 @@ import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -53,7 +54,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
-  userId = this.userService.get()._id;
+  user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
 
@@ -66,9 +67,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private userService: UserService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.userShelf = this.userService.getUserShelf();
-        this.setupList(this.courses.data, this.userShelf.courseIds);
+      .subscribe((shelf: any) => {
+        this.userShelf = this.userService.shelf;
+        this.setupList(this.courses.data, shelf.courseIds);
       });
    }
 
@@ -76,9 +77,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.getUserShelf();
       this.courses.data = courses;
-      this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.userShelf = this.userService.shelf;
+      this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
@@ -89,6 +90,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
+      course.canManage = this.user.isUserAdmin ||
+        (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
     });
   }
@@ -147,7 +150,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().debug('Closing dialog').subscribe(() => {
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
   }
@@ -158,10 +161,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const { _id: courseId, _rev: courseRev } = course;
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
         .subscribe((data) => {
+          this.selection.deselect(course);
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
-          this.selection.clear();
           this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
     };
@@ -169,6 +172,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   deleteCourses(courses) {
     return () => {
+      // Delete many courses only allowed for admin, so no need to check if user is creator
       const deleteArray = courses.map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
@@ -176,10 +180,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       .pipe(switchMap(data => {
         return this.getCourses();
       })).subscribe((data: any) => {
+        data.sort((a, b) => b.createdDate - a.createdDate);
+        this.courses.data = data;
         this.setupList(data, this.userShelf.courseIds);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted selected courses');
+        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
       }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }
@@ -209,10 +215,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   resetSearch() {
-    this.filter = {
-      'gradeLevel': '',
-      'subjectLevel': ''
-    };
+    this.filter.gradeLevel = '';
+    this.filter.subjectLevel = '';
     this.titleSearch = '';
   }
 
@@ -228,9 +232,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   updateShelf(newShelf, message) {
-    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
+    this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
-      this.userService.setShelf(newShelf);
+      this.userService.shelf = newShelf;
+      this.setupList(this.courses.data,  this.userShelf.courseIds);
       this.planetMessageService.showMessage(message);
     }, (error) => (error));
   }

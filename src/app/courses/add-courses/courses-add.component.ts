@@ -15,6 +15,7 @@ import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -42,7 +43,8 @@ export class CoursesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private userService: UserService
   ) {
     this.createForm();
   }
@@ -69,7 +71,8 @@ export class CoursesAddComponent implements OnInit {
       method: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
-      createdDate: Date.now()
+      createdDate: Date.now(),
+      creator: this.userService.get().name + '@' + this.userService.getConfig().code
     });
   }
 
@@ -154,7 +157,7 @@ export class CoursesAddComponent implements OnInit {
       id: this.uniqueIdOfStep(),
       stepTitle: '',
       description: '',
-      attachment: ''
+      resources: []
     });
   }
 

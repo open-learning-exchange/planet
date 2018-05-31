@@ -50,6 +50,11 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.registrationRequest}}</mat-cell>
     </ng-container>
+    <!-- Date Column -->
+    <ng-container matColumnDef="createdDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.createdDate | date: 'mediumDate'}}</mat-cell>
+    </ng-container>
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>

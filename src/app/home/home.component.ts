@@ -10,6 +10,7 @@ import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { findDocuments } from '../shared/mangoQueries';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './home.component.html',
@@ -37,10 +38,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   userImgSrc = '';
 
   // Sets the margin for the main content to match the sidenav width
-  animObs = interval(15).debug('Menu animation').pipe(tap(() => {
-    this.mainContent._updateContentMargins();
-    this.mainContent._changeDetectorRef.markForCheck();
-  }));
+  animObs = interval(15).pipe(
+    debug('Menu animation'),
+    tap(() => {
+      this.mainContent._updateContentMargins();
+      this.mainContent._changeDetectorRef.markForCheck();
+    }
+  ));
   // For disposable returned by observer to unsubscribe
   animDisp: any;
 
