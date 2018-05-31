@@ -15,6 +15,7 @@ import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '.
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
 import { debug } from '../debug-operator';
+import { CoursesService, Course } from '../shared/services';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -31,7 +32,7 @@ import { debug } from '../debug-operator';
 
 export class CoursesComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
-  courses = new MatTableDataSource();
+  private courses: MatTableDataSource<Course> = new MatTableDataSource<Course>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   message = '';
@@ -64,32 +65,37 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private coursesService: CoursesService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
         this.setupList(this.courses.data, shelf.courseIds);
       });
-   }
+  }
 
   ngOnInit() {
-    this.getCourses().subscribe((courses: any) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.courses.data = courses;
-      this.userShelf = this.userService.shelf;
-      this.setupList(courses, this.userShelf.courseIds);
-    }, (error) => console.log(error));
+    this.coursesService.updateCourses()
+      .pipe(switchMap((res) => {
+        console.log('syncing from remote');
+        console.log(res);
+        return this.coursesService.getCourses();
+      }))
+      .subscribe(courses => {
+        this.courses.data = courses;
+        this.userShelf = this.userService.shelf;
+        this.setupList(courses, this.userShelf.courseIds);
+      }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
-  setupList(courseRes, myCourses) {
-    courseRes.forEach((course: any) => {
-      const myCourseIndex = myCourses.findIndex(courseId => {
-        return course._id === courseId;
-      });
+  setupList(courseRes: Course[], myCourses) {
+    courseRes.forEach(course => {
+      const myCourseIndex = myCourses.findIndex(courseId =>
+        course._id === courseId
+      );
       course.admission = myCourseIndex > -1;
     });
   }
@@ -174,14 +180,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-      .pipe(switchMap(data => {
-        return this.getCourses();
-      })).subscribe((data: any) => {
-        this.setupList(data, this.userShelf.courseIds);
-        this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted selected courses');
-      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
+        .pipe(switchMap(data => {
+          return this.getCourses();
+        })).subscribe((data: any) => {
+          this.setupList(data, this.userShelf.courseIds);
+          this.selection.clear();
+          this.deleteDialog.close();
+          this.planetMessageService.showMessage('You have deleted selected courses');
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
     };
   }
 
@@ -199,8 +205,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.courses.data.forEach(row => this.selection.select(row));
+      this.selection.clear() :
+      this.courses.data.forEach(row => this.selection.select(row));
   }
 
   onFilterChange(filterValue: string, field: string) {
