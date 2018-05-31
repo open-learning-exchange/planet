@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, isDevMode } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -6,6 +6,10 @@ import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
+import { debug } from '../debug-operator';
 
 @Component({
   template: `
@@ -17,6 +21,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
       </span>
       <button *ngIf="planetType !== center && showResendConfiguration"
         (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
+      <button *ngIf="planetType === 'community' && devMode"
+        (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
@@ -42,11 +48,15 @@ export class ManagerDashboardComponent implements OnInit {
   planetType = this.userService.getConfig().planetType;
   showResendConfiguration = false;
   requestStatus = 'loading';
+  devMode = isDevMode();
+  deleteCommunityDialog: any;
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private router: Router,
+    private planetMessageService: PlanetMessageService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -102,6 +112,37 @@ export class ManagerDashboardComponent implements OnInit {
     return this.couchService.post(`${db}/_find`,
       { 'selector': { '_id': user._id }, 'fields': [ '_id', '_rev' ] },
       { domain: this.userService.getConfig().parentDomain });
+  }
+
+  deleteCommunity() {
+     return () => {
+      this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
+        const replicators = docs.map(doc => ({ ...doc, '_deleted': true }));
+        return forkJoin([
+          this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
+          this.couchService.delete('configurations/' + this.userService.getConfig()._id + '?rev=' + this.userService.getConfig()._rev ),
+          this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
+          this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
+          this.couchService.post('_replicator/_bulk_docs', { 'docs': replicators })
+        ]);
+      })).subscribe((res: any) => {
+        this.deleteCommunityDialog.close();
+        this.router.navigate([ '/login/configuration' ]);
+      }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
+    };
+  }
+
+  openDeleteCommunityDialog() {
+    this.deleteCommunityDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteCommunity(),
+        changeType: 'delete',
+        type: 'community',
+        displayName: this.userService.get().name
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
   }
 
 }

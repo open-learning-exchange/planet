@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "LNG=${LNG:-en};ng serve --aot --i18n-file=src/i18n/messages.$LNG.xlf --locale=$LNG --i18n-format=xlf",
     "v-serve": "vagrant ssh -- -t 'cd /vagrant;ng serve'",
-    "build": "ng build",
+    "build": "LNG=${LNG:-en};ng build --prod --i18n-file=src/i18n/messages.$LNG.xlf --locale=$LNG --i18n-format=xlf",
     "v-build": "vagrant ssh -- -t 'cd /vagrant;ng build --prod'",
     "test": "ng test",
     "v-test": "vagrant ssh -- -t 'cd /vagrant;ng test'",

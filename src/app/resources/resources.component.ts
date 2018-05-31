@@ -205,6 +205,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .subscribe((data) => {
+          this.selection.deselect(resource);
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
@@ -269,10 +270,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetFilter() {
-    this.filter = {
-      'subject': '',
-      'level': ''
-    };
+    this.filter.level = '';
+    this.filter.subject = '';
     this.titleSearch = '';
   }
 
