@@ -5,20 +5,20 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
+    <span class="margin-lr-3"><h3>{{courseDetail?.courseTitle}}</h3></span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-detail bg-light-grey">
-      <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
-      <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
-      <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
-      <p i18n><b>Method:</b> {{courseDetail.method}}</p>
-      <p i18n><b>Description:</b> {{courseDetail.description}}</p>
+      <p i18n><b>Subject Level:</b> {{courseDetail?.subjectLevel}}</p>
+      <p i18n><b>Grade Level:</b> {{courseDetail?.gradeLevel}}</p>
+      <p i18n><b>Language of Instruction:</b> {{courseDetail?.languageOfInstruction}}</p>
+      <p i18n><b>Method:</b> {{courseDetail?.method}}</p>
+      <p i18n><b>Description:</b> {{courseDetail?.description}}</p>
     </div>
     <div class="course-view">
-      <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
+      <ng-container *ngFor="let step of courseDetail?.steps; let stepNum = index;">
         <mat-expansion-panel hideToggle="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
