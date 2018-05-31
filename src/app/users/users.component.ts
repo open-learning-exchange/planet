@@ -227,26 +227,26 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   roleSubmit(users: any[], roles: string[]) {
-    forkJoin(users.reduce((observers, userInfo) => {
-      const user = userInfo.doc;
+    forkJoin(users.reduce((observers, userId) => {
+      const user: any = this.allUsers.data.find((u: any) => u.doc._id === userId);
       // Do not add role if it already exists on user and also not allow an admin to be given another role
-      if (user.isUserAdmin === false) {
+      if (user.doc.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const newRoles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
-        const tempUser = { ...user, roles: newRoles };
+        const newRoles = [ ...user.doc.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+        const tempUser = { ...user.doc, roles: newRoles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
     }, []))
     .pipe(debug('Adding role to users'))
     .subscribe((responses) => {
-      users.map((userInfo) => {
-        const user = userInfo.doc;
-        if (user.isUserAdmin === false) {
+      users.map((userId) => {
+        const user: any = this.allUsers.data.find((u: any) => u.doc._id === userId);
+        if (user.doc.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
-          const res: any = responses.find((response: any) => response.id === user._id);
-          user._rev = res.rev;
+          user.doc.roles = [ ...user.doc.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+          const res: any = responses.find((response: any) => response.id === user.doc._id);
+          user.doc._rev = res.rev;
         }
       });
     }, (error) => {
