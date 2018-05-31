@@ -36,6 +36,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
       this.maxStep = course.steps.length;
+      this.attempts = 0;
       if (this.stepDetail.exam) {
         this.showExamButton = this.checkMyCourses(course._id);
         this.submissionsService.openSubmission({
