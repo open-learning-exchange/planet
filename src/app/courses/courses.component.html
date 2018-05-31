@@ -21,6 +21,7 @@
 </mat-toolbar>
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
+    <span *ngIf="selection.selected.length" class="margin-lr-3"><h3>{{selection.selected.length}}{{(selection.selected.length === 1 ) ? ' item' : ' items'}} selected</h3></span>
     <span class="toolbar-fill"></span>
     <button *ngIf="!parent" mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
