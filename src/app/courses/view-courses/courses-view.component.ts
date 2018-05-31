@@ -50,7 +50,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
+    this.coursesService.courseUpdated$
+    .pipe(takeUntil(this.onDestroy$))
+    .subscribe(({ course, progress }: { course: any, progress: any }) => {
       this.courseDetail = course;
       this.showExamButton = this.checkMyCourses(course._id);
     });

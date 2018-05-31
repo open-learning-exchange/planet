@@ -31,7 +31,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
+    this.coursesService.courseUpdated$
+    .pipe(takeUntil(this.onDestroy$))
+    .subscribe(({ course, progress }: { course: any, progress: any }) => {
       // To be readable by non-technical people stepNum & questionNum param will start at 1
       const step = course.steps[this.stepNum - 1];
       this.setQuestion(step.exam.questions);
