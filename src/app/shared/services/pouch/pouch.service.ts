@@ -18,9 +18,7 @@ export class PouchService {
   private baseUrl = environment.couchAddress;
   private localDB;
   private authDB;
-  private remoteDBs = {
-    courses: null
-  };
+  private readonly remoteDBs = [ 'courses' ];
 
   constructor() {
     this.localDB = new PouchDB('local-pouchdb');
@@ -40,15 +38,33 @@ export class PouchService {
     this.authDB = new PouchDB(this.baseUrl + 'test', {
       skip_setup: true
     });
+  }
 
-    Object.keys(this.remoteDBs).forEach(db => {
-      this.remoteDBs[db] = new PouchDB(this.baseUrl + db);
+  replicateFromRemoteDBs() {
+    return this.remoteDBs.forEach(db => {
+      this.localDB.replicate.from(this.baseUrl + db);
     });
   }
 
-  replicateRemoteToLocal(key: RemoteDatabases) {
+  replicateToRemoteDBs() {
+    return this.remoteDBs.forEach(db => {
+      this.localDB.replicate.to(this.baseUrl + db, {
+        filter(doc) {
+          return doc.pouchIndex === db;
+        }
+      });
+    });
+  }
+
+  replicateFromRemoteDB(key: RemoteDatabases) {
     return Observable.fromPromise(
-      this.localDB.replicate.from(this.remoteDBs[key])
+      this.localDB.replicate.from(this.baseUrl + key)
+    ).pipe(catchError(this.handleError));
+  }
+
+  replicateToRemoteDB(key: RemoteDatabases) {
+    return Observable.fromPromise(
+      this.localDB.replicate.to(this.baseUrl + key)
     ).pipe(catchError(this.handleError));
   }
 
@@ -56,12 +72,8 @@ export class PouchService {
     return this.localDB;
   }
 
-  getRemotePouchDB(key: RemoteDatabases) {
-    if (key === 'auth') {
-      return this.authDB;
-    }
-
-    return this.remoteDBs[key];
+  getAuthDB() {
+    return this.authDB;
   }
 
   private handleError(err) {
