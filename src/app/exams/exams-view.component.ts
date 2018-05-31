@@ -45,6 +45,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.mode === 'grade') {
         this.setQuestion(submission.parent.questions);
         this.answer = submission.answers[this.questionNum - 1];
+        this.grade = submission.grades[this.questionNum - 1 ];
       }
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -57,7 +58,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       } else if (submissionId) {
         this.mode = 'grade';
         this.grade = undefined;
-        this.submissionsService.openSubmission({ submissionId, 'status': 'complete' });
+        this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
       }
     });
   }
@@ -74,7 +75,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
         break;
       case 'grade':
-        this.submissionsService.submitGrade(this.grade, this.questionNum - 1);
+        this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
         break;
     }
     this.answer = '';
