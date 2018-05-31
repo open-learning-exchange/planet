@@ -162,6 +162,9 @@ export class UserService {
     }
     return newObs.pipe(switchMap(() => {
       return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+    }), map((res: any) => {
+      this.sessionRev = res.rev;
+      return res;
     }));
   }
 
