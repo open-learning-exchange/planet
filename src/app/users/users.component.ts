@@ -226,27 +226,33 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  roleSubmit(users: any[], roles: string[]) {
-    forkJoin(users.reduce((observers, userId) => {
+  idsToUsers(userIds: any[]) {
+    return userIds.map(userId => {
       const user: any = this.allUsers.data.find((u: any) => u.doc._id === userId);
+      return user.doc;
+    });
+  }
+
+  roleSubmit(userIds: any[], roles: string[]) {
+    const users: any = this.idsToUsers(userIds);
+    forkJoin(users.reduce((observers, user) => {
       // Do not add role if it already exists on user and also not allow an admin to be given another role
-      if (user.doc.isUserAdmin === false) {
+      if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const newRoles = [ ...user.doc.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
-        const tempUser = { ...user.doc, roles: newRoles };
+        const newRoles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+        const tempUser = { ...user, roles: newRoles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
     }, []))
     .pipe(debug('Adding role to users'))
     .subscribe((responses) => {
-      users.map((userId) => {
-        const user: any = this.allUsers.data.find((u: any) => u.doc._id === userId);
-        if (user.doc.isUserAdmin === false) {
+      users.map((user) => {
+        if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.doc.roles = [ ...user.doc.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
-          const res: any = responses.find((response: any) => response.id === user.doc._id);
-          user.doc._rev = res.rev;
+          user.roles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+          const res: any = responses.find((response: any) => response.id === user._id);
+          user._rev = res.rev;
         }
       });
     }, (error) => {
@@ -271,15 +277,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => (error));
   }
 
-  addTeams(users) {
+  addTeams(userIds) {
+    const users = this.idsToUsers(userIds);
     const userShelf = this.userService.shelf;
-    const myTeamIds = users.map((data) => {
-      return data.doc._id;
-    }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
+    const myTeamIds = userIds.concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
     const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
     const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
     const msg = (users.length === 1 && addedNum === 1 ?
-      users[0].doc.name + ' has been'
+      users[0].name + ' has been'
       : addedNum + ' ' + subjectVerbAgreement + ' been')
       + ' added to';
     this.updateShelf(myTeamIds, userShelf, msg);
