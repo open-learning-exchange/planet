@@ -54,7 +54,7 @@ export class CoursesService {
   }
 
   updateCourses() {
-    return this.pouchDBService.replicateRemoteToLocal('courses');
+    return this.pouchDBService.replicateFromRemoteDB('courses');
   }
 
   private handleError(err) {

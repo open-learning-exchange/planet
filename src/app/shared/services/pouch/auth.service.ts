@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
 import 'rxjs/add/observable/fromPromise';
 
@@ -16,8 +16,8 @@ interface SessionInfo {
 export class AuthService {
   private authDB;
 
-  constructor(private pouchdbService: PouchService) {
-    this.authDB = this.pouchdbService.getRemotePouchDB('auth');
+  constructor(private pouchService: PouchService) {
+    this.authDB = this.pouchService.getAuthDB();
   }
 
   getSessionInfo(): Observable<SessionInfo> {
