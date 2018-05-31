@@ -54,7 +54,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
-  userId = this.userService.get()._id;
+  user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
 
@@ -90,8 +90,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const myCourseIndex = myCourses.findIndex(courseId => {
         return course._id === courseId;
       });
-      course.canManage = this.userService.get().isUserAdmin ||
-        (course.creator === this.userService.get().name + '@' + this.userService.getConfig().code);
+      course.canManage = this.user.isUserAdmin ||
+        (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
     });
   }
@@ -172,11 +172,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   deleteCourses(courses) {
     return () => {
-      const deleteArray = courses.filter((course) => {
-        if (course.canManage) {
-          return course;
-        }
-      }).map((course) => {
+      // Delete many courses only allowed for admin, so no need to check if user is creator
+      const deleteArray = courses.map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
@@ -235,7 +232,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   updateShelf(newShelf, message) {
-    this.couchService.put('shelf/' + this.userId, newShelf).subscribe((res) => {
+    this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
       this.setupList(this.courses.data,  this.userShelf.courseIds);
