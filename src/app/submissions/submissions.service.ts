@@ -44,7 +44,7 @@ export class SubmissionsService {
   }
 
   private newSubmission({ parentId, parent, user, type }) {
-    this.submission = { parentId, parent, user, type, answers: [], grades: [], status: 'pending' };
+    this.submission = { parentId, parent, user, type, answers: [], grades: [], grade: 0, status: 'pending' };
   }
 
   openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
@@ -52,13 +52,15 @@ export class SubmissionsService {
     this.couchService.post('submissions/_find', { selector })
       .subscribe((res) => {
         let attempts = res.docs.length - 1;
+        const bestAttempt = res.docs.reduce((best: any, submission: any) =>
+          submission.grade > best.grade ? submission : best, res.docs[0]);
         this.submission = res.docs.find(submission => submission.status === status);
         if (this.submission === undefined) {
           attempts += 1;
           this.newSubmission({ parentId, parent, user, type });
         }
         this.submissionAttempts = attempts;
-        this.submissionUpdated.next({ submission: this.submission, attempts });
+        this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
       });
   }
 
@@ -71,12 +73,18 @@ export class SubmissionsService {
   submitGrade(grade, index: number, close) {
     const submission = { ...this.submission, grades: [ ...this.submission.grades ] };
     submission.grades[index] = grade;
+    submission.grade = this.calcTotalGrade(submission);
     this.updateSubmission(submission, false, close);
   }
 
   updateStatus(submission: any) {
     const statusProgression = new Map([ [ 'pending', 'complete' ], [ 'complete', 'graded' ] ]);
     return statusProgression.get(submission.status);
+  }
+
+  calcTotalGrade(submission: any) {
+    return submission.grades.reduce((total: number, grade: any, index: number) =>
+      total + (submission.parent.questions[index].marks * grade), 0);
   }
 
   updateSubmission(submission: any, takingExam: boolean, close: boolean) {
