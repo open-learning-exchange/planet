@@ -22,6 +22,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   attempts = 0;
   showExamButton = false;
   resource: any;
+  progress: any;
 
   constructor(
     private router: Router,
@@ -32,9 +33,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
+    this.coursesService.courseUpdated$
+    .pipe(takeUntil(this.onDestroy$))
+    .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
+      this.progress = progress;
+      if (this.stepNum > progress.stepNum) {
+        this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, progress });
+      }
       this.maxStep = course.steps.length;
       this.attempts = 0;
       if (this.stepDetail.exam) {

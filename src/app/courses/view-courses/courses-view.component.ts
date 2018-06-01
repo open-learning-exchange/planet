@@ -39,6 +39,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
   showExamButton = false;
+  nextStep = 1;
 
   constructor(
     private router: Router,
@@ -50,8 +51,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
+    this.coursesService.courseUpdated$
+    .pipe(takeUntil(this.onDestroy$))
+    .subscribe(({ course, progress = { stepNum: 1 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
+      this.nextStep = progress.stepNum;
       this.showExamButton = this.checkMyCourses(course._id);
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -66,7 +70,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate([ './step/1' ], { relativeTo: this.route });
+    this.router.navigate([ './step/' + this.nextStep ], { relativeTo: this.route });
   }
 
   goToExam(stepDetail, stepNum) {

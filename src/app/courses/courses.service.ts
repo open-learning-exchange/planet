@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Subject } from 'rxjs/Subject';
+import { UserService } from '../shared/user.service';
+import { findDocuments } from '../shared/mangoQueries';
+import { forkJoin } from 'rxjs/observable/forkJoin';
+import { of } from 'rxjs/observable/of';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
@@ -8,30 +12,35 @@ export class CoursesService {
 
   course: any = { _id: '' };
   submission: any = { courseId: '', examId: '' };
-  private courseUpdated = new Subject<any[]>();
+  private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;
 
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private userService: UserService
   ) {}
 
-  // Components call this to get details of one course.
+  // Components call this to get details of one course and associated progress.
   // If the id already matches what is stored on the service, return that.
   // Or will get new version if forceLatest set to true
+  // Always queries CouchDB for the latest progress by the logged in user
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
+    const obs = [
+      this.couchService.post('courses_progress/_find', findDocuments({
+        'userId': this.userService.get()._id,
+        courseId
+      }))
+    ];
     if (!forceLatest && courseId === this.course._id) {
-      this.courseUpdated.next(this.course);
+      obs.push(of(this.course));
     } else {
-      this.getCourse(courseId, opts);
+      obs.push(this.couchService.get('courses/' + courseId, opts));
     }
-  }
-
-  private getCourse(courseId: string, opts) {
-    this.couchService.get('courses/' + courseId, opts).subscribe(course => {
+    forkJoin(obs).subscribe(([ progress, course ]) => {
       this.course = course;
-      this.courseUpdated.next(course);
+      this.courseUpdated.next({ progress: progress.docs[0], course });
     });
   }
 
@@ -39,6 +48,13 @@ export class CoursesService {
     this.course = { _id: '' };
     this.stepIndex = -1;
     this.returnUrl = '';
+  }
+
+  updateProgress({ courseId, stepNum, progress = {} }) {
+    const newProgress = { ...progress, stepNum, courseId, userId: this.userService.get()._id };
+    this.couchService.post('courses_progress', newProgress).subscribe(() => {
+      this.requestCourse({ courseId });
+    });
   }
 
 }
