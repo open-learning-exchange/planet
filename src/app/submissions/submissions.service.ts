@@ -65,17 +65,22 @@ export class SubmissionsService {
   submitAnswer(answer, index: number, close: boolean) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
     submission.answers[index] = answer;
-    submission.status = close ? 'complete' : 'pending';
-    this.updateSubmission(submission, true);
+    this.updateSubmission(submission, true, close);
   }
 
-  submitGrade(grade, index: number) {
+  submitGrade(grade, index: number, close) {
     const submission = { ...this.submission, grades: [ ...this.submission.grades ] };
     submission.grades[index] = grade;
-    this.updateSubmission(submission, false);
+    this.updateSubmission(submission, false, close);
   }
 
-  updateSubmission(submission: any, takingExam: boolean) {
+  updateStatus(submission: any) {
+    const statusProgression = new Map([ [ 'pending', 'complete' ], [ 'complete', 'graded' ] ]);
+    return statusProgression.get(submission.status);
+  }
+
+  updateSubmission(submission: any, takingExam: boolean, close: boolean) {
+    submission.status = close ? this.updateStatus(submission) : submission.status;
     this.couchService.post('submissions', submission).subscribe((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
