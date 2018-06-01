@@ -72,20 +72,24 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
+    let obs: any;
     switch (this.mode) {
       case 'take':
-        this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
+        obs = this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
         break;
       case 'grade':
-        this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
+        obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
         break;
     }
     this.answer = '';
-    if (close) {
-      this.goBack();
-    } else {
-      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
-    }
+    // Only navigate away from page until after successful post (ensures DB is updated for submission list)
+    obs.subscribe(() => {
+      if (close) {
+        this.goBack();
+      } else {
+        this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+      }
+    });
   }
 
   goBack() {
