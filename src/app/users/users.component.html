@@ -2,12 +2,16 @@
   <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Users</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group *ngIf="planetType !== 'community'" (change)="changeFilter(filterGroup.value)" #filterGroup="matButtonToggleGroup">
+  <mat-button-toggle-group
+    class="margin-lr-5 font-size-1"
+    *ngIf="planetType !== 'community'"
+    (change)="changeFilter(filterGroup.value)"
+    #filterGroup="matButtonToggleGroup">
     <mat-button-toggle value="local" [checked]="!filterAssociated">
       Local
     </mat-button-toggle>
     <mat-button-toggle value="associated" [checked]="filterAssociated">
-      Asociated
+      Associated
     </mat-button-toggle>
   </mat-button-toggle-group>
   <mat-icon>search</mat-icon>
