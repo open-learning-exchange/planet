@@ -23,6 +23,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   showExamButton = false;
   resource: any;
   progress: any;
+  examPassed = false;
 
   constructor(
     private router: Router,
@@ -53,9 +54,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           type: 'exam' });
       }
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts, bestAttempt }) => {
         this.examStart = submission.answers.length + 1;
         this.attempts = attempts;
+        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
+        this.examPassed = examPercent > this.stepDetail.exam.passingPercentage;
       });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {

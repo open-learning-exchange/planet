@@ -88,7 +88,7 @@ export class ExamsAddComponent implements OnInit {
   addExam(examInfo) {
     this.couchService.post(this.dbName, examInfo).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
-      const courseExam = { ...this.documentInfo, ...examInfo };
+      const courseExam = { ...this.documentInfo, ...examInfo, totalMarks: this.totalMarks(examInfo) };
       this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
       this.router.navigate([ this.coursesService.returnUrl ]);
       this.planetMessageService.showMessage(this.successMessage);
@@ -96,6 +96,10 @@ export class ExamsAddComponent implements OnInit {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+  }
+
+  totalMarks(examInfo) {
+    return examInfo.questions.reduce((total: number, question: any) => total + question.marks, 0);
   }
 
   addQuestion(question: any = {}) {
