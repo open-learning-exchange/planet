@@ -6,7 +6,7 @@ import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { filterSpecificFields, composeFilterFunctions, filterFieldExists, filterFieldNotExists } from '../shared/table-helpers';
@@ -53,14 +53,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
-    private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.setMyTeams(this.allUsers.data, shelf.myTeamIds);
       });
-    }
+  }
 
   ngOnInit() {
     this.planetType = this.userService.getConfig().planetType;
