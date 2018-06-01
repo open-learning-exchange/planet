@@ -15,7 +15,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
   stepNum = 0;
-  stepDetail: any = { stepTitle: '', description: '' };
+  stepDetail: any = { stepTitle: '', description: '', resources: [] };
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
