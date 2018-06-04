@@ -26,7 +26,7 @@ export class CoursesService {
   // If the id already matches what is stored on the service, return that.
   // Or will get new version if forceLatest set to true
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
-    if (!forceLatest && courseId === this.course._id) {
+    if (!forceLatest && this.course && courseId === this.course._id) {
       this.courseUpdated.next(this.course);
     } else {
       this.getCourse(courseId, opts);
