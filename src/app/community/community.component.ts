@@ -6,7 +6,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { of } from 'rxjs/observable/of';
 import { findDocuments } from '../shared/mangoQueries';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './community.component.html'
@@ -25,7 +25,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     'action'
   ];
   editDialog: any;
-
+  filter = { 'registrationRequest': '' };
+  private _search = '';
+  get search(): string { return this._search; }
+  set search(value: string) {
+    // When setting the search, also set the communities filter
+    this.communities.filter = value ? value : this.dropdownsFill();
+    this._search = value;
+  }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -37,16 +44,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getCommunityList();
     this.communities.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-    this.communities.filterPredicate = filterSpecificFields([ 'code', 'name' ]);
+    this.communities.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'code', 'name' ]) ]);
   }
 
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
     this.communities.sort = this.sort;
-  }
-
-  requestListFilter(filterValue: string) {
-    this.communities.filter = filterValue;
   }
 
   getCommunityList() {
@@ -55,6 +58,28 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       .subscribe((data) => {
         this.communities.data = data.docs;
       }, (error) => this.message = 'There was a problem getting Communities');
+  }
+
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Force filter to update by setting it to a space if empty
+    this.communities.filter = this.communities.filter ? this.communities.filter : ' ';
+  }
+
+  resetSearch() {
+    this.filter.registrationRequest = '';
+    this.search = '';
+  }
+
+  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+  // search text is deleted, but does not run when there are no active filters.
+  dropdownsFill() {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
+      if (val) {
+        return ' ';
+      }
+      return emptySpace;
+    }, '');
   }
 
   updateRev(item, array) {
