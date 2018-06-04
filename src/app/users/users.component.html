@@ -39,8 +39,8 @@
       </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
+        <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
+          [checked]="selection.isSelected(row.doc._id)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -103,7 +103,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row.doc._id)}" ></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="10"

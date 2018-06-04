@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
+
 @Component({
   template: `
     <p i18n>Your Notifications</p>
@@ -9,7 +12,7 @@ import { findDocuments } from '../shared/mangoQueries';
       <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
         <p [ngClass]="{'primary-text-color':notification.status==='unread'}">
-          <a routerLink="/notifications">
+          <a [routerLink]="notification.link || '/notifications'">
             {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
           </a>
         </p>
@@ -19,11 +22,13 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class NotificationsComponent implements OnInit {
   notifications = [];
+  private onDestroy$ = new Subject<void>();
+
   constructor(
     private couchService: CouchService,
     private userService: UserService
     ) {
-    this.userService.notificationStateChange$.subscribe(() => {
+    this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
     });
   }
@@ -33,9 +38,14 @@ export class NotificationsComponent implements OnInit {
   }
 
   getNotifications() {
-    this.couchService.
-    post('notifications/_find', findDocuments(
-      { 'user': 'org.couchdb.user:' + this.userService.get().name,
+    const userFilter = [ {
+      'user': 'org.couchdb.user:' + this.userService.get().name
+    } ];
+    if (this.userService.get().isUserAdmin) {
+      userFilter.push({ 'user': 'SYSTEM' });
+    }
+    this.couchService.post('notifications/_find', findDocuments(
+      { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 }
       },

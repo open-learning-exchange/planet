@@ -4,20 +4,17 @@ import { environment } from '../environments/environment';
 
 const debuggerOn = !environment.production;
 
-export const debugOperator = function<T> (message: string) {
-  const source = this;
+const logger = (args: any[]) => {
   if (debuggerOn) {
-    return source.pipe(tap(
-      function (next) {
-        console.log(message, next);
-      },
-      function (err) {
-        console.error('ERROR >>> ', message, err);
-      },
-      function () {
-        console.log(message, 'Completed.');
-      }
-    ));
+    console.log.apply(null, args);
   }
-  return source;
 };
+
+export const debug = <T>(message: string) => (source: Observable<T>) =>
+  source.pipe(tap(
+    value => logger([ message, value ]),
+    err => logger([ 'ERROR >>> ', message, err ]),
+    () => logger([ message, 'Completed.' ])
+  ));
+
+

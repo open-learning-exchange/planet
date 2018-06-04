@@ -19,7 +19,16 @@ export class UserService {
   private user: any = { name: '' };
   private logsDb = 'login_activities';
   private configuration: any = { };
-  private shelf: any = { };
+  private _shelf: any = { };
+  get shelf(): any {
+    return this._shelf;
+  }
+  set shelf(shelf: any) {
+    this._shelf = shelf;
+    if (shelf === {}) {
+      this.shelfChange.next(shelf);
+    }
+  }
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
@@ -43,21 +52,12 @@ export class UserService {
     this.notificationStateChange.next();
   }
 
-  setShelf(shelf: any): any {
-    this.shelf = shelf;
-    this.shelfChange.next();
-  }
-
   get(): any {
     return this.user;
   }
 
   getConfig(): any {
     return this.configuration;
-  }
-
-  getUserShelf(): any {
-    return this.shelf;
   }
 
   setUserConfigAndShelf(user: any) {
@@ -162,6 +162,9 @@ export class UserService {
     }
     return newObs.pipe(switchMap(() => {
       return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+    }), map((res: any) => {
+      this.sessionRev = res.rev;
+      return res;
     }));
   }
 

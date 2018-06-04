@@ -9,6 +9,8 @@ import { interval } from 'rxjs/observable/interval';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { forkJoin } from 'rxjs/observable/forkJoin';
+import { findDocuments } from '../shared/mangoQueries';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './home.component.html',
@@ -36,10 +38,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   userImgSrc = '';
 
   // Sets the margin for the main content to match the sidenav width
-  animObs = interval(15).debug('Menu animation').pipe(tap(() => {
-    this.mainContent._updateContentMargins();
-    this.mainContent._changeDetectorRef.markForCheck();
-  }));
+  animObs = interval(15).pipe(
+    debug('Menu animation'),
+    tap(() => {
+      this.mainContent._updateContentMargins();
+      this.mainContent._changeDetectorRef.markForCheck();
+    }
+  ));
   // For disposable returned by observer to unsubscribe
   animDisp: any;
 
@@ -68,7 +73,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }).filter(lang  => {
       return lang['active'] !== 'N';
     });
-    this.userService.notificationStateChange$.subscribe(() => {
+    this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
     });
   }
@@ -86,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated' ];
+    const routesWithBackground = [ 'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions' ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
@@ -124,7 +129,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   logoutClick() {
     this.userService.endSessionLog().pipe(switchMap(() => {
       const obsArr = [ this.couchService.delete('_session', { withCredentials: true }) ];
-      if (this.userService.getConfig().name === this.userService.get().name) {
+      const localAdminName = this.userService.getConfig().adminName.split('@')[0];
+      if (localAdminName === this.userService.get().name) {
         obsArr.push(
           this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parentDomain }),
         );
@@ -137,14 +143,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNotification() {
-    const userId = 'org.couchdb.user:' + this.userService.get().name;
-    this.couchService.allDocs('notifications')
-      .subscribe((data) => {
-        data.sort((a, b) => 0 - (new Date(a.time) > new Date(b.time) ? 1 : -1));
-        this.notifications = data.filter((nt: any)  => {
-          return nt.user === userId;
-        });
-      }, (error) => console.log(error));
+    const userFilter = [ {
+      'user': 'org.couchdb.user:' + this.userService.get().name
+    } ];
+    if (this.userService.get().isUserAdmin) {
+      userFilter.push({ 'user': 'SYSTEM' });
+    }
+    this.couchService.post('notifications/_find', findDocuments(
+      { '$or': userFilter,
+      // The sorted item must be included in the selector for sort to work
+        'time': { '$gt': 0 }
+      },
+      0,
+      [ { 'time': 'desc' } ]))
+    .subscribe(data => {
+      this.notifications = data.docs;
+    }, (error) => console.log(error));
   }
 
   readNotification(notification) {

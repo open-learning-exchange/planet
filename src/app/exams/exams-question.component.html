@@ -28,6 +28,10 @@
         matAutosizeMinRows="4">
       </textarea>
     </mat-form-field>
+    <mat-form-field>
+      <input type="number" matInput i18n-placeholder placeholder="Marks" formControlName="marks">
+      <mat-error><planet-form-error-messages [control]="questionForm.controls.marks"></planet-form-error-messages></mat-error>
+    </mat-form-field>
     <div *ngIf="questionForm.controls.type.value === 'select'">
       <button type="button" mat-button (click)="addChoice()">Add Choice</button>
       <mat-form-field *ngFor="let choice of choices.controls; index as i">
@@ -37,6 +41,6 @@
     </div>
   </form>
   <mat-action-row>
-    <button mat-icon-button><mat-icon (click)="deleteQuestion()">delete</mat-icon></button>
+    <button mat-icon-button (click)="deleteQuestion()"><mat-icon>delete</mat-icon></button>
   </mat-action-row>
 </mat-expansion-panel>

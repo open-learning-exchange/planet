@@ -20,7 +20,7 @@ export class CoursesStepComponent implements OnChanges {
     id: '',
     stepTitle: '',
     description: '',
-    attachment: ''
+    resources: []
   };
   @Output() stepInfoChange = new EventEmitter<any>();
   @Input() stepNum: number;
@@ -31,7 +31,7 @@ export class CoursesStepComponent implements OnChanges {
 
   stepForm: FormGroup;
   dialogRef: MatDialogRef<DialogsListComponent>;
-  attachment: any;
+  resources: any;
 
   constructor(
     private fb: FormBuilder,
@@ -40,12 +40,13 @@ export class CoursesStepComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.stepForm = this.fb.group(this.stepInfo);
-    this.attachment = this.stepForm.controls.attachment.value;
+    const { resources, ...stepForm } = this.stepInfo;
+    this.stepForm = this.fb.group(stepForm);
+    this.resources = resources;
   }
 
   stepChange() {
-    this.stepInfoChange.emit(this.stepForm.value);
+    this.stepInfoChange.emit({ ...this.stepForm.value, resources: this.resources });
   }
 
   addExam(stepNum: number) {
@@ -57,9 +58,12 @@ export class CoursesStepComponent implements OnChanges {
   }
 
   attachItem(db: string) {
+    const initialSelection = this.resources.map(resource => resource._id);
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
       const data = { okClick: this.dialogOkClick(db).bind(this),
         filterPredicate: filterSpecificFields([ 'title' ]),
+        allowMulti: true,
+        initialSelection,
         ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
@@ -71,8 +75,8 @@ export class CoursesStepComponent implements OnChanges {
   }
 
   dialogOkClick(db: string) {
-    return (item: any) => {
-      this.stepForm.patchValue({ attachment: { doc: item, type: db } });
+    return (selected: any) => {
+      this.resources = selected;
       this.stepChange();
       this.dialogRef.close();
     };

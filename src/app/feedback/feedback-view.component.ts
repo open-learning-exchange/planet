@@ -8,6 +8,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -33,8 +34,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getFeedback(params.get('id'))))
-      .debug('Getting feedback')
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(debug('Getting feedback'), takeUntil(this.onDestroy$))
       .subscribe((result) => {
         this.setFeedback(result);
         this.setCouchListener(result.docs[0]._id);
@@ -105,6 +105,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   scrollToBottom() {
     this.chatListElement.nativeElement.scrollTo({ top: this.chatListElement.nativeElement.scrollHeight, behavior: 'smooth' });
+  }
+
+  feedbackTrackByFn(index, item) {
+    return item._id;
   }
 
 }

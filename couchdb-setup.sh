@@ -60,10 +60,11 @@ insert_attachments() {
   for i in $INPUTS
   do
     ID=$(echo $i | jq -r '.doc_id' )
-    FILE_LOCATION=$(echo $i | jq -r '.file_name')
+    FILE_NAME=$(echo $i | jq -r '.file_name')
+    FILE_LOCATION=$(echo $i | jq -r '.file_location')
     FILE_TYPE=$(echo $i | jq -r '.file_type')
     REV=$(curl $COUCHURL/$DB/$ID | jq -r '._rev')
-    curl -X PUT $COUCHURL/$DB/$ID/$FILE_LOCATION?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE
+    curl -X PUT $COUCHURL/$DB/$ID/$FILE_NAME?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE
   done
 }
 
@@ -108,6 +109,8 @@ curl -X PUT $COUCHURL/login_activities
 curl -X PUT $COUCHURL/notifications
 curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/shelf
+curl -X PUT $COUCHURL/submissions
+curl -X PUT $COUCHURL/courses_progress
 
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
@@ -116,6 +119,8 @@ upsert_doc nations _design/nation-validators @./design/nations/nation-validators
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
+upsert_doc feedback _index '{"index":{"fields":[{"openTime":"desc"}]},"name":"time-index"}' POST
+upsert_doc communityregistrationrequests _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"time-index"}' POST
 # Insert dummy data docs
 insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
