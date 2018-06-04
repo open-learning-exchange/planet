@@ -6,7 +6,8 @@ import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { of } from 'rxjs/observable/of';
 import { findDocuments } from '../shared/mangoQueries';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
+import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 
 @Component({
   templateUrl: './community.component.html'
@@ -15,16 +16,18 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
   communities = new MatTableDataSource();
   nations = [];
+  filter = {
+    registrationRequest: 'pending'
+  };
   displayedColumns = [
     'name',
     'code',
-    'preferredLang',
     'localDomain',
-    'registrationRequest',
     'createdDate',
     'action'
   ];
   editDialog: any;
+  viewNationDetailDialog: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -44,7 +47,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
           return item[property].toLowerCase();
       }
     };
-    this.communities.filterPredicate = filterSpecificFields([ 'code', 'name' ]);
+    this.communities.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'code', 'name' ]) ]);
   }
 
   ngAfterViewInit() {
@@ -52,15 +55,33 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     this.communities.sort = this.sort;
   }
 
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue;
+    // Force filter to update by setting it to a space if empty
+    this.communities.filter = this.communities.filter || ' ';
+  }
+
   requestListFilter(filterValue: string) {
-    this.communities.filter = filterValue;
+    this.communities.filter = filterValue || this.dropdownsFill();
+  }
+
+  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+  // search text is deleted, but does not run when there are no active filters.
+  dropdownsFill() {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
+      if (val) {
+        return ' ';
+      }
+      return emptySpace;
+    }, '');
   }
 
   getCommunityList() {
     this.couchService.post('communityregistrationrequests/_find',
-      findDocuments({ 'registrationRequest': { '$ne': 'accepted' } }, 0, [ { 'createdDate': 'desc' } ] ))
+      findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
         this.communities.data = data.docs;
+        this.requestListFilter('');
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
@@ -91,10 +112,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       // Split community object into id, rev, and all other props in communityInfo
       const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
       switch (change) {
-        case 'delete':
         case 'reject':
         case 'unlink':
-          const updatedCommunity = { ...community, registrationRequest: change };
+          const updatedCommunity = { ...community, registrationRequest: 'rejected' };
           this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
             .subscribe((data) => {
               this.updateRev(data, this.communities.data);
@@ -157,6 +177,17 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         return this.couchService.put('_users/' + user._id + '?rev=' + user._rev,
           { ...user, roles: [ 'learner' ] });
       }));
+  }
+
+  view(planet) {
+    this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+      width: '600px',
+      autoFocus: false,
+      data: {
+        allData: planet,
+        title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
+      }
+    });
   }
 
 }
