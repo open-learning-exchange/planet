@@ -110,7 +110,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   initUpdate() {
-    this.configurationType = "update";
+    this.configurationType = 'update';
     const configurationId = this.userService.getConfig()._id;
 
     this.couchService.get('configurations/' + configurationId)
@@ -121,12 +121,12 @@ export class ConfigurationComponent implements OnInit {
       this.contactFormGroup.patchValue(data);
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
 
-  parentUniqueValidator(controlName: string) { 
+  parentUniqueValidator(controlName: string) {
     return ac => {
-      if (this.configurationType === "update") {
+      if (this.configurationType === 'update') {
         return this.validatorService.isNameAvailible$(
           'communityregistrationrequests',
           'code',
@@ -203,7 +203,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
-    if(this.configurationType === "update"){
+    if(this.configurationType === 'update') {
       this.updateConfiguration();
     } else if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const { confirmPassword, ...credentials } = this.loginForm.value;
@@ -301,7 +301,7 @@ export class ConfigurationComponent implements OnInit {
       const configuration = Object.assign(this.configurationFormGroup.value, this.contactFormGroup.value, {'_rev': this.documentInfo.rev})
       this.couchService.put(
         'configurations/' + this.documentInfo.id,
-        configuration 
+        configuration
       ).subscribe(() => {
         // Navigate back to the manager dashboard
         this.router.navigate([ '/manager' ]);
