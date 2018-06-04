@@ -111,7 +111,7 @@ export class ConfigurationComponent implements OnInit {
     this.configurationType = 'update';
     const configurationId = this.userService.getConfig()._id;
     this.couchService.get('configurations/' + configurationId)
-    .subscribe(data => {
+    .subscribe((data: any) => {
       this.documentInfo = { rev: data._rev, id: data._id };
       this.nationOrCommunity = data.planetType;
       this.configurationFormGroup.patchValue(data);
@@ -262,7 +262,7 @@ export class ConfigurationComponent implements OnInit {
             this.couchService.post('configurations', configuration),
             // then post configuration to parent planet's registration requests
             this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
-              .pipe(mergeMap(data => {
+              .pipe(mergeMap((data: any) => {
                 // then add user to parent planet with id of configuration and isUserAdmin set to false
                 userDetail['requestId'] =  data.id;
                 userDetail['isUserAdmin'] =  false;
@@ -295,7 +295,7 @@ export class ConfigurationComponent implements OnInit {
 
   updateConfiguration() {
      if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const configuration = Object.assign(this.configurationFormGroup.value, this.contactFormGroup.value, { '_rev': this.documentInfo.re; v });
+      const configuration = Object.assign(this.configurationFormGroup.value, this.contactFormGroup.value, { '_rev': this.documentInfo.rev });
       this.couchService.put(
         'configurations/' + this.documentInfo.id,
         configuration
