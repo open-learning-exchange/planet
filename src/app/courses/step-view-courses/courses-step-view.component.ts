@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap, filter } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { Step, Course } from '../../shared/services';
 
@@ -30,28 +30,33 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: Course) => {
-      // To be readable by non-technical people stepNum param will start at 1
-      this.stepDetail = course.steps[this.stepNum - 1];
-      this.maxStep = course.steps.length;
-      if (this.stepDetail.exam) {
-        this.showExamButton = this.checkMyCourses(course._id);
-        this.coursesService.openSubmission({
-          parentId: this.stepDetail.exam._id + '@' + course._id,
-          parent: this.stepDetail.exam,
-          user: this.userService.get().name,
-          type: 'exam' });
-      }
-      this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-      this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
-        this.examStart = submission.answers.length + 1;
-        this.attempts = attempts;
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        this.stepNum = +params.get('stepNum'); // Leading + forces string to number
+        this.coursesService.requestCourse({ courseId: params.get('id') });
+        return this.coursesService.courseUpdated$;
+      }),
+      filter(course => !!course), // for filtering out null values
+      takeUntil(this.onDestroy$)
+    ).subscribe((course: Course) => {
+        // To be readable by non-technical people stepNum param will start at 1
+        this.stepDetail = course.steps[this.stepNum - 1];
+        this.maxStep = course.steps.length;
+        if (this.stepDetail.exam) {
+          this.showExamButton = this.checkMyCourses(course._id);
+          this.coursesService.openSubmission({
+            parentId: this.stepDetail.exam._id + '@' + course._id,
+            parent: this.stepDetail.exam,
+            user: this.userService.get().name,
+            type: 'exam'
+          });
+        }
+        this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
+        this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+          this.examStart = submission.answers.length + 1;
+          this.attempts = attempts;
+        });
       });
-    });
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.coursesService.requestCourse({ courseId: params.get('id') });
-    });
   }
 
   ngOnDestroy() {
