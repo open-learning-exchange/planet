@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
+import { Step, Course } from '../../shared/services';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -11,10 +12,9 @@ import { UserService } from '../../shared/user.service';
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
-
-  onDestroy$ = new Subject<void>();
+  private stepDetail: Step;
+  private onDestroy$ = new Subject<void>();
   stepNum = 0;
-  stepDetail: any = { stepTitle: '', description: '' };
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
@@ -30,7 +30,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: any) => {
+    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((course: Course) => {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
       this.maxStep = course.steps.length;
