@@ -14,8 +14,8 @@ interface Step {
 
 // @TODO: Add more fields from the database
 export interface Course {
-  _id: String;
-  _rev: String;
+  _id: string;
+  _rev: string;
   kind: string;
   languageOfInstruction: string;
   courseTitle: string;
