@@ -6,10 +6,14 @@ import { map } from 'rxjs/operators';
 import 'rxjs/add/observable/fromPromise';
 import { PouchService } from './pouch.service';
 
-interface Step {
+export interface Step {
   stepTitle: string;
   description: string;
   attachment: string;
+  exam?: {
+    _id: string;
+  }
+  resources?: any[];
 }
 
 // @TODO: Add more fields from the database
