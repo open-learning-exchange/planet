@@ -4,7 +4,7 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-      <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}: {{stepDetail.stepTitle}}</h3></span>
+      <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}: {{stepDetail?.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
     <span *ngIf="stepDetail?.exam?.questions.length" i18n><h3>Exam attempts: {{attempts}}</h3></span>
     <a
@@ -26,9 +26,9 @@
       i18n>
       Open resource new tab
     </a>
-    <mat-form-field *ngIf="stepDetail.resources.length > 1">
+    <mat-form-field *ngIf="stepDetail?.resources.length > 1">
       <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (change)="onResourceChange($event.value)">
-        <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail.resources; index as i" [value]="resource">
+        <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail?.resources; index as i" [value]="resource">
           {{ resource.title }}
         </mat-option>
       </mat-select>
@@ -38,7 +38,7 @@
     <button mat-icon-button [disabled]="stepNum === maxStep" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="description">{{stepDetail.description}}</div>
+    <div class="description">{{stepDetail?.description}}</div>
     <planet-resources-viewer
       *ngIf="resource"
       [resourceId]="resource._id"
