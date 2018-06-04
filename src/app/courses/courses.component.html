@@ -52,7 +52,7 @@
       <mat-cell  *matCellDef="let element" class="list-content-menu">
         <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
         </h3>
-        <div class="content"><p>{{ element.description }}</p></div>
+        <div class="content"><p class="content-ellipsis">{{ element.description }}</p></div>
         <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
