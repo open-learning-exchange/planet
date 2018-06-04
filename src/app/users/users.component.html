@@ -27,7 +27,7 @@
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
       <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}}</span></button>
+        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span></button>
     </div>
   </mat-toolbar>
 
