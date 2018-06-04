@@ -295,7 +295,10 @@ export class ConfigurationComponent implements OnInit {
 
   updateConfiguration() {
      if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const configuration = Object.assign(this.configurationFormGroup.value, this.contactFormGroup.value, { '_rev': this.documentInfo.rev });
+      const configuration = Object.assign(
+        this.configurationFormGroup.value,
+        this.contactFormGroup.value,
+        { '_rev': this.documentInfo.rev });
       this.couchService.put(
         'configurations/' + this.documentInfo.id,
         configuration
