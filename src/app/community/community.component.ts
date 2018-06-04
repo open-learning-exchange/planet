@@ -112,10 +112,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       // Split community object into id, rev, and all other props in communityInfo
       const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
       switch (change) {
-        case 'delete':
         case 'reject':
         case 'unlink':
-          const updatedCommunity = { ...community, registrationRequest: change };
+          const updatedCommunity = { ...community, registrationRequest: 'rejected' };
           this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
             .subscribe((data) => {
               this.updateRev(data, this.communities.data);
