@@ -36,7 +36,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCommunityList();
-    this.communities.sortingDataAccessor = (item, property) => item[property].toString().toLowerCase();
+    this.communities.sortingDataAccessor = (item, property) => {
+      switch (typeof item[property]) {
+        case 'number':
+          return item[property];
+        case 'string':
+          return item[property].toLowerCase();
+      }
+    };
     this.communities.filterPredicate = filterSpecificFields([ 'code', 'name' ]);
   }
 
