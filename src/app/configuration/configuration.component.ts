@@ -48,8 +48,8 @@ export class ConfigurationComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       name: [ '', [
         Validators.required,
-        CustomValidators.pattern(/^[A-Za-z0-9]/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^[a-z0-9_.-]*$/i) ]
+        CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
       ],
       password: [
         '',
