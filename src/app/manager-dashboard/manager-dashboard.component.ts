@@ -60,7 +60,9 @@ export class ManagerDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.checkRequestStatus();
+    if (this.planetType !== 'center') {
+      this.checkRequestStatus();
+    }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
       // A non-admin user cannot receive all user docs
