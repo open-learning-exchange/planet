@@ -11,10 +11,12 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 import * as JSZip from 'jszip/dist/jszip.min';
-import * as mime from 'mime-types';
 import { Observable, of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
+
+import Mime from 'mime/Mime';
+const mime = new Mime(require('mime/types/standard.json'));
 
 @Component({
   templateUrl: './resources-add.component.html'
@@ -227,7 +229,7 @@ export class ResourcesAddComponent implements OnInit {
           // Create object in format for multiple attachment upload to CouchDB
           const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
             // Default to text/plain if no mime type found
-            const fileType = mime.lookup(file.name) || 'text/plain';
+            const fileType = mime.getType(file.name) || 'text/plain';
             newFilesObj[file.name] = { data: file.data, content_type: fileType };
             return newFilesObj;
           }, {});
