@@ -126,9 +126,9 @@ export class ConfigurationComponent implements OnInit {
        if (this.configurationType === 'update') {
         return this.validatorService.isNameAvailible$(
           'communityregistrationrequests',
-          'code',
+          controlName,
           ac,
-          this.configurationFormGroup.value.code
+          this.configurationFormGroup.value[controlName]
         );
       } else {
         return this.validatorService.isUnique$(
@@ -160,12 +160,14 @@ export class ConfigurationComponent implements OnInit {
   }
 
   planetNameChange(event) {
-    let code = this.configurationFormGroup.get('name').value;
-    // convert special character to dot except last character
-    code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
-    // skip special character if comes as last character
-    code = code.replace(/\W+$/, '').toLowerCase();
-    this.configurationFormGroup.get('code').setValue(code);
+    if (this.configurationType !== 'update') {
+      let code = this.configurationFormGroup.get('name').value;
+      // convert special character to dot except last character
+      code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
+      // skip special character if comes as last character
+      code = code.replace(/\W+$/, '').toLowerCase();
+      this.configurationFormGroup.get('code').setValue(code);
+    }
   }
 
   getNationList() {
