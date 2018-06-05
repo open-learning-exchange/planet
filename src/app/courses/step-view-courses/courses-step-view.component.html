@@ -27,7 +27,7 @@
       Open resource new tab
     </a>
     <mat-form-field *ngIf="stepDetail.resources.length > 1">
-      <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (change)="onResourceChange($event.value)">
+      <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (selectionChange)="onResourceChange($event.value)">
         <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail.resources; index as i" [value]="resource">
           {{ resource.title }}
         </mat-option>

@@ -77,7 +77,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (remove)="deleteRole(element.doc,i)">
+          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
             {{role}}
             <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
           </mat-chip>
