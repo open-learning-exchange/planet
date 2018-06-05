@@ -115,12 +115,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         case 'reject':
         case 'unlink':
           const updatedCommunity = { ...community, registrationRequest: 'rejected' };
-          this.couchService.put('communityregistrationrequests/' + communityId, updatedCommunity)
-            .subscribe((data) => {
-              this.updateRev(data, this.communities.data);
-              this.getCommunityList();
-              this.editDialog.close();
-            }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+          this.rejectCommunity(updatedCommunity);
           break;
         case 'accept':
           forkJoin([
@@ -165,7 +160,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         this.updateRev(data, this.communities.data);
         this.getCommunityList();
         this.editDialog.close();
-      }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+      }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
     };
   }
 
