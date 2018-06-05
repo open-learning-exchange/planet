@@ -66,8 +66,17 @@ export class CoursesService {
         console.log('replicating to couch...');
         return res;
       },
+        catchError(this.handleError)
+      )
+    );
+  }
+
+  updateCourse(course) {
+    return Observable.fromPromise(
+      this.localDB.put({ ...course, pouchIndex: 'courses' })
+    ).pipe(
+      switchMap(() => this.pouchDBService.replicateToRemoteDB('courses')),
       catchError(this.handleError)
-    )
     );
   }
 
