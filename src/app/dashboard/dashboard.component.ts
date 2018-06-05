@@ -4,9 +4,8 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
 import { map, switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
+import { of, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 
 @Component({

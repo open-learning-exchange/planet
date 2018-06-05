@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';

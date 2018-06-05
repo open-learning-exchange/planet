@@ -8,12 +8,10 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { forkJoin, of, Subject } from 'rxjs';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
-import { Subject } from 'rxjs/Subject';
 import { debug } from '../debug-operator';
 
 @Component({

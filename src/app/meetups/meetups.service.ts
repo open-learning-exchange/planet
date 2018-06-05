@@ -3,9 +3,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
-import { Subject } from 'rxjs/Subject';
-import { of } from 'rxjs/observable/of';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 
 @Injectable()

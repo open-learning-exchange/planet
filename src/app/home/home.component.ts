@@ -5,10 +5,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { languages } from '../shared/languages';
-import { interval } from 'rxjs/observable/interval';
+import { interval, Subject, forkJoin } from 'rxjs';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 

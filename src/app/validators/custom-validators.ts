@@ -1,5 +1,5 @@
 import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {

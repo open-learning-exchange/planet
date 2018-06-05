@@ -3,7 +3,7 @@ import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output } from '@a
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { ResourcesService } from '../resources.service';
 
 @Component({

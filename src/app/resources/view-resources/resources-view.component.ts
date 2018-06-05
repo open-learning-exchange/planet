@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { takeUntil, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';

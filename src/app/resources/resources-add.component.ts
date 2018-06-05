@@ -12,9 +12,7 @@ import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 import * as JSZip from 'jszip';
 import * as mime from 'mime-types';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { Observable, of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 

@@ -3,7 +3,7 @@ import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/m
 import { filterSpecificFields } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 
 @Component({

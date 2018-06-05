@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { forkJoin } from 'rxjs/observable/forkJoin';
-import { of } from 'rxjs/observable/of';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
