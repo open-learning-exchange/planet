@@ -62,6 +62,8 @@ export class PouchService {
     ).pipe(catchError(this.handleError));
   }
 
+  // @TODO: handle offline cases
+  // handle error or make use of navigator online?
   replicateToRemoteDB(key: RemoteDatabases) {
     return Observable.fromPromise(
       this.localDB.replicate.to(this.baseUrl + key)
