@@ -5,8 +5,7 @@ WORKDIR /ng-app
 COPY package.json ./
 RUN apk add --update \
     python \
-    python-dev \
-    py-pip
+    build-base
 RUN npm i
 
 COPY . .
