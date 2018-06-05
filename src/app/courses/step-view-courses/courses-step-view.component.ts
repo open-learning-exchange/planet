@@ -57,6 +57,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts, bestAttempt }) => {
         this.examStart = submission.answers.length + 1;
         this.attempts = attempts;
+        bestAttempt = { grade: 0, ...bestAttempt };
         const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
         this.examPassed = examPercent > this.stepDetail.exam.passingPercentage;
       });
