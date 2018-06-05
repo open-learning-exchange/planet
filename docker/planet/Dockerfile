@@ -3,8 +3,12 @@ LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app
 COPY package.json ./
-RUN apk add --update \
-    python
+RUN RUN apk add --update \
+    python \
+    python-dev \
+    py-pip \
+    build-base \
+  && pip install virtualenv
 RUN npm i
 
 COPY . .
