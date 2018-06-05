@@ -150,23 +150,42 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   deleteCommunity(community) {
     // Return a function with community on its scope to pass to delete dialog
     return () => {
-    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      const { _id: id, _rev: rev } = community;
-      forkJoin([
-        this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
-        this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
-      ]).pipe(switchMap(([ user, shelf ]) => {
-        const deleteObs = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ].concat(
-          this.addDeleteObservable(user, '_users/'),
-          this.addDeleteObservable(shelf, 'shelf/')
-        );
-        return forkJoin(deleteObs);
-      })).subscribe((data) => {
+      this.rejectDeleteCommunity('delete', community).subscribe((data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.communities.data = this.communities.data.filter((comm: any) => data[0].id !== comm._id);
         this.editDialog.close();
       }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
     };
+  }
+
+  rejectCommunity(community) {
+    // Return a function with community on its scope to pass to delete dialog
+    return () => {
+      this.rejectDeleteCommunity('reject', community).subscribe((data) => {
+        this.updateRev(data, this.communities.data);
+        this.getCommunityList();
+        this.editDialog.close();
+      }, (error) => this.editDialog.componentInstance.message = 'There was a problem accepting this community');
+    };
+  }
+
+  rejectDeleteCommunity(action, community) {
+    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+    const { _id: id, _rev: rev } = community;
+    return forkJoin([
+      this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
+      this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+    ]).pipe(switchMap(([ user, shelf ]) => {
+      let actionObservable = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ];
+      if (action === 'reject') {
+        actionObservable = [ this.couchService.put('communityregistrationrequests/' + id, community) ];
+      }
+      const actObs = actionObservable.concat(
+        this.addDeleteObservable(user, '_users/'),
+        this.addDeleteObservable(shelf, 'shelf/')
+      );
+      return forkJoin(actObs);
+    }));
   }
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
