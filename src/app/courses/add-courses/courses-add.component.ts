@@ -7,7 +7,8 @@ import {
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-
+import { filter, switchMap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
@@ -15,6 +16,8 @@ import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
+import { CoursesService as PouchCoursesService, Course } from '../../shared/services';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -42,7 +45,8 @@ export class CoursesAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private pouchCoursesService: PouchCoursesService
   ) {
     this.createForm();
   }
@@ -54,8 +58,8 @@ export class CoursesAddComponent implements OnInit {
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         this.route.snapshot.url[0].path === 'update'
-        ? ac => this.validatorService.isNameAvailible$(this.dbName, 'courseTitle', ac, this.route.snapshot.params.id)
-        : ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
+          ? ac => this.validatorService.isNameAvailible$(this.dbName, 'courseTitle', ac, this.route.snapshot.params.id)
+          : ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',
@@ -74,25 +78,27 @@ export class CoursesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    const storedCourse = this.coursesService.course;
-    if (this.route.snapshot.url[0].path === 'update') {
-      this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
-      .subscribe((data) => {
-        data.steps.forEach(step => {
-          step['id'] = this.uniqueIdOfStep();
-        });
-        this.pageType = 'Update';
-        this.documentInfo = { rev: data._rev, id: data._id };
-        if (!storedCourse.form) {
-          this.setFormAndSteps({ form: data, steps: data.steps });
-        }
-      }, (error) => {
-        console.log(error);
+    combineLatest(
+      this.route.url.pipe(
+        filter(segment => segment[0].path === 'update'),
+        switchMap(() => this.route.paramMap.pipe(
+          switchMap(paramMap => this.pouchCoursesService.getCourse(paramMap.get('id')))
+        )),
+      ),
+      this.coursesService.courseUpdated$
+    ).subscribe(([ course, storedCourse ]: [Course, any]) => {
+
+      course.steps.forEach(step => {
+        step['id'] = this.uniqueIdOfStep();
       });
-    }
-    if (storedCourse.form) {
-      this.setFormAndSteps(storedCourse);
-    }
+      this.pageType = 'Update';
+      this.documentInfo = { rev: course._rev, id: course._id };
+      if (storedCourse && storedCourse.form) {
+        this.setFormAndSteps(storedCourse);
+      } else {
+        this.setFormAndSteps({ form: course, steps: course.steps });
+      }
+    });
   }
 
   setFormAndSteps(course: any) {
