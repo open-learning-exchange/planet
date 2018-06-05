@@ -35,7 +35,7 @@ import { Course } from '../../shared/services';
 
 export class CoursesViewComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
-  private courseDetail: Course;
+  courseDetail: Course;
 
   constructor(
     private router: Router,

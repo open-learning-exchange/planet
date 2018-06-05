@@ -32,7 +32,7 @@ import { CoursesService, Course } from '../shared/services';
 
 export class CoursesComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
-  private courses: MatTableDataSource<Course> = new MatTableDataSource<Course>();
+  courses: MatTableDataSource<Course> = new MatTableDataSource<Course>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   message = '';

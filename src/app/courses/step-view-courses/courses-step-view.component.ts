@@ -12,15 +12,15 @@ import { Step, Course } from '../../shared/services';
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
-  private stepDetail: Step;
+  stepDetail: Step;
   private onDestroy$ = new Subject<void>();
-  private stepNum = 0;
-  private maxStep = 1;
-  private resourceUrl = '';
-  private examStart = 1;
-  private attempts = 0;
-  private showExamButton = false;
-  private resource: any;
+  stepNum = 0;
+  maxStep = 1;
+  resourceUrl = '';
+  examStart = 1;
+  attempts = 0;
+  showExamButton = false;
+  resource: any;
 
   constructor(
     private router: Router,
