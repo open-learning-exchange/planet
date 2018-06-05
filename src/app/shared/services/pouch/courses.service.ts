@@ -9,11 +9,11 @@ import { PouchService } from './pouch.service';
 export interface Step {
   stepTitle: string;
   description: string;
-  attachment: string;
   exam?: {
     _id: string;
-  }
-  resources?: any[];
+    questions: any[];
+  };
+  resources: any[];
 }
 
 // @TODO: Add more fields from the database
