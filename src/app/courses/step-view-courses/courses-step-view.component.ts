@@ -37,9 +37,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.coursesService.requestCourse({ courseId: params.get('id') });
         return this.coursesService.courseUpdated$;
       }),
-      filter(course => !!course), // for filtering out null values
-      takeUntil(this.onDestroy$)
-    ).subscribe((course: Course) => {
+      filter(course => !!course), // for filtering out null values when the page is directly visited
+      switchMap(course => {
         // To be readable by non-technical people stepNum param will start at 1
         this.stepDetail = course.steps[this.stepNum - 1];
         this.maxStep = course.steps.length;
@@ -53,11 +52,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           });
         }
         this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-        this.coursesService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
-          this.examStart = submission.answers.length + 1;
-          this.attempts = attempts;
-        });
-      });
+        return this.coursesService.submissionUpdated$;
+      }),
+      takeUntil(this.onDestroy$)
+    ).subscribe(({ submission, attempts }) => {
+      this.examStart = submission.answers.length + 1;
+      this.attempts = attempts;
+    });
   }
 
   ngOnDestroy() {
