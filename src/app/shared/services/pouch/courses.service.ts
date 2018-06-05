@@ -62,12 +62,7 @@ export class CoursesService {
       this.localDB.put({ ...course, _id: course.courseTitle, pouchIndex: 'courses' })
     ).pipe(
       switchMap(() => this.pouchDBService.replicateToRemoteDB('courses')),
-      map((res) => {
-        console.log('replicating to couch...');
-        return res;
-      },
-        catchError(this.handleError)
-      )
+      catchError(this.handleError)
     );
   }
 
