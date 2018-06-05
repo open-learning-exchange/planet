@@ -7,8 +7,8 @@ import {
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { filter, switchMap } from 'rxjs/operators';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+import { filter, switchMap, combineLatest, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
@@ -17,13 +17,13 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { CoursesService as PouchCoursesService, Course } from '../../shared/services';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
 export class CoursesAddComponent implements OnInit {
+  onDestroy$ = new Subject<void>();
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
@@ -78,14 +78,13 @@ export class CoursesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    combineLatest(
-      this.route.url.pipe(
-        filter(segment => segment[0].path === 'update'),
-        switchMap(() => this.route.paramMap.pipe(
-          switchMap(paramMap => this.pouchCoursesService.getCourse(paramMap.get('id')))
-        )),
-      ),
-      this.coursesService.courseUpdated$
+    this.route.url.pipe(
+      filter(segment => segment[0].path === 'update'),
+      switchMap(() => this.route.paramMap.pipe(
+        switchMap(paramMap => this.pouchCoursesService.getCourse(paramMap.get('id')))
+      )),
+      combineLatest(this.coursesService.courseUpdated$),
+      takeUntil(this.onDestroy$)
     ).subscribe(([ course, storedCourse ]: [Course, any]) => {
 
       course.steps.forEach(step => {
