@@ -3,7 +3,10 @@ LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app
 COPY package.json ./
-RUN npm i --silent
+RUN apk add --update \
+    python \
+    build-base
+RUN npm i
 
 COPY . .
 RUN $(npm bin)/ng build --prod
