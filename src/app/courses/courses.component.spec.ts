@@ -13,7 +13,6 @@ import { By } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/observable/throw';
-import * as Rx from 'rxjs/Rx';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
