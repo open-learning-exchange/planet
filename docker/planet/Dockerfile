@@ -3,7 +3,7 @@ LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app
 COPY package.json ./
-RUN RUN apk add --update \
+RUN apk add --update \
     python \
     python-dev \
     py-pip \
