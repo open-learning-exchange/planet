@@ -6,9 +6,7 @@ COPY package.json ./
 RUN apk add --update \
     python \
     python-dev \
-    py-pip \
-    build-base \
-  && pip install virtualenv
+    py-pip
 RUN npm i
 
 COPY . .
