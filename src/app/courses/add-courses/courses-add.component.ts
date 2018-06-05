@@ -86,7 +86,6 @@ export class CoursesAddComponent implements OnInit {
       combineLatest(this.coursesService.courseUpdated$),
       takeUntil(this.onDestroy$)
     ).subscribe(([ course, storedCourse ]: [Course, any]) => {
-
       course.steps.forEach(step => {
         step['id'] = this.uniqueIdOfStep();
       });
