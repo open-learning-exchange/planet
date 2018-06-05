@@ -28,7 +28,7 @@ export class CoursesAddComponent implements OnInit {
   members = [];
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
-  documentInfo = { rev: '', id: '' };
+  documentInfo = { _rev: '', _id: '' };
   pageType = 'Add new';
   steps = [];
 
@@ -90,7 +90,7 @@ export class CoursesAddComponent implements OnInit {
         step['id'] = this.uniqueIdOfStep();
       });
       this.pageType = 'Update';
-      this.documentInfo = { rev: course._rev, id: course._id };
+      this.documentInfo = { _rev: course._rev, _id: course._id };
       if (storedCourse && storedCourse.form) {
         this.setFormAndSteps(storedCourse);
       } else {
@@ -106,10 +106,11 @@ export class CoursesAddComponent implements OnInit {
 
   updateCourse(courseInfo) {
     this.deleteStepIdProperty();
-    this.couchService.put(
-      this.dbName + '/' + this.documentInfo.id,
-      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
-    ).subscribe(() => {
+    this.pouchCoursesService.updateCourse({
+      ...courseInfo,
+      ...this.documentInfo,
+      steps: this.steps
+    }).subscribe(() => {
       this.navigateBack();
       this.planetMessageService.showMessage('Course Updated Successfully');
     }, (err) => {
