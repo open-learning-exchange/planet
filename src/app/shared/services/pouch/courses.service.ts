@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
-import { map } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import 'rxjs/add/observable/fromPromise';
 import { PouchService } from './pouch.service';
 
@@ -55,6 +55,20 @@ export class CoursesService {
 
   getCourse(id): Observable<Course> {
     return Observable.fromPromise(this.localDB.get(id));
+  }
+
+  addCourse(course) {
+    return Observable.fromPromise(
+      this.localDB.put({ ...course, _id: course.courseTitle, pouchIndex: 'courses' })
+    ).pipe(
+      switchMap(() => this.pouchDBService.replicateToRemoteDB('courses')),
+      map((res) => {
+        console.log('replicating to couch...');
+        return res;
+      },
+      catchError(this.handleError)
+    )
+    );
   }
 
   updateCourses() {

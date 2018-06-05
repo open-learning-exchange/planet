@@ -138,7 +138,7 @@ export class CoursesAddComponent implements OnInit {
     // By deleting the id property, ngFor trackBy will break
     // If user is not rerouted after update moving steps will no longer work
     this.deleteStepIdProperty();
-    this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
+    this.pouchCoursesService.addCourse({ ...courseInfo, steps: this.steps }).subscribe(() => {
       this.navigateBack();
       this.planetMessageService.showMessage('New Course Added');
     }, (err) => {
