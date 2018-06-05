@@ -3,6 +3,8 @@ LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app
 COPY package.json ./
+RUN apk add --update \
+    python
 RUN npm i
 
 COPY . .
