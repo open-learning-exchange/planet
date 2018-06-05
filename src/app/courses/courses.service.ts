@@ -7,9 +7,10 @@ import { CoursesService as PouchCoursesService, Course } from '../shared/service
 // Service for updating and storing active course for single course views.
 @Injectable()
 export class CoursesService {
-  course: any;
+
+  course: any = { _id: '' };
   submission: any = { courseId: '', examId: '' };
-  private courseUpdated: BehaviorSubject<Course> = new BehaviorSubject<Course>(null);
+  private courseUpdated = new BehaviorSubject<Course>(null);
   courseUpdated$ = this.courseUpdated.asObservable();
   private submissionUpdated = new Subject<any>();
   submissionUpdated$ = this.submissionUpdated.asObservable();
@@ -26,7 +27,7 @@ export class CoursesService {
   // If the id already matches what is stored on the service, return that.
   // Or will get new version if forceLatest set to true
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
-    if (!forceLatest && this.course && courseId === this.course._id) {
+    if (!forceLatest && courseId === this.course._id) {
       this.courseUpdated.next(this.course);
     } else {
       this.getCourse(courseId, opts);
@@ -41,7 +42,7 @@ export class CoursesService {
   }
 
   reset() {
-    this.course = null;
+    this.course = { '_id': '' };
     this.stepIndex = -1;
     this.returnUrl = '';
   }
