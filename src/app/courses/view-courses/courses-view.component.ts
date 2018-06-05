@@ -34,8 +34,10 @@ import { Course } from '../../shared/services';
 })
 
 export class CoursesViewComponent implements OnInit, OnDestroy {
-  private onDestroy$ = new Subject<void>();
+
+  onDestroy$ = new Subject<void>();
   courseDetail: Course;
+  parent = this.route.snapshot.data.parent;
 
   constructor(
     private router: Router,
