@@ -1,0 +1,42 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Teams</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill">
+      <h1 i18n>All Teams</h1>
+    </span>
+    <div class="margin-lr-3">
+      <button mat-mini-fab (click)="addTeam()" ><mat-icon>add</mat-icon></button>
+    </div>
+  </mat-toolbar>
+
+  <mat-table #table [dataSource]="team" matSort>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+      <mat-cell  *matCellDef="let element">
+        <button mat-raised-button color="primary" (click)="joinTeam(element._id, element.isMember)">
+          <span *ngIf="element.isMember; else joinButton" i18n><mat-icon>clear</mat-icon>Leave</span>
+          <ng-template #joinButton><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
+        </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]">
+  </mat-paginator>
+</div>

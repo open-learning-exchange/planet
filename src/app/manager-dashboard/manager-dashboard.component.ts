@@ -12,6 +12,7 @@ import { debug } from '../debug-operator';
 
 @Component({
   template: `
+    <a routerLink="/users" i18n mat-raised-button>Members</a>
     <div *ngIf="displayDashboard">
       <span *ngIf="planetType !== 'community'">
         <a routerLink="/requests" i18n mat-raised-button>Requests</a>
