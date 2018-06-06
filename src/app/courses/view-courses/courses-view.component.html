@@ -25,13 +25,13 @@
               {{step.stepTitle || 'Step ' + (stepNum + 1)}}
             </mat-panel-title>
             <mat-panel-description>
-              <mat-icon *ngIf="step.attachment">attach_file</mat-icon>
+              <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
               <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
             </mat-panel-description>
           </mat-expansion-panel-header>
           {{step.description}}
           <mat-action-row>
-            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step.attachment" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
+            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
             <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
           </mat-action-row>
         </mat-expansion-panel>
