@@ -30,6 +30,7 @@
           <span *ngIf="element.isMember; else joinButton" i18n><mat-icon>clear</mat-icon>Leave</span>
           <ng-template #joinButton><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
         </button>
+        <button mat-raised-button color="primary" [routerLink]="['member', element._id]" i18n>Members</button>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

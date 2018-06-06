@@ -5,7 +5,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
-import { SelectionModel } from '@angular/cdk/collections';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -17,7 +16,6 @@ import { debug } from '../debug-operator';
 export class TeamComponent implements OnInit, AfterViewInit {
 
   private onDestroy$ = new Subject<void>();
-  selection = new SelectionModel(true, []);
   team = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -33,7 +31,6 @@ export class TeamComponent implements OnInit, AfterViewInit {
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
-        console.log(shelf);
         this.userShelf = this.userService.shelf;
         this.team.data = this.teamList(this.team.data, shelf.myTeamIds);
       });
@@ -101,6 +98,7 @@ export class TeamComponent implements OnInit, AfterViewInit {
       });
   }
 
+  // If multiple team is added then need to check
   dedupeShelfReduce(ids, id) {
     if (ids.indexOf(id) > -1) {
       return ids;
@@ -148,4 +146,5 @@ export class TeamComponent implements OnInit, AfterViewInit {
   applyFilter(filterValue: string) {
     this.team.filter = filterValue;
   }
+
 }

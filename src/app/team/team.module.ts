@@ -3,6 +3,7 @@ import { TeamRouterModule } from './team-router.module';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../shared/material.module';
 import { TeamComponent } from './team.component';
+import { TeamMemberComponent } from './team-member.component';
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import { TeamComponent } from './team.component';
     MaterialModule
   ],
   declarations: [
-    TeamComponent
+    TeamComponent,
+    TeamMemberComponent
   ]
 })
 export class TeamModule {}
