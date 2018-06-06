@@ -97,7 +97,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   updateClick(community, change) {
     this.editDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: change === 'delete' ? this.deleteCommunity(community) : this.updateCommunity(community, change),
+        okClick: this.updateCommunity(community, change),
         changeType: change,
         type: 'community',
         displayName: community.name
@@ -112,6 +112,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       // Split community object into id, rev, and all other props in communityInfo
       const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
       switch (change) {
+        case 'delete':
+          this.deleteCommunity(community);
+          break;
         case 'reject':
         case 'unlink':
           const updatedCommunity = { ...community, registrationRequest: 'rejected' };
@@ -137,49 +140,49 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   addDeleteObservable(res, db) {
     if (res.docs.length > 0) {
       const doc = res.docs[0];
-      return [ this.couchService.delete(db + doc._id + '?rev=' + doc._rev) ];
+      return this.couchService.delete(db + doc._id + '?rev=' + doc._rev);
     }
-    return [];
+    return of({ 'ok': true });
   }
 
   deleteCommunity(community) {
     // Return a function with community on its scope to pass to delete dialog
-    return () => {
-      this.rejectDeleteCommunity('delete', community).subscribe((data) => {
-        // It's safer to remove the item from the array based on its id than to splice based on the index
-        this.communities.data = this.communities.data.filter((comm: any) => data[0].id !== comm._id);
-        this.editDialog.close();
-      }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
-    };
-  }
-
-  rejectCommunity(community) {
-    // Return a function with community on its scope to pass to delete dialog
-    return () => {
-      this.rejectDeleteCommunity('reject', community).subscribe((data) => {
-        this.updateRev(data, this.communities.data);
-        this.getCommunityList();
-        this.editDialog.close();
-      }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
-    };
-  }
-
-  rejectDeleteCommunity(action, community) {
-    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
     const { _id: id, _rev: rev } = community;
+    return this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community)
+    .subscribe(([ data, userRes ]) => {
+      // It's safer to remove the item from the array based on its id than to splice based on the index
+      this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
+      this.editDialog.close();
+    }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
+  }
+
+  rejectCommunity(community: any) {
+    // Return a function with community on its scope to pass to delete dialog
+    return this.pipeRemovePlanetUser(this.couchService.put('communityregistrationrequests/' + community._id, community), community)
+    .subscribe(([ data, userRes ]) => {
+      this.updateRev(data, this.communities.data);
+      this.getCommunityList();
+      this.editDialog.close();
+    }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
+  }
+
+  pipeRemovePlanetUser(obs: any, community) {
+    return obs.pipe(
+      switchMap(data => {
+        return forkJoin([ of(data), this.removePlanetUser(community) ]);
+      })
+    );
+  }
+
+  removePlanetUser(community) {
     return forkJoin([
       this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
       this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
     ]).pipe(switchMap(([ user, shelf ]) => {
-      let actionObservable = [ this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev) ];
-      if (action === 'reject') {
-        actionObservable = [ this.couchService.put('communityregistrationrequests/' + id, community) ];
-      }
-      const actObs = actionObservable.concat(
+      return forkJoin([
         this.addDeleteObservable(user, '_users/'),
         this.addDeleteObservable(shelf, 'shelf/')
-      );
-      return forkJoin(actObs);
+      ]);
     }));
   }
 
