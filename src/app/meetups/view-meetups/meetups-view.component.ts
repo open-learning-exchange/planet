@@ -90,8 +90,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users', {
-      '_id' : { '$ne': this.userService.get()._id },
-      'roles' : { '$in': [ 'learner', 'leader' ] }
+      '_id': { '$ne': this.userService.get()._id },
+      '$or': [
+        { 'roles': { '$in': [ 'learner', 'leader' ] } },
+        { 'isUserAdmin': true }
+      ]
     }).subscribe((res) => {
       const data = {
         okClick: this.sendInvitations.bind(this),
