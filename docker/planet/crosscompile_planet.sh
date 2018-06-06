@@ -30,7 +30,7 @@ if [[ "${ACT}" == "install"  ]]; then
    npm install "--arch=${TRIPLE}"
 elif [[ "${ACT}" == "build"  ]]; then
    echo "Build the angular app in production mode stage"
-   $(npm bin)/ng build "--arch=${TRIPLE}" --prod
+   $(npm bin)/ng build --prod
 else
    echo "Error: No action Specified"
 fi
