@@ -38,7 +38,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         return this.coursesService.courseUpdated$;
       }),
       filter(course => !!course), // for filtering out null values when the page is directly visited
-      switchMap(course => {
+      switchMap((course: any) => {
         // To be readable by non-technical people stepNum param will start at 1
         this.stepDetail = course.steps[this.stepNum - 1];
         this.maxStep = course.steps.length;
