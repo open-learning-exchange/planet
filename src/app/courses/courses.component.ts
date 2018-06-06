@@ -32,7 +32,7 @@ import { Course } from './interfaces';
 })
 
 export class CoursesComponent implements OnInit, AfterViewInit {
-  selection = new SelectionModel(true, []);
+  selection = new SelectionModel<Course>(true, []);
   courses = new MatTableDataSource<Course>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -160,14 +160,13 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteCourse(course) {
+  deleteCourse(course: Course) {
     // Return a function with course on its scope to pass to delete dialog
     return () => {
-      const { _id: courseId, _rev: courseRev } = course;
-      this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
+      this.coursesService.deleteCourse(course._id, course._rev)
         .subscribe((data) => {
           // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
+          this.courses.data = this.courses.data.filter(c => data.id !== c._id);
           this.deleteDialog.close();
           this.selection.clear();
           this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);

@@ -33,6 +33,12 @@ export interface Course {
   admission: boolean;
 }
 
+interface Response {
+  okay: boolean;
+  id: string;
+  rev: string;
+}
+
 @Injectable()
 export class CoursesService {
   private localDB;
@@ -71,6 +77,18 @@ export class CoursesService {
       this.localDB.put({ ...course, pouchIndex: 'courses' })
     ).pipe(
       switchMap(() => this.pouchDBService.replicateToRemoteDB('courses')),
+      catchError(this.handleError)
+    );
+  }
+
+  deleteCourse(_id: string, _rev: string): Observable<Response> {
+    return Observable.fromPromise(
+      this.localDB.remove(_id, _rev)
+    ).pipe(
+      map(res => {
+        this.pouchDBService.replicateToRemoteDB('courses');
+        return res;
+      }),
       catchError(this.handleError)
     );
   }
