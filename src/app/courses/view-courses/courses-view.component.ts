@@ -7,7 +7,7 @@ import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs/Subject';
 import { environment } from '../../../environments/environment';
-import { Course } from '../interfaces';
+import { Course, FormCourse } from '../interfaces';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -36,7 +36,8 @@ import { Course } from '../interfaces';
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
-  courseDetail: Course;
+  // @FIXME: use better types
+  courseDetail: any;
   parent = this.route.snapshot.data.parent;
 
   constructor(
