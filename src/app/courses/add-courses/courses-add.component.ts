@@ -31,7 +31,7 @@ export class CoursesAddComponent implements OnInit {
   courseForm: FormGroup;
   documentInfo = { _rev: '', _id: '' };
   pageType = 'Add new';
-  steps: FormStep[];
+  steps: FormStep[] = [];
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
