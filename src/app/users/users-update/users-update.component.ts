@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 import { NgxImgModule } from 'ngx-img';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
+import emailMask from 'text-mask-addons/dist/emailMask';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -45,6 +46,8 @@ export class UsersUpdateComponent implements OnInit {
   roles: string[] = [];
   languages = languages;
   maxDate = new Date();
+  emailModel = '';
+  eMask = emailMask;
 
   constructor(
     private fb: FormBuilder,
