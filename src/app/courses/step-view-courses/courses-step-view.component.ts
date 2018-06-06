@@ -54,7 +54,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           type: 'exam' });
       }
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts, bestAttempt }) => {
+      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
         this.examStart = submission.answers.length + 1;
         this.attempts = attempts;
         const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
