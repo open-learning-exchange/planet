@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
 import { of } from 'rxjs/observable/of';
 import { _throw } from 'rxjs/observable/throw';
 import { Subject } from 'rxjs/Subject';
@@ -32,6 +32,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allUsers = new MatTableDataSource();
   message = '';
+  filterAssociated = false;
+  filter: any;
+  planetType = '';
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
@@ -56,9 +59,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
       .subscribe((shelf: any) => {
         this.setMyTeams(this.allUsers.data, shelf.myTeamIds);
       });
-    }
+  }
 
   ngOnInit() {
+    this.planetType = this.userService.getConfig().planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
@@ -68,8 +72,25 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }
   }
 
+  changeFilter(type) {
+    switch (type) {
+      case 'associated':
+        this.displayedColumns = [ 'profile', 'name', 'action' ];
+        this.filterAssociated = true;
+        break;
+      default:
+        this.displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
+        this.filterAssociated = false;
+        break;
+    }
+    this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
+    this.allUsers.filterPredicate = composeFilterFunctions([ this.filter, filterSpecificFields([ 'doc.name' ]) ]);
+    this.allUsers.filter = this.allUsers.filter || ' ';
+  }
+
   applyFilter(filterValue: string) {
     this.allUsers.filter = filterValue;
+    this.changeFilter(this.filterAssociated ? 'associated' : 'local');
   }
 
   ngAfterViewInit() {
@@ -95,13 +116,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
+    return this.couchService.post(this.dbName + '/_find', { 'selector': {} });
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsers().pipe(debug('Getting user list')).subscribe(users => {
+    this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
       users = users.docs.filter((user: any) => {
         // Removes current user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
@@ -116,7 +137,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         return userInfo;
       });
       this.setMyTeams(users, this.userService.shelf.myTeamIds);
-      this.allUsers.filterPredicate = filterSpecificFields([ 'doc.name' ]);
+      this.changeFilter('local');
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
