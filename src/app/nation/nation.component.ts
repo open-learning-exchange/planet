@@ -102,7 +102,7 @@ export class NationComponent implements OnInit, AfterViewInit {
       forkJoin([
         this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } }),
         this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + nation.adminName } })
-      ]).pipe(switchMap(([ community, user, shelf ]) => {
+      ]).pipe(switchMap(([ user, shelf ]) => {
         const deleteObs = [ this.couchService.delete(this.dbName + '/' + nationId + '?rev=' + nationRev) ].concat(
           this.addDeleteObservable(user, '_users/'),
           this.addDeleteObservable(shelf, 'shelf/')
