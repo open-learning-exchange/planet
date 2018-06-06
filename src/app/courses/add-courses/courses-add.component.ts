@@ -16,7 +16,8 @@ import * as constants from '../constants';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
-import { CoursesService as PouchCoursesService, Course } from '../../shared/services';
+import { CoursesService as PouchCoursesService } from '../../shared/services';
+import { Course, FormStep, FormCourse } from '../interfaces';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -30,7 +31,7 @@ export class CoursesAddComponent implements OnInit {
   courseForm: FormGroup;
   documentInfo = { _rev: '', _id: '' };
   pageType = 'Add new';
-  steps = [];
+  steps: FormStep[];
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -85,7 +86,7 @@ export class CoursesAddComponent implements OnInit {
       )),
       combineLatest(this.coursesService.courseUpdated$),
       takeUntil(this.onDestroy$)
-    ).subscribe(([ course, storedCourse ]: [Course, any]) => {
+    ).subscribe(([ course, storedCourse ]: [Course, FormCourse]) => {
       course.steps.forEach(step => {
         step['id'] = this.uniqueIdOfStep();
       });
@@ -99,7 +100,7 @@ export class CoursesAddComponent implements OnInit {
     });
   }
 
-  setFormAndSteps(course: any) {
+  setFormAndSteps(course: FormCourse) {
     this.courseForm.patchValue(course.form);
     this.steps = course.steps || [];
   }

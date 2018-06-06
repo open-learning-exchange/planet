@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil, switchMap, filter } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
-import { Step, Course } from '../../shared/services';
+import { Step, Course } from '../interfaces';
 
 @Component({
   templateUrl: './courses-step-view.component.html',

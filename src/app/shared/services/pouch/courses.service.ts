@@ -57,7 +57,7 @@ export class CoursesService {
     return Observable.fromPromise(this.localDB.get(id));
   }
 
-  addCourse(course) {
+  addCourse(course: Course) {
     return Observable.fromPromise(
       this.localDB.put({ ...course, _id: course.courseTitle, pouchIndex: 'courses' })
     ).pipe(
@@ -66,7 +66,7 @@ export class CoursesService {
     );
   }
 
-  updateCourse(course) {
+  updateCourse(course: Course) {
     return Observable.fromPromise(
       this.localDB.put({ ...course, pouchIndex: 'courses' })
     ).pipe(

@@ -7,7 +7,7 @@ import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs/Subject';
 import { environment } from '../../../environments/environment';
-import { Course } from '../../shared/services';
+import { Course } from '../interfaces';
 
 @Component({
   templateUrl: './courses-view.component.html',

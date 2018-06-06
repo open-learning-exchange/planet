@@ -15,7 +15,8 @@ import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '.
 import * as constants from './constants';
 import { Subject } from 'rxjs/Subject';
 import { debug } from '../debug-operator';
-import { CoursesService, Course } from '../shared/services';
+import { CoursesService } from '../shared/services';
+import { Course } from './interfaces';
 
 @Component({
   templateUrl: './courses.component.html',
