@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { filterSpecificFields, composeFilterFunctions, filterFieldExists, filterFieldNotExists } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
 import { of } from 'rxjs/observable/of';
 import { _throw } from 'rxjs/observable/throw';
 import { Subject } from 'rxjs/Subject';
@@ -83,7 +83,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         this.filterAssociated = false;
         break;
     }
-    this.filter = this.filterAssociated ? filterFieldExists([ 'doc.requesteId' ]) : filterFieldNotExists([ 'doc.requesteId' ]);
+    this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
     this.allUsers.filterPredicate = composeFilterFunctions([ this.filter, filterSpecificFields([ 'doc.name' ]) ]);
     this.allUsers.filter = this.allUsers.filter || ' ';
   }

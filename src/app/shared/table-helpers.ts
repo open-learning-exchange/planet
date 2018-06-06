@@ -32,23 +32,13 @@ export const filterDropdowns = (filterObj: any) => {
   };
 };
 
-// Takes fields and return true if requestId field is present
-export const filterFieldExists = (filterFields: string[]): any => {
+// Takes array of field names and if trueIfExists is true, return true if field exists
+// if false return true if it does not exist
+export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => {
   return (data: any, filter: string) => {
     for (let i = 0; i < filterFields.length; i++) {
       const keys = filterFields[i].split('.');
-      return getProperty(data, keys) !== undefined;
-    }
-    return true;
-  };
-};
-
-// Takes fields and return true if requestId field is empty
-export const filterFieldNotExists = (filterFields: string[]): any => {
-  return (data: any, filter: string) => {
-    for (let i = 0; i < filterFields.length; i++) {
-      const keys = filterFields[i].split('.');
-      return getProperty(data, keys) === undefined;
+      return trueIfExists === (getProperty(data, keys) !== undefined);
     }
     return true;
   };
