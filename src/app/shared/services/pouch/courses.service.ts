@@ -93,6 +93,18 @@ export class CoursesService {
     );
   }
 
+  deleteCourses(docs: [{ _id: string, _rev: string, _deleted: true }]): Observable<Response> {
+    return Observable.fromPromise(
+      this.localDB.bulkDocs(docs)
+    ).pipe(
+      map(res => {
+        this.pouchDBService.replicateToRemoteDB('courses');
+        return res;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   updateCourses() {
     return this.pouchDBService.replicateFromRemoteDB('courses');
   }

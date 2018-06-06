@@ -179,10 +179,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const deleteArray = courses.map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
-      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-        .pipe(switchMap(data => {
-          return this.getCourses();
-        })).subscribe((data: any) => {
+      this.coursesService.deleteCourses(deleteArray)
+        .pipe(switchMap(() => this.coursesService.getCourses() ))
+        .subscribe((data) => {
           this.setupList(data, this.userShelf.courseIds);
           this.selection.clear();
           this.deleteDialog.close();
