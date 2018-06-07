@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ConfigurationModule } from '../configuration/configuration.module';
+// this has been replaced by configuration.module
 import { ConfigurationComponent } from '../configuration/configuration.component';
 import { LoginComponent } from './login.component';
 import { LoginRouterModule } from './login-router.module';
@@ -13,9 +15,9 @@ import { MatTooltipModule } from '@angular/material';
 
 @NgModule({
   imports: [
-    LoginRouterModule, FormsModule, CommonModule, MaterialModule, ReactiveFormsModule, PlanetFormsModule ],
+    LoginRouterModule, FormsModule, CommonModule, MaterialModule, ReactiveFormsModule, ConfigurationModule, PlanetFormsModule ],
   declarations: [
-    LoginComponent, LoginFormComponent, ConfigurationComponent, LowercaseDirective
+    LoginComponent, LoginFormComponent, LowercaseDirective
   ],
   providers: [ ConfigurationGuard ]
 })

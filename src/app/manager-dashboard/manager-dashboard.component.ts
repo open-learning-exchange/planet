@@ -24,6 +24,7 @@ import { debug } from '../debug-operator';
       <button *ngIf="planetType === 'community' && devMode"
         (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+      <a routerLink="configuration" il8n mat-raised-button>Configuration</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />

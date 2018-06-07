@@ -6,10 +6,11 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap  } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
+import { UserService } from '../shared/user.service';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 
@@ -25,6 +26,7 @@ const removeProtocol = (str: string) => {
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
+  configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
   loginForm: FormGroup;
@@ -34,6 +36,7 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
+  documentInfo = { rev: '', id: '' };
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
@@ -41,10 +44,16 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
+    if (this.route.snapshot.data.update) {
+      this.initUpdate();
+    }
+
     this.loginForm = this.formBuilder.group({
       name: [ '', [
         Validators.required,
@@ -100,13 +109,39 @@ export class ConfigurationComponent implements OnInit {
     this.getNationList();
   }
 
+  initUpdate() {
+    this.configurationType = 'update';
+    const configurationId = this.userService.getConfig()._id;
+
+    this.couchService.get('configurations/' + configurationId)
+    .subscribe((data) => {
+      this.documentInfo = { rev: data._rev, id: data._id };
+      this.nationOrCommunity = data.planetType;
+      this.configurationFormGroup.patchValue(data);
+      this.contactFormGroup.patchValue(data);
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
   parentUniqueValidator(controlName: string) {
-    return ac => this.validatorService.isUnique$(
-      'communityregistrationrequests',
-      controlName,
-      ac,
-      { domain: ac.parent.get('parentDomain').value }
-    );
+    return ac => {
+      if (this.configurationType === 'update') {
+        return this.validatorService.isNameAvailible$(
+          'communityregistrationrequests',
+          'code',
+          ac,
+          this.configurationFormGroup.value.code
+        );
+      } else {
+        return this.validatorService.isUnique$(
+          'communityregistrationrequests',
+          controlName,
+          ac,
+          { domain: ac.parent.get('parentDomain').value }
+        );
+      }
+    }
   }
 
   confirmConfigurationFormGroup() {
@@ -168,7 +203,9 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
-    if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+    if(this.configurationType === 'update') {
+      this.updateConfiguration();
+    } else if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const { confirmPassword, ...credentials } = this.loginForm.value;
       const adminName = credentials.name + '@' + this.configurationFormGroup.controls.code.value;
       const configuration = Object.assign({ registrationRequest: 'pending', adminName },
@@ -256,6 +293,23 @@ export class ConfigurationComponent implements OnInit {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+    }
+  }
+
+  updateConfiguration() {
+    if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+      const configuration = Object.assign(this.configurationFormGroup.value, this.contactFormGroup.value, {'_rev': this.documentInfo.rev})
+      this.couchService.put(
+        'configurations/' + this.documentInfo.id,
+        configuration
+      ).subscribe(() => {
+        // Navigate back to the manager dashboard
+        this.router.navigate([ '/manager' ]);
+        this.planetMessageService.showMessage('Course Updated Successfully');
+      }, (err) => {
+        // Connect to an error display component to show user that an error has occurred
+        console.log(err);
+      });
     }
   }
 
