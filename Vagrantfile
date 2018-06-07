@@ -83,9 +83,6 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt update
-    sudo apt upgrade -y
-
     # Add CouchDB Docker
     sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb treehouses/couchdb:2.1.1
     # Install Angular CLI
