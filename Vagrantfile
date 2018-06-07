@@ -104,7 +104,7 @@ Vagrant.configure(2) do |config|
     mkdir -p /vagrant/node_modules
     chown vagrant:vagrant /vagrant_node_modules
     mount --bind /vagrant_node_modules /vagrant/node_modules
-    npm install
+    npm i --unsafe-perm
     # End node_modules fix
 
     # Add initial Couch databases here
