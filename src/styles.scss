@@ -327,4 +327,8 @@ body {
     filter: brightness(0) invert(1);
   }
 
+  mat-toolbar:first-child > mat-form-field,
+  .input-icon {
+      margin-top: 10px !important;
+  }
 }
