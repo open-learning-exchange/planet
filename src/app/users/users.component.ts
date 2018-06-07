@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { forkJoin, of, throwError, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -10,9 +10,6 @@ import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
-import { of } from 'rxjs/observable/of';
-import { _throw } from 'rxjs/observable/throw';
-import { Subject } from 'rxjs/Subject';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
@@ -176,7 +173,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         catchError((err) => {
           // If deleting user fails, do not continue stream and show error
           this.planetMessageService.showAlert('There was a problem deleting this user.');
-          return _throw(err);
+          return throwError(err);
         }),
         switchMap((data) => {
           this.selection.deselect(user._id);

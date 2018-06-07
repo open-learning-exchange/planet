@@ -7,10 +7,9 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { of } from 'rxjs/observable/of';
+import { of, Subject } from 'rxjs';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
-import { Subject } from 'rxjs/Subject';
 import { debug } from '../debug-operator';
 
 @Component({

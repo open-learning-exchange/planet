@@ -11,9 +11,9 @@ import { FormBuilder } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/observable/throw';
-import * as Rx from 'rxjs/Rx';
 
 describe('ResourcesViewComponent', () => {
+  /*
     let component: ResourcesViewComponent;
     let fixture: ComponentFixture<ResourcesViewComponent>;
     // let getSpy: any;

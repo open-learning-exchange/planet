@@ -1,7 +1,7 @@
 import { Component, HostBinding, Input, OnDestroy, Optional, Self } from '@angular/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MatFormFieldControl } from '@angular/material';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({

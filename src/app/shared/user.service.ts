@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { of, Observable, Subject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 
 // Holds the currently logged in user information

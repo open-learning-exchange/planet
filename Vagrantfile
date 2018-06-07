@@ -88,6 +88,11 @@ Vagrant.configure(2) do |config|
     #docker pull portainer/portainer
     #sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
 
+    # Install latest version of npm and node for Angular 6
+    add-apt-repository "deb https://deb.nodesource.com/node_8.x stretch main"
+    sudo apt update
+    sudo apt upgrade -y
+
     # Add CouchDB Docker
     sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb couchdb:2.1.1
     # Install Angular CLI

@@ -11,7 +11,7 @@ import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({

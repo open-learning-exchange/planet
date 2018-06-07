@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Subject } from 'rxjs/Subject';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';

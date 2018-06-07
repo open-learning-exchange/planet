@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { UserService } from './user.service';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import { Observable, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';

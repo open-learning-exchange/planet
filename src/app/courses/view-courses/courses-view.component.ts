@@ -5,7 +5,7 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
 

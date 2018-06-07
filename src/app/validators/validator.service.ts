@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 // Make sure not to import the entire rxjs library!!!
-import { Observable } from 'rxjs/Observable';
-import { timer } from 'rxjs/observable/timer';
+import { Observable, timer, of } from 'rxjs';
 
 import { findOneDocument, findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
 import { debug } from '../debug-operator';
 
 @Injectable()

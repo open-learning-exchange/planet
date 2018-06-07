@@ -7,9 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterDropdowns } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
 import { debug } from '../debug-operator';
 
 @Component({
