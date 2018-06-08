@@ -20,6 +20,15 @@
       mat-raised-button
       color="accent"
       class="margin-lr-10"
+      *ngIf="stepDetail?.exam?.questions.length && previewMode"
+      (click)="goToExam()"
+      i18n>
+      Preview Exam
+    </a>
+    <a
+      mat-raised-button
+      color="accent"
+      class="margin-lr-10"
       *ngIf="resource"
       [href]="resourceUrl"
       target="_blank"

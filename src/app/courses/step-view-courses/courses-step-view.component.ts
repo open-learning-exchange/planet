@@ -21,6 +21,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   examStart = 1;
   attempts = 0;
   showExamButton = false;
+  previewMode = false;
   resource: any;
   progress: any;
   examPassed = false;
@@ -47,6 +48,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.attempts = 0;
       if (this.stepDetail.exam) {
         this.showExamButton = this.checkMyCourses(course._id);
+        this.previewMode = !this.showExamButton && this.isManager(course.creator);
         this.submissionsService.openSubmission({
           parentId: this.stepDetail.exam._id + '@' + course._id,
           parent: this.stepDetail.exam,
@@ -90,12 +92,17 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     return this.userService.shelf.courseIds.includes(courseId);
   }
 
+  isManager(creator) {
+    return this.userService.get().isUserAdmin
+    || creator === this.userService.get().name + '@' + this.userService.getConfig().code;
+  }
+
   onResourceChange(value) {
     this.resource = value;
   }
 
   goToExam() {
-    this.router.navigate([ 'exam', { questionNum: this.examStart } ], { relativeTo: this.route });
+    this.router.navigate([ 'exam', { questionNum: this.examStart, preview: this.previewMode } ], { relativeTo: this.route });
   }
 
 }

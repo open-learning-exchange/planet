@@ -11,12 +11,12 @@
     <b>{{question.header}}</b>
     <p>{{question.body}}</p>
     <ng-container [ngSwitch]="mode">
-      <ng-container *ngSwitchCase="'take'">
+      <ng-container *ngSwitchCase="'take' || 'preview'">
         <ng-container [ngSwitch]="question.type">
           <mat-form-field *ngSwitchCase="'input'">
-            <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer">
+            <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer" [disabled]="mode === 'preview'">
           </mat-form-field>
-          <mat-radio-group *ngSwitchCase="'select'" class="planet-radio-group" [(ngModel)]="answer">
+          <mat-radio-group *ngSwitchCase="'select'" class="planet-radio-group" [(ngModel)]="answer" [disabled]="mode === 'preview'">
             <mat-radio-button *ngFor="let option of question.choices" [value]="option" class="planet-radio-button">
               {{option}}
             </mat-radio-button>

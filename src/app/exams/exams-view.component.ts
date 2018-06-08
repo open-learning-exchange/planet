@@ -14,6 +14,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
   question: any = { header: '', body: '', type: '', choices: [] };
+  courseId = '';
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
@@ -54,8 +55,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.stepNum = +params.get('stepNum');
       const courseId = params.get('id');
       const submissionId = params.get('submissionId');
+      const previewMode = params.get('preview');
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
+        if (previewMode) {
+          this.mode = 'preview';
+        }
       } else if (submissionId) {
         this.mode = 'grade';
         this.grade = undefined;
@@ -74,6 +79,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     let obs: any;
     switch (this.mode) {
       case 'take':
+      case 'preview':
         obs = this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
         break;
       case 'grade':
