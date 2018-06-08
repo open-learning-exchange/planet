@@ -139,7 +139,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       okClick = this.deleteMeetups(this.selection.selected),
       displayName = '';
     if (this.selection.selected.length === 1) {
-      const meetup = this.selection.selected[0];
+      const meetup: any = this.meetups.data.find((m: any) => m._id === this.selection.selected[0]);
       amount = 'single';
       okClick = this.deleteMeetup(meetup);
       displayName = meetup.title;
