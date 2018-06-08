@@ -31,7 +31,10 @@
           </mat-expansion-panel-header>
           {{step.description}}
           <mat-action-row>
-            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
+            <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
+            <mat-menu #resourceList="matMenu">
+              <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
+            </mat-menu>
             <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
           </mat-action-row>
         </mat-expansion-panel>
