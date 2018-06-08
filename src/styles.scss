@@ -327,4 +327,7 @@ body {
     filter: brightness(0) invert(1);
   }
 
+  mat-dialog-actions {
+    justify-content: flex-end;
+  }
 }
