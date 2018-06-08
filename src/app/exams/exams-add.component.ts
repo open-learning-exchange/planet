@@ -15,7 +15,8 @@ import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
-  templateUrl: 'exams-add.component.html'
+  templateUrl: 'exams-add.component.html',
+  styleUrls: [ 'exams-add.scss' ]
 })
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
