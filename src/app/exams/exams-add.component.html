@@ -19,10 +19,6 @@
           <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field class="full-width">
-          <input matInput type="number" i18n-placeholder placeholder="Passing Percentage" formControlName="passingPercentage" required>
-          <mat-error><planet-form-error-messages [control]="examForm.controls.passingPercentage"></planet-form-error-messages></mat-error>
-        </mat-form-field>
       </div>
       <div class="exam-questions">
         <planet-exam-question

@@ -50,7 +50,7 @@ export class ExamsAddComponent implements OnInit {
         : ac => this.validatorService.isUnique$(this.dbName, 'name', ac)
       ],
       passingPercentage: [
-        50,
+        100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
       questions: this.fb.array([])
