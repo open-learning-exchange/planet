@@ -11,7 +11,7 @@
     display: grid;
     height: inherit;
     grid-template-areas: "buttons" "inputs" "questions";
-    grid-template-rows: 48px 144px calc(#{$view-container-height} - 192px);
+    grid-template-rows: 48px 72px calc(#{$view-container-height} - 120px);
   }
 
   .exam-buttons {

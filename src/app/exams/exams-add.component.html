@@ -12,7 +12,7 @@
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="exam-buttons">
         <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
-        <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n>Add Question</button>
+        <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n class="margin-lr-5">Add Question</button>
       </div>
       <div class="exam-inputs">
         <mat-form-field class="full-width">
