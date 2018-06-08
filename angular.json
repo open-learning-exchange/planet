@@ -24,7 +24,8 @@
               "node_modules/material-design-icons/iconfont/material-icons.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "poll": 2000
           },
           "configurations": {
             "production": {
