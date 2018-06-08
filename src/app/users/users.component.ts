@@ -150,7 +150,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         changeType: 'delete',
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? '' : 'Planet associated with it will be disconnected.'
+        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
       }
     });
     // Reset the message when the dialog closes
