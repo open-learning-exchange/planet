@@ -4,6 +4,7 @@ import {
   FormControl,
   FormArray
 } from '@angular/forms';
+import { uniqueId } from '../shared/utils';
 
 @Component({
   selector: 'planet-exam-question',
@@ -22,6 +23,7 @@ export class ExamsQuestionComponent implements OnInit {
   @Input() questionForm: FormGroup;
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
+  correctCheckboxes: boolean[];
 
   constructor() {}
 
@@ -30,7 +32,7 @@ export class ExamsQuestionComponent implements OnInit {
   }
 
   addChoice() {
-    this.choices.push(new FormControl());
+    this.choices.push(new FormControl({ 'text': '', 'id': uniqueId() }));
   }
 
   removeChoice(index: number) {
@@ -39,6 +41,10 @@ export class ExamsQuestionComponent implements OnInit {
 
   deleteQuestion() {
     this.questionRemove.emit();
+  }
+
+  setCorrect(event: any, choice: any) {
+    this.questionForm.controls.correctIndex.setValue(event.checked ? choice.id : -1);
   }
 
 }
