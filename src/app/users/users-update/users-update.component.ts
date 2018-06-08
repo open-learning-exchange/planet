@@ -60,7 +60,7 @@ export class UsersUpdateComponent implements OnInit {
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
-        if (this.user.gender) {
+        if (this.user.gender || this.user.name !== this.userService.get().name) {
           this.redirectUrl = '/users/profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
@@ -128,7 +128,9 @@ export class UsersUpdateComponent implements OnInit {
     // ...is the rest syntax for object destructuring
     this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
       userInfo._rev = res.rev;
-      this.userService.set(userInfo);
+      if (this.user.name === this.userService.get().name) {
+        this.userService.set(userInfo);
+      }
       this.router.navigate([ this.redirectUrl ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
