@@ -33,23 +33,13 @@ export class ResourcesService {
   }
 
   getAllResources(opts: any) {
-    if (!this.user.isUserAdmin && !this.user.roles.length) {
-      // Workaround for `Error: ExpressionChangedAfterItHasBeenCheckedError`
-      setTimeout(() => {
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
-    }
+    this.userService.checkPermissions();
 
     return this.couchService.allDocs('resources', opts);
   }
 
   getResources(resourceIds: string[], opts: any) {
-    if (!this.user.isUserAdmin && !this.user.roles.length) {
-      // Workaround for `Error: ExpressionChangedAfterItHasBeenCheckedError`
-      setTimeout(() => {
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
-    }
+    this.userService.checkPermissions();
 
     return this.couchService.post('resources/_find', findDocuments({
       '_id': { '$in': resourceIds }

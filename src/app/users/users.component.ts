@@ -64,11 +64,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
     } else {
-      // Workaround for `Error: ExpressionChangedAfterItHasBeenCheckedError`
-      setTimeout(() => {
-        // Inactive users cannot receive all user docs
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
+      this.userService.checkPermissions();
     }
   }
 

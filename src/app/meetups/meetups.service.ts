@@ -38,23 +38,13 @@ export class MeetupService {
   }
 
   getAllMeetups(opts: any) {
-    if (!this.user.isUserAdmin && !this.user.roles.length) {
-      // Workaround for `Error: ExpressionChangedAfterItHasBeenCheckedError`
-      setTimeout(() => {
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
-    }
+    this.userService.checkPermissions();
 
     return this.couchService.allDocs('meetups', opts);
   }
 
   getMeetups(meetupIds: string[], opts: any) {
-    if (!this.user.isUserAdmin && !this.user.roles.length) {
-      // Workaround for `Error: ExpressionChangedAfterItHasBeenCheckedError`
-      setTimeout(() => {
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
-    }
+    this.userService.checkPermissions();
 
     // find meetupId on meetup table
     return this.couchService.post('meetups/_find', findDocuments({

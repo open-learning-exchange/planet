@@ -100,12 +100,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       opts = { domain: this.userService.getConfig().parentDomain };
     }
 
-    if (!this.user.isUserAdmin && !this.user.roles.length) {
-      // Workaround for `Error: ExpressionChangedAfterItHasBeenCheckedError`
-      setTimeout(() => {
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
-    }
+    this.userService.checkPermissions();
 
     return this.couchService.allDocs('courses', opts);
   }
