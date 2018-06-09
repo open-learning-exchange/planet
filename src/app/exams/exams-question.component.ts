@@ -23,7 +23,7 @@ export class ExamsQuestionComponent implements OnInit {
   @Input() questionForm: FormGroup;
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
-  correctCheckboxes: boolean[];
+  correctCheckboxes: any = {};
 
   constructor() {}
 
@@ -32,7 +32,12 @@ export class ExamsQuestionComponent implements OnInit {
   }
 
   addChoice() {
-    this.choices.push(new FormControl({ 'text': '', 'id': uniqueId() }));
+    const newId = uniqueId();
+    this.correctCheckboxes[newId] = false;
+    this.choices.push(new FormGroup({
+      'text': new FormControl(''),
+      'id': new FormControl(newId)
+    }));
   }
 
   removeChoice(index: number) {
@@ -44,7 +49,16 @@ export class ExamsQuestionComponent implements OnInit {
   }
 
   setCorrect(event: any, choice: any) {
-    this.questionForm.controls.correctIndex.setValue(event.checked ? choice.id : -1);
+    if (event.checked) {
+      Object.keys(this.correctCheckboxes).forEach((key) => {
+        this.correctCheckboxes[key] = key === choice.controls.id.value;
+      });
+    }
+    this.questionForm.controls.correctChoice.setValue(event.checked ? choice.controls.id.value : '');
+  }
+
+  choiceTrackByFn(index, item) {
+    return item.id;
   }
 
 }

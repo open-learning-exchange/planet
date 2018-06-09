@@ -109,7 +109,7 @@ export class ExamsAddComponent implements OnInit {
         header: '',
         body: '',
         type: 'input',
-        correctIndex: -1
+        correctChoice: ''
       },
       question,
       {
