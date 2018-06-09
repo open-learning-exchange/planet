@@ -7,8 +7,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
@@ -48,8 +47,8 @@ export class ConfigurationComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       name: [ '', [
         Validators.required,
-        CustomValidators.pattern(/^[A-Za-z0-9]/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^[a-z0-9_.-]*$/i) ]
+        CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
       ],
       password: [
         '',

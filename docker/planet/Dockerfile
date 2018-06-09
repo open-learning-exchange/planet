@@ -1,4 +1,4 @@
-FROM node:6.11-alpine as builder
+FROM node:8.11.2-alpine as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 WORKDIR /ng-app

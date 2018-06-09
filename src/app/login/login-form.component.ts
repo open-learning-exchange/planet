@@ -3,14 +3,12 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError } from 'rxjs/operators';
-import { fromPromise } from 'rxjs/observable/fromPromise';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { from, forkJoin, of } from 'rxjs';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
-import { of } from 'rxjs/observable/of';
 
 const registerForm = {
   name: [],
@@ -46,8 +44,8 @@ export class LoginFormComponent {
   ) {
     registerForm.name = [ '', [
       Validators.required,
-      CustomValidators.pattern(/^[A-Za-z0-9]/i, 'invalidFirstCharacter'),
-      Validators.pattern(/^[a-z0-9_.-]*$/i) ],
+      CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+      Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ],
       ac => this.validatorService.isUnique$('_users', 'name', ac, {})
     ];
     const formObj = this.createMode ? registerForm : loginForm;
@@ -106,9 +104,9 @@ export class LoginFormComponent {
       .pipe(switchMap((data) => {
         // Navigate into app
         if (isCreate) {
-          return fromPromise(this.router.navigate( [ 'users/update/' + name ]));
+          return from(this.router.navigate( [ 'users/update/' + name ]));
         } else {
-          return fromPromise(this.reRoute());
+          return from(this.reRoute());
         }
       }), switchMap((routeSuccess) => {
         // Post new session info to login_activity

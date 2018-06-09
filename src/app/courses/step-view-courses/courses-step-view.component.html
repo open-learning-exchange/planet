@@ -6,7 +6,7 @@
   <mat-toolbar class="primary-color font-size-1">
       <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}: {{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
-    <span *ngIf="stepDetail?.exam?.questions.length" i18n><h3>Exam attempts: {{attempts}}</h3></span>
+    <span *ngIf="attempts" i18n>Past attempts: {{attempts}}</span>
     <a
       mat-raised-button
       color="accent"
@@ -27,7 +27,7 @@
       Open resource new tab
     </a>
     <mat-form-field *ngIf="stepDetail.resources.length > 1">
-      <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (change)="onResourceChange($event.value)">
+      <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (selectionChange)="onResourceChange($event.value)">
         <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail.resources; index as i" [value]="resource">
           {{ resource.title }}
         </mat-option>
@@ -35,7 +35,7 @@
     </mat-form-field>
     <span i18n>{{stepNum}}/{{maxStep}}</span>
     <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="stepNum === maxStep" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
+    <button mat-icon-button [disabled]="stepNum === maxStep || (stepDetail?.exam?.questions.length && !examPassed)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="description">{{stepDetail.description}}</div>

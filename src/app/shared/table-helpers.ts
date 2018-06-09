@@ -7,6 +7,7 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
   return includeItem;
 });
 
+// Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
     for (let i = 0; i < filterFields.length; i++) {
@@ -28,6 +29,18 @@ export const filterDropdowns = (filterObj: any) => {
   return (data: any, filter: string) => {
     // Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
     return Object.entries(filterObj).reduce(checkFilterItems(data), true);
+  };
+};
+
+// Takes array of field names and if trueIfExists is true, return true if field exists
+// if false return true if it does not exist
+export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => {
+  return (data: any, filter: string) => {
+    for (let i = 0; i < filterFields.length; i++) {
+      const keys = filterFields[i].split('.');
+      return trueIfExists === (getProperty(data, keys) !== undefined);
+    }
+    return true;
   };
 };
 

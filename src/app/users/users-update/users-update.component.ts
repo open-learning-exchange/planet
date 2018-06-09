@@ -5,8 +5,7 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import { Observable, of } from 'rxjs';
 import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
@@ -31,7 +30,7 @@ import { languages } from '../../shared/languages';
 })
 export class UsersUpdateComponent implements OnInit {
   user: any = {};
-  educationLevel = [ '1', '2', '3', '4', '5', '6' , '7', '8', '9', '11', '12', 'Higher' ];
+  educationLevel = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   currentImgKey: string;
@@ -61,7 +60,7 @@ export class UsersUpdateComponent implements OnInit {
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
-        if (this.user.gender) {
+        if (this.user.gender || this.user.name !== this.userService.get().name) {
           this.redirectUrl = '/users/profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
@@ -129,7 +128,9 @@ export class UsersUpdateComponent implements OnInit {
     // ...is the rest syntax for object destructuring
     this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
       userInfo._rev = res.rev;
-      this.userService.set(userInfo);
+      if (this.user.name === this.userService.get().name) {
+        this.userService.set(userInfo);
+      }
       this.router.navigate([ this.redirectUrl ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject, forkJoin, of } from 'rxjs';
+import { UserService } from '../shared/user.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
@@ -8,33 +10,35 @@ export class CoursesService {
 
   course: any = { _id: '' };
   submission: any = { courseId: '', examId: '' };
-  private courseUpdated = new Subject<any[]>();
+  private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
-  private submissionUpdated = new Subject<any>();
-  submissionUpdated$ = this.submissionUpdated.asObservable();
-  submissionAttempts = 0;
   stepIndex: any;
   returnUrl: string;
 
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private userService: UserService
   ) {}
 
-  // Components call this to get details of one course.
+  // Components call this to get details of one course and associated progress.
   // If the id already matches what is stored on the service, return that.
   // Or will get new version if forceLatest set to true
+  // Always queries CouchDB for the latest progress by the logged in user
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
+    const obs = [
+      this.couchService.post('courses_progress/_find', findDocuments({
+        'userId': this.userService.get()._id,
+        courseId
+      }))
+    ];
     if (!forceLatest && courseId === this.course._id) {
-      this.courseUpdated.next(this.course);
+      obs.push(of(this.course));
     } else {
-      this.getCourse(courseId, opts);
+      obs.push(this.couchService.get('courses/' + courseId, opts));
     }
-  }
-
-  private getCourse(courseId: string, opts) {
-    this.couchService.get('courses/' + courseId, opts).subscribe(course => {
+    forkJoin(obs).subscribe(([ progress, course ]) => {
       this.course = course;
-      this.courseUpdated.next(course);
+      this.courseUpdated.next({ progress: progress.docs[0], course });
     });
   }
 
@@ -44,37 +48,10 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  private newSubmission({ parentId, parent, user, type }) {
-    this.submission = { parentId, parent, user, type, answers: [], status: 'pending' };
-  }
-
-  openSubmission({ parentId, parent, user, type }) {
-    this.couchService.post('submissions/_find', { 'selector': { parentId, user } })
-      .subscribe((res) => {
-        let attempts = res.docs.length - 1;
-        this.submission = res.docs.find(submission => submission.status === 'pending');
-        if (this.submission === undefined) {
-          attempts += 1;
-          this.newSubmission({ parentId, parent, user, type });
-        }
-        this.submissionAttempts = attempts;
-        this.submissionUpdated.next({ submission: this.submission, attempts });
-      });
-  }
-
-  updateSubmission(answer, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
-    submission.answers[index] = answer;
-    submission.status = close ? 'complete' : 'pending';
-    this.couchService.post('submissions', submission).subscribe((res) => {
-      let attempts = this.submissionAttempts;
-      if (submission.status === 'complete') {
-        attempts += 1;
-        this.newSubmission(submission);
-      } else {
-        this.submission = { ...submission, _id: res.id, _rev: res.rev };
-      }
-      this.submissionUpdated.next({ submission: this.submission, attempts });
+  updateProgress({ courseId, stepNum, progress = {} }) {
+    const newProgress = { ...progress, stepNum, courseId, userId: this.userService.get()._id };
+    this.couchService.post('courses_progress', newProgress).subscribe(() => {
+      this.requestCourse({ courseId });
     });
   }
 

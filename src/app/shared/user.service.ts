@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { of, Observable, Subject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import { environment } from '../../environments/environment';
 
 // Holds the currently logged in user information
@@ -25,7 +22,9 @@ export class UserService {
   }
   set shelf(shelf: any) {
     this._shelf = shelf;
-    this.shelfChange.next(shelf);
+    if (shelf === {}) {
+      this.shelfChange.next(shelf);
+    }
   }
   sessionStart: number;
   sessionRev: string;
@@ -160,6 +159,9 @@ export class UserService {
     }
     return newObs.pipe(switchMap(() => {
       return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+    }), map((res: any) => {
+      this.sessionRev = res.rev;
+      return res;
     }));
   }
 

@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ole/stretch64"
-  config.vm.box_version = "0.3.3"
+  config.vm.box_version = "0.4.0"
 
   config.vm.hostname = "planet"
 
@@ -34,7 +34,6 @@ Vagrant.configure(2) do |config|
   # accessing "localhost:8082" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8082
   config.vm.network "forwarded_port", guest: 5984, host: 2200, auto_correct: true
-  config.vm.network "forwarded_port", guest: 5986, host: 2201, auto_correct: true
   config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
   config.vm.network "forwarded_port", guest: 9876, host: 9876, auto_correct: true
   config.vm.network "forwarded_port", guest: 49152, host: 49152, auto_correct: true
@@ -84,12 +83,8 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    # Portainer
-    #docker pull portainer/portainer
-    #sudo docker run -d -p 9000:9000 --name treehouse -v /var/run/docker.sock:/var/run/docker.sock portainer:portainer
-
     # Add CouchDB Docker
-    sudo docker run -d -p 5984:5984 -p 5986:5986 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb couchdb:2.1.1
+    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb treehouses/couchdb:2.1.1
     # Install Angular CLI
     #sudo npm install -g @angular/cli
 
@@ -109,12 +104,8 @@ Vagrant.configure(2) do |config|
     mkdir -p /vagrant/node_modules
     chown vagrant:vagrant /vagrant_node_modules
     mount --bind /vagrant_node_modules /vagrant/node_modules
-    npm install
+    npm i --unsafe-perm
     # End node_modules fix
-
-    # docker-compose
-    sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
 
     # Add initial Couch databases here
     chmod +x couchdb-setup.sh

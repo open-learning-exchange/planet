@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -89,11 +89,19 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users', { '$not': { '_id': this.userService.get()._id } }).subscribe((res) => {
-      const data = { okClick: this.sendInvitations.bind(this),
+    this.dialogsListService.getListAndColumns('_users', {
+      '_id': { '$ne': this.userService.get()._id },
+      '$or': [
+        { 'roles': { '$in': [ 'learner', 'leader' ] } },
+        { 'isUserAdmin': true }
+      ]
+    }).subscribe((res) => {
+      const data = {
+        okClick: this.sendInvitations.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
-        ...res };
+        ...res
+      };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
         height: '500px',

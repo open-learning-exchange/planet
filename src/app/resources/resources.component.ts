@@ -6,13 +6,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { switchMap, catchError, takeUntil, map } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
+import { of, Subject, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields, filterDropdowns, composeFilterFunctions } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
-import { Subject } from 'rxjs/Subject';
-import { forkJoin } from 'rxjs/observable/forkJoin';
 import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
@@ -205,6 +203,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: resourceId, _rev: resourceRev } = resource;
       this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
         .subscribe((data) => {
+          this.selection.deselect(resource);
           this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
@@ -269,10 +268,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetFilter() {
-    this.filter = {
-      'subject': '',
-      'level': ''
-    };
+    this.filter.level = '';
+    this.filter.subject = '';
     this.titleSearch = '';
   }
 

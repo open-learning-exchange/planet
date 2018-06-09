@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { tap, switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './login.component.html',

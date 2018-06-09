@@ -2,17 +2,14 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { forkJoin, of, throwError, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { filterSpecificFields } from '../shared/table-helpers';
-import { of } from 'rxjs/observable/of';
-import { _throw } from 'rxjs/observable/throw';
-import { Subject } from 'rxjs/Subject';
+import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
@@ -32,6 +29,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allUsers = new MatTableDataSource();
   message = '';
+  filterAssociated = false;
+  filter: any;
+  planetType = '';
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
   isUserAdmin = false;
@@ -56,9 +56,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
       .subscribe((shelf: any) => {
         this.setMyTeams(this.allUsers.data, shelf.myTeamIds);
       });
-    }
+  }
 
   ngOnInit() {
+    this.planetType = this.userService.getConfig().planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
@@ -68,8 +69,25 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }
   }
 
+  changeFilter(type) {
+    switch (type) {
+      case 'associated':
+        this.displayedColumns = [ 'profile', 'name', 'action' ];
+        this.filterAssociated = true;
+        break;
+      default:
+        this.displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
+        this.filterAssociated = false;
+        break;
+    }
+    this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
+    this.allUsers.filterPredicate = composeFilterFunctions([ this.filter, filterSpecificFields([ 'doc.name' ]) ]);
+    this.allUsers.filter = this.allUsers.filter || ' ';
+  }
+
   applyFilter(filterValue: string) {
     this.allUsers.filter = filterValue;
+    this.changeFilter(this.filterAssociated ? 'associated' : 'local');
   }
 
   ngAfterViewInit() {
@@ -91,17 +109,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.allUsers.data.forEach(row => this.selection.select(row));
+    this.allUsers.data.forEach((row: any) => this.selection.select(row.doc._id));
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find', { 'selector': { } });
+    return this.couchService.post(this.dbName + '/_find', { 'selector': {} });
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsers().pipe(debug('Getting user list')).subscribe(users => {
+    this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
       users = users.docs.filter((user: any) => {
         // Removes current user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
@@ -116,7 +134,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         return userInfo;
       });
       this.setMyTeams(users, this.userService.shelf.myTeamIds);
-      this.allUsers.filterPredicate = filterSpecificFields([ 'doc.name' ]);
+      this.changeFilter('local');
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
@@ -132,7 +150,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         changeType: 'delete',
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? '' : 'Planet associated with it will be disconnected.'
+        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
       }
     });
     // Reset the message when the dialog closes
@@ -155,12 +173,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
         catchError((err) => {
           // If deleting user fails, do not continue stream and show error
           this.planetMessageService.showAlert('There was a problem deleting this user.');
-          return _throw(err);
+          return throwError(err);
         }),
         switchMap((data) => {
+          this.selection.deselect(user._id);
           this.planetMessageService.showMessage('User deleted: ' + user.name);
           this.deleteDialog.close();
-          this.selection.clear();
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
           return this.removeDeletedUserFromShelves(userId);
@@ -226,9 +244,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  roleSubmit(users: any[], roles: string[]) {
-    forkJoin(users.reduce((observers, userInfo) => {
-      const user = userInfo.doc;
+  idsToUsers(userIds: any[]) {
+    return userIds.map(userId => {
+      const user: any = this.allUsers.data.find((u: any) => u.doc._id === userId);
+      return user.doc;
+    });
+  }
+
+  roleSubmit(userIds: any[], roles: string[]) {
+    const users: any = this.idsToUsers(userIds);
+    forkJoin(users.reduce((observers, user) => {
       // Do not add role if it already exists on user and also not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
@@ -240,8 +265,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, []))
     .pipe(debug('Adding role to users'))
     .subscribe((responses) => {
-      users.map((userInfo) => {
-        const user = userInfo.doc;
+      users.map((user) => {
         if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
           user.roles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
@@ -271,15 +295,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => (error));
   }
 
-  addTeams(users) {
+  addTeams(userIds) {
+    const users = this.idsToUsers(userIds);
     const userShelf = this.userService.shelf;
-    const myTeamIds = users.map((data) => {
-      return data.doc._id;
-    }).concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
+    const myTeamIds = userIds.concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
     const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
     const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
     const msg = (users.length === 1 && addedNum === 1 ?
-      users[0].doc.name + ' has been'
+      users[0].name + ' has been'
       : addedNum + ' ' + subjectVerbAgreement + ' been')
       + ' added to';
     this.updateShelf(myTeamIds, userShelf, msg);

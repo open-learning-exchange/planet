@@ -1,4 +1,4 @@
-FROM node:6.11-alpine
+FROM node:8.11.2-alpine
 
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates;\
@@ -11,4 +11,4 @@ COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY ./couchdb-setup.sh /root/couchdb-setup.sh
 ADD ./design /root/design
 
-CMD sh ./docker-entrypoint.sh
+CMD bash ./docker-entrypoint.sh

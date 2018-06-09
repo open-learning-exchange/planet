@@ -18,6 +18,7 @@
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
         <span i18n>Delete</span>
+        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
       </button>
       <button mat-mini-fab routerLink="add">
         <mat-icon>add</mat-icon>
@@ -75,14 +76,14 @@
       <mat-cell *matCellDef="let element">
         <div>
           <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span i18n>at</span>{{ ' ' + element.startTime + ' - ' + element.endTime }}</p>
-          <p><span i18n>Recurring:</span>{{ ' ' + element.recurring }}</p>
+          <p><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
           <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
           <p><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
         </div>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="5"

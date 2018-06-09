@@ -7,10 +7,9 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { of } from 'rxjs/observable/of';
+import { of, Subject } from 'rxjs';
 import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
-import { Subject } from 'rxjs/Subject';
 import { debug } from '../debug-operator';
 
 @Component({
@@ -109,19 +108,20 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: meetupId, _rev: meetupRev } = meetup;
       this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev)
         .subscribe((data) => {
+          this.selection.deselect(meetupId);
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
-          this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted Meetup ' + meetup.title);
         }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup');
     };
   }
 
-  deleteMeetups(meetups) {
+  deleteMeetups(meetupIds) {
     // Deletes multiple meetups
     return () => {
-      const deleteMeetupArr = meetups.map((meetup) => {
+      const deleteMeetupArr = meetupIds.map((meetupId) => {
+        const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
         return { _id: meetup._id, _rev: meetup._rev, _deleted: true };
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteMeetupArr })
@@ -139,7 +139,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       okClick = this.deleteMeetups(this.selection.selected),
       displayName = '';
     if (this.selection.selected.length === 1) {
-      const meetup = this.selection.selected[0];
+      const meetup: any = this.meetups.data.find((m: any) => m._id === this.selection.selected[0]);
       amount = 'single';
       okClick = this.deleteMeetup(meetup);
       displayName = meetup.title;

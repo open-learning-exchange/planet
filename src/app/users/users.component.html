@@ -2,6 +2,18 @@
   <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Users</span>
   <span class="toolbar-fill"></span>
+  <mat-button-toggle-group
+    class="margin-lr-5 font-size-1"
+    *ngIf="planetType !== 'community'"
+    (change)="changeFilter(filterGroup.value)"
+    #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="local" [checked]="!filterAssociated">
+      Local
+    </mat-button-toggle>
+    <mat-button-toggle value="associated" [checked]="filterAssociated">
+      Associated
+    </mat-button-toggle>
+  </mat-button-toggle-group>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
@@ -13,7 +25,7 @@
     <span class="toolbar-fill">
       <h1 i18n>All Users</h1>
     </span>
-    <div class="margin-lr-3">
+    <div class="margin-lr-3" *ngIf="!filterAssociated">
       <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
@@ -26,7 +38,8 @@
         </mat-form-field>
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
-      <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span></button>
+      <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span>
+        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span></button>
     </div>
   </mat-toolbar>
 
@@ -39,8 +52,8 @@
       </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
+        <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
+          [checked]="selection.isSelected(row.doc._id)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -64,7 +77,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (remove)="deleteRole(element.doc,i)">
+          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
             {{role}}
             <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
           </mat-chip>
@@ -88,22 +101,24 @@
             <mat-icon>delete</mat-icon>Delete
           </button>
           <a
-            *ngIf="element.doc.roles.length > 0"
+            *ngIf="element.doc.roles.length > 0 && !filterAssociated"
             (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
             mat-raised-button color="primary" i18n>
             <!--Convert boolean to number for i18n-->
             {+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}
           </a>
         </span>
-        <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([element])">Add Team</button>
-        <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id, element.doc.name)">Remove Team</button></ng-template>
+        <ng-container *ngIf="!filterAssociated">
+          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([element])">Add Team</button>
+          <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id, element.doc.name)">Remove Team</button></ng-template>
+        </ng-container>
         <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
           <mat-icon>folder_open</mat-icon>View Profile
         </a>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}" ></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row.doc._id)}" ></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="10"
