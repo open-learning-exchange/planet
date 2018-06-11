@@ -150,7 +150,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.post('notifications/_find', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 }
+        'time': { '$gt': 0 },
+        'status': 'unread'
       },
       0,
       [ { 'time': 'desc' } ]))
