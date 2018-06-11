@@ -64,7 +64,12 @@ export class SubmissionsService {
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], grades: [ ...this.submission.grades ] };
-    submission.answers[index] = answer;
+    const oldAnswer = submission.answers[index];
+    submission.answers[index] = {
+      value: answer,
+      mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
+      passed: correct !== false
+    };
     this.updateGrade(submission, correct ? 1 : 0, index);
     return this.updateSubmission(submission, true, close);
   }

@@ -80,12 +80,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
-    let correctAnswer = true;
+    let correctAnswer;
     let obs: any;
     switch (this.mode) {
       case 'take':
-        correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : true;
-        obs = this.submissionsService.submitAnswer(this.answer, this.question.correctChoice && correctAnswer, this.questionNum - 1, close);
+        correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : correctAnswer;
+        obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, close);
         break;
       case 'grade':
         obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
@@ -94,7 +94,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer = undefined;
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
-      if (!correctAnswer) {
+      if (correctAnswer === false) {
         this.incorrectAnswer = true;
       } else {
         this.routeToNext(close);
