@@ -125,4 +125,8 @@ export class ExamsAddComponent implements OnInit {
     this.router.navigate([ this.coursesService.returnUrl ]);
   }
 
+  backToCourse() {
+    this.router.navigate(['/courses']);
+  }
+
 }
