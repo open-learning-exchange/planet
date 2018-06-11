@@ -29,6 +29,8 @@ export class ExamsQuestionComponent implements OnInit {
 
   ngOnInit() {
     this.choices = <FormArray>this.questionForm.controls.choices;
+    const correctChoice = this.questionForm.controls.correctChoice.value;
+    this.choices.controls.forEach(choice => this.correctCheckboxes[choice.controls.id.value] = correctChoice === choice.controls.id.value);
   }
 
   addChoice() {

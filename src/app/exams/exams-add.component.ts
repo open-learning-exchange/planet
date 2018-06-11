@@ -104,6 +104,12 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addQuestion(question: any = {}) {
+    const choices = question.choices.map((choice) => {
+      return new FormGroup({
+        'text': new FormControl(choice.text),
+        'id': new FormControl(choice.id)
+      });
+    });
     this.questionsFormArray.push(this.fb.group(Object.assign(
       {
         header: '',
@@ -114,7 +120,7 @@ export class ExamsAddComponent implements OnInit {
       question,
       {
         marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array(question.choices || [])
+        choices: this.fb.array(choices || [])
       }
     )));
   }
