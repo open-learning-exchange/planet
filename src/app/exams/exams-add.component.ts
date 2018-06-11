@@ -122,11 +122,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate([ this.coursesService.returnUrl ]);
-  }
-
-  backToCourse() {
-    this.router.navigate(['/courses']);
+    this.router.navigate([ this.coursesService.returnUrl || 'courses' ]);
   }
 
 }
