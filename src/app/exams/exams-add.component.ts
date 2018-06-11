@@ -103,7 +103,7 @@ export class ExamsAddComponent implements OnInit {
     return examInfo.questions.reduce((total: number, question: any) => total + question.marks, 0);
   }
 
-  addQuestion(question: any = {}) {
+  addQuestion(question: any = { choices: [] }) {
     const choices = question.choices.map((choice) => {
       return new FormGroup({
         'text': new FormControl(choice.text),
