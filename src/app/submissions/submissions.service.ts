@@ -70,7 +70,9 @@ export class SubmissionsService {
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false
     };
-    this.updateGrade(submission, correct ? 1 : 0, index);
+    if (correct !== undefined) {
+      this.updateGrade(submission, correct ? 1 : 0, index);
+    }
     return this.updateSubmission(submission, true, close);
   }
 

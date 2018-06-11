@@ -23,7 +23,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer: any;
+  answer: any = { value: '' };
   incorrectAnswer = false;
   mode = 'take';
   grade;
@@ -85,13 +85,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     switch (this.mode) {
       case 'take':
         correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : correctAnswer;
-        obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, close);
+        obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close);
+        this.answer = undefined;
         break;
       case 'grade':
         obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
         break;
     }
-    this.answer = undefined;
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
       if (correctAnswer === false) {
