@@ -112,6 +112,7 @@ curl -X PUT $COUCHURL/shelf
 curl -X PUT $COUCHURL/submissions
 curl -X PUT $COUCHURL/courses_progress
 curl -X PUT $COUCHURL/attachments
+curl -X PUT $COUCHURL/send_items
 
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
