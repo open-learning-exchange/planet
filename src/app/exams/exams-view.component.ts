@@ -7,7 +7,13 @@ import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 
 @Component({
-  templateUrl: './exams-view.component.html'
+  templateUrl: './exams-view.component.html',
+  styles: [ `
+    .v-align-center {
+      display: flex;
+      align-items: center;
+    }
+  ` ]
 })
 
 export class ExamsViewComponent implements OnInit, OnDestroy {
@@ -17,7 +23,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer: string | number = '';
+  answer: any;
+  incorrectAnswer = false;
   mode = 'take';
   grade;
 
@@ -56,6 +63,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
+        this.incorrectAnswer = false;
       } else if (submissionId) {
         this.mode = 'grade';
         this.grade = undefined;
@@ -71,9 +79,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
+    let correctAnswer = true;
     let obs: any;
     switch (this.mode) {
       case 'take':
+        correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : true;
         obs = this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
         break;
       case 'grade':
@@ -83,12 +93,20 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer = '';
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
-      if (close) {
-        this.goBack();
+      if (!correctAnswer) {
+        this.incorrectAnswer = true;
       } else {
-        this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+        this.routeToNext(close);
       }
     });
+  }
+
+  routeToNext (close) {
+    if (close) {
+      this.goBack();
+    } else {
+      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+    }
   }
 
   goBack() {

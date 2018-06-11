@@ -31,8 +31,11 @@
         </mat-radio-group>
       </ng-container>
     </ng-container>
-    <div>
+    <div class="v-align-center">
       <button mat-raised-button color="primary" (click)="nextQuestion(questionNum)" i18n>Submit Answer</button>
+      <span class="small warn-text-color v-align-center" *ngIf="incorrectAnswer">
+        <mat-icon class="margin-lr-3">error</mat-icon><span i18n>Incorrect answer, please try again</span>
+      </span>
     </div>
   </div>
 </div>
