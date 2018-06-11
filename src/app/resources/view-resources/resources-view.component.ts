@@ -45,17 +45,18 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
   // Use string rather than boolean for i18n select
   fullView = 'off';
+  resourceId: string;
 
   ngOnInit() {
     this.route.paramMap
       .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
-        const resourceId = params.get('id');
-        const getOpts: any = { resourceIds: [ resourceId ] };
+        this.resourceId = params.get('id');
+        const getOpts: any = { resourceIds: [ this.resourceId ] };
         if (this.parent) {
           getOpts.opts = { domain: this.userService.getConfig().parentDomain };
         }
-        this.resourceActivity(resourceId, 'visit');
+        this.resourceActivity(this.resourceId, 'visit');
         this.resourcesService.updateResources(getOpts);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))

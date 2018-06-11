@@ -5,7 +5,7 @@
 
 <div class="space-container">
 <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3">{{resource.title}}</span>
+    <span class="margin-lr-3">{{resource?.title}}</span>
     <button mat-button (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
@@ -17,19 +17,20 @@
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-resources-rating [rating]="resource?.rating" [resourceId]="resource?._id"></planet-resources-rating>
-      <p><b>Author:</b> <i>{{resource.author}}</i></p>
-      <p><b>Published by:</b> {{resource.Publisher}} on {{resource.year}}</p>
-      <p><b>Media:</b> {{ resource.medium }}</p>
-      <p><b>Language:</b> {{ resource.language }}</p>
-      <p><b>Subject/s:</b> {{resource.subject}}</p>
-      <p><b>to License:</b> <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
-      <p><b>Resource:</b> {{ resource.resourceFor }}</p>
-      <p><b>Type:</b> {{ resource.resourceType }}</p>
+      <p><b>Author:</b> <i>{{resource?.author}}</i></p>
+      <p><b>Published by:</b> {{resource?.Publisher}} on {{resource?.year}}</p>
+      <p><b>Media:</b> {{ resource?.medium }}</p>
+      <p><b>Language:</b> {{ resource?.language }}</p>
+      <p><b>Subject/s:</b> {{resource?.subject}}</p>
+      <p><b>to License:</b> <a href={{resource?.linkToLicense}} target="_blank">{{resource?.linkToLicense}}</a></p>
+      <p><b>Resource:</b> {{ resource?.resourceFor }}</p>
+      <p><b>Type:</b> {{ resource?.resourceType }}</p>
       <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
     <planet-resources-viewer
-      *ngIf="resource"
-      [resourceId]="resource?._id"
+      *ngIf="resource?._id"
+      [resource]="resource"
+      [resourceId]="resourceId"
       (resourceUrl)="setResourceUrl($event)">
     </planet-resources-viewer>
   </div>
