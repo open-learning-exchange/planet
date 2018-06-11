@@ -36,9 +36,6 @@ import { ExamsModule } from '../exams/exams.module';
     CoursesViewComponent,
     CoursesStepComponent,
     CoursesStepViewComponent,
-  ],
-  providers: [
-    CoursesService
   ]
 })
 export class CoursesModule {}
