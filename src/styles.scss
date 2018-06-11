@@ -37,6 +37,10 @@ body {
     color: $accent;
   }
 
+  .warn-text-color {
+    color: $warn;
+  }
+
   .bg-light-grey {
     background-color: $light-grey;
   }
@@ -239,7 +243,7 @@ body {
   }
 
   .small {
-    font-size: 0.625rem;
+    font-size: 0.75rem;
   }
 
   mat-table .highlight, .primary-light-color {
