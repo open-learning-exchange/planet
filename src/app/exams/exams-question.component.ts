@@ -4,25 +4,43 @@ import {
   FormControl,
   FormArray
 } from '@angular/forms';
+import { uniqueId } from '../shared/utils';
 
 @Component({
   selector: 'planet-exam-question',
-  templateUrl: 'exams-question.component.html'
+  templateUrl: 'exams-question.component.html',
+  styles: [ `
+    .question-choices {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 180px 24px);
+      align-items: center;
+      grid-column-gap: 5px;
+    }
+  ` ]
 })
 export class ExamsQuestionComponent implements OnInit {
 
   @Input() questionForm: FormGroup;
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
+  correctCheckboxes: any = {};
 
   constructor() {}
 
   ngOnInit() {
     this.choices = <FormArray>this.questionForm.controls.choices;
+    const correctChoice = this.questionForm.controls.correctChoice.value;
+    this.choices.controls.forEach((choice: any) =>
+      this.correctCheckboxes[choice.controls.id.value] = correctChoice === choice.controls.id.value);
   }
 
   addChoice() {
-    this.choices.push(new FormControl());
+    const newId = uniqueId();
+    this.correctCheckboxes[newId] = false;
+    this.choices.push(new FormGroup({
+      'text': new FormControl(''),
+      'id': new FormControl(newId)
+    }));
   }
 
   removeChoice(index: number) {
@@ -31,6 +49,19 @@ export class ExamsQuestionComponent implements OnInit {
 
   deleteQuestion() {
     this.questionRemove.emit();
+  }
+
+  setCorrect(event: any, choice: any) {
+    if (event.checked) {
+      Object.keys(this.correctCheckboxes).forEach((key) => {
+        this.correctCheckboxes[key] = key === choice.controls.id.value;
+      });
+    }
+    this.questionForm.controls.correctChoice.setValue(event.checked ? choice.controls.id.value : '');
+  }
+
+  choiceTrackByFn(index, item) {
+    return item.id;
   }
 
 }

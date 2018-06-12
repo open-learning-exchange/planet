@@ -1,0 +1,30 @@
+@import '../variables';
+
+:host {
+
+  .view-container {
+    display: grid;
+    grid-auto-rows: 1fr;
+  }
+
+  form {
+    display: grid;
+    height: inherit;
+    grid-template-areas: "buttons" "inputs" "questions";
+    grid-template-rows: 48px 72px calc(#{$view-container-height} - 120px);
+  }
+
+  .exam-buttons {
+    grid-area: buttons;
+  }
+
+  .exam-inputs {
+    grid-area: inputs;
+  }
+
+  .exam-questions {
+    grid-area: questions;
+    overflow-y: auto;
+  }
+
+}

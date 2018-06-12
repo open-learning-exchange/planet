@@ -109,7 +109,7 @@
           </a>
         </span>
         <ng-container *ngIf="!filterAssociated">
-          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([element])">Add Team</button>
+          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([element.doc._id])">Add Team</button>
           <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id, element.doc.name)">Remove Team</button></ng-template>
         </ng-container>
         <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>

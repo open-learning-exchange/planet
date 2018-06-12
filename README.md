@@ -79,4 +79,4 @@ cd /vagrant
 npm rebuild node-sass
 ```
 
-The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'`.
+The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `screen -dmS build bash -c 'cd /vagrant; ng serve'`.
