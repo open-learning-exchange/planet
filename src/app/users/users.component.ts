@@ -64,6 +64,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
     } else {
+      // Inactive users cannot receive all user docs
       setTimeout(() => {
         this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
       });
