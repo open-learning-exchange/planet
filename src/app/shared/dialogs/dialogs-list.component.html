@@ -1,5 +1,5 @@
 <div class="search-bar">
-  <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3" *ngIf="data.allowMulti">
+  <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3" *ngIf="data.allowMulti && isAllSelected()!=='hidden'">
     {isAllSelected(), select, yes {Deselect} no {Select}} all
   </button>
   <mat-icon>search</mat-icon>

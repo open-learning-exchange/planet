@@ -63,7 +63,16 @@ export class DialogsListComponent implements AfterViewInit {
     const allShownSelected = !this.tableData.filteredData.find((row: any) => {
       return this.selection.selected.indexOf(row._id) === -1;
     });
-    return allShownSelected ? 'yes' : 'no';
+
+    if (allShownSelected) {
+      if (this.tableData.filteredData.length === 0) {
+        return 'hidden';
+      } else {
+        return 'yes';
+      }
+    } else {
+      return 'no';
+    }
   }
 
   masterToggle() {
