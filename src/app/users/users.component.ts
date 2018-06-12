@@ -64,7 +64,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
     if (this.isUserAdmin || this.userService.get().roles.length) {
       this.initializeData();
     } else {
-      this.userService.checkPermissions();
+      setTimeout(() => {
+        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
+      });
     }
   }
 

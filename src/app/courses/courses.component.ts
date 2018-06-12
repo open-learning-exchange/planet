@@ -100,8 +100,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       opts = { domain: this.userService.getConfig().parentDomain };
     }
 
-    this.userService.checkPermissions();
-
     return this.couchService.allDocs('courses', opts);
   }
 

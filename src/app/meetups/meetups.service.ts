@@ -38,14 +38,10 @@ export class MeetupService {
   }
 
   getAllMeetups(opts: any) {
-    this.userService.checkPermissions();
-
     return this.couchService.allDocs('meetups', opts);
   }
 
   getMeetups(meetupIds: string[], opts: any) {
-    this.userService.checkPermissions();
-
     // find meetupId on meetup table
     return this.couchService.post('meetups/_find', findDocuments({
       '_id': { '$in': meetupIds }

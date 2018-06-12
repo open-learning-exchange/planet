@@ -33,14 +33,10 @@ export class ResourcesService {
   }
 
   getAllResources(opts: any) {
-    this.userService.checkPermissions();
-
     return this.couchService.allDocs('resources', opts);
   }
 
   getResources(resourceIds: string[], opts: any) {
-    this.userService.checkPermissions();
-
     return this.couchService.post('resources/_find', findDocuments({
       '_id': { '$in': resourceIds }
     }, 0, [], 1000), opts);

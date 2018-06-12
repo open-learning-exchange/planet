@@ -168,13 +168,4 @@ export class UserService {
       return res;
     }));
   }
-
-  checkPermissions() {
-    if (!this.user.isUserAdmin && !this.user.roles.length) {
-      setTimeout(() => {
-        this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-      });
-    }
-  }
-
 }
