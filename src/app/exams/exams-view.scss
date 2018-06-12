@@ -1,0 +1,15 @@
+:host {
+  .question-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question-list mat-radio-button {
+    margin: 5px;
+  }
+
+  .v-align-center {
+      display: flex;
+      align-items: center;
+  }
+}
