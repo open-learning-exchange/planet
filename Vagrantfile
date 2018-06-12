@@ -84,7 +84,7 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     # Add CouchDB Docker
-    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb treehouses/couchdb:2.1.1
+    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.1.1
     # Install Angular CLI
     #sudo npm install -g @angular/cli
 
@@ -97,6 +97,9 @@ Vagrant.configure(2) do |config|
     node bin.js http://localhost:5984
     cd /vagrant
     # End add CORS to CouchDB
+
+    curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/file -d '"/opt/couchdb/var/log/couch.log"'
+    curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/writer -d '"file"'
 
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     echo "Preparing local node_modules folder…"
