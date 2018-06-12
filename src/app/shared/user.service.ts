@@ -38,9 +38,7 @@ export class UserService {
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
 
-  constructor(
-    private couchService: CouchService
-  ) {}
+  constructor(private couchService: CouchService) {}
 
   set(user: any): any {
     this.user = user;
