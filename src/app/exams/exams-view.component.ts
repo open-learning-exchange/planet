@@ -23,7 +23,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer: any = { value: '' };
+  answer: any = '';
   incorrectAnswer = false;
   mode = 'take';
   grade;
