@@ -24,7 +24,7 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
-        <p i18n>Submitted answer:<span> {{answer.value.text || answer.value}}</span></p>
+        <p i18n>Submitted answer:<span> {{answer?.value?.text || answer?.value}}</span></p>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
