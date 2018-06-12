@@ -4,9 +4,9 @@ services:
       - 5984
     image: treehouses/couchdb:2.1.1
     ports:
-      - "2300:5984"
+      - "2200:5984"
   db-init:
-    image: treehouses/planet:db-init-latest
+    image: treehouses/planet:db-init
     depends_on:
       - couchdb
     environment:
