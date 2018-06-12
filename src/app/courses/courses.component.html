@@ -53,7 +53,7 @@
         <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
-        <button *ngIf="!parent" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-cell>

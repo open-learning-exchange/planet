@@ -118,7 +118,7 @@ body {
     display: grid;
     grid-template-areas:
       'hd mn'
-      'cn mn';
+      'cn .';
     grid-template-columns: auto 50px;
 
     .header {

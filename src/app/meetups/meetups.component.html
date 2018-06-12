@@ -46,7 +46,7 @@
         <div class="content">
           <p>{{ element.description }}</p>
         </div>
-        <button *ngIf="!parent" mat-icon-button [matMenuTriggerFor]="meetupMenu">
+        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-cell>
