@@ -99,6 +99,7 @@ Vagrant.configure(2) do |config|
     # End add CORS to CouchDB
 
     curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/file -d '"/opt/couchdb/var/log/couch.log"'
+    curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/writer -d '"file"'
 
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     echo "Preparing local node_modules folder…"
