@@ -9,7 +9,7 @@
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
     <mat-icon matBadge={{notifications.length}} matBadgeColor="warn" MatBadgeSize="small">notifications</mat-icon>
   </button>
-  <button mat-icon-button *ngIf="notifications.length === 0" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
+  <button mat-icon-button *ngIf="notifications.length === 0" routerLink="/notifications" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
   <button mat-icon-button [matMenuTriggerFor]="languageMenu">
     <img *ngIf="currentFlag" src="assets/flags/{{currentFlag}}.png" alt="{{currentLang}}"
       title="{{currentLang}}" />
