@@ -5,7 +5,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Injectable()
 export class MeetupService {
@@ -14,12 +13,10 @@ export class MeetupService {
   meetupUpdated$ = this.meetupUpdated.asObservable();
   meetups = [];
   userShelf = this.userService.shelf;
-  user = this.userService.get();
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
   ) {
     this.userService.shelfChange$
       .subscribe((shelf: any) => {

@@ -4,7 +4,6 @@ import { catchError, switchMap, map } from 'rxjs/operators';
 import { of, Observable, Subject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
-import { PlanetMessageService } from './planet-message.service';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -40,8 +39,7 @@ export class UserService {
   notificationStateChange$ = this.notificationStateChange.asObservable();
 
   constructor(
-    private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private couchService: CouchService
   ) {}
 
   set(user: any): any {

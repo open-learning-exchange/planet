@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -14,12 +13,10 @@ export class ResourcesService {
   private ratingsDb = 'ratings';
   private resourcesUpdated = new Subject<any[]>();
   resourcesUpdated$ = this.resourcesUpdated.asObservable();
-  user = this.userService.get();
 
   constructor(
     private couchService: CouchService,
-    private userService: UserService,
-    private planetMessageService: PlanetMessageService,
+    private userService: UserService
   ) {}
 
   updateResources({ resourceIds = [], opts = {} }: { resourceIds?: string[], opts?: any } = {}) {
@@ -84,7 +81,7 @@ export class ResourcesService {
         ratingInfo.femaleRating = ratingInfo.femaleRating + 1;
         break;
     }
-    ratingInfo.userRating = rating.user.name === this.user.name ? rating : ratingInfo.userRating;
+    ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
     if (ratings.length > index + 1 && ratings[index + 1].item === id) {
       // Ratings are sorted by resource id,
       // so this recursion will add all ratings to resource
