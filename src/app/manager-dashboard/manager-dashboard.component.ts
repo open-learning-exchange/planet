@@ -22,7 +22,8 @@ import { debug } from '../debug-operator';
         (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
       <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-      <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
+      <button i18n mat-raised-button (click)="getPushedItem()">Get Courses ({{pushedCourses.length}})</button>
+      <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>      
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
@@ -49,6 +50,7 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
+  pushedCourses = [];
 
   constructor(
     private userService: UserService,
@@ -61,6 +63,7 @@ export class ManagerDashboardComponent implements OnInit {
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
+      this.checkPushedItem();
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
@@ -146,6 +149,23 @@ export class ManagerDashboardComponent implements OnInit {
     });
     // Reset the message when the dialog closes
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
+  }
+
+  checkPushedItem() {
+    this.couchService.post(`send_items/_find`,
+      findDocuments({ type: 'course', 'sendTo': this.userService.getConfig().name }),
+        { domain: this.userService.getConfig().parentDomain })
+      .subscribe(data => {
+        this.pushedCourses = data.docs;
+      }, error => (error));
+  }
+
+  getPushedItem() {
+    const pushedItems = this.pushedCourses.map(item => {
+      const { _rev: rev, ...course } = item.item;
+      return course;
+    });
+    this.couchService.post('courses/_bulk_docs', { docs: pushedItems }).subscribe();
   }
 
 }
