@@ -161,11 +161,18 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   getPushedItem() {
+    const deleteItems = [];
     const pushedItems = this.pushedCourses.map(item => {
-      const { _rev: rev, ...course } = item.item;
+      deleteItems.push({ _id: item._id, _rev: item._rev, _deleted: true });
+      const { ...course } = item.item;
       return course;
     });
-    this.couchService.post('courses/_bulk_docs', { docs: pushedItems }).subscribe();
+    this.couchService.post('courses/_bulk_docs', { docs: pushedItems }).pipe(
+      switchMap(data => {
+        return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
+        { domain: this.userService.getConfig().parentDomain });
+      })
+    ).subscribe();
   }
 
 }
