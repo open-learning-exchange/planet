@@ -5,8 +5,8 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from 
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError, takeUntil, map } from 'rxjs/operators';
-import { of, Subject, forkJoin } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields, filterDropdowns, composeFilterFunctions } from '../shared/table-helpers';
@@ -14,8 +14,6 @@ import { ResourcesService } from './resources.service';
 import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { Validators } from '@angular/forms';
 import { SyncService } from '../shared/sync.service';
 
 @Component({

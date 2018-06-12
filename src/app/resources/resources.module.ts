@@ -12,6 +12,7 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ResourcesRatingComponent } from './rating-resources/resources-rating.component';
 import { PlanetStackedBarComponent } from '../shared/planet-stacked-bar.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { SyncService } from '../shared/sync.service';
 
 @NgModule({
   imports: [
@@ -32,6 +33,9 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     ResourcesAddComponent,
     ResourcesRatingComponent,
     PlanetStackedBarComponent
+  ],
+  providers: [
+    SyncService
   ],
   exports: [ ResourcesViewerComponent ]
 })
