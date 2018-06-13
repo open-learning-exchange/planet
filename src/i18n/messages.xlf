@@ -932,36 +932,27 @@
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="13c270db76cb28d7e1945a454ed60a5d5e5752df" datatype="html">
-        <source>
-      <x id="INTERPOLATION" equiv-text="{{examStart === 1 ? &quot;Take Exam&quot; : &quot;Continue Exam&quot;}}"/>
-    </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html">
         <source>
       Open resource new tab
     </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html">
         <source>List of Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c87fc952938382700c1d2c56bdb02b8a55b4941d" datatype="html">
@@ -1020,13 +1011,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f7503283354cce9f5bc0e058da5eb75f906b290c" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{field.label}}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.ts</context>
-          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d7039076b24be09bd64cbfd5b38bb95363a89931" datatype="html">
@@ -1694,13 +1678,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">4</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="763183703a8c602e394c9705c4e8f79895e5dde3" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ planetType === &apos;center&apos; ? &apos;Nation&apos; : &apos;Community&apos; }}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
-          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html">
