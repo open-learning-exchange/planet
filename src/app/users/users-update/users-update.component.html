@@ -43,9 +43,9 @@
         </mat-form-field>
         <mat-form-field>
           <input matInput [matDatepicker]="dp" [max]="maxDate" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" required>
-	    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-	    <mat-datepicker #dp></mat-datepicker>
-	  <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+          <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
