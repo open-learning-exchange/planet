@@ -52,7 +52,7 @@
         </context-group>
         <target xml:lang="ar" state="needs-translation">Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/>
       the <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
-  
+
   </target>
       </trans-unit>
       <trans-unit id="b3b7b0b5d0a6b1dbab492e6d68ae1fa227d7bb58" datatype="html">
@@ -951,15 +951,6 @@
         </context-group>
         <target xml:lang="ar" state="needs-translation">Step</target>
       </trans-unit>
-      <trans-unit id="13c270db76cb28d7e1945a454ed60a5d5e5752df" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{examStart === 1 ? &quot;Take Exam&quot; : &quot;Continue Exam&quot;}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html">
         <source>
       Open resource new tab
@@ -1011,15 +1002,6 @@
           <context context-type="linenumber">2</context>
         </context-group>
         <target xml:lang="ar" state="needs-translation">{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</target>
-      </trans-unit>
-      <trans-unit id="f7503283354cce9f5bc0e058da5eb75f906b290c" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{field.label}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.ts</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -1620,15 +1602,6 @@
         </context-group>
         <target xml:lang="ar" state="needs-translation">Requests</target>
       </trans-unit>
-      <trans-unit id="763183703a8c602e394c9705c4e8f79895e5dde3" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{ planetType === 'center' ? 'Nation' : 'Community' }}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html">
         <source>Resend Registration Request</source>
         <context-group purpose="location">
@@ -1668,18 +1641,6 @@
           <context context-type="linenumber">16</context>
         </context-group>
         <target xml:lang="ar" state="needs-translation">List Meetups</target>
-      </trans-unit>
-      <trans-unit id="d65fd97877969344d3a07afec5d0389b7aeea1aa" datatype="html">
-        <source>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
-          <context context-type="linenumber">31</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/resources/resources.component.ts</context>
-          <context context-type="linenumber">43</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
@@ -2212,15 +2173,6 @@
         </context-group>
         <target xml:lang="ar" state="needs-translation">Action</target>
       </trans-unit>
-      <trans-unit id="9effd84e2122d49dba889d3e03fa25c19589e06d" datatype="html">
-        <source>
-          <x id="ICU" equiv-text="{+element.doc.isUserAdmin, select, 0 {...} 1 {...}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">93</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="506bcfcdbb95044d7597c7f0833f25a68d37738a" datatype="html">
         <source>{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</source>
         <context-group purpose="location">
@@ -2237,9 +2189,9 @@
           <context context-type="linenumber">100</context>
         </context-group>
         <target xml:lang="ar" state="needs-translation">
-          
+
           <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
-        
+
         </target>
       </trans-unit>
       <trans-unit id="761e7bc19e9488ae4447d0cd58a9c83b4d1844e2" datatype="html">
