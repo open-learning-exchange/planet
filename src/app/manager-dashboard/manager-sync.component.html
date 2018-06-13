@@ -1,5 +1,5 @@
 <mat-toolbar>
-<button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+<button mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></button>
 <span i18n>Synchronization Task</span>
 <span class="toolbar-fill"></span>
 </mat-toolbar>
@@ -7,15 +7,19 @@
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators">
       <h3 matLine>
-        <mat-icon *ngIf="rep.id.includes('continuous'); else singleRep">repeat</mat-icon>
-        <ng-template #accountIcon><mat-icon>repeat_one</mat-icon></ng-template>
+        <mat-icon *ngIf="rep?.id?.includes('continuous'); else singleRep">repeat</mat-icon>
+        <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
         {{rep.doc_id}}
-        <button mat-icon-button *ngIf="!rep.id.includes('continuous')" (click)="deleteReplicator()"><mat-icon>delete</mat-icon></button>
+        <button mat-icon-button *ngIf="!rep?.id?.includes('continuous')" (click)="deleteReplicator(rep.doc_id)"><mat-icon>delete</mat-icon></button>
       </h3>
       <p matLine>
         <span> {{rep.source}} </span><mat-icon>arrow_forward</mat-icon><span> {{rep.target}} </span>
         <ng-container [ngSwitch]="rep.state">
-        <mat-icon *ngSwitchCase="'crashing'" title="{{rep.state}}">error</mat-icon>
+        <!-- States: initializing, failed, error, running, pending, crashing, completed -->
+        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" title="{{rep.state}}">error</mat-icon>
+        <mat-icon *ngSwitchCase="'running'" title="{{rep.state}}">sync</mat-icon>
+        <mat-icon *ngSwitchCase="'pending'" title="{{rep.state}}">pause</mat-icon>
+        <mat-icon *ngSwitchCase="'completed'" title="{{rep.state}}">cloud_done</mat-icon>
         </ng-container>
       </p>
     </mat-list-item>
