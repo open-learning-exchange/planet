@@ -2048,21 +2048,11 @@
           <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="9effd84e2122d49dba889d3e03fa25c19589e06d" datatype="html">
-        <source>
-            
-            <x id="ICU" equiv-text="{+element.doc.isUserAdmin, select, 0 {...} 1 {...}}"/>
-          </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">106</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="506bcfcdbb95044d7597c7f0833f25a68d37738a" datatype="html">
         <source>{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="436d4f2b6d175f1deeb91d14618542f63567bd7d" datatype="html">
@@ -2071,7 +2061,7 @@
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="761e7bc19e9488ae4447d0cd58a9c83b4d1844e2" datatype="html">
