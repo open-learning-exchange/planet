@@ -18,7 +18,7 @@
 
       <!-- radio button -->
       <section *ngIf="field.type === 'radio'">
-        <label i18n>{{field.label}}</label>
+        <label>{{field.label}}</label>
         <div class="planet-radio-group">
           <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" >
             <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
