@@ -13,8 +13,6 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       { path: 'users', loadChildren: '../users/users.module#UsersModule' },
-      { path: 'associated/:planet/:nation', component: NationComponent },
-      { path: 'associated/:planet', component: NationComponent },
       { path: 'manager', loadChildren: '../manager-dashboard/manager-dashboard.module#ManagerDashboardModule' },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'requests', component: CommunityComponent },

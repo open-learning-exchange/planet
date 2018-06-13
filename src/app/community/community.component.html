@@ -57,7 +57,7 @@
           <button mat-raised-button color="primary" (click)="updateClick(element, 'unlink')" i18n>
             <mat-icon>link_off</mat-icon>Unlink
           </button>
-          <button *ngIf="element.planetType === 'community'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
+          <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
             Communities
           </button>
         </ng-container>

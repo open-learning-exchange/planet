@@ -215,6 +215,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     { 'registrationRequest': 'accepted' }, { domain: url })
     .subscribe((planets) => {
       const data = {
+        disableSelection: true,
         filterPredicate: filterSpecificFields([ 'name', 'code' ]),
         ...planets };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
