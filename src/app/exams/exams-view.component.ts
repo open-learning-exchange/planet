@@ -8,12 +8,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 
 @Component({
   templateUrl: './exams-view.component.html',
-  styles: [ `
-    .v-align-center {
-      display: flex;
-      align-items: center;
-    }
-  ` ]
+  styleUrls: [ './exams-view.scss' ]
 })
 
 export class ExamsViewComponent implements OnInit, OnDestroy {
