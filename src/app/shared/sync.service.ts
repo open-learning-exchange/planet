@@ -20,7 +20,6 @@ export class SyncService {
 
   private syncItems: any;
   private dbName: string;
-  private continuous: boolean;
 
   private defaultConfig = {
     'create_target':  false,
