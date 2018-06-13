@@ -45,6 +45,8 @@ export class UsersProfileComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.user = this.userService.get();
+
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) =>
         of(params.get('name'))
