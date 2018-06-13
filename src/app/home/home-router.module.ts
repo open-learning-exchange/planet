@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeComponent } from './home.component';
 import { CommunityComponent } from '../community/community.component';
-import { NationComponent } from '../nation/nation.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { SubmissionsComponent } from '../submissions/submissions.component';
 import { SubmissionsModule } from '../submissions/submissions.module';
