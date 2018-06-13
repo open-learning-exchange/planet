@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
@@ -31,11 +31,10 @@ export class CouchService {
       .pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'))
       .pipe(catchError(err => {
         if (err.status === 403) {
-          setTimeout(() => {
-            this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-          });
+          this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
         }
-        return [];
+        // Empty response for the _find or _all_docs endpoints
+        return of({ docs: [], rows: [] });
       }));
   }
 
