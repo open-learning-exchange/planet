@@ -44,6 +44,8 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
   roles: string[] = [];
   languages = languages;
+  minDate = new Date(2000, 0, 1);
+  maxDate = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +59,7 @@ export class UsersUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.urlName = this.route.snapshot.paramMap.get('name');
+    this.maxDate.setFullYear(this.maxDate.getFullYear() - 30);
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
