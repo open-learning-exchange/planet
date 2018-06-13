@@ -13,7 +13,7 @@ import { debug } from '../debug-operator';
 @Component({
   template: `
     <div *ngIf="displayDashboard">
-      <span *ngIf="planetType !== 'community'">
+      <span *ngIf="planetType === 'community'">
         <a routerLink="/requests" i18n mat-raised-button>Requests</a>
         <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
           i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
