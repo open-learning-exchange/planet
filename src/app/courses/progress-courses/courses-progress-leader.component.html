@@ -25,7 +25,12 @@
         <div class="border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{i + 1}}</div>
       </div>
       <div class="errors errors-user" *ngFor="let submission of submissions">
-        <div class="primary-color border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{submission.answers[i].mistakes}}</div>
+        <div
+          class="border-bottom"
+          [ngClass]="{'primary-color':submission.answers[i]!==''}"
+          *ngFor="let question of selectedStep?.exam?.questions; index as i">
+          {{submission.answers[i].mistakes}}
+        </div>
         <div>{{submission.totalMistakes}}</div>
         <div>{{submission.user}}</div>
       </div>

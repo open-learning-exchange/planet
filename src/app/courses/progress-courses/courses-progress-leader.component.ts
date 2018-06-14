@@ -33,9 +33,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.selectedStep = course.steps[0];
       this.setSubmissions();
     });
-    this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions) => {
+    this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
+      const questionsLength = submissions[0].parent.questions.length;
+      const fillEmptyAnswers = (submission) => [].concat(submission.answers, Array(questionsLength - submission.answers.length).fill(''));
       this.submissions = submissions.map(
-        submission => ({ totalMistakes: submission.answers.reduce((total, answer) => total + answer.mistakes, 0), ...submission })
+        submission => ({
+          totalMistakes: submission.answers.reduce((total, answer) => total + answer.mistakes, 0),
+          ...submission,
+          answers: fillEmptyAnswers(submission)
+        })
       );
       this.errors = submissions.reduce((errors, submission) => {
         return submission.answers.map((answer, index) => answer.mistakes + (errors[index] || 0));
