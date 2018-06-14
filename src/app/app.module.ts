@@ -22,6 +22,7 @@ import { FeedbackService } from './feedback/feedback.service';
 import { ResourcesService } from './resources/resources.service';
 import { SubmissionsService } from './submissions/submissions.service';
 import { CoursesService } from './courses/courses.service';
+import { SHARED_SERVICES } from './shared/database';
 
 @NgModule({
   imports: [
@@ -48,7 +49,8 @@ import { CoursesService } from './courses/courses.service';
     FeedbackService,
     ResourcesService,
     SubmissionsService,
-    CoursesService
+    CoursesService,
+    ...SHARED_SERVICES
   ],
   bootstrap: [ AppComponent ]
 })
