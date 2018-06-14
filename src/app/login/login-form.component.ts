@@ -99,6 +99,12 @@ export class LoginFormComponent {
     }, error => this.planetMessageService.showAlert('An error occurred please try again'));
   }
 
+  createParentSession({ name, password }) {
+    return this.couchService.post('_session',
+      { 'name': name, 'password': password },
+      { withCredentials: true, domain: this.userService.getConfig().parentDomain });
+  }
+
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
@@ -115,9 +121,7 @@ export class LoginFormComponent {
         const localAdminName = localConfig.adminName.split('@')[0];
         // If not in e2e test or on a center, also add session to parent domain
         if (!environment.test && localAdminName === name && localConfig.planet_type !== 'center') {
-          obsArr.push(this.couchService.post('_session',
-            { 'name': this.userService.getConfig().adminName, 'password': password },
-            { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
+          obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
         }
         return forkJoin(obsArr).pipe(catchError(error => {
           // 401 is for Unauthorized
