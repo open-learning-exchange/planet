@@ -5,6 +5,7 @@ import { findDocuments } from '../mangoQueries';
 
 const listColumns = {
   'resources': [ 'title' ],
+  'courses': [ 'courseTitle' ],
   '_users': [ 'name' ]
 };
 

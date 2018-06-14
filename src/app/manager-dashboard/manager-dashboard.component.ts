@@ -6,9 +6,12 @@ import { switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { filterSpecificFields } from '../shared/table-helpers';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 
 @Component({
   template: `
@@ -24,6 +27,11 @@ import { debug } from '../debug-operator';
         (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
       <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
+    </div>
+    <div class="view-container" *ngIf="planetType !== 'community' || true">
+      <h3 i18n>Send On Accept</h3><br />
+      <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
+      <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
@@ -50,12 +58,15 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
+  dialogRef: MatDialogRef<DialogsListComponent>;
+  initialSelection = [];
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
     private planetMessageService: PlanetMessageService,
+    private dialogsListService: DialogsListService,
     private dialog: MatDialog
   ) {}
 
@@ -147,6 +158,56 @@ export class ManagerDashboardComponent implements OnInit {
     });
     // Reset the message when the dialog closes
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
+  }
+
+  sendOnAccept(db: string) {
+    let filterPredicate: any;
+    let previousList = [];
+    let initialSelection = [];
+    switch (db) {
+      case 'resources':
+        filterPredicate = filterSpecificFields([ 'title' ]);
+        break;
+      case 'courses':
+        filterPredicate = filterSpecificFields([ 'courseTitle' ]);
+        break;
+    }
+    this.couchService.post(db + '/_find', findDocuments({ 'sendOnAccept': true })).pipe(
+      switchMap(items => {
+        previousList = items.docs;
+        initialSelection = previousList.map(res => res._id);
+        return this.dialogsListService.getListAndColumns(db);
+      })).subscribe(res => {
+        const data = {
+          okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
+          filterPredicate,
+          allowMulti: true,
+          initialSelection,
+          ...res };
+        this.dialogRef = this.dialog.open(DialogsListComponent, {
+          data: data,
+          height: '500px',
+          width: '600px',
+          autoFocus: false
+        });
+    });
+  }
+
+  sendOnAcceptOkClick(db: string, previousList: any) {
+    return (selected: any) => {
+      const dataUpdate = [];
+      selected.filter(item => item).map(item => {
+        dataUpdate.push({ ...item, sendOnAccept: true });
+      });
+      previousList.map(item => {
+        if (dataUpdate.indexOf(item) < 0) {
+          dataUpdate.push({ ...item, sendOnAccept: false });
+        }
+      });
+      console.log(dataUpdate);
+      this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe();
+      this.dialogRef.close();
+    };
   }
 
 }
