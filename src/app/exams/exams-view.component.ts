@@ -18,7 +18,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer: any = '';
+  answer: any = undefined;
   incorrectAnswer = false;
   mode = 'take';
   grade;

@@ -32,7 +32,7 @@
       </ng-container>
     </ng-container>
     <div class="v-align-center">
-      <button mat-raised-button color="primary" (click)="nextQuestion(questionNum)" [disabled]="answer === undefined || grade === undefined" i18n>
+      <button mat-raised-button color="primary" (click)="nextQuestion(questionNum)" [disabled]="answer === undefined || grade === undefined || grade === null" i18n>
         Submit Answer
       </button>
       <span class="small warn-text-color v-align-center" *ngIf="incorrectAnswer">
