@@ -69,12 +69,12 @@ export class SyncService {
       '_id': dbName + replicatorName + Date.now(),
       'target': this.dbObj(dbName, adminPassword, toParent),
       'source': this.dbObj(dbName, adminPassword, !toParent),
-      'document': itemIds
+      'selector': { '$or': itemIds }
     };
   }
 
   private dbObj(dbName, adminPassword, parent: boolean) {
-    const username = this.userService.get().name + parent ? '@' + this.userService.getConfig().code : '';
+    const username = this.userService.get().name + (parent ? '@' + this.userService.getConfig().code : '');
     const domain = parent ? this.userService.getConfig().parentDomain + '/' : environment.couchAddress;
     const protocol = parent ? environment.centerProtocol + '://' : '';
     return {
