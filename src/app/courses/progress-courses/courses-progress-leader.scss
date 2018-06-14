@@ -1,0 +1,42 @@
+@import '../../variables';
+
+:host {
+
+  $cell-size: 50px;
+
+  .view-container {
+    overflow: auto;
+  }
+
+  .progress-view {
+    display: grid;
+    grid-template-areas: "total index";
+    grid-template-columns: $cell-size;
+    grid-auto-columns: $cell-size;
+    grid-auto-flow: column;
+    grid-column-gap: 4px;
+  }
+
+  .errors {
+    display: grid;
+    grid-auto-rows: $cell-size;
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .errors-total {
+    grid-area: total;
+  }
+
+  .errors-index {
+    grid-area: index;
+  }
+
+  .errors-user {
+    margin-top: $cell-size;
+  }
+
+}

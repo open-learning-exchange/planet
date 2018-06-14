@@ -24,10 +24,10 @@ export class SubmissionsService {
     private couchService: CouchService,
   ) { }
 
-  updateSubmissions({ opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
+  updateSubmissions({ opts = {}, parentId }: { parentId?: string, opts?: any } = {}) {
     this.getSubmissions(opts).subscribe((submissions: any) => {
-      this.submissions = submissions;
-      this.submissionsUpdated.next(submissions);
+      this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
+      this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
 
@@ -109,6 +109,20 @@ export class SubmissionsService {
       }
       this.submissionUpdated.next({ submission: this.submission, attempts });
     }));
+  }
+
+  filterSubmissions(submissions, parentId) {
+    return submissions.filter(s => s.parentId === parentId).reduce((subs, submission) => {
+      const userSubmissionIndex = subs.findIndex((s) => s.user === submission.user);
+      if (userSubmissionIndex !== -1) {
+        const oldSubmission = subs[userSubmissionIndex];
+        subs[userSubmissionIndex] = this.calcTotalGrade(submission) > this.calcTotalGrade(oldSubmission) ?
+          submission : oldSubmission;
+      } else {
+        subs.push(submission);
+      }
+      return subs;
+    }, []);
   }
 
 }

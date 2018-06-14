@@ -78,7 +78,7 @@
               <mat-icon>credit_card</mat-icon>
               <span i18n>Credits</span>
             </a>
-            <a mat-menu-item routerLink="add">
+            <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
