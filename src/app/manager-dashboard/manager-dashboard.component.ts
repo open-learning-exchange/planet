@@ -204,8 +204,9 @@ export class ManagerDashboardComponent implements OnInit {
           dataUpdate.push({ ...item, sendOnAccept: false });
         }
       });
-      console.log(dataUpdate);
-      this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe();
+      this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
+        this.planetMessageService.showMessage('Added to send on accept list');
+      });
       this.dialogRef.close();
     };
   }

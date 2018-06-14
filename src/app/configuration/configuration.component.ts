@@ -206,13 +206,59 @@ export class ConfigurationComponent implements OnInit {
           'source': configuration.code
         }
       });
+      const courseOnAccept = {
+        '_id': 'course_on_accept',
+        'target': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+          },
+          'url': environment.couchAddress + 'courses'
+        },
+        'source': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+          },
+          'url': 'https://' + configuration.parentDomain + '/courses'
+        },
+        'selector': {
+          'sendOnAccept': true
+        },
+        'create_target':  false,
+        'continuous': true,
+        'owner': credentials.name
+      };
+      const resourceOnAccept = {
+        '_id': 'resource_on_accept',
+        'target': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+          },
+          'url': environment.couchAddress + 'resources'
+        },
+        'source': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+          },
+          'url': 'https://' + configuration.parentDomain + '/resources'
+        },
+        'selector': {
+          'sendOnAccept': true
+        },
+        'create_target':  false,
+        'continuous': true,
+        'owner': credentials.name
+      };
 
       // create replicator at first as we do not have session
       this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
         debug('Creating replicator'),
         switchMap(res => {
-          return this.couchService.post('_replicator', feedbackSyncDown);
+          return forkJoin([
+            this.couchService.post('_replicator', feedbackSyncDown),
+            this.couchService.post('_replicator', courseOnAccept),
+            this.couchService.post('_replicator', resourceOnAccept)
+          ]);
         }),
         debug('Sending request to parent planet'),
         switchMap(res => {
