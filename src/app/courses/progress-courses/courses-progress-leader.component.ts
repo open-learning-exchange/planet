@@ -35,15 +35,18 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
       const questionsLength = submissions[0].parent.questions.length;
-      const fillEmptyAnswers = (submission) => [].concat(submission.answers, Array(questionsLength - submission.answers.length).fill(''));
+      const fillEmptyAnswers = (answers) => [].concat(answers, Array(questionsLength - answers.length).fill(''));
       this.submissions = submissions.map(
-        submission => ({
-          totalMistakes: submission.answers.reduce((total, answer) => total + answer.mistakes, 0),
-          ...submission,
-          answers: fillEmptyAnswers(submission)
-        })
+        submission => {
+          const answers = fillEmptyAnswers(submission.answers.map(a => ({ ...a, mistakes: a.mistakes || 1 - a.grade })));
+          return {
+            totalMistakes: answers.reduce((total, answer) => total + (answer.mistakes || 0), 0),
+            ...submission,
+            answers
+          };
+        }
       );
-      this.errors = submissions.reduce((errors, submission) => {
+      this.errors = this.submissions.reduce((errors, submission) => {
         return submission.answers.map((answer, index) => answer.mistakes + (errors[index] || 0));
       }, []);
     });
