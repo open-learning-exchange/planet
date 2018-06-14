@@ -25,9 +25,6 @@ import { debug } from '../debug-operator';
     .mat-column-rating {
       max-width: 225px;
     }
-    a:hover {
-      color: #2196f3;
-    }
     .mat-progress-bar {
       height: 10px;
       width: 120px;
