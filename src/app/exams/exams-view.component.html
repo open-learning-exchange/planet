@@ -16,23 +16,28 @@
           <mat-form-field *ngSwitchCase="'input'">
             <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer">
           </mat-form-field>
-          <mat-radio-group *ngSwitchCase="'select'" class="planet-radio-group" [(ngModel)]="answer">
-            <mat-radio-button *ngFor="let option of question.choices" [value]="option" class="planet-radio-button">
-              {{option}}
+          <mat-radio-group *ngSwitchCase="'select'" class="question-list planet-radio-group" [(ngModel)]="answer">
+            <mat-radio-button *ngFor="let option of question.choices" [value]="option">
+              {{option.text}}
             </mat-radio-button>
           </mat-radio-group>
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
-        <p i18n>Submitted answer:<span> {{answer}}</span></p>
+        <p i18n>Submitted answer:<span> {{answer?.value?.text || answer?.value}}</span></p>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
         </mat-radio-group>
       </ng-container>
     </ng-container>
-    <div>
-      <button mat-raised-button color="primary" (click)="nextQuestion(questionNum)" i18n>Submit Answer</button>
+    <div class="v-align-center">
+      <button mat-raised-button color="primary" (click)="nextQuestion(questionNum)" [disabled]="answer === undefined || grade === undefined || grade === null" i18n>
+        Submit Answer
+      </button>
+      <span class="small warn-text-color v-align-center" *ngIf="incorrectAnswer">
+        <mat-icon class="margin-lr-3">error</mat-icon><span i18n>Incorrect answer, please try again</span>
+      </span>
     </div>
   </div>
 </div>

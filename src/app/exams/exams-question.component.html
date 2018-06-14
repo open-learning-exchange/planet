@@ -12,12 +12,6 @@
       <input matInput i18n-placeholder placeholder="Question Title" formControlName="header">
     </mat-form-field>
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Type" formControlName="type">
-        <mat-option value="input" i18n>Input</mat-option>
-        <mat-option value="select" i18n>Multiple Choice</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
       <textarea
         matInput
         i18n-placeholder
@@ -28,16 +22,23 @@
         matAutosizeMinRows="4">
       </textarea>
     </mat-form-field>
-    <mat-form-field>
-      <input type="number" matInput i18n-placeholder placeholder="Marks" formControlName="marks">
-      <mat-error><planet-form-error-messages [control]="questionForm.controls.marks"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <div *ngIf="questionForm.controls.type.value === 'select'">
-      <button type="button" mat-button (click)="addChoice()">Add Choice</button>
-      <mat-form-field *ngFor="let choice of choices.controls; index as i">
-        <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice">
-        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
+    <div>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Type" formControlName="type">
+          <mat-option value="input" i18n>Input</mat-option>
+          <mat-option value="select" i18n>Multiple Choice</mat-option>
+        </mat-select>
       </mat-form-field>
+      <button type="button" mat-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value === 'select'">Add Choice</button>
+    </div>
+    <div class="question-choices">
+      <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
+          <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
+        </mat-form-field>
+        <mat-checkbox (change)="setCorrect($event, choice)" [checked]="correctCheckboxes[choice.controls.id.value]"></mat-checkbox>
+      </ng-container>
     </div>
   </form>
   <mat-action-row>

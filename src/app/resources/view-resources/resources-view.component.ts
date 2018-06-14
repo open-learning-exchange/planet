@@ -45,22 +45,23 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
   // Use string rather than boolean for i18n select
   fullView = 'off';
+  resourceId: string;
 
   ngOnInit() {
     this.route.paramMap
       .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
-        const resourceId = params.get('id');
-        const getOpts: any = { resourceIds: [ resourceId ] };
+        this.resourceId = params.get('id');
+        const getOpts: any = { resourceIds: [ this.resourceId ] };
         if (this.parent) {
           getOpts.opts = { domain: this.userService.getConfig().parentDomain };
         }
-        this.resourceActivity(resourceId, 'visit');
+        this.resourceActivity(this.resourceId, 'visit');
         this.resourcesService.updateResources(getOpts);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((resourceArr) => {
-        this.setResource(resourceArr[0]);
+        this.resource = resourceArr[0];
       });
   }
 
@@ -69,20 +70,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  setResource(resource: any) {
-    this.resource = resource;
-    if (resource._attachments) {
-      // openWhichFile is used to label which file to start with for HTML resources
-      const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
-      this.contentType = resource._attachments[filename].content_type;
-      this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
-
-      const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
-      this.mediaType = resource.mediaType || mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
-    }
-    if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
-      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
-    }
+  setResourceUrl(resourceUrl: string) {
+    this.resourceSrc = resourceUrl;
   }
 
   resourceActivity(resourceId, activity) {

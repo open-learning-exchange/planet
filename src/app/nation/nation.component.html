@@ -9,7 +9,7 @@
           <mat-option i18n value="All">All</mat-option>
           <mat-option *ngFor="let nationName of nationsList;" value={{nationName.localDomain}}> {{nationName.name}} </mat-option>
         </mat-select>
-      </mat-form-field> &nbsp;
+      </mat-form-field>
       <mat-form-field>
         <mat-select [value]="filter.registrationRequest || 'All'" (selectionChange)="onFilterChange($event.value, 'registrationRequest')">
           <mat-option i18n value="All">All</mat-option>

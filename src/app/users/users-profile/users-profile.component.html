@@ -42,7 +42,7 @@
       <mat-list>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>DOB</h4>
-          <p matLine><b>{{userDetail.birthDate}}</b></p>
+          <p matLine><b>{{userDetail.birthDate | date: 'fullDate'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>

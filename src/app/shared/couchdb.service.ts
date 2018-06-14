@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { debug } from '../debug-operator';
+import { PlanetMessageService } from './planet-message.service';
 
 @Injectable()
 export class CouchService {
@@ -26,10 +27,21 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return httpReq.pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'));
+    return httpReq
+      .pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'))
+      .pipe(catchError(err => {
+        if (err.status === 403) {
+          this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
+        }
+        // Empty response for the _find or _all_docs endpoints
+        return of({ docs: [], rows: [] });
+      }));
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private planetMessageService: PlanetMessageService
+  ) {}
 
   put(db: string, data: any, opts?: any): Observable<any> {
     return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');

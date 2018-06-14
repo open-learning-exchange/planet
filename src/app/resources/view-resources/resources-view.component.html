@@ -5,42 +5,33 @@
 
 <div class="space-container">
 <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3">{{resource.title}}</span>
+    <span class="margin-lr-3">{{resource?.title}}</span>
     <button mat-button (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
     <span class="toolbar-fill"></span>
-    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource.isDownloadable">
+    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.isDownloadable">
       <mat-icon>file_download</mat-icon>
     </a>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-      <planet-resources-rating [rating]="resource.rating" [resourceId]="resource._id"></planet-resources-rating>
-      <p><b>Author:</b> <i>{{resource.author}}</i></p>
-      <p><b>Published by:</b> {{resource.Publisher}} on {{resource.year}}</p>
-      <p><b>Media:</b> {{ resource.medium }}</p>
-      <p><b>Language:</b> {{ resource.language }}</p>
-      <p><b>Subject/s:</b> {{resource.subject}}</p>
-      <p><b>to License:</b> <a href={{resource.linkToLicense}} target="_blank">{{resource.linkToLicense}}</a></p>
-      <p><b>Resource:</b> {{ resource.resourceFor }}</p>
-      <p><b>Type:</b> {{ resource.resourceType }}</p>
+      <planet-resources-rating [rating]="resource?.rating" [resourceId]="resource?._id"></planet-resources-rating>
+      <p><b>Author:</b> <i>{{resource?.author}}</i></p>
+      <p><b>Published by:</b> {{resource?.Publisher}} on {{resource?.year}}</p>
+      <p><b>Media:</b> {{ resource?.medium }}</p>
+      <p><b>Language:</b> {{ resource?.language }}</p>
+      <p><b>Subject/s:</b> {{resource?.subject}}</p>
+      <p><b>to License:</b> <a href={{resource?.linkToLicense}} target="_blank">{{resource?.linkToLicense}}</a></p>
+      <p><b>Resource:</b> {{ resource?.resourceFor }}</p>
+      <p><b>Type:</b> {{ resource?.resourceType }}</p>
       <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
-    <div class="resource-view" [ngSwitch]="mediaType">
-      <img [src]="resourceSrc" *ngSwitchCase="'image'">
-      <video controls *ngSwitchCase="'video'">
-        <source [src]="resourceSrc" [type]="contentType" />
-        Browser not supported
-      </video>
-      <audio controls *ngSwitchCase="'audio'">
-        <source [src]="resourceSrc" [type]="contentType" />
-        Browser not supported
-      </audio>
-      <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
-      oallowfullscreen msallowfullscreen ></iframe>
-      <div *ngSwitchCase="'other'"><a class='btn btn-primary' href={{resourceSrc}}>Open File</a></div>
-      <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
-    </div>
+    <planet-resources-viewer
+      *ngIf="resource?._id"
+      [resource]="resource"
+      [resourceId]="resourceId"
+      (resourceUrl)="setResourceUrl($event)">
+    </planet-resources-viewer>
   </div>
 </div>

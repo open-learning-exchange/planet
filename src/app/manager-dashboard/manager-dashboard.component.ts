@@ -16,11 +16,11 @@ import { debug } from '../debug-operator';
       <span *ngIf="planetType !== 'community'">
         <a routerLink="/requests" i18n mat-raised-button>Requests</a>
         <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
-          i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
+          mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
       </span>
       <button *ngIf="planetType !== center && showResendConfiguration"
         (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-      <button *ngIf="planetType === 'community' && devMode"
+      <button *ngIf="devMode"
         (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     </div>
@@ -118,7 +118,9 @@ export class ManagerDashboardComponent implements OnInit {
   deleteCommunity() {
      return () => {
       this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
-        const replicators = docs.map(doc => ({ ...doc, '_deleted': true }));
+        const replicators = docs.map(doc => {
+          return { _id: doc._id, _rev: doc._rev, _deleted: true };
+        });
         return forkJoin([
           this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
           this.couchService.delete('configurations/' + this.userService.getConfig()._id + '?rev=' + this.userService.getConfig()._rev ),

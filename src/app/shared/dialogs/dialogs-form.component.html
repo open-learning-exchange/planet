@@ -18,7 +18,7 @@
 
       <!-- radio button -->
       <section *ngIf="field.type === 'radio'">
-        <label i18n>{{field.label}}</label>
+        <label>{{field.label}}</label>
         <div class="planet-radio-group">
           <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" >
             <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
@@ -41,7 +41,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>&nbsp;
     <button type="submit" color="primary" mat-raised-button i18n>Submit</button>
+    <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
   </mat-dialog-actions>
 </form>

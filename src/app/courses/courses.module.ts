@@ -11,8 +11,10 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { CoursesStepComponent } from './add-courses/courses-step.component';
+import { CoursesService } from '../courses/courses.service';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
 import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
+import { ResourcesModule } from '../resources/resources.module';
 import { ExamsModule } from '../exams/exams.module';
 
 @NgModule({
@@ -24,6 +26,7 @@ import { ExamsModule } from '../exams/exams.module';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
+    ResourcesModule,
     ExamsModule
   ],
   declarations: [
@@ -33,7 +36,6 @@ import { ExamsModule } from '../exams/exams.module';
     CoursesViewComponent,
     CoursesStepComponent,
     CoursesStepViewComponent,
-    ResourcesViewerComponent
   ]
 })
 export class CoursesModule {}

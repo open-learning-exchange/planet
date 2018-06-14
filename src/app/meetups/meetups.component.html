@@ -5,7 +5,7 @@
   </button>
   <span i18n>Meetups</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
+  <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
   </mat-form-field>
@@ -28,8 +28,7 @@
   <mat-table #table [dataSource]="meetups" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
-          i18n>
+        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
@@ -51,7 +50,7 @@
         </button>
         <mat-cell>
           <mat-menu #meetupMenu="matMenu">
-            <a mat-menu-item (click)="attendMeetup(element._id, element.participate)">
+            <a mat-menu-item (click)="attendMeetup(element)">
               <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
               <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
             </a>
