@@ -18,14 +18,14 @@
     <div class="progress-view">
       <div class="errors errors-total">
         <div i18n>Total Errors</div>
-        <div class="accent-color" *ngFor="let error of errors">{{error}}</div>
+        <div class="accent-color border-bottom" *ngFor="let error of errors">{{error}}</div>
       </div>
       <div class="errors errors-index">
         <div i18n>Steps</div>
-        <div *ngFor="let question of selectedStep?.exam?.questions; index as i">{{i + 1}}</div>
+        <div class="border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{i + 1}}</div>
       </div>
       <div class="errors errors-user" *ngFor="let submission of submissions">
-        <div class="primary-color" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{submission.answers[i].mistakes}}</div>
+        <div class="primary-color border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{submission.answers[i].mistakes}}</div>
         <div>{{submission.totalMistakes}}</div>
         <div>{{submission.user}}</div>
       </div>

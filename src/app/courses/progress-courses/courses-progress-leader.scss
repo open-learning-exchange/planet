@@ -3,6 +3,7 @@
 :host {
 
   $cell-size: 50px;
+  $column-gap: 4px;
 
   .view-container {
     overflow: auto;
@@ -14,7 +15,7 @@
     grid-template-columns: $cell-size;
     grid-auto-columns: $cell-size;
     grid-auto-flow: column;
-    grid-column-gap: 4px;
+    grid-column-gap: $column-gap;
   }
 
   .errors {
@@ -37,6 +38,20 @@
 
   .errors-user {
     margin-top: $cell-size;
+  }
+
+  .border-bottom {
+    position: relative;
+  }
+
+  .border-bottom:before {
+    content:"";
+    position: absolute;
+    top: 0px;
+    height: $cell-size;
+    width: calc(#{$cell-size} + #{$column-gap});
+    border-bottom: 3px solid $grey;
+    z-index: 10;
   }
 
 }
