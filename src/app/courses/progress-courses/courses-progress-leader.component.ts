@@ -50,6 +50,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   onStepChange(value: any) {
     this.selectedStep = value;
+    this.setSubmissions();
   }
 
   setSubmissions() {
