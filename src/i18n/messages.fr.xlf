@@ -1047,22 +1047,13 @@
         </context-group>
         <target xml:lang="fr" state="needs-translation">Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
-      <trans-unit id="13c270db76cb28d7e1945a454ed60a5d5e5752df" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{examStart === 1 ? &quot;Take Exam&quot; : &quot;Continue Exam&quot;}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html">
         <source>
       Open resource new tab
     </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">25</context>
         </context-group>
         <target xml:lang="fr" state="needs-translation">
       Open resource new tab
@@ -1072,7 +1063,7 @@
         <source>List of Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">29</context>
         </context-group>
         <target xml:lang="fr" state="needs-translation">List of Resources</target>
       </trans-unit>
@@ -1080,7 +1071,7 @@
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">35</context>
         </context-group>
         <target xml:lang="fr" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
@@ -1151,15 +1142,6 @@
           <context context-type="linenumber">2</context>
         </context-group>
         <target xml:lang="fr" state="needs-translation">{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</target>
-      </trans-unit>
-      <trans-unit id="f7503283354cce9f5bc0e058da5eb75f906b290c" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{field.label}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.ts</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="d7039076b24be09bd64cbfd5b38bb95363a89931" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -1911,15 +1893,6 @@
         </context-group>
         <target xml:lang="fr" state="needs-translation">Requests</target>
       </trans-unit>
-      <trans-unit id="763183703a8c602e394c9705c4e8f79895e5dde3" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{ planetType === 'center' ? 'Nation' : 'Community' }}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html">
         <source>Resend Registration Request</source>
         <context-group purpose="location">
@@ -2340,20 +2313,11 @@
         </context-group>
         <target xml:lang="fr" state="needs-translation">Action</target>
       </trans-unit>
-      <trans-unit id="9effd84e2122d49dba889d3e03fa25c19589e06d" datatype="html">
-        <source>
-          <x id="ICU" equiv-text="{+element.doc.isUserAdmin, select, 0 {...} 1 {...}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">106</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="506bcfcdbb95044d7597c7f0833f25a68d37738a" datatype="html">
         <source>{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">106</context>
         </context-group>
         <target xml:lang="fr" state="needs-translation">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
       </trans-unit>
@@ -2362,7 +2326,7 @@
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">112</context>
         </context-group>
         <target xml:lang="fr" state="needs-translation">
           
