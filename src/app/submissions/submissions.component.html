@@ -15,7 +15,7 @@
   <mat-table #table [dataSource]="submissions" matSort>
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
-      <mat-cell *matCellDef="let element" class="list-content-menu">{{element.parent.name}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
