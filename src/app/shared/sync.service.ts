@@ -9,6 +9,17 @@ import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 
+const passwordFormFields = [
+  {
+    'label': 'Password',
+    'type': 'textbox',
+    'inputType': 'password',
+    'name': 'password',
+    'placeholder': 'Password',
+    'required': true
+  }
+];
+
 @Injectable()
 export class SyncService {
 
@@ -27,21 +38,11 @@ export class SyncService {
 
   openConfirmation(syncData) {
     const title = 'Admin Confirmation';
-    const fields = [
-      {
-        'label': 'Password',
-        'type': 'textbox',
-        'inputType': 'password',
-        'name': 'password',
-        'placeholder': 'Password',
-        'required': true
-      }
-    ];
     const formGroup = {
       password: [ '', Validators.required ]
     };
     this.dialogsFormService
-    .confirm(title, fields, formGroup)
+    .confirm(title, passwordFormFields, formGroup)
     .pipe(
       debug('Dialog confirm'),
       switchMap((response: any) => {
