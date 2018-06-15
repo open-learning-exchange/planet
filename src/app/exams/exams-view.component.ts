@@ -48,7 +48,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.mode === 'grade') {
         this.setQuestion(submission.parent.questions);
         this.answer = submission.answers[this.questionNum - 1];
-        this.grade = submission.grades[this.questionNum - 1 ];
+        this.grade = this.answer.grade;
       }
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
