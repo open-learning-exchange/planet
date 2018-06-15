@@ -1642,12 +1642,14 @@
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">List Meetups</target>
       </trans-unit>
+      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</target>
+      </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html">
         <source>Join</source>
         <context-group purpose="location">
