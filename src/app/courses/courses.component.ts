@@ -13,6 +13,7 @@ import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -38,7 +39,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'courseTitle', 'action' ] : [ 'select', 'courseTitle', 'action' ];
+  displayedColumns = [ 'select', 'courseTitle', 'action' ];
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -62,7 +63,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private syncService: SyncService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -249,6 +251,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     userShelf.courseIds.push(courseId);
     this.updateShelf(userShelf, 'Course added to your dashboard');
+  }
+
+  fetchCourse(courses) {
+    const syncData = {
+      dbName: this.dbName,
+      items: courses,
+      type: 'fetch'
+    };
+    this.syncService.openConfirmation(syncData);
   }
 
 }
