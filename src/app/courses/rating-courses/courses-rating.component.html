@@ -1,0 +1,16 @@
+<div class="list-item-rating">
+  <div class="stats-total">{{ rating.totalRating + ' Total' }}</div>
+
+  <div class="avg-rating">
+    <span class="rating-number">{{ rating.totalRating > 0 ? (rating.rateSum / rating.totalRating).toFixed(1) : (rating.rateSum).toFixed(1) }}</span>
+    <span i18n>Average</span>
+  </div>
+
+  <div class="your-rating" *ngIf="!parent">
+    <form [formGroup]="rateForm" novalidate>
+      <planet-rating (click)="onStarClick()" formControlName="rate"></planet-rating>
+    </form>
+  </div>
+
+  <div class="your-rating-label" *ngIf="!parent">Your Rating</div>
+</div>

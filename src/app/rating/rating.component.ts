@@ -1,15 +1,15 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { CouchService } from '../../shared/couchdb.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { UserService } from '../../shared/user.service';
+import { Component, Input, OnChanges } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { CouchService } from '../shared/couchdb.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/user.service';
 import { map } from 'rxjs/operators';
-import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { ResourcesService } from '../resources.service';
-import { debug } from '../../debug-operator';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { debug } from '../debug-operator';
 
 const popupFormFields = [
   {
+    'label': 'Rate',
     'type': 'rating',
     'name': 'rate',
     'placeholder': 'Your Rating',
@@ -25,15 +25,16 @@ const popupFormFields = [
 ];
 
 @Component({
-  templateUrl: './resources-rating.component.html',
-  selector: 'planet-resources-rating'
+  templateUrl: './rating.component.html',
+  selector: 'planet-rating'
 })
-export class ResourcesRatingComponent implements OnChanges {
+export class RatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
-  @Input() resourceId: string;
+  @Input() itemId: string;
   @Input() parent;
 
+  ratingType = '';
   rateForm: FormGroup;
   popupForm: FormGroup;
   isPopupOpen = false;
@@ -47,13 +48,13 @@ export class ResourcesRatingComponent implements OnChanges {
 
   private dbName = 'ratings';
 
+
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
     private planetMessage: PlanetMessageService,
     private userService: UserService,
-    private dialogsForm: DialogsFormService,
-    private resourcesService: ResourcesService
+    private dialogsForm: DialogsFormService
   ) {
     this.rateForm = this.fb.group(this.rateFormField);
     this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
@@ -78,7 +79,7 @@ export class ResourcesRatingComponent implements OnChanges {
   onStarClick(form = this.rateForm) {
     this.updateRating(form).subscribe(res => {
       // This should never be called for parent resources, so do not need to send domain options
-      this.resourcesService.updateResources({ resourceIds: [ this.resourceId ], updateCurrentResources: true });
+      this.updateService();
       if (!this.isPopupOpen) {
         this.openDialog();
         this.planetMessage.showMessage('Thank you, your rating is submitted!');
@@ -92,14 +93,16 @@ export class ResourcesRatingComponent implements OnChanges {
     });
   }
 
+  updateService() { }
+
   updateRating(form) {
     // Later parameters of Object.assign will overwrite values from previous objects
     const newRating = Object.assign({
-      type: 'resource',
-      item: this.resourceId
-    }, this.rating.userRating, form.value, {
-      time: Date.now(),
+      type: this.ratingType,
+      item: this.itemId,
       user: this.userService.get()
+    }, this.rating.userRating, form.value, {
+      time: Date.now()
     });
     let couchRequest = this.couchService.post,
       couchUrl = this.dbName;
@@ -120,7 +123,7 @@ export class ResourcesRatingComponent implements OnChanges {
     this.popupForm.patchValue(this.rateForm.value);
     this.isPopupOpen = true;
     this.dialogsForm
-      .confirm('Provide additional comment', popupFormFields, this.popupForm)
+      .confirm('Rating', popupFormFields, this.popupForm)
       .pipe(debug('Dialog confirm'))
       .subscribe((res) => {
         if (res) {

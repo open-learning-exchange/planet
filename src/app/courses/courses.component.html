@@ -111,7 +111,8 @@
     </ng-container>
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="list-content-menu">
+      <mat-cell *matCellDef="let element">
+        <planet-courses-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent"></planet-courses-rating>
         <div>
           <p>{{ "Grade Level: " + element.gradeLevel}}</p>
           <p>{{ "Subject Level: " + element.subjectLevel}}</p>
