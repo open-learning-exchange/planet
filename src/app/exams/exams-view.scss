@@ -1,0 +1,19 @@
+:host {
+  .question-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question-list mat-radio-button {
+    margin: 5px;
+  }
+
+  .question-list mat-radio-button:last-child {
+    margin-bottom: 15px;
+  }
+
+  .v-align-center {
+      display: flex;
+      align-items: center;
+  }
+}

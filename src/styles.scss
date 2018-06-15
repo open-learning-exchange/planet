@@ -118,7 +118,7 @@ body {
     display: grid;
     grid-template-areas:
       'hd mn'
-      'cn mn';
+      'cn .';
     grid-template-columns: auto 50px;
 
     .header {
@@ -329,6 +329,11 @@ body {
 
   .ole-logo {
     filter: brightness(0) invert(1);
+  }
+
+  mat-toolbar:first-child > mat-form-field,
+  .input-icon {
+      margin-top: 10px;
   }
 
   mat-dialog-actions {

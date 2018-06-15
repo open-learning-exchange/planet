@@ -44,6 +44,7 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
   roles: string[] = [];
   languages = languages;
+  maxDate = new Date();
 
   constructor(
     private fb: FormBuilder,

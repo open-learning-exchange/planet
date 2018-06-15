@@ -1,0 +1,39 @@
+<mat-toolbar>
+  <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span i18n>Course Progress</span>
+    <span class="toolbar-fill"></span>
+    <mat-form-field *ngIf="course?.steps.length > 1">
+      <mat-select i18n-placeholder placeholder="List of Steps" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
+        <mat-option *ngFor="let step of course?.steps; index as i" [value]="step">
+          {{ step.stepTitle }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <div class="progress-view">
+      <div class="errors errors-total">
+        <div i18n>Total Errors</div>
+        <div class="accent-color border-bottom" *ngFor="let error of errors">{{error}}</div>
+      </div>
+      <div class="errors errors-index">
+        <div i18n>Steps</div>
+        <div class="border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{i + 1}}</div>
+      </div>
+      <div class="errors errors-user" *ngFor="let submission of submissions">
+        <div
+          class="border-bottom"
+          [ngClass]="{'primary-color':submission.answers[i]!==''}"
+          *ngFor="let question of selectedStep?.exam?.questions; index as i">
+          {{submission.answers[i].mistakes}}
+        </div>
+        <div>{{submission.totalMistakes}}</div>
+        <div>{{submission.user}}</div>
+      </div>
+    </div>
+  </div>
+</div>
