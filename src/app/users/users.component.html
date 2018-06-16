@@ -28,7 +28,7 @@
     <div class="margin-lr-3" *ngIf="!filterAssociated">
       <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
-          <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Filter by role">
+          <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Roles to add">
             <mat-option disabled="disabled" class="hide-checkbox">
               <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
               <button mat-raised-button i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
