@@ -31,7 +31,7 @@ export class DashboardTileComponent implements OnInit {
 
   onClick(item, group) {
     this.dashboardService.removeFromDashboard(item._id, group).subscribe((res) => {
-      this.planetMessageService.showMessage('You have remove ' + item.title + ' from ' +  group +'.');
+      this.planetMessageService.showMessage('You have remove ' + item.title + ' from ' +  group + '.');
     });
   }
 

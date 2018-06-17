@@ -19,17 +19,17 @@ export class DashboardService {
     }
 
     removeFromDashboard(itemId, myItem) {
-        switch(myItem) {
-            case "myLibrary":
+        switch (myItem) {
+            case 'myLibrary':
                             this.userShelf.resourceIds.splice(itemId, 1);
                             break;
-            case "myCourses":
+            case 'myCourses':
                             this.userShelf.courseIds.splice(itemId, 1);
                             break;
-            case "myMeetups":
+            case 'myMeetups':
                             this.userShelf.meetupIds.splice(itemId, 1);
                             break;
-            case "myTeams":
+            case 'myTeams':
                             this.userShelf.myTeamIds.splice(itemId, 1);
                             break;
         }
