@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { DashboardService } from './dashboard.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -16,12 +18,21 @@ export class DashboardTileComponent implements OnInit {
     return { title: 'Item ' + ind, link: '/' };
   });
 
-  constructor() { }
+  constructor(
+    private dashboardService: DashboardService,
+    private planetMessageService: PlanetMessageService
+  ) { }
 
   ngOnInit() {
     if (!this.itemData) {
       this.itemData = this.mockItems;
     }
+  }
+
+  onClick(item, group) {
+    this.dashboardService.removeFromDashboard(item._id, group).subscribe((res) => {
+      this.planetMessageService.showMessage('You have remove ' + item.title + ' from ' +  group +'.');
+    });
   }
 
 }

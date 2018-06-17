@@ -16,6 +16,7 @@ import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
 import { PulsateIconDirective } from './pulsate-icon.directive';
+import { DashboardService } from '../dashboard/dashboard.service';
 
 @NgModule({
   imports: [
@@ -37,6 +38,7 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective
-  ]
+  ],
+  providers: [ DashboardService ]
 })
 export class HomeModule {}
