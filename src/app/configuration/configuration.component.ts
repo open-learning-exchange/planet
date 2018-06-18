@@ -224,7 +224,6 @@ export class ConfigurationComponent implements OnInit {
           'sendOnAccept': true
         },
         'create_target':  false,
-        'continuous': true,
         'owner': credentials.name
       };
       const resourceOnAccept = {
@@ -245,7 +244,6 @@ export class ConfigurationComponent implements OnInit {
           'sendOnAccept': true
         },
         'create_target':  false,
-        'continuous': true,
         'owner': credentials.name
       };
 
