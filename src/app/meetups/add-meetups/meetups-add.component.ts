@@ -12,6 +12,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
+import { switchMap } from 'rxjs/operators';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -105,9 +107,33 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   updateMeetup(meetupeInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision }).subscribe(() => {
-      this.router.navigate([ '/meetups' ]);
-      this.planetMessageService.showMessage('Meetup Updated Successfully');
+    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision })
+      .pipe(switchMap(data => {
+        return this.couchService.post('shelf/_find', findDocuments({
+          'meetupIds': { '$in': [ this.id ] }
+        }, [ '_id' ], 0));
+      }),
+      switchMap(data => {
+        return data.docs.map((res) => {
+            const invitation =  {
+              'user': res._id,
+              'message': meetupeInfo.title + ' has been updated.',
+              'link': this.router.url,
+              'item': this.id,
+              'type': 'meetup',
+              'priority': 1,
+              'status': 'unread',
+              'time': Date.now()
+            };
+            return { ...invitation };
+        });
+      }),
+      switchMap(data => {
+        return this.couchService.post('notifications',  data);
+      })
+    ).subscribe((data: any) => {
+        this.router.navigate([ '/meetups' ]);
+        this.planetMessageService.showMessage('Meetup Updated Successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
