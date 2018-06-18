@@ -74,10 +74,9 @@ export class DashboardComponent implements OnInit {
   }
 
   isEmptyShelf(shelf) {
-    let isEmpty = shelf.courseIds.length === 0
+    return shelf.courseIds.length === 0
       && shelf.meetupIds.length === 0
       && shelf.myTeamIds.length === 0
       && shelf.resourceIds.length === 0;
-    return isEmpty;
   }
 }
