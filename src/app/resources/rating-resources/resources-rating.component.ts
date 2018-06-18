@@ -79,7 +79,7 @@ export class ResourcesRatingComponent implements OnChanges {
   onStarClick(form = this.rateForm) {
     this.updateRating(form).subscribe(res => {
       // This should never be called for parent resources, so do not need to send domain options
-      this.resourcesService.updateResources();
+      this.resourcesService.updateResources({ resourceIds: [ this.resourceId ], updateCurrentResources: true });
       if (!this.isPopupOpen) {
         this.openDialog();
         this.planetMessage.showMessage('Thank you, your rating is submitted!');
