@@ -22,6 +22,7 @@ import { FeedbackService } from './feedback/feedback.service';
 import { ResourcesService } from './resources/resources.service';
 import { SubmissionsService } from './submissions/submissions.service';
 import { CoursesService } from './courses/courses.service';
+import { SyncService } from './shared/sync.service';
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import { CoursesService } from './courses/courses.service';
     CouchService,
     AuthService,
     UserService,
+    SyncService,
     ValidatorService,
     PlanetMessageService,
     MatIconRegistry,

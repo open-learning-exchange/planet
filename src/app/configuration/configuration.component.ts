@@ -184,9 +184,9 @@ export class ConfigurationComponent implements OnInit {
       };
       const configSync = {
         dbSource: 'communityregistrationrequests',
-        dbTarget: 'configuration',
+        dbTarget: 'configurations',
         code: configuration.code,
-        parentDomain: 'https://' + configuration.parentDomain,
+        parentDomain: configuration.parentDomain,
         options: { _id: 'configuration_from_parent', selector: { code: configuration.code } }
       };
 
