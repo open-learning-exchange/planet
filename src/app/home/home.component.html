@@ -19,7 +19,7 @@
     <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
   </button>
   <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
-    <button mat-menu-item routerLink="/users/profile/{{user.name}}">{{user.name}}</button>
+    <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
     <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
     <button mat-menu-item i18n (click)="changePasswordForm(user)">Change Password</button>
   </mat-menu>
