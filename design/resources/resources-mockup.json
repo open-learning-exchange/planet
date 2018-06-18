@@ -6,7 +6,7 @@
             "resourceFor": [
                 "Learner"
             ],
-            "Publisher": "africanstorybook.org",
+            "publisher": "africanstorybook.org",
             "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
             "addedBy": "admin",
             "uploadDate": "2014-08-26T04:00:00.000Z",
@@ -41,7 +41,7 @@
             "resourceFor": [
                 "Learner"
             ],
-            "Publisher": "African Storybooks",
+            "publisher": "African Storybooks",
             "linkToLicense": "https://creativecommons.org/licenses/by-nc/4.0/",
             "addedBy": "admin",
             "uploadDate": "2014-08-26T04:00:00.000Z",
@@ -76,7 +76,7 @@
             "resourceFor": [
                 "Learner"
             ],
-            "Publisher": "africanstorybook.org",
+            "publisher": "africanstorybook.org",
             "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
             "addedBy": "admin",
             "uploadDate": "2014-08-26T04:00:00.000Z",
@@ -111,7 +111,7 @@
             "resourceFor": [
                 "Learner"
             ],
-            "Publisher": "Africanstorybook.org",
+            "publisher": "Africanstorybook.org",
             "linkToLicense": "https://creativecommons.org/licenses/by/4.0/",
             "addedBy": "admin",
             "uploadDate": "2014-08-26T04:00:00.000Z",
@@ -142,7 +142,7 @@
          },
          {
             "_id":"0216s208a72e79b29997d0fd400beac",
-            "Publisher": "Phi Delta Kappa (permission received from PDK and author JSaphier)",
+            "publisher": "Phi Delta Kappa (permission received from PDK and author JSaphier)",
             "need_optimization": false,
             "resourceFor": [
                 "Learner"
