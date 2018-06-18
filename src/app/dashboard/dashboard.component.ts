@@ -15,7 +15,8 @@ import { environment } from '../../environments/environment';
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
-  displayName = this.userService.get().firstName + ' ' + this.userService.get().lastName;
+  displayName: string = this.userService.get().firstName !== undefined ?
+    this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   dateNow = Date.now();
   visits = 0;
 
