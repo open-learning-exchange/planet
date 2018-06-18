@@ -1,7 +1,7 @@
 <mat-card>
   <img [src]="profileImg">
   <div class="primary-color dashboard-name mat-typography">
-    <h2>{{displayName}}</h2>
+    <h2 *ngIf="this.userService.get().firstName!=undefined">{{displayName}}</h2>
     <p class="caption">{{dateNow | date:'longDate'}}</p>
     <p class="caption">{{visits | number}} <ng-container i18n>Visits</ng-container></p>
   </div>
