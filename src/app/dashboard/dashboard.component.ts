@@ -25,7 +25,8 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.displayName = this.userService.get().firstName !== undefined ?  this.userService.get().firstName + ' ' + this.userService.get().lastName : '';
+    this.displayName = this.userService.get().firstName !== undefined
+                        ? this.userService.get().firstName + ' ' + this.userService.get().lastName : '';
     const userShelf = this.userService.shelf;
     forkJoin([
       this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
