@@ -254,12 +254,9 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   fetchCourse(courses) {
-    const syncData = {
-      dbName: this.dbName,
-      items: courses,
-      type: 'fetch'
-    };
-    this.syncService.openConfirmation(syncData);
+    this.syncService.fetchItems(courses, this.dbName).subscribe((response: any) => {
+      this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to fetch');
+    }, () => error => this.planetMessageService.showMessage(error));
   }
 
 }

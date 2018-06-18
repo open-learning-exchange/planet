@@ -261,12 +261,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fetchResource(resources) {
-    const syncData = {
-      dbName: this.dbName,
-      items: resources,
-      type: 'fetch'
-    };
-    this.syncService.openConfirmation(syncData);
+    this.syncService.fetchItems(resources, this.dbName).subscribe((response: any) => {
+      this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to fetch');
+    }, () => error => this.planetMessageService.showMessage(error));
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {
