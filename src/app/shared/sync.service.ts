@@ -54,11 +54,11 @@ export class SyncService {
   }
 
   syncUp(opt, credentials) {
-    return this.syncParams(opt, credentials, 'push');
+    return this.runReplicator(this.syncParams(opt, credentials, 'push'));
   }
 
   syncDown(opt, credentials) {
-    return this.syncParams(opt, credentials, 'pull');
+    return this.runReplicator(this.syncParams(opt, credentials, 'pull'));
   }
 
   private syncParams(opt, credentials, type) {
@@ -94,7 +94,7 @@ export class SyncService {
   }
 
   deleteReplicator(replicators) {
-    return this.couchService.put('_replicator/_bulk_docs', { docs: replicators });
+    return this.couchService.post('_replicator/_bulk_docs', { docs: replicators });
   }
 
   fetchItems(items, dbName) {
