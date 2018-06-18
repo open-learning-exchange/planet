@@ -95,4 +95,48 @@ export class SyncService {
     return this.couchService.post('_replicator', replicator);
   }
 
+  syncUp(opt, credentials) {
+    return this.syncParams(opt, credentials, 'push');
+  }
+
+  syncDown(opt, credentials) {
+    return this.syncParams(opt, credentials, 'pull');
+  }
+
+  private syncParams(opt, credentials, type) {
+    const dbSource = opt.dbSource || opt.db;
+    const dbTarget = opt.dbTarget || opt.db;
+    const parentDomain = opt.parentDomain || this.userService.getConfig().parentDomain;
+    const code = opt.code || this.userService.getConfig().code;
+    const adminName = credentials.name + '@' + code;
+    const sourceUrl = type === 'pull' ? 'https://' + parentDomain + '/' : environment.couchAddress;
+    const targetUrl = type === 'pull' ? environment.couchAddress : 'https://' + parentDomain + '/';
+    const replicator = {
+      'source': {
+        'headers': {
+          'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+        },
+        'url': sourceUrl + dbSource
+      },
+      'target': {
+        'headers': {
+          'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+        },
+        'url': targetUrl + dbTarget
+      },
+      ...opt.options,
+      'create_target':  false,
+      'owner': credentials.name
+    };
+    return replicator;
+  }
+
+  runReplicator(params) {
+    return this.couchService.post('_replicator', params);
+  }
+
+  deleteReplicator(replicators) {
+    return this.couchService.put('_replicator/_bulk_docs', { docs: replicators });
+  }
+
 }
