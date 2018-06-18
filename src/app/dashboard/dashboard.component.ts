@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
         })
       ).subscribe((res: any) => {
         this.visits = res.docs.length;
-    });
+      });
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
