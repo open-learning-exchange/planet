@@ -46,7 +46,6 @@ export class UsersUpdateComponent implements OnInit {
   roles: string[] = [];
   languages = languages;
   maxDate = new Date();
-  emailModel = '';
   eMask = emailMask;
 
   constructor(
