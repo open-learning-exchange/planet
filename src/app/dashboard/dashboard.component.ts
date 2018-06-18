@@ -26,6 +26,11 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     const userShelf = this.userService.shelf;
+
+    if (this.isEmptyShelf(userShelf)) {
+      return;
+    }
+
     forkJoin([
       this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
@@ -37,6 +42,7 @@ export class DashboardComponent implements OnInit {
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
+
     this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
@@ -44,7 +50,7 @@ export class DashboardComponent implements OnInit {
         })
       ).subscribe((res: any) => {
         this.visits = res.docs.length;
-      });
+    });
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
@@ -65,5 +71,13 @@ export class DashboardComponent implements OnInit {
       return this.urlPrefix + Object.keys(attachments)[0];
     }
     return 'assets/image.png';
+  }
+
+  isEmptyShelf(shelf) {
+    let isEmpty = shelf.courseIds.length === 0
+      && shelf.meetupIds.length === 0
+      && shelf.myTeamIds.length === 0
+      && shelf.resourceIds.length === 0;
+    return isEmpty;
   }
 }
