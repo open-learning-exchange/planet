@@ -188,6 +188,7 @@ create_multiarch_manifest_planet(){
     if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
     then
 		if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
+		then
 			build_message Creating Planet Multiarch Manifest for Versioned.
 			# $3: versioned arm
 			# $4: versioned amd64
@@ -230,6 +231,7 @@ create_multiarch_manifest_dbinit(){
      if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
      then
 		if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
+		then
 			build_message Creating Multiarch Manifest for db-init Versioned
 			# $3: db-init versioned arm
 			# $4: db-init versioned amd64
@@ -263,6 +265,7 @@ push_multiarch_manifests(){
     if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
     then
 		if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
+		then
 			manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
 			manifest_tool push from-spec /tmp/MA_manifests/MA_db_init_versioned.yaml
 			build_message Successfully Pushed Versioned Multiarch Manifests to cloud
