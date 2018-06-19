@@ -190,4 +190,13 @@ export class CustomValidators {
     };
   }
 
+  // for validating whether time is a futureDate or not
+  static notDateInFuture(ac: AbstractControl): ValidationErrors {
+    const now = new Date(),
+      today = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+      formVal = ac.value;
+    if (formVal > today) {
+      return { invalidFutureDate: true };
+    }
+  }
 }

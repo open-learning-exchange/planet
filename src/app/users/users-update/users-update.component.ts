@@ -12,6 +12,7 @@ import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { NgxImgModule } from 'ngx-img';
 import { languages } from '../../shared/languages';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -88,7 +89,7 @@ export class UsersUpdateComponent implements OnInit {
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
-      birthDate: [ '', Validators.required ],
+      birthDate: [ '', Validators.compose([ Validators.required, CustomValidators.notDateInFuture ]) ],
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]
     });
