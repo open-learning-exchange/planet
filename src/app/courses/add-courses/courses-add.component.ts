@@ -73,7 +73,10 @@ export class CoursesAddComponent implements OnInit {
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: Date.now(),
-      creator: this.userService.get().name + '@' + this.userService.getConfig().code
+      creator: this.userService.get().name + '@' + this.userService.getConfig().code,
+      sourcePlanet: this.userService.getConfig().code,
+      resideOn:  this.userService.getConfig().code,
+      updatedDate: Date.now()
     });
   }
 
@@ -108,7 +111,7 @@ export class CoursesAddComponent implements OnInit {
     this.deleteStepIdProperty();
     this.couchService.put(
       this.dbName + '/' + this.documentInfo.id,
-      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
+      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps, updatedDate: Date.now() }
     ).subscribe(() => {
       this.navigateBack();
       this.planetMessageService.showMessage('Course Updated Successfully');
