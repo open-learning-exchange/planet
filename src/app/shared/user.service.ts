@@ -29,6 +29,7 @@ export class UserService {
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
+  private encrypt: string;
 
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
@@ -39,6 +40,14 @@ export class UserService {
   notificationStateChange$ = this.notificationStateChange.asObservable();
 
   constructor(private couchService: CouchService) {}
+
+  setBase64(username, password) {
+    this.encrypt = btoa(username + ':' + password);
+  }
+
+  getBase64(): string {
+    return this.encrypt;
+  }
 
   set(user: any): any {
     this.user = user;
