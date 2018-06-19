@@ -44,18 +44,15 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   replicatorTask(credentials) {
+    // List of replicators to push to parent planet
     const pushList = [
-      { db: 'courses', options: { _id: 'courses_to_parent' } },
       { db: 'courses_progress', options: { _id: 'courses_progress_to_parent' } },
-      { db: 'exams', options: { _id: 'exams_to_parent' } },
       { db: 'feedback', options: { _id: 'feedback_to_parent' } },
       { db: 'login_activities', options: { _id: 'login_activities_to_parent' } },
       { db: 'ratings', options: { _id: 'ratings_to_parent' } },
-      { db: 'resource_activities', options: { _id: 'resource_activities_to_parent' } },
-      { db: 'resources', options: { _id: 'resources_to_parent' } },
-      { db: 'shelf', options: { _id: 'shelf_to_parent' } },
-      { db: 'submissions', options: { _id: 'submissions_to_parent' } }
+      { db: 'resource_activities', options: { _id: 'resource_activities_to_parent' } }
     ];
+    // List of replicators to pull from parent
     const pullList = [
       { db: 'feedback', options: { _id: 'feedback_from_parent', selector: { source: this.userService.getConfig().code } } },
       { db: 'notifications', options: { _id: 'notifications_from_parent', selector: { target: this.userService.getConfig().code } } }
