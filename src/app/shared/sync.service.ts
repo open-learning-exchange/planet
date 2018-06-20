@@ -22,6 +22,8 @@ const passwordFormFields = [
 @Injectable()
 export class SyncService {
 
+  private parentDomain: string;
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -32,6 +34,11 @@ export class SyncService {
     return this.openConfirmation().pipe(switchMap((credentials) => {
       return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
     }));
+  }
+
+  sync(replicator, credentials) {
+    this.parentDomain = this.userService.getConfig().parentDomain || replicator.parentDomain;
+    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 
   deleteReplicators(replicators) {
@@ -63,10 +70,6 @@ export class SyncService {
     }));
   }
 
-  private sync(replicator, credentials) {
-    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
-  }
-
   private syncParams(replicator, credentials, type) {
     const dbSource = replicator.dbSource || replicator.db;
     const dbTarget = replicator.dbTarget || replicator.db;
@@ -74,7 +77,8 @@ export class SyncService {
       replicator.selector = this.itemSelector(replicator.items);
     }
     return {
-      '_id': dbSource + '_' + type,
+      // Name the id always after the local database
+      '_id': (type === 'push' ? dbSource : dbTarget) + '_' + type,
       'source': this.dbObj(dbSource, credentials, type === 'pull'),
       'target': this.dbObj(dbTarget, credentials, type !== 'pull'),
       'selector': replicator.selector,
@@ -89,7 +93,7 @@ export class SyncService {
 
   private dbObj(dbName, credentials, parent: boolean) {
     const username = credentials.name + (parent ? '@' + this.userService.getConfig().code : '');
-    const domain = parent ? this.userService.getConfig().parentDomain + '/' : environment.couchAddress;
+    const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
     const protocol = parent ? environment.centerProtocol + '://' : '';
     return {
       'headers': {
