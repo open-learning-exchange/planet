@@ -3,8 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ConfigurationComponent } from './configuration.component';
 
 const routes: Routes = [
-    { path: '', component: ConfigurationComponent },
-    { path: 'update', component: ConfigurationComponent }
+    { path: '', component: ConfigurationComponent }
 ];
 
 @NgModule({
