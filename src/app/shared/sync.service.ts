@@ -64,24 +64,9 @@ export class SyncService {
   private syncParams(opt, credentials, type) {
     const dbSource = opt.dbSource || opt.db;
     const dbTarget = opt.dbTarget || opt.db;
-    const parentDomain = opt.parentDomain || this.userService.getConfig().parentDomain;
-    const code = opt.code || this.userService.getConfig().code;
-    const adminName = credentials.name + '@' + code;
-    const sourceUrl = type === 'pull' ? 'https://' + parentDomain + '/' : environment.couchAddress;
-    const targetUrl = type === 'pull' ? environment.couchAddress : 'https://' + parentDomain + '/';
     const replicator = {
-      'source': {
-        'headers': {
-          'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
-        },
-        'url': sourceUrl + dbSource
-      },
-      'target': {
-        'headers': {
-          'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
-        },
-        'url': targetUrl + dbTarget
-      },
+      'source': this.dbObj(dbSource, credentials, type === 'pull'),
+      'target': this.dbObj(dbTarget, credentials, type !== 'pull'),
       ...opt.options,
       'create_target':  false,
       'owner': credentials.name
@@ -108,6 +93,18 @@ export class SyncService {
     return this.openConfirmation().pipe(switchMap(credential => {
       return this.syncDown(syncData, credential);
     }));
+  }
+
+  private dbObj(dbName, credentials, parent: boolean) {
+    const username = credentials.name + (parent ? '@' + this.userService.getConfig().code : '');
+    const domain = parent ? this.userService.getConfig().parentDomain + '/' : environment.couchAddress;
+    const protocol = parent ? environment.centerProtocol + '://' : '';
+    return {
+      'headers': {
+        'Authorization': 'Basic ' + btoa(username + ':' + credentials.password)
+      },
+      'url': protocol + domain + dbName
+    };
   }
 
 }
