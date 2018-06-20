@@ -165,4 +165,26 @@ export class UserService {
     }));
   }
 
+  removeFromDashboard(itemId, myItem) {
+    switch (myItem) {
+        case 'myLibrary':
+                        this._shelf.resourceIds.splice(itemId, 1);
+                        break;
+        case 'myCourses':
+                        this._shelf.courseIds.splice(itemId, 1);
+                        break;
+        case 'myMeetups':
+                        this._shelf.meetupIds.splice(itemId, 1);
+                        break;
+        case 'myTeams':
+                        this._shelf.myTeamIds.splice(itemId, 1);
+                        break;
+    }
+    return this.couchService.put('shelf/' + this._shelf._id, this._shelf)
+    .pipe(map((response) => {
+        this.shelfChange.next(this._shelf);
+        return { response };
+    }));
+}
+
 }
