@@ -35,7 +35,7 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
-  documentInfo = { rev: '', id: '' };
+  configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
@@ -112,7 +112,7 @@ export class ConfigurationComponent implements OnInit {
     const configurationId = this.userService.getConfig()._id;
     this.couchService.get('configurations/' + configurationId)
     .subscribe((data: any) => {
-      this.documentInfo = { rev: data._rev, id: data._id };
+      this.configuration = data;
       this.nationOrCommunity = data.planetType;
       this.configurationFormGroup.patchValue(data);
       this.contactFormGroup.patchValue(data);
@@ -123,21 +123,15 @@ export class ConfigurationComponent implements OnInit {
 
   parentUniqueValidator(controlName: string) {
     return ac => {
-       if (this.configurationType === 'update') {
-        return this.validatorService.isNameAvailible$(
-          'communityregistrationrequests',
-          controlName,
-          ac,
-          this.configurationFormGroup.value[controlName]
-        );
-      } else {
-        return this.validatorService.isUnique$(
-          'communityregistrationrequests',
-          controlName,
-          ac,
-          { domain: ac.parent.get('parentDomain').value }
-        );
-      }
+      return this.validatorService.isUnique$(
+        'communityregistrationrequests',
+        controlName,
+        ac,
+        {
+          exceptions: [ this.configuration[controlName] ],
+          opts: { domain: ac.parent.get('parentDomain').value }
+        }
+      );
     };
   }
 
@@ -300,9 +294,9 @@ export class ConfigurationComponent implements OnInit {
       const configuration = Object.assign(
         this.configurationFormGroup.value,
         this.contactFormGroup.value,
-        { '_rev': this.documentInfo.rev });
+        { '_rev': this.configuration._rev });
       this.couchService.put(
-        'configurations/' + this.documentInfo.id,
+        'configurations/' + this.configuration._id,
         configuration
       ).subscribe(() => {
         // Navigate back to the manager dashboard
