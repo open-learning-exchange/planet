@@ -6,10 +6,10 @@
             "description": "this is our Team Meeting",
             "startDate": 1529842215440,
             "endDate": 1532434215440,
-            "recurring": "Weekly",
+            "recurring": "weekly",
             "day": [
                 "Tuesday",
-                "Thursday",
+                "Thursday"
             ],
             "startTime": "3:00pm",
             "endTime": "5:00pm",
@@ -77,7 +77,7 @@
             "description": "To discuss about planet issue",
             "startDate": 1543061415440,
             "endDate": 1543147815440,
-            "recurring": "Weekly",
+            "recurring": "weekly",
             "day": [
                 "Monday",
                 "Tuesday",
