@@ -27,43 +27,37 @@ export class ManagerSyncComponent implements OnInit {
 
   getReplicators() {
     this.couchService.allDocs('_replicator').subscribe(data => {
-        this.replicators = data;
+      this.replicators = data;
     });
   }
 
   syncPlanet() {
-    const credentials = [];
     const deleteArray = this.replicators.map(rep => {
       return { _id: rep._id, _rev: rep._rev, _deleted: true };
     });
-    this.syncService.deleteReplicator(deleteArray).pipe(switchMap(data => {
-      return forkJoin(this.replicatorTask(credentials));
+    this.syncService.deleteReplicators(deleteArray).pipe(switchMap(data => {
+      return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
     })).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
     }, error => this.planetMessageService.showMessage('There was error on syncing'));
   }
 
-  replicatorTask(credentials) {
+  replicatorList() {
     // List of replicators to push to parent planet
     const pushList = [
-      { db: 'courses_progress', options: { _id: 'courses_progress_to_parent' } },
-      { db: 'feedback', options: { _id: 'feedback_to_parent' } },
-      { db: 'login_activities', options: { _id: 'login_activities_to_parent' } },
-      { db: 'ratings', options: { _id: 'ratings_to_parent' } },
-      { db: 'resource_activities', options: { _id: 'resource_activities_to_parent' } }
+      { db: 'courses_progress' },
+      { db: 'feedback' },
+      { db: 'login_activities' },
+      { db: 'ratings' },
+      { db: 'resource_activities' }
     ];
     // List of replicators to pull from parent
     const pullList = [
-      { db: 'feedback', options: { _id: 'feedback_from_parent', selector: { source: this.userService.getConfig().code } } },
-      { db: 'notifications', options: { _id: 'notifications_from_parent', selector: { target: this.userService.getConfig().code } } }
+      { db: 'feedback', selector: { source: this.userService.getConfig().code } },
+      { db: 'notifications', selector: { target: this.userService.getConfig().code } }
     ];
-    const obs = pushList.map(push => {
-      return this.syncService.syncUp(push, credentials);
-    });
-    pullList.map(pull => {
-      obs.push(this.syncService.syncDown(pull, credentials));
-    });
-    return obs;
+    const addDirection = (direction) => (val) => ({ ...val, direction });
+    return pushList.map(addDirection('push')).concat(pullList.map(addDirection('pull')));
   }
 
 }

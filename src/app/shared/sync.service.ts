@@ -3,8 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
-import { throwError, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { throwError, forkJoin } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 
@@ -28,7 +28,17 @@ export class SyncService {
     private dialogsFormService: DialogsFormService
   ) {}
 
-  openConfirmation() {
+  confirmPasswordAndRunReplicators(replicators) {
+    return this.openConfirmation().pipe(switchMap((credentials) => {
+      return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
+    }));
+  }
+
+  deleteReplicators(replicators) {
+    return this.couchService.post('_replicator/_bulk_docs', { docs: replicators });
+  }
+
+  private openConfirmation() {
     const title = 'Admin Confirmation';
     const formGroup = {
       password: [ '', Validators.required ]
@@ -48,51 +58,33 @@ export class SyncService {
 
   private verifyPassword(password) {
     return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(switchMap(() => {
-      return of({ name: this.userService.get().name, password });
+    .pipe(map(() => {
+      return { name: this.userService.get().name, password };
     }));
   }
 
-  syncUp(opt, credentials) {
-    return this.runReplicator(this.syncParams(opt, credentials, 'push'));
+  private sync(replicator, credentials) {
+    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 
-  syncDown(opt, credentials) {
-    return this.runReplicator(this.syncParams(opt, credentials, 'pull'));
-  }
-
-  private syncParams(opt, credentials, type) {
-    const dbSource = opt.dbSource || opt.db;
-    const dbTarget = opt.dbTarget || opt.db;
-    const replicator = {
+  private syncParams(replicator, credentials, type) {
+    const dbSource = replicator.dbSource || replicator.db;
+    const dbTarget = replicator.dbTarget || replicator.db;
+    if (replicator.items) {
+      replicator.selector = this.itemSelector(replicator.items);
+    }
+    return {
+      '_id': dbSource + '_' + type,
       'source': this.dbObj(dbSource, credentials, type === 'pull'),
       'target': this.dbObj(dbTarget, credentials, type !== 'pull'),
-      ...opt.options,
+      'selector': replicator.selector,
       'create_target':  false,
       'owner': credentials.name
     };
-    return replicator;
   }
 
-  runReplicator(params) {
-    return this.couchService.post('_replicator', params);
-  }
-
-  deleteReplicator(replicators) {
-    return this.couchService.post('_replicator/_bulk_docs', { docs: replicators });
-  }
-
-  fetchItems(items, dbName) {
-    const itemIds = items.map((res) => {
-      return { _id: res._id, _rev: res._rev };
-    });
-    const syncData = {
-      db: dbName,
-      options: { _id: dbName + '_from_parent' + Date.now(), selector: { '$or': itemIds } }
-    };
-    return this.openConfirmation().pipe(switchMap(credential => {
-      return this.syncDown(syncData, credential);
-    }));
+  private itemSelector(items) {
+    return { '$or': items.map((res) => ({ _id: res._id, _rev: res._rev })) };
   }
 
   private dbObj(dbName, credentials, parent: boolean) {
