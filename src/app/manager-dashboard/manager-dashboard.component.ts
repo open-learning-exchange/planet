@@ -28,7 +28,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
       <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
     </div>
-    <div class="view-container" *ngIf="planetType !== 'community' || true">
+    <div class="view-container" *ngIf="planetType !== 'community'">
       <h3 i18n>Send On Accept</h3><br />
       <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
       <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
@@ -160,10 +160,8 @@ export class ManagerDashboardComponent implements OnInit {
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
   }
 
-  sendOnAccept(db: string) {
+  setFilterPredicate(db: string) {
     let filterPredicate: any;
-    let previousList = [];
-    let initialSelection = [];
     switch (db) {
       case 'resources':
         filterPredicate = filterSpecificFields([ 'title' ]);
@@ -172,6 +170,11 @@ export class ManagerDashboardComponent implements OnInit {
         filterPredicate = filterSpecificFields([ 'courseTitle' ]);
         break;
     }
+    return filterPredicate;
+  }
+
+  sendOnAccept(db: string) {
+    let previousList = [],  initialSelection = [];
     this.couchService.post(db + '/_find', findDocuments({ 'sendOnAccept': true })).pipe(
       switchMap(items => {
         previousList = items.docs;
@@ -180,7 +183,7 @@ export class ManagerDashboardComponent implements OnInit {
       })).subscribe(res => {
         const data = {
           okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
-          filterPredicate,
+          filterPredicate: this.setFilterPredicate(db),
           allowMulti: true,
           initialSelection,
           ...res };

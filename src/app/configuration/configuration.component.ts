@@ -11,6 +11,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
+import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -40,6 +41,7 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
+    private syncService: SyncService,
     private router: Router
   ) { }
 
@@ -207,46 +209,13 @@ export class ConfigurationComponent implements OnInit {
         }
       });
       const courseOnAccept = {
-        '_id': 'course_on_accept',
-        'target': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
-          },
-          'url': environment.couchAddress + 'courses'
-        },
-        'source': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
-          },
-          'url': 'https://' + configuration.parentDomain + '/courses'
-        },
-        'selector': {
-          'sendOnAccept': true
-        },
-        'create_target':  false,
-        'owner': credentials.name
+        db: 'courses',
+        type: 'pull',
+        parentDomain: configuration.parentDomain,
+        code: configuration.code,
+        selector: { 'sendOnAccept': true }
       };
-      const resourceOnAccept = {
-        '_id': 'resource_on_accept',
-        'target': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
-          },
-          'url': environment.couchAddress + 'resources'
-        },
-        'source': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
-          },
-          'url': 'https://' + configuration.parentDomain + '/resources'
-        },
-        'selector': {
-          'sendOnAccept': true
-        },
-        'create_target':  false,
-        'owner': credentials.name
-      };
-
+      const resourceOnAccept = { ...courseOnAccept, db: 'resources' };
       // create replicator at first as we do not have session
       this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
@@ -254,8 +223,8 @@ export class ConfigurationComponent implements OnInit {
         switchMap(res => {
           return forkJoin([
             this.couchService.post('_replicator', feedbackSyncDown),
-            this.couchService.post('_replicator', courseOnAccept),
-            this.couchService.post('_replicator', resourceOnAccept)
+            this.syncService.sync(courseOnAccept, credentials),
+            this.syncService.sync(resourceOnAccept, credentials)
           ]);
         }),
         debug('Sending request to parent planet'),
