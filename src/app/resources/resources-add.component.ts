@@ -105,7 +105,8 @@ export class ResourcesAddComponent implements OnInit {
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
-      mediaType: mediaType
+      mediaType: mediaType,
+      _attachments: {}
     };
     return of({ resource, file });
   }
@@ -124,8 +125,8 @@ export class ResourcesAddComponent implements OnInit {
         const message = this.pageType === 'Update' ? 'Resource Updated Successfully' : 'New Resource Created';
         obs.pipe(switchMap((res) => {
           if (file) {
-            const opts = { headers: { 'If-Match': res.rev, 'Content-Type': file.type } };
-            return this.couchService.put(this.dbName + '/' + res.id + '/' + file.name, file, opts);
+            const opts = { headers: { 'Content-Type': file.type } };
+            return this.couchService.putAttachment(this.dbName + '/' + res.id + '/' + file.name + '?rev=' + res.rev, file, opts);
           }
           return of({});
         })).subscribe(() => {
