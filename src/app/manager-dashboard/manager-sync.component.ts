@@ -56,8 +56,8 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'feedback', selector: { source: this.userService.getConfig().code } },
       { db: 'notifications', selector: { target: this.userService.getConfig().code } }
     ];
-    const addDirection = (direction) => (val) => ({ ...val, direction });
-    return pushList.map(addDirection('push')).concat(pullList.map(addDirection('pull')));
+    const addType = (type) => (val) => ({ ...val, type });
+    return pushList.map(addType('push')).concat(pullList.map(addType('pull')));
   }
 
 }
