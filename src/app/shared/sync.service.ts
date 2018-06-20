@@ -23,6 +23,7 @@ const passwordFormFields = [
 export class SyncService {
 
   private parentDomain: string;
+  private code: string;
 
   constructor(
     private couchService: CouchService,
@@ -38,6 +39,7 @@ export class SyncService {
 
   sync(replicator, credentials) {
     this.parentDomain = this.userService.getConfig().parentDomain || replicator.parentDomain;
+    this.code = this.userService.getConfig().code || replicator.code;
     return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 
@@ -92,7 +94,7 @@ export class SyncService {
   }
 
   private dbObj(dbName, credentials, parent: boolean) {
-    const username = credentials.name + (parent ? '@' + this.userService.getConfig().code : '');
+    const username = credentials.name + (parent ? '@' + this.code : '');
     const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
     const protocol = parent ? environment.centerProtocol + '://' : '';
     return {
