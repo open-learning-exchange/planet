@@ -22,6 +22,8 @@ import { FeedbackService } from './feedback/feedback.service';
 import { ResourcesService } from './resources/resources.service';
 import { SubmissionsService } from './submissions/submissions.service';
 import { CoursesService } from './courses/courses.service';
+import { SyncService } from './shared/sync.service';
+import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
 
 @NgModule({
   imports: [
@@ -30,6 +32,7 @@ import { CoursesService } from './courses/courses.service';
     HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
+    PlanetDialogsModule,
     NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
@@ -48,7 +51,8 @@ import { CoursesService } from './courses/courses.service';
     FeedbackService,
     ResourcesService,
     SubmissionsService,
-    CoursesService
+    CoursesService,
+    SyncService
   ],
   bootstrap: [ AppComponent ]
 })

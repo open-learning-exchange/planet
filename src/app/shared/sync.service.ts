@@ -3,9 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
-import { PlanetMessageService } from './planet-message.service';
-import { throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { throwError, forkJoin } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 
@@ -23,76 +22,87 @@ const passwordFormFields = [
 @Injectable()
 export class SyncService {
 
+  private parentDomain: string;
+  private code: string;
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService,
-    private planetMessageService: PlanetMessageService
+    private dialogsFormService: DialogsFormService
   ) {}
 
-  private defaultConfig = {
-    'create_target':  false,
-    'continuous': false,
-    'owner': this.userService.get().name
-  };
+  confirmPasswordAndRunReplicators(replicators) {
+    return this.openConfirmation().pipe(switchMap((credentials) => {
+      return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
+    }));
+  }
 
-  openConfirmation(syncData) {
+  sync(replicator, credentials) {
+    this.parentDomain = this.userService.getConfig().parentDomain || replicator.parentDomain;
+    this.code = this.userService.getConfig().code || replicator.code;
+    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
+  }
+
+  deleteReplicators(replicators) {
+    return this.couchService.post('_replicator/_bulk_docs', { docs: replicators });
+  }
+
+  private openConfirmation() {
     const title = 'Admin Confirmation';
     const formGroup = {
       password: [ '', Validators.required ]
     };
-    this.dialogsFormService
+    return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup)
     .pipe(
       debug('Dialog confirm'),
       switchMap((response: any) => {
         if (response !== undefined) {
-          return this.createSessionAndReplicator(response.password, syncData);
+          return this.verifyPassword(response.password);
         }
         return throwError('Invalid password');
       })
-    )
-    .subscribe((response: any) => {
-      this.planetMessageService.showMessage(syncData.items.length + ' ' + syncData.dbName + ' ' + 'queued to fetch');
-    }, () => error => this.planetMessageService.showMessage(error));
+    );
   }
 
-  private createSessionAndReplicator(password, syncData) {
+  private verifyPassword(password) {
     return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(switchMap(() => {
-      return this.createReplicator(password, syncData);
+    .pipe(map(() => {
+      return { name: this.userService.get().name, password };
     }));
   }
 
-  private replicatorDoc(adminPassword, itemIds, dbName, toParent) {
-    const replicatorName = toParent ? '_to_parent' : '_from_parent';
+  private syncParams(replicator, credentials, type) {
+    const dbSource = replicator.dbSource || replicator.db;
+    const dbTarget = replicator.dbTarget || replicator.db;
+    if (replicator.items) {
+      replicator.selector = this.itemSelector(replicator.items);
+    }
     return {
-      '_id': dbName + replicatorName + Date.now(),
-      'target': this.dbObj(dbName, adminPassword, toParent),
-      'source': this.dbObj(dbName, adminPassword, !toParent),
-      'selector': { '$or': itemIds }
+      // Name the id always after the local database
+      '_id': (type === 'push' ? dbSource : dbTarget) + '_' + type + (replicator.date ? '_' + Date.now() : ''),
+      'source': this.dbObj(dbSource, credentials, type === 'pull'),
+      'target': this.dbObj(dbTarget, credentials, type !== 'pull'),
+      'selector': replicator.selector,
+      'create_target':  false,
+      'owner': credentials.name
     };
   }
 
-  private dbObj(dbName, adminPassword, parent: boolean) {
-    const username = this.userService.get().name + (parent ? '@' + this.userService.getConfig().code : '');
-    const domain = parent ? this.userService.getConfig().parentDomain + '/' : environment.couchAddress;
+  private itemSelector(items) {
+    return { '$or': items.map((res) => ({ _id: res._id, _rev: res._rev })) };
+  }
+
+  private dbObj(dbName, credentials, parent: boolean) {
+    const username = credentials.name + (parent ? '@' + this.code : '');
+    const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
     const protocol = parent ? environment.centerProtocol + '://' : '';
     return {
       'headers': {
-        'Authorization': 'Basic ' + btoa(username + ':' + adminPassword)
+        'Authorization': 'Basic ' + btoa(username + ':' + credentials.password)
       },
       'url': protocol + domain + dbName
     };
-  }
-
-  private createReplicator(adminPassword, syncData) {
-    const itemIds = syncData.items.map((res) => {
-      return { _id: res._id, _rev: res._rev };
-    });
-    const syncConfig = this.replicatorDoc(adminPassword, itemIds, syncData.dbName, syncData.type === 'push');
-    const replicator = { ...this.defaultConfig, ...syncConfig, continuous: syncData.continuous };
-    return this.couchService.post('_replicator', replicator);
   }
 
 }
