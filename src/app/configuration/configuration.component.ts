@@ -11,7 +11,6 @@ import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
-import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -39,7 +38,6 @@ export class ConfigurationComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private couchService: CouchService,
-    private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private router: Router
@@ -182,17 +180,40 @@ export class ConfigurationComponent implements OnInit {
         'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
-      const configSync = {
-        dbSource: 'communityregistrationrequests',
-        dbTarget: 'configurations',
-        code: configuration.code,
-        parentDomain: configuration.parentDomain,
-        options: { _id: 'configuration_from_parent', selector: { code: configuration.code } }
+      const feedbackSyncUp = {
+        '_id': 'feedback_to_parent',
+        'source': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+          },
+          'url': environment.couchAddress + 'feedback'
+        },
+        'target': {
+          'headers': {
+            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+          },
+          'url': 'https://' + configuration.parentDomain + '/feedback'
+        },
+        'create_target':  false,
+        'continuous': true,
+        'owner': credentials.name
       };
+      const feedbackSyncDown = Object.assign({}, feedbackSyncUp, {
+        '_id': 'feedback_from_parent',
+        'source': feedbackSyncUp.target,
+        'target': feedbackSyncUp.source,
+        'selector': {
+          'source': configuration.code
+        }
+      });
 
       // create replicator at first as we do not have session
-      this.syncService.syncDown(configSync, credentials)
+      this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
+        debug('Creating replicator'),
+        switchMap(res => {
+          return this.couchService.post('_replicator', feedbackSyncDown);
+        }),
         debug('Sending request to parent planet'),
         switchMap(res => {
           return forkJoin([
