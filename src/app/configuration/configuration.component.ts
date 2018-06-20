@@ -292,12 +292,27 @@ export class ConfigurationComponent implements OnInit {
   updateConfiguration() {
      if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
       const configuration = Object.assign(
+        this.configuration,
         this.configurationFormGroup.value,
-        this.contactFormGroup.value,
-        { '_rev': this.configuration._rev });
+        this.contactFormGroup.value
+      );
       this.couchService.put(
         'configurations/' + this.configuration._id,
         configuration
+      ).pipe(switchMap(() => {
+        return this.couchService.post(
+          'communityregistrationrequests/_find',
+          findDocuments({ 'code': configuration.code }),
+          { domain: configuration.parentDomain }
+        );
+      }), switchMap((res) => {
+        const { _id, _rev, registrationRequest } = res.docs[0];
+        return this.couchService.post(
+          'communityregistrationrequests',
+          { ...configuration, _id, _rev, registrationRequest },
+          { domain: configuration.parentDomain }
+        );
+      })
       ).subscribe(() => {
         // Navigate back to the manager dashboard
         this.router.navigate([ '/manager' ]);
