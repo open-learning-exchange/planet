@@ -15,8 +15,6 @@ import { debug } from '../debug-operator';
     <div *ngIf="displayDashboard">
       <span *ngIf="planetType !== 'community'">
         <a routerLink="/requests" i18n mat-raised-button>Requests</a>
-        <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
-          mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
       </span>
       <button *ngIf="planetType !== center && showResendConfiguration"
         (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
