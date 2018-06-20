@@ -14,7 +14,7 @@ import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
   .mat-raised-button {
     margin: 0px 2px 0px 2px;
   }
-  `]
+  ` ]
 })
 export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
