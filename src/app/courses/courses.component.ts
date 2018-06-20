@@ -254,7 +254,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   fetchCourse(courses) {
-    this.syncService.fetchItems(courses, this.dbName).subscribe((response: any) => {
+    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: courses, type: 'pull', date: true } ])
+    .subscribe((response: any) => {
       this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to fetch');
     }, () => error => this.planetMessageService.showMessage(error));
   }

@@ -78,7 +78,7 @@ export class SyncService {
     }
     return {
       // Name the id always after the local database
-      '_id': (type === 'push' ? dbSource : dbTarget) + '_' + type,
+      '_id': (type === 'push' ? dbSource : dbTarget) + '_' + type + (replicator.date ? '_' + Date.now() : ''),
       'source': this.dbObj(dbSource, credentials, type === 'pull'),
       'target': this.dbObj(dbTarget, credentials, type !== 'pull'),
       'selector': replicator.selector,

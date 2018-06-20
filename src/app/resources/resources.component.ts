@@ -261,7 +261,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fetchResource(resources) {
-    this.syncService.fetchItems(resources, this.dbName).subscribe((response: any) => {
+    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: resources, type: 'pull', date: true } ])
+    .subscribe((response: any) => {
       this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to fetch');
     }, () => error => this.planetMessageService.showMessage(error));
   }
