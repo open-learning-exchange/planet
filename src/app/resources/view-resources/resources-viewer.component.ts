@@ -5,6 +5,8 @@ import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ResourcesService } from '../resources.service';
+import { UserService } from '../../shared/user.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'planet-resources-viewer',
@@ -19,14 +21,24 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   mediaType: string;
   contentType: string;
   resourceSrc: string;
-  urlPrefix = environment.couchAddress + 'resources/';
+  parent = this.route.snapshot.data.parent;
   pdfSrc: any;
   private onDestroy$ = new Subject<void>();
 
   constructor(
     private sanitizer: DomSanitizer,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private route: ActivatedRoute,
+    private userService: UserService
   ) { }
+
+  get urlPrefix()  {
+    let domain = environment.couchAddress + 'resources/';
+    if (this.parent) {
+      domain = 'http://' + this.userService.getConfig().parentDomain + '/resources/';
+    }
+    return domain;
+  }
 
   ngOnChanges() {
     if (this.resource === undefined || this.resource._id !== this.resourceId) {
