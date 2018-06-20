@@ -111,6 +111,7 @@ curl -X PUT $COUCHURL/ratings
 curl -X PUT $COUCHURL/shelf
 curl -X PUT $COUCHURL/submissions
 curl -X PUT $COUCHURL/courses_progress
+curl -X PUT $COUCHURL/attachments
 
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
@@ -126,6 +127,8 @@ insert_docs meetups ./design/meetups/meetups-mockup.json
 insert_docs courses ./design/courses/courses-mockup.json
 insert_docs resources ./design/resources/resources-mockup.json
 insert_attachments resources ./design/resources/resources-attachment-mockup.json
+# When attachment database is implemented in app, uncomment below line and delete above line
+# insert_attachments attachments ./design/resources/resources-attachment-mockup.json
 # Add permission in databases
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security

@@ -23,6 +23,11 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
+    <span *ngIf="parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="fetchResource(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
+      </button>
+    </span>
     <span *ngIf="!parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
@@ -41,7 +46,7 @@
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
         [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()" i18n>
+        [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
@@ -57,7 +62,7 @@
           <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
-        <button  *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">

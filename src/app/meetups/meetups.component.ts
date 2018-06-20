@@ -139,7 +139,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       okClick = this.deleteMeetups(this.selection.selected),
       displayName = '';
     if (this.selection.selected.length === 1) {
-      const meetup = this.selection.selected[0];
+      const meetup: any = this.meetups.data.find((m: any) => m._id === this.selection.selected[0]);
       amount = 'single';
       okClick = this.deleteMeetup(meetup);
       displayName = meetup.title;
@@ -167,9 +167,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  attendMeetup(id, participate) {
-    this.meetupService.attendMeetup(id, participate).subscribe((res) => {
+  attendMeetup(meetup) {
+    this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
+      meetup.participate = !res.participate;
       this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
     });
   }

@@ -15,7 +15,8 @@ import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
-  templateUrl: 'exams-add.component.html'
+  templateUrl: 'exams-add.component.html',
+  styleUrls: [ 'exams-add.scss' ]
 })
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
@@ -49,7 +50,7 @@ export class ExamsAddComponent implements OnInit {
         : ac => this.validatorService.isUnique$(this.dbName, 'name', ac)
       ],
       passingPercentage: [
-        50,
+        100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
       questions: this.fb.array([])
@@ -102,17 +103,24 @@ export class ExamsAddComponent implements OnInit {
     return examInfo.questions.reduce((total: number, question: any) => total + question.marks, 0);
   }
 
-  addQuestion(question: any = {}) {
+  addQuestion(question: any = { choices: [] }) {
+    const choices = question.choices.map((choice) => {
+      return new FormGroup({
+        'text': new FormControl(choice.text),
+        'id': new FormControl(choice.id)
+      });
+    });
     this.questionsFormArray.push(this.fb.group(Object.assign(
       {
         header: '',
         body: '',
-        type: 'input'
+        type: 'input',
+        correctChoice: ''
       },
       question,
       {
         marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array(question.choices || [])
+        choices: this.fb.array(choices || [])
       }
     )));
   }
@@ -122,7 +130,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate([ this.coursesService.returnUrl ]);
+    this.router.navigate([ this.coursesService.returnUrl || 'courses' ]);
   }
 
 }

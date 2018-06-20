@@ -16,6 +16,7 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
+import { uniqueId } from '../../shared/utils';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -82,7 +83,7 @@ export class CoursesAddComponent implements OnInit {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         data.steps.forEach(step => {
-          step['id'] = this.uniqueIdOfStep();
+          step['id'] = uniqueId();
         });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
@@ -154,16 +155,11 @@ export class CoursesAddComponent implements OnInit {
 
   addStep() {
     this.steps.push({
-      id: this.uniqueIdOfStep(),
+      id: uniqueId(),
       stepTitle: '',
       description: '',
       resources: []
     });
-  }
-
-  uniqueIdOfStep() {
-    // Highly unlikely random numbers will not be unique for practical amount of course steps
-    return '_' + Math.random().toString(36).substr(2, 9);
   }
 
   navigateBack() {

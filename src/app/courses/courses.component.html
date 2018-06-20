@@ -22,6 +22,11 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
+    <span *ngIf="parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="fetchCourse(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
+      </button>
+    </span>
     <button *ngIf="!parent" mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
       <span i18n>Request Courses</span>
@@ -78,7 +83,7 @@
               <mat-icon>credit_card</mat-icon>
               <span i18n>Credits</span>
             </a>
-            <a mat-menu-item routerLink="add">
+            <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>

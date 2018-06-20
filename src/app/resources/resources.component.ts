@@ -5,8 +5,8 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from 
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError, takeUntil, map } from 'rxjs/operators';
-import { of, Subject, forkJoin } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields, filterDropdowns, composeFilterFunctions } from '../shared/table-helpers';
@@ -14,6 +14,7 @@ import { ResourcesService } from './resources.service';
 import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -24,9 +25,6 @@ import { debug } from '../debug-operator';
     }
     .mat-column-rating {
       max-width: 225px;
-    }
-    a:hover {
-      color: #2196f3;
     }
     .mat-progress-bar {
       height: 10px;
@@ -45,7 +43,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'title', 'rating' ] : [ 'select', 'title', 'rating' ];
+  displayedColumns = [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   subjectList: any = constants.subjectList;
   levelList: any = constants.levelList;
@@ -71,7 +69,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private httpclient: HttpClient,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private syncService: SyncService
   ) {}
 
   ngOnInit() {
@@ -259,6 +258,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const resourceIds = [ ...currentShelf.resourceIds ];
     resourceIds.splice(resourceIds.indexOf(resourceId), 1);
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
+  }
+
+  fetchResource(resources) {
+    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: resources, type: 'pull', date: true } ])
+    .subscribe((response: any) => {
+      this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to fetch');
+    }, () => error => this.planetMessageService.showMessage(error));
   }
 
   onDropdownFilterChange(filterValue: string, field: string) {

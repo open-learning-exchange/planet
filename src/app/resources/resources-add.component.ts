@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
@@ -33,6 +32,7 @@ export class ResourcesAddComponent implements OnInit {
   userDetail: any = {};
   pageType = 'Add new';
   disableDownload = true;
+  isSubmitted = false;
 
   constructor(
     private router: Router,
@@ -128,6 +128,7 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
+      this.isSubmitted = true;
       const fileObs: Observable<any> = this.createFileObs();
       fileObs.pipe(debug('Preparing file for upload')).subscribe((resource) => {
         const { _id, _rev } = this.existingResource;

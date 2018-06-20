@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button routerLink="/courses"><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button (click)="cancel()"><mat-icon>arrow_back</mat-icon></a>
 </mat-toolbar>
 
 <div class="space-container">
@@ -8,25 +8,25 @@
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
   </mat-toolbar>
-  <div class="view-container">
+  <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
-      <mat-form-field class="full-width">
-        <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
-        <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field class="full-width">
-        <input matInput type="number" i18n-placeholder placeholder="Passing Percentage" formControlName="passingPercentage" required>
-        <mat-error><planet-form-error-messages [control]="examForm.controls.passingPercentage"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <div>
+      <div class="exam-buttons">
+        <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
+        <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n class="margin-lr-5">Add Question</button>
+      </div>
+      <div class="exam-inputs">
+        <mat-form-field class="full-width">
+          <input matInput i18n-placeholder placeholder="Exam Title" formControlName="name" required>
+          <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </div>
+      <div class="exam-questions">
         <planet-exam-question
           *ngFor="let question of questionsFormArray.controls; let i = index"
           [questionForm]="question"
           (questionRemove)="removeQuestion(i)"
           ></planet-exam-question>
       </div>
-      <button mat-raised-button color="primary" type="submit" i18n>{{pageType}} Exam</button>
-      <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n>Add Question</button>
     </form>
   </div>
   <div *ngFor="let question of questionsFormArray.controls">{{question.value | json}}</div>

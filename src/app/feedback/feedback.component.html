@@ -69,7 +69,7 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">

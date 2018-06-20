@@ -46,12 +46,18 @@ export class UsersProfileComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.userService.get();
-    this.profileView();
+
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) =>
+        of(params.get('name'))
+      )
+    ).subscribe((urlName) => {
+      this.urlName = urlName;
+      this.profileView();
+    });
   }
 
   profileView() {
-    this.urlName = this.route.snapshot.paramMap.get('name');
-    this.user = this.userService.get();
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;

@@ -21,6 +21,10 @@ import { debug } from '../debug-operator';
     .mat-column-select {
       max-width: 44px;
     }
+    /* Buttons margin */
+    .mat-raised-button {
+      margin: 0px 2px 0px 2px;
+    }
   ` ]
 })
 export class UsersComponent implements OnInit, AfterViewInit {
@@ -61,12 +65,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.planetType = this.userService.getConfig().planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    if (this.isUserAdmin || this.userService.get().roles.length) {
-      this.initializeData();
-    } else {
-      // Inactive users cannot receive all user docs
-      this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-    }
+    this.initializeData();
   }
 
   changeFilter(type) {
@@ -150,7 +149,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         changeType: 'delete',
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? '' : 'Planet associated with it will be disconnected.'
+        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
       }
     });
     // Reset the message when the dialog closes

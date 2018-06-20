@@ -22,7 +22,7 @@ export class UserService {
   }
   set shelf(shelf: any) {
     this._shelf = shelf;
-    if (shelf === {}) {
+    if (Object.keys(shelf).length > 0) {
       this.shelfChange.next(shelf);
     }
   }

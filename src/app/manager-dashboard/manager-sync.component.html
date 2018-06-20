@@ -1,0 +1,28 @@
+<mat-toolbar>
+<button mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></button>
+<span i18n>Synchronization Task</span>
+<span class="toolbar-fill"></span>
+</mat-toolbar>
+<div class="space-container primary-link-hover">
+  <button mat-button (click)="syncPlanet()"><mat-icon>sync</mat-icon>Run Sync</button>
+  <mat-list>
+    <mat-list-item *ngFor="let rep of replicators">
+      <h3 matLine>
+        <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
+        <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
+        {{rep._id}}
+      </h3>
+      <p matLine>
+        <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span>
+        <ng-container [ngSwitch]="rep?._replication_state">
+        <!-- States: initializing, failed, error, running, pending, crashing, completed -->
+        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" title="{{rep._replication_state}}">error</mat-icon>
+        <mat-icon *ngSwitchCase="'running'" title="{{rep._replication_state}}">sync</mat-icon>
+        <mat-icon *ngSwitchCase="'pending'" title="{{rep._replication_state}}">pause</mat-icon>
+        <mat-icon *ngSwitchCase="'completed'" title="{{rep._replication_state}}">cloud_done</mat-icon>
+        <mat-icon *ngSwitchDefault>sync</mat-icon>
+        </ng-container>
+      </p>
+    </mat-list-item>
+  </mat-list>
+</div>

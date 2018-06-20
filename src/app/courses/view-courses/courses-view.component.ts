@@ -85,10 +85,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  resourceUrl(stepDetail) {
-    if (Object.keys(stepDetail.resources[0]._attachments)[0]) {
-      const filename = stepDetail.openWhichFile || Object.keys(stepDetail.resources[0]._attachments)[0];
-      return environment.couchAddress + 'resources/' + stepDetail.resources[0]._id + '/' + filename;
+  resourceUrl(resource) {
+    if (Object.keys(resource._attachments)[0]) {
+      const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+      return environment.couchAddress + 'resources/' + resource._id + '/' + filename;
     }
   }
 
