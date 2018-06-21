@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class SubmissionsService {
