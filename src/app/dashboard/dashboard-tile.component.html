@@ -11,7 +11,7 @@
         [ngClass]="{'bg-grey': odd}"
       >
         <span [routerLink]="item.link">{{item.title}}</span>
-        <button mat-icon-button class="clear-item" (click)="onClick(item, cardTitle)">
+        <button mat-icon-button class="clear-item" (click)="removeFromShelf(item)">
           <mat-icon>clear</mat-icon>
         </button>
       </div>

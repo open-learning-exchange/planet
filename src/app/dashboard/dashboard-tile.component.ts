@@ -13,6 +13,7 @@ export class DashboardTileComponent implements OnInit {
   @Input() color: string;
   @Input() itemData;
   @Input() emptyLink = '/';
+  @Input() shelfName: string;
   @ViewChild('items') itemDiv: ElementRef;
   mockItems = Array(100).fill(0).map((val, ind, arr) => {
     return { title: 'Item ' + ind, link: '/' };
@@ -29,9 +30,10 @@ export class DashboardTileComponent implements OnInit {
     }
   }
 
-  onClick(item, group) {
-    this.userService.removeFromDashboard(item._id, group).subscribe((res) => {
-      this.planetMessageService.showMessage('You have remove ' + item.title + ' from ' +  group + '.');
+  removeFromShelf(item: any) {
+    const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
+    this.userService.updateShelf(newIds, this.shelfName).subscribe(() => {
+      this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
     });
   }
 
