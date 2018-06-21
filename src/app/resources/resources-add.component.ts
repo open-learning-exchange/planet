@@ -14,8 +14,10 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
+import { switchMap } from 'rxjs/operators';
 
 import Mime from 'mime/Mime';
+import { findDocuments } from '../shared/mangoQueries';
 const mime = new Mime(require('mime/types/standard.json'));
 
 @Component({
@@ -161,13 +163,66 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
+  createAttachmentObj(files): object {
+    const contentType: string = this.file.type;
+    const data: string = files[this.file.name].data;
+    const attachments: object = {};
+    const imgKey: string = this.file.name;
+    attachments[imgKey] = {
+      'content_type': contentType,
+      'data': data
+    };
+    return attachments ;
+  }
+
   addResource(resourceInfo) {
     // ...is the rest syntax for object destructuring
-    return this.couchService.post(this.dbName, { ...resourceInfo });
+    const files = resourceInfo._attachments;
+    delete resourceInfo._attachments;
+    this.couchService.post(this.dbName, { ...resourceInfo })
+    .pipe(switchMap((res) => {
+      const attachments = {
+        'type': 'resources',
+        'item': res.id,
+        '_attachments': this.createAttachmentObj(files)
+      };
+      return this.couchService.post('attachments', attachments);
+    })).subscribe((response: any) => {
+      this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('New Resource Created');
+    }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
+      console.log(err);
+    });
   }
 
   updateResource(resourceInfo) {
-    return this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo, updatedDate: Date.now() });
+    const files = resourceInfo._attachments;
+    delete resourceInfo._attachments;
+    this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo, updatedDate: Date.now() })
+    .pipe(
+      switchMap((res) => {
+        return this.couchService.post('attachments/_find', findDocuments({
+          'item': resourceInfo._id,
+          'type': 'resources'
+        }));
+      })
+       ,switchMap((res) => {
+        const attachments = {
+          '_id': res.docs[0]._id,
+          '_rev': res.docs[0]._rev,
+          'type': 'resources',
+          'item': resourceInfo._id,
+          '_attachments': this.createAttachmentObj(files)
+      };
+        return this.couchService.post('attachments', attachments);
+    })).subscribe((response: any) => {
+      this.router.navigate([ '/resources' ]);
+      this.planetMessageService.showMessage('New Resource Created');
+    }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
+      console.log(err); 
+    });
   }
 
   deleteAttachmentToggle(event) {

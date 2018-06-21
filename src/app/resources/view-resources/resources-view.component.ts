@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -63,6 +64,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resourceArr) => {
         this.resource = resourceArr[0];
       });
+    this.couchService.post('attachments/_find', findDocuments({
+        'item': this.resourceId,
+        'type': 'resources'
+      })).subscribe();
   }
 
   ngOnDestroy() {
