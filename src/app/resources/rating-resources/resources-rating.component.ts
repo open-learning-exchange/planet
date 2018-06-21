@@ -10,7 +10,7 @@ import { debug } from '../../debug-operator';
 
 const popupFormFields = [
   {
-    'label': 'Rate',
+    'label': 'You Rated ',
     'type': 'rating',
     'name': 'rate',
     'placeholder': 'Your Rating',
@@ -121,7 +121,7 @@ export class ResourcesRatingComponent implements OnChanges {
     this.popupForm.patchValue(this.rateForm.value);
     this.isPopupOpen = true;
     this.dialogsForm
-      .confirm('Rating', popupFormFields, this.popupForm)
+      .confirm('Provide additional comment', popupFormFields, this.popupForm)
       .pipe(debug('Dialog confirm'))
       .subscribe((res) => {
         if (res) {

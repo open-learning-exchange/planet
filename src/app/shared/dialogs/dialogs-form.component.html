@@ -29,6 +29,7 @@
 
       <!-- Star Rating -->
       <mat-form-field class="rating" *ngIf="field.type === 'rating'">
+        <label>{{field.label}}</label>
         <planet-rating [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
