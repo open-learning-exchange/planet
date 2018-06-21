@@ -17,7 +17,7 @@ else
     sed -i -e "s#planet-db-host#$PROTOCOL://$DB_HOST#g" /usr/share/nginx/html/**/main*
 fi
 
-sed -i -e "s#planet-db-port#$DB_PORT#g" /usr/share/nginx/html/main*
+sed -i -e "s#planet-db-port#$DB_PORT#g" /usr/share/nginx/html/**/main*
 sed -i -e "s#planet-center-address#$CENTER_ADDRESS#g" /usr/share/nginx/html/**/main*
 
 nginx -g "daemon off;"
