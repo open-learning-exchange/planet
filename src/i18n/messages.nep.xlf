@@ -133,7 +133,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target xml:lang="ne-NP" state="translated">नाम: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -197,7 +197,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target xml:lang="ne-NP" state="translated">ई-मेल: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -233,7 +233,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Search</target>
+        <target xml:lang="ne-NP" state="translated">खाेज्नुहाेस्</target>
       </trans-unit>
       <trans-unit id="2d78f8c2108598d4f1f05bce677f97d0c7a64d98" datatype="html">
         <source>Your Current List of Requests</source>
@@ -1679,7 +1679,7 @@
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Planet Learning</target>
+        <target xml:lang="ne-NP" state="translated">प्लानेट लर्निंग</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html">
         <source>Messages</source>
