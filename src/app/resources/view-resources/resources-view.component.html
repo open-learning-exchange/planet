@@ -28,7 +28,7 @@
       <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
     <planet-resources-viewer
-      *ngIf="resource?._id"
+      *ngIf="resource?._attachments"
       [resource]="resource"
       [resourceId]="resourceId"
       (resourceUrl)="setResourceUrl($event)">

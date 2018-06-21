@@ -55,6 +55,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = { stepNum: 1 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
+      this.courseDetail.steps = this.courseDetail.steps.map(step => {
+        step.resources = step.resources.filter(r => {
+          return r._attachments;
+        });
+        return step;
+      });
       this.nextStep = progress.stepNum;
       this.showExamButton = this.checkMyCourses(course._id);
     });
@@ -86,7 +92,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   resourceUrl(resource) {
-    if (Object.keys(resource._attachments)[0]) {
+    if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
       return environment.couchAddress + 'resources/' + resource._id + '/' + filename;
     }
