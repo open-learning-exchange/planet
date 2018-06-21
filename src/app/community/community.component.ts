@@ -1,12 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatDialog, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 
 @Component({
   templateUrl: './community.component.html'
@@ -27,12 +29,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ];
   editDialog: any;
   viewNationDetailDialog: any;
+  dialogRef: MatDialogRef<DialogsListComponent>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,
+    private dialogsListService: DialogsListService,
     private dialog: MatDialog
   ) {}
 
@@ -203,6 +207,23 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         allData: planet,
         title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
       }
+    });
+  }
+
+  getChildPlanet(url: string) {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests',
+    { 'registrationRequest': 'accepted' }, { domain: url })
+    .subscribe((planets) => {
+      const data = {
+        disableSelection: true,
+        filterPredicate: filterSpecificFields([ 'name', 'code' ]),
+        ...planets };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
     });
   }
 

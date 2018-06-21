@@ -18,14 +18,13 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
     <div *ngIf="displayDashboard">
       <span *ngIf="planetType !== 'community'">
         <a routerLink="/requests" i18n mat-raised-button>Requests</a>
-        <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
-          mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
       </span>
       <button *ngIf="planetType !== center && showResendConfiguration"
         (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
       <button *ngIf="devMode"
         (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+      <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
       <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
     </div>
     <div class="view-container" *ngIf="planetType !== 'community'">

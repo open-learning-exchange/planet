@@ -59,6 +59,10 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
+  putAttachment(db: string, file: FormData, opts?: any) {
+    return this.couchDBReq('put', db, this.setOpts(opts), file);
+  }
+
   allDocs(db: string, opts?: any) {
     return this.couchDBReq('get', db + '/_all_docs?include_docs=true', this.setOpts(opts)).pipe(map((data: any) => {
       // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
@@ -78,29 +82,6 @@ export class CouchService {
       reportProgress: true
     });
     return this.http.request(req);
-  }
-
-  // Reads a file as a Base64 string to append to object sent to CouchDB
-  prepAttachment(file) {
-    const reader = new FileReader();
-    const obs = Observable.create((observer) => {
-      reader.onload = () => {
-        // FileReader result has file type at start of string, need to remove for CouchDB
-        const fileData = reader.result.split(',')[1],
-        attachments = {};
-        attachments[file.name] = {
-          content_type: file.type,
-          data: fileData
-        };
-        const attachmentObject = {
-          _attachments: attachments
-        };
-        observer.next(attachmentObject);
-        observer.complete();
-      };
-    });
-    reader.readAsDataURL(file);
-    return obs;
   }
 
 }

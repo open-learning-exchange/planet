@@ -54,7 +54,7 @@
               <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
               <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
             </a>
-            <a mat-menu-item [routerLink]="['/meetups/update', element._id]">
+            <a mat-menu-item [routerLink]="['/meetups/update', element._id]" *ngIf="currentUserName === element.createdBy">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>

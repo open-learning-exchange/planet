@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap, takeUntil } from 'rxjs/operators';
-import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';

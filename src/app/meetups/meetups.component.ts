@@ -7,8 +7,8 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { of, Subject } from 'rxjs';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 
@@ -38,6 +38,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   pageEvent: PageEvent;
+  currentUserName = this.userService.get().name;
 
   constructor(
     private couchService: CouchService,

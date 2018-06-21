@@ -9,7 +9,6 @@ import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 
-import { NationComponent } from '../nation/nation.component';
 import { MaterialModule } from '../shared/material.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
@@ -31,7 +30,6 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     HomeComponent,
     DashboardComponent,
     CommunityComponent,
-    NationComponent,
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective

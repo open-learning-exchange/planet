@@ -6,7 +6,8 @@ import { findDocuments } from '../mangoQueries';
 const listColumns = {
   'resources': [ 'title' ],
   'courses': [ 'courseTitle' ],
-  '_users': [ 'name' ]
+  '_users': [ 'name' ],
+  'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
 };
 
 @Injectable()
@@ -16,8 +17,8 @@ export class DialogsListService {
     private couchService: CouchService
   ) {}
 
-  getListAndColumns(db: string, selector: any = {}) {
-    return this.couchService.post(db + '/_find', findDocuments(selector)).pipe(map((res) => {
+  getListAndColumns(db: string, selector: any = {}, opts: any = {}) {
+    return this.couchService.post(db + '/_find', findDocuments(selector), opts).pipe(map((res) => {
       return { tableData: res.docs, columns: listColumns[db] };
     }));
   }
