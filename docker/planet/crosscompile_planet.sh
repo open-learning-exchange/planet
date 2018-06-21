@@ -30,11 +30,11 @@ if [[ "${ACT}" == "install"  ]]; then
    npm install "--arch=${TRIPLE}"
 elif [[ "${ACT}" == "build"  ]]; then
    echo "Build the angular app in production mode stage"
-   $(npm bin)/ng build --prod --base-href /en/ --output-path=dist/en
-   $(npm bin)/ng build --prod --base-href /ar/ --output-path=dist/ar --aot --i18n-file=src/i18n/messages.ar.xlf --i18n-locale=ar --i18n-format=xlf
-   $(npm bin)/ng build --prod --base-href /es/ --output-path=dist/es --aot --i18n-file=src/i18n/messages.es.xlf --i18n-locale=es --i18n-format=xlf
-   $(npm bin)/ng build --prod --base-href /fr/ --output-path=dist/fr --aot --i18n-file=src/i18n/messages.fr.xlf --i18n-locale=fr --i18n-format=xlf
-   $(npm bin)/ng build --prod --base-href /ne/ --output-path=dist/ne --aot --i18n-file=src/i18n/messages.ne.xlf --i18n-locale=ne --i18n-format=xlf
+   $(npm bin)/ng build --prod --base-href /eng/ --output-path=dist/eng
+   $(npm bin)/ng build --prod --base-href /ara/ --output-path=dist/ara --aot --i18n-file=src/i18n/messages.ara.xlf --i18n-locale=ar --i18n-format=xlf
+   $(npm bin)/ng build --prod --base-href /spa/ --output-path=dist/spa --aot --i18n-file=src/i18n/messages.spa.xlf --i18n-locale=es --i18n-format=xlf
+   $(npm bin)/ng build --prod --base-href /fra/ --output-path=dist/fra --aot --i18n-file=src/i18n/messages.fra.xlf --i18n-locale=fr --i18n-format=xlf
+   $(npm bin)/ng build --prod --base-href /nep/ --output-path=dist/nep --aot --i18n-file=src/i18n/messages.nep.xlf --i18n-locale=ne --i18n-format=xlf
 else
    echo "Error: No action Specified"
 fi
