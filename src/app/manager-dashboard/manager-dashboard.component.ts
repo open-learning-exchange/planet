@@ -21,6 +21,7 @@ import { debug } from '../debug-operator';
       <button *ngIf="devMode"
         (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
       <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+      <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
       <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
