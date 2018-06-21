@@ -21,6 +21,10 @@ import { debug } from '../debug-operator';
     .mat-column-select {
       max-width: 44px;
     }
+    /* Buttons margin */
+    .mat-raised-button {
+      margin: 0px 2px 0px 2px;
+    }
   ` ]
 })
 export class UsersComponent implements OnInit, AfterViewInit {

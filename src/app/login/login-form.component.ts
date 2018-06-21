@@ -120,7 +120,7 @@ export class LoginFormComponent {
         const localConfig = this.userService.getConfig();
         const localAdminName = localConfig.adminName.split('@')[0];
         // If not in e2e test or on a center, also add session to parent domain
-        if (!environment.test && localAdminName === name && localConfig.planet_type !== 'center') {
+        if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
           obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
         }
         return forkJoin(obsArr).pipe(catchError(error => {
