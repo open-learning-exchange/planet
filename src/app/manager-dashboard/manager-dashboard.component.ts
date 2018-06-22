@@ -139,6 +139,7 @@ export class ManagerDashboardComponent implements OnInit {
         { domain: this.userService.getConfig().parentDomain })
     .pipe(data => {
       this.pushedItems[type] = data.docs;
+      return of({ ok: true });
     });
   }
 
