@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getNotification();
     this.onUserUpdate();
     this.currentLanguage = this.languages.find(language => {
-      return document.baseURI.indexOf('/' + language.name + '/') > -1;
+      return this.router.url.indexOf('/' + language.shortCode + '/') > -1;
     }) || this.currentLanguage;
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
