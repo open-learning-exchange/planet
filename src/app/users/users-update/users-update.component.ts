@@ -35,8 +35,8 @@ export class UsersUpdateComponent implements OnInit {
   editForm: FormGroup;
   currentImgKey: string;
   currentProfileImg: string;
-  defaultProfileImg = '../assets/image.png';
-  previewSrc = '../assets/image.png';
+  defaultProfileImg = 'assets/image.png';
+  previewSrc = 'assets/image.png';
   uploadImage = false;
   urlPrefix = environment.couchAddress + this.dbName + '/';
   urlName = '';

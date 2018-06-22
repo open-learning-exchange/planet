@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, isDevMode } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { languages } from '../shared/languages';
 import { interval, Subject, forkJoin } from 'rxjs';
@@ -27,7 +27,7 @@ import { debug } from '../debug-operator';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   languages = [];
-  currentFlag = 'en';
+  currentFlag = 'eng';
   currentLang = 'English';
   sidenavState = 'closed';
   notifications = [];
@@ -51,6 +51,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private router: Router,
+    private route: ActivatedRoute,
     private userService: UserService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
@@ -63,13 +64,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getNotification();
     this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
-      if (language.servedUrl === document.baseURI) {
+      if (!isDevMode() && this.route.snapshot.url[0].path === language.shortCode) {
         this.currentFlag = language.shortCode;
         this.currentLang = language.name;
       }
       return language;
     }).filter(lang  => {
-      return lang['active'] !== 'N';
+      return lang['active'] !== 'N' && this.currentFlag !== lang.shortCode;
     });
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
