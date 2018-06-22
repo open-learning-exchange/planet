@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # shellcheck disable=SC1091
 
-. build_planet.sh
+. ./build_planet.sh
 
 if [ -z "${I18N}" ]; then
   I18N="single"
