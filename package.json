@@ -42,8 +42,8 @@
     "material-icons": "^0.1.0",
     "mime": "^2.3.1",
     "ngx-img": "^10.15.0",
-    "pouchdb": "^6.4.3",
-    "pouchdb-find": "^6.4.3",
+    "pouchdb": "^7.0.0",
+    "pouchdb-find": "^7.0.0",
     "rxjs": "^6.2.0",
     "zone.js": "~0.8.26"
   },
