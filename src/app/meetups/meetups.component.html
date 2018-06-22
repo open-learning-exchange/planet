@@ -62,10 +62,12 @@
               <mat-icon>visibility</mat-icon>
               <span i18n>View</span>
             </a>
-            <button mat-menu-item (click)="deleteClick(element)">
-              <mat-icon>delete_forever</mat-icon>
-              <span i18n>Delete</span>
-            </button>
+            <ng-container *ngIf="currentUserName === element.createdBy || this.userService.get().isUserAdmin">
+              <button mat-menu-item (click)="deleteClick(element)">
+                <mat-icon>delete_forever</mat-icon>
+                <span i18n>Delete</span>
+              </button>
+            </ng-container>
           </mat-menu>
         </mat-cell>
       </mat-cell>
