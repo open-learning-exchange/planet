@@ -9,6 +9,7 @@ import { interval, Subject, forkJoin } from 'rxjs';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   templateUrl: './home.component.html',
@@ -27,7 +28,7 @@ import { debug } from '../debug-operator';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   languages = [];
-  currentFlag = 'en';
+  currentFlag = 'eng';
   currentLang = 'English';
   sidenavState = 'closed';
   notifications = [];
@@ -51,7 +52,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private location: LocationStrategy
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -63,13 +65,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getNotification();
     this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
-      if (language.servedUrl === document.baseURI) {
-        this.currentFlag = language.shortCode;
-        this.currentLang = language.name;
+      if (this.location.getBaseHref() === '/' + language.shortCode) {
+       this.currentFlag = language.shortCode;
+       this.currentLang = language.name;
       }
       return language;
     }).filter(lang  => {
-      return lang['active'] !== 'N';
+      return lang['active'] !== 'N' && this.currentFlag !== lang.shortCode;
     });
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();

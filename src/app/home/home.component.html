@@ -21,10 +21,10 @@
 </mat-toolbar>
 <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
-  <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.servedUrl)">
+  <a mat-menu-item *ngFor="let language of languages" href="/{{language.shortCode}}">
     <img src="assets/flags/{{language.shortCode}}.png" title="{{language.name}}" alt="{{language.name}}"/>
     <span>{{language.shortCode}}</span>
-  </button>
+  </a>
 </mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
