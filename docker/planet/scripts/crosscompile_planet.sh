@@ -1,7 +1,7 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # shellcheck disable=SC1091
 
-. build_planet.sh
+source build_planet.sh
 
 ARCH=$1
 ACT=$2
