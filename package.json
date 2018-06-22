@@ -56,6 +56,7 @@
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
     "@types/pouchdb": "^6.3.2",
+    "@types/pouchdb-find": "^6.3.3",
     "codelyzer": "~3.2.0",
     "htmlhint-ng2": "0.0.13",
     "jasmine-core": "~2.6.2",
