@@ -339,4 +339,12 @@ body {
   mat-dialog-actions {
     justify-content: flex-end;
   }
+
+  mat-row mat-cell {
+    @extend .toolbar-form;
+    .mat-raised-button {
+      margin: 0px 2px 2px 0px;
+    }
+  }
+
 }
