@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, isDevMode } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { languages } from '../shared/languages';
 import { interval, Subject, forkJoin } from 'rxjs';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   templateUrl: './home.component.html',
@@ -51,8 +52,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private router: Router,
-    private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private location: LocationStrategy
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -64,9 +65,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getNotification();
     this.onUserUpdate();
     this.languages = (<any>languages).map(language => {
-      if (!isDevMode() && this.route.snapshot.url[0].path === language.shortCode) {
-        this.currentFlag = language.shortCode;
-        this.currentLang = language.name;
+      if (this.location.getBaseHref() === '/' + language.shortCode) {
+       this.currentFlag = language.shortCode;
+       this.currentLang = language.name;
       }
       return language;
     }).filter(lang  => {
