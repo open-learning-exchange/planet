@@ -9,36 +9,10 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
-  template: `
-    <div *ngIf="displayDashboard">
-      <span *ngIf="planetType !== 'community'">
-        <a routerLink="/requests" i18n mat-raised-button>Requests</a>
-      </span>
-      <button *ngIf="planetType !== center && showResendConfiguration"
-        (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-      <button *ngIf="devMode"
-        (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
-      <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
-      <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-      <button i18n mat-raised-button (click)="getPushedItem()">Get Courses ({{pushedCourses.length}})</button>
-      <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>      
-    </div>
-    <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
-      <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <ng-container [ngSwitch]="requestStatus">
-        <ng-container *ngSwitchCase="'accepted'">
-          <a routerLink="resources" i18n mat-raised-button>List Resources</a>
-          <a routerLink="courses" i18n mat-raised-button>List Courses</a>
-          <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
-        </ng-container>
-        <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
-        <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
-      </ng-container>
-    </div>
-    <div>{{message}}</div>
-  `
+  templateUrl: './manager-dashboard.component.html'
 })
 
 export class ManagerDashboardComponent implements OnInit {
@@ -50,14 +24,15 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
-  pushedCourses = [];
+  pushedItems = { course: [], resource: [] };
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
     private planetMessageService: PlanetMessageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private syncService: SyncService
   ) {}
 
   ngOnInit() {
@@ -152,22 +127,42 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   checkPushedItem() {
-    this.couchService.post(`send_items/_find`,
-      findDocuments({ type: 'course', 'sendTo': this.userService.getConfig().name }),
-        { domain: this.userService.getConfig().parentDomain })
-      .subscribe(data => {
-        this.pushedCourses = data.docs;
-      }, error => (error));
+    forkJoin([
+      this.getPushedList('course'),
+      this.getPushedList('resource')
+    ]).subscribe(data => {}, error => (error));
   }
 
-  getPushedItem() {
-    const deleteItems = [];
-    const pushedItems = this.pushedCourses.map(item => {
-      deleteItems.push({ _id: item._id, _rev: item._rev, _deleted: true });
-      const { _rev: rev, ...course } = item.item;
-      return course;
+  getPushedList(type: string) {
+    return this.couchService.post(`send_items/_find`,
+      findDocuments({ type, 'sendTo': this.userService.getConfig().name }),
+        { domain: this.userService.getConfig().parentDomain })
+    .pipe(data => {
+      this.pushedItems[type] = data.docs;
     });
-    this.couchService.post('courses/_bulk_docs', { docs: pushedItems }).pipe(
+  }
+
+  getPushedItem(type: string) {
+    let dbName = '';
+    switch (type) {
+       case 'course':
+        dbName = 'courses';
+        break;
+      case 'resource':
+        dbName = 'resources';
+        break;
+    }
+    const deleteItems = this.pushedItems[type].map(item => {
+      return { _id: item._id, _rev: item._rev, _deleted: true };
+    });
+    const itemList = this.pushedItems[type].map(item => item.item);
+    const replicators = [{
+      db: dbName,
+      type: 'pull',
+      date: true,
+      items: itemList
+    }];
+    this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(data => {
         return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
         { domain: this.userService.getConfig().parentDomain });
