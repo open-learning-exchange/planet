@@ -10,7 +10,7 @@ COPY package.json ./
 COPY docker/planet/scripts/ ./
 COPY . .
 
-RUN ./crosscompile_planet.sh armv7 install
+RUN ls; ./crosscompile_planet.sh armv7 install
 RUN ./crosscompile_planet.sh armv7 build
 
 #####
