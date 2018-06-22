@@ -11,6 +11,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { NgxImgModule } from 'ngx-img';
+import { CustomValidators } from '../../validators/custom-validators';
 import { languages } from '../../shared/languages';
 
 @Component({
@@ -87,7 +88,7 @@ export class UsersUpdateComponent implements OnInit {
       lastName: [ '', Validators.required ],
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
-      phoneNumber: [ '', Validators.required ],
+      phoneNumber: [ '', [ Validators.required, CustomValidators.phoneValidator ] ],
       birthDate: [ '', Validators.required ],
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]

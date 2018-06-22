@@ -190,4 +190,13 @@ export class CustomValidators {
     };
   }
 
+  // Validation for phone number which takes numbers and optional +
+  static phoneValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    const invalidPhoneNo = /^\+?\d+$/i.test(ac.value);
+    return invalidPhoneNo ? null : { invalidPhoneNo: true };
+  }
+
 }

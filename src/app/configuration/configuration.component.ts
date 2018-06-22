@@ -102,7 +102,7 @@ export class ConfigurationComponent implements OnInit {
           Validators.email
         ])
       ],
-      phoneNumber: [ '', Validators.required ]
+      phoneNumber: [ '', [ Validators.required, CustomValidators.phoneValidator ] ]
     });
     this.getNationList();
   }
