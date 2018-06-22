@@ -1,7 +1,7 @@
 FROM node:8.11.2-alpine as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
-ARG LANGUAGE_MODE "single"
+ARG LANGUAGE_MODE="single"
 ENV I18N ${LANGUAGE_MODE}
 
 WORKDIR /ng-app
