@@ -10,7 +10,7 @@ import { debug } from '../../debug-operator';
 
 const popupFormFields = [
   {
-    'label': 'You Rated ',
+    'label': 'You Rated',
     'type': 'rating',
     'name': 'rate',
     'placeholder': 'Your Rating',
