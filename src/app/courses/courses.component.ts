@@ -274,21 +274,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
         allowMulti: false,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        height: '500px',
-        width: '600px',
-        autoFocus: false
+        data, height: '500px', width: '600px', autoFocus: false
       });
     });
   }
 
   dialogOkClick(db: string) {
     return (selected: any) => {
-      const obs = [];
       const coursesToSend = this.selection.selected;
-      coursesToSend.map(item => {
-        obs.push(this.couchService.post('send_items', { type: 'course', sendTo: selected[0].code, item: item }));
-      });
+      const obs = coursesToSend.map(item => this.couchService.post('send_items', { type: 'course', sendTo: selected[0].code, item: item }));
       forkJoin(obs).subscribe();
       this.dialogRef.close();
     };

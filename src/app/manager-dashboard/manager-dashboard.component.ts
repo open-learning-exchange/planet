@@ -156,12 +156,7 @@ export class ManagerDashboardComponent implements OnInit {
       return { _id: item._id, _rev: item._rev, _deleted: true };
     });
     const itemList = this.pushedItems[type].map(item => item.item);
-    const replicators = [{
-      db: dbName,
-      type: 'pull',
-      date: true,
-      items: itemList
-    }];
+    const replicators = [ { db: dbName, type: 'pull', date: true, items: itemList } ];
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(data => {
         return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
