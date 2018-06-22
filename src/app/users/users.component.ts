@@ -112,7 +112,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find', { 'selector': {} });
+    return this.couchService.allDocs(this.dbName)
+    .pipe(
+      switchMap((res) => {
+        return this.couchService.post(this.dbName + '/_find', { 'selector': {}, 'limit': res.length });
+      })
+    );
   }
 
   initializeData() {
