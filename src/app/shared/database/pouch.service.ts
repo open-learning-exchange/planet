@@ -10,31 +10,34 @@ PouchDB.plugin(PouchDBFind);
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress;
-  private localDB;
-  private remoteDBs = [];
+  private localDBs;
+  private databases = [];
 
   constructor() {
-    this.localDB = new PouchDB('local-pouchdb');
+    this.databases.forEach(db => {
+      const pouchDB = new PouchDB(`local-${db}`);
 
-    // indexes the field for faster lookup
-    this.localDB.createIndex({
-      index: {
-        fields: [ 'kind', 'createdAt' ]
-      }
+      // indexes the field for faster lookup
+      pouchDB.createIndex({
+        index: {
+          fields: [ 'kind', 'createdAt' ]
+        }
+      });
+      this.localDBs[db] = pouchDB;
     });
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    return this.remoteDBs.forEach(db => {
-      this.localDB.replicate.from(this.baseUrl + db);
+    return this.databases.forEach(db => {
+      this.localDBs[db].replicate.from(this.baseUrl + db);
     });
   }
 
   replicateToRemoteDBs() {
-    return this.remoteDBs.forEach(db => {
-      this.localDB.replicate.to(this.baseUrl + db, {
+    return this.databases.forEach(db => {
+      this.localDBs[db].replicate.to(this.baseUrl + db, {
         filter(doc) {
           return doc.pouchIndex === db;
         }
@@ -44,18 +47,18 @@ export class PouchService {
 
   replicateFromRemoteDB(db) {
     return from(
-      this.localDB.replicate.from(this.baseUrl + db)
+      this.localDBs[db].replicate.from(this.baseUrl + db)
     ).pipe(catchError(this.handleError));
   }
 
   replicateToRemoteDB(db) {
     return from(
-      this.localDB.replicate.to(this.baseUrl + db)
+      this.localDBs[db].replicate.to(this.baseUrl + db)
     ).pipe(catchError(this.handleError));
   }
 
-  getLocalPouchDB() {
-    return this.localDB;
+  getLocalPouchDB(db) {
+    return this.localDBs[db];
   }
 
   private handleError(err) {
