@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 build_multi(){
   "$(npm bin)"/ng build --prod --base-href /eng/ --output-path=dist/eng
