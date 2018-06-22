@@ -137,10 +137,10 @@ export class ManagerDashboardComponent implements OnInit {
     return this.couchService.post(`send_items/_find`,
       findDocuments({ type, 'sendTo': this.userService.getConfig().name }),
         { domain: this.userService.getConfig().parentDomain })
-    .pipe(data => {
+    .pipe(switchMap(data => {
       this.pushedItems[type] = data.docs;
       return of({ ok: true });
-    });
+    }));
   }
 
   getPushedItem(type: string) {
