@@ -21,7 +21,7 @@
 </mat-toolbar>
 <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
-  <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.servedUrl)">
+  <button mat-menu-item *ngFor="let language of languages" [routerLink]="['/', language.shortCode]">
     <img src="assets/flags/{{language.shortCode}}.png" title="{{language.name}}" alt="{{language.name}}"/>
     <span>{{language.shortCode}}</span>
   </button>
