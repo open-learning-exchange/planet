@@ -26,7 +26,7 @@ import { debug } from '../debug-operator';
   ]
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
-  languages = [];
+  languages = languages;
   currentLanguage: any = { name: 'English', shortCode: 'eng' };
   sidenavState = 'closed';
   notifications = [];
