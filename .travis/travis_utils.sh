@@ -104,7 +104,12 @@ package_docker(){
   # $2: tag
   # $3: tag latest
   build_message processing $2
-  docker build -f $1 -t $2 .
+  if [ "$TRAVIS_BRANCH" = "master" ] || [ ! -z "$gtag" ] || [ ! -z "$TRAVIS_TAG" ]; then
+    docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=multi .
+  else
+    docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=single  .
+  fi
+
   if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
         tag_a_docker $2 $3
@@ -171,7 +176,7 @@ create_multiarch_manifest_planet(){
     then
         build_message Creating Planet Multiarch Manifest for Latest
         # $1: latest arm
-        # $2: latest amd64        
+        # $2: latest amd64
         yq n image treehouses/planet:latest | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
@@ -183,7 +188,7 @@ create_multiarch_manifest_planet(){
     else
         build_message Branch is Not master so no need to create Multiarch manifests for planet.
     fi
-        
+
     #Building for versioned
     if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
     then
@@ -214,7 +219,7 @@ create_multiarch_manifest_dbinit(){
     then
         build_message Creating Multiarch Manifest for db-init
         # $1: db-init arm
-        # $2: db-init amd64        
+        # $2: db-init amd64
         yq n image treehouses/planet:db-init | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
@@ -225,8 +230,8 @@ create_multiarch_manifest_dbinit(){
         tee /tmp/MA_manifests/MA_db_init.yaml
      else
         build_message Branch is Not master so no need to create Multiarch manifests for db-init.
-     fi       
-        
+     fi
+
      #Building for versioned
      if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
      then
