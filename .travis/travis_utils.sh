@@ -104,7 +104,7 @@ package_docker(){
   # $2: tag
   # $3: tag latest
   build_message processing $2
-  if [ "$TRAVIS_BRANCH" = "master" ] || [ ! -z "$gtag" ] || [ ! -z "$TRAVIS_TAG" ]; then
+  if [ "$TRAVIS_BRANCH" = "build_i18n_only_in_master" ] || [ ! -z "$gtag" ] || [ ! -z "$TRAVIS_TAG" ]; then
     docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=multi .
   else
     docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=single  .
