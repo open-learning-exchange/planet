@@ -56,9 +56,9 @@ prepare_planet_rpi(){
   PLANET_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
   PLANET_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-latest
   docker create --name reuse-artifact $DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
-  mkdir -p /ng-app/dist
+  mkdir -p ./ng-app/dist
   docker export reuse-artifact > reuse-artifact.tar
-  tar -xvf reuse-artifact.tar -C /ng-app/dist
+  tar -xvf reuse-artifact.tar -C ./ng-app/dist
 }
 
 prepare_db_init_rpi(){

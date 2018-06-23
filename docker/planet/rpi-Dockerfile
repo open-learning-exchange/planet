@@ -1,7 +1,7 @@
 FROM tobi312/rpi-nginx:alpine
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 RUN rm -rf /usr/share/nginx/html/*
-COPY /ng-app/dist /usr/share/nginx/html
+COPY ./ng-app/dist /usr/share/nginx/html
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 
 CMD ./docker-entrypoint.sh
