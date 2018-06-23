@@ -10,10 +10,19 @@ import { LowercaseDirective } from '../shared/lowercase.directive';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
 import { MatTooltipModule } from '@angular/material';
 import { ConfigurationModule } from '../configuration/configuration.module';
+import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
-    LoginRouterModule, FormsModule, CommonModule, MaterialModule, ReactiveFormsModule, PlanetFormsModule, ConfigurationModule ],
+    LoginRouterModule,
+    FormsModule,
+    CommonModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    ConfigurationModule,
+    PlanetLanguageModule
+  ],
   declarations: [
     LoginComponent, LoginFormComponent, LowercaseDirective
   ],
