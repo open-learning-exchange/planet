@@ -55,6 +55,10 @@ prepare_planet_rpi(){
   PLANET_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT
   PLANET_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION
   PLANET_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-latest
+  docker create --name reuse-artifact $DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
+  mkdir -p /ng-app/dist
+  docker export reuse-artifact > reuse-artifact.tar
+  tar -xvf reuse-artifact.tar -C /ng-app/dist
 }
 
 prepare_db_init_rpi(){
@@ -171,7 +175,7 @@ create_multiarch_manifest_planet(){
     then
         build_message Creating Planet Multiarch Manifest for Latest
         # $1: latest arm
-        # $2: latest amd64        
+        # $2: latest amd64
         yq n image treehouses/planet:latest | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
@@ -183,7 +187,7 @@ create_multiarch_manifest_planet(){
     else
         build_message Branch is Not master so no need to create Multiarch manifests for planet.
     fi
-        
+
     #Building for versioned
     if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
     then
@@ -214,7 +218,7 @@ create_multiarch_manifest_dbinit(){
     then
         build_message Creating Multiarch Manifest for db-init
         # $1: db-init arm
-        # $2: db-init amd64        
+        # $2: db-init amd64
         yq n image treehouses/planet:db-init | \
         yq w - manifests[0].image $1 | \
         yq w - manifests[0].platform.architecture arm | \
@@ -225,8 +229,8 @@ create_multiarch_manifest_dbinit(){
         tee /tmp/MA_manifests/MA_db_init.yaml
      else
         build_message Branch is Not master so no need to create Multiarch manifests for db-init.
-     fi       
-        
+     fi
+
      #Building for versioned
      if [[ ! -z $gtag ]] || [[ ! -z $TRAVIS_TAG  ]]
      then
