@@ -34,7 +34,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.setSubmissions();
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
-      const questionsLength = submissions[0].parent.questions.length;
+      const questionsLength = this.selectedStep.exam.questions.length;
       const fillEmptyAnswers = (answers) => [].concat(answers, Array(questionsLength - answers.length).fill(''));
       this.submissions = submissions.map(
         submission => {
@@ -46,9 +46,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
           };
         }
       );
+
       this.errors = this.submissions.reduce((errors, submission) => {
         return submission.answers.map((answer, index) => answer.mistakes + (errors[index] || 0));
-      }, []);
+      }, new Array(questionsLength).fill(0));
     });
   }
 
