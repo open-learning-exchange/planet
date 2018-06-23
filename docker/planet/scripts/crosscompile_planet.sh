@@ -12,10 +12,10 @@ fi
 
 if [[ "${ARCH}" == "armv7" ]]; then
   TRIPLE="arm-linux-gnueabihf"
-  GCC="4.8"
+  GCC="5"
 elif [[ "${ARCH}" == "armv8" ]]; then
   TRIPLE="aarch64-linux-gnu"
-  GCC="4.8"
+  GCC="5"
 else
   exit 1
 fi
