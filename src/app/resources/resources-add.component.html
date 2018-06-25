@@ -97,8 +97,9 @@
         <mat-form-field>
           <input matInput  i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
         </mat-form-field>
-        <label>File Upload:</label>
+        <label i18n>File Upload:</label>
         <input type="file" (change)="bindFile($event)" />
+        <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
       </mat-grid-list>
       <mat-grid-list cols="1">
         <mat-checkbox [disabled]="disableDownload" formControlName="isDownloadable">File downloadable</mat-checkbox>
