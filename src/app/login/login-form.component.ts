@@ -9,6 +9,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
+import { SyncService } from '../shared/sync.service';
 
 const registerForm = {
   name: [],
@@ -40,7 +41,8 @@ export class LoginFormComponent {
     private userService: UserService,
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private syncService: SyncService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -122,6 +124,9 @@ export class LoginFormComponent {
         // If not in e2e test or on a center, also add session to parent domain
         if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
           obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
+          if (localConfig.registrationRequest === 'pending') {
+            obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
+          }
         }
         return forkJoin(obsArr).pipe(catchError(error => {
           // 401 is for Unauthorized
@@ -136,4 +141,18 @@ export class LoginFormComponent {
 
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
+
+  getConfigurationSyncDown(configuration, credentials) {
+    const replicators =  {
+      dbSource: 'communityregistrationrequests',
+      dbTarget: 'configurations',
+      type: 'pull',
+      date: true,
+      selector: {
+        code: configuration.code
+      }
+    };
+    return this.syncService.sync(replicators, credentials);
+  }
+
 }
