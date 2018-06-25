@@ -114,10 +114,7 @@ export class MeetupsAddComponent implements OnInit {
         }, [ '_id' ], 0));
       }),
       switchMap(data => {
-        return this.meetupChangeNotifications(data.docs, meetupInfo, this.id);
-      }),
-      switchMap(notifications => {
-        return this.couchService.post('notifications', notifications);
+        return this.couchService.post('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
       })
     ).subscribe(() => {
         this.router.navigate([ '/meetups' ]);
@@ -170,7 +167,7 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   meetupChangeNotifications(users, meetupInfo, meetupId) {
-    return users.map((user) => ({
+    return { docs: users.map((user) => ({
       'user': user._id,
       'message': meetupInfo.title + ' has been updated.',
       'link': '/meetups/view/' + meetupId,
@@ -179,7 +176,7 @@ export class MeetupsAddComponent implements OnInit {
       'priority': 1,
       'status': 'unread',
       'time': Date.now()
-    }));
+    })) };
   }
 
 }
