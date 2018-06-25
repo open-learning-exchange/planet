@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
@@ -37,11 +38,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.getCommunityList();
+    this.route.queryParams.subscribe(params => this.getCommunityList(params['search']));
     this.communities.sortingDataAccessor = (item, property) => {
       switch (typeof item[property]) {
         case 'number':
@@ -79,12 +81,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  getCommunityList() {
+  getCommunityList(search = '') {
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
         this.communities.data = data.docs;
-        this.requestListFilter('');
+        this.requestListFilter(search);
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
