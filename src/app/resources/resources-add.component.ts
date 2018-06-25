@@ -93,7 +93,7 @@ export class ResourcesAddComponent implements OnInit {
       openWhichFile: '',
       isDownloadable: '',
       sourcePlanet: this.userService.getConfig().code,
-      resideOn:  this.userService.getConfig().code,
+      resideOn: this.userService.getConfig().code,
       createdDate: Date.now(),
       updatedDate: Date.now()
     });

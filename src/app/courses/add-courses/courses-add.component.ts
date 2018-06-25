@@ -75,7 +75,7 @@ export class CoursesAddComponent implements OnInit {
       createdDate: Date.now(),
       creator: this.userService.get().name + '@' + this.userService.getConfig().code,
       sourcePlanet: this.userService.getConfig().code,
-      resideOn:  this.userService.getConfig().code,
+      resideOn: this.userService.getConfig().code,
       updatedDate: Date.now()
     });
   }
