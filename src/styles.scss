@@ -332,6 +332,7 @@ body {
   }
 
   mat-toolbar:first-child > mat-form-field,
+  mat-toolbar form mat-form-field,
   .input-icon {
       margin-top: 10px;
   }
