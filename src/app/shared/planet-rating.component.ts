@@ -30,8 +30,7 @@ export class PlanetRatingComponent implements MatFormFieldControl<number>, Contr
 
   starActiveWidth = '0%';
   stateChanges = new Subject<void>();
-  // Set error state to always true and remove mat-form-field line with css
-  errorState = true;
+  errorState = false;
   // Label should always float above stars
   shouldLabelFloat = true;
   controlType = 'no-underline';
