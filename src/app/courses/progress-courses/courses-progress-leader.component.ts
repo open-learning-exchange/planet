@@ -47,7 +47,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         }
       );
       this.errors = this.submissions.reduce((errors, submission) => {
-        return submission.answers.map((answer, index) => answer.mistakes + (errors[index] || 0));
+        return submission.answers.map((answer, index) => answer.mistakes || 0 + (errors[index] || 0));
       }, []);
     });
   }
