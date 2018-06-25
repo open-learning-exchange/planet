@@ -108,30 +108,27 @@ export class MeetupsAddComponent implements OnInit {
 
   updateMeetup(meetupeInfo) {
     this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision })
-      .pipe(switchMap(data => {
+      .pipe(switchMap(() => {
         return this.couchService.post('shelf/_find', findDocuments({
           'meetupIds': { '$in': [ this.id ] }
         }, [ '_id' ], 0));
       }),
       switchMap(data => {
-        return data.docs.map((res) => {
-            const invitation =  {
-              'user': res._id,
-              'message': meetupeInfo.title + ' has been updated.',
-              'link': '/meetups/view/' + this.id,
-              'item': this.id,
-              'type': 'meetup',
-              'priority': 1,
-              'status': 'unread',
-              'time': Date.now()
-            };
-            return { ...invitation };
-        });
+        return data.docs.map((user) => ({
+          'user': user._id,
+          'message': meetupeInfo.title + ' has been updated.',
+          'link': '/meetups/view/' + this.id,
+          'item': this.id,
+          'type': 'meetup',
+          'priority': 1,
+          'status': 'unread',
+          'time': Date.now()
+        }));
       }),
-      switchMap(data => {
-        return this.couchService.post('notifications',  data);
+      switchMap(notifications => {
+        return this.couchService.post('notifications', notifications);
       })
-    ).subscribe((data: any) => {
+    ).subscribe(() => {
         this.router.navigate([ '/meetups' ]);
         this.planetMessageService.showMessage('Meetup Updated Successfully');
     }, (err) => {
