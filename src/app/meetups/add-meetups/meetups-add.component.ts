@@ -118,7 +118,7 @@ export class MeetupsAddComponent implements OnInit {
             const invitation =  {
               'user': res._id,
               'message': meetupeInfo.title + ' has been updated.',
-              'link': this.router.url,
+              'link': '/meetups/view/' + this.id,
               'item': this.id,
               'type': 'meetup',
               'priority': 1,
