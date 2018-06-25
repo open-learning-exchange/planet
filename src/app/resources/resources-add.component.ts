@@ -86,7 +86,6 @@ export class ResourcesAddComponent implements OnInit {
       openWith: '',
       resourceFor: [],
       medium: '',
-      articleDate: Date.now(),
       resourceType: '',
       addedBy: '',
       openUrl: [],
