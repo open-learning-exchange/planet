@@ -64,6 +64,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   setSubmissions() {
+    this.submissions = [];
+    this.errors = [];
     if (this.selectedStep.exam) {
       this.submissionsService.updateSubmissions({ parentId: this.selectedStep.exam._id + '@' + this.course._id });
     }
