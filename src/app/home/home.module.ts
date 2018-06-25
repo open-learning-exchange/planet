@@ -14,6 +14,7 @@ import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
+import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     MaterialModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
+    PlanetLanguageModule
   ],
   declarations: [
     HomeComponent,
