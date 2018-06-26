@@ -207,21 +207,21 @@ export class ResourcesAddComponent implements OnInit {
           'type': 'resources'
         }));
       })
-       ,switchMap((res) => {
+      , switchMap((res) => {
         const attachments = {
           '_id': res.docs[0]._id,
           '_rev': res.docs[0]._rev,
           'type': 'resources',
           'item': resourceInfo._id,
           '_attachments': this.createAttachmentObj(files)
-      };
+        };
         return this.couchService.post('attachments', attachments);
     })).subscribe((response: any) => {
       this.router.navigate([ '/resources' ]);
       this.planetMessageService.showMessage('New Resource Created');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
-      console.log(err); 
+      console.log(err);
     });
   }
 

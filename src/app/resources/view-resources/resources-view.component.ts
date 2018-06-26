@@ -35,6 +35,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
+  attachment: any;
   // If parent route, url will use parent domain.  If not uses this domain.
   parent = this.route.snapshot.data.parent;
   get urlPrefix()  {
@@ -64,10 +65,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resourceArr) => {
         this.resource = resourceArr[0];
       });
-    this.couchService.post('attachments/_find', findDocuments({
-        'item': this.resourceId,
-        'type': 'resources'
-      })).subscribe();
+    return this.couchService.post('attachments/_find', findDocuments({
+      'item': this.resourceId,
+      'type': 'resources'
+    })).subscribe(attachmentArr => {
+      this.attachment = attachmentArr.docs[0];
+    });
   }
 
   ngOnDestroy() {
