@@ -23,7 +23,7 @@ import { Subject } from 'rxjs';
         </p>
       </mat-list-item>
     </mat-list>
-    </div>
+  </div>
   `
 })
 export class NotificationsComponent implements OnInit {
