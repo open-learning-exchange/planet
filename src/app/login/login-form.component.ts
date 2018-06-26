@@ -110,36 +110,41 @@ export class LoginFormComponent {
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
-        // Navigate into app
-        if (isCreate) {
-          return from(this.router.navigate( [ 'users/update/' + name ]));
-        } else {
-          return from(this.reRoute());
-        }
-      }), switchMap((routeSuccess) => {
-        // Post new session info to login_activity
-        const obsArr = [ this.userService.newSessionLog() ];
-        const localConfig = this.userService.getConfig();
-        const localAdminName = localConfig.adminName.split('@')[0];
-        // If not in e2e test or on a center, also add session to parent domain
-        if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
-          obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
-          if (localConfig.registrationRequest === 'pending') {
-            obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
-          }
-        }
-        return forkJoin(obsArr).pipe(catchError(error => {
-          // 401 is for Unauthorized
-          if (error.status === 401) {
-            this.planetMessageService.showMessage('Can not login to parent planet.');
+          // Navigate into app
+          if (isCreate) {
+            return from(this.router.navigate( [ 'users/update/' + name ]));
           } else {
-            this.planetMessageService.showMessage('Error connecting to parent.');
+            return from(this.reRoute());
           }
-          return of(error);
-        }));
-      })).subscribe((res) => {
-
+        }),
+        this.createSession(name, password)
+      ).subscribe((res) => {
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
+  }
+
+  createSession(name, password) {
+    return switchMap((routeSuccess) => {
+      // Post new session info to login_activity
+      const obsArr = [ this.userService.newSessionLog() ];
+      const localConfig = this.userService.getConfig();
+      const localAdminName = localConfig.adminName.split('@')[0];
+      // If not in e2e test or on a center, also add session to parent domain
+      if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
+        obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
+        if (localConfig.registrationRequest === 'pending') {
+          obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
+        }
+      }
+      return forkJoin(obsArr).pipe(catchError(error => {
+        // 401 is for Unauthorized
+        if (error.status === 401) {
+          this.planetMessageService.showMessage('Can not login to parent planet.');
+        } else {
+          this.planetMessageService.showMessage('Error connecting to parent.');
+        }
+        return of(error);
+      }));
+    });
   }
 
   getConfigurationSyncDown(configuration, credentials) {
