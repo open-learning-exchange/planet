@@ -21,7 +21,12 @@ const removeProtocol = (str: string) => {
 
 @Component({
   selector: 'planet-configuration',
-  templateUrl: './configuration.component.html'
+  templateUrl: './configuration.component.html',
+  styles: [ `
+    .mat-raised-button {
+      margin: 0px 2px 2px 0px;
+    }
+  ` ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
