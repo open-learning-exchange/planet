@@ -11,33 +11,7 @@ import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
 
 @Component({
-  template: `
-    <div *ngIf="displayDashboard">
-      <span *ngIf="planetType !== 'community'">
-        <a routerLink="/requests" i18n mat-raised-button>Requests</a>
-      </span>
-      <button *ngIf="planetType !== center && showResendConfiguration"
-        (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-      <button *ngIf="devMode"
-        (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
-      <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
-      <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-      <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
-    </div>
-    <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
-      <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <ng-container [ngSwitch]="requestStatus">
-        <ng-container *ngSwitchCase="'accepted'">
-          <a routerLink="resources" i18n mat-raised-button>List Resources</a>
-          <a routerLink="courses" i18n mat-raised-button>List Courses</a>
-          <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
-        </ng-container>
-        <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
-        <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
-      </ng-container>
-    </div>
-    <div>{{message}}</div>
-  `
+  templateUrl: './manager-dashboard.component.html'
 })
 
 export class ManagerDashboardComponent implements OnInit {
