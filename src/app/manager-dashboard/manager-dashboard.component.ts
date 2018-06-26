@@ -25,6 +25,7 @@ export class ManagerDashboardComponent implements OnInit {
   devMode = isDevMode();
   deleteCommunityDialog: any;
   pushedItems = { course: [], resource: [] };
+  pin: string;
 
   constructor(
     private userService: UserService,
@@ -46,6 +47,7 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
+    this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
   }
 
   resendConfig() {
