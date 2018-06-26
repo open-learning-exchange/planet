@@ -89,7 +89,7 @@ export class UsersUpdateComponent implements OnInit {
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
-      birthDate: [ '', Validators.compose([ Validators.required, CustomValidators.notDateInFuture ]) ],
+      birthDate: [ '', Validators.compose([ CustomValidators.dateValidRequired, CustomValidators.notDateInFuture ]) ],
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]
     });

@@ -196,4 +196,11 @@ export class CustomValidators {
       return { invalidFutureDate: true };
     }
   }
+
+  // for validating whether time is date or not
+  static dateValidRequired(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return { dateRequired: true };
+    }
+  }
 }
