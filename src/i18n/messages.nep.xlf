@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">ltr</target>
+        <target xml:lang="ne-NP" state="translated">ltr</target>
       </trans-unit>
       <trans-unit id="f52df91ad79481987baa252e69202d15e60ae9e4" datatype="html">
         <source>
@@ -393,7 +393,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Password</target>
+        <target xml:lang="ne-NP" state="translated">पासवर्ड</target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html">
         <source>Confirm Password</source>
@@ -1747,7 +1747,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Meetups</target>
+        <target xml:lang="ne-NP" state="translated">भेलाहरू</target>
       </trans-unit>
       <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html">
         <source>Members</source>
@@ -1867,7 +1867,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Repeat Password</target>
+        <target xml:lang="ne-NP" state="translated">पासवर्ड दाेहाेर्याउनुहाेस्</target>
       </trans-unit>
       <trans-unit id="0332b165168e5892a3a2ca8164e609173580d0d9" datatype="html">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></source>
