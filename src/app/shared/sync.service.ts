@@ -3,8 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
-import { throwError, forkJoin } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { throwError, forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 
@@ -67,8 +67,11 @@ export class SyncService {
 
   private verifyPassword(password) {
     return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(map(() => {
-      return { name: this.userService.get().name, password };
+    .pipe(switchMap((data) => {
+      if (!data.ok) {
+        return throwError('Invalid password');
+      }
+      return of({ name: this.userService.get().name, password });
     }));
   }
 
