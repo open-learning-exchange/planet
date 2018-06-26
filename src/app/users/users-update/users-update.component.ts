@@ -46,7 +46,6 @@ export class UsersUpdateComponent implements OnInit {
   roles: string[] = [];
   languages = languages;
   maxDate = new Date();
-  hasAttachment = false;
 
   constructor(
     private fb: FormBuilder,
@@ -73,7 +72,6 @@ export class UsersUpdateComponent implements OnInit {
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
           this.previewSrc = this.currentProfileImg;
           this.uploadImage = true;
-          this.hasAttachment = true;
         } else {
           this.previewSrc = this.defaultProfileImg;
         }
@@ -153,7 +151,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   removeImageFile() {
-    this.previewSrc = this.hasAttachment ? this.currentProfileImg : this.defaultProfileImg;
+    this.previewSrc = this.currentProfileImg || this.defaultProfileImg;
     this.file = null;
     this.uploadImage = false;
   }
