@@ -94,8 +94,15 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   deleteCommunity() {
-     return () => {
-      this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
+    return () => {
+      this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
+        forkJoin([
+          this.couchService.delete('_users/org.couchdb.user:satellite?rev=' + res._rev),
+          this.couchService.delete('_node/nonode@nohost/_config/satellite/pin')
+        ])
+      ),
+      switchMap(() => this.couchService.allDocs('_replicator')),
+      switchMap((docs: any) => {
         const replicators = docs.map(doc => {
           return { _id: doc._id, _rev: doc._rev, _deleted: true };
         });
