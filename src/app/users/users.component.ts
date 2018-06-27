@@ -108,14 +108,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find', { 'selector': {} });
+    return this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 3 });
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
-      users = users.docs.filter((user: any) => {
+      users = users.filter((user: any) => {
         // Removes current user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         if (currentLoginUser !== user.name) {
