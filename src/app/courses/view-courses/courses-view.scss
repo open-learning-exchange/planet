@@ -1,0 +1,32 @@
+:host {
+  .course-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "detail view";
+  }
+
+  .course-detail {
+    grid-area: detail;
+    padding: 1rem;
+  }
+
+  .course-view {
+    grid-area: view;
+  }
+
+  .course-detail, .course-view {
+    overflow: auto;
+  }
+
+  .course-progress {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-column-gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    planet-courses-progress-bar {
+      height: 1rem;
+      width: 100%;
+    }
+  }
+}

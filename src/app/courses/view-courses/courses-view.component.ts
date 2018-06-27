@@ -10,26 +10,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
-  styles: [ `
-  .view-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "detail view";
-  }
-
-  .course-detail {
-    grid-area: detail;
-    padding: 1rem;
-  }
-
-  .course-view {
-    grid-area: view;
-  }
-
-  .course-detail, .course-view {
-    overflow: auto;
-  }
-  ` ]
+  styleUrls: [ 'courses-view.scss' ]
 })
 
 export class CoursesViewComponent implements OnInit, OnDestroy {
@@ -38,7 +19,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = {};
   parent = this.route.snapshot.data.parent;
   showExamButton = false;
-  nextStep = 1;
+  progress = { stepNum: 1 };
 
   constructor(
     private router: Router,
@@ -54,7 +35,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = { stepNum: 1 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
-      this.nextStep = progress.stepNum;
+      this.progress = progress;
       this.showExamButton = this.checkMyCourses(course._id);
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -69,7 +50,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate([ './step/' + this.nextStep ], { relativeTo: this.route });
+    this.router.navigate([ './step/' + this.progress.stepNum ], { relativeTo: this.route });
   }
 
   goToExam(stepDetail, stepNum) {
