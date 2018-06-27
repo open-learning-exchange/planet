@@ -43,7 +43,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => this.getCommunityList(params['search']));
+    this.getCommunityList(this.route.snapshot.paramMap.get('search'));
     this.communities.sortingDataAccessor = (item, property) => {
       switch (typeof item[property]) {
         case 'number':
