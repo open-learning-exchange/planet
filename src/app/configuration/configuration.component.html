@@ -1,5 +1,5 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
-  <mat-step [stepControl]="loginForm">
+  <mat-step *ngIf="configurationType === 'new'" [stepControl]="loginForm" [optional]="configurationType === 'update'">
     <ng-template matStepLabel i18n>Create Admin</ng-template>
     <form [formGroup]="loginForm">
       <mat-form-field>
@@ -20,7 +20,7 @@
   </mat-step>
 
   <mat-step [stepControl]="configurationFormGroup">
-    <ng-template matStepLabel i18n>Set Up Configuration</ng-template>
+    <ng-template matStepLabel i18n>{{configurationType === 'new' ? 'Set Up' : 'Update'}} Configuration</ng-template>
     <form [formGroup]="configurationFormGroup">
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Select Nation/Community" (selectionChange)="onChange($event.value)" formControlName="planetType" required>
@@ -71,14 +71,14 @@
         </button>
     </div>
     <div>
-      <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+      <button mat-raised-button type="button" color="primary" *ngIf="configurationType === 'new'" matStepperPrevious i18n>Back</button>
       <button mat-raised-button color="primary" (click)="confirmConfigurationFormGroup()" i18n>Next</button>
     </div>
   </mat-step>
 
   <mat-step [stepControl]="contactFormGroup">
     <form [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
-      <ng-template matStepLabel i18n>Contact Details</ng-template>
+      <ng-template matStepLabel i18n>{{configurationType === 'new' ? '' : 'Update'}} Contact Details</ng-template>
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>

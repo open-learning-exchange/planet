@@ -332,6 +332,7 @@ body {
   }
 
   mat-toolbar:first-child > mat-form-field,
+  mat-toolbar form mat-form-field,
   .input-icon {
       margin-top: 10px;
   }
@@ -339,4 +340,12 @@ body {
   mat-dialog-actions {
     justify-content: flex-end;
   }
+
+  mat-row mat-cell {
+    flex-wrap: wrap;
+    .mat-raised-button {
+      margin: 0px 2px 2px 0px;
+    }
+  }
+
 }

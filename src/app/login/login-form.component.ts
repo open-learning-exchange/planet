@@ -46,7 +46,7 @@ export class LoginFormComponent {
       Validators.required,
       CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
       Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ],
-      ac => this.validatorService.isUnique$('_users', 'name', ac, {})
+      ac => this.validatorService.isUnique$('_users', 'name', ac)
     ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
@@ -120,7 +120,7 @@ export class LoginFormComponent {
         const localConfig = this.userService.getConfig();
         const localAdminName = localConfig.adminName.split('@')[0];
         // If not in e2e test or on a center, also add session to parent domain
-        if (!environment.test && localAdminName === name && localConfig.planet_type !== 'center') {
+        if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
           obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
         }
         return forkJoin(obsArr).pipe(catchError(error => {

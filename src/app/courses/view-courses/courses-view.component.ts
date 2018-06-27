@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap, takeUntil } from 'rxjs/operators';
-import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
@@ -86,7 +85,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   resourceUrl(resource) {
-    if (Object.keys(resource._attachments)[0]) {
+    if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
       return environment.couchAddress + 'resources/' + resource._id + '/' + filename;
     }
