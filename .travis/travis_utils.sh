@@ -108,15 +108,15 @@ package_docker(){
   # $2: tag
   # $3: tag latest
   build_message processing $2
-  if [ "$TRAVIS_BRANCH" = "master" ] || [ "$gtag" == *"i18n"* ]  || [ "$TRAVIS_TAG" == *"i18n"* ]; then
+  if [ "$TRAVIS_BRANCH" = "master" ] || [[ "$gtag" == *"i18n"* ]]  || [[ "$TRAVIS_TAG" == *"i18n"* ]]; then
     docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=multi .
   else
     docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=single  .
   fi
   if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
-        tag_a_docker $2 $3
-    fi
+      tag_a_docker $2 $3
+  fi
 }
 
 push_docker(){
