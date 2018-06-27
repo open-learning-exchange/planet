@@ -99,8 +99,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     if (this.parent) {
       opts = { domain: this.userService.getConfig().parentDomain };
     }
-    return this.couchService.allDocs('courses', opts).pipe(
-      switchMap((courses) => forkJoin([ of(courses), this.couchService.allDocs('courses_progress', opts) ])),
+    return forkJoin([ this.couchService.allDocs('courses', opts), this.couchService.allDocs('courses_progress', opts) ]).pipe(
       map(([ courses, progress ]) =>
         courses.map(course => ({
           ...course,
