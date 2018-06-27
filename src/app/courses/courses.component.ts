@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl,
+  MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -14,6 +15,8 @@ import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '.
 import * as constants from './constants';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -33,6 +36,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
   fb: FormBuilder;
@@ -60,6 +64,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
+    private dialogsListService: DialogsListService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
@@ -258,6 +263,28 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     .subscribe((response: any) => {
       this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to fetch');
     }, () => error => this.planetMessageService.showMessage(error));
+  }
+
+  openSendCourseDialog() {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+    .subscribe((planet) => {
+      const data = { okClick: this.sendCourse('courses').bind(this),
+        filterPredicate: filterSpecificFields([ 'name' ]),
+        allowMulti: false,
+        ...planet };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data, height: '500px', width: '600px', autoFocus: false
+      });
+    });
+  }
+
+  sendCourse(db: string) {
+    return (selected: any) => {
+      const coursesToSend = this.selection.selected.map(course => ({ db, sendTo: selected[0].code, item: course }));
+      this.couchService.post('send_items/_bulk_docs', { 'docs': coursesToSend }).subscribe(() => {
+        this.dialogRef.close();
+      }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
+    };
   }
 
 }
