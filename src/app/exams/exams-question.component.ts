@@ -64,11 +64,10 @@ export class ExamsQuestionComponent implements OnInit {
     return item.id;
   }
 
-  onChange(type) {
-    if (this.choices.length > 0) {
-      for (let i = 1 ; i <= this.choices.length ; i ++) {
-        this.removeChoice(0);
-      }
+  clearChoices() {
+    this.questionForm.patchValue({ 'correctChoice': '' });
+    while (this.choices.length !== 0) {
+      this.removeChoice(0);
     }
   }
 
