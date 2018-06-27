@@ -24,14 +24,14 @@
     </mat-form-field>
     <div>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Type" formControlName="type">
+        <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="onChange($event.value)">
           <mat-option value="input" i18n>Input</mat-option>
           <mat-option value="select" i18n>Multiple Choice</mat-option>
         </mat-select>
       </mat-form-field>
       <button type="button" mat-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value === 'select'">Add Choice</button>
     </div>
-    <div class="question-choices">
+    <div class="question-choices" *ngIf="questionForm.controls.type.value === 'select'">
       <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
