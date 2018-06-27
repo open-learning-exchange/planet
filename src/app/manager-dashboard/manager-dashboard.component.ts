@@ -58,7 +58,6 @@ export class ManagerDashboardComponent implements OnInit {
   devMode = isDevMode();
   deleteCommunityDialog: any;
   dialogRef: MatDialogRef<DialogsListComponent>;
-  initialSelection = [];
 
   constructor(
     private userService: UserService,
