@@ -159,52 +159,40 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   setFilterPredicate(db: string) {
-    let filterPredicate: any;
     switch (db) {
       case 'resources':
-        filterPredicate = filterSpecificFields([ 'title' ]);
-        break;
+        return filterSpecificFields([ 'title' ]);
       case 'courses':
-        filterPredicate = filterSpecificFields([ 'courseTitle' ]);
-        break;
+        return filterSpecificFields([ 'courseTitle' ]);
     }
-    return filterPredicate;
   }
 
   sendOnAccept(db: string) {
-    let previousList = [],  initialSelection = [];
-    this.couchService.post(db + '/_find', findDocuments({ 'sendOnAccept': true })).pipe(
-      switchMap(items => {
-        previousList = items.docs;
-        initialSelection = previousList.map(res => res._id);
-        return this.dialogsListService.getListAndColumns(db);
-      })).subscribe(res => {
-        const data = {
-          okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
-          filterPredicate: this.setFilterPredicate(db),
-          allowMulti: true,
-          initialSelection,
-          ...res };
-        this.dialogRef = this.dialog.open(DialogsListComponent, {
-          data: data,
-          height: '500px',
-          width: '600px',
-          autoFocus: false
-        });
+    this.dialogsListService.getListAndColumns(db).subscribe(res => {
+      const previousList = res.tableData.filter(doc => doc.sendOnAccept === true),
+        initialSelection = previousList.map(doc => doc._id);
+      const data = {
+        okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
+        filterPredicate: this.setFilterPredicate(db),
+        allowMulti: true,
+        initialSelection,
+        ...res };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
     });
   }
 
   sendOnAcceptOkClick(db: string, previousList: any) {
     return (selected: any) => {
-      const dataUpdate = [];
-      selected.filter(item => item).map(item => {
-        dataUpdate.push({ ...item, sendOnAccept: true });
-      });
-      previousList.map(item => {
-        if (dataUpdate.indexOf(item) < 0) {
-          dataUpdate.push({ ...item, sendOnAccept: false });
-        }
-      });
+      const dataUpdate = selected.map(item => ({ ...item, sendOnAccept: true }))
+      .concat(
+        previousList.filter(item => selected.findIndex(i => i._id === item.id) < 0)
+          .map(item => ({ ...item, sendOnAccept: false }))
+      );
       this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
         this.planetMessageService.showMessage('Added to send on accept list');
       });
