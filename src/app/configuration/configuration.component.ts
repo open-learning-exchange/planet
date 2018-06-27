@@ -47,7 +47,7 @@ export class ConfigurationComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-     private syncService: SyncService
+    private syncService: SyncService
   ) { }
 
   ngOnInit() {
