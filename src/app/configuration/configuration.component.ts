@@ -201,9 +201,15 @@ export class ConfigurationComponent implements OnInit {
     if (this.configurationType === 'update') {
       this.updateConfiguration();
     } else if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const { confirmPassword, ...credentials } = this.loginForm.value;
+      const {
+        confirmPassword,
+        ...credentials
+      } = this.loginForm.value;
       const adminName = credentials.name + '@' + this.configurationFormGroup.controls.code.value;
-      const configuration = Object.assign({ registrationRequest: 'pending', adminName },
+      const configuration = Object.assign({
+          registrationRequest: 'pending',
+          adminName
+        },
         this.configurationFormGroup.value, this.contactFormGroup.value);
       const userDetail: any = {
         ...credentials,
@@ -213,42 +219,95 @@ export class ConfigurationComponent implements OnInit {
         'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
-      const feedbackSyncUp = {
-        '_id': 'feedback_to_parent',
-        'source': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
-          },
-          'url': environment.couchAddress + 'feedback'
+      const feedbackSyncUp = this.getFeedbackSyncUp(configuration, credentials, adminName);
+      const feedbackSyncDown = this.getFeedbackSyncDown(feedbackSyncUp, configuration);
+
+      this.createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail);
+    }
+  }
+
+  getFeedbackSyncUp(configuration, credentials, adminName) {
+    return {
+      '_id': 'feedback_to_parent',
+      'source': {
+        'headers': {
+          'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
         },
-        'target': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
-          },
-          'url': 'https://' + configuration.parentDomain + '/feedback'
+        'url': environment.couchAddress + 'feedback'
+      },
+      'target': {
+        'headers': {
+          'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
         },
-        'create_target':  false,
-        'continuous': true,
-        'owner': credentials.name
+        'url': 'https://' + configuration.parentDomain + '/feedback'
+      },
+      'create_target': false,
+      'continuous': true,
+      'owner': credentials.name
+    };
+  }
+
+  getFeedbackSyncDown(feedbackSyncUp, configuration) {
+    return Object.assign({}, feedbackSyncUp, {
+      '_id': 'feedback_from_parent',
+      'source': feedbackSyncUp.target,
+      'target': feedbackSyncUp.source,
+      'selector': {
+        'source': configuration.code
+      }
+    });
+  }
+
+  createRequestNotification(configuration) {
+    return mergeMap(data => {
+      const requestNotification = {
+        'user': 'SYSTEM',
+        'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
+        'link': '/requests',
+        'type': 'request',
+        'priority': 1,
+        'status': 'unread',
+        'time': Date.now()
       };
-      const feedbackSyncDown = Object.assign({}, feedbackSyncUp, {
-        '_id': 'feedback_from_parent',
-        'source': feedbackSyncUp.target,
-        'target': feedbackSyncUp.source,
-        'selector': {
-          'source': configuration.code
-        }
+      // Send notification to parent
+      return this.couchService.post('notifications', requestNotification, {
+        domain: configuration.parentDomain
       });
-      const courseOnAccept = {
-        db: 'courses',
-        type: 'pull',
-        parentDomain: configuration.parentDomain,
-        code: configuration.code,
-        selector: { 'sendOnAccept': true }
-      };
-      const resourceOnAccept = { ...courseOnAccept, db: 'resources' };
-      // create replicator at first as we do not have session
-      this.couchService.post('_replicator', feedbackSyncUp)
+    });
+  }
+
+  addUserToParentPlanet(userDetail, adminName, configuration) {
+    return mergeMap((data: any) => {
+      // then add user to parent planet with id of configuration and isUserAdmin set to false
+      userDetail['requestId'] = data.id;
+      userDetail['isUserAdmin'] = false;
+      return this.couchService.put('_users/org.couchdb.user:' + adminName, { ...userDetail,
+        name: adminName
+      }, {
+        domain: configuration.parentDomain
+      });
+    });
+  }
+
+  addUserToShelf(adminName, configuration) {
+    return mergeMap(data => {
+      return this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
+        domain: configuration.parentDomain
+      });
+    });
+  }
+
+  createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail) {
+    const courseOnAccept = {
+      db: 'courses',
+      type: 'pull',
+      parentDomain: configuration.parentDomain,
+      code: configuration.code,
+      selector: { 'sendOnAccept': true }
+    };
+    const resourceOnAccept = { ...courseOnAccept, db: 'resources' };
+    // create replicator at first as we do not have session
+    this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
         debug('Creating replicator'),
         switchMap(res => {
@@ -266,32 +325,16 @@ export class ConfigurationComponent implements OnInit {
             // then add user with same credentials
             this.couchService.put('_users/org.couchdb.user:' + credentials.name, userDetail),
             // then add a shelf for that user
-            this.couchService.put('shelf/org.couchdb.user:' + credentials.name, { }),
+            this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
             // then add configuration
             this.couchService.post('configurations', configuration),
             // then post configuration to parent planet's registration requests
-            this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
-              .pipe(mergeMap((data: any) => {
-                // then add user to parent planet with id of configuration and isUserAdmin set to false
-                userDetail['requestId'] =  data.id;
-                userDetail['isUserAdmin'] =  false;
-                return this.couchService.put('_users/org.couchdb.user:' + adminName,
-                  { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
-              }), mergeMap(data => {
-                return this.couchService.put('shelf/org.couchdb.user:' + adminName, { }, { domain: configuration.parentDomain });
-              }), mergeMap(data => {
-                const requestNotification = {
-                  'user': 'SYSTEM',
-                  'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
-                  'link': '/requests',
-                  'type': 'request',
-                  'priority': 1,
-                  'status': 'unread',
-                  'time': Date.now()
-                };
-                // Send notification to parent
-                return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
-              })
+            this.couchService.post('communityregistrationrequests', configuration, {
+              domain: configuration.parentDomain
+            })
+            .pipe(this.addUserToParentPlanet(userDetail, adminName, configuration),
+              this.addUserToShelf(adminName, configuration),
+              this.createRequestNotification(configuration)
             )
           ]);
         })
@@ -299,7 +342,6 @@ export class ConfigurationComponent implements OnInit {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
-    }
   }
 
   updateConfiguration() {

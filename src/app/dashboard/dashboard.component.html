@@ -22,23 +22,27 @@
   [cardTitle]="'myLibrary'"
   class="planet-library-theme"
   [itemData]="data.resources"
-  [emptyLink]="'/resources'">
+  [emptyLink]="'/resources'"
+  [shelfName]="'resourceIds'">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="'myCourses'"
   class="planet-courses-theme"
   [itemData]="data.courses"
-  [emptyLink]="'/courses'">
+  [emptyLink]="'/courses'"
+  [shelfName]="'courseIds'">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="'myMeetups'"
   class="planet-meetups-theme"
   [itemData]="data.meetups"
-  [emptyLink]="'/meetups'">
+  [emptyLink]="'/meetups'"
+  [shelfName]="'meetupIds'">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="'myTeams'"
   class="planet-teams-theme"
   [itemData]="data.myTeams"
-  [emptyLink]="'/users'">
+  [emptyLink]="'/users'"
+  [shelfName]="'myTeamIds'">
 </planet-dashboard-tile>

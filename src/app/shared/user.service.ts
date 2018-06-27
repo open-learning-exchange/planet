@@ -165,4 +165,12 @@ export class UserService {
     }));
   }
 
+  updateShelf(ids: string[], shelfName: string) {
+    const newShelf = { ...this.shelf, [shelfName]: ids };
+    return this.couchService.put('shelf/' + this.user._id, newShelf).pipe(map((res) => {
+      this.shelf = { ...newShelf, '_rev': res.rev };
+      return this.shelf;
+    }));
+  }
+
 }

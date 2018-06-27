@@ -38,7 +38,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       const fillEmptyAnswers = (answers) => [].concat(answers, Array(questionsLength - answers.length).fill(''));
       this.submissions = submissions.map(
         submission => {
-          const answers = fillEmptyAnswers(submission.answers.map(a => ({ ...a, mistakes: a.mistakes || 1 - a.grade })));
+          const answers = fillEmptyAnswers(submission.answers.map(a => ({ ...a, mistakes: a.mistakes || 1 - a.grade || 0 })));
           return {
             totalMistakes: answers.reduce((total, answer) => total + (answer.mistakes || 0), 0),
             ...submission,
@@ -47,7 +47,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         }
       );
       this.errors = this.submissions.reduce((errors, submission) => {
-        return submission.answers.map((answer, index) => answer.mistakes + (errors[index] || 0));
+        return submission.answers.map((answer, index) => answer.mistakes || 0 + (errors[index] || 0));
       }, []);
     });
   }

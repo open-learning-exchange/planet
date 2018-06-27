@@ -14,7 +14,7 @@
             "subject": [
                 "Literature"
             ],
-            "articleDate": 1516581294335,
+            "createdDate": 1516581294335,
             "kind": "Resource",
             "": "Text",
             "language": "English",
@@ -49,7 +49,7 @@
             "subject": [
                 "Literature"
             ],
-            "articleDate": 1516581294335,
+            "createdDate": 1516581294335,
             "kind": "Resource",
             "medium": "Text",
             "language": "English",
@@ -84,7 +84,7 @@
             "subject": [
                 "Literature"
             ],
-            "articleDate": 1516581294335,
+            "createdDate": 1516581294335,
             "kind": "Resource",
             "medium": "Text",
             "language": "English",
@@ -119,7 +119,7 @@
             "subject": [
                 "Literature"
             ],
-            "articleDate": 1516581294335,
+            "createdDate": 1516581294335,
             "kind": "Resource",
             "medium": "Text",
             "language": "English",
@@ -153,7 +153,7 @@
             "subject": [
                 "Learning"
             ],
-            "articleDate": 1516581294335,
+            "createdDate": 1516581294335,
             "kind": "Resource",
             "medium": "Text",
             "language": "English",

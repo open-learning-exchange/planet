@@ -12,8 +12,9 @@ import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
+import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -24,7 +25,9 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     PlanetFormsModule,
     MaterialModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    PlanetDialogsModule,
+    PlanetLanguageModule
   ],
   declarations: [
     HomeComponent,

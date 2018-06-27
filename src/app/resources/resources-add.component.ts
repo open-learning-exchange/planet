@@ -34,6 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   pageType = 'Add new';
   disableDownload = true;
   isSubmitted = false;
+  resourceFilename = '';
 
   constructor(
     private router: Router,
@@ -58,6 +59,7 @@ export class ResourcesAddComponent implements OnInit {
           this.existingResource = data;
           // If the resource does not have an attachment, disable file downloadable toggle
           this.disableDownload = !this.existingResource._attachments;
+          this.resourceFilename = this.existingResource._attachments ? Object.keys(this.existingResource._attachments)[0] : '';
           this.resourceForm.patchValue(data);
         }, (error) => {
           console.log(error);
@@ -86,12 +88,15 @@ export class ResourcesAddComponent implements OnInit {
       openWith: '',
       resourceFor: [],
       medium: '',
-      articleDate: Date.now(),
       resourceType: '',
       addedBy: '',
       openUrl: [],
       openWhichFile: '',
-      isDownloadable: ''
+      isDownloadable: '',
+      sourcePlanet: this.userService.getConfig().code,
+      resideOn: this.userService.getConfig().code,
+      createdDate: Date.now(),
+      updatedDate: Date.now()
     });
   }
 
@@ -162,7 +167,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   updateResource(resourceInfo) {
-    return this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo });
+    return this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo, updatedDate: Date.now() });
   }
 
   deleteAttachmentToggle(event) {
