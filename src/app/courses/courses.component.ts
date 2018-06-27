@@ -77,22 +77,20 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.courses.data = courses;
       this.userShelf = this.userService.shelf;
-      this.setupList(courses, this.userShelf.courseIds);
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
-    courseRes.forEach((course: any) => {
-      const myCourseIndex = myCourses.findIndex(courseId => {
-        return course._id === courseId;
-      });
+    return courseRes.map((course: any) => {
+      const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.user.isUserAdmin ||
         (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
+      return course;
     });
   }
 
@@ -101,7 +99,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     if (this.parent) {
       opts = { domain: this.userService.getConfig().parentDomain };
     }
-    return this.couchService.allDocs('courses', opts);
+    return this.couchService.allDocs('courses', opts).pipe(
+      switchMap((courses) => forkJoin([ of(courses), this.couchService.allDocs('courses_progress', opts) ])),
+      map(([ courses, progress ]) =>
+        courses.map(course => ({
+          ...course,
+          progress: progress.find(p => p.courseId === course._id && p.userId === this.user._id)
+        }))
+      )
+    );
   }
 
   ngAfterViewInit() {
