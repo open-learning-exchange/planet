@@ -27,6 +27,11 @@
         <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
       </button>
     </span>
+    <button *ngIf="!parent" mat-button (click)="openSendCourseDialog()" routerLinkActive="active" [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+      <span i18n>Send Courses</span>
+      <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+    </button>
     <button *ngIf="!parent" mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
       <span i18n>Request Courses</span>
