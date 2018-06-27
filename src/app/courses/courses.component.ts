@@ -265,10 +265,10 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
-  sendCourse() {
+  openSendCourseDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
     .subscribe((planet) => {
-      const data = { okClick: this.dialogOkClick('communityregistrationrequests').bind(this),
+      const data = { okClick: this.sendCourse('courses').bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: false,
         ...planet };
@@ -278,12 +278,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  dialogOkClick(db: string) {
+  sendCourse(db: string) {
     return (selected: any) => {
-      const coursesToSend = this.selection.selected;
-      const obs = coursesToSend.map(item => this.couchService.post('send_items', { type: 'course', sendTo: selected[0].code, item: item }));
-      forkJoin(obs).subscribe();
-      this.dialogRef.close();
+      const coursesToSend = this.selection.selected.map(course => ({ db, sendTo: selected[0].code, item: course }));
+      this.couchService.post('send_items/_bulk_docs', { 'docs': coursesToSend }).subscribe(() => {
+        this.dialogRef.close();
+      }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
     };
   }
 
