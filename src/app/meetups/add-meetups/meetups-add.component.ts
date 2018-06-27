@@ -49,6 +49,8 @@ export class MeetupsAddComponent implements OnInit {
         this.revision = data._rev;
         this.id = data._id;
         this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
+        data.startDate = new Date(data.startDate);
+        data.endDate = new Date(data.endDate);
         this.meetupForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -95,8 +97,12 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   updateMeetup(meetupInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...meetupInfo, '_rev': this.revision })
-      .pipe(switchMap(() => {
+    this.couchService.put(this.dbName + '/' + this.id, {
+      ...meetupInfo,
+      '_rev': this.revision,
+      'startDate' : Date.parse(meetupInfo.startDate),
+      'endDate' : Date.parse(meetupInfo.endDate)
+     }).pipe(switchMap(() => {
         return this.couchService.post('shelf/_find', findDocuments({
           'meetupIds': { '$in': [ this.id ] }
         }, [ '_id' ], 0));
@@ -114,7 +120,11 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   addMeetup(meetupInfo) {
-    this.couchService.post(this.dbName, { ...meetupInfo }).subscribe(() => {
+    this.couchService.post(this.dbName, {
+      ...meetupInfo,
+      'startDate' : Date.parse(meetupInfo.startDate),
+      'endDate' : Date.parse(meetupInfo.endDate),
+    }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup created');
     }, (err) => console.log(err));
