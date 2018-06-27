@@ -1,0 +1,21 @@
+@import '../../variables';
+
+:host {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-column-gap: 3px;
+  grid-auto-flow: column;
+
+  div {
+    background-color: $primary;
+  }
+
+  div.completed {
+    background-color: $planet-green;
+  }
+
+  div.not-started {
+    background-color: $grey;
+  }
+
+}
