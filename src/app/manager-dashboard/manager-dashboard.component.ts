@@ -38,7 +38,7 @@ export class ManagerDashboardComponent implements OnInit {
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
-      this.checkPushedItem();
+      this.getPushedList();
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
@@ -126,44 +126,29 @@ export class ManagerDashboardComponent implements OnInit {
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
   }
 
-  checkPushedItem() {
-    forkJoin([
-      this.getPushedList('course'),
-      this.getPushedList('resource')
-    ]).subscribe(data => {}, error => (error));
-  }
-
-  getPushedList(type: string) {
-    return this.couchService.post(`send_items/_find`,
-      findDocuments({ type, 'sendTo': this.userService.getConfig().name }),
+  getPushedList() {
+    this.couchService.post(`send_items/_find`,
+      findDocuments({ 'sendTo': this.userService.getConfig().name }),
         { domain: this.userService.getConfig().parentDomain })
-    .pipe(switchMap(data => {
-      this.pushedItems[type] = data.docs;
-      return of({ ok: true });
-    }));
+    .subscribe(data => {
+      this.pushedItems = data.docs.reduce((items, item) => {
+        items[item.db] = items[item.db] ? items[item.db] : [];
+        items[item.db].push(item);
+        return items;
+      }, {});
+    });
   }
 
-  getPushedItem(type: string) {
-    let dbName = '';
-    switch (type) {
-       case 'course':
-        dbName = 'courses';
-        break;
-      case 'resource':
-        dbName = 'resources';
-        break;
-    }
-    const deleteItems = this.pushedItems[type].map(item => {
-      return { _id: item._id, _rev: item._rev, _deleted: true };
-    });
-    const itemList = this.pushedItems[type].map(item => item.item);
-    const replicators = [ { db: dbName, type: 'pull', date: true, items: itemList } ];
+  getPushedItem(db: string) {
+    const deleteItems = this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+    const itemList = this.pushedItems[db].map(item => item.item);
+    const replicators = [ { db, type: 'pull', date: true, items: itemList } ];
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(data => {
         return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
         { domain: this.userService.getConfig().parentDomain });
       })
-    ).subscribe();
+    ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
   }
 
 }
