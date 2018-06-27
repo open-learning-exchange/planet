@@ -258,7 +258,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.updateShelf(userShelf, 'Course added to your dashboard');
   }
 
-
   fetchCourse(courses) {
     this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: courses, type: 'pull', date: true } ])
     .subscribe((response: any) => {
