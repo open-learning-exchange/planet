@@ -348,4 +348,16 @@ body {
     }
   }
 
+  .course-progress {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-column-gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    planet-courses-progress-bar {
+      height: 1rem;
+      width: 100%;
+    }
+  }
+
 }
