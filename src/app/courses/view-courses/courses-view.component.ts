@@ -16,7 +16,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
-  courseDetail: any = {};
+  courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   showExamButton = false;
   progress = { stepNum: 1 };
@@ -33,7 +33,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = { stepNum: 1 } }: { course: any, progress: any }) => {
+    .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
       this.progress = progress;
       this.showExamButton = this.checkMyCourses(course._id);
@@ -50,7 +50,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate([ './step/' + this.progress.stepNum ], { relativeTo: this.route });
+    this.router.navigate([ './step/' + (this.progress.stepNum || 1) ], { relativeTo: this.route });
   }
 
   goToExam(stepDetail, stepNum) {

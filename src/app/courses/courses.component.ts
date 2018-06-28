@@ -103,7 +103,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       map(([ courses, progress ]) =>
         courses.map(course => ({
           ...course,
-          progress: progress.find(p => p.courseId === course._id && p.userId === this.user._id)
+          progress: progress.find(p => p.courseId === course._id && p.userId === this.user._id) || { stepNum: 0 }
         }))
       )
     );

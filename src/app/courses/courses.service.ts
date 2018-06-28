@@ -48,8 +48,8 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, progress = {} }) {
-    const newProgress = { ...progress, stepNum, courseId, userId: this.userService.get()._id };
+  updateProgress({ courseId, stepNum, passed = true, progress = {} }) {
+    const newProgress = { ...progress, stepNum, courseId, passed, userId: this.userService.get()._id };
     this.couchService.post('courses_progress', newProgress).subscribe(() => {
       this.requestCourse({ courseId });
     });
