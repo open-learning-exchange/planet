@@ -35,8 +35,7 @@ export class UsersUpdateComponent implements OnInit {
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   currentImgKey: string;
-  currentProfileImg: string;
-  defaultProfileImg = 'assets/image.png';
+  currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
   uploadImage = false;
   urlPrefix = environment.couchAddress + this.dbName + '/';
@@ -70,11 +69,9 @@ export class UsersUpdateComponent implements OnInit {
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
-          this.previewSrc = this.currentProfileImg;
           this.uploadImage = true;
-        } else {
-          this.previewSrc = this.defaultProfileImg;
         }
+        this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
       }, (error) => {
         console.log(error);
