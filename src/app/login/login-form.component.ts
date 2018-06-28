@@ -93,8 +93,6 @@ export class LoginFormComponent {
 
   createUser({ name, password }: { name: string, password: string }) {
     const metadata = {
-      roles: [],
-      type: 'user',
       isUserAdmin: false,
       joinDate: Date.now()
     };
