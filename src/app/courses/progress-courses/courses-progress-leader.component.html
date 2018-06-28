@@ -22,7 +22,7 @@
       </div>
       <div class="errors errors-index">
         <div i18n>Steps</div>
-        <div class="border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{i + 1}}</div>
+        <div class="border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{yAxisLength - i}}</div>
       </div>
       <div class="errors errors-user" *ngFor="let submission of submissions">
         <div
