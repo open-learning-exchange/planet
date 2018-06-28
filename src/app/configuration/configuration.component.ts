@@ -279,7 +279,7 @@ export class ConfigurationComponent implements OnInit {
       // then add user to parent planet with id of configuration and isUserAdmin set to false
       userDetail['requestId'] = data.id;
       userDetail['isUserAdmin'] = false;
-      return this.couchService.put('_users/org.couchdb.user:' + adminName, { ...userDetail,
+      return this.createUser(adminName, { ...userDetail,
         name: adminName
       }, {
         domain: configuration.parentDomain
@@ -296,10 +296,15 @@ export class ConfigurationComponent implements OnInit {
   }
 
   createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail) {
+    const pin = this.createPin();
     // create replicator at first as we do not have session
     this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
         debug('Creating replicator'),
+        switchMap(() => forkJoin([
+          this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
+          this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
+        ])),
         switchMap(res => {
           return this.couchService.post('_replicator', feedbackSyncDown);
         }),
@@ -309,7 +314,7 @@ export class ConfigurationComponent implements OnInit {
             // When creating a planet, add admin
             this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
             // then add user with same credentials
-            this.couchService.put('_users/org.couchdb.user:' + credentials.name, userDetail),
+            this.createUser(credentials.name, userDetail),
             // then add a shelf for that user
             this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
             // then add configuration
@@ -363,6 +368,14 @@ export class ConfigurationComponent implements OnInit {
         console.log(err);
       });
     }
+  }
+
+  createUser(name, details, opts?) {
+    return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
+  }
+
+  createPin() {
+    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
 }

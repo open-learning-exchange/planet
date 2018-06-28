@@ -116,11 +116,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.selection.clear();
     this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
       users = users.filter((user: any) => {
-        // Removes current user from list.  Users should not be able to change their own roles,
+        // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
-        if (currentLoginUser !== user.name) {
-          return user;
-        }
+        return currentLoginUser !== user.name && user.name !== 'satellite';
       }).map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
