@@ -47,6 +47,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   subjectList: any = constants.subjectList;
   levelList: any = constants.levelList;
+  currentUser = this.userService.get();
   filter = {
     'subject': '',
     'level': ''
