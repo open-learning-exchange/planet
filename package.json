@@ -16,9 +16,10 @@
     "lint-all": "npm run sass-lint && ng lint ang-bell-app --type-check && npm run htmlhint",
     "v-lint": "vagrant ssh -- -t 'cd /vagrant;npm run lint -s'",
     "v-lint-fix": "vagrant ssh -- -t 'cd /vagrant;ng lint ang-bell-app --fix --type-check'",
-    "e2e": "ng e2e --environment test",
-    "v-e2e": "vagrant ssh -- -t 'cd /vagrant;ng e2e --environment test'",
-    "install-hooks": "cp -a git-hooks/. .git/hooks/"
+    "e2e": "ng e2e --webdriver-update=false",
+    "v-e2e": "vagrant ssh -- -t 'cd /vagrant;ng e2e --webdriver-update=false'",
+    "install-hooks": "cp -a git-hooks/. .git/hooks/",
+    "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37"
   },
   "private": true,
   "dependencies": {
