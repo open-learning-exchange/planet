@@ -292,7 +292,7 @@ export class ConfigurationComponent implements OnInit {
           // then add configuration
           this.couchService.post('configurations', configuration),
           // then post configuration to parent planet's registration requests
-          this.couchService.post('communityregistrationrequests', { ...configuration, _id: conf.id }, {
+          this.couchService.post('communityregistrationrequests', { ...configuration }, {
             domain: configuration.parentDomain
           }).pipe(
             this.addUserToParentPlanet(userDetail, adminName, configuration),
