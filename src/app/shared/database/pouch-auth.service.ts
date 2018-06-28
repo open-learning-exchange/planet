@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import { PouchService } from './pouch.service';
 import { from, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
+import { PouchService } from './pouch.service';
 
 @Injectable()
 export class PouchAuthService {
