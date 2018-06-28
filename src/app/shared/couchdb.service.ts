@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, expand, takeWhile, toArray, flatMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
 
@@ -74,6 +74,14 @@ export class CouchService {
           return doc._id.indexOf('_design') === -1;
         });
     }));
+  }
+
+  findAll(db: string, query: any, opts?: any) {
+    return this.post(db + '/_find', query, opts).pipe(expand((res) => {
+      return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
+    }), takeWhile((res) => {
+      return res.docs.length > 0;
+    }), flatMap(({ docs }) => docs), toArray());
   }
 
   stream(method: string, db: string) {

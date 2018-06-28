@@ -1,7 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+
+source build_planet.sh
 
 ARCH=$1
 ACT=$2
+
+if [[ -z "${I18N}" ]]; then
+  I18N="single"
+fi
 
 if [[ "${ARCH}" == "armv7" ]]; then
   TRIPLE="arm-linux-gnueabihf"
@@ -26,15 +33,15 @@ if [[ "${ACT}" == "install"  ]]; then
    apt-get update -qq
    apt-get install -y curl gnupg
    curl -sL https://deb.nodesource.com/setup_8.x | bash -
-   apt-get install -y nodejs build-essential ${PACKAGES}
+   apt-get install -y nodejs build-essential "${PACKAGES}"
    npm install "--arch=${TRIPLE}"
 elif [[ "${ACT}" == "build"  ]]; then
    echo "Build the angular app in production mode stage"
-   $(npm bin)/ng build --prod --base-href /eng/ --output-path=dist/eng
-   $(npm bin)/ng build --prod --base-href /ara/ --output-path=dist/ara --aot --i18n-file=src/i18n/messages.ara.xlf --i18n-locale=ar --i18n-format=xlf
-   $(npm bin)/ng build --prod --base-href /spa/ --output-path=dist/spa --aot --i18n-file=src/i18n/messages.spa.xlf --i18n-locale=es --i18n-format=xlf
-   $(npm bin)/ng build --prod --base-href /fra/ --output-path=dist/fra --aot --i18n-file=src/i18n/messages.fra.xlf --i18n-locale=fr --i18n-format=xlf
-   $(npm bin)/ng build --prod --base-href /nep/ --output-path=dist/nep --aot --i18n-file=src/i18n/messages.nep.xlf --i18n-locale=ne --i18n-format=xlf
+   if [[ "${I18N}" == "multi" ]]; then
+     build_multi
+   else
+     build_single
+   fi
 else
    echo "Error: No action Specified"
 fi
