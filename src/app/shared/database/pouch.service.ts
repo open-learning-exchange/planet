@@ -46,15 +46,15 @@ export class PouchService {
   }
 
   replicateFromRemoteDB(db) {
-    return from(
-      this.localDBs[db].replicate.from(this.baseUrl + db)
-    ).pipe(catchError(this.handleError));
+    return this.replicate(this.localDBs[db].replicate.from(this.baseUrl + db));
   }
 
   replicateToRemoteDB(db) {
-    return from(
-      this.localDBs[db].replicate.to(this.baseUrl + db)
-    ).pipe(catchError(this.handleError));
+    return this.replicate(this.localDBs[db].replicate.to(this.baseUrl + db));
+  }
+
+  replicate(replicateFn) {
+    return from(replicateFn).pipe(catchError(this.handleError));
   }
 
   getLocalPouchDB(db) {
