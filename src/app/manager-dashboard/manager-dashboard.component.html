@@ -1,9 +1,12 @@
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Manager Settings</span>
+</mat-toolbar>
+
+
 <div class="space-container">
-  <mat-toolbar>
-    <mat-toolbar-row class="primary-color font-size-1">
-      <span i18n>Manager Settings</span>
-    </mat-toolbar-row>
-  </mat-toolbar>
   <div *ngIf="displayDashboard">
       <span *ngIf="planetType !== 'community'">
         <a routerLink="/requests" i18n mat-raised-button>Requests</a>
