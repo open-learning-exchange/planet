@@ -82,10 +82,10 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   }
 
   getCommunityList(search = '') {
-    this.couchService.post('communityregistrationrequests/_find',
+    this.couchService.findAll('communityregistrationrequests',
       findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
-        this.communities.data = data.docs;
+        this.communities.data = data;
         this.requestListFilter(search);
       }, (error) => this.message = 'There was a problem getting Communities');
   }

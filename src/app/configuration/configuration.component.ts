@@ -12,6 +12,7 @@ import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { UserService } from '../shared/user.service';
+import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -45,7 +46,8 @@ export class ConfigurationComponent implements OnInit {
     private validatorService: ValidatorService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private syncService: SyncService
   ) { }
 
   ngOnInit() {
@@ -280,7 +282,7 @@ export class ConfigurationComponent implements OnInit {
       // then add user to parent planet with id of configuration and isUserAdmin set to false
       userDetail['requestId'] = data.id;
       userDetail['isUserAdmin'] = false;
-      return this.couchService.put('_users/org.couchdb.user:' + adminName, { ...userDetail,
+      return this.createUser(adminName, { ...userDetail,
         name: adminName
       }, {
         domain: configuration.parentDomain
@@ -297,12 +299,27 @@ export class ConfigurationComponent implements OnInit {
   }
 
   createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail) {
+    const replicatorObj = {
+      type: 'pull',
+      parentDomain: configuration.parentDomain,
+      code: configuration.code,
+      selector: { 'sendOnAccept': true }
+    };
+    const pin = this.createPin();
     // create replicator at first as we do not have session
     this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
         debug('Creating replicator'),
+        switchMap(() => forkJoin([
+          this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
+          this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
+        ])),
         switchMap(res => {
-          return this.couchService.post('_replicator', feedbackSyncDown);
+          return forkJoin([
+            this.couchService.post('_replicator', feedbackSyncDown),
+            this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
+            this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
+          ]);
         }),
         debug('Sending request to parent planet'),
         switchMap(res => {
@@ -310,7 +327,7 @@ export class ConfigurationComponent implements OnInit {
             // When creating a planet, add admin
             this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
             // then add user with same credentials
-            this.couchService.put('_users/org.couchdb.user:' + credentials.name, userDetail),
+            this.createUser(credentials.name, userDetail),
             // then add a shelf for that user
             this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
             // then add configuration
@@ -364,6 +381,14 @@ export class ConfigurationComponent implements OnInit {
         console.log(err);
       });
     }
+  }
+
+  createUser(name, details, opts?) {
+    return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
+  }
+
+  createPin() {
+    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
 }

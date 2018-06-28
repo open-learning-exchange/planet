@@ -125,7 +125,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Cancel</target>
+        <target xml:lang="es-ES" state="translated">Cancelar</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -633,7 +633,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Submit</target>
+        <target xml:lang="es-ES" state="translated">Enviar</target>
       </trans-unit>
       <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</source>

@@ -24,6 +24,7 @@ import { SubmissionsService } from './submissions/submissions.service';
 import { CoursesService } from './courses/courses.service';
 import { SyncService } from './shared/sync.service';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
+import { PlanetLanguageModule } from './shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
     NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
-      : []
+      : [],
+    PlanetLanguageModule
   ],
   declarations: [
     AppComponent, PageNotFoundComponent

@@ -26,8 +26,6 @@ import { debug } from '../debug-operator';
   ]
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
-  languages = languages;
-  currentLanguage: any = { name: 'English', shortCode: 'eng' };
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
@@ -61,11 +59,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.getNotification();
     this.onUserUpdate();
-    this.currentLanguage = this.languages.find(language => {
-      return window.location.href.indexOf('/' + language.shortCode + '/') > -1;
-    }) || this.currentLanguage;
-    this.languages = languages.filter(
-      language => language.shortCode !== this.currentLanguage.shortCode);
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
     });
