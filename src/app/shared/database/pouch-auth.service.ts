@@ -17,9 +17,8 @@ export class PouchAuthService {
         );
     }
 
-    // opts: for passing in extra data about the user
-    signup(username, password, opts?) {
-        return from(this.authDB.signUp(username, password, opts)).pipe(
+    signup(username, password, metadata?) {
+        return from(this.authDB.signUp(username, password, { metadata })).pipe(
             catchError(this.handleError)
         );
     }
