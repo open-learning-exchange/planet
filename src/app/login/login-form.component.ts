@@ -125,16 +125,7 @@ export class LoginFormComponent {
   createSession(name, password) {
     return switchMap((routeSuccess) => {
       // Post new session info to login_activity
-      const obsArr = [ this.userService.newSessionLog() ];
-      const localConfig = this.userService.getConfig();
-      const localAdminName = localConfig.adminName.split('@')[0];
-      // If not in e2e test or on a center, also add session to parent domain
-      if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
-        obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
-        if (localConfig.registrationRequest === 'pending') {
-          obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
-        }
-      }
+      const obsArr = this.loginObservables(name, password);
       return forkJoin(obsArr).pipe(catchError(error => {
         // 401 is for Unauthorized
         if (error.status === 401) {
@@ -145,6 +136,20 @@ export class LoginFormComponent {
         return of(error);
       }));
     });
+  }
+
+  loginObservables(name, password) {
+    const obsArr = [ this.userService.newSessionLog() ];
+    const localConfig = this.userService.getConfig();
+    const localAdminName = localConfig.adminName.split('@')[0];
+    if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
+      return obsArr;
+    }
+    obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
+    if (localConfig.registrationRequest === 'pending') {
+      obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
+    }
+    return obsArr;
   }
 
   getConfigurationSyncDown(configuration, credentials) {
