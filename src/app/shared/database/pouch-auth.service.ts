@@ -35,6 +35,12 @@ export class PouchAuthService {
     );
   }
 
+  logout() {
+    return from(this.authDB.logOut()).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(err) {
     console.error('An error occured while signing in the user', err);
     return throwError(err.message || err);
