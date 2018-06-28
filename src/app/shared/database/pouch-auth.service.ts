@@ -24,7 +24,7 @@ export class PouchAuthService {
   }
 
   login(username, password) {
-    return from(this.authDB.login(username, password)).pipe(
+    return from(this.authDB.logIn(username, password)).pipe(
       catchError(this.handleError)
     );
   }
