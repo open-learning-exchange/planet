@@ -298,14 +298,12 @@ export class ConfigurationComponent implements OnInit {
   }
 
   createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail) {
-    const courseOnAccept = {
-      db: 'courses',
+    const replicatorObj = {
       type: 'pull',
       parentDomain: configuration.parentDomain,
       code: configuration.code,
       selector: { 'sendOnAccept': true }
     };
-    const resourceOnAccept = { ...courseOnAccept, db: 'resources' };
     const pin = this.createPin();
     // create replicator at first as we do not have session
     this.couchService.post('_replicator', feedbackSyncUp)
@@ -318,8 +316,8 @@ export class ConfigurationComponent implements OnInit {
         switchMap(res => {
           return forkJoin([
             this.couchService.post('_replicator', feedbackSyncDown),
-            this.syncService.sync(courseOnAccept, credentials),
-            this.syncService.sync(resourceOnAccept, credentials)
+            this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
+            this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
           ]);
         }),
         debug('Sending request to parent planet'),
