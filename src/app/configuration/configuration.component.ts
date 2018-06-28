@@ -12,6 +12,7 @@ import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { UserService } from '../shared/user.service';
+import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -45,7 +46,8 @@ export class ConfigurationComponent implements OnInit {
     private validatorService: ValidatorService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private syncService: SyncService
   ) { }
 
   ngOnInit() {
@@ -296,6 +298,12 @@ export class ConfigurationComponent implements OnInit {
   }
 
   createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail) {
+    const replicatorObj = {
+      type: 'pull',
+      parentDomain: configuration.parentDomain,
+      code: configuration.code,
+      selector: { 'sendOnAccept': true }
+    };
     const pin = this.createPin();
     // create replicator at first as we do not have session
     this.couchService.post('_replicator', feedbackSyncUp)
@@ -306,7 +314,11 @@ export class ConfigurationComponent implements OnInit {
           this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
         ])),
         switchMap(res => {
-          return this.couchService.post('_replicator', feedbackSyncDown);
+          return forkJoin([
+            this.couchService.post('_replicator', feedbackSyncDown),
+            this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
+            this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
+          ]);
         }),
         debug('Sending request to parent planet'),
         switchMap(res => {

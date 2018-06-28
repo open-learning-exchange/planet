@@ -6,9 +6,12 @@ import { switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { filterSpecificFields } from '../shared/table-helpers';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 
 @Component({
@@ -24,6 +27,7 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
+  dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
   pin: string;
 
@@ -32,6 +36,7 @@ export class ManagerDashboardComponent implements OnInit {
     private couchService: CouchService,
     private router: Router,
     private planetMessageService: PlanetMessageService,
+    private dialogsListService: DialogsListService,
     private dialog: MatDialog,
     private syncService: SyncService
   ) {}
@@ -133,6 +138,48 @@ export class ManagerDashboardComponent implements OnInit {
     });
     // Reset the message when the dialog closes
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
+  }
+
+  setFilterPredicate(db: string) {
+    switch (db) {
+      case 'resources':
+        return filterSpecificFields([ 'title' ]);
+      case 'courses':
+        return filterSpecificFields([ 'courseTitle' ]);
+    }
+  }
+
+  sendOnAccept(db: string) {
+    this.dialogsListService.getListAndColumns(db).subscribe(res => {
+      const previousList = res.tableData.filter(doc => doc.sendOnAccept === true),
+        initialSelection = previousList.map(doc => doc._id);
+      const data = {
+        okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
+        filterPredicate: this.setFilterPredicate(db),
+        allowMulti: true,
+        initialSelection,
+        ...res };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
+    });
+  }
+
+  sendOnAcceptOkClick(db: string, previousList: any) {
+    return (selected: any) => {
+      const dataUpdate = selected.map(item => ({ ...item, sendOnAccept: true }))
+      .concat(
+        previousList.filter(item => selected.findIndex(i => i._id === item.id) < 0)
+          .map(item => ({ ...item, sendOnAccept: false }))
+      );
+      this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
+        this.planetMessageService.showMessage('Added to send on accept list');
+      });
+      this.dialogRef.close();
+    };
   }
 
   getPushedList() {
