@@ -30,13 +30,13 @@ export class PouchService {
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    return this.databases.forEach(db => {
+    this.databases.forEach(db => {
       this.localDBs[db].replicate.from(this.baseUrl + db);
     });
   }
 
   replicateToRemoteDBs() {
-    return this.databases.forEach(db => {
+    this.databases.forEach(db => {
       this.localDBs[db].replicate.to(this.baseUrl + db, {
         filter(doc) {
           return doc.pouchIndex === db;
