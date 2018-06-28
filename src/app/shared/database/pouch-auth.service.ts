@@ -11,6 +11,12 @@ export class PouchAuthService {
         this.authDB = this.pouchService.getAuthDB();
     }
 
+    getSessionInfo() {
+        return from(this.authDB.getSession()).pipe(
+            catchError(this.handleError)
+        );
+    }
+
     login(username, password) {
         return from(this.authDB.login(username, password)).pipe(
             catchError(this.handleError)
