@@ -119,6 +119,16 @@
           "options": {
             "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "ang-bell-app:serve"
+          },
+          "configurations": {
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ]
+            }
           }
         },
         "lint": {
