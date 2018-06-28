@@ -55,7 +55,7 @@ export class CoursesService {
     });
   }
 
-  attachedItemsToCourses(courses: any[]) {
+  attachedItemsOfCourses(courses: any[]) {
     return courses.reduce((attached, course) => {
       course.steps.forEach(step => {
         attached.resources.concat(step.resources || []);

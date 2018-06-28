@@ -266,7 +266,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   fetchCourse(courses) {
-    let { resources, exams } = this.coursesService.attachedItemsToCourses(courses);
+    let { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
     this.syncService.confirmPasswordAndRunReplicators([
       { db: this.dbName, items: courses, type: 'pull', date: true },
       { db: 'resources', items: resources, type: 'pull', date: true },

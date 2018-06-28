@@ -13,6 +13,7 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -34,6 +35,7 @@ export class ManagerDashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
+    private coursesService: CoursesService,
     private router: Router,
     private planetMessageService: PlanetMessageService,
     private dialogsListService: DialogsListService,
@@ -170,16 +172,25 @@ export class ManagerDashboardComponent implements OnInit {
 
   sendOnAcceptOkClick(db: string, previousList: any) {
     return (selected: any) => {
-      const dataUpdate = selected.map(item => ({ ...item, sendOnAccept: true }))
-      .concat(
-        previousList.filter(item => selected.findIndex(i => i._id === item.id) < 0)
-          .map(item => ({ ...item, sendOnAccept: false }))
-      );
+      const removedItems = previousList.filter(item => selected.findIndex(i => i._id === item.id) < 0)
+        .map(item => ({ ...item, sendOnAccept: false }));
+      const dataUpdate = selected.map(item => ({ ...item, sendOnAccept: true })).concat(removedItems);
+      if (db === 'courses') {
+        this.handleCourseAttachments(selected, previousList);
+      }
       this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
         this.planetMessageService.showMessage('Added to send on accept list');
       });
       this.dialogRef.close();
     };
+  }
+
+  handleCourseAttachments(courses, removedCourses) {
+    const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
+    // Not automatically removing attached resources because they can be selected independently
+    const previousExams = this.coursesService.attachedItemsOfCourses(removedCourses).exams;
+    this.sendOnAcceptOkClick('resources', [])(resources);
+    this.sendOnAcceptOkClick('exams', previousExams)(exams);
   }
 
   getPushedList() {
