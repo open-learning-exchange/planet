@@ -12,7 +12,7 @@ import { Subject } from 'rxjs';
       <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
         <p [ngClass]="{'primary-text-color':notification.status==='unread'}">
-          <a [routerLink]="notification.link || '/notifications'">
+          <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'">
             {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
           </a>
         </p>

@@ -261,7 +261,8 @@ export class ConfigurationComponent implements OnInit {
       const requestNotification = {
         'user': 'SYSTEM',
         'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
-        'link': '/requests/' + configuration.code,
+        'link': '/requests/',
+        'linkParams': { 'search': configuration.code },
         'type': 'request',
         'priority': 1,
         'status': 'unread',

@@ -15,7 +15,6 @@ const routes: Routes = [
       { path: 'manager', loadChildren: '../manager-dashboard/manager-dashboard.module#ManagerDashboardModule' },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
       { path: 'requests', component: CommunityComponent },
-      { path: 'requests/:search', component: CommunityComponent },
       { path: 'feedback', loadChildren: '../feedback/feedback.module#FeedbackModule' },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
