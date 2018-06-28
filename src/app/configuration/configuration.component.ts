@@ -281,7 +281,8 @@ export class ConfigurationComponent implements OnInit {
           this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
         ]);
       }),
-      switchMap(() => {
+      switchMap(() => this.couchService.post('configurations', configuration)),
+      switchMap((conf) => {
         return forkJoin([
           // When creating a planet, add admin
           this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
@@ -289,10 +290,8 @@ export class ConfigurationComponent implements OnInit {
           this.couchService.put('_users/org.couchdb.user:' + credentials.name, userDetail),
           // then add a shelf for that user
           this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
-          // then add configuration
-          this.couchService.post('configurations', configuration),
           // then post configuration to parent planet's registration requests
-          this.couchService.post('communityregistrationrequests', { ...configuration }, {
+          this.couchService.post('communityregistrationrequests', { ...configuration, _id: conf._id }, {
             domain: configuration.parentDomain
           }).pipe(
             this.addUserToParentPlanet(userDetail, adminName, configuration),
