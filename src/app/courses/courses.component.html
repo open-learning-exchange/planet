@@ -98,6 +98,10 @@
             </button>
           </mat-menu>
         </mat-cell>
+        <div class="course-progress" *ngIf="element.admission">
+          <span i18n>Your progress:</span>
+          <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
+        </div>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
