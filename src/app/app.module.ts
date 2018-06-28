@@ -22,6 +22,7 @@ import { FeedbackService } from './feedback/feedback.service';
 import { ResourcesService } from './resources/resources.service';
 import { SubmissionsService } from './submissions/submissions.service';
 import { CoursesService } from './courses/courses.service';
+import { SHARED_SERVICES } from './shared/database';
 import { SyncService } from './shared/sync.service';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
 import { PlanetLanguageModule } from './shared/planet-language.module';
@@ -54,6 +55,7 @@ import { PlanetLanguageModule } from './shared/planet-language.module';
     ResourcesService,
     SubmissionsService,
     CoursesService,
+    ...SHARED_SERVICES,
     SyncService
   ],
   bootstrap: [ AppComponent ]

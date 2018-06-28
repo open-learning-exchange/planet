@@ -10,6 +10,9 @@ COPY package.json ./
 COPY docker/planet/scripts/ ./
 COPY . .
 
+RUN apk add --update \
+    python \
+    build-base
 RUN npm i --silent
 RUN ./compile_planet.sh
 
