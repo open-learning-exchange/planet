@@ -209,8 +209,14 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  onSubmitConfiguration(){
-    this.configurationService.onSubmitConfiguration(environment, this.configurationType, this.configuration, this.configurationFormGroup, this.contactFormGroup, this.loginForm);
+  onSubmitConfiguration() {
+    this.configurationService.onSubmitConfiguration(
+      this.configurationType,
+      this.configuration,
+      this.configurationFormGroup,
+      this.contactFormGroup,
+      this.loginForm
+    );
   }
 
 }
