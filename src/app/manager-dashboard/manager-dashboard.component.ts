@@ -9,6 +9,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -23,18 +24,21 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
+  pushedItems = { course: [], resource: [] };
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
     private planetMessageService: PlanetMessageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private syncService: SyncService
   ) {}
 
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
+      this.getPushedList();
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
@@ -120,6 +124,31 @@ export class ManagerDashboardComponent implements OnInit {
     });
     // Reset the message when the dialog closes
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
+  }
+
+  getPushedList() {
+    this.couchService.post(`send_items/_find`,
+      findDocuments({ 'sendTo': this.userService.getConfig().name }),
+        { domain: this.userService.getConfig().parentDomain })
+    .subscribe(data => {
+      this.pushedItems = data.docs.reduce((items, item) => {
+        items[item.db] = items[item.db] ? items[item.db] : [];
+        items[item.db].push(item);
+        return items;
+      }, {});
+    });
+  }
+
+  getPushedItem(db: string) {
+    const deleteItems = this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+    const itemList = this.pushedItems[db].map(item => item.item);
+    const replicators = [ { db, type: 'pull', date: true, items: itemList } ];
+    this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
+      switchMap(data => {
+        return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
+        { domain: this.userService.getConfig().parentDomain });
+      })
+    ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
   }
 
 }
