@@ -29,6 +29,7 @@ export class ManagerDashboardComponent implements OnInit {
   deleteCommunityDialog: any;
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
+  pin: string;
 
   constructor(
     private userService: UserService,
@@ -51,6 +52,7 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
+    this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
   }
 
   resendConfig() {
@@ -99,8 +101,15 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   deleteCommunity() {
-     return () => {
-      this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
+    return () => {
+      this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
+        forkJoin([
+          this.couchService.delete('_users/org.couchdb.user:satellite?rev=' + res._rev),
+          this.couchService.delete('_node/nonode@nohost/_config/satellite/pin')
+        ])
+      ),
+      switchMap(() => this.couchService.allDocs('_replicator')),
+      switchMap((docs: any) => {
         const replicators = docs.map(doc => {
           return { _id: doc._id, _rev: doc._rev, _deleted: true };
         });
