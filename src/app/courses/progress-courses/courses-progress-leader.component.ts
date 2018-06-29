@@ -13,8 +13,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   course: any;
   selectedStep: any;
-  submissions: any[];
-  errors: number[];
+  chartData: any[];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
 
@@ -36,20 +35,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
       this.yAxisLength = submissions[0].parent.questions.length;
-      const fillEmptyAnswers = (answers) => [].concat(answers, Array(this.yAxisLength - answers.length).fill(''));
-      this.submissions = submissions.map(
+      this.chartData = submissions.map(
         submission => {
-          const answers = fillEmptyAnswers(submission.answers.map(a => ({ ...a, mistakes: a.mistakes || 1 - a.grade || 0 }))).reverse();
+          const answers = submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
           return {
-            totalMistakes: answers.reduce((total, answer) => total + (answer.mistakes || 0), 0),
-            ...submission,
-            answers
+            items: answers,
+            label: submission.user
           };
         }
       );
-      this.errors = this.submissions.reduce((errors, submission) => {
-        return submission.answers.map((answer, index) => (answer.mistakes || 0) + (errors[index] || 0));
-      }, []);
     });
   }
 

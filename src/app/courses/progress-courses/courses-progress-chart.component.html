@@ -1,0 +1,18 @@
+<div class="errors errors-total">
+  <div i18n>Total Errors</div>
+  <div class="accent-color border-bottom" *ngFor="let total of horizTotals">{{total}}</div>
+</div>
+<div class="errors errors-index">
+  <div i18n>Steps</div>
+  <div class="border-bottom" *ngFor="let total of horizTotals; index as i">{{height - i}}</div>
+</div>
+<div class="errors errors-user" *ngFor="let set of sets">
+  <div
+    class="border-bottom"
+    [ngClass]="{'primary-color':item.fill}"
+    *ngFor="let item of set?.items; index as i">
+    {{item.number}}
+  </div>
+  <div>{{set.total}}</div>
+  <div class="wrap-content" [matTooltip]="set.label?.length > 6 ? set.label : null "><p>{{set.label}}</p></div>
+</div>

@@ -15,25 +15,7 @@
     </mat-form-field>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="progress-view">
-      <div class="errors errors-total">
-        <div i18n>Total Errors</div>
-        <div class="accent-color border-bottom" *ngFor="let error of errors">{{error}}</div>
-      </div>
-      <div class="errors errors-index">
-        <div i18n>Steps</div>
-        <div class="border-bottom" *ngFor="let question of selectedStep?.exam?.questions; index as i">{{yAxisLength - i}}</div>
-      </div>
-      <div class="errors errors-user" *ngFor="let submission of submissions">
-        <div
-          class="border-bottom"
-          [ngClass]="{'primary-color':submission.answers[i]!==''}"
-          *ngFor="let question of selectedStep?.exam?.questions; index as i">
-          {{submission.answers[i].mistakes}}
-        </div>
-        <div>{{submission.totalMistakes}}</div>
-        <div class="wrap-content" [matTooltip]="submission.user?.length > 6 ? submission.user : null "><p>{{submission.user}}</p></div>
-      </div>
-    </div>
+    <planet-courses-progress-chart [inputs]="chartData" [height]="yAxisLength">
+    </planet-courses-progress-chart>
   </div>
 </div>
