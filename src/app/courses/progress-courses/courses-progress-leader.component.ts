@@ -6,8 +6,8 @@ import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 
 @Component({
-  templateUrl: 'courses-progress-leader.component.html',
-  styleUrls: [ 'courses-progress-leader.scss' ]
+  templateUrl: 'courses-progress.component.html',
+  styleUrls: [ 'courses-progress.scss' ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
