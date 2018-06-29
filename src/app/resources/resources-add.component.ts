@@ -19,7 +19,21 @@ import Mime from 'mime/Mime';
 const mime = new Mime(require('mime/types/standard.json'));
 
 @Component({
-  templateUrl: './resources-add.component.html'
+  templateUrl: './resources-add.component.html',
+  styles: [ `
+  .view-container {
+    display: grid;
+    grid-template-columns: 550px auto;
+    grid-column-gap: 1rem;
+  }
+  form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: flex-start;
+  }
+` ]
 })
 
 export class ResourcesAddComponent implements OnInit {
