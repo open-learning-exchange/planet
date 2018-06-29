@@ -17,6 +17,7 @@ import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { CoursesService } from './courses.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -63,6 +64,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
+    private coursesService: CoursesService,
     private dialog: MatDialog,
     private dialogsListService: DialogsListService,
     private planetMessageService: PlanetMessageService,
@@ -264,8 +266,12 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   fetchCourse(courses) {
-    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: courses, type: 'pull', date: true } ])
-    .subscribe((response: any) => {
+    const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
+    this.syncService.confirmPasswordAndRunReplicators([
+      { db: this.dbName, items: courses, type: 'pull', date: true },
+      { db: 'resources', items: resources, type: 'pull', date: true },
+      { db: 'exams', items: exams, type: 'pull', date: true }
+    ]).subscribe((response: any) => {
       this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to fetch');
     }, () => error => this.planetMessageService.showMessage(error));
   }

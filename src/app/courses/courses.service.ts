@@ -55,4 +55,14 @@ export class CoursesService {
     });
   }
 
+  attachedItemsOfCourses(courses: any[]) {
+    return courses.reduce((attached, course) => {
+      course.steps.forEach(step => {
+        attached.resources = attached.resources.concat(step.resources || []);
+        attached.exams = attached.exams.concat(step.exam ? [ step.exam ] : []);
+      });
+      return attached;
+    }, { resources: [], exams: [] });
+  }
+
 }
