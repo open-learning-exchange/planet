@@ -324,10 +324,13 @@ export class ConfigurationComponent implements OnInit {
           { domain: configuration.parentDomain }
         );
       }), switchMap((res) => {
-        const { _id, _rev, registrationRequest } = res.docs[0];
+        // Remove local revision as it will have conflict with parent
+        const { _rev: localRev, ...localConfig } = configuration;
+        // if parent record not found set empty
+        const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
         return this.couchService.post(
           'communityregistrationrequests',
-          { ...configuration, _id, _rev, registrationRequest },
+          { ...localConfig, ...parentConfig },
           { domain: configuration.parentDomain }
         );
       })

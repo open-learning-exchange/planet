@@ -88,8 +88,10 @@ export class ManagerDashboardComponent implements OnInit {
       { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
         if (data.docs.length === 0) {
           this.showResendConfiguration = true;
+          this.requestStatus = 'deleted';
+        } else {
+          this.requestStatus = data.docs[0].registrationRequest;
         }
-        this.requestStatus = data.docs[0].registrationRequest;
       }, error => (error));
   }
 

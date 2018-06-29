@@ -161,9 +161,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
 
   rejectCommunity(community: any) {
     // Return a function with community on its scope to pass to delete dialog
-    return this.pipeRemovePlanetUser(this.couchService.put('communityregistrationrequests/' + community._id, community), community)
-    .subscribe(([ data, userRes ]) => {
-      this.updateRev(data, this.communities.data);
+    const { _id: id, _rev: rev } = community;
+    return this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
+    .subscribe((data) => {
       this.getCommunityList();
       this.editDialog.close();
     }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
