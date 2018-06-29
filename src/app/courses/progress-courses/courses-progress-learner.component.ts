@@ -72,7 +72,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   totalMistakes(submissions) {
     return submissions.map((submission) => ({
       ...submission,
-      totalMistakes: submission.answers.reduce((total, a) => total + (a.mistakes || (1 - (a.grade || 0))), 0)
+      totalMistakes: submission.answers.reduce((total, a) => total + (a.mistakes || (1 - a.grade) || 0), 0)
     }));
   }
 
@@ -89,6 +89,9 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   }
 
   bestSubmission(submissions) {
+    if (submissions.length === 0) {
+      return '';
+    }
     return Math.min(...submissions.map(submission => submission.totalMistakes));
   }
 
