@@ -20,15 +20,15 @@ export class SubmissionsService {
     private couchService: CouchService,
   ) { }
 
-  updateSubmissions({ opts = {}, parentId }: { parentId?: string, opts?: any } = {}) {
-    this.getSubmissions(opts).subscribe((submissions: any) => {
+  updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
+    this.getSubmissions(query, opts).subscribe((submissions: any) => {
       this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
       this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
 
-  getSubmissions(opts: any) {
-    return this.couchService.allDocs('submissions', opts);
+  getSubmissions(query: any = { 'selector': {} }, opts: any = {}) {
+    return this.couchService.findAll('submissions', query, opts);
   }
 
   setSubmission(id: string) {
