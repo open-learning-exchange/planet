@@ -65,7 +65,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       items: this.courseBySteps(
         course,
         submissions.filter(submission => submission.parentId.indexOf(course._id) > -1)
-      )
+      ).reverse()
     }));
   }
 
