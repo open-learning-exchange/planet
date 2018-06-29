@@ -19,6 +19,7 @@ import { ExamsModule } from '../exams/exams.module';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
+import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { CoursesProgressChartComponent } from './progress-courses/courses-progre
     CoursesStepComponent,
     CoursesStepViewComponent,
     CoursesProgressLeaderComponent,
+    CoursesProgressLearnerComponent,
     CoursesProgressBarComponent,
     CoursesProgressChartComponent
   ]

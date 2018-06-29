@@ -2,6 +2,7 @@
   <div class="left-tile accent-color">
     <mat-icon svgIcon={{cardTitle}}></mat-icon>
     <span>{{cardTitle}}</span>
+    <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="courses/myProgress">My Progress</a>
   </div>
   <div class="right-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}">

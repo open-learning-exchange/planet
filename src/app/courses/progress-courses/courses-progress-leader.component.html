@@ -4,7 +4,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>Course Progress</span>
+    <span i18n>{{headingStart ? headingStart + ' ' : ''}}Course Progress</span>
     <span class="toolbar-fill"></span>
     <mat-form-field *ngIf="course?.steps.length > 1">
       <mat-select i18n-placeholder placeholder="List of Steps" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
