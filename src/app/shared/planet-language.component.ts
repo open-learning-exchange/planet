@@ -23,11 +23,6 @@ export class PlanetLanguageComponent implements OnInit {
   }
 
   getRouterUrl(language) {
-    const newRoute = '/' + language.shortCode + this.router.url;
-    if (this.router.url.indexOf('/' + this.currentLanguage.shortCode + '/') === 0) {
-      newRoute.replace('/' + this.currentLanguage.shortCode + '/', '/' + language.shortCode + '/');
-    }
-
-    return newRoute;
+    return '/' + language.shortCode + this.router.url;
   }
 }
