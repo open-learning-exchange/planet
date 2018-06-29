@@ -12,6 +12,8 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   course: any;
+  // Need to define this variable for template which is shared with CoursesProgressLearner
+  headingStart = '';
   selectedStep: any;
   chartData: any[];
   onDestroy$ = new Subject<void>();

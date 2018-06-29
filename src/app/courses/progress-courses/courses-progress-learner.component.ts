@@ -13,6 +13,8 @@ import { UserService } from '../../shared/user.service';
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 
   user = this.userService.get();
+  // Need to define this variable for template which is shared with CoursesProgressLeader
+  course;
   headingStart = this.user.firstName + ' ' + this.user.lastName;
   courses: any[] = [];
   submissions: any[] = [];
