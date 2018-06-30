@@ -40,13 +40,13 @@
       </mat-grid-list>
       <mat-grid-list cols="3">
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple>
+          <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple required>
             <mat-option *ngFor="let subject of constants.subjectList" [value]="subject">{{subject}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple>
+          <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple required>
             <mat-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
