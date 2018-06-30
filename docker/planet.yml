@@ -4,7 +4,7 @@ services:
       - 5984
     image: treehouses/couchdb:2.1.1
     ports:
-      - "2200:5984"
+      - "2300:5984"
   db-init:
     image: treehouses/planet:db-init
     depends_on:
@@ -12,9 +12,12 @@ services:
     environment:
       - COUCHDB_HOST=http://couchdb:5984
   planet:
-    image: treehouses/planet:latest
+#    image: treehouses/planet:latest
+    image: "146038918452"
     ports:
-      - "80:80"
+      - "3100:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - MULTIPLE_IPS=true
       - HOST_PROTOCOL=http
