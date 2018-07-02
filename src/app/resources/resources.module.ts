@@ -10,6 +10,7 @@ import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     HttpClientModule,
     HttpClientJsonpModule,
     PlanetDialogsModule
+    PlanetLanguageModule
   ],
   declarations: [
     ResourcesComponent,
