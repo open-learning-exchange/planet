@@ -38,7 +38,7 @@
       <mat-form-field *ngIf="nationOrCommunity === 'nation'">
         <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
       </mat-form-field>
-      <div>
+    
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
@@ -51,7 +51,7 @@
           <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </div>
+    
       <div *ngIf="showAdvancedOptions">
         <span>Advanced Options:</span>
         <mat-form-field *ngIf="showAdvancedOptions">
@@ -79,7 +79,7 @@
   <mat-step [stepControl]="contactFormGroup">
     <form [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
       <ng-template matStepLabel i18n>{{configurationType === 'new' ? '' : 'Update'}} Contact Details</ng-template>
-      <div>
+    
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
           <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
@@ -91,8 +91,7 @@
           <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
           <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </div>
-      <div>
+      
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
           <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
@@ -101,8 +100,8 @@
           <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
           <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </div>
-      <div>
+    
+      <div class="full-width">
         <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
         <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
       </div>
