@@ -27,6 +27,7 @@ export class DialogsListComponent implements AfterViewInit {
   tableColumns: string[] = [];
   selection = new SelectionModel(false, []);
   pageEvent: PageEvent;
+  disableRowClick: boolean;
   @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
@@ -35,11 +36,13 @@ export class DialogsListComponent implements AfterViewInit {
     okClick: any,
     filterPredicate?: any,
     allowMulti?: boolean,
-    initialSelection?: any[]
+    initialSelection?: any[],
+    disableSelection?: boolean
   }) {
     this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
+    this.disableRowClick = this.data.disableSelection || false;
     if (this.data.filterPredicate) {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }

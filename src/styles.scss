@@ -37,6 +37,10 @@ body {
     color: $accent;
   }
 
+  .warn-text-color {
+    color: $warn;
+  }
+
   .bg-light-grey {
     background-color: $light-grey;
   }
@@ -114,7 +118,7 @@ body {
     display: grid;
     grid-template-areas:
       'hd mn'
-      'cn mn';
+      'cn .';
     grid-template-columns: auto 50px;
 
     .header {
@@ -239,7 +243,7 @@ body {
   }
 
   .small {
-    font-size: 0.625rem;
+    font-size: 0.75rem;
   }
 
   mat-table .highlight, .primary-light-color {
@@ -325,6 +329,35 @@ body {
 
   .ole-logo {
     filter: brightness(0) invert(1);
+  }
+
+  mat-toolbar:first-child > mat-form-field,
+  mat-toolbar form mat-form-field,
+  .input-icon {
+      margin-top: 10px;
+  }
+
+  mat-dialog-actions {
+    justify-content: flex-end;
+  }
+
+  mat-row mat-cell {
+    flex-wrap: wrap;
+    .mat-raised-button {
+      margin: 0px 2px 2px 0px;
+    }
+  }
+
+  .course-progress {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-column-gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    planet-courses-progress-bar {
+      height: 1rem;
+      width: 100%;
+    }
   }
 
 }

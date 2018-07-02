@@ -7,6 +7,7 @@ $warn-hue: 500;
 $planet-primary: $mat-blue;
 $planet-accent: $mat-amber;
 $planet-warn: $mat-red;
+$planet-green: mat-color($mat-green, $primary-hue);
 
 $planet-app-primary: mat-palette($planet-primary, $primary-hue);
 $planet-app-accent: mat-palette($planet-accent, $accent-hue);
@@ -16,6 +17,7 @@ $planet-app-theme: mat-light-theme($planet-app-primary, $planet-app-accent, $pla
 
 $primary: mat-color($planet-app-primary, $primary-hue);
 $accent: mat-color($planet-app-accent, $accent-hue);
+$warn: mat-color($planet-app-warn, $warn-hue);
 $primary-text: mat-contrast($planet-primary, $primary-hue);
 $accent-text: mat-contrast($planet-accent, $accent-hue);
 $light-grey: mat-color($mat-grey, 100);

@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl, MatDialog, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl,
+  MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -13,6 +14,10 @@ import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
+import { SyncService } from '../shared/sync.service';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { CoursesService } from './courses.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -32,13 +37,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
   fb: FormBuilder;
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = this.parent ? [ 'courseTitle', 'action' ] : [ 'select', 'courseTitle', 'action' ];
+  displayedColumns = [ 'select', 'courseTitle', 'action' ];
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -58,11 +64,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
+    private coursesService: CoursesService,
     private dialog: MatDialog,
+    private dialogsListService: DialogsListService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private syncService: SyncService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -75,22 +84,20 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     this.getCourses().subscribe((courses: any) => {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.courses.data = courses;
       this.userShelf = this.userService.shelf;
-      this.setupList(courses, this.userShelf.courseIds);
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
     }, (error) => console.log(error));
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   setupList(courseRes, myCourses) {
-    courseRes.forEach((course: any) => {
-      const myCourseIndex = myCourses.findIndex(courseId => {
-        return course._id === courseId;
-      });
+    return courseRes.map((course: any) => {
+      const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.user.isUserAdmin ||
         (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
+      return course;
     });
   }
 
@@ -99,7 +106,14 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     if (this.parent) {
       opts = { domain: this.userService.getConfig().parentDomain };
     }
-    return this.couchService.allDocs('courses', opts);
+    return forkJoin([ this.couchService.allDocs('courses', opts), this.couchService.allDocs('courses_progress', opts) ]).pipe(
+      map(([ courses, progress ]) =>
+        courses.map(course => ({
+          ...course,
+          progress: progress.find(p => p.courseId === course._id && p.userId === this.user._id) || { stepNum: 0 }
+        }))
+      )
+    );
   }
 
   ngAfterViewInit() {
@@ -249,6 +263,39 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
     userShelf.courseIds.push(courseId);
     this.updateShelf(userShelf, 'Course added to your dashboard');
+  }
+
+  fetchCourse(courses) {
+    const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
+    this.syncService.confirmPasswordAndRunReplicators([
+      { db: this.dbName, items: courses, type: 'pull', date: true },
+      { db: 'resources', items: resources, type: 'pull', date: true },
+      { db: 'exams', items: exams, type: 'pull', date: true }
+    ]).subscribe((response: any) => {
+      this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to fetch');
+    }, () => error => this.planetMessageService.showMessage(error));
+  }
+
+  openSendCourseDialog() {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+    .subscribe((planet) => {
+      const data = { okClick: this.sendCourse('courses').bind(this),
+        filterPredicate: filterSpecificFields([ 'name' ]),
+        allowMulti: false,
+        ...planet };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data, height: '500px', width: '600px', autoFocus: false
+      });
+    });
+  }
+
+  sendCourse(db: string) {
+    return (selected: any) => {
+      const coursesToSend = this.selection.selected.map(course => ({ db, sendTo: selected[0].code, item: course }));
+      this.couchService.post('send_items/_bulk_docs', { 'docs': coursesToSend }).subscribe(() => {
+        this.dialogRef.close();
+      }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
+    };
   }
 
 }

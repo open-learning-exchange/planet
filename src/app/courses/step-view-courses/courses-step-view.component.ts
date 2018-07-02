@@ -16,6 +16,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
+  courseId: string;
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
@@ -58,15 +59,21 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
       this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-        this.examStart = submission.answers.length + 1;
+        this.examStart = submission.answers.reduce((totalPassed, answer) => totalPassed + (answer.passed ? 1 : 0), 0) + 1;
         this.attempts = attempts;
         const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-        this.examPassed = examPercent > this.stepDetail.exam.passingPercentage;
+        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
+        if (this.progress.passed !== this.examPassed) {
+          this.coursesService.updateProgress({
+            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed, progress: this.progress
+          });
+        }
       });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.coursesService.requestCourse({ courseId: params.get('id') });
+      this.courseId =  params.get('id');
+      this.coursesService.requestCourse({ courseId: this.courseId });
     });
   }
 

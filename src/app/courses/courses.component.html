@@ -22,12 +22,22 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
+    <span *ngIf="parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="fetchCourse(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
+      </button>
+    </span>
+    <button *ngIf="!parent" mat-button (click)="openSendCourseDialog()" routerLinkActive="active" [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+      <span i18n>Send Courses</span>
+      <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+    </button>
     <button *ngIf="!parent" mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
       <span i18n>Request Courses</span>
       <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
     </button>
-    <button *ngIf="!parent && user.isAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+    <button *ngIf="!parent && user.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
       <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
     </button>
@@ -78,7 +88,7 @@
               <mat-icon>credit_card</mat-icon>
               <span i18n>Credits</span>
             </a>
-            <a mat-menu-item routerLink="add">
+            <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
@@ -88,6 +98,10 @@
             </button>
           </mat-menu>
         </mat-cell>
+        <div class="course-progress" *ngIf="element.admission">
+          <span i18n>Your progress:</span>
+          <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
+        </div>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">

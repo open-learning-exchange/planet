@@ -16,6 +16,7 @@ import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
+import { uniqueId } from '../../shared/utils';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -72,7 +73,10 @@ export class CoursesAddComponent implements OnInit {
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: Date.now(),
-      creator: this.userService.get().name + '@' + this.userService.getConfig().code
+      creator: this.userService.get().name + '@' + this.userService.getConfig().code,
+      sourcePlanet: this.userService.getConfig().code,
+      resideOn: this.userService.getConfig().code,
+      updatedDate: Date.now()
     });
   }
 
@@ -82,7 +86,7 @@ export class CoursesAddComponent implements OnInit {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         data.steps.forEach(step => {
-          step['id'] = this.uniqueIdOfStep();
+          step['id'] = uniqueId();
         });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
@@ -107,7 +111,7 @@ export class CoursesAddComponent implements OnInit {
     this.deleteStepIdProperty();
     this.couchService.put(
       this.dbName + '/' + this.documentInfo.id,
-      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps }
+      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps, updatedDate: Date.now() }
     ).subscribe(() => {
       this.navigateBack();
       this.planetMessageService.showMessage('Course Updated Successfully');
@@ -154,16 +158,11 @@ export class CoursesAddComponent implements OnInit {
 
   addStep() {
     this.steps.push({
-      id: this.uniqueIdOfStep(),
+      id: uniqueId(),
       stepTitle: '',
       description: '',
       resources: []
     });
-  }
-
-  uniqueIdOfStep() {
-    // Highly unlikely random numbers will not be unique for practical amount of course steps
-    return '_' + Math.random().toString(36).substr(2, 9);
   }
 
   navigateBack() {

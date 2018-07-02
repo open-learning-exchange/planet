@@ -48,11 +48,21 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, progress = {} }) {
-    const newProgress = { ...progress, stepNum, courseId, userId: this.userService.get()._id };
+  updateProgress({ courseId, stepNum, passed = true, progress = {} }) {
+    const newProgress = { ...progress, stepNum, courseId, passed, userId: this.userService.get()._id };
     this.couchService.post('courses_progress', newProgress).subscribe(() => {
       this.requestCourse({ courseId });
     });
+  }
+
+  attachedItemsOfCourses(courses: any[]) {
+    return courses.reduce((attached, course) => {
+      course.steps.forEach(step => {
+        attached.resources = attached.resources.concat(step.resources || []);
+        attached.exams = attached.exams.concat(step.exam ? [ step.exam ] : []);
+      });
+      return attached;
+    }, { resources: [], exams: [] });
   }
 
 }

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
@@ -15,17 +15,28 @@ import { environment } from '../../environments/environment';
 export class DashboardComponent implements OnInit {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
-  displayName = this.userService.get().firstName + ' ' + this.userService.get().lastName;
+  displayName: string = this.userService.get().firstName !== undefined ?
+    this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   dateNow = Date.now();
   visits = 0;
 
   constructor(
     private userService: UserService,
     private couchService: CouchService
-  ) {}
+  ) {
+    this.userService.shelfChange$.pipe()
+      .subscribe(() => {
+        this.ngOnInit();
+      });
+  }
 
   ngOnInit() {
     const userShelf = this.userService.shelf;
+
+    if (this.isEmptyShelf(userShelf)) {
+      return;
+    }
+
     forkJoin([
       this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
@@ -37,6 +48,7 @@ export class DashboardComponent implements OnInit {
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
+
     this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
@@ -65,5 +77,12 @@ export class DashboardComponent implements OnInit {
       return this.urlPrefix + Object.keys(attachments)[0];
     }
     return 'assets/image.png';
+  }
+
+  isEmptyShelf(shelf) {
+    return shelf.courseIds.length === 0
+      && shelf.meetupIds.length === 0
+      && shelf.myTeamIds.length === 0
+      && shelf.resourceIds.length === 0;
   }
 }

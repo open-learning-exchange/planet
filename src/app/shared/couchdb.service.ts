@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, expand, takeWhile, toArray, flatMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
+import { PlanetMessageService } from './planet-message.service';
 
 @Injectable()
 export class CouchService {
@@ -26,10 +27,21 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return httpReq.pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'));
+    return httpReq
+      .pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'))
+      .pipe(catchError(err => {
+        if (err.status === 403) {
+          this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
+        }
+        // Empty response for the _find or _all_docs endpoints
+        return of({ docs: [], rows: [] });
+      }));
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private planetMessageService: PlanetMessageService
+  ) {}
 
   put(db: string, data: any, opts?: any): Observable<any> {
     return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');
@@ -47,6 +59,10 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
+  putAttachment(db: string, file: FormData, opts?: any) {
+    return this.couchDBReq('put', db, this.setOpts(opts), file);
+  }
+
   allDocs(db: string, opts?: any) {
     return this.couchDBReq('get', db + '/_all_docs?include_docs=true', this.setOpts(opts)).pipe(map((data: any) => {
       // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
@@ -60,35 +76,20 @@ export class CouchService {
     }));
   }
 
+  findAll(db: string, query: any, opts?: any) {
+    return this.post(db + '/_find', query, opts).pipe(expand((res) => {
+      return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
+    }), takeWhile((res) => {
+      return res.docs.length > 0;
+    }), flatMap(({ docs }) => docs), toArray());
+  }
+
   stream(method: string, db: string) {
     const url = this.baseUrl + db;
     const req = new HttpRequest(method, url, {
       reportProgress: true
     });
     return this.http.request(req);
-  }
-
-  // Reads a file as a Base64 string to append to object sent to CouchDB
-  prepAttachment(file) {
-    const reader = new FileReader();
-    const obs = Observable.create((observer) => {
-      reader.onload = () => {
-        // FileReader result has file type at start of string, need to remove for CouchDB
-        const fileData = reader.result.split(',')[1],
-        attachments = {};
-        attachments[file.name] = {
-          content_type: file.type,
-          data: fileData
-        };
-        const attachmentObject = {
-          _attachments: attachments
-        };
-        observer.next(attachmentObject);
-        observer.complete();
-      };
-    });
-    reader.readAsDataURL(file);
-    return obs;
   }
 
 }

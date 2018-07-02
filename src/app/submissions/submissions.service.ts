@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class SubmissionsService {
@@ -24,10 +20,10 @@ export class SubmissionsService {
     private couchService: CouchService,
   ) { }
 
-  updateSubmissions({ opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
+  updateSubmissions({ opts = {}, parentId }: { parentId?: string, opts?: any } = {}) {
     this.getSubmissions(opts).subscribe((submissions: any) => {
-      this.submissions = submissions;
-      this.submissionsUpdated.next(submissions);
+      this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
+      this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
 
@@ -42,7 +38,7 @@ export class SubmissionsService {
   }
 
   private newSubmission({ parentId, parent, user, type }) {
-    this.submission = { parentId, parent, user, type, answers: [], grades: [], grade: 0, status: 'pending' };
+    this.submission = { parentId, parent, user, type, answers: [], grade: 0, status: 'pending' };
   }
 
   openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
@@ -62,17 +58,29 @@ export class SubmissionsService {
       });
   }
 
-  submitAnswer(answer, index: number, close: boolean) {
+  submitAnswer(answer, correct: boolean, index: number, close: boolean) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
-    submission.answers[index] = answer;
+    const oldAnswer = submission.answers[index];
+    submission.answers[index] = {
+      value: answer,
+      mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
+      passed: correct !== false
+    };
+    if (correct !== undefined) {
+      this.updateGrade(submission, correct ? 1 : 0, index);
+    }
     return this.updateSubmission(submission, true, close);
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, grades: [ ...this.submission.grades ] };
-    submission.grades[index] = grade;
-    submission.grade = this.calcTotalGrade(submission);
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
+  }
+
+  updateGrade(submission, grade, index) {
+    submission.answers[index].grade = grade;
+    submission.grade = this.calcTotalGrade(submission);
   }
 
   updateStatus(submission: any) {
@@ -81,8 +89,8 @@ export class SubmissionsService {
   }
 
   calcTotalGrade(submission: any) {
-    return submission.grades.reduce((total: number, grade: any, index: number) =>
-      total + (submission.parent.questions[index].marks * grade), 0);
+    return submission.answers.reduce((total: number, answer: any, index: number) =>
+      total + (submission.parent.questions[index].marks * (answer.grade || 0)), 0);
   }
 
   updateSubmission(submission: any, takingExam: boolean, close: boolean) {
@@ -97,6 +105,20 @@ export class SubmissionsService {
       }
       this.submissionUpdated.next({ submission: this.submission, attempts });
     }));
+  }
+
+  filterSubmissions(submissions, parentId) {
+    return submissions.filter(s => s.parentId === parentId).reduce((subs, submission) => {
+      const userSubmissionIndex = subs.findIndex((s) => s.user === submission.user);
+      if (userSubmissionIndex !== -1) {
+        const oldSubmission = subs[userSubmissionIndex];
+        subs[userSubmissionIndex] = this.calcTotalGrade(submission) > this.calcTotalGrade(oldSubmission) ?
+          submission : oldSubmission;
+      } else {
+        subs.push(submission);
+      }
+      return subs;
+    }, []);
   }
 
 }
