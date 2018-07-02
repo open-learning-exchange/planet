@@ -14,7 +14,6 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
-import { switchMap } from 'rxjs/operators';
 
 import Mime from 'mime/Mime';
 import { findDocuments } from '../shared/mangoQueries';
@@ -128,9 +127,9 @@ export class ResourcesAddComponent implements OnInit {
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-        const obs = this.pageType === 'Update' ? this.updateResource(newResource) : this.addResource(newResource);
+        const obs: any = this.pageType === 'Update' ? this.updateResource(newResource) : this.addResource(newResource);
         const message = this.pageType === 'Update' ? 'Resource Updated Successfully' : 'New Resource Created';
-        obs.pipe(switchMap((res) => {
+        obs.pipe(switchMap((res: any) => {
           if (file) {
             const opts = { headers: { 'Content-Type': file.type } };
             return this.couchService.putAttachment(this.dbName + '/' + res.id + '/' + file.name + '?rev=' + res.rev, file, opts);
