@@ -1,10 +1,13 @@
 <mat-toolbar>
-<button mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></button>
-<span i18n>Synchronization Task</span>
-<span class="toolbar-fill"></span>
+  <button mat-icon-button routerLink="/manager"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Synchronization Task</span>
 </mat-toolbar>
 <div class="space-container primary-link-hover">
-  <button mat-button (click)="syncPlanet()"><mat-icon>sync</mat-icon>Run Sync</button>
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill"></span>
+    <button mat-button (click)="syncPlanet()" i18n><mat-icon>sync</mat-icon>Run Sync</button>
+    <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
+  </mat-toolbar>
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators">
       <h3 matLine>
