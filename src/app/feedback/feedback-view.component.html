@@ -28,6 +28,10 @@
           <mat-icon>clear</mat-icon>
         </a>
       </ng-template>
+      <span class="toolbar-fill"></span>
+      <a *ngIf="feedback?.state" [routerLink]="['/', feedback.state, 'view', feedback.item]" mat-icon-button>
+        <mat-icon svgIcon="myLibrary"></mat-icon>
+      </a>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
