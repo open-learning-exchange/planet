@@ -115,6 +115,10 @@ export class LoginFormComponent {
           return from(this.reRoute());
         }
       }), switchMap((routeSuccess) => {
+        if (!routeSuccess) {
+          throw routeSuccess;
+        }
+
         // Post new session info to login_activity
         const obsArr = [ this.userService.newSessionLog() ];
         const localConfig = this.userService.getConfig();
