@@ -21,11 +21,19 @@ import { CustomValidators } from '../../validators/custom-validators';
       margin: 64px 30px;
     }
     .view-container {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 550px auto;
+      grid-column-gap: 1rem;
     }
-    .view-container form {
-      margin: 0 10px 10px 0;
+    form {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-content: flex-start;
+    }
+    .img-wrapper {
+      margin: 10px;
     }
   ` ]
 })
