@@ -26,15 +26,15 @@
       </div>
       <div>
         <mat-form-field>
-          <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Start Date" formControlName="startDate">
-          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-          <mat-datepicker #dp></mat-datepicker>
+          <input matInput [matDatepicker]="datepickerStart" i18n-placeholder placeholder="Start Date" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #datepickerStart></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [matDatepicker]="dp1" i18n-placeholder placeholder="End Date" formControlName="endDate">
-          <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
-          <mat-datepicker #dp1></mat-datepicker>
+          <input matInput [matDatepicker]="datepickerEnd" i18n-placeholder placeholder="End Date" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #datepickerEnd></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>

@@ -100,8 +100,8 @@ export class MeetupsAddComponent implements OnInit {
     this.couchService.put(this.dbName + '/' + this.id, {
       ...meetupInfo,
       '_rev': this.revision,
-      'startDate' : Date.parse(meetupInfo.startDate),
-      'endDate' : Date.parse(meetupInfo.endDate)
+      'startDate': Date.parse(meetupInfo.startDate),
+      'endDate': Date.parse(meetupInfo.endDate)
      }).pipe(switchMap(() => {
         return this.couchService.post('shelf/_find', findDocuments({
           'meetupIds': { '$in': [ this.id ] }
@@ -122,8 +122,8 @@ export class MeetupsAddComponent implements OnInit {
   addMeetup(meetupInfo) {
     this.couchService.post(this.dbName, {
       ...meetupInfo,
-      'startDate' : Date.parse(meetupInfo.startDate),
-      'endDate' : Date.parse(meetupInfo.endDate),
+      'startDate': Date.parse(meetupInfo.startDate),
+      'endDate': Date.parse(meetupInfo.endDate),
     }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup created');
