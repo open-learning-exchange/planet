@@ -21,11 +21,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   mediaType: string;
   contentType: string;
   resourceSrc: string;
-<<<<<<< HEAD
+  urlAttachment = environment.couchAddress + 'attachments/';
   parent = this.route.snapshot.data.parent;
-=======
-  urlPrefix = environment.couchAddress + 'attachments/';
->>>>>>> c0638a77... [#847] Separate Resource Attachment (connects #847)
   pdfSrc: any;
   private onDestroy$ = new Subject<void>();
 
@@ -67,7 +64,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
     this.mediaType = resource.mediaType;
     this.contentType = resource._attachments[filename].content_type;
-    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
+    this.resourceSrc = this.urlAttachment + resource._id + '/' + filename;
     if (!this.mediaType) {
       const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
       this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
