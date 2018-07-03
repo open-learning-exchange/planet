@@ -19,8 +19,10 @@
         formControlName="body"
         matTextareaAutosize
         matAutosizeMaxRows="5"
-        matAutosizeMinRows="4">
+        matAutosizeMinRows="4"
+        required>
       </textarea>
+      <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <div>
       <mat-form-field>
