@@ -116,12 +116,9 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
       switch (change) {
         case 'delete':
-          this.deleteCommunity(community);
-          break;
         case 'reject':
         case 'unlink':
-          const updatedCommunity = { ...community, registrationRequest: 'rejected' };
-          this.rejectCommunity(updatedCommunity);
+          this.deleteCommunity(community);
           break;
         case 'accept':
           forkJoin([
@@ -157,16 +154,6 @@ export class CommunityComponent implements OnInit, AfterViewInit {
       this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
       this.editDialog.close();
     }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
-  }
-
-  rejectCommunity(community: any) {
-    // Return a function with community on its scope to pass to delete dialog
-    const { _id: id, _rev: rev } = community;
-    return this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev)
-    .subscribe((data) => {
-      this.getCommunityList();
-      this.editDialog.close();
-    }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
   }
 
   pipeRemovePlanetUser(obs: any, community) {

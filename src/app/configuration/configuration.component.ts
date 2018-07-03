@@ -51,6 +51,7 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.userService.get());
     if (this.route.snapshot.data.update) {
       this.initUpdate();
     }
@@ -328,13 +329,9 @@ export class ConfigurationComponent implements OnInit {
         const { _rev: localRev, ...localConfig } = configuration;
         // if parent record not found set empty
         const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
-        return this.couchService.post(
-          'communityregistrationrequests',
-          { ...localConfig, ...parentConfig },
-          { domain: configuration.parentDomain }
-        );
-      })
-      ).subscribe(() => {
+        return res.docs.length ? this.update(configuration, { ...localConfig, ...parentConfig })
+          : this.reSubmit(configuration, { ...localConfig, ...parentConfig });
+      })).subscribe(() => {
         // Navigate back to the manager dashboard
         this.router.navigate([ '/manager' ]);
         this.planetMessageService.showMessage('Configuration Updated Successfully');
@@ -343,6 +340,28 @@ export class ConfigurationComponent implements OnInit {
         console.log(err);
       });
     }
+  }
+
+  update(configuration, newConfig) {
+    return this.couchService.post(
+      'communityregistrationrequests',
+      newConfig,
+      { domain: configuration.parentDomain }
+    );
+  }
+
+  reSubmit(configuration, newConfig) {
+    const { _rev: userRev, _id: userId, ...userDetail } = this.userService.get();
+    const adminName = configuration.adminName;
+    return this.syncService.openConfirmation().pipe(
+      switchMap((credentials) => {
+        return this.update(configuration, newConfig).pipe(
+          this.addUserToParentPlanet({ ...userDetail, roles: [], ...credentials }, adminName, configuration),
+          this.addUserToShelf(adminName, configuration),
+          this.createRequestNotification(configuration)
+        );
+      })
+    );
   }
 
   createUser(name, details, opts?) {

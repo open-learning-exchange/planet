@@ -47,7 +47,7 @@ export class SyncService {
     return this.couchService.post('_replicator/_bulk_docs', { docs: replicators });
   }
 
-  private openConfirmation() {
+  public openConfirmation() {
     const title = 'Admin Confirmation';
     const formGroup = {
       password: [ '', Validators.required ]
