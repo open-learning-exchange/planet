@@ -21,6 +21,12 @@ import { debug } from '../debug-operator';
     .mat-column-select {
       max-width: 44px;
     }
+
+    .profile-image-100 {
+      max-width: 100px;
+      height: auto;
+      padding: 3px;
+    }
   ` ]
 })
 export class UsersComponent implements OnInit, AfterViewInit {
