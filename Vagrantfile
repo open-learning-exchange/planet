@@ -33,6 +33,10 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8082" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8082
+  # Port expose for docker inside vagrant
+  config.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
+  config.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
+  
   config.vm.network "forwarded_port", guest: 5984, host: 2200, auto_correct: true
   config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
   config.vm.network "forwarded_port", guest: 9876, host: 9876, auto_correct: true
