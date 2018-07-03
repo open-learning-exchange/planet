@@ -34,6 +34,7 @@ export class DashboardTileComponent implements OnInit {
     event.stopPropagation();
     const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
     this.userService.updateShelf(newIds, this.shelfName).subscribe(() => {
+      this.itemData.length--;
       this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
     });
   }
