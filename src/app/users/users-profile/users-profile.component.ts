@@ -21,7 +21,7 @@ import { debug } from '../../debug-operator';
     .profile-container {
       max-width: 900px;
       display: grid;
-      grid-template-columns: 100px 0.75fr 0.75fr;
+      grid-template-columns: 1fr 0.75fr 0.75fr;
       grid-column-gap: 2rem;
     }
   ` ]
