@@ -87,6 +87,7 @@ Vagrant.configure(2) do |config|
     sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.1.1
     # Install Angular CLI
     #sudo npm install -g @angular/cli
+    sudo npm install -g webdriver-manager
 
     # Add CORS to CouchDB so app has access to databases
     #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
@@ -108,6 +109,7 @@ Vagrant.configure(2) do |config|
     chown vagrant:vagrant /vagrant_node_modules
     mount --bind /vagrant_node_modules /vagrant/node_modules
     npm i --unsafe-perm
+    sudo npm run webdriver-set-version
     # End node_modules fix
 
     # Add initial Couch databases here
