@@ -76,6 +76,12 @@ export class ResourcesRatingComponent implements OnChanges {
   }
 
   onStarClick(form = this.rateForm) {
+    //check whether the gender has been set or not
+    console.log('Gender' , this.userService.get().gender);
+    if (this.userService.get().gender === undefined) {
+      this.planetMessage.showAlert('Please update your profile.');
+      return false;
+    }
     this.updateRating(form).subscribe(res => {
       // This should never be called for parent resources, so do not need to send domain options
       this.resourcesService.updateResources({ resourceIds: [ this.resourceId ], updateCurrentResources: true });
