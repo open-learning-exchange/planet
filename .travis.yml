@@ -22,6 +22,7 @@ _use_chrome: &_use_chrome
       packages:
         - google-chrome-stable
         - google-chrome-beta
+        - jq
 _use_nodejs: &_use_nodejs
   language: node_js
   node_js:
