@@ -76,6 +76,10 @@
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
+            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+              <mat-icon>feedback</mat-icon>
+              <span i18n>Feedback</span>
+            </a>
             <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
