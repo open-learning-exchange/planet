@@ -195,4 +195,12 @@ export class CustomValidators {
       return { invalidFutureDate: true };
     }
   }
+
+  // matDatepicker returns null for date missing or invalid date
+  // Use this validator for special date message
+  static dateValidRequired(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return { dateRequired: true };
+    }
+  }
 }
