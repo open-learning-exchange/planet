@@ -1,0 +1,57 @@
+@import '../../variables';
+
+:host {
+
+  $cell-size: 50px;
+  $column-gap: 4px;
+
+  .view-container {
+    overflow: auto;
+  }
+
+  .progress-view {
+    display: grid;
+    grid-template-areas: "total index";
+    grid-template-columns: $cell-size;
+    grid-auto-columns: $cell-size;
+    grid-auto-flow: column;
+    grid-column-gap: $column-gap;
+  }
+
+  .errors {
+    display: grid;
+    grid-auto-rows: $cell-size;
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .errors-total {
+    grid-area: total;
+  }
+
+  .errors-index {
+    grid-area: index;
+  }
+
+  .errors-user {
+    margin-top: $cell-size;
+  }
+
+  .border-bottom {
+    position: relative;
+  }
+
+  .border-bottom:before {
+    content:"";
+    position: absolute;
+    top: 0px;
+    height: $cell-size;
+    width: calc(#{$cell-size} + #{$column-gap});
+    border-bottom: 3px solid $grey;
+    z-index: 10;
+  }
+
+}

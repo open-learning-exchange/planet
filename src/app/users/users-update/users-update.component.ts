@@ -12,6 +12,7 @@ import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { NgxImgModule } from 'ngx-img';
 import { languages } from '../../shared/languages';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -34,9 +35,8 @@ export class UsersUpdateComponent implements OnInit {
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   currentImgKey: string;
-  currentProfileImg: string;
-  defaultProfileImg = '../assets/image.png';
-  previewSrc = '../assets/image.png';
+  currentProfileImg = 'assets/image.png';
+  previewSrc = 'assets/image.png';
   uploadImage = false;
   urlPrefix = environment.couchAddress + this.dbName + '/';
   urlName = '';
@@ -44,6 +44,7 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
   roles: string[] = [];
   languages = languages;
+  maxDate = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -68,11 +69,9 @@ export class UsersUpdateComponent implements OnInit {
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
-          this.previewSrc = this.currentProfileImg;
           this.uploadImage = true;
-        } else {
-          this.previewSrc = this.defaultProfileImg;
         }
+        this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
       }, (error) => {
         console.log(error);
@@ -87,7 +86,7 @@ export class UsersUpdateComponent implements OnInit {
       email: [ '', [ Validators.required, Validators.email ] ],
       language: [ '', Validators.required ],
       phoneNumber: [ '', Validators.required ],
-      birthDate: [ '', Validators.required ],
+      birthDate: [ '', Validators.compose([ CustomValidators.dateValidRequired, CustomValidators.notDateInFuture ]) ],
       gender: [ '', Validators.required ],
       level: [ '', Validators.required ]
     });

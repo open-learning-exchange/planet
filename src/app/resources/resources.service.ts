@@ -13,19 +13,37 @@ export class ResourcesService {
   private ratingsDb = 'ratings';
   private resourcesUpdated = new Subject<any[]>();
   resourcesUpdated$ = this.resourcesUpdated.asObservable();
+  private currentResources = [];
 
   constructor(
     private couchService: CouchService,
     private userService: UserService
   ) {}
 
-  updateResources({ resourceIds = [], opts = {} }: { resourceIds?: string[], opts?: any } = {}) {
+  updateResources({ resourceIds = [], opts = {}, updateCurrentResources = false }:
+    { resourceIds?: string[], opts?: any, updateCurrentResources?: boolean} = {}) {
     const resourceQuery = resourceIds.length > 0 ?
       this.getResources(resourceIds, opts) : this.getAllResources(opts);
     forkJoin(resourceQuery, this.getRatings(resourceIds, opts)).subscribe((results: any) => {
       const resourcesRes = results[0].docs || results[0],
         ratingsRes = results[1];
-      this.resourcesUpdated.next(this.createResourceList(resourcesRes, ratingsRes.docs));
+
+      const resources = this.createResourceList(resourcesRes, ratingsRes.docs);
+
+      if (updateCurrentResources && this.currentResources.length) {
+        this.currentResources.map((currentResource, cIndex) => {
+          resources.map(newResource => {
+            if (currentResource._id === newResource._id) {
+              this.currentResources[cIndex] = newResource;
+            }
+          });
+        });
+        this.resourcesUpdated.next(this.currentResources);
+        return;
+      }
+
+      this.currentResources = resources;
+      this.resourcesUpdated.next(resources);
     }, (err) => console.log(err));
   }
 

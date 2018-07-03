@@ -9,7 +9,7 @@
       <ng-container [ngSwitch]="feedback.type">
         <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
         <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
-        <mat-icon *ngSwitchCase="'Suggestion'">lighbulb_outline</mat-icon>
+        <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
       </ng-container>
       <ng-container *ngIf="!editTitleMode; else editTitleBlock">
         <span class="margin-lr-3">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
@@ -28,6 +28,10 @@
           <mat-icon>clear</mat-icon>
         </a>
       </ng-template>
+      <span class="toolbar-fill"></span>
+      <a *ngIf="feedback?.state" [routerLink]="['/', feedback.state, 'view', feedback.item]" mat-icon-button>
+        <mat-icon svgIcon="myLibrary"></mat-icon>
+      </a>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">

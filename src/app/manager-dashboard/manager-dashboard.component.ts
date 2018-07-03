@@ -6,38 +6,17 @@ import { switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { filterSpecificFields } from '../shared/table-helpers';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { SyncService } from '../shared/sync.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
-  template: `
-    <div *ngIf="displayDashboard">
-      <span *ngIf="planetType !== 'community'">
-        <a routerLink="/requests" i18n mat-raised-button>Requests</a>
-        <a routerLink="/associated/{{ planetType === 'center' ? 'nation' : 'community' }}"
-          i18n mat-raised-button>{{ planetType === 'center' ? 'Nation' : 'Community' }}</a>
-      </span>
-      <button *ngIf="planetType !== center && showResendConfiguration"
-        (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-      <button *ngIf="devMode"
-        (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
-      <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
-    </div>
-    <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
-      <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <ng-container [ngSwitch]="requestStatus">
-        <ng-container *ngSwitchCase="'accepted'">
-          <a routerLink="resources" i18n mat-raised-button>List Resources</a>
-          <a routerLink="courses" i18n mat-raised-button>List Courses</a>
-          <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
-        </ng-container>
-        <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
-        <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
-      </ng-container>
-    </div>
-    <div>{{message}}</div>
-  `
+  templateUrl: './manager-dashboard.component.html'
 })
 
 export class ManagerDashboardComponent implements OnInit {
@@ -49,18 +28,25 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
+  dialogRef: MatDialogRef<DialogsListComponent>;
+  pushedItems = { course: [], resource: [] };
+  pin: string;
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
+    private coursesService: CoursesService,
     private router: Router,
     private planetMessageService: PlanetMessageService,
-    private dialog: MatDialog
+    private dialogsListService: DialogsListService,
+    private dialog: MatDialog,
+    private syncService: SyncService
   ) {}
 
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
+      this.getPushedList();
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
@@ -68,6 +54,7 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
+    this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
   }
 
   resendConfig() {
@@ -116,8 +103,15 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   deleteCommunity() {
-     return () => {
-      this.couchService.allDocs('_replicator').pipe(switchMap((docs: any) => {
+    return () => {
+      this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
+        forkJoin([
+          this.couchService.delete('_users/org.couchdb.user:satellite?rev=' + res._rev),
+          this.couchService.delete('_node/nonode@nohost/_config/satellite/pin')
+        ])
+      ),
+      switchMap(() => this.couchService.allDocs('_replicator')),
+      switchMap((docs: any) => {
         const replicators = docs.map(doc => {
           return { _id: doc._id, _rev: doc._rev, _deleted: true };
         });
@@ -146,6 +140,82 @@ export class ManagerDashboardComponent implements OnInit {
     });
     // Reset the message when the dialog closes
     this.deleteCommunityDialog.afterClosed().pipe(debug('Closing dialog')).subscribe();
+  }
+
+  setFilterPredicate(db: string) {
+    switch (db) {
+      case 'resources':
+        return filterSpecificFields([ 'title' ]);
+      case 'courses':
+        return filterSpecificFields([ 'courseTitle' ]);
+    }
+  }
+
+  sendOnAccept(db: string) {
+    this.dialogsListService.getListAndColumns(db).subscribe(res => {
+      const previousList = res.tableData.filter(doc => doc.sendOnAccept === true),
+        initialSelection = previousList.map(doc => doc._id);
+      const data = {
+        okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
+        filterPredicate: this.setFilterPredicate(db),
+        allowMulti: true,
+        initialSelection,
+        ...res };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
+    });
+  }
+
+  sendOnAcceptOkClick(db: string, previousList: any) {
+    return (selected: any) => {
+      const removedItems = previousList.filter(item => selected.findIndex(i => i._id === item.id) < 0)
+        .map(item => ({ ...item, sendOnAccept: false }));
+      const dataUpdate = selected.map(item => ({ ...item, sendOnAccept: true })).concat(removedItems);
+      if (db === 'courses') {
+        this.handleCourseAttachments(selected, previousList);
+      }
+      this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
+        this.planetMessageService.showMessage('Added to send on accept list');
+      });
+      this.dialogRef.close();
+    };
+  }
+
+  handleCourseAttachments(courses, removedCourses) {
+    const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
+    // Not automatically removing attached resources because they can be selected independently
+    const previousExams = this.coursesService.attachedItemsOfCourses(removedCourses).exams;
+    this.sendOnAcceptOkClick('resources', [])(resources);
+    this.sendOnAcceptOkClick('exams', previousExams)(exams);
+  }
+
+  getPushedList() {
+    this.couchService.post(`send_items/_find`,
+      findDocuments({ 'sendTo': this.userService.getConfig().name }),
+        { domain: this.userService.getConfig().parentDomain })
+    .subscribe(data => {
+      this.pushedItems = data.docs.reduce((items, item) => {
+        items[item.db] = items[item.db] ? items[item.db] : [];
+        items[item.db].push(item);
+        return items;
+      }, {});
+    });
+  }
+
+  getPushedItem(db: string) {
+    const deleteItems = this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+    const itemList = this.pushedItems[db].map(item => item.item);
+    const replicators = [ { db, type: 'pull', date: true, items: itemList } ];
+    this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
+      switchMap(data => {
+        return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
+        { domain: this.userService.getConfig().parentDomain });
+      })
+    ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
   }
 
 }

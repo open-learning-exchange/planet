@@ -16,6 +16,8 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
 import { ResourcesModule } from '../resources/resources.module';
 import { ExamsModule } from '../exams/exams.module';
+import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
+import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 
 @NgModule({
   imports: [
@@ -36,6 +38,8 @@ import { ExamsModule } from '../exams/exams.module';
     CoursesViewComponent,
     CoursesStepComponent,
     CoursesStepViewComponent,
+    CoursesProgressLeaderComponent,
+    CoursesProgressBarComponent
   ]
 })
 export class CoursesModule {}

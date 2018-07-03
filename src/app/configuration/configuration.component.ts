@@ -6,11 +6,13 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
+import { UserService } from '../shared/user.service';
+import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and '/'
@@ -20,10 +22,16 @@ const removeProtocol = (str: string) => {
 
 @Component({
   selector: 'planet-configuration',
-  templateUrl: './configuration.component.html'
+  templateUrl: './configuration.component.html',
+  styles: [ `
+    .mat-raised-button {
+      margin: 0px 2px 2px 0px;
+    }
+  ` ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
+  configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
   loginForm: FormGroup;
@@ -33,6 +41,7 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
+  configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
@@ -40,10 +49,16 @@ export class ConfigurationComponent implements OnInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private syncService: SyncService
   ) { }
 
   ngOnInit() {
+    if (this.route.snapshot.data.update) {
+      this.initUpdate();
+    }
     this.loginForm = this.formBuilder.group({
       name: [ '', [
         Validators.required,
@@ -99,13 +114,32 @@ export class ConfigurationComponent implements OnInit {
     this.getNationList();
   }
 
+  initUpdate() {
+    this.configurationType = 'update';
+    const configurationId = this.userService.getConfig()._id;
+    this.couchService.get('configurations/' + configurationId)
+    .subscribe((data: any) => {
+      this.configuration = data;
+      this.nationOrCommunity = data.planetType;
+      this.configurationFormGroup.patchValue(data);
+      this.contactFormGroup.patchValue(data);
+    }, error => {
+      console.log(error);
+    } );
+  }
+
   parentUniqueValidator(controlName: string) {
-    return ac => this.validatorService.isUnique$(
-      'communityregistrationrequests',
-      controlName,
-      ac,
-      { domain: ac.parent.get('parentDomain').value }
-    );
+    return ac => {
+      return this.validatorService.isUnique$(
+        'communityregistrationrequests',
+        controlName,
+        ac,
+        {
+          exceptions: [ this.configuration[controlName] ],
+          opts: { domain: ac.parent.get('parentDomain').value }
+        }
+      );
+    };
   }
 
   confirmConfigurationFormGroup() {
@@ -127,12 +161,14 @@ export class ConfigurationComponent implements OnInit {
   }
 
   planetNameChange(event) {
-    let code = this.configurationFormGroup.get('name').value;
-    // convert special character to dot except last character
-    code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
-    // skip special character if comes as last character
-    code = code.replace(/\W+$/, '').toLowerCase();
-    this.configurationFormGroup.get('code').setValue(code);
+    if (this.configurationType !== 'update') {
+      let code = this.configurationFormGroup.get('name').value;
+      // convert special character to dot except last character
+      code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
+      // skip special character if comes as last character
+      code = code.replace(/\W+$/, '').toLowerCase();
+      this.configurationFormGroup.get('code').setValue(code);
+    }
   }
 
   getNationList() {
@@ -167,10 +203,18 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
-    if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
-      const { confirmPassword, ...credentials } = this.loginForm.value;
+    if (this.configurationType === 'update') {
+      this.updateConfiguration();
+    } else if (this.loginForm.valid && this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+      const {
+        confirmPassword,
+        ...credentials
+      } = this.loginForm.value;
       const adminName = credentials.name + '@' + this.configurationFormGroup.controls.code.value;
-      const configuration = Object.assign({ registrationRequest: 'pending', adminName },
+      const configuration = Object.assign({
+          registrationRequest: 'pending',
+          adminName
+        },
         this.configurationFormGroup.value, this.contactFormGroup.value);
       const userDetail: any = {
         ...credentials,
@@ -180,39 +224,106 @@ export class ConfigurationComponent implements OnInit {
         'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
-      const feedbackSyncUp = {
-        '_id': 'feedback_to_parent',
-        'source': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
-          },
-          'url': environment.couchAddress + 'feedback'
-        },
-        'target': {
-          'headers': {
-            'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
-          },
-          'url': 'https://' + configuration.parentDomain + '/feedback'
-        },
-        'create_target':  false,
-        'continuous': true,
-        'owner': credentials.name
-      };
-      const feedbackSyncDown = Object.assign({}, feedbackSyncUp, {
-        '_id': 'feedback_from_parent',
-        'source': feedbackSyncUp.target,
-        'target': feedbackSyncUp.source,
-        'selector': {
-          'source': configuration.code
-        }
-      });
+      const feedbackSyncUp = this.getFeedbackSyncUp(configuration, credentials, adminName);
+      const feedbackSyncDown = this.getFeedbackSyncDown(feedbackSyncUp, configuration);
 
-      // create replicator at first as we do not have session
-      this.couchService.post('_replicator', feedbackSyncUp)
+      this.createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail);
+    }
+  }
+
+  getFeedbackSyncUp(configuration, credentials, adminName) {
+    return {
+      '_id': 'feedback_to_parent',
+      'source': {
+        'headers': {
+          'Authorization': 'Basic ' + btoa(credentials.name + ':' + credentials.password)
+        },
+        'url': environment.couchAddress + 'feedback'
+      },
+      'target': {
+        'headers': {
+          'Authorization': 'Basic ' + btoa(adminName + ':' + credentials.password)
+        },
+        'url': 'https://' + configuration.parentDomain + '/feedback'
+      },
+      'create_target': false,
+      'continuous': true,
+      'owner': credentials.name
+    };
+  }
+
+  getFeedbackSyncDown(feedbackSyncUp, configuration) {
+    return Object.assign({}, feedbackSyncUp, {
+      '_id': 'feedback_from_parent',
+      'source': feedbackSyncUp.target,
+      'target': feedbackSyncUp.source,
+      'selector': {
+        'source': configuration.code
+      }
+    });
+  }
+
+  createRequestNotification(configuration) {
+    return mergeMap(data => {
+      const requestNotification = {
+        'user': 'SYSTEM',
+        'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
+        'link': '/requests',
+        'type': 'request',
+        'priority': 1,
+        'status': 'unread',
+        'time': Date.now()
+      };
+      // Send notification to parent
+      return this.couchService.post('notifications', requestNotification, {
+        domain: configuration.parentDomain
+      });
+    });
+  }
+
+  addUserToParentPlanet(userDetail, adminName, configuration) {
+    return mergeMap((data: any) => {
+      // then add user to parent planet with id of configuration and isUserAdmin set to false
+      userDetail['requestId'] = data.id;
+      userDetail['isUserAdmin'] = false;
+      return this.createUser(adminName, { ...userDetail,
+        name: adminName
+      }, {
+        domain: configuration.parentDomain
+      });
+    });
+  }
+
+  addUserToShelf(adminName, configuration) {
+    return mergeMap(data => {
+      return this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
+        domain: configuration.parentDomain
+      });
+    });
+  }
+
+  createReplicator(feedbackSyncUp, feedbackSyncDown, credentials, configuration, adminName, userDetail) {
+    const replicatorObj = {
+      type: 'pull',
+      parentDomain: configuration.parentDomain,
+      code: configuration.code,
+      selector: { 'sendOnAccept': true }
+    };
+    const pin = this.createPin();
+    // create replicator at first as we do not have session
+    this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
         debug('Creating replicator'),
+        switchMap(() => forkJoin([
+          this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
+          this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
+        ])),
         switchMap(res => {
-          return this.couchService.post('_replicator', feedbackSyncDown);
+          return forkJoin([
+            this.couchService.post('_replicator', feedbackSyncDown),
+            this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
+            this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
+          ]);
         }),
         debug('Sending request to parent planet'),
         switchMap(res => {
@@ -220,34 +331,18 @@ export class ConfigurationComponent implements OnInit {
             // When creating a planet, add admin
             this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
             // then add user with same credentials
-            this.couchService.put('_users/org.couchdb.user:' + credentials.name, userDetail),
+            this.createUser(credentials.name, userDetail),
             // then add a shelf for that user
-            this.couchService.put('shelf/org.couchdb.user:' + credentials.name, { }),
+            this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
             // then add configuration
             this.couchService.post('configurations', configuration),
             // then post configuration to parent planet's registration requests
-            this.couchService.post('communityregistrationrequests', configuration, { domain: configuration.parentDomain })
-              .pipe(mergeMap(data => {
-                // then add user to parent planet with id of configuration and isUserAdmin set to false
-                userDetail['requestId'] =  data.id;
-                userDetail['isUserAdmin'] =  false;
-                return this.couchService.put('_users/org.couchdb.user:' + adminName,
-                  { ...userDetail, name: adminName }, { domain: configuration.parentDomain });
-              }), mergeMap(data => {
-                return this.couchService.put('shelf/org.couchdb.user:' + adminName, { }, { domain: configuration.parentDomain });
-              }), mergeMap(data => {
-                const requestNotification = {
-                  'user': 'SYSTEM',
-                  'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
-                  'link': '/requests',
-                  'type': 'request',
-                  'priority': 1,
-                  'status': 'unread',
-                  'time': Date.now()
-                };
-                // Send notification to parent
-                return this.couchService.post('notifications', requestNotification, { domain: configuration.parentDomain });
-              })
+            this.couchService.post('communityregistrationrequests', configuration, {
+              domain: configuration.parentDomain
+            })
+            .pipe(this.addUserToParentPlanet(userDetail, adminName, configuration),
+              this.addUserToShelf(adminName, configuration),
+              this.createRequestNotification(configuration)
             )
           ]);
         })
@@ -255,7 +350,49 @@ export class ConfigurationComponent implements OnInit {
         this.planetMessageService.showMessage('Admin created: ' + data[1].id.replace('org.couchdb.user:', ''));
         this.router.navigate([ '/login' ]);
       }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+  }
+
+  updateConfiguration() {
+     if (this.configurationFormGroup.valid && this.contactFormGroup.valid) {
+      const configuration = Object.assign(
+        this.configuration,
+        this.configurationFormGroup.value,
+        this.contactFormGroup.value
+      );
+      this.couchService.put(
+        'configurations/' + this.configuration._id,
+        configuration
+      ).pipe(switchMap(() => {
+        return this.couchService.post(
+          'communityregistrationrequests/_find',
+          findDocuments({ 'code': configuration.code }),
+          { domain: configuration.parentDomain }
+        );
+      }), switchMap((res) => {
+        const { _id, _rev, registrationRequest } = res.docs[0];
+        return this.couchService.post(
+          'communityregistrationrequests',
+          { ...configuration, _id, _rev, registrationRequest },
+          { domain: configuration.parentDomain }
+        );
+      })
+      ).subscribe(() => {
+        // Navigate back to the manager dashboard
+        this.router.navigate([ '/manager' ]);
+        this.planetMessageService.showMessage('Configuration Updated Successfully');
+      }, err => {
+        // Connect to an error display component to show user that an error has occured
+        console.log(err);
+      });
     }
+  }
+
+  createUser(name, details, opts?) {
+    return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
+  }
+
+  createPin() {
+    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
 }

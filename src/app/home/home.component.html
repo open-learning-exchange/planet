@@ -10,10 +10,7 @@
     <mat-icon matBadge={{notifications.length}} matBadgeColor="warn" MatBadgeSize="small">notifications</mat-icon>
   </button>
   <button mat-icon-button *ngIf="notifications.length === 0" routerLink="/notifications" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
-  <button mat-icon-button [matMenuTriggerFor]="languageMenu">
-    <img *ngIf="currentFlag" src="assets/flags/{{currentFlag}}.png" alt="{{currentLang}}"
-      title="{{currentLang}}" />
-  </button>
+  <planet-language></planet-language>
   <button mat-icon-button [matMenuTriggerFor]="userProfile">
     <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
     <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
@@ -24,13 +21,6 @@
     <button mat-menu-item i18n planetChangePassword>Change Password</button>
   </mat-menu>
 </mat-toolbar>
-<!--Languages dropdown menu-->
-<mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
-  <button mat-menu-item *ngFor="let language of languages" (click)="switchLanguage(language.servedUrl)">
-    <img src="assets/flags/{{language.shortCode}}.png" title="{{language.name}}" alt="{{language.name}}"/>
-    <span>{{language.shortCode}}</span>
-  </button>
-</mat-menu>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
   <a [routerLink]="notification.link || '/notifications'"

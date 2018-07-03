@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable()
 export class MeetupService {

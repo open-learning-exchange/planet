@@ -17,5 +17,15 @@
         "files": ["/assets/**"]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "dataGroup1",
+      "urls": ["!resources"],
+      "cacheConfig": {
+        "maxSize": 50,
+        "maxAge": "3d12h"
+      }
+    }
   ]
 }

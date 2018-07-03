@@ -24,7 +24,7 @@
     </mat-form-field>
     <div>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Type" formControlName="type">
+        <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
           <mat-option value="input" i18n>Input</mat-option>
           <mat-option value="select" i18n>Multiple Choice</mat-option>
         </mat-select>

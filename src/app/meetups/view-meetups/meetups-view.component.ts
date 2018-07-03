@@ -25,6 +25,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   members = [];
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
+  currentUserName = this.userService.get().name;
 
   constructor(
     public dialog: MatDialog,
