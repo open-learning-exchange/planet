@@ -76,8 +76,7 @@ export class ResourcesRatingComponent implements OnChanges {
   }
 
   onStarClick(form = this.rateForm) {
-    //check whether the gender has been set or not
-    console.log('Gender' , this.userService.get().gender);
+    // check whether the gender has been set or not
     if (this.userService.get().gender === undefined) {
       this.planetMessage.showAlert('Please update your profile.');
       return false;
