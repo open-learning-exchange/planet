@@ -11,10 +11,15 @@
   </button>
   <button mat-icon-button *ngIf="notifications.length === 0" routerLink="/notifications" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
   <planet-language></planet-language>
-  <button mat-icon-button routerLink="/users/profile/{{user.name}}">
+  <button mat-icon-button [matMenuTriggerFor]="userProfile">
     <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
     <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
   </button>
+  <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
+    <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
+    <button mat-menu-item i18n planetChangePassword>Change Password</button>
+  </mat-menu>
 </mat-toolbar>
 <!--Notification dropdown menu-->
 <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
