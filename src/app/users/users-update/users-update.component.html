@@ -49,8 +49,8 @@
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Gender" formControlName="gender" required>
-            <mat-option value="male">Male</mat-option>
-            <mat-option value="female">Female</mat-option>
+            <mat-option value="male"><mat-icon svgIcon="male" class="male-icon primary-text-color"></mat-icon>Male</mat-option>
+            <mat-option value="female"><mat-icon svgIcon="female" class="female-icon accent-text-color"></mat-icon>Female</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
         </mat-form-field>
