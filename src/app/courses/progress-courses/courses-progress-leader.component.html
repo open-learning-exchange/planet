@@ -32,7 +32,7 @@
           {{submission.answers[i].mistakes}}
         </div>
         <div>{{submission.totalMistakes}}</div>
-        <div>{{submission.user}}</div>
+        <div class="wrap-content" [matTooltip]="submission.user?.length > 6 ? submission.user : null "><p>{{submission.user}}</p></div>
       </div>
     </div>
   </div>
