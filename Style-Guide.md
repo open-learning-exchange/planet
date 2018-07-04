@@ -44,7 +44,7 @@ Please don't use the following name for variable since it is used by our `entryp
 | planet-db-port 	| used in the docker script 	|
 
 ### il8n
-Planet uses the `il8n` translation module to translate our content and make it accessible. This module can be included in an html tag with the keyword il8n. For example, `<p il8n> Text to be translated </p>` However, if there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `il8n` attribute should not be used as it will raise errors.
+Planet uses the `il8n` translation module to translate our content and make it accessible. This module can be included in an html tag with the keyword il8n. For example, `<p il8n> Text to be translated </p>`. However, if there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `il8n` attribute should not be used as it will raise errors during compilation.
 
 ### App Directory Structure
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
