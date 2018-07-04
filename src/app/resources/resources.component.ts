@@ -38,6 +38,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
   ` ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+  localList = [];
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -79,12 +80,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    if(this.parent) {
+      this.couchService.listAllDocs(this.dbName).subscribe((results: any) => {
+        this.localList = results;
+      });
+    }
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((resources) => {
        // Sort in descending createdDate order, so the new resource can be shown on the top
       resources.sort((a, b) => b.createdDate - a.createdDate);
       this.resources.data = resources;
-      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
+      this.setupList(this.resources.data, this.userService.shelf.resourceIds, this.localList);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions(
@@ -100,7 +106,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
-        this.setupList(this.resources.data, shelf.resourceIds);
+        this.setupList(this.resources.data, shelf.resourceIds, this.localList);
       });
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
@@ -108,12 +114,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  setupList(resourcesRes, myLibrarys) {
+  setupList(resourcesRes, myLibrarys, localList) {
     resourcesRes.forEach((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
       resource.libraryInfo = myLibraryIndex > -1;
+      const localListIndex = localList.findIndex(resourceId => {
+        return resource._id === resourceId;
+      });
+      resource.hasLocalCopy = localListIndex > -1;
     });
   }
 
