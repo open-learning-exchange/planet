@@ -54,4 +54,14 @@
     z-index: 10;
   }
 
+  .wrap-content {
+    min-width: 0;
+  }
+
+  .wrap-content p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
 }
