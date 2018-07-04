@@ -33,14 +33,14 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8082" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8082
-  # Port expose for docker inside vagrant
+  # Port expose for docker inside vagrant (2300:2300 = CouchDB 3100:3100 = App)
   config.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
   config.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
-  
+  # Port expose for dev server (5984:2200 = CouchDB 3000:3000 = App)
   config.vm.network "forwarded_port", guest: 5984, host: 2200, auto_correct: true
   config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
+  # Port expose for unit tests (Karma)
   config.vm.network "forwarded_port", guest: 9876, host: 9876, auto_correct: true
-  config.vm.network "forwarded_port", guest: 49152, host: 49152, auto_correct: true
   config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
