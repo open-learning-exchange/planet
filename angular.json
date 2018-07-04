@@ -118,7 +118,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "ang-bell-app:serve"
+            "devServerTarget": "ang-bell-app:serve:test"
           }
         },
         "lint": {
