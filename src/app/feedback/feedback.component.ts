@@ -5,11 +5,12 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
+import * as constants from './constants';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
@@ -29,6 +30,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
+  typeOptions: any = constants.feedbackType;
+  filter = {
+    'feedbackTypes': ''
+  };
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   user: any = {};
@@ -55,7 +60,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.user = this.userService.get();
     this.getFeedback();
-    this.feedback.filterPredicate = filterSpecificFields([ 'owner' ]);
+    this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
     this.feedback.sort = this.sort;
   }
 
@@ -134,4 +139,25 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
+    // Force filter to update by setting it to a space if empty
+    this.feedback.filter = this.feedback.filter ? this.feedback.filter : ' ';
+  }
+
+  resetSearch() {
+    this.filter.feedbackTypes = '';
+    //this.titleSearch = '';
+  }
+
+  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+  // search text is deleted, but does not run when there are no active filters.
+  dropdownsFill() {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
+      if (val) {
+        return ' ';
+      }
+      return emptySpace;
+    }, '');
+  }
 }
