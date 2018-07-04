@@ -47,6 +47,8 @@ Please don't use the following name for variable since it is used by our `entryp
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
+### il8n
+Planet uses the `il8n` translation module to translate our content and make it accessible. This module can be included with an html tag by the keyword il8n within the html tag. For example, `<p il8n> Text to be translated </p>` However, if there are no strings enclosed by the tage, or if only interpolation strings are enclosed, then the `il8n` attribute should not be used. 
 ## SCSS Style
 ### Naming
 This is a work in progress.  Please keep names descriptive and concise.  Feature or the role of the class should be a prefix separated with a dash from the rest of the name.
