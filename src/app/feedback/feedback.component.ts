@@ -134,4 +134,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  onCellClick(feedbackId) {
+    this.router.navigate([ '/feedback/view/' + feedbackId ]);
+  }
+
 }
