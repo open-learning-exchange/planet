@@ -1,3 +1,7 @@
+<mat-toolbar *ngIf="configurationType === 'update'">
+  <a mat-icon-button i18n routerLink="/manager"><mat-icon>arrow_back</mat-icon></a>
+  <span i18n>Planet Configuration</span>
+</mat-toolbar>
 <mat-horizontal-stepper [linear]="true" #stepper>
   <mat-step *ngIf="configurationType === 'new'" [stepControl]="loginForm" [optional]="configurationType === 'update'">
     <ng-template matStepLabel i18n>Create Admin</ng-template>
