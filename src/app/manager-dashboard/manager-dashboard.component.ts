@@ -61,7 +61,7 @@ export class ManagerDashboardComponent implements OnInit {
         { 'selector': { '_id': 'version' } },
         { domain: this.userService.getConfig().parentDomain }
       ).subscribe(config => {
-        this.versionParent = config.version;
+        this.versionParent = config.docs[0].version;
       });
     }
     this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
