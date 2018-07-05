@@ -28,7 +28,8 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
-  version: any = { local: this.userService.getConfig().version, parent: '' };
+  versionLocal: string = this.userService.getConfig().version;
+  versionParent = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
   pin: string;
@@ -55,9 +56,9 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     } else if (this.userService.getConfig().planetType !== 'center') {
-      this.couchService.allDocs('configurations', { domain: this.userService.getConfig().parentDomain })
+      this.couchService.post('configurations/_find', { 'selector': { '_id': 'version' } }, { domain: this.userService.getConfig().parentDomain })
       .subscribe(config => {
-        this.version.parent = config.filter((c) => c.version).version;
+        this.versionParent = config.version;
       });
     }
     this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);

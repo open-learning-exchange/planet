@@ -30,8 +30,8 @@
   </div>
   <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
     <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-    <p><b i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} Version:</b> {{version.parent}}</p>
-    <p><b i18n>Local Version:</b> {{version.local}}</p>
+    <p><b i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} Version:</b> {{versionParent}}</p>
+    <p><b i18n>Local Version:</b> {{versionLocal}}</p>
     <ng-container [ngSwitch]="requestStatus">
       <ng-container *ngSwitchCase="'accepted'">
         <a routerLink="resources" i18n mat-raised-button>List Resources</a>
