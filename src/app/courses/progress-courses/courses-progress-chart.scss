@@ -5,18 +5,12 @@
   $cell-size: 50px;
   $column-gap: 4px;
 
-  .view-container {
-    overflow: auto;
-  }
-
-  .progress-view {
-    display: grid;
-    grid-template-areas: "total index";
-    grid-template-columns: $cell-size;
-    grid-auto-columns: $cell-size;
-    grid-auto-flow: column;
-    grid-column-gap: $column-gap;
-  }
+  display: grid;
+  grid-template-areas: "total index";
+  grid-template-columns: $cell-size;
+  grid-auto-columns: $cell-size;
+  grid-auto-flow: column;
+  grid-column-gap: $column-gap;
 
   .errors {
     display: grid;
