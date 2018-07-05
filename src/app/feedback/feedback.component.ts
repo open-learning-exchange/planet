@@ -10,7 +10,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
-import * as constants from './constants';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
@@ -30,10 +29,17 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
-  typeOptions: any = constants.feedbackType;
+  typeOptions: any = [ 'Question', 'Bug', 'Suggestion' ];
   filter = {
-    'feedbackTypes': ''
+    'type': ''
   };
+  private _titleSearch = '';
+  get titleSearch(): string { return this._titleSearch; }
+  set titleSearch(value: string) {
+    // When setting the titleSearch, also set the feedback filter
+    this.feedback.filter = value ? value : this.dropdownsFill();
+    this._titleSearch = value;
+  }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   user: any = {};
@@ -61,12 +67,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
-    this.feedback.sort = this.sort;
+    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   ngAfterViewInit() {
     this.feedback.paginator = this.paginator;
-    this.feedback.sortingDataAccessor = (item, property) => item[property];
+    this.feedback.sort = this.sort;
   }
 
   ngOnDestroy() {
@@ -74,7 +80,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  applyFilter(filterValue: string) {
+  searchFilter(filterValue: string) {
     this.feedback.filter = filterValue;
   }
 
@@ -146,8 +152,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetSearch() {
-    this.filter.feedbackTypes = '';
-    //this.titleSearch = '';
+    this.filter.type = '';
+    this.titleSearch = '';
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
@@ -160,4 +166,5 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       return emptySpace;
     }, '');
   }
+
 }
