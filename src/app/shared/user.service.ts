@@ -80,8 +80,9 @@ export class UserService {
       }),
       switchMap(([ configuration, shelf ]: [ any, any ]) => {
         if (configuration.length > 0) {
-          // Assigns this.configuration to first value of first array, this.shelf to second
-          this.configuration = Object.assign(configuration[0], configuration[1]);
+          // Config is split into two docs, one with most properties and one with id 'version' and the version
+          const fullConfig = configuration.find((conf: any) => conf._id !== 'version');
+          this.configuration = Object.assign({}, configuration[0], configuration[1], fullConfig);
           this.shelf = shelf;
         }
         return of(true);
