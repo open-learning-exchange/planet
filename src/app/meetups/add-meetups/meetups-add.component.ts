@@ -29,6 +29,7 @@ export class MeetupsAddComponent implements OnInit {
   id = null;
   days = constants.days;
   meetupFrequency = [];
+  createdBy = this.userService.get().name;
 
   constructor(
     private couchService: CouchService,
@@ -48,6 +49,7 @@ export class MeetupsAddComponent implements OnInit {
         this.pageType = 'Update';
         this.revision = data._rev;
         this.id = data._id;
+        this.createdBy = data.createdBy;
         this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
         data.startDate = new Date(data.startDate);
         data.endDate = new Date(data.endDate);
@@ -76,7 +78,7 @@ export class MeetupsAddComponent implements OnInit {
       ],
       category: '',
       meetupLocation: '',
-      createdBy: this.userService.get().name,
+      createdBy: this.createdBy,
       createdDate: Date.now()
     });
   }
