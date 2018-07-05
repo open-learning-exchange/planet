@@ -82,9 +82,9 @@ export class ExamsAddComponent implements OnInit {
     } else {
       Object.keys(this.examForm.controls).forEach(field => {
         const control = this.examForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-        this.formNotComplete = true;
+        control.markAsTouched({ onlySelf: true });  
       });
+      this.formNotComplete = true;
     }
   }
 
