@@ -17,7 +17,7 @@ export class ConfigurationGuard {
       if (data.length > 1) {
         this.router.navigate([ '/login' ]);
       }
-      return data.length === 0;
+      return data.length < 2;
     }));
   }
 
