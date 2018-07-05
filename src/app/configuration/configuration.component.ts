@@ -24,7 +24,6 @@ const removeProtocol = (str: string) => {
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
-  planetVersion: string = require( '../../../package.json').version;
   nationOrCommunity = 'community';
   message = '';
   loginForm: FormGroup;
@@ -82,8 +81,7 @@ export class ConfigurationComponent implements OnInit {
         Validators.required,
         this.parentUniqueValidator('code')
       ],
-      createdDate: Date.now(),
-      version: this.planetVersion
+      createdDate: Date.now()
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],

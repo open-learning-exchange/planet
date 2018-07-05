@@ -26,8 +26,8 @@ import { debug } from '../debug-operator';
     </div>
     <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <b i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} Version:</b> {{parentConfig?.version}}
-      <b i18n>Local Version:</b> {{userService.get()?.version}}<br />
+      <b i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} Version:</b> {{version.parent}}
+      <p><b i18n>Local Version:</b> {{version.local}}</p>
       <ng-container [ngSwitch]="requestStatus">
         <ng-container *ngSwitchCase="'accepted'">
           <a routerLink="resources" i18n mat-raised-button>List Resources</a>
@@ -51,7 +51,7 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
-  parentConfig: any;
+  version: any = { local: this.userService.getConfig().version, parent: '' };
 
   constructor(
     private userService: UserService,
@@ -73,7 +73,7 @@ export class ManagerDashboardComponent implements OnInit {
     } else if (this.userService.getConfig().planetType !== 'center') {
       this.couchService.allDocs('configurations', { domain: this.userService.getConfig().parentDomain })
       .subscribe(config => {
-        this.parentConfig = config;
+        this.version.parent = config.filter((c) => c.version).version;
       });
     }
   }
