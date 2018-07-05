@@ -7,8 +7,8 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { of, Subject } from 'rxjs';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 
@@ -38,6 +38,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   pageEvent: PageEvent;
+  currentUser = this.userService.get();
 
   constructor(
     private couchService: CouchService,
@@ -167,9 +168,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  attendMeetup(id, participate) {
-    this.meetupService.attendMeetup(id, participate).subscribe((res) => {
+  attendMeetup(meetup) {
+    this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
+      meetup.participate = !res.participate;
       this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
     });
   }

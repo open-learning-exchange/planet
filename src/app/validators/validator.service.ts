@@ -17,7 +17,7 @@ constructor(
   private userService: UserService
 ) {}
 
-  public checkUnique$(db: string, field: string, value: any, opts?: any): Observable<boolean> {
+  public checkUnique$(db: string, field: string, value: any, opts = {}): Observable<boolean> {
     return this.couchService
       .post(`${db}/_find`, findOneDocument(field, value), opts)
       .pipe(map(data => {
@@ -29,8 +29,11 @@ constructor(
     dbName: string,
     fieldName: string,
     ac: AbstractControl,
-    opts: any = {}
+    { exceptions = [], opts = {} } = { exceptions: [], opts: {} }
   ): Observable<ValidationErrors | null> {
+    if (exceptions.findIndex(exception => ac.value === exception) > -1) {
+      return of(null);
+    }
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => this.checkUnique$(dbName, fieldName, ac.value, opts)),

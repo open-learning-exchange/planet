@@ -22,7 +22,7 @@ export class UserService {
   }
   set shelf(shelf: any) {
     this._shelf = shelf;
-    if (shelf === {}) {
+    if (Object.keys(shelf).length > 0) {
       this.shelfChange.next(shelf);
     }
   }
@@ -163,6 +163,14 @@ export class UserService {
     }), map((res: any) => {
       this.sessionRev = res.rev;
       return res;
+    }));
+  }
+
+  updateShelf(ids: string[], shelfName: string) {
+    const newShelf = { ...this.shelf, [shelfName]: ids };
+    return this.couchService.put('shelf/' + this.user._id, newShelf).pipe(map((res) => {
+      this.shelf = { ...newShelf, '_rev': res.rev };
+      return this.shelf;
     }));
   }
 
