@@ -173,4 +173,8 @@ export class UserService {
     }));
   }
 
+  createPin() {
+    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
+  }
+
 }

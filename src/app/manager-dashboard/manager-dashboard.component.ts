@@ -3,7 +3,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -54,6 +54,10 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     }
+    this.getSatellitePin();
+  }
+
+  getSatellitePin() {
     this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
   }
 
@@ -216,6 +220,22 @@ export class ManagerDashboardComponent implements OnInit {
         { domain: this.userService.getConfig().parentDomain });
       })
     ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
+  }
+
+  resetPin() {
+    const userName = 'org.couchdb.user:satellite';
+    this.couchService.get('_users/' + userName)
+    .pipe(switchMap((data) => {
+      const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
+      satelliteProfile.password = this.userService.createPin();
+      return forkJoin([
+        this.couchService.put('_users/' + userName, satelliteProfile),
+        this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password)
+      ]);
+    })).subscribe((res) => {
+      this.getSatellitePin();
+      this.planetMessageService.showMessage('Pin reset successfully');
+    }, (error) => this.planetMessageService.showAlert('Error to reset pin'));
   }
 
 }
