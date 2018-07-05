@@ -26,6 +26,7 @@ export class ExamsAddComponent implements OnInit {
   pageType = 'Add';
   successMessage = 'New exam added';
   steps = [];
+  formNotComplete = false;
 
   constructor(
     private router: Router,
@@ -82,6 +83,7 @@ export class ExamsAddComponent implements OnInit {
       Object.keys(this.examForm.controls).forEach(field => {
         const control = this.examForm.get(field);
         control.markAsTouched({ onlySelf: true });
+        this.formNotComplete = true;
       });
     }
   }
