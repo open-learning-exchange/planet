@@ -56,8 +56,11 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     } else if (this.userService.getConfig().planetType !== 'center') {
-      this.couchService.post('configurations/_find', { 'selector': { '_id': 'version' } }, { domain: this.userService.getConfig().parentDomain })
-      .subscribe(config => {
+      this.couchService.post(
+        'configurations/_find',
+        { 'selector': { '_id': 'version' } },
+        { domain: this.userService.getConfig().parentDomain }
+      ).subscribe(config => {
         this.versionParent = config.version;
       });
     }
