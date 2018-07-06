@@ -40,9 +40,10 @@ export class ExamsAddComponent implements OnInit {
   }
 
   createForm() {
+    const title = this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle;
     this.examForm = this.fb.group({
       name: [
-        '',
+        title,
         Validators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         this.route.snapshot.url[0].path === 'update'
