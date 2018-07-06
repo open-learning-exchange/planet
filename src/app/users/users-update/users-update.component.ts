@@ -5,12 +5,11 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { Observable, of } from 'rxjs';
-import { MatFormField, MatFormFieldControl } from '@angular/material';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
-import { NgxImgModule } from 'ngx-img';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 
@@ -125,11 +124,24 @@ export class UsersUpdateComponent implements OnInit {
 
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
-      userInfo._rev = res.rev;
-      if (this.user.name === this.userService.get().name) {
-        this.userService.set(userInfo);
-      }
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo })
+    .pipe(
+      switchMap(res => {
+        userInfo._rev = res.rev;
+        if (this.user.name === this.userService.get().name) {
+          this.userService.set(userInfo);
+        }
+        if (this.userService.getConfig().adminName === this.user.name + '@' + this.userService.getConfig().code) {
+          const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
+          return this.couchService.put('configurations/' + this.userService.getConfig()._id,
+            { ...this.userService.getConfig(), firstName, lastName, middleName, email, phoneNumber })
+          .pipe(switchMap(() => {
+            return this.userService.setUserConfigAndShelf(userInfo);
+          }));
+        }
+        return of({ ok: true });
+      })
+    ).subscribe(() => {
       this.router.navigate([ this.redirectUrl ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
