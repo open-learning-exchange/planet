@@ -4,7 +4,7 @@
 
   <!--Languages dropdown menu-->
 <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
-  <a mat-menu-item *ngFor="let language of languages" href="/{{language.shortCode}}/">
+  <a mat-menu-item *ngFor="let language of languages" href="{{ getRouterUrl(language) }}">
     {{language.name}}
   </a>
 </mat-menu>

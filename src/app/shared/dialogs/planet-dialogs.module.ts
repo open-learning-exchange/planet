@@ -10,16 +10,17 @@ import { PlanetFormsModule } from '../planet-forms.module';
 import { FeedbackDirective } from '../../feedback/feedback.directive';
 import { DialogsListComponent } from './dialogs-list.component';
 import { DialogsListService } from './dialogs-list.service';
+import { ChangePasswordDirective } from './change-password.directive';
 
 @NgModule({
   imports: [
     CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
   ],
   exports: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective, DialogsListComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective, DialogsListComponent, ChangePasswordDirective
   ],
   declarations: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective, DialogsListComponent
+    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective, DialogsListComponent, ChangePasswordDirective
   ],
   providers: [
     DialogsFormService, DialogsListService

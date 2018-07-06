@@ -17,7 +17,7 @@ prepare_ci(){
   DOCKER_ORG=treehouses
   DOCKER_REPO=planet-tags
   DOCKER_REPO_TEST=planet-test
-  VERSION=$(cat package.json | grep version | awk '{print$2}' | awk '{print substr($0, 2, length($0) - 3)}')
+  VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
   BRANCH=$TRAVIS_BRANCH
   COMMIT=${TRAVIS_COMMIT::8}
   REMOTE_MASTER_HASH=$(git ls-remote https://github.com/open-learning-exchange/planet.git | grep refs/heads/master | cut -f 1)
