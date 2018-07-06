@@ -3,6 +3,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "detail view";
+    height: calc(100vh - 382px);
   }
 
   .course-detail {
@@ -16,10 +17,6 @@
 
   .course-detail, .course-view {
     overflow: auto;
-  }
-
-  .view-container {
-    overflow-y: auto;
   }
 
 }
