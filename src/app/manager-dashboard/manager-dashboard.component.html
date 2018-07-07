@@ -22,6 +22,7 @@
       Get Resources ({{pushedItems?.resources?.length}})
     </button>
     <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
+    <a routerLink="/upgrade" i18n mat-raised-button>Upgrade</a>
   </div>
   <div class="view-container" *ngIf="planetType !== 'community'">
     <h3 i18n>Send On Accept</h3><br />

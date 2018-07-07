@@ -15,6 +15,7 @@ import { NotificationsComponent } from '../notifications/notifications.component
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
 import { PlanetLanguageModule } from '../shared/planet-language.module';
+import { UpgradeComponent } from '../upgrade/upgrade.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { PlanetLanguageModule } from '../shared/planet-language.module';
     CommunityComponent,
     DashboardTileComponent,
     NotificationsComponent,
-    PulsateIconDirective
+    PulsateIconDirective,
+    UpgradeComponent
   ]
 })
 export class HomeModule {}

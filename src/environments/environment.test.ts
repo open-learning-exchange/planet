@@ -3,5 +3,6 @@ export const environment = {
   test: true,
   couchAddress: 'http://127.0.0.1:5984/',
   centerAddress: 'earth.ole.org:2200',
-  centerProtocol: 'https'
+  centerProtocol: 'https',
+  upgradeAddress: window.location.protocol + '//' + window.location.hostname + '/upgrade'
 };

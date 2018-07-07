@@ -4,5 +4,6 @@ export const environment = {
   // Change this to Docker address
   couchAddress: 'planet-db-host:planet-db-port/',
   centerAddress: 'planet-center-address',
-  centerProtocol: 'https'
+  centerProtocol: 'https',
+  upgradeAddress: window.location.protocol + '//' + window.location.hostname + '/upgrade'
 };
