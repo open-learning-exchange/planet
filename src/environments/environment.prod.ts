@@ -5,5 +5,5 @@ export const environment = {
   couchAddress: 'planet-db-host:planet-db-port/',
   centerAddress: 'planet-center-address',
   centerProtocol: 'https',
-  upgradeAddress: window.location.protocol + '//' + window.location.hostname + '/upgrade'
+  upgradeAddress: window.location.protocol + '//' + window.location.hostname + ':3100/upgrade'
 };
