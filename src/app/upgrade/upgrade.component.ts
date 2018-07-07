@@ -29,7 +29,7 @@ export class UpgradeComponent {
   }
 
   upgrade() {
-    this.http.get(environment.upgradeAddress).subscribe(result => {
+    this.http.get(environment.upgradeAddress, {responseType: 'text'}).subscribe(result => {
       JSON.stringify(result).split('\n').forEach(line => {
         this.addLine(line);
       });
