@@ -26,6 +26,7 @@ export class ExamsAddComponent implements OnInit {
   pageType = 'Add';
   successMessage = 'New exam added';
   steps = [];
+  showFormError = false;
 
   constructor(
     private router: Router,
@@ -83,6 +84,7 @@ export class ExamsAddComponent implements OnInit {
         const control = this.examForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+      this.showFormError = true;
     }
   }
 
