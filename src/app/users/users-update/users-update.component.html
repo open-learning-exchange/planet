@@ -51,10 +51,14 @@
           <mat-radio-group i18n-placeholder formControlName="gender" required>
             <label>Gender</label>
             <mat-radio-button class="planet-radio-button" value="male">
-              <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
+              <div class="radio-icon-label">
+                <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
+              </div>
             </mat-radio-button>
             <mat-radio-button class="planet-radio-button" value="female">
-              <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span i18n>Female</span>
+              <div class="radio-icon-label">
+                <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span i18n>Female</span>
+              </div>
             </mat-radio-button>
             <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
           </mat-radio-group>
