@@ -48,8 +48,8 @@
           <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <div>
-          <mat-radio-group i18n-placeholder formControlName="gender" required>
-            <label>Gender</label>
+          <mat-radio-group formControlName="gender" required>
+            <label i18n>Gender</label>
             <mat-radio-button class="planet-radio-button" value="male">
               <div class="radio-icon-label">
                 <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
