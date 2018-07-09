@@ -16,6 +16,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 })
 export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
+  searchValue = '';
   communities = new MatTableDataSource();
   nations = [];
   filter = {
@@ -43,7 +44,8 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.getCommunityList(this.route.snapshot.paramMap.get('search'));
+    this.searchValue = this.route.snapshot.paramMap.get('search');
+    this.getCommunityList(this.searchValue);
     this.communities.sortingDataAccessor = (item, property) => {
       switch (typeof item[property]) {
         case 'number':
