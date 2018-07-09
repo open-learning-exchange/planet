@@ -28,6 +28,8 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
+  versionLocal: string = this.userService.getConfig().version;
+  versionParent = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
   pin: string;
@@ -53,6 +55,14 @@ export class ManagerDashboardComponent implements OnInit {
       // A non-admin user cannot receive all user docs
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
+    } else if (this.userService.getConfig().planetType !== 'center') {
+      this.couchService.post(
+        'configurations/_find',
+        { 'selector': { '_id': 'version' } },
+        { domain: this.userService.getConfig().parentDomain }
+      ).subscribe(config => {
+        this.versionParent = config.docs[0].version;
+      });
     }
     this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
   }
