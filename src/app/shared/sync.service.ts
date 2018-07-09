@@ -4,7 +4,7 @@ import { UserService } from '../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { throwError, forkJoin, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 
@@ -49,8 +49,9 @@ export class SyncService {
 
   private openConfirmation() {
     const title = 'Admin Confirmation';
+    let passwordInvalid = null;
     const formGroup = {
-      password: [ '', Validators.required ]
+      password: [ '', [ Validators.required, () => passwordInvalid ] ]
     };
     return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup)
@@ -61,6 +62,10 @@ export class SyncService {
           return this.verifyPassword(response.password);
         }
         return throwError('Invalid password');
+      }),
+      catchError((err) => {
+        passwordInvalid = { 'invalidPassword': true };
+        return throwError(err);
       })
     );
   }
