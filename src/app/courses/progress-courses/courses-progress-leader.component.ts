@@ -36,7 +36,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.setSubmissions();
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
-      this.yAxisLength = submissions[0].parent.questions.length;
+      this.yAxisLength = this.selectedStep.exam.questions.length;
       this.chartData = submissions.map(
         submission => {
           const answers = submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
@@ -60,6 +60,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   setSubmissions() {
+    this.chartData = [];
     if (this.selectedStep.exam) {
       this.submissionsService.updateSubmissions({ parentId: this.selectedStep.exam._id + '@' + this.course._id });
     }
