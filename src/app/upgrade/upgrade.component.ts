@@ -31,7 +31,7 @@ export class UpgradeComponent {
   upgrade() {
     this.http.get(environment.upgradeAddress, { responseType: 'text' }).subscribe(result => {
       result.split('\n').forEach(line => {
-        this.addLine(line);
+        this.addLine(line, false, true);
       });
       this.message = 'Success';
       this.error = false;
