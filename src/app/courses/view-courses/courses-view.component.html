@@ -10,32 +10,41 @@
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="course-detail bg-light-grey">
-      <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
-      <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
-      <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
-      <p i18n><b>Method:</b> {{courseDetail.method}}</p>
-      <p i18n><b>Description:</b> {{courseDetail.description}}</p>
+    <div class="course-progress">
+      <span i18n>Your progress:</span>
+      <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>
-    <div class="course-view">
-      <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
-        <mat-expansion-panel hideToggle="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{step.stepTitle || 'Step ' + (stepNum + 1)}}
-            </mat-panel-title>
-            <mat-panel-description>
-              <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
-              <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          {{step.description}}
-          <mat-action-row>
-            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [href]="resourceUrl(step)" target="_blank" i18n>View Resource</a>
-            <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
-          </mat-action-row>
-        </mat-expansion-panel>
-      </ng-container>
+    <div class="course-container">
+      <div class="course-detail bg-light-grey">
+        <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
+        <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
+        <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
+        <p i18n><b>Method:</b> {{courseDetail.method}}</p>
+        <p i18n><b>Description:</b> {{courseDetail.description}}</p>
+      </div>
+      <div class="course-view">
+        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
+          <mat-expansion-panel hideToggle="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{step.stepTitle || 'Step ' + (stepNum + 1)}}
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
+                <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            {{step.description}}
+            <mat-action-row>
+              <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
+              <mat-menu #resourceList="matMenu">
+                <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
+              </mat-menu>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>

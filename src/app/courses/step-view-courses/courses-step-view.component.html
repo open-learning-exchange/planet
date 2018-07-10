@@ -12,8 +12,7 @@
       color="accent"
       class="margin-lr-10"
       *ngIf="stepDetail?.exam?.questions.length && showExamButton"
-      (click)="goToExam()"
-      i18n>
+      (click)="goToExam()">
       {{examStart === 1 ? "Take Exam" : "Continue Exam"}}
     </a>
     <a
@@ -40,7 +39,7 @@
   <div class="view-container view-full-height">
     <div class="description">{{stepDetail.description}}</div>
     <planet-resources-viewer
-      *ngIf="resource"
+      *ngIf="resource?._attachments"
       [resourceId]="resource._id"
       (resourceUrl)="setResourceUrl($event)">
     </planet-resources-viewer>

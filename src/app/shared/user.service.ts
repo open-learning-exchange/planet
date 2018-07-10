@@ -22,7 +22,7 @@ export class UserService {
   }
   set shelf(shelf: any) {
     this._shelf = shelf;
-    if (shelf === {}) {
+    if (Object.keys(shelf).length > 0) {
       this.shelfChange.next(shelf);
     }
   }
@@ -78,10 +78,12 @@ export class UserService {
         }
         return of([ [], {} ]);
       }),
-      switchMap((configAndShelf: [ [any], any ]) => {
-        if (configAndShelf.length > 0) {
-          // Assigns this.configuration to first value of first array, this.shelf to second
-          [ [ this.configuration ], this.shelf ] = configAndShelf;
+      switchMap(([ configuration, shelf ]: [ any, any ]) => {
+        if (configuration.length > 0) {
+          // Config is split into two docs, one with most properties and one with id 'version' and the version
+          const fullConfig = configuration.find((conf: any) => conf._id !== 'version');
+          this.configuration = Object.assign({}, configuration[0], configuration[1], fullConfig);
+          this.shelf = shelf;
         }
         return of(true);
       }));
@@ -163,6 +165,18 @@ export class UserService {
       this.sessionRev = res.rev;
       return res;
     }));
+  }
+
+  updateShelf(ids: string[], shelfName: string) {
+    const newShelf = { ...this.shelf, [shelfName]: ids };
+    return this.couchService.put('shelf/' + this.user._id, newShelf).pipe(map((res) => {
+      this.shelf = { ...newShelf, '_rev': res.rev };
+      return this.shelf;
+    }));
+  }
+
+  createPin() {
+    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
 }

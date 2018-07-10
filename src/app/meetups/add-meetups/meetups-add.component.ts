@@ -12,6 +12,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
+import { switchMap } from 'rxjs/operators';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -47,6 +49,8 @@ export class MeetupsAddComponent implements OnInit {
         this.revision = data._rev;
         this.id = data._id;
         this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
+        data.startDate = new Date(data.startDate);
+        data.endDate = new Date(data.endDate);
         this.meetupForm.patchValue(data);
       }, (error) => {
         console.log(error);
@@ -58,20 +62,8 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', Validators.required ],
       description: [ '', Validators.required ],
-      startDate: [ '',
-      Validators.compose([
-        CustomValidators.dateValidator,
-        CustomValidators.notDateInPast
-        ])
-      ],
-      endDate: [
-        '',
-        Validators.compose([
-          // we are using a higher order function so we  need to call the validator function
-          CustomValidators.endDateValidator(),
-          CustomValidators.dateValidator
-        ])
-      ],
+      startDate: [ '', CustomValidators.notDateInPast ],
+      endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: '',
       day: this.fb.array([]),
       startTime: [ '', CustomValidators.timeValidator ],
@@ -104,10 +96,23 @@ export class MeetupsAddComponent implements OnInit {
     }
   }
 
-  updateMeetup(meetupeInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, { ...meetupeInfo, '_rev': this.revision }).subscribe(() => {
-      this.router.navigate([ '/meetups' ]);
-      this.planetMessageService.showMessage('Meetup Updated Successfully');
+  updateMeetup(meetupInfo) {
+    this.couchService.put(this.dbName + '/' + this.id, {
+      ...meetupInfo,
+      '_rev': this.revision,
+      'startDate': Date.parse(meetupInfo.startDate),
+      'endDate': Date.parse(meetupInfo.endDate)
+     }).pipe(switchMap(() => {
+        return this.couchService.post('shelf/_find', findDocuments({
+          'meetupIds': { '$in': [ this.id ] }
+        }, [ '_id' ], 0));
+      }),
+      switchMap(data => {
+        return this.couchService.post('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
+      })
+    ).subscribe(() => {
+        this.router.navigate([ '/meetups' ]);
+        this.planetMessageService.showMessage('Meetup Updated Successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -115,7 +120,11 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   addMeetup(meetupInfo) {
-    this.couchService.post(this.dbName, { ...meetupInfo }).subscribe(() => {
+    this.couchService.post(this.dbName, {
+      ...meetupInfo,
+      'startDate': Date.parse(meetupInfo.startDate),
+      'endDate': Date.parse(meetupInfo.endDate),
+    }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
       this.planetMessageService.showMessage('Meetup created');
     }, (err) => console.log(err));
@@ -153,6 +162,19 @@ export class MeetupsAddComponent implements OnInit {
         this.meetupForm.setControl('day', this.fb.array(this.meetupFrequency));
         break;
     }
+  }
+
+  meetupChangeNotifications(users, meetupInfo, meetupId) {
+    return { docs: users.map((user) => ({
+      'user': user._id,
+      'message': meetupInfo.title + ' has been updated.',
+      'link': '/meetups/view/' + meetupId,
+      'item': meetupId,
+      'type': 'meetup',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    })) };
   }
 
 }

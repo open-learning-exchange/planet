@@ -7,17 +7,23 @@ import { Subject } from 'rxjs';
 
 @Component({
   template: `
-    <p i18n>Your Notifications</p>
+  <div class="space-container">
+    <mat-toolbar>
+      <mat-toolbar-row class="primary-color font-size-1">
+        <span i18n>Your Notifications</span>
+      </mat-toolbar-row>
+    </mat-toolbar>
     <mat-list role="list" *ngFor="let notification of notifications">
       <mat-list-item (click)="readNotification(notification)">
       <mat-divider></mat-divider>
         <p [ngClass]="{'primary-text-color':notification.status==='unread'}">
-          <a [routerLink]="notification.link || '/notifications'">
+          <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'">
             {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
           </a>
         </p>
       </mat-list-item>
     </mat-list>
+  </div>
   `
 })
 export class NotificationsComponent implements OnInit {

@@ -7,7 +7,8 @@ import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 
 @Component({
-  templateUrl: './exams-view.component.html'
+  templateUrl: './exams-view.component.html',
+  styleUrls: [ './exams-view.scss' ]
 })
 
 export class ExamsViewComponent implements OnInit, OnDestroy {
@@ -17,7 +18,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer: string | number = '';
+  answer: any = undefined;
+  incorrectAnswer = false;
   mode = 'take';
   grade;
 
@@ -46,7 +48,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.mode === 'grade') {
         this.setQuestion(submission.parent.questions);
         this.answer = submission.answers[this.questionNum - 1];
-        this.grade = submission.grades[this.questionNum - 1 ];
+        this.grade = this.answer.grade;
       }
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -56,6 +58,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
+        this.incorrectAnswer = false;
+        this.grade = 0;
       } else if (submissionId) {
         this.mode = 'grade';
         this.grade = undefined;
@@ -71,24 +75,34 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
+    let correctAnswer;
     let obs: any;
     switch (this.mode) {
       case 'take':
-        obs = this.submissionsService.submitAnswer(this.answer, this.questionNum - 1, close);
+        correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : correctAnswer;
+        obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close);
+        this.answer = undefined;
         break;
       case 'grade':
         obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
         break;
     }
-    this.answer = '';
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
-      if (close) {
-        this.goBack();
+      if (correctAnswer === false) {
+        this.incorrectAnswer = true;
       } else {
-        this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+        this.routeToNext(close);
       }
     });
+  }
+
+  routeToNext (close) {
+    if (close) {
+      this.goBack();
+    } else {
+      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+    }
   }
 
   goBack() {

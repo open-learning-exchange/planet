@@ -9,6 +9,7 @@ import { UsersUpdateComponent } from './users-update/users-update.component';
 import { UsersRouterModule } from './users-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
+import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { MaterialModule } from '../shared/material.module';
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
+    PlanetDialogsModule,
     MaterialModule
   ],
   declarations: [

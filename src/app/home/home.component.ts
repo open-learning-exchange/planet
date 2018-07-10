@@ -26,9 +26,6 @@ import { debug } from '../debug-operator';
   ]
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
-  languages = [];
-  currentFlag = 'en';
-  currentLang = 'English';
   sidenavState = 'closed';
   notifications = [];
   @ViewChild('content') private mainContent;
@@ -62,15 +59,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.getNotification();
     this.onUserUpdate();
-    this.languages = (<any>languages).map(language => {
-      if (language.servedUrl === document.baseURI) {
-        this.currentFlag = language.shortCode;
-        this.currentLang = language.name;
-      }
-      return language;
-    }).filter(lang  => {
-      return lang['active'] !== 'N';
-    });
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
     });
@@ -150,7 +138,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.post('notifications/_find', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 }
+        'time': { '$gt': 0 },
+        'status': 'unread'
       },
       0,
       [ { 'time': 'desc' } ]))

@@ -1,18 +1,22 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatDialog, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 
 @Component({
   templateUrl: './community.component.html'
 })
 export class CommunityComponent implements OnInit, AfterViewInit {
   message = '';
+  searchValue = '';
   communities = new MatTableDataSource();
   nations = [];
   filter = {
@@ -27,17 +31,21 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ];
   editDialog: any;
   viewNationDetailDialog: any;
+  dialogRef: MatDialogRef<DialogsListComponent>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog
+    private dialogsListService: DialogsListService,
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.getCommunityList();
+    this.searchValue = this.route.snapshot.paramMap.get('search');
+    this.getCommunityList(this.searchValue);
     this.communities.sortingDataAccessor = (item, property) => {
       switch (typeof item[property]) {
         case 'number':
@@ -75,12 +83,12 @@ export class CommunityComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  getCommunityList() {
-    this.couchService.post('communityregistrationrequests/_find',
+  getCommunityList(search = '') {
+    this.couchService.findAll('communityregistrationrequests',
       findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
       .subscribe((data) => {
-        this.communities.data = data.docs;
-        this.requestListFilter('');
+        this.communities.data = data;
+        this.requestListFilter(search);
       }, (error) => this.message = 'There was a problem getting Communities');
   }
 
@@ -203,6 +211,23 @@ export class CommunityComponent implements OnInit, AfterViewInit {
         allData: planet,
         title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
       }
+    });
+  }
+
+  getChildPlanet(url: string) {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests',
+    { 'registrationRequest': 'accepted' }, { domain: url })
+    .subscribe((planets) => {
+      const data = {
+        disableSelection: true,
+        filterPredicate: filterSpecificFields([ 'name', 'code' ]),
+        ...planets };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
     });
   }
 

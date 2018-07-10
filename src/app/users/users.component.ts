@@ -61,12 +61,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.planetType = this.userService.getConfig().planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    if (this.isUserAdmin || this.userService.get().roles.length) {
-      this.initializeData();
-    } else {
-      // Inactive users cannot receive all user docs
-      this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-    }
+    this.initializeData();
   }
 
   changeFilter(type) {
@@ -113,19 +108,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.post(this.dbName + '/_find', { 'selector': {} });
+    return this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 3 });
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
-      users = users.docs.filter((user: any) => {
-        // Removes current user from list.  Users should not be able to change their own roles,
+      users = users.filter((user: any) => {
+        // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
-        if (currentLoginUser !== user.name) {
-          return user;
-        }
+        return currentLoginUser !== user.name && user.name !== 'satellite';
       }).map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
         if (user._attachments) {
@@ -150,7 +143,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         changeType: 'delete',
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? '' : 'Planet associated with it will be disconnected.'
+        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
       }
     });
     // Reset the message when the dialog closes

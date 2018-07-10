@@ -3,10 +3,17 @@
   <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Feedback List</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select placeholder="Feedback Type" [value]="filter.type || 'All'" (selectionChange)="onFilterChange($event.value, 'type')">
+      <mat-option i18n value="All">All</mat-option>
+      <mat-option *ngFor="let option of typeOptions" value={{option}}>{{option}}</mat-option>
+    </mat-select>
   </mat-form-field>
+  <mat-icon class="input-icon">search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput i18n-placeholder placeholder="Type text to search..." [(ngModel)]="titleSearch">
+  </mat-form-field>
+  <button mat-button i18n (click)="resetSearch()"><span>Reset</span></button>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar>
@@ -69,12 +76,12 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <button class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+        <button mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #resourceMenu="matMenu">
           <button mat-menu-item [routerLink]="['view',element._id]">
-            <mat-icon></mat-icon>
+            <mat-icon>visibility</mat-icon>
             <span i18n>View</span>
           </button>
           <button mat-menu-item (click)="deleteClick(element)">

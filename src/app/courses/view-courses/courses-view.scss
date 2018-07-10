@@ -1,0 +1,22 @@
+:host {
+  .course-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "detail view";
+    height: calc(100vh - 382px);
+  }
+
+  .course-detail {
+    grid-area: detail;
+    padding: 1rem;
+  }
+
+  .course-view {
+    grid-area: view;
+  }
+
+  .course-detail, .course-view {
+    overflow: auto;
+  }
+
+}

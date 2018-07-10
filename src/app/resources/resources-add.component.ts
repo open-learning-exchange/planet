@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
@@ -12,6 +11,7 @@ import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 import * as JSZip from 'jszip/dist/jszip.min';
 import { Observable, of, forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
@@ -33,6 +33,8 @@ export class ResourcesAddComponent implements OnInit {
   userDetail: any = {};
   pageType = 'Add new';
   disableDownload = true;
+  isSubmitted = false;
+  resourceFilename = '';
 
   constructor(
     private router: Router,
@@ -57,6 +59,7 @@ export class ResourcesAddComponent implements OnInit {
           this.existingResource = data;
           // If the resource does not have an attachment, disable file downloadable toggle
           this.disableDownload = !this.existingResource._attachments;
+          this.resourceFilename = this.existingResource._attachments ? Object.keys(this.existingResource._attachments)[0] : '';
           this.resourceForm.patchValue(data);
         }, (error) => {
           console.log(error);
@@ -85,12 +88,15 @@ export class ResourcesAddComponent implements OnInit {
       openWith: '',
       resourceFor: [],
       medium: '',
-      articleDate: Date.now(),
       resourceType: '',
       addedBy: '',
       openUrl: [],
       openWhichFile: '',
-      isDownloadable: ''
+      isDownloadable: '',
+      sourcePlanet: this.userService.getConfig().code,
+      resideOn: this.userService.getConfig().code,
+      createdDate: Date.now(),
+      updatedDate: Date.now()
     });
   }
 
@@ -101,45 +107,37 @@ export class ResourcesAddComponent implements OnInit {
     return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
   }
 
-  // Creates an observer which reads one file then outputs its data
-  private fileReaderObs(file, mediaType) {
-    const reader = new FileReader();
-    const obs = Observable.create((observer) => {
-      reader.onload = () => {
-        // FileReader result has file type at start of string, need to remove for CouchDB
-        const fileData = reader.result.split(',')[1],
-          attachments = {};
-        attachments[file.name] = {
-          content_type: file.type,
-          data: fileData
-        };
-        const resource = {
-          filename: file.name,
-          _attachments: attachments,
-          mediaType: mediaType
-        };
-        observer.next(resource);
-        observer.complete();
-      };
-    });
-    reader.readAsDataURL(file);
-    return obs;
+  private singleAttachment(file, mediaType) {
+    const resource = {
+      filename: file.name,
+      mediaType: mediaType,
+      _attachments: {}
+    };
+    return of({ resource, file });
   }
 
   onSubmit() {
     if (this.resourceForm.valid) {
+      this.isSubmitted = true;
       const fileObs: Observable<any> = this.createFileObs();
-      fileObs.pipe(debug('Preparing file for upload')).subscribe((resource) => {
+      fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
         const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-        if (this.route.snapshot.url[0].path === 'update') {
-          this.updateResource(newResource);
-        } else {
-          this.addResource(newResource);
-        }
+        const obs = this.pageType === 'Update' ? this.updateResource(newResource) : this.addResource(newResource);
+        const message = this.pageType === 'Update' ? 'Resource Updated Successfully' : 'New Resource Created';
+        obs.pipe(switchMap((res) => {
+          if (file) {
+            const opts = { headers: { 'Content-Type': file.type } };
+            return this.couchService.putAttachment(this.dbName + '/' + res.id + '/' + file.name + '?rev=' + res.rev, file, opts);
+          }
+          return of({});
+        })).subscribe(() => {
+          this.router.navigate([ '/resources' ]);
+          this.planetMessageService.showMessage(message);
+        }, (err) => this.planetMessageService.showAlert('There was an error with this resource'));
       });
     } else {
       Object.keys(this.resourceForm.controls).forEach(field => {
@@ -155,33 +153,21 @@ export class ResourcesAddComponent implements OnInit {
     switch (mediaType) {
       case undefined:
         // Creates an observable that immediately returns an empty object
-        return of({});
+        return of({ resource: {} });
       case 'zip':
         return this.zipObs(this.file);
       default:
-        return this.fileReaderObs(this.file, mediaType);
+        return this.singleAttachment(this.file, mediaType);
     }
   }
 
   addResource(resourceInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...resourceInfo }).subscribe(() => {
-      this.router.navigate([ '/resources' ]);
-      this.planetMessageService.showMessage('New Resource Created');
-    }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    });
+    return this.couchService.post(this.dbName, { ...resourceInfo });
   }
 
   updateResource(resourceInfo) {
-    this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo }).subscribe(() => {
-      this.router.navigate([ '/resources' ]);
-      this.planetMessageService.showMessage('Resource Updated Successfully');
-    }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    });
+    return this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo, updatedDate: Date.now() });
   }
 
   deleteAttachmentToggle(event) {
@@ -234,7 +220,7 @@ export class ResourcesAddComponent implements OnInit {
             return newFilesObj;
           }, {});
           // Leave filename blank (since it is many files) and call mediaType 'HTML'
-          observer.next({ filename: '', mediaType: 'HTML', _attachments: filesObj });
+          observer.next({ resource: { filename: '', mediaType: 'HTML', _attachments: filesObj } });
           observer.complete();
         }, (error) => {
           console.log(error);

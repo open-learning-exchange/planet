@@ -33,10 +33,14 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8082" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8082
+  # Port expose for docker inside vagrant (2300:2300 = CouchDB 3100:3100 = App)
+  config.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
+  config.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
+  # Port expose for dev server (5984:2200 = CouchDB 3000:3000 = App)
   config.vm.network "forwarded_port", guest: 5984, host: 2200, auto_correct: true
   config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
+  # Port expose for unit tests (Karma)
   config.vm.network "forwarded_port", guest: 9876, host: 9876, auto_correct: true
-  config.vm.network "forwarded_port", guest: 49152, host: 49152, auto_correct: true
   config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
@@ -84,9 +88,10 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     # Add CouchDB Docker
-    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/usr/local/var/lib/couchdb -v /srv/log/bell:/usr/local/var/log/couchdb treehouses/couchdb:2.1.1
+    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.1.1
     # Install Angular CLI
     #sudo npm install -g @angular/cli
+    sudo npm install -g webdriver-manager
 
     # Add CORS to CouchDB so app has access to databases
     #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
@@ -98,6 +103,9 @@ Vagrant.configure(2) do |config|
     cd /vagrant
     # End add CORS to CouchDB
 
+    curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/file -d '"/opt/couchdb/var/log/couch.log"'
+    curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/writer -d '"file"'
+
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     echo "Preparing local node_modules folder…"
     mkdir -p /vagrant_node_modules
@@ -105,6 +113,7 @@ Vagrant.configure(2) do |config|
     chown vagrant:vagrant /vagrant_node_modules
     mount --bind /vagrant_node_modules /vagrant/node_modules
     npm i --unsafe-perm
+    sudo npm run webdriver-set-version
     # End node_modules fix
 
     # Add initial Couch databases here

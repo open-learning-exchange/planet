@@ -46,7 +46,7 @@ export class LoginFormComponent {
       Validators.required,
       CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
       Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ],
-      ac => this.validatorService.isUnique$('_users', 'name', ac, {})
+      ac => this.validatorService.isUnique$('_users', 'name', ac)
     ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
@@ -84,7 +84,7 @@ export class LoginFormComponent {
   }
 
   reRoute() {
-    return this.router.navigate([ this.returnUrl ]);
+    return this.router.navigateByUrl(this.returnUrl);
   }
 
   createUser({ name, password }: {name: string, password: string}) {
@@ -99,6 +99,12 @@ export class LoginFormComponent {
     }, error => this.planetMessageService.showAlert('An error occurred please try again'));
   }
 
+  createParentSession({ name, password }) {
+    return this.couchService.post('_session',
+      { 'name': name, 'password': password },
+      { withCredentials: true, domain: this.userService.getConfig().parentDomain });
+  }
+
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
@@ -109,14 +115,17 @@ export class LoginFormComponent {
           return from(this.reRoute());
         }
       }), switchMap((routeSuccess) => {
+        if (!routeSuccess) {
+          throw routeSuccess;
+        }
+
         // Post new session info to login_activity
         const obsArr = [ this.userService.newSessionLog() ];
-        const localAdminName = this.userService.getConfig().adminName.split('@')[0];
-        // If not in e2e test, also add session to parent domain
-        if (!environment.test && localAdminName === name) {
-          obsArr.push(this.couchService.post('_session',
-            { 'name': this.userService.getConfig().adminName, 'password': password },
-            { withCredentials: true, domain: this.userService.getConfig().parentDomain }));
+        const localConfig = this.userService.getConfig();
+        const localAdminName = localConfig.adminName.split('@')[0];
+        // If not in e2e test or on a center, also add session to parent domain
+        if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
+          obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
         }
         return forkJoin(obsArr).pipe(catchError(error => {
           // 401 is for Unauthorized

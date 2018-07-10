@@ -25,6 +25,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   members = [];
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
+  currentUserName = this.userService.get().name;
 
   constructor(
     public dialog: MatDialog,
@@ -83,6 +84,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   joinMeetup() {
     this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
+      this.meetupDetail.participate = !res.participate;
       this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
       this.fixEnrolledList(res.participate, this.userService.get().name);
     });
@@ -90,7 +92,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users', {
-      '_id': { '$ne': this.userService.get()._id },
+      '$nor': [
+        { '_id': this.userService.get()._id },
+        { '_id': 'org.couchdb.user:satellite' }
+      ],
       '$or': [
         { 'roles': { '$in': [ 'learner', 'leader' ] } },
         { 'isUserAdmin': true }
