@@ -29,7 +29,7 @@ export class UpgradeComponent {
   }
 
   upgrade() {
-    this.http.get(environment.upgradeAddress, {responseType: 'text'}).subscribe(result => {
+    this.http.get(environment.upgradeAddress, { responseType: 'text' }).subscribe(result => {
       result.split('\n').forEach(line => {
         this.addLine(line);
       });
@@ -60,7 +60,7 @@ export class UpgradeComponent {
   }
 
   addLine(string, error?, success?) {
-    if (!string.length) return;
+    if (!string.length) { return; }
     string = string.trim();
     const dTime = this.getDateTime();
     let start = '<span>';
