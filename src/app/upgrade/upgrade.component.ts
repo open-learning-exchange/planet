@@ -30,7 +30,7 @@ export class UpgradeComponent {
 
   upgrade() {
     this.http.get(environment.upgradeAddress, {responseType: 'text'}).subscribe(result => {
-      JSON.stringify(result).split('\n').forEach(line => {
+      result.split('\n').forEach(line => {
         this.addLine(line);
       });
       this.message = 'Success';
@@ -60,6 +60,8 @@ export class UpgradeComponent {
   }
 
   addLine(string, error?, success?) {
+    if (!string.length) return;
+    string = string.trim();
     const dTime = this.getDateTime();
     let start = '<span>';
     if (error) { start = '<span class=\'upgrade_error\'>'; }
