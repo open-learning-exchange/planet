@@ -10,35 +10,16 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
-  styles: [ `
-  .view-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "detail view";
-  }
-
-  .course-detail {
-    grid-area: detail;
-    padding: 1rem;
-  }
-
-  .course-view {
-    grid-area: view;
-  }
-
-  .course-detail, .course-view {
-    overflow: auto;
-  }
-  ` ]
+  styleUrls: [ 'courses-view.scss' ]
 })
 
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
-  courseDetail: any = {};
+  courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   showExamButton = false;
-  nextStep = 1;
+  progress = { stepNum: 1 };
 
   constructor(
     private router: Router,
@@ -52,9 +33,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = { stepNum: 1 } }: { course: any, progress: any }) => {
+    .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
-      this.nextStep = progress.stepNum;
+      this.progress = progress;
       this.showExamButton = this.checkMyCourses(course._id);
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -69,7 +50,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate([ './step/' + this.nextStep ], { relativeTo: this.route });
+    this.router.navigate([ './step/' + (this.progress.stepNum || 1) ], { relativeTo: this.route });
   }
 
   goToExam(stepDetail, stepNum) {
@@ -85,7 +66,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   resourceUrl(resource) {
-    if (Object.keys(resource._attachments)[0]) {
+    if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
       return environment.couchAddress + 'resources/' + resource._id + '/' + filename;
     }

@@ -1,23 +1,7 @@
-FROM ubuntu:xenial as builder
-LABEL maintainer="sahil@ole.org,mappuji@ole.org"
-
-WORKDIR /ng-app
-COPY package.json ./
-
-COPY docker/planet/crosscompile_planet.sh .
-RUN bash ./crosscompile_planet.sh armv7 install
-
-COPY . .
-RUN bash ./crosscompile_planet.sh armv7 build
-
-#####
-
 FROM tobi312/rpi-nginx:alpine
-
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 RUN rm -rf /usr/share/nginx/html/*
+COPY ./ng-app/dist/usr/share/nginx/html /usr/share/nginx/html
+COPY docker/planet/scripts/docker-entrypoint.sh ./
 
-COPY --from=builder /ng-app/dist /usr/share/nginx/html
-COPY docker/planet/docker-entrypoint.sh ./
-
-CMD sh ./docker-entrypoint.sh
+CMD ./docker-entrypoint.sh

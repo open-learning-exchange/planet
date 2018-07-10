@@ -39,7 +39,7 @@
   <div class="view-container view-full-height">
     <div class="description">{{stepDetail.description}}</div>
     <planet-resources-viewer
-      *ngIf="resource"
+      *ngIf="resource?._attachments"
       [resourceId]="resource._id"
       (resourceUrl)="setResourceUrl($event)">
     </planet-resources-viewer>

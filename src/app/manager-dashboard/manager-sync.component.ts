@@ -40,7 +40,7 @@ export class ManagerSyncComponent implements OnInit {
     })).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
       this.getReplicators();
-    }, error => this.planetMessageService.showMessage('There was error on syncing'));
+    }, error => this.planetMessageService.showMessage(error));
   }
 
   replicatorList() {

@@ -19,12 +19,14 @@
         formControlName="body"
         matTextareaAutosize
         matAutosizeMaxRows="5"
-        matAutosizeMinRows="4">
+        matAutosizeMinRows="4"
+        required>
       </textarea>
+      <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <div>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Type" formControlName="type">
+        <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
           <mat-option value="input" i18n>Input</mat-option>
           <mat-option value="select" i18n>Multiple Choice</mat-option>
         </mat-select>

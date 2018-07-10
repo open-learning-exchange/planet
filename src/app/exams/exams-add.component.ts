@@ -26,6 +26,7 @@ export class ExamsAddComponent implements OnInit {
   pageType = 'Add';
   successMessage = 'New exam added';
   steps = [];
+  showFormError = false;
 
   constructor(
     private router: Router,
@@ -79,11 +80,19 @@ export class ExamsAddComponent implements OnInit {
     if (this.examForm.valid) {
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
     } else {
-      Object.keys(this.examForm.controls).forEach(field => {
-        const control = this.examForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      this.checkValidFormComponent(this.examForm);
+      this.showFormError = true;
     }
+  }
+
+  checkValidFormComponent(formField) {
+    Object.keys(formField.controls).forEach(field => {
+      const control = formField.get(field);
+      control.markAsTouched({ onlySelf: true });
+      if (control.controls) {
+        this.checkValidFormComponent(control);
+      }
+    });
   }
 
   addExam(examInfo) {
@@ -113,7 +122,7 @@ export class ExamsAddComponent implements OnInit {
     this.questionsFormArray.push(this.fb.group(Object.assign(
       {
         header: '',
-        body: '',
+        body: [ '', Validators.required ],
         type: 'input',
         correctChoice: ''
       },

@@ -112,7 +112,10 @@ curl -X PUT $COUCHURL/shelf
 curl -X PUT $COUCHURL/submissions
 curl -X PUT $COUCHURL/courses_progress
 curl -X PUT $COUCHURL/attachments
+curl -X PUT $COUCHURL/send_items
 
+# Update version number in configurations database
+upsert_doc configurations version $(jq -c '{version: .version}' package.json)
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes
@@ -134,6 +137,8 @@ SECURITY=$(add_security_admin_roles ./design/security-update/security-update.jso
 multi_db_update $SECURITY _security
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
+# Increse http request size for large attachments
+upsert_doc _node/nonode@nohost/_config httpd/max_http_request_size '"1073741824"'
 
 # Make user database public
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'

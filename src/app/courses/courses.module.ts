@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CoursesComponent } from './courses.component';
 import { CoursesAddComponent } from './add-courses/courses-add.component';
-import { CoursesRequestComponent } from './request-courses/courses-request.component';
 import { CoursesRouterModule } from './courses-router.module';
 import { PlanetFormsModule } from '../shared/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
@@ -17,6 +16,9 @@ import { ResourcesViewerComponent } from '../resources/view-resources/resources-
 import { ResourcesModule } from '../resources/resources.module';
 import { ExamsModule } from '../exams/exams.module';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
+import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
+import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
+import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
 
 @NgModule({
   imports: [
@@ -33,11 +35,13 @@ import { CoursesProgressLeaderComponent } from './progress-courses/courses-progr
   declarations: [
     CoursesComponent,
     CoursesAddComponent,
-    CoursesRequestComponent,
     CoursesViewComponent,
     CoursesStepComponent,
     CoursesStepViewComponent,
-    CoursesProgressLeaderComponent
+    CoursesProgressLeaderComponent,
+    CoursesProgressLearnerComponent,
+    CoursesProgressBarComponent,
+    CoursesProgressChartComponent
   ]
 })
 export class CoursesModule {}

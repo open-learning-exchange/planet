@@ -64,4 +64,11 @@ export class ExamsQuestionComponent implements OnInit {
     return item.id;
   }
 
+  clearChoices() {
+    this.questionForm.patchValue({ 'correctChoice': '' });
+    while (this.choices.length !== 0) {
+      this.removeChoice(0);
+    }
+  }
+
 }

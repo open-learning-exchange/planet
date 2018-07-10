@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, forkJoin, of } from 'rxjs';
+import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 
@@ -12,6 +12,8 @@ export class CoursesService {
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
+  private coursesUpdated = new BehaviorSubject<any[]>([]);
+  coursesUpdated$ = this.coursesUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;
 
@@ -48,10 +50,26 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, progress = {} }) {
-    const newProgress = { ...progress, stepNum, courseId, userId: this.userService.get()._id };
+  updateProgress({ courseId, stepNum, passed = true, progress = {} }) {
+    const newProgress = { ...progress, stepNum, courseId, passed, userId: this.userService.get()._id };
     this.couchService.post('courses_progress', newProgress).subscribe(() => {
       this.requestCourse({ courseId });
+    });
+  }
+
+  attachedItemsOfCourses(courses: any[]) {
+    return courses.reduce((attached, course) => {
+      course.steps.forEach(step => {
+        attached.resources = attached.resources.concat(step.resources || []);
+        attached.exams = attached.exams.concat(step.exam ? [ step.exam ] : []);
+      });
+      return attached;
+    }, { resources: [], exams: [] });
+  }
+
+  getCourses(query = { 'selector': {} }, opts?) {
+    this.couchService.findAll('courses', query, opts).subscribe((courses) => {
+      this.coursesUpdated.next(courses);
     });
   }
 
