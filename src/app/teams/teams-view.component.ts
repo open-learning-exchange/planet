@@ -7,9 +7,9 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './team-member.component.html'
+  templateUrl: './teams-view.component.html'
 })
-export class TeamMemberComponent implements OnInit {
+export class TeamsViewComponent implements OnInit {
 
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
@@ -25,7 +25,7 @@ export class TeamMemberComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.couchService.get('team/' + this.teamId )
+    this.couchService.get('teams/' + this.teamId )
       .subscribe(data => {
         this.team = { isMember: false, ...data };
         this.getMembers();

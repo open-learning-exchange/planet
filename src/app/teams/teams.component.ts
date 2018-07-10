@@ -11,16 +11,17 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
 
 @Component({
-  templateUrl: './team.component.html'
+  templateUrl: './teams.component.html'
 })
-export class TeamComponent implements OnInit, AfterViewInit {
+export class TeamsComponent implements OnInit, AfterViewInit {
 
   private onDestroy$ = new Subject<void>();
-  team = new MatTableDataSource();
+  teams = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   userShelf: any = [];
   displayedColumns = [ 'name', 'action' ];
+  dbName = 'teams';
 
   constructor(
     private dialog: MatDialog,
@@ -32,27 +33,27 @@ export class TeamComponent implements OnInit, AfterViewInit {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
-        this.team.data = this.teamList(this.team.data, shelf.myTeamIds);
+        this.teams.data = this.teamList(this.teams.data, shelf.myTeamIds);
       });
   }
 
   ngOnInit() {
     this.getTeam();
-    this.team.filterPredicate = filterSpecificFields([ 'name' ]);
-    this.team.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.teams.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.teams.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   getTeam() {
-    this.couchService.allDocs('team').subscribe((data: any) => {
-      this.team.data = data;
+    this.couchService.allDocs(this.dbName).subscribe((data: any) => {
+      this.teams.data = data;
       this.userShelf = this.userService.shelf;
-      this.team.data = this.teamList(this.team.data, this.userService.shelf.myTeamIds);
+      this.teams.data = this.teamList(this.teams.data, this.userService.shelf.myTeamIds);
     }, (error) => console.log(error));
   }
 
   ngAfterViewInit() {
-    this.team.sort = this.sort;
-    this.team.paginator = this.paginator;
+    this.teams.sort = this.sort;
+    this.teams.paginator = this.paginator;
   }
 
   teamList(teamRes, userTeamRes) {
@@ -65,7 +66,6 @@ export class TeamComponent implements OnInit, AfterViewInit {
 
   addTeam() {
     const title = 'Create Team';
-    const type = 'team';
     const fields = [ {
         'label': 'Is Group Open',
         'type': 'radio',
@@ -107,7 +107,7 @@ export class TeamComponent implements OnInit, AfterViewInit {
   }
 
   createTeam(post: any) {
-    this.couchService.post('team/', post).pipe(
+    this.couchService.post(this.dbName + '/', post).pipe(
       switchMap(newTeam => {
         return this.updateTeam(newTeam.id, false);
       }))
@@ -126,7 +126,7 @@ export class TeamComponent implements OnInit, AfterViewInit {
     this.updateTeam(teamId, becomeMember).subscribe(data => {
       this.userShelf._rev = data.rev;
       this.userService.shelf = this.userShelf;
-      this.teamList(this.team.data, this.userShelf.myTeamIds);
+      this.teamList(this.teams.data, this.userShelf.myTeamIds);
       const msg = becomeMember ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team');
     });
@@ -144,7 +144,7 @@ export class TeamComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
-    this.team.filter = filterValue;
+    this.teams.filter = filterValue;
   }
 
 }

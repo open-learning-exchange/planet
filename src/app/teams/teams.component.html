@@ -19,7 +19,7 @@
     </div>
   </mat-toolbar>
 
-  <mat-table #table [dataSource]="team" matSort>
+  <mat-table #table [dataSource]="teams" matSort>
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>

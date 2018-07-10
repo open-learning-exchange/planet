@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
       this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-      this.getData('team', userShelf.myTeamIds, { titleField: 'name' , linkPrefix: 'team/member/', addId: true })
+      this.getData('teams', userShelf.myTeamIds, { titleField: 'name' , linkPrefix: 'teams/view/', addId: true })
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
