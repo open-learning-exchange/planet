@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
@@ -44,8 +44,15 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.searchValue = this.route.snapshot.paramMap.get('search');
-    this.getCommunityList(this.searchValue);
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) =>
+        of(params.get('search'))
+      )
+    ).subscribe((searchValue) => {
+      this.searchValue = searchValue;
+      this.getCommunityList(searchValue);
+    });
+
     this.communities.sortingDataAccessor = (item, property) => {
       switch (typeof item[property]) {
         case 'number':
