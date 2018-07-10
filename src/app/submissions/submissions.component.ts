@@ -13,6 +13,9 @@ import { SubmissionsService } from './submissions.service';
     .mat-column-name {
       max-width: 25vw;
     }
+    mat-row {
+      cursor: pointer;
+    }
   ` ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {

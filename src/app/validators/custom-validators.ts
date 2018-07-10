@@ -49,8 +49,7 @@ export class CustomValidators {
   static notDateInPast(ac: AbstractControl): ValidationErrors {
     const now = new Date(),
       today = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-      // Add time as midnight to ensure new Date() does not return different day than input
-      formVal = new Date(ac.value + 'T00:00:00');
+      formVal = ac.value;
     if (formVal < today) {
       return { dateInPast: true };
     }
@@ -194,6 +193,14 @@ export class CustomValidators {
   static notDateInFuture(ac: AbstractControl): ValidationErrors {
     if (ac.value > Date.now()) {
       return { invalidFutureDate: true };
+    }
+  }
+
+  // matDatepicker returns null for date missing or invalid date
+  // Use this validator for special date message
+  static dateValidRequired(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return { dateRequired: true };
     }
   }
 }

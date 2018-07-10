@@ -22,7 +22,12 @@ const removeProtocol = (str: string) => {
 
 @Component({
   selector: 'planet-configuration',
-  templateUrl: './configuration.component.html'
+  templateUrl: './configuration.component.html',
+  styles: [ `
+    .mat-raised-button {
+      margin: 0px 2px 2px 0px;
+    }
+  ` ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;
@@ -229,7 +234,8 @@ export class ConfigurationComponent implements OnInit {
       const requestNotification = {
         'user': 'SYSTEM',
         'message': 'New ' + configuration.planetType + ' "' + configuration.name + '" has requested to connect.',
-        'link': '/requests',
+        'link': '/requests/',
+        'linkParams': { 'search': configuration.code },
         'type': 'request',
         'priority': 1,
         'status': 'unread',
@@ -270,7 +276,7 @@ export class ConfigurationComponent implements OnInit {
       code: configuration.code,
       selector: { 'sendOnAccept': true }
     };
-    const pin = this.createPin();
+    const pin = this.userService.createPin();
     forkJoin([
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
@@ -366,10 +372,6 @@ export class ConfigurationComponent implements OnInit {
 
   createUser(name, details, opts?) {
     return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
-  }
-
-  createPin() {
-    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
 }

@@ -5,18 +5,12 @@
   $cell-size: 50px;
   $column-gap: 4px;
 
-  .view-container {
-    overflow: auto;
-  }
-
-  .progress-view {
-    display: grid;
-    grid-template-areas: "total index";
-    grid-template-columns: $cell-size;
-    grid-auto-columns: $cell-size;
-    grid-auto-flow: column;
-    grid-column-gap: $column-gap;
-  }
+  display: grid;
+  grid-template-areas: "total index";
+  grid-template-columns: $cell-size;
+  grid-auto-columns: $cell-size;
+  grid-auto-flow: column;
+  grid-column-gap: $column-gap;
 
   .errors {
     display: grid;
@@ -52,6 +46,16 @@
     width: calc(#{$cell-size} + #{$column-gap});
     border-bottom: 3px solid $grey;
     z-index: 10;
+  }
+
+  .wrap-content {
+    min-width: 0;
+  }
+
+  .wrap-content p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
 }

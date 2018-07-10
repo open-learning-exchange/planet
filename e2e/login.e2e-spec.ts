@@ -22,7 +22,7 @@ describe('Login', () => {
     passInput.sendKeys('e2e');
     page.clickSignin();
     browser.getCurrentUrl().then((url) => {
-      expect(url).toEqual('http://0.0.0.0:49152/');
+      expect(url).toEqual('http://localhost:4200/');
     });
   });
 

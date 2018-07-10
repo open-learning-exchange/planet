@@ -30,6 +30,8 @@
   </div>
   <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
     <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
+    <p><b i18n>{planetType, select, community {Nation} nation {Center}} Version:</b> {{versionParent || 'N/A'}}</p>
+    <p><b i18n>Local Version:</b> {{versionLocal}}</p>
     <ng-container [ngSwitch]="requestStatus">
       <ng-container *ngSwitchCase="'accepted'">
         <a routerLink="resources" i18n mat-raised-button>List Resources</a>
@@ -41,6 +43,8 @@
       <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
     </ng-container>
   </div>
-  <div *ngIf="pin" i18n>Your tablet pin number is: {{pin}}</div>
+  <div *ngIf="pin" i18n>Your tablet pin number is: {{pin}}
+    <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
+  </div>
   <div>{{message}}</div>
 </div>

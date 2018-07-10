@@ -32,11 +32,6 @@
       <span i18n>Send Courses</span>
       <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
     </button>
-    <button *ngIf="!parent" mat-button routerLink="request" routerLinkActive="active" [disabled]="!selection.selected.length">
-      <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-      <span i18n>Request Courses</span>
-      <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
-    </button>
     <button *ngIf="!parent && user.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
       <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
       <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
@@ -75,6 +70,10 @@
             <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
+            </a>
+            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+              <mat-icon>feedback</mat-icon>
+              <span i18n>Feedback</span>
             </a>
             <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
               <mat-icon>folder</mat-icon>

@@ -92,7 +92,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users', {
-      '_id': { '$ne': this.userService.get()._id },
+      '$nor': [
+        { '_id': this.userService.get()._id },
+        { '_id': 'org.couchdb.user:satellite' }
+      ],
       '$or': [
         { 'roles': { '$in': [ 'learner', 'leader' ] } },
         { 'isUserAdmin': true }

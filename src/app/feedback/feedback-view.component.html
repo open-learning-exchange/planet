@@ -28,6 +28,13 @@
           <mat-icon>clear</mat-icon>
         </a>
       </ng-template>
+      <span class="toolbar-fill"></span>
+      <a *ngIf="feedback?.state" [routerLink]="['/', feedback.state, 'view', feedback.item]" mat-icon-button>
+        <ng-container [ngSwitch]="feedback.state">
+          <mat-icon *ngSwitchCase="'resources'" svgIcon="myLibrary"></mat-icon>
+          <mat-icon *ngSwitchCase="'courses'" svgIcon="myCourses"></mat-icon>
+        </ng-container>
+      </a>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">

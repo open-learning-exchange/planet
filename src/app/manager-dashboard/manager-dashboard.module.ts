@@ -8,6 +8,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardRouterModule } from './manger-dashboard-router.module';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { ManagerSyncComponent } from './manager-sync.component';
+import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
+import { ConfigurationModule } from '../configuration/configuration.module';
 
 @NgModule({
   imports: [
@@ -19,11 +21,13 @@ import { ManagerSyncComponent } from './manager-sync.component';
     PlanetDialogsModule,
     ManagerDashboardRouterModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    ConfigurationModule
   ],
   declarations: [
     ManagerDashboardComponent,
-    ManagerSyncComponent
+    ManagerSyncComponent,
+    ManagerDashboardConfigurationComponent
   ]
 })
 export class ManagerDashboardModule {}
