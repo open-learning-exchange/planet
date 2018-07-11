@@ -55,8 +55,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamList(teamRes, userTeamRes) {
     return teamRes.map((res: any) => {
-      const team = res.doc || res;
-      team.isMember = userTeamRes.indexOf(team._id) > -1;
+      const team = { doc: res.doc || res, userStatus: 'unrelated' };
+      team.userStatus = userTeamRes.indexOf(team.doc._id) > -1 ? 'member' : team.userStatus;
+      team.userStatus = team.doc.requests.indexOf(this.userService.get()._id) > -1 ? 'requesting' : team.userStatus;
       return team;
     });
   }
@@ -72,6 +73,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
+    });
+  }
+
+  requestToJoin(team) {
+    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).subscribe((newTeam) => {
+      this.teamList(this.teams.data.map((t) => t._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
+      this.planetMessageService.showMessage('Request to join team sent');
     });
   }
 
