@@ -26,9 +26,7 @@
     <!-- Title Column -->
     <ng-container matColumnDef="title">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <a [routerLink]="['view',element._id]">{{element.title}}</a>
-      </mat-cell>
+      <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
     </ng-container>
     <!-- Type Column -->
     <ng-container matColumnDef="type">
@@ -75,7 +73,7 @@
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element">
+      <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
         <button mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -100,7 +98,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns">
+    <mat-row *matRowDef="let row; columns: displayedColumns" class="cursor-pointer" [routerLink]="['view', row._id]">
     </mat-row>
   </mat-table>
   <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
