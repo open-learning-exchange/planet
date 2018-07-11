@@ -243,13 +243,29 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  updateShelf(newShelf, message) {
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  updateShelf(newShelf, message: string) {
     this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
       this.setupList(this.courses.data,  this.userShelf.courseIds);
-      this.planetMessageService.showMessage(message);
+      this.planetMessageService.showMessage(message + ' myCourses');
     }, (error) => (error));
+  }
+
+  addToCourse(courses) {
+    const currentShelf = this.userService.shelf;
+    const courseIds = courses.map((data) => {
+      return data._id;
+    }).concat(currentShelf.courseIds).reduce(this.dedupeShelfReduce, []);
+    const message = courses.length === 1 ? courses[0].courseTitle + ' have been added to' : courses.length + ' courses have been added to';
+    this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
   courseResign(courseId) {
