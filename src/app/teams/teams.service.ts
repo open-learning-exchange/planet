@@ -57,20 +57,29 @@ export class TeamsService {
     return this.couchService.post(this.dbName + '/', team);
   }
 
-  requestToJoinTeam(team, userId) {
-    team = {
-      ...team,
-      requests: team.requests.concat([ userId ]).reduce(this.dedupeArrayReduce, [])
-    };
+  updateTeam(team: any) {
     return this.couchService.put(this.dbName + '/' + team._id, team).pipe(switchMap((res: any) => {
       team._rev = res.rev;
       return of(team);
     }));
   }
 
+  requestToJoinTeam(team, userId) {
+    team = {
+      ...team,
+      requests: team.requests.concat([ userId ]).reduce(this.dedupeArrayReduce, [])
+    };
+    return this.updateTeam(team);
+  }
+
+  removeFromRequests(team, userId) {
+    const newRequestArray = team.requests.filter(id => id !== userId);
+    return this.updateTeam({ ...team, requests: newRequestArray });
+  }
+
   toggleTeamMembership(teamId, leaveTeam, shelf) {
-    shelf = this.updateTeam(teamId, leaveTeam, shelf);
-    return this.couchService.put('shelf/' + this.userService.get()._id, shelf).pipe(switchMap((data) => {
+    shelf = this.updateTeamShelf(teamId, leaveTeam, shelf);
+    return this.couchService.put('shelf/' + shelf._id, shelf).pipe(switchMap((data) => {
       shelf._rev = data.rev;
       if (this.userService.get()._id === shelf._id) {
         this.userService.shelf = shelf;
@@ -79,8 +88,8 @@ export class TeamsService {
     }));
   }
 
-  updateTeam(teamId, leaveTeam, shelf) {
-    let myTeamIds = shelf.myTeamIds;
+  updateTeamShelf(teamId, leaveTeam, shelf) {
+    let myTeamIds = shelf.myTeamIds || [];
     if (leaveTeam) {
       myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
     } else {

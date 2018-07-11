@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -21,6 +21,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   userShelf: any = [];
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
+  currentUserName = this.userService.get().name;
 
   constructor(
     private couchService: CouchService,
@@ -81,6 +82,21 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.team = newTeam;
       this.setStatus(this.team, this.userService.get(), this.userService.shelf);
       this.planetMessageService.showMessage('Request to join team sent');
+    });
+  }
+
+  acceptRequest(userId) {
+    this.couchService.get('shelf/' + userId).pipe(
+      switchMap((res) => {
+        return this.teamsService.toggleTeamMembership(this.team._id, false, res);
+      }),
+      switchMap(() => {
+        return this.teamsService.removeFromRequests(this.team, userId);
+      })
+    ).subscribe((newTeam) => {
+      this.team = newTeam;
+      this.getMembers();
+      this.setStatus(this.team, this.userService.get(), this.userService.shelf);
     });
   }
 

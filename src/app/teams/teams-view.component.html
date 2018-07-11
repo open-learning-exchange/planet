@@ -29,12 +29,15 @@
           {{member.name}} <span *ngIf="mem === currentUserName">(You)</span>
         </li>
       </ul>
-      <p>Requests</p>
-      <ul>
-        <li *ngFor="let user of team.requests">
-          {{user.name}}
-        </li>
-      </ul>
+      <ng-container *ngIf="userStatus==='member'">
+        <p>Requests</p>
+        <ul>
+          <li *ngFor="let user of team?.requests">
+            {{user.replace('org.couchdb.user:','')}}
+            <button mat-button class="margin-lr-3" (click)="acceptRequest(user)">Accept</button>
+          </li>
+        </ul>
+      </ng-container>
     </div>
   </div>
 </div>
