@@ -14,12 +14,12 @@ export class CouchService {
   private reqNum = 0;
 
   private setOpts(opts: any = {}) {
-    const { domain, ...httpOpts } = opts;
-    return [ domain, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
+    const { domain, protocol, ...httpOpts } = opts;
+    return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
   }
 
-  private couchDBReq(type: string, db: string, [ domain, opts ]: any[], data?: any) {
-    const url = domain ? environment.centerProtocol + '://' + domain + '/' + db : this.baseUrl + db;
+  private couchDBReq(type: string, db: string, [ domain, protocol, opts ]: any[], data?: any) {
+    const url = domain ? (protocol || environment.parentProtocol) + '://' + domain + '/' + db : this.baseUrl + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
       httpReq = this.http[type](url, data, opts);

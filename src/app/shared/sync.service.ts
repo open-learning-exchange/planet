@@ -104,7 +104,7 @@ export class SyncService {
   private dbObj(dbName, credentials, parent: boolean) {
     const username = credentials.name + (parent ? '@' + this.code : '');
     const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
-    const protocol = parent ? environment.centerProtocol + '://' : '';
+    const protocol = parent ? environment.parentProtocol + '://' : '';
     return {
       'headers': {
         'Authorization': 'Basic ' + btoa(username + ':' + credentials.password)

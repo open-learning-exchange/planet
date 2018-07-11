@@ -174,7 +174,7 @@ export class ConfigurationComponent implements OnInit {
   getNationList() {
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
-      { domain: environment.centerAddress })
+      { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;
       }, (error) => this.planetMessageService.showAlert('There is a problem getting the list of nations'));
