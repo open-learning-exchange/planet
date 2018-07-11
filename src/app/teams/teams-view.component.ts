@@ -7,13 +7,14 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './teams-view.component.html'
+  templateUrl: './teams-view.component.html',
+  styleUrls: [ './teams-view.scss' ]
 })
 export class TeamsViewComponent implements OnInit {
 
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
-  members = new MatTableDataSource();
+  members = [];
   displayedColumns = [ 'name' ];
   userShelf: any = [];
 
@@ -38,7 +39,7 @@ export class TeamsViewComponent implements OnInit {
     this.couchService.post('shelf/_find', findDocuments({
       'myTeamIds': { '$in': [ this.teamId ] }
     }, 0)).subscribe((data) => {
-      this.members.data = data.docs.map((mem) => {
+      this.members = data.docs.map((mem) => {
         if (mem._id === this.userService.get()._id) {
           this.team.isMember = true;
         }

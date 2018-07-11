@@ -3,10 +3,6 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <ng-container [ngSwitch]="team.openGroup">
-      <mat-icon *ngSwitchCase="'Yes'">lock_open</mat-icon>
-      <mat-icon *ngSwitchCase="'No'">lock</mat-icon>
-    </ng-container>
     <span class="margin-lr-3"><h3>{{team?.name}}</h3></span>
     <span class="toolbar-fill"></span>
     <button mat-button class="margin-lr-3" (click)="joinTeam(team?._id, team?.isMember)">
@@ -15,19 +11,16 @@
     </button>
   </mat-toolbar>
   <div class="view-container">
-    <mat-table #table [dataSource]="members" matSort>
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu">
-          {{element.name}} {{element.name === this.userService.get().name ? '(You)' : ''}}
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-    <mat-paginator #paginator
-      [pageSize]="10"
-      [pageSizeOptions]="[5, 10, 20]">
-    </mat-paginator>
+    <div class="left-tile">
+      <p>{{team?.description}}</p>
+    </div>
+    <div class="right-tile">
+      <p>Members</p>
+      <ul>
+        <li *ngFor="let member of members">
+          {{member.name}} <span *ngIf="mem === currentUserName">(You)</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>

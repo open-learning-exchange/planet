@@ -67,12 +67,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   addTeam() {
     const title = 'Create Team';
     const fields = [ {
-        'label': 'Is Group Open',
-        'type': 'radio',
-        'name': 'openGroup',
-        'options': [ 'Yes', 'No' ],
-        'required': true
-      }, {
         'type': 'textbox',
         'name': 'name',
         'placeholder': 'Name',
@@ -85,8 +79,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     } ];
     const formGroup = {
       name: [ '', Validators.required ],
-      description: '',
-      openGroup: [ 'Yes', Validators.required ],
+      description: ''
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
