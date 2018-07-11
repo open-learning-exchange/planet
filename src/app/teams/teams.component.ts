@@ -3,12 +3,11 @@ import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/m
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { debug } from '../debug-operator';
+import { TeamsService } from './teams.service';
 
 @Component({
   templateUrl: './teams.component.html'
@@ -24,11 +23,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   dbName = 'teams';
 
   constructor(
-    private dialog: MatDialog,
     private userService: UserService,
     private couchService: CouchService,
-    private dialogsFormService: DialogsFormService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private teamsService: TeamsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -38,12 +36,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.getTeam();
+    this.getTeams();
     this.teams.filterPredicate = filterSpecificFields([ 'name' ]);
     this.teams.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
-  getTeam() {
+  getTeams() {
     this.couchService.allDocs(this.dbName).subscribe((data: any) => {
       this.teams.data = data;
       this.userShelf = this.userService.shelf;
@@ -65,30 +63,17 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   addTeam() {
-    const title = 'Create Team';
-    const fields = [ {
-        'type': 'textbox',
-        'name': 'name',
-        'placeholder': 'Name',
-        'required': true
-      }, {
-        'type': 'textarea',
-        'name': 'description',
-        'placeholder': 'Detail',
-        'required': false
-    } ];
-    const formGroup = {
-      name: [ '', Validators.required ],
-      description: ''
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .pipe(debug('Dialog confirm'))
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.createTeam(response);
-        }
-      });
+    this.teamsService.addTeamDialog(this.userShelf).subscribe(() => {
+      this.getTeams();
+      this.planetMessageService.showMessage('Team created');
+    });
+  }
+
+  toggleMembership(teamId, leaveTeam) {
+    this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
+      const msg = leaveTeam ? 'left' : 'joined';
+      this.planetMessageService.showMessage('You have ' + msg + ' team.');
+    });
   }
 
   // If multiple team is added then need to check
@@ -97,43 +82,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       return ids;
     }
     return ids.concat(id);
-  }
-
-  createTeam(post: any) {
-    this.couchService.post(this.dbName + '/', post).pipe(
-      switchMap(newTeam => {
-        return this.updateTeam(newTeam.id, false);
-      }))
-    .subscribe((data: any) => {
-      this.userShelf._rev = data.rev;
-      this.userService.shelf = this.userShelf;
-      this.getTeam();
-      this.planetMessageService.showMessage('Team has been created');
-    },
-    (error) => {
-      this.planetMessageService.showAlert('Error on creating team');
-    });
-  }
-
-  joinTeam(teamId, becomeMember) {
-    this.updateTeam(teamId, becomeMember).subscribe(data => {
-      this.userShelf._rev = data.rev;
-      this.userService.shelf = this.userShelf;
-      this.teamList(this.teams.data, this.userShelf.myTeamIds);
-      const msg = becomeMember ? 'left' : 'joined';
-      this.planetMessageService.showMessage('You have ' + msg + ' team');
-    });
-  }
-
-  updateTeam(teamId, becomeMember) {
-    let myTeamIds = this.userService.shelf.myTeamIds;
-    if (becomeMember) {
-      myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    } else {
-      myTeamIds = myTeamIds.concat([ teamId ]).reduce(this.dedupeShelfReduce, []);
-    }
-    this.userShelf.myTeamIds = myTeamIds;
-    return this.couchService.put('shelf/' + this.userService.get()._id, { ...this.userShelf });
   }
 
   applyFilter(filterValue: string) {
