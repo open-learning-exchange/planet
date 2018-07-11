@@ -26,10 +26,10 @@
       <p>Members</p>
       <ul>
         <li *ngFor="let member of members">
-          {{member.name}} <span *ngIf="mem === currentUserName">(You)</span>
+          {{member.name}} <span *ngIf="member.name === currentUserName">(You)</span>
         </li>
       </ul>
-      <ng-container *ngIf="userStatus==='member'">
+      <ng-container *ngIf="userStatus === 'member' && team?.requests.length > 0">
         <p>Requests</p>
         <ul>
           <li *ngFor="let user of team?.requests">
