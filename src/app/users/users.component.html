@@ -22,9 +22,7 @@
 
 <div class="space-container" *ngIf="displayTable">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="toolbar-fill">
-      <h1 i18n>All Users</h1>
-    </span>
+    <span class="toolbar-fill"></span>
     <div class="margin-lr-3" *ngIf="!filterAssociated">
       <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
