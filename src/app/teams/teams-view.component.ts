@@ -12,7 +12,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './teams-view.component.html',
   styleUrls: [ './teams-view.scss' ]
 })
-export class TeamsViewComponent implements OnInit {
+export class TeamsViewComponent implements OnInit, OnDestroy {
 
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
@@ -20,7 +20,7 @@ export class TeamsViewComponent implements OnInit {
   displayedColumns = [ 'name' ];
   userShelf: any = [];
   userIsMember = false;
-  onDestroy$ = new Subject<void>;
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,

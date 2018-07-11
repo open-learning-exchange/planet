@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
-import { of, forkJoin, empty } from 'rxjs';
+import { of, empty } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';

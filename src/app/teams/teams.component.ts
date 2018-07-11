@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { TeamsService } from './teams.service';
 
 @Component({
