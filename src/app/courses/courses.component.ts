@@ -111,7 +111,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
 
-      // Check if parent resource is available locally
+      // Check if parent course is available locally
       const localListIndex = this.localList.findIndex(localCourse => {
         return course._id === localCourse.id;
       });
