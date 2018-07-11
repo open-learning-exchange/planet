@@ -7,14 +7,14 @@
   <div class="view-container">
     <form class="view-container" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
       <mat-grid-list cols="3">
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder placeholder="Author" formControlName="author">
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
         </mat-form-field>
       </mat-grid-list>
@@ -25,16 +25,16 @@
         </mat-form-field>
       </div>
       <mat-grid-list cols="3">
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Language" formControlName="language">
             <mat-option i18n value="English">English</mat-option>
             <mat-option i18n value="Spanish">Español</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
         </mat-form-field>
       </mat-grid-list>
@@ -45,13 +45,13 @@
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple required>
             <mat-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
             <mat-option *ngFor="let open of constants.openWith" [value]="open">
             {{ open }}
@@ -60,41 +60,41 @@
         </mat-form-field>
       </mat-grid-list>
       <mat-grid-list cols="3">
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" multiple>
             <mat-option i18n value="default">Default</mat-option>
             <mat-option i18n value="leader">Leader</mat-option>
             <mat-option i18n value="learner">learner</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Media" formControlName="medium">
             <mat-option *ngFor="let medium of constants.media" [value]="medium">
             {{ medium }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput [value]="resourceForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
         </mat-form-field>
       </mat-grid-list>
       <mat-grid-list cols="3">
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
             <mat-option *ngFor="let type of constants.resourceType" [value]="type">
             {{ type }}
             </mat-option>
           </mat-select>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder [(ngModel)]="userDetail.name" placeholder="Added By" formControlName="addedBy" readonly>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder placeholder="Open URL" formControlName="openUrl" >
         </mat-form-field>
       </mat-grid-list>
       <mat-grid-list cols="1">
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput  i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
         </mat-form-field>
         <label i18n>File Upload:</label>
