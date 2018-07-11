@@ -19,7 +19,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   members = [];
   displayedColumns = [ 'name' ];
   userShelf: any = [];
-  userIsMember = false;
+  userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -35,12 +35,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       .subscribe(data => {
         this.team = data;
         this.getMembers();
+        this.setStatus(this.team, this.userService.get(), this.userService.shelf);
         this.userShelf = this.userService.shelf;
       });
     this.userService.shelfChange$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(shelf => {
         this.userShelf = shelf;
+        this.setStatus(this.team, this.userService.get(), this.userService.shelf);
         this.getMembers();
       });
   }
@@ -55,20 +57,30 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.couchService.post('shelf/_find', findDocuments({
       'myTeamIds': { '$in': [ this.teamId ] }
     }, 0)).subscribe((data) => {
-      this.userIsMember = false;
       this.members = data.docs.map((mem) => {
-        if (mem._id === this.userService.get()._id) {
-          this.userIsMember = true;
-        }
         return { name: mem._id.split(':')[1] };
       });
     });
+  }
+
+  setStatus(team, user, shelf) {
+    this.userStatus = 'unrelated';
+    this.userStatus = team.requests.findIndex(id => id === user._id) > -1 ? 'requesting' : this.userStatus;
+    this.userStatus = shelf.myTeamIds.findIndex(id => id === team._id) > -1 ? 'member' : this.userStatus;
   }
 
   toggleMembership(teamId, leaveTeam) {
     this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team');
+    });
+  }
+
+  requestToJoin() {
+    this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).subscribe((newTeam) => {
+      this.team = newTeam;
+      this.setStatus(this.team, this.userService.get(), this.userService.shelf);
+      this.planetMessageService.showMessage('Request to join team sent');
     });
   }
 

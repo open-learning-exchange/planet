@@ -6,10 +6,17 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{team?.name}}</h3></span>
     <span class="toolbar-fill"></span>
-    <button mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, userIsMember)">
-      <span *ngIf="userIsMember; else joinButton" i18n>Leave</span>
-      <ng-template #joinButton><span i18n>Join</span></ng-template>
-    </button>
+    <ng-container [ngSwitch]="userStatus">
+      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, true)">
+        Leave
+      </button>
+      <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()">
+        <ng-container i18n>Request to Join</ng-container>
+      </button>
+      <button *ngSwitchCase="'requesting'" mat-button disabled>
+        Request pending
+      </button>
+    </ng-container>
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">
@@ -20,6 +27,12 @@
       <ul>
         <li *ngFor="let member of members">
           {{member.name}} <span *ngIf="mem === currentUserName">(You)</span>
+        </li>
+      </ul>
+      <p>Requests</p>
+      <ul>
+        <li *ngFor="let user of team.requests">
+          {{user.name}}
         </li>
       </ul>
     </div>

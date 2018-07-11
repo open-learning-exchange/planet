@@ -34,7 +34,8 @@ export class TeamsService {
     const title = 'Create Team';
     const formGroup = {
       name: [ '', Validators.required ],
-      description: ''
+      description: '',
+      requests: [ [] ]
     };
     return this.dialogsFormService
       .confirm(title, addTeamDialogFields, formGroup)
@@ -52,8 +53,19 @@ export class TeamsService {
       );
   }
 
-  createTeam(post: any) {
-    return this.couchService.post(this.dbName + '/', post);
+  createTeam(team: any) {
+    return this.couchService.post(this.dbName + '/', team);
+  }
+
+  requestToJoinTeam(team, userId) {
+    team = {
+      ...team,
+      requests: team.requests.concat([ userId ]).reduce(this.dedupeArrayReduce, [])
+    };
+    return this.couchService.put(this.dbName + '/' + team._id, team).pipe(switchMap((res: any) => {
+      team._rev = res.rev;
+      return of(team);
+    }));
   }
 
   toggleTeamMembership(teamId, leaveTeam, shelf) {
@@ -72,9 +84,16 @@ export class TeamsService {
     if (leaveTeam) {
       myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
     } else {
-      myTeamIds = myTeamIds.concat([ teamId ]);
+      myTeamIds = myTeamIds.concat([ teamId ]).reduce(this.dedupeArrayReduce, []);
     }
     return { ...shelf, myTeamIds };
+  }
+
+  dedupeArrayReduce(items, item) {
+    if (items.indexOf(item) > -1) {
+      return items;
+    }
+    return items.concat(item);
   }
 
 }
