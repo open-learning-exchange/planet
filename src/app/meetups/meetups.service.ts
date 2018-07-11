@@ -61,6 +61,22 @@ export class MeetupService {
   attendMeetup(meetupId, participate) {
     participate ? this.userShelf.meetupIds.splice(meetupId, 1)
       : this.userShelf.meetupIds.push(meetupId);
+    return this.meetupShelf(participate);
+  }
+
+  dedupeShelfReduce(ids, id) {
+    if (ids.indexOf(id) > -1) {
+      return ids;
+    }
+    return ids.concat(id);
+  }
+
+  attendMeetups(meetups) {
+    this.userShelf.meetupIds = meetups.concat(this.userShelf.meetupIds).reduce(this.dedupeShelfReduce, []);
+    return this.meetupShelf(true);
+  }
+
+  meetupShelf(participate) {
     return this.couchService.put('shelf/' + this.userService.get()._id, this.userShelf)
       .pipe(map((response) => {
         this.userShelf._rev = response.rev;
