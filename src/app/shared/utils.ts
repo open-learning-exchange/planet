@@ -6,4 +6,4 @@ export const dedupeShelfReduce = (ids, id) => {
       return ids;
     }
     return ids.concat(id);
-  }
+  };
