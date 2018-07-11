@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { TeamsService } from './teams.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -19,10 +20,11 @@ export class TeamsViewComponent implements OnInit {
   userShelf: any = [];
 
   constructor(
-      private couchService: CouchService,
-      private userService: UserService,
-      private route: ActivatedRoute,
-      private planetMessageService: PlanetMessageService
+    private couchService: CouchService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private planetMessageService: PlanetMessageService,
+    private teamsService: TeamsService
   ) {}
 
   ngOnInit() {
@@ -48,26 +50,12 @@ export class TeamsViewComponent implements OnInit {
     });
   }
 
-  joinTeam(teamId, becomeMember) {
-    this.updateTeam(teamId, becomeMember).subscribe(data => {
-      this.userShelf._rev = data.rev;
-      this.userService.shelf = this.userShelf;
-      this.team.isMember = !becomeMember;
-      this.getMembers();
-      const msg = becomeMember ? 'left' : 'joined';
+  toggleMembership(teamId, leaveTeam) {
+    this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
+      const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team');
+      this.getMembers();
     });
-  }
-
-  updateTeam(teamId, becomeMember) {
-    let myTeamIds = this.userService.shelf.myTeamIds;
-    if (becomeMember) {
-      myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    } else {
-      myTeamIds = myTeamIds.concat([ teamId ]);
-    }
-    this.userShelf.myTeamIds = myTeamIds;
-    return this.couchService.put('shelf/' + this.userService.get()._id, { ...this.userShelf });
   }
 
 }

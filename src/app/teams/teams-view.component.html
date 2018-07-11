@@ -5,7 +5,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{team?.name}}</h3></span>
     <span class="toolbar-fill"></span>
-    <button mat-button class="margin-lr-3" (click)="joinTeam(team?._id, team?.isMember)">
+    <button mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, team?.isMember)">
       <span *ngIf="team?.isMember; else joinButton" i18n>Leave</span>
       <ng-template #joinButton><span i18n>Join</span></ng-template>
     </button>
