@@ -18,6 +18,7 @@ import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -243,13 +244,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  dedupeShelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
-  }
-
   updateShelf(newShelf, message: string) {
     this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
@@ -263,7 +257,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     const currentShelf = this.userService.shelf;
     const courseIds = courses.map((data) => {
       return data._id;
-    }).concat(currentShelf.courseIds).reduce(this.dedupeShelfReduce, []);
+    }).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
     const message = courses.length === 1 ? courses[0].courseTitle + ' have been added to' : courses.length + ' courses have been added to';
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
