@@ -16,7 +16,7 @@ import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { compareRev, dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -32,6 +32,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 })
 
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
+  localList = [];
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -82,6 +83,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
    }
 
   ngOnInit() {
+    if (this.parent) {
+      this.couchService.listAllDocs(this.dbName).subscribe((results: any) => {
+        this.localList = results;
+      });
+    }
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
@@ -104,6 +110,12 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       course.canManage = this.user.isUserAdmin ||
         (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
+
+      // Check if parent resource is available locally
+      const localListIndex = this.localList.findIndex(localCourse => {
+        return course._id === localCourse.id;
+      });
+      course.localCopy = (localListIndex > -1) ? compareRev(course._rev, this.localList[localListIndex].value.rev) : 0;
       return course;
     });
   }

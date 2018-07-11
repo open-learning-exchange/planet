@@ -79,12 +79,9 @@ export class CouchService {
   listAllDocs(db: string, opts?: any) {
     return this.couchDBReq('get', db + '/_all_docs', this.setOpts(opts)).pipe(map((data: any) => {
       // _all_docs returns object with rows array of objects with id and value.
-      return data.rows.map((res: any) => {
-          // Map over data.rows to remove the 'value' property layer
-          return res.id;
-        }).filter((doc: any) => {
+      return data.rows.filter((doc: any) => {
           // Filter out any design documents
-          return doc.indexOf('_design') === -1;
+          return doc.id.indexOf('_design') === -1;
         });
     }));
   }

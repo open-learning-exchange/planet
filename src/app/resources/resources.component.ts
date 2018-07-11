@@ -14,7 +14,7 @@ import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { compareRev, dedupeShelfReduce } from '../shared/utils';
 import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 
@@ -80,7 +80,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if(this.parent) {
+    if (this.parent) {
       this.couchService.listAllDocs(this.dbName).subscribe((results: any) => {
         this.localList = results;
       });
@@ -90,7 +90,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
        // Sort in descending createdDate order, so the new resource can be shown on the top
       resources.sort((a, b) => b.createdDate - a.createdDate);
       this.resources.data = resources;
-      this.setupList(this.resources.data, this.userService.shelf.resourceIds, this.localList);
+      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions(
@@ -106,7 +106,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
-        this.setupList(this.resources.data, shelf.resourceIds, this.localList);
+        this.setupList(this.resources.data, shelf.resourceIds);
       });
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
@@ -114,16 +114,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  setupList(resourcesRes, myLibrarys, localList) {
+  setupList(resourcesRes, myLibrarys) {
     resourcesRes.forEach((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
       resource.libraryInfo = myLibraryIndex > -1;
-      const localListIndex = localList.findIndex(resourceId => {
-        return resource._id === resourceId;
+      // Check if parent resource is available locally
+      const localListIndex = this.localList.findIndex(localRes => {
+        return resource._id === localRes.id;
       });
-      resource.hasLocalCopy = localListIndex > -1;
+      resource.localCopy = (localListIndex > -1) ? compareRev(resource._rev, this.localList[localListIndex].value.rev) : 0;
     });
   }
 

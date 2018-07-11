@@ -67,6 +67,12 @@
         <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
+        <ng-container [ngSwitch]="element.localCopy">
+          <mat-icon *ngSwitchCase="1" i18n-title title="Upto date">done_all</mat-icon>
+          <mat-icon *ngSwitchCase="-1" i18n-title title="Newer">fiber_new</mat-icon>
+          <mat-icon *ngSwitchCase="2" i18n-title title="Older">timelapse</mat-icon>
+          <mat-icon *ngSwitchCase="9" i18n-title title="Does not match">priority_high</mat-icon>
+        </ng-container>
         <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
