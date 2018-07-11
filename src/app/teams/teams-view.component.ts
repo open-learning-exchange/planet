@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ActivatedRoute } from '@angular/router';
-import { MatTableDataSource } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -18,6 +19,8 @@ export class TeamsViewComponent implements OnInit {
   members = [];
   displayedColumns = [ 'name' ];
   userShelf: any = [];
+  userIsMember = false;
+  onDestroy$ = new Subject<void>;
 
   constructor(
     private couchService: CouchService,
@@ -28,12 +31,23 @@ export class TeamsViewComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.couchService.get('teams/' + this.teamId )
+    this.couchService.get('teams/' + this.teamId)
       .subscribe(data => {
-        this.team = { isMember: false, ...data };
+        this.team = data;
         this.getMembers();
         this.userShelf = this.userService.shelf;
       });
+    this.userService.shelfChange$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(shelf => {
+        this.userShelf = shelf;
+        this.getMembers();
+      });
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getMembers() {
@@ -41,9 +55,10 @@ export class TeamsViewComponent implements OnInit {
     this.couchService.post('shelf/_find', findDocuments({
       'myTeamIds': { '$in': [ this.teamId ] }
     }, 0)).subscribe((data) => {
+      this.userIsMember = false;
       this.members = data.docs.map((mem) => {
         if (mem._id === this.userService.get()._id) {
-          this.team.isMember = true;
+          this.userIsMember = true;
         }
         return { name: mem._id.split(':')[1] };
       });
@@ -54,7 +69,6 @@ export class TeamsViewComponent implements OnInit {
     this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team');
-      this.getMembers();
     });
   }
 
