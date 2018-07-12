@@ -41,7 +41,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
-    this.couchService.allDocs(this.dbName).subscribe((data: any) => {
+    this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((data: any) => {
       this.userShelf = this.userService.shelf;
       this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
     }, (error) => console.log(error));

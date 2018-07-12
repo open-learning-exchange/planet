@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { dedupeShelfReduce } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { of, empty } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
+import { findDocuments } from '../shared/mangoQueries';
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -54,7 +56,8 @@ export class TeamsService {
   }
 
   createTeam(team: any) {
-    return this.couchService.post(this.dbName + '/', { ...team, limit: '12' });
+    console.log({ ...team, status: 'active' });
+    return this.couchService.post(this.dbName + '/', { ...team, limit: '12', status: 'active' });
   }
 
   updateTeam(team: any) {
@@ -67,7 +70,7 @@ export class TeamsService {
   requestToJoinTeam(team, userId) {
     team = {
       ...team,
-      requests: team.requests.concat([ userId ]).reduce(this.dedupeArrayReduce, [])
+      requests: team.requests.concat([ userId ]).reduce(dedupeShelfReduce, [])
     };
     return this.updateTeam(team);
   }
@@ -85,7 +88,14 @@ export class TeamsService {
         this.userService.shelf = shelf;
       }
       return of(data);
-    }));
+    }),
+    switchMap((shelfData) => {
+      if (leaveTeam) {
+        return this.updateArchiveMember(teamId);
+      }
+      return of(shelfData);
+    })
+  );
   }
 
   updateTeamShelf(teamId, leaveTeam, shelf) {
@@ -93,16 +103,23 @@ export class TeamsService {
     if (leaveTeam) {
       myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
     } else {
-      myTeamIds = myTeamIds.concat([ teamId ]).reduce(this.dedupeArrayReduce, []);
+      myTeamIds = myTeamIds.concat([ teamId ]).reduce(dedupeShelfReduce, []);
     }
     return { ...shelf, myTeamIds };
   }
 
-  dedupeArrayReduce(items, item) {
-    if (items.indexOf(item) > -1) {
-      return items;
-    }
-    return items.concat(item);
+  updateArchiveMember(teamId) {
+    // find teamId on User shelf
+    return this.couchService.post('shelf/_find', findDocuments({
+      'myTeamIds': { '$in': [ teamId ] }
+    }, 0)).pipe(switchMap((data) => {
+      if (data.docs.length === 0) {
+        return this.couchService.get('teams/' + teamId).pipe(switchMap(teamData => {
+          return this.updateTeam({ ...teamData, status: 'archived' });
+        }));
+      }
+      return of(data);
+    }));
   }
 
 }
