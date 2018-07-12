@@ -78,7 +78,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   requestToJoin(team) {
     this.teamsService.requestToJoinTeam(team, this.userService.get()._id).subscribe((newTeam) => {
-      this.teamList(this.teams.data.map((t) => t._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
+      this.teamList(this.teams.data.map((t: any) => t._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
       this.planetMessageService.showMessage('Request to join team sent');
     });
   }
