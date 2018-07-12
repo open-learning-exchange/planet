@@ -10,5 +10,5 @@ export const environment = {
   centerAddress: 'earth.ole.org:2200',
   centerProtocol: 'https',
   parentProtocol: 'https',
-  upgradeAddress: window.location.protocol + '//' + window.location.hostname + '/upgrade'
+  upgradeAddress: window.location.origin + '/upgrade'
 };
