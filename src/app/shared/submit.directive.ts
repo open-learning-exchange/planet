@@ -14,7 +14,7 @@ export class SubmitDirective {
 
   @HostListener('click') submit() {
     if (this.validSubmit) {
-      let dialogRef = this.dialog.open(DialogsLoadingComponent, { });
+      const dialogRef = this.dialog.open(DialogsLoadingComponent, { });
       dialogRef.disableClose = true;
       dialogRef.closeOnNavigation = true;
       console.log(dialogRef);

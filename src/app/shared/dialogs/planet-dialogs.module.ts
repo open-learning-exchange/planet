@@ -16,7 +16,11 @@ import { ChangePasswordDirective } from './change-password.directive';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule
   ],
   exports: [
     DialogsFormComponent,
@@ -37,10 +41,15 @@ import { ChangePasswordDirective } from './change-password.directive';
     ChangePasswordDirective
   ],
   providers: [
-    DialogsFormService, DialogsListService
+    DialogsFormService,
+    DialogsListService
   ],
   entryComponents: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, DialogsListComponent, DialogsLoadingComponent
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    DialogsListComponent,
+    DialogsLoadingComponent
   ]
 })
 export class PlanetDialogsModule {}
