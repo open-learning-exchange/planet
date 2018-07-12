@@ -1,0 +1,29 @@
+.upgrade_error {
+    color: #C70039;
+}
+
+.upgrade_success {
+  color: #8DC75F;
+}
+
+.upgrade_buttons button {
+  margin: 0px 0px 0px 2px;
+}
+
+.upgrade_mat-card {
+  max-width: 400px;
+}
+
+.upgrade_mat-card-icon {
+  background-image: url('/assets/OLE_Logo1.png');
+  background-size: cover;
+}
+
+.upgrade_output {
+  border: 1px solid #D5D5D5;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  max-height: 300px;
+  min-height: 300px;
+  overflow: auto;
+}

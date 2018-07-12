@@ -58,7 +58,11 @@ prepare_planet_rpi(){
   docker create --name reuse-artifact $DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
   mkdir -p ./ng-app/dist
   docker export reuse-artifact > reuse-artifact.tar
-  tar -xvf reuse-artifact.tar -C ./ng-app/dist
+  # this used to had verbose mode,
+  # which was been removed due to problems when building travis images.
+  # we found the solution here
+  # https://stackoverflow.com/questions/37540792/jenkins-script-tar-write-error
+  tar -xf reuse-artifact.tar -C ./ng-app/dist
 }
 
 prepare_db_init_rpi(){
