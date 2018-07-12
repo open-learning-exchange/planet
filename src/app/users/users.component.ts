@@ -22,10 +22,8 @@ import { debug } from '../debug-operator';
       max-width: 44px;
     }
 
-    .profile-image-100 {
+    .mat-column-profile {
       max-width: 100px;
-      height: auto;
-      padding: 3px;
     }
   ` ]
 })
