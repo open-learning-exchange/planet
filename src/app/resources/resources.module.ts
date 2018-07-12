@@ -22,7 +22,7 @@ import { PlanetLanguageModule } from '../shared/planet-language.module';
     MaterialModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
     PlanetLanguageModule
   ],
   declarations: [
