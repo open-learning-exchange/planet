@@ -174,7 +174,7 @@ export class ConfigurationComponent implements OnInit {
   getNationList() {
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
-      { domain: environment.centerAddress })
+      { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;
       }, (error) => this.planetMessageService.showAlert('There is a problem getting the list of nations'));
@@ -310,7 +310,7 @@ export class ConfigurationComponent implements OnInit {
       code: configuration.code,
       selector: { 'sendOnAccept': true }
     };
-    const pin = this.createPin();
+    const pin = this.userService.createPin();
     // create replicator at first as we do not have session
     this.couchService.post('_replicator', feedbackSyncUp)
       .pipe(
@@ -390,10 +390,6 @@ export class ConfigurationComponent implements OnInit {
 
   createUser(name, details, opts?) {
     return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
-  }
-
-  createPin() {
-    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
 }

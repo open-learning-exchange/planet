@@ -4,13 +4,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { LoginFormComponent } from './login-form.component';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
+import { ConfigurationComponent } from '../configuration/configuration.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent,
     children: [
       { path: '', component: LoginFormComponent },
       { path: 'newuser', component: LoginFormComponent },
-      { path: 'configuration', loadChildren: '../configuration/configuration.module#ConfigurationModule',
+      { path: 'configuration', component: ConfigurationComponent,
       canActivate: [ ConfigurationGuard ] }
     ]
   }

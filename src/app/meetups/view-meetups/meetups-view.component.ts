@@ -101,6 +101,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         { 'isUserAdmin': true }
       ]
     }).subscribe((res) => {
+      res.tableData = res.tableData.filter(tableValue => this.members.indexOf(tableValue.name) === -1);
       const data = {
         okClick: this.sendInvitations.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),

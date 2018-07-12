@@ -3,8 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
-import { throwError, forkJoin } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { throwError, forkJoin, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 
@@ -49,8 +49,9 @@ export class SyncService {
 
   private openConfirmation() {
     const title = 'Admin Confirmation';
+    let passwordInvalid = null;
     const formGroup = {
-      password: [ '', Validators.required ]
+      password: [ '', [ Validators.required, () => passwordInvalid ] ]
     };
     return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup)
@@ -61,14 +62,21 @@ export class SyncService {
           return this.verifyPassword(response.password);
         }
         return throwError('Invalid password');
+      }),
+      catchError((err) => {
+        passwordInvalid = { 'invalidPassword': true };
+        return throwError(err);
       })
     );
   }
 
   private verifyPassword(password) {
     return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(map(() => {
-      return { name: this.userService.get().name, password };
+    .pipe(switchMap((data) => {
+      if (!data.ok) {
+        return throwError('Invalid password');
+      }
+      return of({ name: this.userService.get().name, password });
     }));
   }
 
@@ -96,7 +104,7 @@ export class SyncService {
   private dbObj(dbName, credentials, parent: boolean) {
     const username = credentials.name + (parent ? '@' + this.code : '');
     const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
-    const protocol = parent ? environment.centerProtocol + '://' : '';
+    const protocol = parent ? environment.parentProtocol + '://' : '';
     return {
       'headers': {
         'Authorization': 'Basic ' + btoa(username + ':' + credentials.password)
