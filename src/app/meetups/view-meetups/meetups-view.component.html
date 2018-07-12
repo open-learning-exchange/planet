@@ -9,7 +9,7 @@
     <button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()">
       <span i18n>Invite Member</span>
     </button>
-    <button mat-button class="margin-lr-3" (click)="joinMeetup()">
+    <button mat-raised-button color="accent" class="margin-lr-3" (click)="joinMeetup()">
       <span *ngIf="!parent">
         <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
         <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
