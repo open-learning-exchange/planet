@@ -1,0 +1,43 @@
+<mat-toolbar>
+  <a mat-icon-button routerLink="/teams"><mat-icon>arrow_back</mat-icon></a>
+  <span i18n>Teams</span>
+</mat-toolbar>
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="margin-lr-3"><h3>{{team?.name}}</h3></span>
+    <span class="toolbar-fill"></span>
+    <ng-container [ngSwitch]="userStatus">
+      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, true)">
+        Leave
+      </button>
+      <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()">
+        <ng-container i18n>Request to Join</ng-container>
+      </button>
+      <button *ngSwitchCase="'requesting'" mat-button disabled>
+        Request pending
+      </button>
+    </ng-container>
+  </mat-toolbar>
+  <div class="view-container">
+    <div class="left-tile">
+      <p>{{team?.description}}</p>
+    </div>
+    <div class="right-tile">
+      <p>Members</p>
+      <ul>
+        <li *ngFor="let member of members">
+          {{member.name}} <span *ngIf="member.name === currentUserName">(You)</span>
+        </li>
+      </ul>
+      <ng-container *ngIf="userStatus === 'member' && team?.requests.length > 0">
+        <p>Requests</p>
+        <ul>
+          <li *ngFor="let user of team?.requests">
+            {{user.replace('org.couchdb.user:','')}}
+            <button mat-button class="margin-lr-3" (click)="acceptRequest(user)">Accept</button>
+          </li>
+        </ul>
+      </ng-container>
+    </div>
+  </div>
+</div>

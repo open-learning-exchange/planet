@@ -15,6 +15,7 @@ import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -230,13 +231,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  dedupeShelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
-  }
-
   updateShelf(newShelf, msg: string) {
     this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
       newShelf._rev = res.rev;
@@ -249,7 +243,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const currentShelf = this.userService.shelf;
     const resourceIds = resources.map((data) => {
       return data._id;
-    }).concat(currentShelf.resourceIds).reduce(this.dedupeShelfReduce, []);
+    }).concat(currentShelf.resourceIds).reduce(dedupeShelfReduce, []);
     const msg = resources.length === 1 ? resources[0].title + ' have been added to' : resources.length + ' resources have been added to';
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), msg);
   }
