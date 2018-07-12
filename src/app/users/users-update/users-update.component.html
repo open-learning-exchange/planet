@@ -10,24 +10,24 @@
   <div class="view-container">
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
       <div>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
           <mat-error><planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
           <mat-error><planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <mat-select i18n-placeholder placeholder="Language" formControlName="language" required>
             <mat-option *ngFor="let language of languages" [value]="language.name">
               {{language.name}}
@@ -37,11 +37,11 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
           <mat-error><planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="margin-lr">
           <input matInput [matDatepicker]="dp" [max]="maxDate" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" required>
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
