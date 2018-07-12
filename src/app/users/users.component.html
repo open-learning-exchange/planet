@@ -61,10 +61,10 @@
       <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div *ngIf="element.imageSrc; else noImage">
-          <img class="cursor-pointer" [src]="element.imageSrc" routerLink="/users/profile/{{element.doc.name}}">
+          <img class="profile-image cursor-pointer" [src]="element.imageSrc" routerLink="/users/profile/{{element.doc.name}}">
         </div>
         <ng-template #noImage>
-          <img class="cursor-pointer" src="assets/avatar.png" routerLink="/users/profile/{{element.doc.name}}">
+          <img class="profile-image cursor-pointer" src="assets/avatar.png" routerLink="/users/profile/{{element.doc.name}}">
         </ng-template>
       </mat-cell>
     </ng-container>
