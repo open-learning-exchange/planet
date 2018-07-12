@@ -22,6 +22,10 @@ import { dedupeShelfReduce } from '../shared/utils';
     .mat-column-select {
       max-width: 44px;
     }
+
+    .mat-column-profile {
+      max-width: 100px;
+    }
   ` ]
 })
 export class UsersComponent implements OnInit, AfterViewInit {
