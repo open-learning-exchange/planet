@@ -112,7 +112,7 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <planet-courses-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent"></planet-courses-rating>
+        <planet-rating-element [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'course'" (updateService)="updateRating($event)"></planet-rating-element>
         <div>
           <p>{{ "Grade Level: " + element.gradeLevel}}</p>
           <p>{{ "Subject Level: " + element.subjectLevel}}</p>

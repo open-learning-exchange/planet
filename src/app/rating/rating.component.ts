@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -26,15 +26,16 @@ const popupFormFields = [
 
 @Component({
   templateUrl: './rating.component.html',
-  selector: 'planet-rating'
+  selector: 'planet-rating-element'
 })
 export class RatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
   @Input() itemId: string;
   @Input() parent;
+  @Input() ratingType = '';
+  @Output() updateService = new EventEmitter<any>();
 
-  ratingType = '';
   rateForm: FormGroup;
   popupForm: FormGroup;
   isPopupOpen = false;
@@ -79,7 +80,7 @@ export class RatingComponent implements OnChanges {
   onStarClick(form = this.rateForm) {
     this.updateRating(form).subscribe(res => {
       // This should never be called for parent resources, so do not need to send domain options
-      this.updateService();
+      this.updateService.emit(this.itemId);
       if (!this.isPopupOpen) {
         this.openDialog();
         this.planetMessage.showMessage('Thank you, your rating is submitted!');
@@ -92,8 +93,6 @@ export class RatingComponent implements OnChanges {
       this.ratingError();
     });
   }
-
-  updateService() { }
 
   updateRating(form) {
     // Later parameters of Object.assign will overwrite values from previous objects

@@ -308,4 +308,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     };
   }
 
+  updateRating(itemId) {
+    this.coursesService.updateCourses({ courseIds: [ itemId ] });
+  }
+
 }

@@ -10,15 +10,14 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { CoursesStepComponent } from './add-courses/courses-step.component';
-import { CoursesService } from '../courses/courses.service';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
-import { ResourcesViewerComponent } from '../resources/view-resources/resources-viewer.component';
 import { ResourcesModule } from '../resources/resources.module';
 import { ExamsModule } from '../exams/exams.module';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
 import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
+import { RatingModule } from '../rating/rating.module';
 
 @NgModule({
   imports: [
@@ -30,7 +29,8 @@ import { CoursesProgressLearnerComponent } from './progress-courses/courses-prog
     PlanetDialogsModule,
     MaterialModule,
     ResourcesModule,
-    ExamsModule
+    ExamsModule,
+    RatingModule
   ],
   declarations: [
     CoursesComponent,

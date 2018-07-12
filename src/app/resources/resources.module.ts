@@ -9,9 +9,8 @@ import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
-import { ResourcesRatingComponent } from './rating-resources/resources-rating.component';
-import { PlanetStackedBarComponent } from '../shared/planet-stacked-bar.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { RatingModule } from '../rating/rating.module';
 
 @NgModule({
   imports: [
@@ -23,15 +22,14 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     MaterialModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
+    RatingModule
   ],
   declarations: [
     ResourcesComponent,
     ResourcesViewComponent,
     ResourcesViewerComponent,
-    ResourcesAddComponent,
-    ResourcesRatingComponent,
-    PlanetStackedBarComponent
+    ResourcesAddComponent
   ],
   exports: [ ResourcesViewerComponent ]
 })

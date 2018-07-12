@@ -94,7 +94,7 @@
     <ng-container matColumnDef="rating">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <planet-resources-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent"></planet-resources-rating>
+        <planet-rating-element [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'resource'" (updateService)="updateRating($event)"></planet-rating-element>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>

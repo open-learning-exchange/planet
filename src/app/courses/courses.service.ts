@@ -97,7 +97,7 @@ export class CoursesService {
       // Selector
       'type': 'course',
       // Must have sorted property in selector to sort correctly
-      'item': { '$gt': null }
+      'item': itemSelector
     }, 0, [ { 'item': 'desc' } ], 1000), opts).pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so courses can be displayed.

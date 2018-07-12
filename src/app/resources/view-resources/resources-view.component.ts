@@ -91,4 +91,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
+  updateRating(itemId) {
+    this.resourcesService.updateResources({ resourceIds: [ itemId ], updateCurrentResources: true });
+  }
+
 }

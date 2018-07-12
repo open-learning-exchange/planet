@@ -285,4 +285,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, '');
   }
 
+  updateRating(itemId) {
+    console.log(itemId);
+    this.resourcesService.updateResources({ resourceIds: [ itemId ], updateCurrentResources: true });
+  }
+
 }
