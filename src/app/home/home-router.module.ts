@@ -19,7 +19,8 @@ const routes: Routes = [
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
       { path: 'notifications', component: NotificationsComponent },
-      { path: 'submissions', loadChildren: '../submissions/submissions.module#SubmissionsModule' }
+      { path: 'submissions', loadChildren: '../submissions/submissions.module#SubmissionsModule' },
+      { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' }
     ]
   }
 ];
