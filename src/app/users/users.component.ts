@@ -13,6 +13,7 @@ import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from 
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   templateUrl: './users.component.html',
@@ -250,7 +251,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       // Do not add role if it already exists on user and also not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const newRoles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+        const newRoles = [ ...user.roles, ...roles ].reduce(dedupeShelfReduce, []);
         const tempUser = { ...user, roles: newRoles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
@@ -261,7 +262,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       users.map((user) => {
         if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = [ ...user.roles, ...roles ].reduce(this.dedupeShelfReduce, []);
+          user.roles = [ ...user.roles, ...roles ].reduce(dedupeShelfReduce, []);
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
         }
@@ -271,13 +272,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
       console.log('Error!');
       console.log(error);
     });
-  }
-
-  dedupeShelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
   }
 
   updateShelf(myTeamIds: string[] = [], userShelf: any, msg: string) {
@@ -291,7 +285,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   addTeams(userIds) {
     const users = this.idsToUsers(userIds);
     const userShelf = this.userService.shelf;
-    const myTeamIds = userIds.concat(userShelf.myTeamIds).reduce(this.dedupeShelfReduce, []);
+    const myTeamIds = userIds.concat(userShelf.myTeamIds).reduce(dedupeShelfReduce, []);
     const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
     const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
     const msg = (users.length === 1 && addedNum === 1 ?
