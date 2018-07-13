@@ -28,6 +28,7 @@ export class DialogsListComponent implements AfterViewInit {
   selection = new SelectionModel(false, []);
   pageEvent: PageEvent;
   disableRowClick: boolean;
+  emptySubmit: boolean;
   @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
@@ -37,12 +38,14 @@ export class DialogsListComponent implements AfterViewInit {
     filterPredicate?: any,
     allowMulti?: boolean,
     initialSelection?: any[],
-    disableSelection?: boolean
+    disableSelection?: boolean,
+    selectionOptional?: boolean
   }) {
     this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
     this.disableRowClick = this.data.disableSelection || false;
+    this.emptySubmit = this.data.selectionOptional || false;
     if (this.data.filterPredicate) {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
@@ -89,5 +92,8 @@ export class DialogsListComponent implements AfterViewInit {
     return this.selection.selected.map(id => this.tableData.data.find((row: any) => row._id === id));
   }
 
+  allowSubmit() {
+    return this.emptySubmit || this.selection.hasValue();
+  }
 
 }

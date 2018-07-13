@@ -174,6 +174,7 @@ export class ManagerDashboardComponent implements OnInit {
         filterPredicate: this.setFilterPredicate(db),
         allowMulti: true,
         initialSelection,
+        selectionOptional: true,
         ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
@@ -193,7 +194,7 @@ export class ManagerDashboardComponent implements OnInit {
         this.handleCourseAttachments(selected, previousList);
       }
       this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
-        this.planetMessageService.showMessage('Added to send on accept list');
+        this.planetMessageService.showMessage('Send on accept list updated');
       });
       this.dialogRef.close();
     };
