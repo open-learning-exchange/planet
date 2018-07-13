@@ -354,6 +354,10 @@ body {
     }
   }
 
+  mat-form-field {
+    margin-right: 5px;
+  }
+
   .course-progress {
     display: grid;
     grid-template-columns: max-content 1fr;
