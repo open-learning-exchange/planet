@@ -13,19 +13,19 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-mini-fab (click)="routeToAddSurvey()">
+    <button mat-mini-fab (click)="routeToEditSurvey('add')">
       <mat-icon>add</mat-icon>
     </button>
   </mat-toolbar>
-  <mat-table #table [dataSource]="exams" matSort>
+  <mat-table #table [dataSource]="surveys" matSort>
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Survey</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.doc.name}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary">Edit Survey</button>
+          <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)">Edit Survey</button>
           <button mat-raised-button color="primary">Send Survey</button>
         </mat-cell>
       </ng-container>

@@ -12,6 +12,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  displayedColumns = [ 'name', 'action' ];
 
   constructor(
     private couchService: CouchService,
@@ -39,8 +40,8 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/manager' ]);
   }
 
-  routeToAddSurvey() {
-    this.router.navigate([ 'add', { 'type': 'surveys' } ], { relativeTo: this.route });
+  routeToEditSurvey(route, id = '') {
+    this.router.navigate([ route + '/' + id, { 'type': 'surveys' } ], { relativeTo: this.route });
   }
 
 }
