@@ -46,6 +46,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   displayedColumns = [ 'select', 'courseTitle', 'action' ];
+  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -82,12 +83,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-    this.getCourses().subscribe((courses: any) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.shelf;
-      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
-    }, (error) => console.log(error));
+    this.getCourses();
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
@@ -100,21 +96,6 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       course.admission = myCourseIndex > -1;
       return course;
     });
-  }
-
-  getCourses() {
-    let opts: any = {};
-    if (this.parent) {
-      opts = { domain: this.userService.getConfig().parentDomain };
-    }
-    return forkJoin([ this.couchService.allDocs('courses', opts), this.couchService.allDocs('courses_progress', opts) ]).pipe(
-      map(([ courses, progress ]) =>
-        courses.map(course => ({
-          ...course,
-          progress: progress.find(p => p.courseId === course._id && p.userId === this.user._id) || { stepNum: 0 }
-        }))
-      )
-    );
   }
 
   ngAfterViewInit() {
@@ -191,7 +172,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
       .pipe(switchMap(data => {
-        return this.getCourses();
+        return this.coursesService.getAllCourses(this.getOpts);
       })).subscribe((data: any) => {
         data.sort((a, b) => b.createdDate - a.createdDate);
         this.courses.data = data;
@@ -309,7 +290,16 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   updateRating(itemId) {
-    this.coursesService.updateCourses({ courseIds: [ itemId ] });
+    this.getCourses();
+  }
+
+  getCourses() {
+    this.coursesService.getAllCourses(this.getOpts).subscribe((courses: any) => {
+      // Sort in descending createdDate order, so the new courses can be shown on the top
+      courses.sort((a, b) => b.createdDate - a.createdDate);
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
+    }, (error) => console.log(error));
   }
 
 }

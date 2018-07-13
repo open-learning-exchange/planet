@@ -76,4 +76,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return this.userService.shelf.courseIds.includes(courseId);
   }
 
+  updateRating(itemId) {
+    this.coursesService.requestCourse({ courseId: itemId, forceLatest: true });
+  }
+
 }

@@ -3,14 +3,16 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
+import { RatingService } from '../rating/rating.service';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
 
 // Service for updating and storing active course for single course views.
 @Injectable()
 export class CoursesService {
-
+  private dbName = 'courses';
+  private progressDb = 'courses_progress';
   course: any = { _id: '' };
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
@@ -22,7 +24,8 @@ export class CoursesService {
 
   constructor(
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private ratingService: RatingService
   ) {}
 
   // Components call this to get details of one course and associated progress.
@@ -31,7 +34,7 @@ export class CoursesService {
   // Always queries CouchDB for the latest progress by the logged in user
   requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
     const obs = [
-      this.couchService.post('courses_progress/_find', findDocuments({
+      this.couchService.post(this.progressDb + '/_find', findDocuments({
         'userId': this.userService.get()._id,
         courseId
       }))
@@ -39,11 +42,14 @@ export class CoursesService {
     if (!forceLatest && courseId === this.course._id) {
       obs.push(of(this.course));
     } else {
-      obs.push(this.couchService.get('courses/' + courseId, opts));
+      obs.push(this.couchService.get(this.dbName + '/' + courseId, opts));
     }
-    forkJoin(obs).subscribe(([ progress, course ]) => {
-      this.course = course;
-      this.courseUpdated.next({ progress: progress.docs[0], course });
+    obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
+
+    forkJoin(obs).subscribe(([ progress, course, ratings ]) => {
+      const courses = this.createCourseList([ course ], ratings.docs);
+      this.course = courses[0];
+      this.courseUpdated.next({ progress: progress.docs[0], course: this.course });
     });
   }
 
@@ -55,7 +61,7 @@ export class CoursesService {
 
   updateProgress({ courseId, stepNum, passed = true, progress = {} }) {
     const newProgress = { ...progress, stepNum, courseId, passed, userId: this.userService.get()._id };
-    this.couchService.post('courses_progress', newProgress).subscribe(() => {
+    this.couchService.post(this.progressDb, newProgress).subscribe(() => {
       this.requestCourse({ courseId });
     });
   }
@@ -71,74 +77,29 @@ export class CoursesService {
   }
 
   getCourses(query = { 'selector': {} }, opts?) {
-    this.couchService.findAll('courses', query, opts).subscribe((courses) => {
+    this.couchService.findAll(this.dbName, query, opts).subscribe((courses) => {
       this.coursesUpdated.next(courses);
     });
   }
 
-  updateCourses({ courseIds = [], opts = {} }: { courseIds?: string[], opts?: any } = {}) {
-    const courseQuery = courseIds.length > 0 ?
-      this.getCourses({ 'selector': { '_id': { '$in': courseIds } } }, opts) : this.getAllCourses(opts);
-    forkJoin(courseQuery, this.getRatings(courseIds, opts)).subscribe((results: any) => {
-      const coursesRes = results[0].docs || results[0],
-        ratingsCourse = results[1];
-      this.courseUpdated.next(this.createCourseList(coursesRes, ratingsCourse.docs));
-    }, (err) => console.log(err));
-  }
-
   getAllCourses(opts: any) {
-    return this.couchService.allDocs('courses', opts);
+    return forkJoin([
+      this.couchService.allDocs(this.dbName, opts),
+      this.couchService.allDocs(this.progressDb, opts),
+      this.ratingService.getRatings({ itemIds: [], type: 'course' }, opts)
+    ]).pipe(
+      map(([ courses, progress, ratings ]) => {
+        courses = this.createCourseList(courses, ratings.docs);
+        return courses.map(course => ({
+          ...course,
+          progress: progress.find(p => p.courseId === course._id && p.userId === this.userService.get()._id) || { stepNum: 0 }
+        }));
+      })
+    );
   }
 
-  getRatings(courseIds: string[], opts: any) {
-    const itemSelector = courseIds.length > 0 ?
-      { '$in': courseIds } : { '$gt': null };
-    return this.couchService.post('ratings/_find', findDocuments({
-      // Selector
-      'type': 'course',
-      // Must have sorted property in selector to sort correctly
-      'item': itemSelector
-    }, 0, [ { 'item': 'desc' } ], 1000), opts).pipe(catchError(err => {
-      // If there's an error, return a fake couchDB empty response
-      // so courses can be displayed.
-      return of({ docs: [] });
-    }));
-  }
-
-  createCourseList(coursesRes, ratings) {
-    return coursesRes.map((c: any) => {
-      const course = c.doc || c;
-      const ratingIndex = ratings.findIndex(rating => {
-        return course._id === rating.item;
-      });
-      if (ratingIndex > -1) {
-        const ratingInfo = this.addRatingToCourse(course._id, ratingIndex, ratings, Object.assign({}, startingRating));
-        return { ...course, rating: ratingInfo };
-      }
-      return { ...course,  rating: Object.assign({}, startingRating) };
-    });
-  }
-
-  addRatingToCourse(id, index, ratings, ratingInfo: any) {
-    const rating = ratings[index];
-    // If totalRating is undefined, will start count at 1
-    ratingInfo.totalRating = ratingInfo.totalRating + 1;
-    ratingInfo.rateSum = ratingInfo.rateSum + rating.rate;
-    switch (rating.user.gender) {
-      case 'male':
-        ratingInfo.maleRating = ratingInfo.maleRating + 1;
-        break;
-      case 'female':
-        ratingInfo.femaleRating = ratingInfo.femaleRating + 1;
-        break;
-    }
-    ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
-    if (ratings.length > index + 1 && ratings[index + 1].item === id) {
-      // Ratings are sorted by course id,
-      // so this recursion will add all ratings to course
-      return this.addRatingToCourse(id, index + 1, ratings, ratingInfo);
-    }
-    return ratingInfo;
+  createCourseList(courses, ratings) {
+    return this.ratingService.createItemList(courses, ratings);
   }
 
 }
