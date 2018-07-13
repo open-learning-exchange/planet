@@ -26,8 +26,7 @@ RUN apk add --update \
     fcgiwrap \
     spawn-fcgi \
     nano \
-    curl \
-    bash
+    curl
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY docker/planet/upgrade.sh /usr/share/nginx/html
 
