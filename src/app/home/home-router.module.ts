@@ -22,7 +22,8 @@ const routes: Routes = [
       { path: 'notifications', component: NotificationsComponent },
       { path: 'submissions', loadChildren: '../submissions/submissions.module#SubmissionsModule' },
       { path: 'upgrade', component: UpgradeComponent },
-      { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' }
+      { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' },
+      { path: 'surveys', loadChildren: '../surveys/surveys.module#SurveysModule' }
     ]
   }
 ];
