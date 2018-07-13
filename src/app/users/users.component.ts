@@ -115,7 +115,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
-      users = users.filter((user: any) => {
+      this.allUsers.data = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         return currentLoginUser !== user.name && user.name !== 'satellite';
