@@ -134,14 +134,14 @@ export class CoursesService {
   }
 
   getUsersCourses(userId){
-    const obs = this.couchService.post('courses_progress/_find', findAllDocumentsComplete('userId',userId))
-    obs.subscribe((response)=>{
+    const obs = this.couchService.post('courses_progress/_find', findAllDocumentsComplete('userId', userId));
+    obs.subscribe((response) => {
       const courses = [];
-      response.docs.map((c)=>{
+      response.docs.map((c) => {
         courses.push(c.courseId);
       });
       this.getCourses({ ids: courses });
-    })
+    });
   }
 
 }
