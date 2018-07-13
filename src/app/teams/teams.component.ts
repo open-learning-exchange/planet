@@ -36,15 +36,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getTeams();
-    this.teams.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.teams.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     this.teams.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
   getTeams() {
     this.couchService.allDocs(this.dbName).subscribe((data: any) => {
-      this.teams.data = data;
       this.userShelf = this.userService.shelf;
-      this.teams.data = this.teamList(this.teams.data, this.userService.shelf.myTeamIds);
+      this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
     }, (error) => console.log(error));
   }
 
