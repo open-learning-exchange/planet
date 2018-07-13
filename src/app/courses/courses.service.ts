@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
-import { findDocuments, inSelector } from '../shared/mangoQueries';
+import { findDocuments, inSelector, findAllDocuments, findAllDocumentsComplete } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 
@@ -131,6 +131,17 @@ export class CoursesService {
 
   createCourseList(courses, ratings) {
     return this.ratingService.createItemList(courses, ratings);
+  }
+
+  getUsersCourses(userId){
+    const obs = this.couchService.post('courses_progress/_find', findAllDocumentsComplete('userId',userId))
+    obs.subscribe((response)=>{
+      const courses = [];
+      response.docs.map((c)=>{
+        courses.push(c.courseId);
+      });
+      this.getCourses({ ids: courses });
+    })
   }
 
 }
