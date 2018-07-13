@@ -8,7 +8,7 @@ export class PlanetMessageService {
   ) { }
 
   showMessage(message: string) {
-    this.snackBar.open(message, ' ', {
+    this.snackBar.open(message, undefined, {
       duration: 3000,
     });
   }
