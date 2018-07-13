@@ -56,12 +56,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private router: Router,
     private planetMessageService: PlanetMessageService
-  ) {
-    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe((shelf: any) => {
-        this.setMyTeams(this.allUsers.data, shelf.myTeamIds);
-      });
-  }
+  ) { }
 
   ngOnInit() {
     this.planetType = this.userService.getConfig().planetType;
@@ -125,13 +120,12 @@ export class UsersComponent implements OnInit, AfterViewInit {
         // so this protects from that.  May need to unhide in the future.
         return currentLoginUser !== user.name && user.name !== 'satellite';
       }).map((user: any) => {
-        const userInfo = { doc: user, imageSrc: '', myTeamInfo: true };
+        const userInfo = { doc: user, imageSrc: '' };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
         return userInfo;
       });
-      this.setMyTeams(users, this.userService.shelf.myTeamIds);
       this.changeFilter('local');
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
@@ -179,26 +173,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
           this.deleteDialog.close();
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
-          return this.removeDeletedUserFromShelves(userId);
+          return of(data);
         })
       ).subscribe(() => { });
     };
-  }
-
-  removeDeletedUserFromShelves(userId) {
-    const myUserId = 'org.couchdb.user:' + this.userService.get().name;
-    return this.couchService.post('shelf/_find', findDocuments({ 'myTeamIds': { '$in': [ userId ] } })).pipe(
-      map(shelves => {
-        return shelves.docs.map(shelf => {
-          const myTeamIds = [ ...shelf.myTeamIds ];
-          myTeamIds.splice(myTeamIds.indexOf(userId), 1);
-          return { ...shelf, myTeamIds };
-        });
-      }),
-      switchMap(newShelves => {
-        return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
-      })
-    );
   }
 
   setRoles(user, roles) {
@@ -214,13 +192,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }, (error) => {
       console.log(error);
     });
-  }
-
-  setMyTeams(users, myTeamIds = []) {
-    this.allUsers.data = users.map((user: any) => {
-      user.myTeamInfo = myTeamIds.indexOf(user.doc._id) > -1;
-      return user;
-    }, []);
   }
 
   deleteRole(user: any, index: number) {
