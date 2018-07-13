@@ -56,7 +56,6 @@ export class TeamsService {
   }
 
   createTeam(team: any) {
-    console.log({ ...team, status: 'active' });
     return this.couchService.post(this.dbName + '/', { ...team, limit: '12', status: 'active' });
   }
 
