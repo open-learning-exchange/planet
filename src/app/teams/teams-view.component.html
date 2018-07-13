@@ -6,6 +6,9 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{team?.name}}</h3></span>
     <span class="toolbar-fill"></span>
+    <button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n>
+      Add Members
+    </button>
     <ng-container [ngSwitch]="userStatus">
       <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, true)">
         Leave

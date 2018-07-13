@@ -2,11 +2,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { filterSpecificFields } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -22,13 +26,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
+  dialogRef: MatDialogRef<DialogsListComponent>;
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private dialog: MatDialog,
+    private dialogsListService: DialogsListService
   ) {}
 
   ngOnInit() {
@@ -97,6 +104,41 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.team = newTeam;
       this.getMembers();
       this.setStatus(this.team, this.userService.get(), this.userService.shelf);
+    });
+  }
+
+  openInviteMemberDialog() {
+    this.dialogsListService.getListAndColumns('_users').subscribe((res) => {
+      res.tableData = res.tableData.filter(tableValue => this.members.indexOf(tableValue.name) === -1);
+      const data = {
+        okClick: this.addMembers.bind(this),
+        filterPredicate: filterSpecificFields([ 'name' ]),
+        allowMulti: true,
+        ...res
+      };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
+    });
+  }
+
+  addMembers(selected: string[]) {
+    const selectedIds = selected.map((s: any) => s._id);
+    this.couchService.findAll('shelf', { selector: { '_id': { '$in': selectedIds } } }).pipe(
+      switchMap((shelves) => {
+        const newShelves = shelves.map((shelf: any) => ({
+          ...shelf,
+          'myTeamIds': [].concat(shelf.myTeamIds, [ this.teamId ])
+        }));
+        return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
+      })
+    ).subscribe(res => {
+      this.getMembers();
+      this.dialogRef.close();
+      this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
     });
   }
 
