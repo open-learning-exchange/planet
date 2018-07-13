@@ -5,6 +5,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 
@@ -17,6 +18,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   teams = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  parent = this.route.snapshot.data.parent;
   userShelf: any = [];
   displayedColumns = [ 'name', 'action' ];
   dbName = 'teams';
@@ -25,6 +27,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
+    private router: Router,
+    private route: ActivatedRoute,
     private teamsService: TeamsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
@@ -89,6 +93,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       return ids;
     }
     return ids.concat(id);
+  }
+
+  goBack() {
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
   applyFilter(filterValue: string) {
