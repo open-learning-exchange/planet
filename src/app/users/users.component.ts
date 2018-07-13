@@ -278,34 +278,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
   }
 
-  updateShelf(myTeamIds: string[] = [], userShelf: any, msg: string) {
-    this.couchService.put('shelf/' + this.userService.get()._id, { ...userShelf, myTeamIds }).subscribe((res) =>  {
-      this.userService.shelf = { ...userShelf, _rev: res.rev, myTeamIds };
-
-      this.planetMessageService.showMessage(msg + ' your shelf');
-    }, (error) => (error));
-  }
-
-  addTeams(userIds) {
-    const users = this.idsToUsers(userIds);
-    const userShelf = this.userService.shelf;
-    const myTeamIds = userIds.concat(userShelf.myTeamIds).reduce(dedupeShelfReduce, []);
-    const addedNum = myTeamIds.length - userShelf.myTeamIds.length;
-    const subjectVerbAgreement = addedNum === 1 ? 'user has' : 'users have';
-    const msg = (users.length === 1 && addedNum === 1 ?
-      users[0].name + ' has been'
-      : addedNum + ' ' + subjectVerbAgreement + ' been')
-      + ' added to';
-    this.updateShelf(myTeamIds, userShelf, msg);
-  }
-
-  removeTeam(teamId, userName) {
-    const userShelf = this.userService.shelf;
-    const myTeamIds = [ ...userShelf.myTeamIds ];
-    myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
-    this.updateShelf(myTeamIds, userShelf, userName + ' has been removed from');
-  }
-
   back() {
     this.router.navigate([ '/' ]);
   }
