@@ -167,15 +167,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
           this.planetMessageService.showAlert('There was a problem deleting this user.');
           return throwError(err);
         }),
-        switchMap((data) => {
-          this.selection.deselect(user._id);
-          this.planetMessageService.showMessage('User deleted: ' + user.name);
-          this.deleteDialog.close();
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
-          return of(data);
-        })
-      ).subscribe(() => { });
+      ).subscribe((data) => {
+        this.selection.deselect(user._id);
+        this.planetMessageService.showMessage('User deleted: ' + user.name);
+        this.deleteDialog.close();
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
+      });
     };
   }
 
