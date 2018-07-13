@@ -2,16 +2,15 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin, of, throwError, Subject } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { dedupeShelfReduce } from '../shared/utils';
 
