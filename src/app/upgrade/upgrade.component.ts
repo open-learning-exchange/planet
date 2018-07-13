@@ -31,15 +31,30 @@ export class UpgradeComponent {
   upgrade() {
     this.http.get(environment.upgradeAddress, { responseType: 'text' }).subscribe(result => {
       result.split('\n').forEach(line => {
-        this.addLine(line, false, true);
+        if (line.includes('timeout')) {
+          this.addLine(line, 'upgrade_timeout');
+          return;
+        }
+        this.addLine(line, 'upgrade_success');
       });
+
+      if (result.includes('timeout')) {
+        this.message = 'Retry';
+        this.error = false;
+        this.done = false;
+        this.enabled = true;
+        this.working = false;
+        this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+        return;
+      }
+
       this.message = 'Success';
       this.error = false;
       this.done = true;
     }, err => {
       this.addLine('An error ocurred:', true);
       JSON.stringify(err, null, 1).split('\n').forEach(line => {
-        this.addLine(line, true);
+        this.addLine(line, 'upgrade_error');
       });
       this.working = false;
       this.message = 'Start upgrade';
@@ -59,13 +74,11 @@ export class UpgradeComponent {
     return `[${d}/${M}/${Y} ${h}:${m}:${s}]`;
   }
 
-  addLine(string, error?, success?) {
+  addLine(string, cssClass?) {
     if (!string.length) { return; }
     string = string.trim();
     const dTime = this.getDateTime();
-    let start = '<span>';
-    if (error) { start = '<span class=\'upgrade_error\'>'; }
-    if (success) { start = '<span class=\'upgrade_success\'>'; }
+    const start = `<span class=\'${cssClass}\'>`;
     this.output += `${start}${dTime} ${string}</span>\n`;
     this.cleanOutput += `${dTime} ${string}\n`;
   }
