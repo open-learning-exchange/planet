@@ -91,16 +91,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users', {
-      '$nor': [
-        { '_id': this.userService.get()._id },
-        { '_id': 'org.couchdb.user:satellite' }
-      ],
-      '$or': [
-        { 'roles': { '$in': [ 'learner', 'leader' ] } },
-        { 'isUserAdmin': true }
-      ]
-    }).subscribe((res) => {
+    this.dialogsListService.getListAndColumns('_users').subscribe((res) => {
       res.tableData = res.tableData.filter(tableValue => this.members.indexOf(tableValue.name) === -1);
       const data = {
         okClick: this.sendInvitations.bind(this),
