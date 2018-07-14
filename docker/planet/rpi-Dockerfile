@@ -10,6 +10,14 @@ RUN apk add --update \
     curl
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY docker/planet/upgrade.sh /usr/share/nginx/html
+COPY package.json /tmp/
+RUN cat /tmp/package.json \
+    | grep version \
+    | head -1 \
+    | awk -F: '{ print $2 }' \
+    | sed 's/[",]//g' \
+    | tr -d '[[:space:]]' > /usr/share/nginx/html/version
+RUN rm /tmp/package.json
 
 
 CMD ./docker-entrypoint.sh
