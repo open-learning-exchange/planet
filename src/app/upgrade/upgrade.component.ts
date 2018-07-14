@@ -82,7 +82,7 @@ export class UpgradeComponent {
   }
 
   handleError(err) {
-    this.addLine('An error ocurred:', true);
+    this.addLine('An error ocurred:', 'upgrade_error');
     JSON.stringify(err, null, 1).split('\n').forEach(line => {
       this.addLine(line, 'upgrade_error');
     });
