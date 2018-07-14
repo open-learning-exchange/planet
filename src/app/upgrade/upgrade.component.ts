@@ -35,16 +35,12 @@ export class UpgradeComponent {
           this.addLine(line, 'upgrade_timeout');
           return;
         }
+
         this.addLine(line, 'upgrade_success');
       });
 
       if (result.includes('timeout')) {
-        this.message = 'Retry';
-        this.error = false;
-        this.done = false;
-        this.enabled = true;
-        this.working = false;
-        this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+        this.handleTimeout();
         return;
       }
 
@@ -52,14 +48,7 @@ export class UpgradeComponent {
       this.error = false;
       this.done = true;
     }, err => {
-      this.addLine('An error ocurred:', true);
-      JSON.stringify(err, null, 1).split('\n').forEach(line => {
-        this.addLine(line, 'upgrade_error');
-      });
-      this.working = false;
-      this.message = 'Start upgrade';
-      this.error = true;
-      this.done = true;
+      this.handleError(err);
     });
   }
 
@@ -81,5 +70,25 @@ export class UpgradeComponent {
     const start = `<span class=\'${cssClass}\'>`;
     this.output += `${start}${dTime} ${string}</span>\n`;
     this.cleanOutput += `${dTime} ${string}\n`;
+  }
+
+  handleTimeout() {
+    this.message = 'Retry';
+    this.error = false;
+    this.done = false;
+    this.enabled = true;
+    this.working = false;
+    this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+  }
+
+  handleError(err) {
+    this.addLine('An error ocurred:', true);
+    JSON.stringify(err, null, 1).split('\n').forEach(line => {
+      this.addLine(line, 'upgrade_error');
+    });
+    this.working = false;
+    this.message = 'Start upgrade';
+    this.error = true;
+    this.done = true;
   }
 }
