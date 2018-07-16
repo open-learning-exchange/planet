@@ -27,7 +27,7 @@ import { dedupeShelfReduce } from '../shared/utils';
     .mat-column-select {
       max-width: 44px;
     }
-    .mat-column-action {
+    .mat-column-info, .mat-column-rating {
       max-width: 225px;
     }
   ` ]
@@ -45,7 +45,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'courseTitle', 'action' ];
+  displayedColumns = [ 'select', 'courseTitle', 'info', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
