@@ -101,10 +101,10 @@ export class RatingComponent implements OnChanges {
     // Later parameters of Object.assign will overwrite values from previous objects
     const newRating = Object.assign({
       type: this.ratingType,
-      item: this.itemId,
-      user: this.userService.get()
+      item: this.itemId
     }, this.rating.userRating, form.value, {
-      time: Date.now()
+      time: Date.now(),
+      user: this.userService.get()
     });
     let couchRequest = this.couchService.post,
       couchUrl = this.dbName;
