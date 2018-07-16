@@ -21,7 +21,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
   members = [];
-  memberDisable = false;
+  disableAddingMembers = false;
   displayedColumns = [ 'name' ];
   userShelf: any = [];
   userStatus = 'unrelated';
@@ -69,7 +69,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.members = data.docs.map((mem) => {
         return { name: mem._id.split(':')[1] };
       });
-      this.memberDisable = this.members.length > this.team.limit;
+      this.disableAddingMembers = this.members.length >= this.team.limit;
     });
   }
 
