@@ -13,7 +13,7 @@
       <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, true)" i18n>
         Leave
       </button>
-      <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()" i18n>
+      <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()">
         <ng-container i18n>Request to Join</ng-container>
       </button>
       <button i18n *ngSwitchCase="'requesting'" mat-button disabled>
