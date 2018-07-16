@@ -12,9 +12,11 @@ COPY . .
 
 RUN apk add --update \
     python \
-    build-base
+    build-base \
+    jq
 RUN npm i --silent
 RUN ./compile_planet.sh
+RUN cat package.json | jq -r .version > dist/version
 
 #####
 
@@ -25,7 +27,6 @@ COPY --from=builder /ng-app/dist /usr/share/nginx/html
 RUN apk add --update \
     fcgiwrap \
     spawn-fcgi \
-    nano \
     curl
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY docker/planet/upgrade.sh /usr/share/nginx/html
