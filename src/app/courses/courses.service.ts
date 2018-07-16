@@ -3,10 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RatingService } from '../rating/rating.service';
-
-const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
 
 // Service for updating and storing active course for single course views.
 @Injectable()
