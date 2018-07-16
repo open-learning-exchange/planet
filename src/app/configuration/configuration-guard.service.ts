@@ -14,10 +14,10 @@ export class ConfigurationGuard {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.couchService.allDocs('configurations').pipe(map((data: any[]) => {
-      if (data.length > 1) {
+      if (data.length > 0) {
         this.router.navigate([ '/login' ]);
       }
-      return data.length < 2;
+      return data.length === 0;
     }));
   }
 
