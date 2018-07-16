@@ -47,3 +47,6 @@ Thumbs.db
 # NPM/Yarn
 *.lock
 package-lock.json
+
+# extra yml files generated
+docker/planet-*.yml
