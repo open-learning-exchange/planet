@@ -54,7 +54,7 @@ export class TeamsService {
   }
 
   createTeam(team: any) {
-    return this.couchService.post(this.dbName + '/', team);
+    return this.couchService.post(this.dbName + '/', { ...team, limit: '12' });
   }
 
   updateTeam(team: any) {
