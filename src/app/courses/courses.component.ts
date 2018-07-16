@@ -98,6 +98,15 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getCourses() {
+    this.coursesService.getAllCourses(this.getOpts).subscribe((courses: any) => {
+      // Sort in descending createdDate order, so the new courses can be shown on the top
+      courses.sort((a, b) => b.createdDate - a.createdDate);
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
+    }, (error) => console.log(error));
+  }
+
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
@@ -292,14 +301,4 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   updateRating(itemId) {
     this.getCourses();
   }
-
-  getCourses() {
-    this.coursesService.getAllCourses(this.getOpts).subscribe((courses: any) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.shelf;
-      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
-    }, (error) => console.log(error));
-  }
-
 }
