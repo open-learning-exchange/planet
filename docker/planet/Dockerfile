@@ -27,8 +27,7 @@ COPY --from=builder /ng-app/dist /usr/share/nginx/html
 RUN apk add --update \
     fcgiwrap \
     spawn-fcgi \
-    curl \
-    bash
+    curl
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY docker/planet/upgrade.sh /usr/share/nginx/html
 
