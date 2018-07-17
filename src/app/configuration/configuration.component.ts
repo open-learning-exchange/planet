@@ -56,7 +56,6 @@ export class ConfigurationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.userService.get());
     if (this.route.snapshot.data.update) {
       this.initUpdate();
     }
