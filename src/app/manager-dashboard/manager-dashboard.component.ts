@@ -56,8 +56,10 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     } else if (this.userService.getConfig().planetType !== 'center') {
-      this.getVersion().subscribe(this.setVersion(this.versionLocal));
-      this.getVersion({ domain: this.userService.getConfig().parentDomain }).subscribe(this.setVersion(this.versionParent));
+      const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
+      this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
+      this.getVersion({ domain: this.userService.getConfig().parentDomain, ...opts })
+        .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
   }
@@ -244,11 +246,7 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   getVersion(opts: any = {}) {
-    return this.couchService.getUrl('version', opts).pipe(catchError((err) => of('N/A')));
-  }
-
-  setVersion(version) {
-    return (newVersion) => version = newVersion;
+    return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
   }
 
 }
