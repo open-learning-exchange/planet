@@ -16,7 +16,7 @@
     </div>
     <div class="course-container">
       <div class="course-detail bg-light-grey">
-        <planet-rating-element [rating]="courseDetail?.rating" [itemId]="courseDetail?._id" [ratingType]="'course'" (updateService)="updateRating($event)"></planet-rating-element>
+        <planet-rating [rating]="courseDetail?.rating" [itemId]="courseDetail?._id" [ratingType]="'course'" (updateService)="updateRating($event)"></planet-rating>
         <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
         <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
         <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>

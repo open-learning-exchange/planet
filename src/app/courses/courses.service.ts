@@ -4,7 +4,7 @@ import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { map } from 'rxjs/operators';
-import { RatingService } from '../rating/rating.service';
+import { RatingService } from '../shared/forms/rating.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable()

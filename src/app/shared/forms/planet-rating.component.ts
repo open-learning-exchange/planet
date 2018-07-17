@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../couchdb.service';
+import { PlanetMessageService } from '../planet-message.service';
+import { UserService } from '../user.service';
 import { map } from 'rxjs/operators';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { debug } from '../debug-operator';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { debug } from '../../debug-operator';
 
 const popupFormFields = [
   {
@@ -25,13 +25,13 @@ const popupFormFields = [
 ];
 
 @Component({
-  templateUrl: './rating.component.html',
+  templateUrl: './planet-rating.component.html',
   styles: [ ` .list-item-rating {
     max-width: 225px;
   } ` ],
-  selector: 'planet-rating-element'
+  selector: 'planet-rating'
 })
-export class RatingComponent implements OnChanges {
+export class PlanetRatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
   @Input() itemId: string;

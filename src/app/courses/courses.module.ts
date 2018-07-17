@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CoursesComponent } from './courses.component';
 import { CoursesAddComponent } from './add-courses/courses-add.component';
 import { CoursesRouterModule } from './courses-router.module';
-import { PlanetFormsModule } from '../shared/planet-forms.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
@@ -17,7 +17,6 @@ import { CoursesProgressLeaderComponent } from './progress-courses/courses-progr
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
 import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
-import { RatingModule } from '../rating/rating.module';
 
 @NgModule({
   imports: [
@@ -29,8 +28,7 @@ import { RatingModule } from '../rating/rating.module';
     PlanetDialogsModule,
     MaterialModule,
     ResourcesModule,
-    ExamsModule,
-    RatingModule
+    ExamsModule
   ],
   declarations: [
     CoursesComponent,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../couchdb.service';
+import { findDocuments } from '../mangoQueries';
+import { UserService } from '../user.service';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 

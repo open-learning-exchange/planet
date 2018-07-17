@@ -7,7 +7,7 @@ import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeRouterModule } from './home-router.module';
 import { CommunityComponent } from '../community/community.component';
-import { PlanetFormsModule } from '../shared/planet-forms.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 
 import { MaterialModule } from '../shared/material.module';
 import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
