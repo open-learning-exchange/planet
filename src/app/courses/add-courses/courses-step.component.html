@@ -4,7 +4,8 @@
       {{stepInfo.stepTitle || 'Step ' + (stepNum)}}
     </mat-panel-title>
     <mat-panel-description>
-      Fill step type here
+      <mat-icon *ngIf="stepInfo?.resources?.length">attach_file</mat-icon>
+      <mat-icon *ngIf="stepInfo?.exam?.questions.length">assignment</mat-icon>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <form class="vertical-form" [formGroup]="stepForm" (change)="stepChange()">
