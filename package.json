@@ -1,6 +1,6 @@
 {
   "name": "ang-bell-app",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -19,7 +19,9 @@
     "e2e": "ng e2e --webdriver-update=false",
     "v-e2e": "vagrant ssh -- -t 'cd /vagrant;ng e2e --webdriver-update=false'",
     "install-hooks": "cp -a git-hooks/. .git/hooks/",
-    "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37"
+    "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
+    "v-generate-yml": "vagrant ssh -- -t 'cd /vagrant;npm run generate-yml'",
+    "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh"
   },
   "private": true,
   "dependencies": {
