@@ -15,6 +15,7 @@ export class UpgradeComponent {
   done: Boolean = false;
   error: Boolean = false;
   cleanOutput = '';
+  timeoutTrials = 0;
 
   constructor(private http: HttpClient) {
     this.addLine('Not started');
@@ -26,6 +27,8 @@ export class UpgradeComponent {
     this.working = true;
     this.addLine('Server request started');
     this.upgrade();
+
+    this.timeoutTrials += 1;
   }
 
   upgrade() {
@@ -78,7 +81,16 @@ export class UpgradeComponent {
     this.done = false;
     this.enabled = true;
     this.working = false;
-    this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+
+    if (this.timeoutTrials >= 5) {
+      this.addLine('Request timed-out', 'upgrade_timeout');
+      this.addLine('Request timed-out 5 times. Please try again later.', 'upgrade_error');
+      this.enabled = false;
+      this.error = true;
+      this.done = true;
+    } else {
+      this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+    }
   }
 
   handleError(err) {
