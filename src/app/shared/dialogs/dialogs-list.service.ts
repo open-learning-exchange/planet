@@ -33,6 +33,7 @@ export class DialogsListService {
   ) {}
 
   getListAndColumns(db: string, selector?: any, opts: any = {}) {
+    this.defaultSelectors['_users']['$nor'][0]['_id'] = this.userService.get()._id;
     selector = selector || this.defaultSelectors[db] || {};
     return this.couchService.post(db + '/_find', findDocuments(selector), opts).pipe(map((res) => {
       return { tableData: res.docs, columns: listColumns[db] };
