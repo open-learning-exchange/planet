@@ -44,7 +44,7 @@ Please don't use the following name for variable since it is used by our `entryp
 | planet-db-port 	| used in the docker script 	|
 
 ### il8n
-Planet uses the `il8n` translation module to translate our content and make it accessible. This module can be included in an html tag with the keyword il8n. For example, `<p il8n> Text to be translated </p>`. However, if there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `il8n` attribute should not be used as it will raise errors during compilation.
+Planet uses the `il8n` translation module to translate our content and make it accessible. This module can be included in an html tag with the keyword il8n. For example, `<p il8n>Text to be translated</p>`. If there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `il8n` attribute should not be used as it will raise errors during compilation. For example, `<p>{{interpolatedString}}</p>` needs no `il8n` tag. If text of an attribute needs to be translated an `il8n` translation attribute can be added by including a label with the format `il8n-x` where `x` represents the label that needs to be translated. For example, `<img src="oleImg" il8n-title title="Example image" />` For more information, see the docs [here](https://angular.io/guide/i18n).
 
 ### App Directory Structure
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
