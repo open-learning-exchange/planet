@@ -15,18 +15,6 @@ export function findAllDocuments(selector, query) {
   `);
 }
 
-// Creates a Mango query to find all documents wth a search based on one field, returns all fields
-// maybe change the above function to make fields optional?
-export function findAllDocumentsComplete(selector, query) {
-  return JSON.parse(`
-    {
-      "selector": {
-        "${selector}": "${query}"
-      }
-    }
-  `);
-}
-
 // Creates more general find query that can search with multiple selectors & fields
 export function findDocuments(selectors, fields: any = 0, sort: any = 0, limit = 0, skip = 0) {
   const queries = { 'selector': selectors, 'skip': skip };
