@@ -96,7 +96,7 @@ export class CoursesService {
 
   getCourses({ ids = [], addProgress = false, addRatings = false }, opts?) {
     this.currentParams = { ids, opts };
-    let observables = [ this.findCourses(ids, opts) ];
+    const observables = [ this.findCourses(ids, opts) ];
     observables.push(addProgress ? this.findProgress(ids, opts) : of([]));
     observables.push(addRatings ? this.findRatings(ids, opts) : of([]));
     forkJoin(observables).subscribe(([ courses, progress, ratings ]) => {
@@ -119,7 +119,10 @@ export class CoursesService {
   }
 
   findProgress(ids, opts) {
-    return this.couchService.findAll(this.progressDb, findDocuments({ 'courseId': inSelector(ids), 'userId': this.userService.get()._id }), opts)
+    return this.couchService.findAll(
+      this.progressDb,
+      findDocuments({ 'courseId': inSelector(ids), 'userId': this.userService.get()._id }), opts
+    );
   }
 
   findRatings(ids, opts) {
