@@ -33,7 +33,7 @@ import { dedupeShelfReduce } from '../shared/utils';
   ` ]
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -84,8 +84,19 @@ export class CoursesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCourses();
+    this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.coursesService.coursesUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((courses) => {
+      // Sort in descending createdDate order, so the new courses can be shown on the top
+      courses.sort((a, b) => b.createdDate - a.createdDate);
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
+    });
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   setupList(courseRes, myCourses) {
@@ -99,12 +110,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   getCourses() {
-    this.coursesService.getAllCourses(this.getOpts).subscribe((courses: any) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.shelf;
-      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
-    }, (error) => console.log(error));
+    this.coursesService.getCourses({ addProgress: true, addRatings: true }, this.getOpts);
   }
 
   ngAfterViewInit() {
@@ -181,7 +187,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
       .pipe(switchMap(data => {
-        return this.coursesService.getAllCourses(this.getOpts);
+        return this.getCourses();
       })).subscribe((data: any) => {
         data.sort((a, b) => b.createdDate - a.createdDate);
         this.courses.data = data;
@@ -298,7 +304,4 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     };
   }
 
-  updateRating(itemId) {
-    this.getCourses();
-  }
 }
