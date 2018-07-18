@@ -23,7 +23,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,

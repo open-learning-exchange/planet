@@ -1,16 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl,
-  MatDialog, MatDialogRef, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, } from '@angular/router';
+import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { forkJoin, of, Subject } from 'rxjs';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';

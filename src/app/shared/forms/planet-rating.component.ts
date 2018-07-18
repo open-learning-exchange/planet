@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';

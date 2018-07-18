@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
-
-const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
 
 @Injectable()
 export class ResourcesService {
