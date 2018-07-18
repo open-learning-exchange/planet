@@ -63,9 +63,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   getMembers() {
     // find teamId on User shelf
-    this.couchService.post('shelf/_find', findDocuments({
-      'myTeamIds': { '$in': [ this.teamId ] }
-    }, 0)).subscribe((data) => {
+    this.teamsService.getTeamMembers(this.teamId).subscribe((data) => {
       this.members = data.docs.map((mem) => {
         return { name: mem._id.split(':')[1] };
       });
@@ -79,8 +77,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.userStatus = shelf.myTeamIds.findIndex(id => id === team._id) > -1 ? 'member' : this.userStatus;
   }
 
-  toggleMembership(teamId, leaveTeam) {
-    this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
+  toggleMembership(team, leaveTeam) {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe(() => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team');
     });
@@ -97,7 +95,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   acceptRequest(userId) {
     this.couchService.get('shelf/' + userId).pipe(
       switchMap((res) => {
-        return this.teamsService.toggleTeamMembership(this.team._id, false, res);
+        return this.teamsService.toggleTeamMembership(this.team, false, res);
       }),
       switchMap(() => {
         return this.teamsService.removeFromRequests(this.team, userId);

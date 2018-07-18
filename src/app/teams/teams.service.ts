@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { dedupeShelfReduce } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { of, empty } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map, takeWhile } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
@@ -50,7 +50,7 @@ export class TeamsService {
           return empty();
         }),
         switchMap((response) => {
-          return this.toggleTeamMembership(response.id, false, shelf);
+          return this.toggleTeamMembership({ _id: response.id }, false, shelf);
         })
       );
   }
@@ -79,22 +79,39 @@ export class TeamsService {
     return this.updateTeam({ ...team, requests: newRequestArray });
   }
 
-  toggleTeamMembership(teamId, leaveTeam, shelf) {
+  toggleTeamMembership(team, leaveTeam, shelf) {
+    const teamId = team._id;
     shelf = this.updateTeamShelf(teamId, leaveTeam, shelf);
-    return this.couchService.put('shelf/' + shelf._id, shelf).pipe(switchMap((data) => {
-      shelf._rev = data.rev;
-      if (this.userService.get()._id === shelf._id) {
-        this.userService.shelf = shelf;
-      }
-      return of(data);
-    }),
-    switchMap((shelfData) => {
-      if (leaveTeam) {
-        return this.updateArchiveMember(teamId);
-      }
-      return of(shelfData);
-    })
-  );
+    return this.couchService.put('shelf/' + shelf._id, shelf).pipe(
+      switchMap((data) => {
+        shelf._rev = data.rev;
+        if (this.userService.get()._id === shelf._id) {
+          this.userService.shelf = shelf;
+        }
+        return of(team);
+      }),
+      switchMap(() => {
+        if (leaveTeam) {
+          return this.isTeamEmpty(teamId);
+        }
+        return of(team);
+      }),
+      switchMap((isEmpty) => {
+        if (isEmpty === true) {
+          return this.updateTeam({ ...team, status: 'archived' });
+        }
+        return of(team);
+      }),
+      switchMap((newTeam) => {
+        return of({ ...team, ...newTeam });
+      })
+    );
+  }
+
+  getTeamMembers(teamId) {
+    return this.couchService.post('shelf/_find', findDocuments({
+      'myTeamIds': { '$in': [ teamId ] }
+    }, 0));
   }
 
   updateTeamShelf(teamId, leaveTeam, shelf) {
@@ -107,18 +124,8 @@ export class TeamsService {
     return { ...shelf, myTeamIds };
   }
 
-  updateArchiveMember(teamId) {
-    // find teamId on User shelf
-    return this.couchService.post('shelf/_find', findDocuments({
-      'myTeamIds': { '$in': [ teamId ] }
-    }, 0)).pipe(switchMap((data) => {
-      if (data.docs.length === 0) {
-        return this.couchService.get('teams/' + teamId).pipe(switchMap(teamData => {
-          return this.updateTeam({ ...teamData, status: 'archived' });
-        }));
-      }
-      return of(data);
-    }));
+  isTeamEmpty(teamId) {
+    return this.getTeamMembers(teamId).pipe(map((data) => data.docs.length === 0));
   }
 
 }

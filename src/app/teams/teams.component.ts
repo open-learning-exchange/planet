@@ -68,10 +68,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleMembership(teamId, leaveTeam) {
-    this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
+  toggleMembership(team, leaveTeam) {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
+      if (newTeam.status === 'archived') {
+        this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+      }
     });
   }
 
