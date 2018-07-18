@@ -109,13 +109,19 @@
         </div>
       </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="action">
+    <ng-container matColumnDef="info">
       <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="list-content-menu">
+      <mat-cell *matCellDef="let element">
         <div>
           <p>{{ "Grade Level: " + element.gradeLevel}}</p>
           <p>{{ "Subject Level: " + element.subjectLevel}}</p>
         </div>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="rating">
+      <mat-header-cell *matHeaderCellDef i18n>Rating</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <planet-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'course'"></planet-rating>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
