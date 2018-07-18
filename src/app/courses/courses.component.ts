@@ -183,13 +183,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       const deleteArray = courses.map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
-      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-      .pipe(switchMap(data => {
-        return this.getCourses();
-      })).subscribe((data: any) => {
-        data.sort((a, b) => b.createdDate - a.createdDate);
-        this.courses.data = data;
-        this.setupList(data, this.userShelf.courseIds);
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }).subscribe((data: any) => {
+        this.getCourses();
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');

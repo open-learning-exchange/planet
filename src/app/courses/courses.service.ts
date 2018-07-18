@@ -99,14 +99,14 @@ export class CoursesService {
     const observables = [ this.findCourses(ids, opts) ];
     observables.push(addProgress ? this.findProgress(ids, opts) : of([]));
     observables.push(addRatings ? this.findRatings(ids, opts) : of([]));
-    forkJoin(observables).subscribe(([ courses, progress, ratings ]) => {
+    forkJoin(observables).subscribe(([ courses, progress, ratings ]: any[]) => {
       if (addRatings) {
         courses = this.createCourseList(courses, ratings.docs);
       }
       if (addProgress) {
         courses = courses.map(course => ({
           ...course,
-          progress: progress.find(p => p.courseId === course._id && p.userId === this.userService.get()._id) || { stepNum: 0 }
+          progress: progress.find((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || { stepNum: 0 }
         }));
       }
       this.courses = courses;
