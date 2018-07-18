@@ -14,26 +14,28 @@ const listColumns = {
 @Injectable()
 export class DialogsListService {
 
-  defaultSelectors = {
-    '_users': {
-      '$nor': [
-        { '_id': this.userService.get()._id },
-        { '_id': 'org.couchdb.user:satellite' }
-      ],
-      '$or': [
-        { 'roles': { '$in': [ 'learner', 'leader' ] } },
-        { 'isUserAdmin': true }
-      ]
-    }
-  };
-
   constructor(
     private couchService: CouchService,
     private userService: UserService
   ) {}
 
+  defaultSelectors() {
+    return {
+      '_users': {
+        '$nor': [
+          { '_id': this.userService.get()._id },
+          { '_id': 'org.couchdb.user:satellite' }
+        ],
+        '$or': [
+          { 'roles': { '$in': [ 'learner', 'leader' ] } },
+          { 'isUserAdmin': true }
+        ]
+      }
+    };
+  }
+
   getListAndColumns(db: string, selector?: any, opts: any = {}) {
-    selector = selector || this.defaultSelectors[db] || {};
+    selector = selector || this.defaultSelectors()[db] || {};
     return this.couchService.post(db + '/_find', findDocuments(selector), opts).pipe(map((res) => {
       return { tableData: res.docs, columns: listColumns[db] };
     }));
