@@ -15,6 +15,7 @@ export class UpgradeComponent {
   done: Boolean = false;
   error: Boolean = false;
   cleanOutput = '';
+  timeoutTrials = 0;
 
   constructor(private http: HttpClient) {
     this.addLine('Not started');
@@ -26,25 +27,31 @@ export class UpgradeComponent {
     this.working = true;
     this.addLine('Server request started');
     this.upgrade();
+
+    this.timeoutTrials += 1;
   }
 
   upgrade() {
     this.http.get(environment.upgradeAddress, { responseType: 'text' }).subscribe(result => {
       result.split('\n').forEach(line => {
-        this.addLine(line, false, true);
+        if (line.includes('timeout')) {
+          this.addLine(line, 'upgrade_timeout');
+          return;
+        }
+
+        this.addLine(line, 'upgrade_success');
       });
+
+      if (result.includes('timeout')) {
+        this.handleTimeout();
+        return;
+      }
+
       this.message = 'Success';
       this.error = false;
       this.done = true;
     }, err => {
-      this.addLine('An error ocurred:', true);
-      JSON.stringify(err, null, 1).split('\n').forEach(line => {
-        this.addLine(line, true);
-      });
-      this.working = false;
-      this.message = 'Start upgrade';
-      this.error = true;
-      this.done = true;
+      this.handleError(err);
     });
   }
 
@@ -59,14 +66,41 @@ export class UpgradeComponent {
     return `[${d}/${M}/${Y} ${h}:${m}:${s}]`;
   }
 
-  addLine(string, error?, success?) {
+  addLine(string, cssClass?) {
     if (!string.length) { return; }
     string = string.trim();
     const dTime = this.getDateTime();
-    let start = '<span>';
-    if (error) { start = '<span class=\'upgrade_error\'>'; }
-    if (success) { start = '<span class=\'upgrade_success\'>'; }
+    const start = `<span class=\'${cssClass}\'>`;
     this.output += `${start}${dTime} ${string}</span>\n`;
     this.cleanOutput += `${dTime} ${string}\n`;
+  }
+
+  handleTimeout() {
+    this.message = 'Retry';
+    this.error = false;
+    this.done = false;
+    this.enabled = true;
+    this.working = false;
+
+    if (this.timeoutTrials >= 5) {
+      this.addLine('Request timed-out', 'upgrade_timeout');
+      this.addLine('Request timed-out 5 times. Please try again later.', 'upgrade_error');
+      this.enabled = false;
+      this.error = true;
+      this.done = true;
+    } else {
+      this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+    }
+  }
+
+  handleError(err) {
+    this.addLine('An error ocurred:', 'upgrade_error');
+    JSON.stringify(err, null, 1).split('\n').forEach(line => {
+      this.addLine(line, 'upgrade_error');
+    });
+    this.working = false;
+    this.message = 'Start upgrade';
+    this.error = true;
+    this.done = true;
   }
 }
