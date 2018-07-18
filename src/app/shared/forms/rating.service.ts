@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
 import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
@@ -10,11 +10,17 @@ const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating
 @Injectable()
 export class RatingService {
   private dbName = 'ratings';
+  private ratingsUpdated = new Subject<void>();
+  ratingsUpdated$ = this.ratingsUpdated.asObservable();
 
   constructor(
     private couchService: CouchService,
     private userService: UserService
   ) {}
+
+  updateRatings() {
+    this.ratingsUpdated.next();
+  }
 
   getRatings({ itemIds, type }: {itemIds: string[], type: string}, opts: any) {
     const itemSelector = itemIds.length > 0 ?

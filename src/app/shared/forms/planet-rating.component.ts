@@ -6,6 +6,7 @@ import { UserService } from '../user.service';
 import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { debug } from '../../debug-operator';
+import { RatingService } from './rating.service';
 
 const popupFormFields = [
   {
@@ -37,7 +38,6 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() itemId: string;
   @Input() parent;
   @Input() ratingType = '';
-  @Output() updateService = new EventEmitter<any>();
 
   rateForm: FormGroup;
   popupForm: FormGroup;
@@ -52,13 +52,13 @@ export class PlanetRatingComponent implements OnChanges {
 
   private dbName = 'ratings';
 
-
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
     private planetMessage: PlanetMessageService,
     private userService: UserService,
-    private dialogsForm: DialogsFormService
+    private dialogsForm: DialogsFormService,
+    private ratingService: RatingService
   ) {
     this.rateForm = this.fb.group(this.rateFormField);
     this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
@@ -82,8 +82,6 @@ export class PlanetRatingComponent implements OnChanges {
 
   onStarClick(form = this.rateForm) {
     this.updateRating(form).subscribe(res => {
-      // This should never be called for parent resources, so do not need to send domain options
-      this.updateService.emit(this.itemId);
       if (!this.isPopupOpen) {
         this.openDialog();
         this.planetMessage.showMessage('Thank you, your rating is submitted!');
@@ -117,6 +115,7 @@ export class PlanetRatingComponent implements OnChanges {
       newRating._rev = res.rev;
       newRating._id = res.id;
       this.rating.userRating = newRating;
+      this.ratingService.updateRatings();
       return res;
     }));
   }
