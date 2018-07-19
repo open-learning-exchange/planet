@@ -92,4 +92,11 @@ export class CouchService {
     return this.http.request(req);
   }
 
+  getUrl(url: string, reqOpts?: any) {
+    const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
+    const domain = domainWithPort ? domainWithPort.split(':')[0] : '';
+    const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
+    return this.http.get(urlPrefix + '/' + url, opts);
+  }
+
 }
