@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -32,6 +32,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
+    private router: Router,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
@@ -134,12 +135,35 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           'myTeamIds': [].concat(shelf.myTeamIds, [ this.teamId ])
         }));
         return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
+      }),
+      switchMap((notifyShelf) => {
+        return this.sendNotifications(selected.length);
       })
     ).subscribe(res => {
       this.getMembers();
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
     });
+  }
+
+  sendNotifications(memberCount) {
+    const notify = this.members.map((user: any) => {
+      return this.memberNotification(user.name, this.team, memberCount);
+    });
+    return this.couchService.post('notifications/_bulk_docs', { docs: notify });
+  }
+
+  memberNotification(userName, team, addedMember) {
+    return {
+      'user': 'org.couchdb.user:' + userName,
+      'message': addedMember + ' member(s) has been added to ' + team.name + ' team. ',
+      'link': this.router.url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
   }
 
 }
