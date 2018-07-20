@@ -1,4 +1,4 @@
-import { Component, Input, Optional, Self, OnDestroy, HostBinding } from '@angular/core';
+import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material';
 import { Subject } from 'rxjs';
@@ -25,6 +25,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     this.onChange(tags);
     this.stateChanges.next();
   }
+  @Output() valueChanges = new EventEmitter<string[]>();
 
   onTouched;
   stateChanges = new Subject<void>();

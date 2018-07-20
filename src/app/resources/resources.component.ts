@@ -9,12 +9,13 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields, composeFilterFunctions, filterArrayField } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterArrayField, filterTags } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
+import { FormControl } from '../../../node_modules/@angular/forms';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -46,7 +47,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   currentUser = this.userService.get();
-  tagFilter = [];
+  tagFilter = new FormControl([]);
+  tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + this.dbName + '/';
   private _titleSearch = '';
@@ -79,7 +81,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions(
-      [ filterArrayField('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
+      [ filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
     );
     this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
@@ -93,6 +95,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((shelf: any) => {
         this.setupList(this.resources.data, shelf.resourceIds);
       });
+    this.tagFilter.valueChanges.subscribe((tags) => {
+      this.tagFilterValue = tags;
+      this.resources.filter = this.resources.filter || ' ';
+    });
   }
 
   setupList(resourcesRes, myLibrarys) {
@@ -259,12 +265,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
-  onTagsChange() {
-    console.log(this.tagFilter);
+  onTagsChange(newTags) {
+    this.tagFilterValue = newTags;
   }
 
   resetFilter() {
-    this.tagFilter = [];
+    this.tagFilter.setValue([]);
+    this.tagFilterValue = [];
     this.titleSearch = '';
   }
 
