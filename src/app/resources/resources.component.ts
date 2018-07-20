@@ -78,7 +78,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setupList(this.resources.data, this.userService.shelf.resourceIds);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
-    this.resources.filterPredicate = composeFilterFunctions([ filterArrayField('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]);
+    this.resources.filterPredicate = composeFilterFunctions(
+      [ filterArrayField('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
+    );
     this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
         case 'rating':

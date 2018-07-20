@@ -12,6 +12,8 @@ import { Subject } from 'rxjs';
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy {
 
+  static nextId = 0;
+
   @HostBinding() id = `planet-rating-stars-${PlanetTagInputComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @Input() _value: string[] = [];
@@ -24,10 +26,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     this.stateChanges.next();
   }
 
-  onChange(_: any) {}
   onTouched;
   stateChanges = new Subject<void>();
-  static nextId = 0;
 
   constructor(@Optional() @Self() public ngControl: NgControl) {
     if (this.ngControl) {
@@ -39,10 +39,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     this.stateChanges.complete();
   }
 
+  onChange(_: any) {}
+
   addTag(event: any) {
     const { input, value } = event;
     const text = value || '';
-    if(this.value.indexOf(text.trim()) > -1) {
+    if (this.value.indexOf(text.trim()) > -1) {
       return;
     }
     if (text.trim()) {
