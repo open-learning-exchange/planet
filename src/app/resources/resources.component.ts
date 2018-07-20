@@ -24,6 +24,9 @@ import { FormControl } from '../../../node_modules/@angular/forms';
     .mat-column-select {
       max-width: 44px;
     }
+    .mat-column-tags {
+      max-width: 125px;
+    }
     .mat-column-rating {
       max-width: 225px;
     }
@@ -44,7 +47,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'title', 'rating' ];
+  displayedColumns = [ 'select', 'title', 'tags', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);

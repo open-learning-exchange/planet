@@ -85,6 +85,16 @@
         </mat-menu>
       </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="tags">
+      <mat-header-cell *matHeaderCellDef i18n>Tags</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-chip-list #tagsList>
+          <mat-chip *ngFor="let tag of element.tags">
+            {{tag}}
+          </mat-chip>
+        </mat-chip-list>
+      </mat-cell>
+    </ng-container>
     <ng-container matColumnDef="rating">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
       <mat-cell *matCellDef="let element">
