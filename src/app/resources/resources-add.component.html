@@ -24,6 +24,17 @@
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
+      <div class="form-width-3">
+        <mat-form-field class="full-width">
+          <mat-chip-list #tagsList>
+            <mat-chip *ngFor="let tag of resourceForm.value.tags" [removable]="true" (removed)="removeTag(tag)">
+              {{tag}}
+              <mat-icon matChipRemove>clear</mat-icon>
+            </mat-chip>
+            <input matInput i18n-placeholder placeholder="Tags" [matChipInputFor]="tagsList" (matChipInputTokenEnd)="addTag($event)" required>
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
       <mat-grid-list cols="3">
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Language" formControlName="language">
