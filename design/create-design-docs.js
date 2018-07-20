@@ -17,7 +17,7 @@ const readFiles = (dirPath) => (err, files) => {
     const filePath = basePath + dirPath + '/' + file;
     fs.stat(filePath, (err, stat) => {
       if (mime.getType(file) === 'application/javascript' && file !== 'create-design-docs.js') {
-        fs.readFile(filePath, 'utf8', writeDesignDoc(filePath));
+        writeDesignDoc(require('./' + dirPath + '/' + file), filePath);
       }
     });
   });
@@ -27,12 +27,31 @@ const readDir = (dirPath, callback) => {
   fs.readdir(basePath + dirPath, callback);
 };
 
-const writeDesignDoc = (filePath) => (err, data) => {
-  fs.writeFile(filePath + 'on', JSON.stringify({ 'validate_doc_update': data.split(/\r?\n/).join('\n') }), (err) => {
+const writeDesignDoc = (design, filePath) => {
+
+  fs.writeFile(filePath + 'on', JSON.stringify(recurseObject(design)), (err) => {
     if (err) {
       console.log(err);
     }
   });
 };
+
+const recurseObject = (object) => {
+  return Object.entries(object).reduce((newObj, [ key, value ]) => {
+    switch (typeof value) {
+      case 'object':
+        newObj[key] = recurseObject(value);
+        break;
+      case 'function':
+        newObj[key] = functionToString(value);
+        break;
+      default:
+        newObj[key] = value;
+    }
+    return newObj;
+  }, {});
+};
+
+const functionToString = (func) => func.toString();
 
 readDir('', readDirectories);

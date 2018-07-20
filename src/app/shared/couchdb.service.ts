@@ -92,6 +92,12 @@ export class CouchService {
     return this.http.request(req);
   }
 
+  getTags(db: string, opts?: any) {
+    return this.couchDBReq('get', db + '/_design/' + db + '/_view/count_tags?group=true', this.setOpts(opts)).pipe(map((res: any) => {
+      return res.rows.sort((a, b) => b.value - a.value);
+    }));
+  }
+
   getUrl(url: string, reqOpts?: any) {
     const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
     const domain = domainWithPort ? domainWithPort.split(':')[0] : '';
