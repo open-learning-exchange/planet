@@ -240,20 +240,4 @@ export class ResourcesAddComponent implements OnInit {
     this.disableDownload = false;
   }
 
-  addTag(event: any) {
-    const { input, value } = event;
-    const tagsFormControl = this.resourceForm.controls.tags;
-    if ((value || '').trim()) {
-      tagsFormControl.setValue(tagsFormControl.value.concat([ value.trim() ]));
-    }
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  removeTag(tagToRemove: string) {
-    const tagsFormControl = this.resourceForm.controls.tags;
-    tagsFormControl.setValue(tagsFormControl.value.filter(tag => tag !== tagToRemove));
-  }
-
 }

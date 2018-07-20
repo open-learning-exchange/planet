@@ -44,10 +44,24 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
   };
 };
 
+export const filterArrayField = (filterField: string, filterItems: string[]) => {
+  return (data: any, filter: string) => {
+    console.log(filterItems);
+    const keys = filterField.split('.');
+    return matchAllItems(filterItems, getProperty(data, keys));
+  }
+}
+
+const matchAllItems = (filterItems: string[], propItems: string[]) => {
+  return filterItems.reduce((isMatch, filter) => isMatch && propItems.indexOf(filter) > -1, true);
+}
+
 // Takes an array of the above filtering functions and returns true if all match
 export const composeFilterFunctions = (filterFunctions: any[]) => {
   return (data: any, filter: any) => {
+    console.log('composing...');
     return filterFunctions.reduce((isMatch, filterFunction) => {
+      console.log('composing...');
       return isMatch && filterFunction(data, filter);
     }, true);
   };

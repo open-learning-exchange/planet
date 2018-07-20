@@ -1,0 +1,7 @@
+<mat-chip-list #tagsList>
+  <mat-chip *ngFor="let tag of _value" [removable]="true" (removed)="removeTag(tag)">
+    {{tag}}
+    <mat-icon matChipRemove>clear</mat-icon>
+  </mat-chip>
+  <input matInput i18n-placeholder placeholder="Tags" [matChipInputFor]="tagsList" (matChipInputTokenEnd)="addTag($event)" required>
+</mat-chip-list>
