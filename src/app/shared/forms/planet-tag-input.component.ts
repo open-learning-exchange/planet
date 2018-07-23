@@ -1,7 +1,9 @@
-import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
+import { TagsService } from './tags.service';
 
 @Component({
   'selector': 'planet-tag-input',
@@ -27,13 +29,29 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
   }
   @Output() valueChanges = new EventEmitter<string[]>();
 
+  @ViewChild('tagInput') tagInput: ElementRef;
+
   onTouched;
   stateChanges = new Subject<void>();
+  tags: string[] = [];
+  filteredTags: Observable<string[]>;
+  inputControl = new FormControl();
 
-  constructor(@Optional() @Self() public ngControl: NgControl) {
+  constructor(
+    @Optional() @Self() public ngControl: NgControl,
+    private tagsService: TagsService
+  ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
+    this.tagsService.getTags().subscribe((tags: string[]) => {
+      console.log(tags);
+      this.tags = tags;
+    });
+    this.filteredTags = this.inputControl.valueChanges.pipe(
+      startWith(null),
+      map((value: string | null) => value ? this.tagsService.filterTags(this.tags, value) : this.tags)
+    );
   }
 
   ngOnDestroy() {
@@ -42,16 +60,23 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
 
   onChange(_: any) {}
 
-  addTag(event: any) {
-    const { input, value } = event;
-    const text = value || '';
-    if (this.value.indexOf(text.trim()) > -1) {
+  inputAddTag(event: any) {
+    this.addTag(event.value);
+  }
+
+  autocompleteAddTag(event: any) {
+    this.addTag(event.option.viewValue);
+  }
+
+  addTag(newTag: string) {
+    if (this.value.indexOf(newTag.trim()) > -1) {
       return;
     }
-    if (text.trim()) {
-      this.writeValue(this.value.concat([ text.trim() ]));
+    const input = this.tagInput.nativeElement;
+    if (newTag.trim()) {
+      this.writeValue(this.value.concat([ newTag.trim() ]));
     }
-    if (input) {
+    if (input.value) {
       input.value = '';
     }
   }

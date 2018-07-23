@@ -3,5 +3,19 @@
     {{tag}}
     <mat-icon matChipRemove>clear</mat-icon>
   </mat-chip>
-  <input matInput i18n-placeholder placeholder="Tags" [matChipInputFor]="tagsList" (matChipInputTokenEnd)="addTag($event)" required>
+  <input
+    matInput
+    #tagInput
+    i18n-placeholder
+    placeholder="Tags"
+    [formControl]="inputControl"
+    [matAutocomplete]="tagAuto"
+    [matChipInputFor]="tagsList"
+    (matChipInputTokenEnd)="inputAddTag($event)"
+    required>
 </mat-chip-list>
+<mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="autocompleteAddTag($event)">
+  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag.key">
+    {{tag.key}}
+  </mat-option>
+</mat-autocomplete>
