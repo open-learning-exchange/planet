@@ -14,7 +14,8 @@ export class DialogsFormService {
   public confirm(title: string, fields: any, formGroup: any): Observable<boolean> {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
-      width: '600px'
+      width: '600px',
+      autoFocus: false
     });
     if (formGroup instanceof FormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
