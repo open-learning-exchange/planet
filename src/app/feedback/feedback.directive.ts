@@ -60,6 +60,9 @@ const dialogFieldOptions = [
 })
 export class FeedbackDirective {
   @Input() feedbackOf: any = {};
+  @Input() message = '';
+  @Input() type = '';
+  @Input() priority = '';
 
   constructor(
     private userService: UserService,
@@ -100,9 +103,9 @@ export class FeedbackDirective {
     const type = 'feedback';
     const fields = dialogFieldOptions;
     const formGroup = {
-      priority: [ '', Validators.required ],
-      type: [ '', Validators.required ],
-      message: [ '', Validators.required ]
+      priority: [ this.priority, Validators.required ],
+      type: [ this.type, Validators.required ],
+      message: [ this.message, Validators.required ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)

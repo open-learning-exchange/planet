@@ -22,9 +22,7 @@
 
 <div class="space-container" *ngIf="displayTable">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="toolbar-fill">
-      <h1 i18n>All Users</h1>
-    </span>
+    <span class="toolbar-fill"></span>
     <div class="margin-lr-3" *ngIf="!filterAssociated">
       <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
@@ -38,8 +36,6 @@
         </mat-form-field>
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Add Roles</span></button>
       </form>
-      <button mat-button class="margin-lr-3" (click)="addTeams(selection.selected)" [disabled]="!selection.selected.length"><mat-icon>library_add</mat-icon><span i18n>Add Teams</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span></button>
     </div>
   </mat-toolbar>
 
@@ -105,10 +101,6 @@
             (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
             mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
         </span>
-        <ng-container *ngIf="!filterAssociated">
-          <button mat-raised-button color="primary" *ngIf="!element.myTeamInfo else addTeam" (click)="addTeams([element.doc._id])">Add Team</button>
-          <ng-template #addTeam><button mat-raised-button color="primary" (click)="removeTeam(element.doc._id, element.doc.name)">Remove Team</button></ng-template>
-        </ng-container>
         <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
           <mat-icon>folder_open</mat-icon>View Profile
         </a>

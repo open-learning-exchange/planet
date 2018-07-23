@@ -113,9 +113,10 @@ curl -X PUT $COUCHURL/submissions
 curl -X PUT $COUCHURL/courses_progress
 curl -X PUT $COUCHURL/attachments
 curl -X PUT $COUCHURL/send_items
+curl -X PUT $COUCHURL/teams
 
-# Update version number in configurations database
-upsert_doc configurations version $(jq -c '{version: .version}' package.json)
+# Create design documents
+node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 # Insert indexes

@@ -1,16 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatFormField, MatFormFieldControl,
-  MatDialog, MatDialogRef, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, } from '@angular/router';
+import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { forkJoin, of, Subject } from 'rxjs';
-import { switchMap, catchError, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -18,6 +16,7 @@ import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -26,13 +25,13 @@ import { CoursesService } from './courses.service';
     .mat-column-select {
       max-width: 44px;
     }
-    .mat-column-action {
+    .mat-column-info, .mat-column-rating {
       max-width: 225px;
     }
   ` ]
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -44,7 +43,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'courseTitle', 'action' ];
+  displayedColumns = [ 'select', 'courseTitle', 'info', 'rating' ];
+  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -61,6 +61,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
+  planetType = this.userService.getConfig().planetType;
 
   constructor(
     private couchService: CouchService,
@@ -81,14 +82,20 @@ export class CoursesComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-    this.getCourses().subscribe((courses: any) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.userShelf = this.userService.shelf;
-      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
-    }, (error) => console.log(error));
+    this.getCourses();
+    this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.coursesService.coursesUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((courses) => {
+      // Sort in descending createdDate order, so the new courses can be shown on the top
+      courses.sort((a, b) => b.createdDate - a.createdDate);
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
+    });
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   setupList(courseRes, myCourses) {
@@ -102,18 +109,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   }
 
   getCourses() {
-    let opts: any = {};
-    if (this.parent) {
-      opts = { domain: this.userService.getConfig().parentDomain };
-    }
-    return forkJoin([ this.couchService.allDocs('courses', opts), this.couchService.allDocs('courses_progress', opts) ]).pipe(
-      map(([ courses, progress ]) =>
-        courses.map(course => ({
-          ...course,
-          progress: progress.find(p => p.courseId === course._id && p.userId === this.user._id) || { stepNum: 0 }
-        }))
-      )
-    );
+    this.coursesService.getCourses({ addProgress: true, addRatings: true }, this.getOpts);
   }
 
   ngAfterViewInit() {
@@ -188,13 +184,8 @@ export class CoursesComponent implements OnInit, AfterViewInit {
       const deleteArray = courses.map((course) => {
         return { _id: course._id, _rev: course._rev, _deleted: true };
       });
-      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-      .pipe(switchMap(data => {
-        return this.getCourses();
-      })).subscribe((data: any) => {
-        data.sort((a, b) => b.createdDate - a.createdDate);
-        this.courses.data = data;
-        this.setupList(data, this.userShelf.courseIds);
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }).subscribe((data: any) => {
+        this.getCourses();
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
@@ -243,13 +234,22 @@ export class CoursesComponent implements OnInit, AfterViewInit {
     }, '');
   }
 
-  updateShelf(newShelf, message) {
+  updateShelf(newShelf, message: string) {
     this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
       this.setupList(this.courses.data,  this.userShelf.courseIds);
-      this.planetMessageService.showMessage(message);
+      this.planetMessageService.showMessage(message + ' myCourses');
     }, (error) => (error));
+  }
+
+  addToCourse(courses) {
+    const currentShelf = this.userService.shelf;
+    const courseIds = courses.map((data) => {
+      return data._id;
+    }).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
+    const message = courses.length === 1 ? courses[0].courseTitle + ' have been added to' : courses.length + ' courses have been added to';
+    this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
   courseResign(courseId) {
@@ -268,7 +268,7 @@ export class CoursesComponent implements OnInit, AfterViewInit {
   shareCourse(type, courses) {
     const msg = (type === 'pull' ? 'fetch' : 'send');
     const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
-    this.syncService.confirmPasswordAndRunReplicators([ 
+    this.syncService.confirmPasswordAndRunReplicators([
       { db: this.dbName, items: courses, type: 'pull', date: true },
       { db: 'resources', items: resources, type: 'pull', date: true },
       { db: 'exams', items: exams, type: 'pull', date: true }

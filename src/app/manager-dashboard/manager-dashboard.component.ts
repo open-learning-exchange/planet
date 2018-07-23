@@ -2,8 +2,8 @@ import { Component, OnInit, isDevMode } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -28,7 +28,7 @@ export class ManagerDashboardComponent implements OnInit {
   requestStatus = 'loading';
   devMode = isDevMode();
   deleteCommunityDialog: any;
-  versionLocal: string = this.userService.getConfig().version;
+  versionLocal = '';
   versionParent = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
@@ -56,13 +56,10 @@ export class ManagerDashboardComponent implements OnInit {
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
     } else if (this.userService.getConfig().planetType !== 'center') {
-      this.couchService.post(
-        'configurations/_find',
-        { 'selector': { '_id': 'version' } },
-        { domain: this.userService.getConfig().parentDomain }
-      ).subscribe(config => {
-        this.versionParent = config.docs[0].version;
-      });
+      const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
+      this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
+      this.getVersion({ domain: this.userService.getConfig().parentDomain, ...opts })
+        .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
   }
@@ -174,6 +171,7 @@ export class ManagerDashboardComponent implements OnInit {
         filterPredicate: this.setFilterPredicate(db),
         allowMulti: true,
         initialSelection,
+        selectionOptional: true,
         ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
@@ -193,7 +191,7 @@ export class ManagerDashboardComponent implements OnInit {
         this.handleCourseAttachments(selected, previousList);
       }
       this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
-        this.planetMessageService.showMessage('Added to send on accept list');
+        this.planetMessageService.showMessage('Send on accept list updated');
       });
       this.dialogRef.close();
     };
@@ -246,6 +244,10 @@ export class ManagerDashboardComponent implements OnInit {
       this.getSatellitePin();
       this.planetMessageService.showMessage('Pin reset successfully');
     }, (error) => this.planetMessageService.showAlert('Error to reset pin'));
+  }
+
+  getVersion(opts: any = {}) {
+    return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
   }
 
 }

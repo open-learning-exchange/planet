@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
-import { switchMap, map } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { forkJoin, of, Subject } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
@@ -14,7 +14,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 @Component({
   templateUrl: './community.component.html'
 })
-export class CommunityComponent implements OnInit, AfterViewInit {
+export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   searchValue = '';
   communities = new MatTableDataSource();
@@ -32,6 +32,7 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   editDialog: any;
   viewNationDetailDialog: any;
   dialogRef: MatDialogRef<DialogsListComponent>;
+  onDestroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -44,8 +45,14 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.searchValue = this.route.snapshot.paramMap.get('search');
-    this.getCommunityList(this.searchValue);
+    this.route.paramMap.pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((params: ParamMap) => {
+      const searchValue = params.get('search');
+      this.searchValue = searchValue;
+      this.getCommunityList(searchValue);
+    });
+
     this.communities.sortingDataAccessor = (item, property) => {
       switch (typeof item[property]) {
         case 'number':
@@ -60,6 +67,11 @@ export class CommunityComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.communities.paginator = this.paginator;
     this.communities.sort = this.sort;
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   onFilterChange(filterValue: string, field: string) {

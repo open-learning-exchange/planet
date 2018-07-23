@@ -25,6 +25,6 @@
   [pageSizeOptions]="[5, 10, 20]">
 </mat-paginator>
 <mat-dialog-actions>
-  <button mat-button (click)="ok()" [disabled]="!selection.hasValue()" i18n>OK</button>
+  <button mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
   <button mat-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>

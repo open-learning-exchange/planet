@@ -1,11 +1,13 @@
 @import '../variables';
 
+$card-width: calc(106px + 2rem);
+
 :host {
   height: $dashboard-height;
   padding: 2rem;
   display: grid;
   grid-template-areas: "card" "card" "card" "card";
-  grid-template-columns: 200px;
+  grid-template-columns: $card-width;
   grid-auto-columns: 1fr;
   grid-auto-rows: $dashboard-tile-height;
   grid-auto-flow: column;
@@ -13,7 +15,7 @@
 
   mat-card {
     grid-area: card;
-    max-width: 200px;
+    max-width: $card-width;
     padding: 0;
     display: grid;
     grid-template-rows: min-content;

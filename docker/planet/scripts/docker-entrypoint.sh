@@ -20,5 +20,5 @@ fi
 sed -i -e "s#planet-db-port#$DB_PORT#g" /usr/share/nginx/html/**/main*
 sed -i -e "s#planet-center-address#$CENTER_ADDRESS#g" /usr/share/nginx/html/**/main*
 
+spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 nginx -g "daemon off;"
-

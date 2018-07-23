@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExamsAddComponent } from './exams-add.component';
 import { ExamsQuestionComponent } from './exams-question.component';
 import { ExamsViewComponent } from './exams-view.component';
-import { PlanetFormsModule } from '../shared/planet-forms.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 

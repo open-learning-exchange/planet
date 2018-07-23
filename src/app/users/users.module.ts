@@ -7,7 +7,7 @@ import { UsersComponent } from './users.component';
 import { UsersProfileComponent } from './users-profile/users-profile.component';
 import { UsersUpdateComponent } from './users-update/users-update.component';
 import { UsersRouterModule } from './users-router.module';
-import { PlanetFormsModule } from '../shared/planet-forms.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 

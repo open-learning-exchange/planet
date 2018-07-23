@@ -15,6 +15,8 @@ services:
     image: treehouses/planet:latest
     ports:
       - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - MULTIPLE_IPS=true
       - HOST_PROTOCOL=http

@@ -26,6 +26,8 @@ import { SHARED_SERVICES } from './shared/database';
 import { SyncService } from './shared/sync.service';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
 import { PlanetLanguageModule } from './shared/planet-language.module';
+import { TeamsService } from './teams/teams.service';
+import { RatingService } from './shared/forms/rating.service';
 
 @NgModule({
   imports: [
@@ -56,7 +58,9 @@ import { PlanetLanguageModule } from './shared/planet-language.module';
     SubmissionsService,
     CoursesService,
     ...SHARED_SERVICES,
-    SyncService
+    SyncService,
+    TeamsService,
+    RatingService
   ],
   bootstrap: [ AppComponent ]
 })

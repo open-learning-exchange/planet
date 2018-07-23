@@ -8,5 +8,7 @@ export const environment = {
   test: false,
   couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200/',
   centerAddress: 'earth.ole.org:2200',
-  centerProtocol: 'https'
+  centerProtocol: 'https',
+  parentProtocol: 'https',
+  upgradeAddress: window.location.origin + '/upgrade'
 };

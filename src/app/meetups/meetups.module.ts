@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PlanetFormsModule } from '../shared/planet-forms.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MeetupsComponent } from './meetups.component';
 import { MeetupsAddComponent } from './add-meetups/meetups-add.component';
 import { MeetupsViewComponent } from './view-meetups/meetups-view.component';

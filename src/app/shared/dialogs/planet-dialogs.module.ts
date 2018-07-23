@@ -6,7 +6,7 @@ import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsPromptComponent } from './dialogs-prompt.component';
 import { DialogsViewComponent } from './dialogs-view.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PlanetFormsModule } from '../planet-forms.module';
+import { PlanetFormsModule } from '../forms/planet-forms.module';
 import { FeedbackDirective } from '../../feedback/feedback.directive';
 import { DialogsListComponent } from './dialogs-list.component';
 import { DialogsListService } from './dialogs-list.service';

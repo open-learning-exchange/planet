@@ -5,23 +5,23 @@ import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({
-  selector: 'planet-rating',
-  templateUrl: './planet-rating.component.html',
+  selector: 'planet-rating-stars',
+  templateUrl: './planet-rating-stars.component.html',
   styles: [ `
     .stars mat-icon {
       cursor: pointer;
     }
   ` ],
   providers: [
-    { provide: MatFormFieldControl, useExisting: PlanetRatingComponent }
+    { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
   ]
 })
-export class PlanetRatingComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
+export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 
   static nextId = 0;
 
   @Input() _value = 0;
-  @HostBinding() id = `planet-rating-${PlanetRatingComponent.nextId++}`;
+  @HostBinding() id = `planet-rating-stars-${PlanetRatingStarsComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
 
   private _required = false;
