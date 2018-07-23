@@ -180,7 +180,7 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.pipeRemovePlanetUser(this.couchService.put('communityregistrationrequests/' + community._id, community), community)
     .subscribe(([ data, userRes ]) => {
       this.updateRev(data, this.communities.data);
-      this.getCommunityList();
+      this.getCommunityList(this.searchValue);
       this.editDialog.close();
     }, (error) => this.editDialog.componentInstance.message = 'There was a problem rejecting this community');
   }
