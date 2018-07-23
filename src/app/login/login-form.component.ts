@@ -117,13 +117,13 @@ export class LoginFormComponent {
             return from(this.reRoute());
           }
         }),
-        this.createSession(name, password)
+        switchMap(this.createSession(name, password))
       ).subscribe((res) => {
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
 
   createSession(name, password) {
-    return switchMap((routeSuccess) => {
+    return () => {
       // Post new session info to login_activity
       const obsArr = this.loginObservables(name, password);
       return forkJoin(obsArr).pipe(catchError(error => {
@@ -135,7 +135,7 @@ export class LoginFormComponent {
         }
         return of(error);
       }));
-    });
+    };
   }
 
   loginObservables(name, password) {

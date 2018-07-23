@@ -224,7 +224,7 @@ export class ConfigurationComponent implements OnInit {
         'joinDate': Date.now(),
         ...this.contactFormGroup.value
       };
-      this.createReplicator(credentials, configuration, adminName, userDetail);
+      this.createPlanet(credentials, configuration, adminName, userDetail);
     }
   }
 
@@ -268,7 +268,7 @@ export class ConfigurationComponent implements OnInit {
     });
   }
 
-  createReplicator(credentials, configuration, adminName, userDetail) {
+  createPlanet(credentials, configuration, adminName, userDetail) {
     const replicatorObj = {
       type: 'pull',
       parentDomain: configuration.parentDomain,
