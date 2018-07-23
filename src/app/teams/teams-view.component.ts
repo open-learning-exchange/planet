@@ -86,8 +86,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   requestToJoin() {
-    this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).subscribe((newTeam) => {
-      this.team = newTeam;
+    this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).pipe(
+      switchMap((newTeam) => {
+        this.team = newTeam;
+        return this.sendNotifications('request');
+      })
+    ).subscribe((newTeam) => {
       this.setStatus(this.team, this.userService.get(), this.userService.shelf);
       this.planetMessageService.showMessage('Request to join team sent');
     });
@@ -137,7 +141,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
       }),
       switchMap((notifyShelf) => {
-        return this.sendNotifications(selected.length);
+        return this.sendNotifications('addMember', selected.length);
       })
     ).subscribe(res => {
       this.getMembers();
@@ -146,17 +150,35 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendNotifications(memberCount) {
+  sendNotifications(type, memberCount?) {
+    console.log(type);
     const notify = this.members.map((user: any) => {
-      return this.memberNotification(user.name, this.team, memberCount);
+      if (type === 'request') {
+        return this.requestNotification(user.name, this.team);
+      } else {
+        return this.memberAddNotification(user.name, this.team, memberCount);
+      }
     });
     return this.couchService.post('notifications/_bulk_docs', { docs: notify });
   }
 
-  memberNotification(userName, team, addedMember) {
+  memberAddNotification(userName, team, addedMember) {
     return {
       'user': 'org.couchdb.user:' + userName,
       'message': addedMember + ' member(s) has been added to ' + team.name + ' team. ',
+      'link': this.router.url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+  }
+
+  requestNotification(userName, team) {
+    return {
+      'user': 'org.couchdb.user:' + userName,
+      'message': this.userService.get().name + ' has requested to join ' + team.name + ' team. ',
       'link': this.router.url,
       'item': team._id,
       'type': 'team',
