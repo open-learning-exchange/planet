@@ -281,7 +281,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return this.tagFilter.length > 0 ? ' ' : '';
+    return this.tagFilter.value.length > 0 ? ' ' : '';
   }
 
 }
