@@ -9,6 +9,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
+import { SyncService } from '../shared/sync.service';
 
 const registerForm = {
   name: [],
@@ -40,7 +41,8 @@ export class LoginFormComponent {
     private userService: UserService,
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private syncService: SyncService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -108,36 +110,59 @@ export class LoginFormComponent {
   login({ name, password }: {name: string, password: string}, isCreate: boolean) {
     this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
       .pipe(switchMap((data) => {
-        // Navigate into app
-        if (isCreate) {
-          return from(this.router.navigate( [ 'users/update/' + name ]));
-        } else {
-          return from(this.reRoute());
-        }
-      }), switchMap((routeSuccess) => {
-        if (!routeSuccess) {
-          throw routeSuccess;
-        }
-
-        // Post new session info to login_activity
-        const obsArr = [ this.userService.newSessionLog() ];
-        const localConfig = this.userService.getConfig();
-        const localAdminName = localConfig.adminName.split('@')[0];
-        // If not in e2e test or on a center, also add session to parent domain
-        if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
-          obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
-        }
-        return forkJoin(obsArr).pipe(catchError(error => {
-          // 401 is for Unauthorized
-          if (error.status === 401) {
-            this.planetMessageService.showMessage('Can not login to parent planet.');
+          // Navigate into app
+          if (isCreate) {
+            return from(this.router.navigate( [ 'users/update/' + name ]));
           } else {
-            this.planetMessageService.showMessage('Error connecting to parent.');
+            return from(this.reRoute());
           }
-          return of(error);
-        }));
-      })).subscribe((res) => {
-
+        }),
+        switchMap(this.createSession(name, password))
+      ).subscribe((res) => {
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
+
+  createSession(name, password) {
+    return () => {
+      // Post new session info to login_activity
+      const obsArr = this.loginObservables(name, password);
+      return forkJoin(obsArr).pipe(catchError(error => {
+        // 401 is for Unauthorized
+        if (error.status === 401) {
+          this.planetMessageService.showMessage('Can not login to parent planet.');
+        } else {
+          this.planetMessageService.showMessage('Error connecting to parent.');
+        }
+        return of(error);
+      }));
+    };
+  }
+
+  loginObservables(name, password) {
+    const obsArr = [ this.userService.newSessionLog() ];
+    const localConfig = this.userService.getConfig();
+    const localAdminName = localConfig.adminName.split('@')[0];
+    if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
+      return obsArr;
+    }
+    obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
+    if (localConfig.registrationRequest === 'pending') {
+      obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
+    }
+    return obsArr;
+  }
+
+  getConfigurationSyncDown(configuration, credentials) {
+    const replicators =  {
+      dbSource: 'communityregistrationrequests',
+      dbTarget: 'configurations',
+      type: 'pull',
+      date: true,
+      selector: {
+        code: configuration.code
+      }
+    };
+    return this.syncService.sync(replicators, credentials);
+  }
+
 }

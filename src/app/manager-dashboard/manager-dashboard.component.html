@@ -40,6 +40,7 @@
         <a routerLink="meetups" i18n mat-raised-button>List Meetups</a>
       </ng-container>
       <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
+      <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by parent. You can retry or contact parent planet.</p>
       <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
     </ng-container>
   </div>
