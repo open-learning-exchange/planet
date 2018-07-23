@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -20,9 +20,15 @@ export class DialogsFormComponent {
     });
   }
 
-  constructor(public dialogRef: MatDialogRef<DialogsFormComponent>) { }
+  constructor(public dialogRef: MatDialogRef<DialogsFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    console.log(`DATA: ${data}`);
+  }
 
   onSubmit(mForm, dialog) {
+    if (data) {
+      return this.data.okSubmit();
+    }
+    // default behavior
     if (mForm.valid) {
       dialog.close(mForm.value);
     } else {

@@ -107,14 +107,18 @@ export class FeedbackDirective {
       type: [ this.type, Validators.required ],
       message: [ this.message, Validators.required ]
     };
+    // this.dialogsFormService
+    //   .confirm(title, fields, formGroup)
+    //   .pipe(debug('Dialog confirm'))
+    //   .subscribe((response) => {
+    //     if (response !== undefined) {
+    //       this.addFeedback(response);
+    //     }
+    //   });
+    console.log(this.dialogsFormService);
     this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .pipe(debug('Dialog confirm'))
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.addFeedback(response);
-        }
-      });
+      .openDialog(title, fields, formGroup);
+    // TODO add callback function that executes this.addFeedback
   }
 
 }

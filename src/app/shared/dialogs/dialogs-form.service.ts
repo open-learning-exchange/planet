@@ -11,10 +11,11 @@ import {
 export class DialogsFormService {
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
 
-  public confirm(title: string, fields: any, formGroup: any): Observable<boolean> {
+  public confirm(title: string, fields: any, formGroup: any, okSubmit = null): Observable<boolean> {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
-      width: '600px'
+      width: '600px',
+      data: okSubmit
     });
     if (formGroup instanceof FormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
@@ -26,4 +27,21 @@ export class DialogsFormService {
     return dialogRef.afterClosed();
   }
 
+  public openDialog(title: string, fields: any, formGroup: any, okSubmit = null): Observable<boolean> {
+    let dialogRef: MatDialogRef<DialogsFormComponent>;
+    dialogRef = this.dialog.open(DialogsFormComponent, {
+      width: '600px',
+      data: okSubmit
+    });
+    if (formGroup instanceof FormGroup) {
+      dialogRef.componentInstance.modalForm = formGroup;
+    } else {
+      dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
+    }
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.fields = fields;
+  }
+  public closeDialog() {
+    return dialogRef.afterClosed();
+  }
 }
