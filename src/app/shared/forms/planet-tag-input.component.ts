@@ -1,6 +1,7 @@
 import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material';
+import { FocusMonitor } from '@angular/cdk/a11y';
 import { Subject, Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { TagsService } from './tags.service';
@@ -29,6 +30,24 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
   }
   @Output() valueChanges = new EventEmitter<string[]>();
 
+  get empty() {
+    return this.tagInput.nativeElement.value === '' && this._value.length === 0;
+  }
+
+  private _placeholder: string;
+  @Input()
+  get placeholder() {
+    return this._placeholder;
+  }
+  set placeholder(text: string) {
+    this._placeholder = text;
+    this.stateChanges.next();
+  }
+
+  get shouldLabelFloat() {
+    return this.focused || !this.empty;
+  }
+
   @ViewChild('tagInput') tagInput: ElementRef;
 
   onTouched;
@@ -36,9 +55,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
   tags: string[] = [];
   filteredTags: Observable<string[]>;
   inputControl = new FormControl();
+  focused = false;
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
+    private focusMonitor: FocusMonitor,
+    private elementRef: ElementRef,
     private tagsService: TagsService
   ) {
     if (this.ngControl) {
@@ -52,10 +74,15 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
       startWith(null),
       map((value: string | null) => value ? this.tagsService.filterTags(this.tags, value) : this.tags)
     );
+    this.focusMonitor.monitor(elementRef.nativeElement, true).subscribe(origin => {
+      this.focused = !!origin;
+      this.stateChanges.next();
+    });
   }
 
   ngOnDestroy() {
     this.stateChanges.complete();
+    this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
   }
 
   onChange(_: any) {}
