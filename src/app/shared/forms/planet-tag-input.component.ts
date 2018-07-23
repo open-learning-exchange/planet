@@ -67,7 +67,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
       this.ngControl.valueAccessor = this;
     }
     this.tagsService.getTags().subscribe((tags: string[]) => {
-      console.log(tags);
       this.tags = tags;
     });
     this.filteredTags = this.inputControl.valueChanges.pipe(
