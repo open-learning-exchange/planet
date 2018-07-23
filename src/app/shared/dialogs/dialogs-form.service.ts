@@ -15,7 +15,7 @@ export class DialogsFormService {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
-      autoFocus:false
+      autoFocus: false
     });
     if (formGroup instanceof FormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
