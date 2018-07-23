@@ -57,7 +57,8 @@
           position: relative;
           span{
             overflow: hidden;
-            margin-top: 2rem;
+            padding-top: 2rem;
+            height: $dashboard-tile-height;
           }
           .delete-item {
             position: absolute;
