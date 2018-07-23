@@ -9,7 +9,7 @@ export class TagsService {
 
   getTags() {
     return this.couchService.get('resources/_design/resources/_view/count_tags?group=true').pipe(
-      map((response: any) => response.rows)
+      map((response: any) => response.rows.sort((a, b) => b.value - a.value))
     );
   }
 

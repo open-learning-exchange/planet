@@ -71,7 +71,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     });
     this.filteredTags = this.inputControl.valueChanges.pipe(
       startWith(null),
-      map((value: string | null) => value ? this.tagsService.filterTags(this.tags, value) : this.tags)
+      map((value: string | null) => value ? this.tagsService.filterTags(this.tags, value) : this.tags),
+      map((fullList) => fullList.slice(0, 5))
     );
     this.focusMonitor.monitor(elementRef.nativeElement, true).subscribe(origin => {
       this.focused = !!origin;
