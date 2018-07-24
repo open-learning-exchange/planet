@@ -5,12 +5,11 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { Observable, of } from 'rxjs';
-import { MatFormField, MatFormFieldControl } from '@angular/material';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
-import { NgxImgModule } from 'ngx-img';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 
@@ -125,16 +124,33 @@ export class UsersUpdateComponent implements OnInit {
 
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
-      userInfo._rev = res.rev;
-      if (this.user.name === this.userService.get().name) {
-        this.userService.set(userInfo);
-      }
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo })
+    .pipe(
+      switchMap(res => {
+        userInfo._rev = res.rev;
+        if (this.user.name === this.userService.get().name) {
+          this.userService.set(userInfo);
+        }
+        const adminName = this.user.name + '@' + this.userService.getConfig().code;
+        if (this.userService.getConfig().adminName === adminName) {
+          return this.updateParentUser({ ...userInfo, name: adminName, isUserAdmin: false, requestId: this.userService.getConfig()._id });
+        }
+        return of({ ok: true });
+      })
+    ).subscribe(() => {
       this.router.navigate([ this.redirectUrl ]);
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+  }
+
+  updateParentUser(userInfo) {
+    const opts = { domain: this.userService.getConfig().parentDomain },
+      requestUrl = this.dbName + '/org.couchdb.user:' + userInfo.name;
+    return this.couchService.get(requestUrl, opts).pipe(switchMap((res: any) => {
+      return this.couchService.put(requestUrl, { ...userInfo, _rev: res._rev }, opts);
+    }));
   }
 
   goBack() {
