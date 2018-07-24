@@ -21,7 +21,8 @@
         <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
         <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
         <p i18n><b>Method:</b> {{courseDetail.method}}</p>
-        <p i18n><b>Description:</b> {{courseDetail.description}}</p>
+        <p><b i18n>Description:</b></p>
+        <td-markdown [content]="courseDetail.description"></td-markdown>
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
