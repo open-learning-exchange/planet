@@ -2,6 +2,7 @@ import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter,
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Subject, Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { TagsService } from './tags.service';
@@ -56,6 +57,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
   filteredTags: Observable<string[]>;
   inputControl = new FormControl();
   focused = false;
+  separatorKeyCodes = [ ENTER, COMMA ];
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,

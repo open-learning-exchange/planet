@@ -8,6 +8,7 @@
     [formControl]="inputControl"
     [matAutocomplete]="tagAuto"
     [matChipInputFor]="tagsList"
+    [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
     (matChipInputTokenEnd)="inputAddTag($event)"
     required>
 </mat-chip-list>
