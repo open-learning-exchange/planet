@@ -151,7 +151,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   sendNotifications(type, memberCount?) {
-    console.log(type);
     const notify = this.members.map((user: any) => {
       if (type === 'request') {
         return this.requestNotification(user.name, this.team);
