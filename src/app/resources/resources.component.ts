@@ -16,6 +16,7 @@ import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
 import { FormControl } from '../../../node_modules/@angular/forms';
+import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -61,6 +62,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+
+  @ViewChild(PlanetTagInputComponent)
+  private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
     private couchService: CouchService,
@@ -282,6 +286,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ? ' ' : '';
+  }
+
+  addTag(tag: string) {
+    this.tagInputComponent.addTag(tag);
   }
 
 }

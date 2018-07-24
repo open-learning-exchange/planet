@@ -57,7 +57,7 @@
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
         <mat-chip-list #tagsList class="tags-list">
-          <mat-chip *ngFor="let tag of element.tags">
+          <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag)">
             {{tag}}
           </mat-chip>
         </mat-chip-list>
