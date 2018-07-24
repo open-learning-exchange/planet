@@ -255,10 +255,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
   }
 
-  fetchResource(resources) {
-    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: resources, type: 'pull', date: true } ])
+  shareResource(type, resources) {
+    const msg = (type === 'pull' ? 'fetch' : 'send');
+    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: resources, type: type, date: true } ])
     .subscribe((response: any) => {
-      this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to fetch');
+      this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
     }, () => error => this.planetMessageService.showMessage(error));
   }
 

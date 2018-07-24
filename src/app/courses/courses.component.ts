@@ -61,6 +61,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
+  planetType = this.userService.getConfig().planetType;
 
   constructor(
     private couchService: CouchService,
@@ -264,14 +265,15 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(userShelf, 'Course added to your dashboard');
   }
 
-  fetchCourse(courses) {
+  shareCourse(type, courses) {
+    const msg = (type === 'pull' ? 'fetch' : 'send');
     const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
     this.syncService.confirmPasswordAndRunReplicators([
       { db: this.dbName, items: courses, type: 'pull', date: true },
       { db: 'resources', items: resources, type: 'pull', date: true },
       { db: 'exams', items: exams, type: 'pull', date: true }
     ]).subscribe((response: any) => {
-      this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to fetch');
+      this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
     }, () => error => this.planetMessageService.showMessage(error));
   }
 

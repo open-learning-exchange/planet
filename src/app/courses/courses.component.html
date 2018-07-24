@@ -22,27 +22,30 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <span *ngIf="parent">
-      <button mat-button [disabled]="!selection.selected.length" (click)="fetchCourse(selection.selected)">
+    <ng-container *ngIf="parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
       </button>
-    </span>
-    <span *ngIf="!parent">
-      <button mat-button (click)="openSendCourseDialog()" routerLinkActive="active" [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-        <span i18n>Send Courses</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
-      </button>
-      <button mat-button [disabled]="!selection.selected.length" (click)="addToCourse(selection.selected)">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myCourses</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
-      </button>
-    </span>
-    <button *ngIf="!parent && user.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-      <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
-    </button>
-    <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+    </ng-container>
+    <ng-container *ngIf="!parent">
+      <ng-container *ngIf="user.isUserAdmin">
+        <button *ngIf="planetType !== 'center'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
+          <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
+          <span i18n>Send Courses</span>
+          <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+        </button>
+        <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
+          <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+          <span i18n>Push To Child</span>
+          <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+        </button>
+        <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+          <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+          <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+        </button>
+      </ng-container>
+      <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+    </ng-container>
   </mat-toolbar>
   <mat-table #table [dataSource]="courses" matSort>
     <ng-container matColumnDef="select">
