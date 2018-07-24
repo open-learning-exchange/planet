@@ -56,6 +56,11 @@
           <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
+        <mat-chip-list #tagsList class="tags-list">
+          <mat-chip *ngFor="let tag of element.tags">
+            {{tag}}
+          </mat-chip>
+        </mat-chip-list>
         <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -83,16 +88,6 @@
             <span i18n>Download file</span>
           </a>
         </mat-menu>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="tags">
-      <mat-header-cell *matHeaderCellDef i18n>Tags</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <mat-chip-list #tagsList>
-          <mat-chip *ngFor="let tag of element.tags">
-            {{tag}}
-          </mat-chip>
-        </mat-chip-list>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="rating">

@@ -47,7 +47,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'title', 'tags', 'rating' ];
+  displayedColumns = [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
