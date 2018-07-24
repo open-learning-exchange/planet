@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TdTextEditorComponent } from '@covalent/text-editor';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentTextEditorModule } from '@covalent/text-editor';
+import { CovalentMarkdownModule } from '@covalent/markdown';
 import { MaterialModule } from '../material.module';
 import { FormErrorMessagesComponent } from './form-error-messages.component';
 import { PlanetRatingComponent } from './planet-rating.component';
@@ -24,7 +24,9 @@ import { PlanetTagInputComponent } from './planet-tag-input.component';
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
     TdTextEditorComponent,
-    TdMarkdownComponent
+    TdMarkdownComponent,
+    CovalentTextEditorModule,
+    CovalentMarkdownModule
   ],
   declarations: [
     FormErrorMessagesComponent,
@@ -33,7 +35,8 @@ import { PlanetTagInputComponent } from './planet-tag-input.component';
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
     TdTextEditorComponent,
-    TdMarkdownComponent
+    TdMarkdownComponent,
+    PlanetStackedBarComponent
   ]
 })
 export class PlanetFormsModule {}
