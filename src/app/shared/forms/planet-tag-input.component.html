@@ -9,6 +9,7 @@
     [matAutocomplete]="tagAuto"
     [matChipInputFor]="tagsList"
     [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+    [matChipInputAddOnBlur]="true"
     (matChipInputTokenEnd)="inputAddTag($event)"
     required>
 </mat-chip-list>
