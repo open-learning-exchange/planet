@@ -50,3 +50,4 @@ package-lock.json
 
 # extra yml files generated
 docker/planet-*.yml
+planet.yml
