@@ -66,7 +66,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     // find teamId on User shelf
     this.teamsService.getTeamMembers(this.teamId).subscribe((data) => {
       this.members = data.docs.map((mem) => {
-        return { name: mem._id.split(':')[1] };
+        return { ...mem, name: mem._id.split(':')[1] };
       });
       this.disableAddingMembers = this.members.length >= this.team.limit;
     });
