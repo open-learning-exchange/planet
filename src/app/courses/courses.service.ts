@@ -134,8 +134,7 @@ export class CoursesService {
   }
 
   getUsersCourses(userId) {
-    const obs = this.couchService.post('courses_progress/_find', findDocuments({ 'userId': userId }, [ 'courseId' ]));
-    obs.subscribe((response) => {
+    this.couchService.post('courses_progress/_find', findDocuments({ 'userId': userId }, [ 'courseId' ])).subscribe(response => {
       const courses = [];
       response.docs.forEach(c => {
         courses.push(c.courseId);
