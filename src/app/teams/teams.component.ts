@@ -41,7 +41,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
-    this.couchService.allDocs(this.dbName).subscribe((data: any) => {
+    this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((data: any) => {
       this.userShelf = this.userService.shelf;
       this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
     }, (error) => console.log(error));
@@ -68,10 +68,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleMembership(teamId, leaveTeam) {
-    this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
+  toggleMembership(team, leaveTeam) {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
+      if (newTeam.status === 'archived') {
+        this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+      }
     });
   }
 
