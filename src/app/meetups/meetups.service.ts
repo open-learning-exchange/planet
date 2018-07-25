@@ -5,6 +5,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Injectable()
 export class MeetupService {
@@ -64,15 +65,8 @@ export class MeetupService {
     return this.meetupShelf(participate);
   }
 
-  dedupeShelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
-  }
-
   attendMeetups(meetups) {
-    this.userShelf.meetupIds = meetups.concat(this.userShelf.meetupIds).reduce(this.dedupeShelfReduce, []);
+    this.userShelf.meetupIds = meetups.concat(this.userShelf.meetupIds).reduce(dedupeShelfReduce, []);
     return this.meetupShelf(true);
   }
 
