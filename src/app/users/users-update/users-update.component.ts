@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
@@ -132,12 +132,7 @@ export class UsersUpdateComponent implements OnInit {
           this.userService.set(userInfo);
         }
         if (this.userService.getConfig().adminName === this.user.name + '@' + this.userService.getConfig().code) {
-          const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
-          return this.couchService.put('configurations/' + this.userService.getConfig()._id,
-            { ...this.userService.getConfig(), firstName, lastName, middleName, email, phoneNumber })
-          .pipe(switchMap(() => {
-            return this.userService.setUserConfigAndShelf(userInfo);
-          }));
+          return this.updateConfigurationContact(userInfo);
         }
         return of({ ok: true });
       })
@@ -147,6 +142,16 @@ export class UsersUpdateComponent implements OnInit {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+  }
+
+  updateConfigurationContact(userInfo) {
+    const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
+    const newConfig = { ...this.userService.getConfig(), firstName, lastName, middleName, email, phoneNumber };
+    return this.couchService.put('configurations/' + this.userService.getConfig()._id, newConfig)
+    .pipe(map((res) => {
+      this.userService.setConfig(newConfig);
+      return res;
+    }));
   }
 
   goBack() {
