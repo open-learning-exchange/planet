@@ -90,21 +90,9 @@ export class TeamsService {
         }
         return of(team);
       }),
-      switchMap(() => {
-        if (leaveTeam) {
-          return this.isTeamEmpty(teamId);
-        }
-        return of(team);
-      }),
-      switchMap((isEmpty) => {
-        if (isEmpty === true) {
-          return this.updateTeam({ ...team, status: 'archived' });
-        }
-        return of(team);
-      }),
-      switchMap((newTeam) => {
-        return of({ ...team, ...newTeam });
-      })
+      switchMap(() => leaveTeam ? this.isTeamEmpty(teamId) : of(team)),
+      switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
+      switchMap((newTeam) => of({ ...team, ...newTeam }))
     );
   }
 
