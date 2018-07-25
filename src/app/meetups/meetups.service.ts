@@ -60,19 +60,25 @@ export class MeetupService {
   }
 
   attendMeetup(meetupId, participate) {
-    participate ? this.userShelf.meetupIds.splice(meetupId, 1)
-      : this.userShelf.meetupIds.push(meetupId);
-    return this.meetupShelf(participate);
+    const newMeetupIds = [ ...this.userShelf.meetupIds ];
+    if (participate) {
+      newMeetupIds.splice(meetupId, 1);
+    } else {
+      newMeetupIds.push(meetupId);
+    }
+    return this.updateMeetupShelf(newMeetupIds, participate);
   }
 
   attendMeetups(meetups) {
-    this.userShelf.meetupIds = meetups.concat(this.userShelf.meetupIds).reduce(dedupeShelfReduce, []);
-    return this.meetupShelf(true);
+    const newMeetupIds = meetups.concat(this.userShelf.meetupIds).reduce(dedupeShelfReduce, []);
+    return this.updateMeetupShelf(newMeetupIds, true);
   }
 
-  meetupShelf(participate) {
-    return this.couchService.put('shelf/' + this.userService.get()._id, this.userShelf)
+  updateMeetupShelf(meetupIds, participate) {
+    const newShelf = { ...this.userShelf, meetupIds };
+    return this.couchService.put('shelf/' + this.userService.get()._id, newShelf)
       .pipe(map((response) => {
+        this.userShelf = newShelf;
         this.userShelf._rev = response.rev;
         this.userService.shelf = this.userShelf;
         return { response, participate };
