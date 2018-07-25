@@ -119,17 +119,17 @@ export class TeamsService {
   sendNotifications(type, members, notificationParams) {
     const notify = members.map((user: any) => {
       if (type === 'request') {
-        return this.requestNotification(user.name, notificationParams);
+        return this.requestNotification(user._id, notificationParams);
       } else {
-        return this.memberAddNotification(user.name, notificationParams);
+        return this.memberAddNotification(user._id, notificationParams);
       }
     });
     return this.couchService.post('notifications/_bulk_docs', { docs: notify });
   }
 
-  memberAddNotification(userName, { team, url, newMembersLength }) {
+  memberAddNotification(userId, { team, url, newMembersLength }) {
     return {
-      'user': 'org.couchdb.user:' + userName,
+      'user': userId,
       'message': newMembersLength + ' member(s) has been added to ' + team.name + ' team. ',
       'link': url,
       'item': team._id,
@@ -140,9 +140,9 @@ export class TeamsService {
     };
   }
 
-  requestNotification(userName, { team, url }) {
+  requestNotification(userId, { team, url }) {
     return {
-      'user': 'org.couchdb.user:' + userName,
+      'user': userId,
       'message': this.userService.get().name + ' has requested to join ' + team.name + ' team. ',
       'link': url,
       'item': team._id,
