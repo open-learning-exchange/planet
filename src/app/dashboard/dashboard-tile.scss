@@ -44,6 +44,7 @@
       .dashboard-items {
         display: grid;
         grid-auto-columns: 150px;
+        grid-auto-rows: $dashboard-tile-height;
         transition: transform 0.5s;
 
         .dashboard-item {
@@ -55,16 +56,17 @@
           text-align: center;
           padding: 0.5rem;
           position: relative;
-          span{
+
+          span {
             overflow: hidden;
-            padding-top: 2rem;
-            height: $dashboard-tile-height;
           }
+
           .delete-item {
             position: absolute;
             top: 3px;
             right: 3px;
           }
+
         }
       }
     }
