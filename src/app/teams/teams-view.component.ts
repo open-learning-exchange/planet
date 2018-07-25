@@ -150,41 +150,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendNotifications(type, memberCount?) {
-    const notify = this.members.map((user: any) => {
-      if (type === 'request') {
-        return this.requestNotification(user.name, this.team);
-      } else {
-        return this.memberAddNotification(user.name, this.team, memberCount);
-      }
+  sendNotifications(type, newMembersLength = 0) {
+    return this.teamsService.sendNotifications(type, this.members, {
+      newMembersLength, url: this.router.url, team: { ...this.team }
     });
-    return this.couchService.post('notifications/_bulk_docs', { docs: notify });
-  }
-
-  memberAddNotification(userName, team, addedMember) {
-    return {
-      'user': 'org.couchdb.user:' + userName,
-      'message': addedMember + ' member(s) has been added to ' + team.name + ' team. ',
-      'link': this.router.url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': Date.now()
-    };
-  }
-
-  requestNotification(userName, team) {
-    return {
-      'user': 'org.couchdb.user:' + userName,
-      'message': this.userService.get().name + ' has requested to join ' + team.name + ' team. ',
-      'link': this.router.url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': Date.now()
-    };
   }
 
 }
