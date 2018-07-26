@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, expand, takeWhile, toArray, flatMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
+import { findDocuments, inSelector } from './mangoQueries';
 
 @Injectable()
 export class CouchService {
@@ -76,7 +77,21 @@ export class CouchService {
     }));
   }
 
+  localComparison(db: string, parentDocs: any[]) {
+    const ids = parentDocs.map((parentDoc: any) => parentDoc._id);
+    return this.findAll(db, findDocuments({ '_id': inSelector(ids) })).pipe(map((localDocs) => {
+      return parentDocs.map((parentDoc) => {
+        const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
+        return {
+          ...parentDoc,
+          localStatus: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
+        };
+      });
+    }));
+  }
+
   findAll(db: string, query: any, opts?: any) {
+    console.log(query);
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
       return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
     }), takeWhile((res) => {
@@ -103,6 +118,15 @@ export class CouchService {
     const domain = domainWithPort ? domainWithPort.split(':')[0] : '';
     const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
     return this.http.get(urlPrefix + '/' + url, opts);
+  }
+
+  private compareRev = (parent, local) => {
+    if (parent === local) {
+      return 'match';
+    }
+    local = parseInt(local.split('-')[0], 10);
+    parent = parseInt(parent.split('-')[0], 10);
+    return (local < parent) ? 'newerAvailable' : (local > parent) ? 'parentOlder' : 'mismatch';
   }
 
 }

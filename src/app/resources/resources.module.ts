@@ -11,6 +11,7 @@ import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PlanetLanguageModule } from '../shared/planet-language.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { PlanetLanguageModule } from '../shared/planet-language.module';
     HttpClientModule,
     HttpClientJsonpModule,
     PlanetDialogsModule,
-    PlanetLanguageModule
+    PlanetLanguageModule,
+    SharedComponentsModule
   ],
   declarations: [
     ResourcesComponent,
