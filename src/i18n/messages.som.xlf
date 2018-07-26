@@ -325,9 +325,8 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-            
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
+        <target xml:lang="so" state="translated">
+                        <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraal="&lt;mat-icon&gt;"/>xariirin_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>furfuran
           
           </target>
       </trans-unit>
@@ -338,9 +337,9 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-            
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
+        <target xml:lang="so" state="translated">
+                        <x id="BILOW_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraal="&lt;mat-icon&gt;"/>link<x id="Xir_TAG_MAT-ICON" ctype="x-mat-icon" equiv-
+qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           
           </target>
       </trans-unit>
@@ -351,9 +350,9 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
+        <target xml:lang="so" state="translated">
             
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>block<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Reject
+            <x id="BILOW_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;mat-icon&gt;"/>block<x id="XIR_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;/mat-icon&gt;"/>Diidmo
           
           </target>
       </trans-unit>
@@ -364,9 +363,8 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-          
-          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
+        <target xml:lang="so" state="translated">
+                    <x id="BILOOW_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;mat-icon&gt;"/>tirtir<x id="XIR_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;/mat-icon&gt;"/>Tirtir
         
         </target>
       </trans-unit>
@@ -420,7 +418,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Next</target>
+        <target xml:lang="so" state="translated">kuxiga</target>
       </trans-unit>
       <trans-unit id="e10987c002a684f07c8747979b7fde44d2c7cef8" datatype="html">
         <source>Set Up Configuration</source>
@@ -428,7 +426,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Set Up Configuration</target>
+        <target xml:lang="so" state="translated">Dejinta qaabka</target>
       </trans-unit>
       <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html">
         <source>Nation</source>
@@ -436,7 +434,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Nation</target>
+        <target xml:lang="so" state="translated">Qaran</target>
       </trans-unit>
       <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html">
         <source>Community</source>
@@ -444,7 +442,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Community</target>
+        <target xml:lang="so" state="translated">Bulsho</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html">
         <source>Select Nation/Community</source>
@@ -452,7 +450,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Select Nation/Community</target>
+        <target xml:lang="so" state="translated">Xulo Qaran/Bulsho</target>
       </trans-unit>
       <trans-unit id="4c5801cfafb0bf7b68021fe73093f522544fed30" datatype="html">
         <source>Nation(s)</source>
@@ -460,7 +458,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Nation(s)</target>
+        <target xml:lang="so" state="translated">Qaran(quruumaha)</target>
       </trans-unit>
       <trans-unit id="fc60c6126b9d7048411532b9bd15a83228a27f77" datatype="html">
         <source>Center</source>
@@ -468,7 +466,10 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Center</target>
+        <target xml:lang="so" state="translated">Xarun</target>
+        <alt-trans>
+          <target xml:lang="so">Xarunta</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html">
         <source>Name</source>
@@ -484,7 +485,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Name</target>
+        <target xml:lang="so" state="translated">Magaca</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html">
         <source>Language</source>
@@ -504,7 +505,10 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Language</target>
+        <target xml:lang="so" state="translated">Luuqad</target>
+        <alt-trans>
+          <target xml:lang="so">Luuqada</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html">
         <source>Local URL</source>
@@ -512,7 +516,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Local URL</target>
+        <target xml:lang="so" state="translated">URL maxalliga ah</target>
       </trans-unit>
       <trans-unit id="a158c27700fb4b55974f72418e1e17f45662d3f6" datatype="html">
         <source>Show Advanced Options</source>
