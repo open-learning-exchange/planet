@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -6,9 +6,9 @@ import { forkJoin, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
@@ -27,12 +27,13 @@ import { dedupeShelfReduce } from '../shared/utils';
     }
   ` ]
 })
-export class UsersComponent implements OnInit, AfterViewInit {
+export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allUsers = new MatTableDataSource();
   message = '';
+  searchValue = '';
   filterAssociated = false;
   filter: any;
   planetType = '';
@@ -54,13 +55,25 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private router: Router,
+    private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
     this.planetType = this.userService.getConfig().planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.route.paramMap.pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((params: ParamMap) => {
+      const searchValue = params.get('search');
+      this.searchValue = searchValue;
+    });
     this.initializeData();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   changeFilter(type) {
@@ -125,7 +138,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
         }
         return userInfo;
       });
-      this.changeFilter('local');
+      this.applyFilter(this.searchValue);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');

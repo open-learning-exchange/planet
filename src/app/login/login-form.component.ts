@@ -117,9 +117,30 @@ export class LoginFormComponent {
             return from(this.reRoute());
           }
         }),
-        switchMap(this.createSession(name, password))
+        switchMap(this.createSession(name, password)),
+        switchMap((sessionData) => {
+          if (isCreate) {
+            const adminName = this.userService.getConfig().adminName.split('@')[0];
+            return this.sendNotifications(adminName, name);
+          }
+          return of(sessionData);
+        })
       ).subscribe((res) => {
       }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
+  }
+
+  sendNotifications(userName, addedMember) {
+    const data = {
+      'user': 'org.couchdb.user:' + userName,
+      'message': 'New User ' + addedMember + ' has joined.',
+      'link': '/users/',
+      'linkParams': { 'search': addedMember },
+      'type': 'new user',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+    return this.couchService.post('notifications', data);
   }
 
   createSession(name, password) {
