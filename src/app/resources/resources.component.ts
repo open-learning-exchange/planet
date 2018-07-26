@@ -14,7 +14,7 @@ import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
-import { compareRev, dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce } from '../shared/utils';
 import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 

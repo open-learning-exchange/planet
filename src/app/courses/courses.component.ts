@@ -7,7 +7,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
@@ -87,7 +87,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.coursesService.coursesUpdated$.pipe(
-      takeUntil(this.onDestroy$)
+      takeUntil(this.onDestroy$),
       map((courses: any) => {
         // Sort in descending createdDate order, so the new courses can be shown on the top
         courses.sort((a, b) => b.createdDate - a.createdDate);
@@ -95,7 +95,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.setupList(courses, this.userShelf.courseIds);
       }),
       switchMap((courses: any) => this.parent ? this.couchService.localComparison(this.dbName, courses) : of(courses))
-    ).subscribe((courses) => {
+    ).subscribe((courses: any) => {
       this.courses.data = courses;
     });
   }
