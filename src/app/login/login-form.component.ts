@@ -135,7 +135,7 @@ export class LoginFormComponent {
       'message': 'New User ' + addedMember + ' has joined.',
       'link': '/users/',
       'linkParams': { 'search': addedMember },
-      'type': 'user',
+      'type': 'new user',
       'priority': 1,
       'status': 'unread',
       'time': Date.now()
