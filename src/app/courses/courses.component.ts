@@ -8,7 +8,7 @@ import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, map } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -16,7 +16,7 @@ import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
-import { compareRev, dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -32,7 +32,6 @@ import { compareRev, dedupeShelfReduce } from '../shared/utils';
 })
 
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
-  localList = [];
   selection = new SelectionModel(true, []);
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
@@ -83,19 +82,21 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
    }
 
   ngOnInit() {
-    if (this.parent) {
-      this.couchService.listAllDocs(this.dbName).subscribe((results: any) => {
-        this.localList = results;
-      });
-    }
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-    this.coursesService.coursesUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((courses) => {
-      // Sort in descending createdDate order, so the new courses can be shown on the top
-      courses.sort((a, b) => b.createdDate - a.createdDate);
-      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
+    this.coursesService.coursesUpdated$.pipe(
+      takeUntil(this.onDestroy$)
+      map((courses: any) => {
+        // Sort in descending createdDate order, so the new courses can be shown on the top
+        courses.sort((a, b) => b.createdDate - a.createdDate);
+        this.userShelf = this.userService.shelf;
+        return this.setupList(courses, this.userShelf.courseIds);
+      }),
+      switchMap((courses: any) => this.parent ? this.couchService.localComparison(this.dbName, courses) : of(courses))
+    ).subscribe((courses) => {
+      this.courses.data = courses;
     });
   }
 
@@ -110,12 +111,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       course.canManage = this.user.isUserAdmin ||
         (course.creator === this.user.name + '@' + this.userService.getConfig().code);
       course.admission = myCourseIndex > -1;
-
-      // Check if parent course is available locally
-      const localListIndex = this.localList.findIndex(localCourse => {
-        return course._id === localCourse.id;
-      });
-      course.localCopy = (localListIndex > -1) ? compareRev(course._rev, this.localList[localListIndex].value.rev) : 0;
       return course;
     });
   }

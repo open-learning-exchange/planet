@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, expand, takeWhile, toArray, flatMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
+import { findDocuments, inSelector } from './mangoQueries';
 
 @Injectable()
 export class CouchService {
@@ -76,17 +77,22 @@ export class CouchService {
     }));
   }
 
-  listAllDocs(db: string, opts?: any) {
-    return this.couchDBReq('get', db + '/_all_docs', this.setOpts(opts)).pipe(map((data: any) => {
-      // _all_docs returns object with rows array of objects with id and value.
-      return data.rows.filter((doc: any) => {
-          // Filter out any design documents
-          return doc.id.indexOf('_design') === -1;
-        });
+  localComparison(db: string, parentDocs: any[]) {
+    const ids = parentDocs.map((parentDoc: any) => parentDoc._id);
+    return this.findAll(db, findDocuments({ '_id': inSelector(ids) })).pipe(map((localDocs) => {
+      console.log(localDocs);
+      return parentDocs.map((parentDoc) => {
+        const localDoc = localDocs.find((localDoc) => localDoc._id === parentDoc._id);
+        return {
+          ...parentDoc,
+          localCopy: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
+        }
+      });
     }));
   }
 
   findAll(db: string, query: any, opts?: any) {
+    console.log(query);
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
       return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
     }), takeWhile((res) => {
@@ -114,5 +120,14 @@ export class CouchService {
     const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
     return this.http.get(urlPrefix + '/' + url, opts);
   }
+
+  private compareRev = (parent, local) => {
+    if (parent === local) {
+      return 1;
+    }
+    local = parseInt(local.split('-')[0], 10);
+    parent = parseInt(parent.split('-')[0], 10);
+    return (local < parent) ? -1 : (local > parent) ? 2 : 9;
+  };
 
 }
