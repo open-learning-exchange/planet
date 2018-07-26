@@ -85,7 +85,7 @@ export class CouchService {
         const localDoc = localDocs.find((localDoc) => localDoc._id === parentDoc._id);
         return {
           ...parentDoc,
-          localCopy: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
+          localStatus: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
         }
       });
     }));
@@ -123,11 +123,11 @@ export class CouchService {
 
   private compareRev = (parent, local) => {
     if (parent === local) {
-      return 1;
+      return 'match';
     }
     local = parseInt(local.split('-')[0], 10);
     parent = parseInt(parent.split('-')[0], 10);
-    return (local < parent) ? -1 : (local > parent) ? 2 : 9;
+    return (local < parent) ? 'newerAvailable' : (local > parent) ? 'parentOlder' : 'mismatch';
   };
 
 }
