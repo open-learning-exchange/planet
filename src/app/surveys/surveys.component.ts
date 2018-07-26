@@ -44,4 +44,8 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     this.router.navigate([ route + '/' + id, { 'type': 'surveys' } ], { relativeTo: this.route });
   }
 
+  applyFilter(filterValue: string) {
+    this.surveys.filter = filterValue;
+  }
+
 }
