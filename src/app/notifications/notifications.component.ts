@@ -50,15 +50,15 @@ export class NotificationsComponent implements OnInit {
     if (this.userService.get().isUserAdmin) {
       userFilter.push({ 'user': 'SYSTEM' });
     }
-    this.couchService.post('notifications/_find', findDocuments(
+    this.couchService.findAll('notifications/_find', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 }
       },
       0,
-      [ { 'time': 'desc' } ], 25))
+      [ { 'time': 'desc' } ]))
     .subscribe(notification => {
-       this.notifications = notification.docs;
+       this.notifications = notification;
     }, (err) => console.log(err.error.reason));
   }
 

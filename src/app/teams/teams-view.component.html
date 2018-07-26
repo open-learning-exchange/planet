@@ -10,15 +10,13 @@
       Add Members
     </button>
     <ng-container [ngSwitch]="userStatus">
-      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, true)" i18n>
+      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
         Leave
       </button>
       <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()">
         <ng-container i18n>Request to Join</ng-container>
       </button>
-      <button i18n *ngSwitchCase="'requesting'" mat-button disabled>
-        Request pending
-      </button>
+      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
     </ng-container>
   </mat-toolbar>
   <div class="view-container">

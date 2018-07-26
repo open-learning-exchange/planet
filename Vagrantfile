@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ole/stretch64"
-  config.vm.box_version = "0.4.0"
+  config.vm.box_version = "0.4.1"
 
   config.vm.hostname = "planet"
 
@@ -88,10 +88,10 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     # Add CouchDB Docker
-    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.1.1
+    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.1.2
     # Install Angular CLI
     #sudo npm install -g @angular/cli
-    sudo npm install -g webdriver-manager
+    #sudo npm install -g webdriver-manager
 
     # Add CORS to CouchDB so app has access to databases
     #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
