@@ -118,7 +118,8 @@ body {
     display: grid;
     grid-template-areas:
       'hd mn'
-      'cn .';
+      'cn .'
+      'tags tags';
     grid-template-columns: auto 50px;
 
     .header {
@@ -134,6 +135,11 @@ body {
 
     .menu {
       grid-area: mn;
+    }
+
+    .tags-list {
+      grid-area: tags;
+      margin-bottom: 0.5rem;
     }
 
   }
