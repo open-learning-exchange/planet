@@ -17,8 +17,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-    Oops!</target>
+        <target xml:lang="so" state="translated">
+    waan ka xunahay!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html">
         <source>
@@ -27,8 +27,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-    404 Not Found</target>
+        <target xml:lang="so" state="translated">
+    404 malaheli karo</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html">
         <source>
@@ -38,8 +38,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-    Sorry, an error has occured, Requested page not found!
+        <target xml:lang="so" state="translated">
+    waan kaxumahay, qalad aya dhacay, codsade..."!",
   </target>
       </trans-unit>
       <trans-unit id="a008bcc957d031735f52caa28f05b132266c960c" datatype="html">
@@ -48,7 +48,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Click here back to the app</target>
+        <target xml:lang="so" state="translated">Riix halkan ku laabo app</target>
       </trans-unit>
       <trans-unit id="c99e1cd58a71ebed52a27ff4103657b363c6dfd8" datatype="html">
         <source>Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/>
