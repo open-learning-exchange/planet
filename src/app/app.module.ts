@@ -28,6 +28,7 @@ import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
 import { PlanetLanguageModule } from './shared/planet-language.module';
 import { TeamsService } from './teams/teams.service';
 import { RatingService } from './shared/forms/rating.service';
+import { TagsService } from './shared/forms/tags.service';
 
 @NgModule({
   imports: [
@@ -60,7 +61,8 @@ import { RatingService } from './shared/forms/rating.service';
     ...SHARED_SERVICES,
     SyncService,
     TeamsService,
-    RatingService
+    RatingService,
+    TagsService
   ],
   bootstrap: [ AppComponent ]
 })

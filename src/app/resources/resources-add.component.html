@@ -24,6 +24,11 @@
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
+      <div class="form-width-3">
+        <mat-form-field class="full-width">
+          <planet-tag-input [formControl]="resourceForm.controls.tags" i18n-placeholder placeholder="Tags"></planet-tag-input>
+        </mat-form-field>
+      </div>
       <mat-grid-list cols="3">
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Language" formControlName="language">

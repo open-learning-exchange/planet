@@ -1,18 +1,9 @@
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Library</span>
-  <span class="toolbar-fill"></span>
-  <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Subject(s)" [value]="filter.subject || 'All'" (selectionChange)="onDropdownFilterChange($event.value, 'subject')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let subject of subjectList" [value]="subject">{{subject}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Level(s)" [value]="filter.level || 'All'" (selectionChange)="onDropdownFilterChange($event.value, 'level')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let level of levelList" [value]="level">{{level}}</mat-option>
-    </mat-select>
+  <span class="toolbar-fill margin-lr-10"></span>
+  <mat-form-field class="font-size-1 margin-lr-3 full-width">
+    <planet-tag-input [formControl]="tagFilter" i18n-placeholder placeholder="Filter tags"></planet-tag-input>
   </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
@@ -65,6 +56,11 @@
           <a [routerLink]="['view', element._id]">{{element.title}}</a>
         </h3>
         <div class="content"><p>{{ element.description }}</p></div>
+        <mat-chip-list #tagsList class="tags-list">
+          <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag)">
+            {{tag}}
+          </mat-chip>
+        </mat-chip-list>
         <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>

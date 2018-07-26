@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import {
+  MatAutocompleteModule,
   MatBadgeModule,
   MatButtonModule,
   MatButtonToggleModule,
@@ -32,6 +33,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   exports: [
+    MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
