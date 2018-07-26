@@ -5,8 +5,8 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from 
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil, map, switchMap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { filterSpecificFields, composeFilterFunctions, filterArrayField, filterTags } from '../shared/table-helpers';
@@ -79,12 +79,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((resources) => {
-       // Sort in descending createdDate order, so the new resource can be shown on the top
-      resources.sort((a, b) => b.createdDate - a.createdDate);
+    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$)).pipe(
+      map((resources) => {
+        // Sort in descending createdDate order, so the new resource can be shown on the top
+        resources.sort((a, b) => b.createdDate - a.createdDate);
+        return this.setupList(resources, this.userService.shelf.resourceIds);
+      }),
+      switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
+    ).subscribe((resources) => {
       this.resources.data = resources;
-      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions(
@@ -109,11 +112,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setupList(resourcesRes, myLibrarys) {
-    resourcesRes.forEach((resource: any) => {
+    return resourcesRes.map((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
-      resource.libraryInfo = myLibraryIndex > -1;
+      return { ...resource, libraryInfo: myLibraryIndex > -1 };
     });
   }
 
