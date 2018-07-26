@@ -33,7 +33,6 @@ export class ResourcesAddComponent implements OnInit {
   userDetail: any = {};
   pageType = 'Add new';
   disableDownload = true;
-  isSubmitted = false;
   resourceFilename = '';
 
   constructor(
@@ -119,7 +118,6 @@ export class ResourcesAddComponent implements OnInit {
 
   onSubmit() {
     if (this.resourceForm.valid) {
-      this.isSubmitted = true;
       const fileObs: Observable<any> = this.createFileObs();
       fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
         const { _id, _rev } = this.existingResource;
