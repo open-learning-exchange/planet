@@ -2271,7 +2271,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Select All</target>
+        <target xml:lang="so" state="translated">Xulo All</target>
       </trans-unit>
       <trans-unit id="fdd8c0ec42148f76f93fa98129edf03bb03ac990" datatype="html">
         <source>Deselect All</source>
@@ -2279,7 +2279,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Deselect All</target>
+        <target xml:lang="so" state="translated">Hadooran Dhaman</target>
       </trans-unit>
       <trans-unit id="659ee3b9f52e7d491906447d5005ebbfdeb72cba" datatype="html">
         <source>Add Roles</source>
@@ -2287,7 +2287,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Add Roles</target>
+        <target xml:lang="so" state="translated">Ku dar doorarka</target>
       </trans-unit>
       <trans-unit id="f08c546eb82ddbf334823913a9ded9781dd298ee" datatype="html">
         <source>Add Teams</source>
@@ -2295,7 +2295,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Add Teams</target>
+        <target xml:lang="so" state="translated">Ku dar kooxaha</target>
       </trans-unit>
       <trans-unit id="fe29c5d80f15cf046e65d26f65f7a83bd8edf901" datatype="html">
         <source>Profile Image</source>
@@ -2303,7 +2303,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Profile Image</target>
+        <target xml:lang="so" state="translated">Profile Sawirka</target>
       </trans-unit>
       <trans-unit id="4fcb6dbd1b656de4f606e061af0ed606d3fdc547" datatype="html">
         <source>User Name</source>
@@ -2311,7 +2311,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">User Name</target>
+        <target xml:lang="so" state="translated">Magaca isticmaalaha</target>
       </trans-unit>
       <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html">
         <source>Roles</source>
@@ -2319,7 +2319,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Roles</target>
+        <target xml:lang="so" state="translated">Roles</target>
       </trans-unit>
       <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html">
         <source>Action</source>
@@ -2327,7 +2327,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Action</target>
+        <target xml:lang="so" state="translated">Waxqabadka</target>
       </trans-unit>
       <trans-unit id="506bcfcdbb95044d7597c7f0833f25a68d37738a" datatype="html">
         <source>{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</source>
@@ -2335,7 +2335,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, dooro, 0 {Promote} 1 {Demote} }</target>
       </trans-unit>
       <trans-unit id="436d4f2b6d175f1deeb91d14618542f63567bd7d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
@@ -2344,9 +2344,8 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">112</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-          
-          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
+        <target xml:lang="so" state="translated">
+                    <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>faylka_furan<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Fiiri Sawirka
         
         </target>
       </trans-unit>
@@ -2356,7 +2355,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="so" state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="64ad662c1920d85083ceb4c8ccd31886811e5afb" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -2364,7 +2363,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="so" state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Badalida Lambarka sirta ah<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html">
         <source>Full Name</source>
@@ -2372,7 +2371,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Full Name</target>
+        <target xml:lang="so" state="translated">Magaca buuxa</target>
       </trans-unit>
       <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html">
         <source>DOB</source>
@@ -2380,7 +2379,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">DOB</target>
+        <target xml:lang="so" state="translated">DOB</target>
       </trans-unit>
       <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html">
         <source>Phone</source>
@@ -2388,7 +2387,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Phone</target>
+        <target xml:lang="so" state="translated">Telefoonka</target>
       </trans-unit>
       <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html">
         <source>Level</source>
@@ -2396,7 +2395,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Level</target>
+        <target xml:lang="so" state="translated">Heerka</target>
       </trans-unit>
       <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html">
         <source>Profile</source>
@@ -2404,7 +2403,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Profile</target>
+        <target xml:lang="so" state="translated">Profile</target>
       </trans-unit>
       <trans-unit id="3909338c4bd606fae7ba39a4d80533aa94514241" datatype="html">
         <source>BirthDate</source>
