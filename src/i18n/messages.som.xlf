@@ -82,9 +82,9 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
-      } many {selected {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} }?
-      } }</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT_2, dooro, keli ah {ka dib {VAR_SELECT, dooro, bulsho {community} qaran{ nation} kooras {resource} khayraad {resource} isweydaarsiga {meetup} isticmaale {use}}?
+      } badan [dooro [VAR_SELECT_1, dooro, beelaha [communities] quruumaha{nations} koorsooyinka {courses] khayraadka {ilo} kulma kulma} {meetingups}}?
+      }}</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
         <source>OK</source>
@@ -96,7 +96,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">OK</target>
+        <target xml:lang="so" state="translated">ok</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
@@ -128,7 +128,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Cancel</target>
+        <target xml:lang="so" state="translated">joojin</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -136,7 +136,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target xml:lang="so" state="translated">Magaca: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -144,7 +144,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target xml:lang="so" state="translated">Koodh: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -152,7 +152,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target xml:lang="so" state="translated">URL maxalliga ah: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="a773e23ee56a2fdee79cba8081bbba2a32a1f8ac" datatype="html">
         <source>Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -160,7 +160,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target xml:lang="so" state="translated">URL waalidka: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -168,7 +168,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target xml:lang="so" state="translated">Nooca Qorshaha: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
@@ -176,7 +176,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target xml:lang="so" state="translated">Taariikhda la Sameeyay: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -184,7 +184,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target xml:lang="so" state="translated">Luuqada: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -192,7 +192,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target xml:lang="so" state="translated">Xaaladda: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -200,7 +200,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target xml:lang="so" state="translated">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
