@@ -1095,7 +1095,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Question <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
+        <target xml:lang="so" state="translated">Suaal <x id="INTERPOLATION" equiv-text="{{suaalNum}}"/> of <x id="INTERPOLATION_1" equiv-qoraal="{{maxQuestions}}"/></target>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html">
         <source>Enter answer here</source>
@@ -1103,7 +1103,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Enter answer here</target>
+        <target xml:lang="so" state="translated">Keli jawaab halkan</target>
       </trans-unit>
       <trans-unit id="eb5afce50958c64ab0a831a30db94c7ff967576c" datatype="html">
         <source>Submitted answer:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -1111,7 +1111,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Submitted answer:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="so" state="translated">Jawaabta lasoo gudbiyay:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="3db39135c783da4bb320d5826f4de893f62c7e1b" datatype="html">
         <source>Correct</source>
@@ -1119,7 +1119,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Correct</target>
+        <target xml:lang="so" state="translated">Sax</target>
       </trans-unit>
       <trans-unit id="8b42d54000704393a3c06e5f8b668880014f6986" datatype="html">
         <source>Incorrect</source>
@@ -1127,7 +1127,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Incorrect</target>
+        <target xml:lang="so" state="translated">Khalad</target>
       </trans-unit>
       <trans-unit id="12530729254d51dd0c7513ca846cdd5e417ea3a6" datatype="html">
         <source>
@@ -1137,8 +1137,8 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">
-        Submit Answer
+        <target xml:lang="so" state="translated">
+        Soo Gudbi Jawaab
       </target>
       </trans-unit>
       <trans-unit id="e3b437177444483ae45895ed7db8dca06a1d7568" datatype="html">
@@ -1147,7 +1147,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Incorrect answer, please try again</target>
+        <target xml:lang="so" state="translated">Jawaab qaldan, fadlan iskuday mar kale</target>
       </trans-unit>
       <trans-unit id="52c61ad3237bb31120f504b3c3a5e70ca6988539" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</source>
