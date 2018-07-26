@@ -1393,7 +1393,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Leader</target>
+        <target xml:lang="so" state="translated">Hogaamiye</target>
       </trans-unit>
       <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html">
         <source>learner</source>
@@ -1401,7 +1401,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">learner</target>
+        <target xml:lang="so" state="translated">bartaha</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -1458,7 +1458,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Open Which File</target>
+        <target xml:lang="so" state="translated">Furan Faylka</target>
       </trans-unit>
       <trans-unit id="9ce1a0f44239a960521f629e8894684e429950c8" datatype="html">
         <source>Delete File</source>
@@ -1466,7 +1466,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Delete File</target>
+        <target xml:lang="so" state="translated">Tirtir faylka</target>
       </trans-unit>
       <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html">
         <source>Average</source>
@@ -1474,7 +1474,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/rating-resources/resources-rating.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Average</target>
+        <target xml:lang="so" state="translated">Celcelis ahaan</target>
       </trans-unit>
       <trans-unit id="26bff472b6d1cdf6b0479ef9cb93cc0181fcab31" datatype="html">
         <source>Question Title</source>
@@ -1482,7 +1482,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Question Title</target>
+        <target xml:lang="so" state="translated">Suaal Bilow</target>
       </trans-unit>
       <trans-unit id="0e397f4323ef7fdf3ede2ad587b5d01e77077717" datatype="html">
         <source>Question Description</source>
@@ -1490,7 +1490,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Question Description</target>
+        <target xml:lang="so" state="translated">Tafaasiisha Su'aasha</target>
       </trans-unit>
       <trans-unit id="3e242f213dd1a0754aad9164aa80887d67708500" datatype="html">
         <source>Input</source>
@@ -1498,7 +1498,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Input</target>
+        <target xml:lang="so" state="translated">Gundasho</target>
       </trans-unit>
       <trans-unit id="424db012720017cb636ef33ab50fd0c909f54469" datatype="html">
         <source>Multiple Choice</source>
@@ -1506,7 +1506,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Multiple Choice</target>
+        <target xml:lang="so" state="translated">Xulo badan</target>
       </trans-unit>
       <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html">
         <source>Type</source>
@@ -1518,7 +1518,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Type</target>
+        <target xml:lang="so" state="translated">Nooca</target>
       </trans-unit>
       <trans-unit id="1fc2618c7ca4b3722929d8739dbf6d9ab4f7dacf" datatype="html">
         <source>Add Choice</source>
@@ -1526,7 +1526,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Add Choice</target>
+        <target xml:lang="so" state="translated">Ku dar xulasho</target>
       </trans-unit>
       <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html">
         <source>Visits</source>
@@ -1534,7 +1534,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Visits</target>
+        <target xml:lang="so" state="translated">Booqashooyinka</target>
       </trans-unit>
       <trans-unit id="e6b61e5dab50fc2b018082f8882a8bf1460dd4ca" datatype="html">
         <source>Submissions</source>
@@ -1546,7 +1546,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Submissions</target>
+        <target xml:lang="so" state="translated">Soo gudbinta</target>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html">
         <source>Feedback List</source>
@@ -2006,7 +2006,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Date:</target>
+        <target xml:lang="so" state="translated">Taariikhda:</target>
       </trans-unit>
       <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html">
         <source>at</source>
@@ -2014,7 +2014,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">at</target>
+        <target xml:lang="so" state="translated">at</target>
       </trans-unit>
       <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html">
         <source>Recurring:</source>
@@ -2022,7 +2022,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Recurring:</target>
+        <target xml:lang="so" state="translated">Soo noqoshada:</target>
       </trans-unit>
       <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
         <source>Recurring Days: </source>
@@ -2030,7 +2030,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Recurring Days: </target>
+        <target xml:lang="so" state="translated">Maalmaha soo noqoshada: </target>
       </trans-unit>
       <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
         <source>Location:</source>
@@ -2038,7 +2038,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Location:</target>
+        <target xml:lang="so" state="translated">Goobta:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2046,7 +2046,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</target>
+        <target xml:lang="so" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> La kulan</target>
       </trans-unit>
       <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html">
         <source>Start Date</source>
@@ -2054,7 +2054,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Start Date</target>
+        <target xml:lang="so" state="translated">Taariikhda billowga</target>
       </trans-unit>
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html">
         <source>End Date</source>
@@ -2062,7 +2062,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">End Date</target>
+        <target xml:lang="so" state="translated">Dhammaadka Taariikhda</target>
       </trans-unit>
       <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
         <source>Recurring</source>
@@ -2070,7 +2070,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Recurring</target>
+        <target xml:lang="so" state="translated">Soo noqoshada</target>
       </trans-unit>
       <trans-unit id="a507c06d9cbc346d9bb3c644c960230e1e0ebdc1" datatype="html">
         <source>Frequency</source>
@@ -2078,7 +2078,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Frequency</target>
+        <target xml:lang="so" state="translated">Joogitaanka</target>
       </trans-unit>
       <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html">
         <source>Daily</source>
@@ -2086,7 +2086,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Daily</target>
+        <target xml:lang="so" state="translated">Malinkasto</target>
       </trans-unit>
       <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html">
         <source>Weekly</source>
@@ -2094,7 +2094,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Weekly</target>
+        <target xml:lang="so" state="translated">Toddobaadkiiba</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
         <source>None</source>
