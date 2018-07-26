@@ -82,11 +82,11 @@ export class CouchService {
     return this.findAll(db, findDocuments({ '_id': inSelector(ids) })).pipe(map((localDocs) => {
       console.log(localDocs);
       return parentDocs.map((parentDoc) => {
-        const localDoc = localDocs.find((localDoc) => localDoc._id === parentDoc._id);
+        const localDoc = localDocs.find((doc) => doc._id === parentDoc._id);
         return {
           ...parentDoc,
           localStatus: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
-        }
+        };
       });
     }));
   }
@@ -128,6 +128,6 @@ export class CouchService {
     local = parseInt(local.split('-')[0], 10);
     parent = parseInt(parent.split('-')[0], 10);
     return (local < parent) ? 'newerAvailable' : (local > parent) ? 'parentOlder' : 'mismatch';
-  };
+  }
 
 }
