@@ -376,7 +376,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Create Admin</target>
+        <target xml:lang="so" state="translated">Abuuro maamule</target>
       </trans-unit>
       <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
         <source>Username</source>
@@ -388,7 +388,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Username</target>
+        <target xml:lang="so" state="translated">magaca isticmaalaha</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -400,7 +400,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Password</target>
+        <target xml:lang="so" state="translated">furaha</target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html">
         <source>Confirm Password</source>
@@ -408,7 +408,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Confirm Password</target>
+        <target xml:lang="so" state="translated">xaqiiji lambarka sirta </target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html">
         <source>Next</source>
