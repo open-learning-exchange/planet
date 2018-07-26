@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
@@ -25,7 +26,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private router: Router
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -79,10 +81,15 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   requestToJoin(team) {
-    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).subscribe((newTeam) => {
-      this.teams.data = this.teamList(this.teams.data.map((t: any) => t.doc._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
-      this.planetMessageService.showMessage('Request to join team sent');
-    });
+    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
+      switchMap((newTeam) => {
+        this.teams.data = this.teamList(this.teams.data.map((t: any) => t.doc._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
+        return this.teamsService.getTeamMembers(newTeam._id);
+      }),
+      switchMap((response) => {
+        return this.teamsService.sendNotifications('request', response.docs, { team, url: this.router.url + '/view/' + team._id });
+      })
+    ).subscribe(() => this.planetMessageService.showMessage('Request to join team sent'));
   }
 
   // If multiple team is added then need to check

@@ -116,4 +116,41 @@ export class TeamsService {
     return this.getTeamMembers(teamId).pipe(map((data) => data.docs.length === 0));
   }
 
+  sendNotifications(type, members, notificationParams) {
+    const notify = members.map((user: any) => {
+      if (type === 'request') {
+        return this.requestNotification(user._id, notificationParams);
+      } else {
+        return this.memberAddNotification(user._id, notificationParams);
+      }
+    });
+    return this.couchService.post('notifications/_bulk_docs', { docs: notify });
+  }
+
+  memberAddNotification(userId, { team, url, newMembersLength }) {
+    return {
+      'user': userId,
+      'message': newMembersLength + ' member(s) has been added to ' + team.name + ' team. ',
+      'link': url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+  }
+
+  requestNotification(userId, { team, url }) {
+    return {
+      'user': userId,
+      'message': this.userService.get().name + ' has requested to join ' + team.name + ' team. ',
+      'link': url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+  }
+
 }

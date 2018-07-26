@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -32,6 +32,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
+    private router: Router,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
@@ -65,7 +66,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     // find teamId on User shelf
     this.teamsService.getTeamMembers(this.teamId).subscribe((data) => {
       this.members = data.docs.map((mem) => {
-        return { name: mem._id.split(':')[1] };
+        return { ...mem, name: mem._id.split(':')[1] };
       });
       this.disableAddingMembers = this.members.length >= this.team.limit;
     });
@@ -85,8 +86,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   requestToJoin() {
-    this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).subscribe((newTeam) => {
-      this.team = newTeam;
+    this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).pipe(
+      switchMap((newTeam) => {
+        this.team = newTeam;
+        return this.sendNotifications('request');
+      })
+    ).subscribe((newTeam) => {
       this.setStatus(this.team, this.userService.get(), this.userService.shelf);
       this.planetMessageService.showMessage('Request to join team sent');
     });
@@ -134,11 +139,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           'myTeamIds': [].concat(shelf.myTeamIds, [ this.teamId ])
         }));
         return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
+      }),
+      switchMap((notifyShelf) => {
+        return this.sendNotifications('addMember', selected.length);
       })
     ).subscribe(res => {
       this.getMembers();
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
+    });
+  }
+
+  sendNotifications(type, newMembersLength = 0) {
+    return this.teamsService.sendNotifications(type, this.members, {
+      newMembersLength, url: this.router.url, team: { ...this.team }
     });
   }
 
