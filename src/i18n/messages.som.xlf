@@ -1938,7 +1938,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">List Resources</target>
+        <target xml:lang="so" state="translated">Qor Ilaha Kheyraadka</target>
       </trans-unit>
       <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html">
         <source>List Courses</source>
@@ -1946,7 +1946,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">List Courses</target>
+        <target xml:lang="so" state="translated">Kursiyada liistada</target>
       </trans-unit>
       <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html">
         <source>List Meetups</source>
@@ -1954,7 +1954,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">List Meetups</target>
+        <target xml:lang="so" state="translated">Liiska kulannada</target>
       </trans-unit>
       <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html">
         <source>Checking request status...</source>
@@ -1962,7 +1962,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Checking request status...</target>
+        <target xml:lang="so" state="translated">Hubinta xaaladda codsiga ...</target>
       </trans-unit>
       <trans-unit id="23299f2edacf5a10fea838d6328872ba4df8093b" datatype="html">
         <source>Your request has not been accepted by parent</source>
@@ -1970,7 +1970,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Your request has not been accepted by parent</target>
+        <target xml:lang="so" state="translated">Waalidka Codsigaaga suman aqbalin </target>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
@@ -1978,7 +1978,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</target>
+        <target xml:lang="so" state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>cad<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Tag</target>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html">
         <source>Join</source>
@@ -1990,7 +1990,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Join</target>
+        <target xml:lang="so" state="translated">Ku biir</target>
       </trans-unit>
       <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html">
         <source>Information</source>
@@ -1998,7 +1998,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Information</target>
+        <target xml:lang="so" state="translated">Macluumaadka</target>
       </trans-unit>
       <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html">
         <source>Date:</source>
@@ -2411,7 +2411,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">BirthDate</target>
+        <target xml:lang="so" state="translated">Taariiqda dhalasha</target>
       </trans-unit>
       <trans-unit id="003d4f5e4909ccf01b6a204c688fd6dab15c20bd" datatype="html">
         <source>Gender</source>
@@ -2419,7 +2419,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Gender</target>
+        <target xml:lang="so" state="translated">Lamaanaha</target>
       </trans-unit>
       <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html">
         <source>level</source>
@@ -2427,7 +2427,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">level</target>
+        <target xml:lang="so" state="translated">heerka</target>
       </trans-unit>
       <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html">
         <source>Update</source>
@@ -2435,7 +2435,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Update</target>
+        <target xml:lang="so" state="translated">Cusboonaysii</target>
       </trans-unit>
     </body>
   </file>
