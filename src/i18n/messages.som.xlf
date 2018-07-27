@@ -2040,21 +2040,21 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Soo noqoshada:</target>
       </trans-unit>
-      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
+      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html" approved="yes">
         <source>Recurring Days: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="so" state="translated">Maalmaha soo noqoshada: </target>
+        <target xml:lang="so">Maalmaha soo noqoshada: </target>
       </trans-unit>
-      <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
+      <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html" approved="yes">
         <source>Location:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="so" state="translated">Goobta:</target>
+        <target xml:lang="so">Goobta:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2072,13 +2072,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Taariikhda billowga</target>
       </trans-unit>
-      <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html">
+      <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html" approved="yes">
         <source>End Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="so" state="translated">Dhammaadka Taariikhda</target>
+        <target xml:lang="so">Dhammaadka Taariikhda</target>
       </trans-unit>
       <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
         <source>Recurring</source>
@@ -2096,13 +2096,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Joogitaanka</target>
       </trans-unit>
-      <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html">
+      <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html" approved="yes">
         <source>Daily</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="so" state="translated">Malinkasto</target>
+        <target xml:lang="so">Malinkasto</target>
       </trans-unit>
       <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html">
         <source>Weekly</source>
@@ -2144,13 +2144,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Qeybta</target>
       </trans-unit>
-      <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html">
+      <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html" approved="yes">
         <source>Location</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="so" state="translated">Goobta</target>
+        <target xml:lang="so">Goobta</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
@@ -2232,13 +2232,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Soo noqoshada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
       </trans-unit>
-      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html">
+      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Goobta:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
+        <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Goobta:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
       </trans-unit>
       <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
@@ -2437,13 +2437,13 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
         </context-group>
         <target xml:lang="so" state="translated">Lamaanaha</target>
       </trans-unit>
-      <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html">
+      <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="so" state="translated">heerka</target>
+        <target xml:lang="so">heerka</target>
       </trans-unit>
       <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html">
         <source>Update</source>
