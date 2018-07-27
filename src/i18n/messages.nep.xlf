@@ -689,7 +689,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Member Limit</target>
+        <target xml:lang="ne-NP" state="translated">सदस्य सीमा</target>
       </trans-unit>
       <trans-unit id="162a0cdc541668672140bc2905c4ecd1e51f4019" datatype="html">
         <source>Language of Instruction</source>
@@ -697,7 +697,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Language of Instruction</target>
+        <target xml:lang="ne-NP" state="translated">निर्देशनको भाषा</target>
       </trans-unit>
       <trans-unit id="e2ec6c55b25c3243cda9a5e14ca9cf5cb6457433" datatype="html">
         <source>Grade Level</source>
@@ -805,7 +805,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Reset<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>रिसेट<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="e744eaa00220ee5b9ffee3ab92d41e208134a706" datatype="html">
         <source>Request Courses</source>
@@ -813,7 +813,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Request Courses</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रम माग्नु</target>
       </trans-unit>
       <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
         <source>Delete</source>
@@ -897,7 +897,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">View Course</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रमहरू हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="2d24d1eb8d295534d8669dbeaf56201c141285af" datatype="html">
         <source>Credits</source>
@@ -905,7 +905,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Credits</target>
+        <target xml:lang="ne-NP" state="translated">क्रेडिटहरू</target>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html">
         <source>Progress</source>
@@ -913,7 +913,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Progress</target>
+        <target xml:lang="ne-NP" state="translated">प्रगति</target>
       </trans-unit>
       <trans-unit id="30c21093bd539da428afa90407b8f780c147e64d" datatype="html">
         <source> Information </source>
@@ -941,7 +941,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">View Step</target>
+        <target xml:lang="ne-NP" state="translated">चरण हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
@@ -1443,7 +1443,8 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Open Which File</target>
+        <target xml:lang="ne-NP" state="translated">कुन फाइल खोल्ने
+</target>
       </trans-unit>
       <trans-unit id="9ce1a0f44239a960521f629e8894684e429950c8" datatype="html">
         <source>Delete File</source>
@@ -1451,7 +1452,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Delete File</target>
+        <target xml:lang="ne-NP" state="translated">फाइल मेटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html">
         <source>Average</source>
@@ -1459,7 +1460,7 @@
           <context context-type="sourcefile">app/resources/rating-resources/resources-rating.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Average</target>
+        <target xml:lang="ne-NP" state="translated">औसत</target>
       </trans-unit>
       <trans-unit id="26bff472b6d1cdf6b0479ef9cb93cc0181fcab31" datatype="html">
         <source>Question Title</source>
