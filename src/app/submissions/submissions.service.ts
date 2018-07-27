@@ -74,7 +74,7 @@ export class SubmissionsService {
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
-    return this.updateSubmission(submission, true, close);
+    return this.updateSubmission(submission, this.submission.type === 'exam', close);
   }
 
   submitGrade(grade, index: number, close) {

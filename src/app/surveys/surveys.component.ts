@@ -79,4 +79,8 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     };
   }
 
+  recordSurvey(survey: any) {
+    this.router.navigate([ 'dispense', { questionNum: 1, surveyId: survey._id } ], { relativeTo: this.route });
+  }
+
 }
