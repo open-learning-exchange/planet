@@ -92,11 +92,6 @@
         <target xml:lang="so" state="translated">{VAR_SELECT_2, select, single {ka dib {VAR_SELECT, select, community {bulsho} nation {qaran} course {kooras} resource {khayraad} meetup {isweydaarsiga} user {isticmaale}}?
       } many {selected {VAR_SELECT_1, select, community {beelaha} nation {quruumaha} course {koorsooyinka} resrouce {khayraadka} meetup {kulma} }?
       } }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_SELECT_2, dooro, keli ah {ka dib {VAR_SELECT, dooro, bulsho {community} qaran{ nation} kooras {resource} khayraad {resource} isweydaarsiga {meetup} isticmaale {use}}?
-      } badan [dooro [VAR_SELECT_1, dooro, beelaha [communities] quruumaha{nations} koorsooyinka {courses] khayraadka {ilo} kulma kulma} {meetingups}}?
-      }}</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
         <source>OK</source>
@@ -357,13 +352,6 @@
         <target xml:lang="so" state="translated">
             <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Aqbal
           </target>
-        <alt-trans>
-          <target xml:lang="so">
-                        <x id="BILOW_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraal="&lt;mat-icon&gt;"/>link<x id="Xir_TAG_MAT-ICON" ctype="x-mat-icon" equiv-
-qoraalka="&lt;/mat-icon&gt;"/>Aqbal
-          
-          </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="812c985df8eb437425ef84753886b5118ea62be9" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>block<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Reject
@@ -375,13 +363,6 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         <target xml:lang="so" state="translated">
             <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>block<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Diidmo
           </target>
-        <alt-trans>
-          <target xml:lang="so">
-            
-            <x id="BILOW_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;mat-icon&gt;"/>block<x id="XIR_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;/mat-icon&gt;"/>Diidmo
-          
-          </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="0b95c500acae46963cafa26a8270c90bf1fedcb6" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
@@ -393,12 +374,6 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         <target xml:lang="so" state="translated">
           <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Tirtir
         </target>
-        <alt-trans>
-          <target xml:lang="so">
-                    <x id="BILOOW_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;mat-icon&gt;"/>tirtir<x id="XIR_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraalka="&lt;/mat-icon&gt;"/>Tirtir
-        
-        </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="de80e491246200ef6b61aec7a244dd26f394fc3e" datatype="html">
         <source>Create Admin</source>
