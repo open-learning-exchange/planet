@@ -130,7 +130,7 @@ export class LoginFormComponent {
     const data = {
       'user': 'org.couchdb.user:' + userName,
       'message': 'New User ' + addedMember + ' has joined.',
-      'link': '/users/',
+      'link': '/manager/users/',
       'linkParams': { 'search': addedMember },
       'type': 'new user',
       'priority': 1,
