@@ -1554,7 +1554,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Feedback List</target>
+        <target xml:lang="so" state="translated">Liiska Warbixinta</target>
       </trans-unit>
       <trans-unit id="2b4943909f1e88357c5874b29637a57006c77a2f" datatype="html">
         <source>Type text to search...</source>
@@ -1566,7 +1566,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Type text to search...</target>
+        <target xml:lang="so" state="translated">Qoro qoraalka si aad u raadisid ...</target>
       </trans-unit>
       <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html">
         <source>Your Current Lists of Feedback</source>
@@ -1574,7 +1574,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Your Current Lists of Feedback</target>
+        <target xml:lang="so" state="translated">Liiskaaga cusub ee jawaab celinta</target>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html">
         <source>Priority</source>
@@ -1582,7 +1582,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Priority</target>
+        <target xml:lang="so" state="translated">Mudnaanta</target>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html">
         <source>Owner</source>
@@ -1590,7 +1590,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Owner</target>
+        <target xml:lang="so" state="translated">Milkiilaha</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
         <source>Status</source>
@@ -1606,7 +1606,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Status</target>
+        <target xml:lang="so" state="translated">Xaaladda</target>
       </trans-unit>
       <trans-unit id="3ace7fac0ba373a88ada1663966bb78b5723478d" datatype="html">
         <source>Open Time</source>
@@ -1614,7 +1614,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Open Time</target>
+        <target xml:lang="so" state="translated">Waqti furan</target>
       </trans-unit>
       <trans-unit id="2cab4f31f1acc2bfb5e4841afc24fc60a5a87e13" datatype="html">
         <source>Close Time</source>
@@ -1622,7 +1622,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Close Time</target>
+        <target xml:lang="so" state="translated">Waqtiga Xiran</target>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html">
         <source>Source</source>
@@ -1630,7 +1630,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Source</target>
+        <target xml:lang="so" state="translated">Xigasho</target>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
@@ -1642,7 +1642,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"> Action </target>
+        <target xml:lang="so" state="translated"> Waxqabadka </target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -1650,7 +1650,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Close</target>
+        <target xml:lang="so" state="translated">Xir</target>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
         <source>Re-open</source>
@@ -1658,7 +1658,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Re-open</target>
+        <target xml:lang="so" state="translated">Dib u fur</target>
       </trans-unit>
       <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html">
         <source>Feedback title</source>
@@ -1666,7 +1666,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Feedback title</target>
+        <target xml:lang="so" state="translated">Cinwaanka jawaabta</target>
       </trans-unit>
       <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html">
         <source>Type your reply here</source>
@@ -1674,7 +1674,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Type your reply here</target>
+        <target xml:lang="so" state="translated">Jawaabtaada halkan ku qor</target>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html">
         <source>Menu</source>
@@ -1682,7 +1682,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Menu</target>
+        <target xml:lang="so" state="translated">Muujinta</target>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
         <source>Planet Learning</source>
@@ -1694,7 +1694,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Planet Learning</target>
+        <target xml:lang="so" state="translated">Barashada Qorshaha</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html">
         <source>Messages</source>
