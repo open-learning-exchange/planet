@@ -655,7 +655,7 @@
         </context-group>
         <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> पाठ्यक्रम</target>
       </trans-unit>
-      <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html">
+      <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html" approved="yes">
         <source>Add Step</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
@@ -665,17 +665,17 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">चरण थप्नुहोस्</target>
+        <target xml:lang="ne-NP">चरण थप्नुहोस्</target>
       </trans-unit>
-      <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html">
+      <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html" approved="yes">
         <source>Course Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">पाठ्यक्रम शिर्षक</target>
+        <target xml:lang="ne-NP">पाठ्यक्रम शिर्षक</target>
       </trans-unit>
-      <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html">
+      <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html" approved="yes">
         <source>Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
@@ -693,7 +693,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">विवरण</target>
+        <target xml:lang="ne-NP">विवरण</target>
       </trans-unit>
       <trans-unit id="c420749a4d671195164749dc99bb89d9fc40c718" datatype="html">
         <source>Member Limit</source>
