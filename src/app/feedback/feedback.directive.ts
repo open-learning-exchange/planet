@@ -6,6 +6,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { Observable } from 'rxjs';
 import { debug } from '../debug-operator';
 
 export class Message {
@@ -73,7 +74,7 @@ export class FeedbackDirective {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  addFeedback(post: any) {
+  addFeedback(post: any): Observable<any> {
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: Date.now(), user },
@@ -87,14 +88,7 @@ export class FeedbackDirective {
         source: this.userService.getConfig().code,
         ...this.feedbackOf
       };
-    this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
-    .subscribe((data) => {
-      this.feedbackService.setfeedback();
-      this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
-    },
-    (error) => {
-      this.planetMessageService.showAlert('Error, your feedback cannot be submitted');
-    });
+    return this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
   }
 
   @HostListener('click')
@@ -107,18 +101,16 @@ export class FeedbackDirective {
       type: [ this.type, Validators.required ],
       message: [ this.message, Validators.required ]
     };
-    // this.dialogsFormService
-    //   .confirm(title, fields, formGroup)
-    //   .pipe(debug('Dialog confirm'))
-    //   .subscribe((response) => {
-    //     if (response !== undefined) {
-    //       this.addFeedback(response);
-    //     }
-    //   });
-    console.log(this.dialogsFormService);
     this.dialogsFormService
-      .openDialog(title, fields, formGroup);
-    // TODO add callback function that executes this.addFeedback
+      .openDialog(title, fields, formGroup, (feedbackForm) => {
+        this.addFeedback(feedbackForm).subscribe(() => {
+          this.dialogsFormService.closeDialog();
+          this.feedbackService.setfeedback();
+          this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
+        },
+        (error) => {
+          this.planetMessageService.showAlert('Error, your feedback cannot be submitted');
+        });
+      });
   }
-
 }
