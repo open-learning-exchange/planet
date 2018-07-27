@@ -552,7 +552,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Waan xaqiijinayaa isbedelka.</target>
       </trans-unit>
-      <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html">
+      <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html" approved="yes">
         <source>Back</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
@@ -562,7 +562,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="so" state="translated">Laabo</target>
+        <target xml:lang="so">Laabo</target>
       </trans-unit>
       <trans-unit id="43161dab615da78790ff6e28f5730e88b96e21e0" datatype="html">
         <source>Contact Details</source>
@@ -624,7 +624,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Email</target>
       </trans-unit>
-      <trans-unit id="db654f91d847f34e71ffb99268ff3a1807913421" datatype="html">
+      <trans-unit id="db654f91d847f34e71ffb99268ff3a1807913421" datatype="html" approved="yes">
         <source>Phone Number</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
@@ -634,7 +634,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="so" state="translated">Lambarka Taleefanka</target>
+        <target xml:lang="so">Lambarka Taleefanka</target>
       </trans-unit>
       <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
         <source>Submit</source>
@@ -656,13 +656,13 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Gudbi</target>
       </trans-unit>
-      <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html">
+      <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Koorso</target>
+        <target xml:lang="so"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Koorso</target>
       </trans-unit>
       <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html">
         <source>Add Step</source>
@@ -1052,13 +1052,13 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Cinwaanka imtixaanka</target>
       </trans-unit>
-      <trans-unit id="041620337eaebda87971d345d05697639dfe78e4" datatype="html">
+      <trans-unit id="041620337eaebda87971d345d05697639dfe78e4" datatype="html" approved="yes">
         <source>Step</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="translated">Tallaabo</target>
+        <target xml:lang="so">Tallaabo</target>
       </trans-unit>
       <trans-unit id="86a03cba21504143b18dea634f76513c1b18685a" datatype="html">
         <source>Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></source>
@@ -1088,13 +1088,13 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Liistada Khayraadka</target>
       </trans-unit>
-      <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html">
+      <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target xml:lang="so"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="c87fc952938382700c1d2c56bdb02b8a55b4941d" datatype="html">
         <source>Question <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></source>
@@ -1102,7 +1102,10 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="translated">Suaal <x id="INTERPOLATION" equiv-text="{{suaalNum}}"/> of <x id="INTERPOLATION_1" equiv-qoraal="{{maxQuestions}}"/></target>
+        <target xml:lang="so" state="translated">Suaal <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
+        <alt-trans>
+          <target xml:lang="so">Suaal <x id="INTERPOLATION" equiv-text="{{suaalNum}}"/> of <x id="INTERPOLATION_1" equiv-qoraal="{{maxQuestions}}"/></target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html">
         <source>Enter answer here</source>
