@@ -989,7 +989,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">View Resource</target>
+        <target xml:lang="ne-NP" state="translated">स्रोत हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="01df8eb930f83e59444f915bad8b8e5197fb8af3" datatype="html">
         <source>Take exam</source>
@@ -997,7 +997,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Take exam</target>
+        <target xml:lang="ne-NP" state="translated">परीक्षा लिनुहोस्</target>
       </trans-unit>
       <trans-unit id="ae235e4db384241bdf4bf293264ffe8968e60248" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Exam</source>
@@ -1021,7 +1021,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Add Question</target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न थप्न</target>
       </trans-unit>
       <trans-unit id="fd87282e3b9eb7f9672eee9c00846dc6a6fa27f9" datatype="html">
         <source>Exam Title</source>
@@ -1983,7 +1983,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Join</target>
+        <target xml:lang="ne-NP" state="translated">सामेल हुनुहोस्</target>
       </trans-unit>
       <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html">
         <source>Information</source>
@@ -1991,7 +1991,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Information</target>
+        <target xml:lang="ne-NP" state="translated">जानकारी</target>
       </trans-unit>
       <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html">
         <source>Date:</source>
@@ -1999,7 +1999,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Date:</target>
+        <target xml:lang="ne-NP" state="translated">मिति:</target>
       </trans-unit>
       <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html">
         <source>at</source>
@@ -2007,7 +2007,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">at</target>
+        <target xml:lang="ne-NP" state="translated">मा</target>
       </trans-unit>
       <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html">
         <source>Recurring:</source>
@@ -2015,7 +2015,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Recurring:</target>
+        <target xml:lang="ne-NP" state="translated">पुनरावर्ती:</target>
       </trans-unit>
       <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
         <source>Recurring Days: </source>
@@ -2023,7 +2023,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Recurring Days: </target>
+        <target xml:lang="ne-NP" state="translated">आवर्ती दिनहरू: </target>
       </trans-unit>
       <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
         <source>Location:</source>
@@ -2031,7 +2031,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Location:</target>
+        <target xml:lang="ne-NP" state="translated">स्थान:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2039,7 +2039,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> भेलाहरू</target>
       </trans-unit>
       <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html">
         <source>Start Date</source>
@@ -2047,7 +2047,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Start Date</target>
+        <target xml:lang="ne-NP" state="translated">सुरू मिति</target>
       </trans-unit>
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html">
         <source>End Date</source>
@@ -2055,7 +2055,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">End Date</target>
+        <target xml:lang="ne-NP" state="translated">अन्त्य मिति</target>
       </trans-unit>
       <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
         <source>Recurring</source>
@@ -2063,7 +2063,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Recurring</target>
+        <target xml:lang="ne-NP" state="translated">पुनरावर्ती</target>
       </trans-unit>
       <trans-unit id="a507c06d9cbc346d9bb3c644c960230e1e0ebdc1" datatype="html">
         <source>Frequency</source>
@@ -2071,7 +2071,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Frequency</target>
+        <target xml:lang="ne-NP" state="translated">आवृत्ति</target>
       </trans-unit>
       <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html">
         <source>Daily</source>
@@ -2079,7 +2079,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Daily</target>
+        <target xml:lang="ne-NP" state="translated">दैनिक</target>
       </trans-unit>
       <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html">
         <source>Weekly</source>
@@ -2087,7 +2087,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Weekly</target>
+        <target xml:lang="ne-NP" state="translated">साप्ताहिक</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
         <source>None</source>
@@ -2095,7 +2095,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">None</target>
+        <target xml:lang="ne-NP" state="translated">कुनै पनि होइन</target>
       </trans-unit>
       <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html">
         <source>Start Time</source>
@@ -2103,7 +2103,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Start Time</target>
+        <target xml:lang="ne-NP" state="translated">सुरुहुने समय</target>
       </trans-unit>
       <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html">
         <source>End Time</source>
@@ -2111,7 +2111,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">End Time</target>
+        <target xml:lang="ne-NP" state="translated">समापन समय</target>
       </trans-unit>
       <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html">
         <source>Category</source>
@@ -2119,7 +2119,9 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Category</target>
+        <target xml:lang="ne-NP" state="translated">	
+श्रेणी
+</target>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html">
         <source>Location</source>
@@ -2127,7 +2129,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Location</target>
+        <target xml:lang="ne-NP" state="translated">स्थान</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
@@ -2135,7 +2137,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Save</target>
+        <target xml:lang="ne-NP" state="translated">सुरक्षित गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html">
         <source>Meetup</source>
@@ -2143,7 +2145,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Meetup</target>
+        <target xml:lang="ne-NP" state="translated">भेलाहरू</target>
       </trans-unit>
       <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html">
         <source>Invite Member</source>
@@ -2151,7 +2153,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Invite Member</target>
+        <target xml:lang="ne-NP" state="translated">सदस्यलार्इ निम्ताे दिनुहाेस्</target>
       </trans-unit>
       <trans-unit id="3eed3c0167ac14df9b8fcf72108d32ea25436c5d" datatype="html">
         <source>Leave</source>
@@ -2159,7 +2161,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Leave</target>
+        <target xml:lang="ne-NP" state="translated">छोड्नु</target>
       </trans-unit>
       <trans-unit id="e30452c9df56f02f4f636337a0aa4266b1cad074" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/></source>
@@ -2167,7 +2169,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>भेटघाट शीर्षक:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </target>
       </trans-unit>
       <trans-unit id="4619dcdae28d0d5d520e16dcaa69e297638f7a53" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></source>
@@ -2175,7 +2177,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>द्वारा निर्मित:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></target>
       </trans-unit>
       <trans-unit id="05d3883f5f3c6883a1910e55f010bd07ec4a87d1" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/></source>
@@ -2183,7 +2185,9 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>	
+श्रेणी:
+<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
       </trans-unit>
       <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></source>
@@ -2207,7 +2211,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>पुनरावर्ती:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
       </trans-unit>
       <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
@@ -2215,7 +2219,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>स्थान:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
       </trans-unit>
       <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
@@ -2223,7 +2227,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
       </trans-unit>
       <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html">
         <source>Recurring Days:</source>
@@ -2231,7 +2235,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Recurring Days:</target>
+        <target xml:lang="ne-NP" state="translated">आवर्ती दिनहरू:</target>
       </trans-unit>
       <trans-unit id="14c4ba961a7806de5331bbd4fd85f9e28bbc5038" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
@@ -2247,7 +2251,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"> - No member has Joined this Meetup</target>
+        <target xml:lang="ne-NP" state="translated"> - कुनै पनि सदस्य यस बैठकमा सामेल हुनुहुन्न</target>
       </trans-unit>
       <trans-unit id="79a88476e6bce275e0b48d39beb09209ae26ced6" datatype="html">
         <source>All Users</source>
@@ -2255,7 +2259,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">All Users</target>
+        <target xml:lang="ne-NP" state="translated">सम्पूर्ण प्रयोगकर्ताहरु</target>
       </trans-unit>
       <trans-unit id="f8b403888712c826f65a73a5e2c8204fa95da187" datatype="html">
         <source>Select All</source>
@@ -2263,7 +2267,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Select All</target>
+        <target xml:lang="ne-NP" state="translated">सबै छनोट गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="fdd8c0ec42148f76f93fa98129edf03bb03ac990" datatype="html">
         <source>Deselect All</source>
@@ -2271,7 +2275,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Deselect All</target>
+        <target xml:lang="ne-NP" state="translated">सबै चयन हटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="659ee3b9f52e7d491906447d5005ebbfdeb72cba" datatype="html">
         <source>Add Roles</source>
@@ -2279,7 +2283,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Add Roles</target>
+        <target xml:lang="ne-NP" state="translated">भूमिकाहरू थप गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="f08c546eb82ddbf334823913a9ded9781dd298ee" datatype="html">
         <source>Add Teams</source>
@@ -2287,7 +2291,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Add Teams</target>
+        <target xml:lang="ne-NP" state="translated">टोलीहरू थप्नुहोस्</target>
       </trans-unit>
       <trans-unit id="fe29c5d80f15cf046e65d26f65f7a83bd8edf901" datatype="html">
         <source>Profile Image</source>
@@ -2295,7 +2299,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Profile Image</target>
+        <target xml:lang="ne-NP" state="translated">प्रोफाइल तस्बिर</target>
       </trans-unit>
       <trans-unit id="4fcb6dbd1b656de4f606e061af0ed606d3fdc547" datatype="html">
         <source>User Name</source>
