@@ -1468,7 +1468,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Question Title</target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न शीर्षक</target>
       </trans-unit>
       <trans-unit id="0e397f4323ef7fdf3ede2ad587b5d01e77077717" datatype="html">
         <source>Question Description</source>
@@ -1476,7 +1476,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Question Description</target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न विवरण</target>
       </trans-unit>
       <trans-unit id="3e242f213dd1a0754aad9164aa80887d67708500" datatype="html">
         <source>Input</source>
@@ -1484,7 +1484,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Input</target>
+        <target xml:lang="ne-NP" state="translated">निवेश</target>
       </trans-unit>
       <trans-unit id="424db012720017cb636ef33ab50fd0c909f54469" datatype="html">
         <source>Multiple Choice</source>
@@ -1492,7 +1492,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Multiple Choice</target>
+        <target xml:lang="ne-NP" state="translated">बहु विकल्पहरू</target>
       </trans-unit>
       <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html">
         <source>Type</source>
@@ -1504,7 +1504,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Type</target>
+        <target xml:lang="ne-NP" state="translated">प्रकार</target>
       </trans-unit>
       <trans-unit id="1fc2618c7ca4b3722929d8739dbf6d9ab4f7dacf" datatype="html">
         <source>Add Choice</source>
@@ -1512,7 +1512,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Add Choice</target>
+        <target xml:lang="ne-NP" state="translated">विकल्प जोड्नु</target>
       </trans-unit>
       <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html">
         <source>Visits</source>
@@ -1520,7 +1520,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Visits</target>
+        <target xml:lang="ne-NP" state="translated">भ्रमण</target>
       </trans-unit>
       <trans-unit id="e6b61e5dab50fc2b018082f8882a8bf1460dd4ca" datatype="html">
         <source>Submissions</source>
@@ -1532,7 +1532,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Submissions</target>
+        <target xml:lang="ne-NP" state="translated">बुझाउने</target>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html">
         <source>Feedback List</source>
