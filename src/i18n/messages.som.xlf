@@ -1702,7 +1702,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Messages</target>
+        <target xml:lang="so" state="translated">Farriimo</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html">
         <source>Manager Settings</source>
@@ -1710,7 +1710,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Manager Settings</target>
+        <target xml:lang="so" state="translated">Maamulaha Goobaha</target>
       </trans-unit>
       <trans-unit id="8bcabdf6b16cad0313a86c7e940c5e3ad7f9f8ab" datatype="html">
         <source>Notifications</source>
@@ -1718,7 +1718,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Notifications</target>
+        <target xml:lang="so" state="translated">Ogeysiisyada</target>
       </trans-unit>
       <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html">
         <source>No Notification</source>
@@ -1726,7 +1726,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">No Notification</target>
+        <target xml:lang="so" state="translated">Ogeysiin la'aan</target>
       </trans-unit>
       <trans-unit id="92eee6be6de0b11c924e3ab27db30257159c0a7c" datatype="html">
         <source>Home</source>
@@ -1738,7 +1738,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Home</target>
+        <target xml:lang="so" state="translated">Guriga</target>
       </trans-unit>
       <trans-unit id="452ef1b96854fe05618303ee601f8fed3b866c9f" datatype="html">
         <source>Resources</source>
@@ -1746,7 +1746,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Resources</target>
+        <target xml:lang="so" state="translated">Khayraadka</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
         <source>Meetups</source>
@@ -1762,7 +1762,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Meetups</target>
+        <target xml:lang="so" state="translated">Kulannada</target>
       </trans-unit>
       <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html">
         <source>Members</source>
@@ -1770,7 +1770,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Members</target>
+        <target xml:lang="so" state="translated">Xubnaha</target>
       </trans-unit>
       <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html">
         <source>Users</source>
@@ -1786,7 +1786,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Users</target>
+        <target xml:lang="so" state="translated">Isticmaalayaasha</target>
       </trans-unit>
       <trans-unit id="43a51f6aa1c907dfef5d2e40423995e30f56f236" datatype="html">
         <source>Surveys</source>
@@ -1798,7 +1798,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Surveys</target>
+        <target xml:lang="so" state="translated">Daraasado</target>
       </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
@@ -1810,7 +1810,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Logout</target>
+        <target xml:lang="so" state="translated">Ka bax</target>
       </trans-unit>
       <trans-unit id="34093757b83e0fbf2a692ef01232fd401af2483f" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</source>
@@ -1818,7 +1818,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</target>
+        <target xml:lang="so" state="translated"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> Liiska</target>
       </trans-unit>
       <trans-unit id="3590f5c3ef2810f637316edb8aaa86b8e907f152" datatype="html">
         <source>pending</source>
@@ -1826,7 +1826,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">pending</target>
+        <target xml:lang="so" state="translated">sugaya</target>
       </trans-unit>
       <trans-unit id="bd3a01457fab7894f736bc16a44092585a370111" datatype="html">
         <source>accepted</source>
@@ -1834,7 +1834,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">accepted</target>
+        <target xml:lang="so" state="translated">aqbalay</target>
       </trans-unit>
       <trans-unit id="8179066a60d0a330f50dee8cbf6d6c08abb8551d" datatype="html">
         <source>rejected</source>
@@ -1842,7 +1842,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">rejected</target>
+        <target xml:lang="so" state="translated">diiday</target>
       </trans-unit>
       <trans-unit id="7bf707ce2496032835753c747a41b9fb52bfdcc9" datatype="html">
         <source>Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></source>
@@ -1850,7 +1850,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></target>
+        <target xml:lang="so" state="translated">Liisaskaaga hadda <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></target>
       </trans-unit>
       <trans-unit id="7f1a78505a133d74b1661d09c2db4ba93fbe60d4" datatype="html">
         <source> Communities </source>
@@ -1858,7 +1858,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"> Communities </target>
+        <target xml:lang="so" state="translated"> Bulshooyinka </target>
       </trans-unit>
       <trans-unit id="daa52b3eb35d393bd15ae121c96b502ef4011163" datatype="html">
         <source> Delete </source>
@@ -1866,7 +1866,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"> Delete </target>
+        <target xml:lang="so" state="translated"> Tirtir </target>
       </trans-unit>
       <trans-unit id="c0313c8016bf778e8022d3464a9dac8051c02441" datatype="html">
         <source>Your Notifications</source>
@@ -1874,7 +1874,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Your Notifications</target>
+        <target xml:lang="so" state="translated">Ogaysiisyadaada</target>
       </trans-unit>
       <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html">
         <source>Repeat Password</source>
@@ -1882,7 +1882,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Repeat Password</target>
+        <target xml:lang="so" state="translated">Ku celi sireetka</target>
       </trans-unit>
       <trans-unit id="0332b165168e5892a3a2ca8164e609173580d0d9" datatype="html">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></source>
@@ -1890,7 +1890,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></target>
+        <target xml:lang="so" state="translated">Versiyon <x id="INTERPOLATION" equiv-text="{{ version }}"/></target>
       </trans-unit>
       <trans-unit id="9db95d10dedf6f319ffec17a38e50157b7e336bb" datatype="html">
         <source>{VAR_SELECT, select, on {Connected} off {Offline} }</source>
@@ -1898,7 +1898,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, on {Connected} off {Offline} }</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, dooro, darid {Connected} demin{Offline} }</target>
       </trans-unit>
       <trans-unit id="5238405b3e8e1b72d2732f0ecbd83be35b98cd5d" datatype="html">
         <source>Requests</source>
@@ -1906,7 +1906,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Requests</target>
+        <target xml:lang="so" state="translated">Codsiyada</target>
       </trans-unit>
       <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html">
         <source>Resend Registration Request</source>
@@ -1914,7 +1914,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Resend Registration Request</target>
+        <target xml:lang="so" state="translated">Dib udir Codso Diiwaangelinta</target>
       </trans-unit>
       <trans-unit id="49599fd0b55ca84378584328e2d3644786bf6708" datatype="html">
         <source>Delete Community</source>
@@ -1922,7 +1922,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation">Delete Community</target>
+        <target xml:lang="so" state="translated">Baabi Beesha</target>
       </trans-unit>
       <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
@@ -1930,7 +1930,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="so" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</target>
+        <target xml:lang="so" state="translated"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> Liiska</target>
       </trans-unit>
       <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html">
         <source>List Resources</source>
