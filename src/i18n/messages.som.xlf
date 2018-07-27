@@ -947,7 +947,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so"> Macluumaadka </target>
       </trans-unit>
-      <trans-unit id="b7a285515e41f0c8038d8b8e65b5199cb9928681" datatype="html">
+      <trans-unit id="b7a285515e41f0c8038d8b8e65b5199cb9928681" datatype="html" approved="yes">
         <source>Course</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
@@ -957,7 +957,7 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="translated">Koorso</target>
+        <target xml:lang="so">Koorso</target>
       </trans-unit>
       <trans-unit id="d282ccaf17e3d27860505b3068eaab460fc64d81" datatype="html">
         <source>View Step</source>
@@ -967,37 +967,37 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Eeg Tallaabada</target>
       </trans-unit>
-      <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html">
+      <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka Maadada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></target>
+        <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka Maadada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></target>
       </trans-unit>
-      <trans-unit id="ef9ea2b8e0e20c3500a390e081cdfc53882cf55d" datatype="html">
+      <trans-unit id="ef9ea2b8e0e20c3500a390e081cdfc53882cf55d" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Grade Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka fasalka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></target>
+        <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka fasalka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></target>
       </trans-unit>
-      <trans-unit id="c27c01ac14e3a79760322122760cff26db09077d" datatype="html">
+      <trans-unit id="c27c01ac14e3a79760322122760cff26db09077d" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Language of Instruction:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Luqadda Waxbarashada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></target>
+        <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Luqadda Waxbarashada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></target>
       </trans-unit>
-      <trans-unit id="b576358946632f81322424330e303c059ae87ad4" datatype="html">
+      <trans-unit id="b576358946632f81322424330e303c059ae87ad4" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Method:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Habka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></target>
+        <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Habka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></target>
       </trans-unit>
       <trans-unit id="115a3b6b95cfd78c2ef52edb47dfe6b8a57128c3" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.description}}"/></source>
@@ -1339,13 +1339,13 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> khayraadka</target>
       </trans-unit>
-      <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html">
+      <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html" approved="yes">
         <source>Author</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="so" state="translated">Qoraa</target>
+        <target xml:lang="so">Qoraa</target>
       </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html">
         <source>Year</source>
@@ -1355,21 +1355,24 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Sanad</target>
       </trans-unit>
-      <trans-unit id="a0843de0a64adcc7ee6a946408b6876cd8abdcae" datatype="html">
+      <trans-unit id="a0843de0a64adcc7ee6a946408b6876cd8abdcae" datatype="html" approved="yes">
         <source>English</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="so" state="translated">Ingiriisi</target>
+        <target xml:lang="so">Ingiriisi</target>
       </trans-unit>
-      <trans-unit id="e00fde81f1d8d3a8585bc2e03445dd63ceeb3b55" datatype="html">
+      <trans-unit id="e00fde81f1d8d3a8585bc2e03445dd63ceeb3b55" datatype="html" approved="yes">
         <source>Español</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="so" state="translated">Español</target>
+        <target xml:lang="so">Ispanyol</target>
+        <alt-trans>
+          <target xml:lang="so">Español</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html">
         <source>Publisher/Attribution</source>
