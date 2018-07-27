@@ -383,7 +383,7 @@
           <target xml:lang="ne-NP">एड्मिन बनाउनु होस्</target>
         </alt-trans>
       </trans-unit>
-      <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
+      <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html" approved="yes">
         <source>Username</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
@@ -393,7 +393,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">यूजर नेम</target>
+        <target xml:lang="ne-NP">यूजर नेम</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html" approved="yes">
         <source>Password</source>
@@ -543,7 +543,7 @@
         </context-group>
         <target xml:lang="ne-NP" state="translated">मैले परिवर्तनहरूको पुष्टि गर्दछु।</target>
       </trans-unit>
-      <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html">
+      <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html" approved="yes">
         <source>Back</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
@@ -553,17 +553,17 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">फर्कनुहाेस्</target>
+        <target xml:lang="ne-NP">फर्कनुहाेस्</target>
       </trans-unit>
-      <trans-unit id="43161dab615da78790ff6e28f5730e88b96e21e0" datatype="html">
+      <trans-unit id="43161dab615da78790ff6e28f5730e88b96e21e0" datatype="html" approved="yes">
         <source>Contact Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">सम्पर्क विवरण</target>
+        <target xml:lang="ne-NP">सम्पर्क विवरण</target>
       </trans-unit>
-      <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
+      <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html" approved="yes">
         <source>First Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
@@ -573,7 +573,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">नाम</target>
+        <target xml:lang="ne-NP">नाम</target>
       </trans-unit>
       <trans-unit id="e82f6e4c34cdbb18b0d9a753ebcfe8b3e9f43e4c" datatype="html" approved="yes">
         <source>Middle Name</source>
@@ -647,13 +647,13 @@
         </context-group>
         <target xml:lang="ne-NP" state="translated">बुझाउने</target>
       </trans-unit>
-      <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html">
+      <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> पाठ्यक्रम</target>
+        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> पाठ्यक्रम</target>
       </trans-unit>
       <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html">
         <source>Add Step</source>
