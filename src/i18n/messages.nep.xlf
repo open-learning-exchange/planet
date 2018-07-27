@@ -17,8 +17,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">
-    Oops!</target>
+        <target xml:lang="ne-NP" state="translated">
+    ओहो!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html">
         <source>
@@ -181,7 +181,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target xml:lang="ne-NP" state="translated">भाषा: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
