@@ -2331,21 +2331,21 @@
         </context-group>
         <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>पुनरावर्ती:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
       </trans-unit>
-      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html">
+      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>स्थान:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
+        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>स्थान:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
       </trans-unit>
-      <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html">
+      <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
+        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
       </trans-unit>
       <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html">
         <source>Recurring Days:</source>
@@ -2363,13 +2363,13 @@
         </context-group>
         <target xml:lang="ne-NP" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
-      <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html">
+      <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html" approved="yes">
         <source> - No member has Joined this Meetup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated"> - कुनै पनि सदस्य यस बैठकमा सामेल हुनुहुन्न</target>
+        <target xml:lang="ne-NP"> - कुनै पनि सदस्य यस बैठकमा सामेल हुनुहुन्न</target>
       </trans-unit>
       <trans-unit id="79a88476e6bce275e0b48d39beb09209ae26ced6" datatype="html" approved="yes">
         <source>All Users</source>
@@ -2433,13 +2433,13 @@
         </context-group>
         <target xml:lang="ne-NP">प्रयाेगकर्ताकाे नाम</target>
       </trans-unit>
-      <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html">
+      <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html" approved="yes">
         <source>Roles</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">भूमिकाहरू</target>
+        <target xml:lang="ne-NP">भूमिकाहरू</target>
       </trans-unit>
       <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html">
         <source>Action</source>
@@ -2478,29 +2478,29 @@
         </context-group>
         <target xml:lang="ne-NP" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
-      <trans-unit id="64ad662c1920d85083ceb4c8ccd31886811e5afb" datatype="html">
+      <trans-unit id="64ad662c1920d85083ceb4c8ccd31886811e5afb" datatype="html" approved="yes">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>पासवर्ड परिवर्तन गर्नुहोस्<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="ne-NP"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>पासवर्ड परिवर्तन गर्नुहोस्<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
-      <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html">
+      <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html" approved="yes">
         <source>Full Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">पुरा नाम</target>
+        <target xml:lang="ne-NP">पुरा नाम</target>
       </trans-unit>
-      <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html">
+      <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html" approved="yes">
         <source>DOB</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">जन्म मिति</target>
+        <target xml:lang="ne-NP">जन्म मिति</target>
       </trans-unit>
       <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html" approved="yes">
         <source>Phone</source>
@@ -2510,13 +2510,16 @@
         </context-group>
         <target xml:lang="ne-NP">फोन</target>
       </trans-unit>
-      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html">
+      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html" approved="yes">
         <source>Level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">स्तर</target>
+        <target xml:lang="ne-NP">तह</target>
+        <alt-trans>
+          <target xml:lang="ne-NP">स्तर</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html" approved="yes">
         <source>Profile</source>
