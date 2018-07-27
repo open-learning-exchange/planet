@@ -435,21 +435,21 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Dejinta qaabka</target>
       </trans-unit>
-      <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html">
+      <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html" approved="yes">
         <source>Nation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="so" state="translated">Qaran</target>
+        <target xml:lang="so">Qaran</target>
       </trans-unit>
-      <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html">
+      <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html" approved="yes">
         <source>Community</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="so" state="translated">Bulsho</target>
+        <target xml:lang="so">Bulsho</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html">
         <source>Select Nation/Community</source>
