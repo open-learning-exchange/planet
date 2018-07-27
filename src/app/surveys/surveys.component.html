@@ -26,7 +26,7 @@
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)">Edit Survey</button>
-          <button mat-raised-button color="primary">Send Survey</button>
+          <button mat-raised-button color="primary" (click)="openSendSurveyDialog(element)">Send Survey</button>
         </mat-cell>
       </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

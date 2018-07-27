@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable()
 export class SubmissionsService {
@@ -38,7 +39,11 @@ export class SubmissionsService {
   }
 
   private newSubmission({ parentId, parent, user, type }) {
-    this.submission = { parentId, parent, user, type, answers: [], grade: 0, status: 'pending' };
+    this.submission = this.createNewSubmission({ parentId, parent, user, type });
+  }
+
+  private createNewSubmission({ parentId, parent, user, type }) {
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending' };
   }
 
   openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
@@ -119,6 +124,22 @@ export class SubmissionsService {
       }
       return subs;
     }, []);
+  }
+
+  sendSubmissionRequests(users: string[], { parentId, parent }) {
+    return this.couchService.post('submissions/_find', findDocuments({
+      parentId,
+      'user._id': { '$in': users.map((user: any) => user._id) } })
+    ).pipe(
+      switchMap((submissions: any) => {
+        const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
+        const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
+        console.log(newSubmissions);
+        return this.couchService.post('submissions/_bulk_docs', {
+          'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
+        });
+      })
+    );
   }
 
 }
