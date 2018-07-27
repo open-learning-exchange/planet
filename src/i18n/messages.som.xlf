@@ -1414,13 +1414,13 @@ qoraalka="&lt;/mat-icon&gt;"/>Aqbal
         </context-group>
         <target xml:lang="so" state="translated">Hogaamiye</target>
       </trans-unit>
-      <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html">
+      <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html" approved="yes">
         <source>learner</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="so" state="translated">bartaha</target>
+        <target xml:lang="so">bartaha</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -1447,13 +1447,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Taariikhda Taariikhda</target>
       </trans-unit>
-      <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html">
+      <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html" approved="yes">
         <source>Resource Type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="so" state="translated">Nooca Khayraadka</target>
+        <target xml:lang="so">Nooca Khayraadka</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
@@ -1547,13 +1547,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Ku dar xulasho</target>
       </trans-unit>
-      <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html">
+      <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html" approved="yes">
         <source>Visits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="so" state="translated">Booqashooyinka</target>
+        <target xml:lang="so">Booqashooyinka</target>
       </trans-unit>
       <trans-unit id="e6b61e5dab50fc2b018082f8882a8bf1460dd4ca" datatype="html">
         <source>Submissions</source>
@@ -1663,13 +1663,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated"> Waxqabadka </target>
       </trans-unit>
-      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
+      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html" approved="yes">
         <source>Close</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target xml:lang="so" state="translated">Xir</target>
+        <target xml:lang="so">Xir</target>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
         <source>Re-open</source>
@@ -1783,13 +1783,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="translated">Kulannada</target>
       </trans-unit>
-      <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html">
+      <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html" approved="yes">
         <source>Members</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="so" state="translated">Xubnaha</target>
+        <target xml:lang="so">Xubnaha</target>
       </trans-unit>
       <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html">
         <source>Users</source>
@@ -2051,13 +2051,13 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so">Maalmaha soo noqoshada: </target>
       </trans-unit>
-      <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html" approved="yes">
+      <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
         <source>Location:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="so">Goobta:</target>
+        <target xml:lang="so" state="translated">Goobta:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2408,13 +2408,13 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
         </context-group>
         <target xml:lang="so" state="translated">Telefoonka</target>
       </trans-unit>
-      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html">
+      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html" approved="yes">
         <source>Level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="so" state="translated">Heerka</target>
+        <target xml:lang="so">Heerka</target>
       </trans-unit>
       <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html">
         <source>Profile</source>
