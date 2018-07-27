@@ -1540,7 +1540,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Feedback List</target>
+        <target xml:lang="ne-NP" state="translated">प्रतिक्रिया सूची</target>
       </trans-unit>
       <trans-unit id="2b4943909f1e88357c5874b29637a57006c77a2f" datatype="html">
         <source>Type text to search...</source>
@@ -1552,7 +1552,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Type text to search...</target>
+        <target xml:lang="ne-NP" state="translated">खोजी गर्न टाइप गर्नुहोस्...</target>
       </trans-unit>
       <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html">
         <source>Your Current Lists of Feedback</source>
@@ -1560,7 +1560,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Your Current Lists of Feedback</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको हालको अनुरोध सूची</target>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html">
         <source>Priority</source>
@@ -1568,7 +1568,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Priority</target>
+        <target xml:lang="ne-NP" state="translated">प्राथमिकता</target>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html">
         <source>Owner</source>
@@ -1576,7 +1576,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Owner</target>
+        <target xml:lang="ne-NP" state="translated">मालिक</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
         <source>Status</source>
@@ -1592,7 +1592,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Status</target>
+        <target xml:lang="ne-NP" state="translated">स्थिति</target>
       </trans-unit>
       <trans-unit id="3ace7fac0ba373a88ada1663966bb78b5723478d" datatype="html">
         <source>Open Time</source>
