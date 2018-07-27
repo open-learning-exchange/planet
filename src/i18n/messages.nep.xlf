@@ -1240,7 +1240,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Add to myLibrary</target>
+        <target xml:lang="ne-NP" state="translated">पुस्तकालयमा थप गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="95b8dfb6cc7200a7c8c8637c610ee8f40ff1a42d" datatype="html">
         <source>Remove from myLibrary</source>
@@ -1248,7 +1248,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Remove from myLibrary</target>
+        <target xml:lang="ne-NP" state="translated">पुस्तकालय बाट हटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html">
         <source>Feedback</source>
@@ -1447,7 +1447,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Open URL</target>
+        <target xml:lang="ne-NP" state="translated">URL खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="b8b0ff24acc2df6a8482367d06e3801ae977b370" datatype="html">
         <source>Open Which File</source>
