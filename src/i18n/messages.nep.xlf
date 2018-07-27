@@ -27,8 +27,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">
-    404 Not Found</target>
+        <target xml:lang="ne-NP" state="translated">
+    404 फेला परेन</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html">
         <source>
@@ -38,8 +38,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">
-    Sorry, an error has occured, Requested page not found!
+        <target xml:lang="ne-NP" state="translated">
+    क्षमा गर्नुहोस्, एक त्रुटि भयो, अनुरोध गरिएको पृष्ठ फेला परेन!
   </target>
       </trans-unit>
       <trans-unit id="a008bcc957d031735f52caa28f05b132266c960c" datatype="html">
@@ -1133,7 +1133,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Incorrect answer, please try again</target>
+        <target xml:lang="ne-NP" state="translated">गलत जवाफ, कृपया फेरि प्रयास गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="52c61ad3237bb31120f504b3c3a5e70ca6988539" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</source>
@@ -1150,8 +1150,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">
-    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target xml:lang="ne-NP" state="translated">
+    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> सबै
   </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
@@ -1168,7 +1168,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Step title</target>
+        <target xml:lang="ne-NP" state="translated">चरण शीर्षक</target>
       </trans-unit>
       <trans-unit id="9c00b704f800f910a8cc54de6074d9ff643586da" datatype="html">
         <source>Attached resources: </source>
@@ -1176,7 +1176,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Attached resources: </target>
+        <target xml:lang="ne-NP" state="translated">संलग्न स्रोतहरू: </target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html">
         <source>Library</source>
@@ -1272,7 +1272,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Download file</target>
+        <target xml:lang="ne-NP" state="translated">डाउनलोड फाइल</target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html">
         <source>Rating</source>
@@ -1280,7 +1280,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Rating</target>
+        <target xml:lang="ne-NP" state="translated">मूल्याङ्कन</target>
       </trans-unit>
       <trans-unit id="a35562563b046bb09e22a6599f2da51fa8111a83" datatype="html">
         <source><x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
@@ -1289,8 +1289,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">
-      <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
+        <target xml:lang="ne-NP" state="translated">
+      <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> विवरण
     </target>
       </trans-unit>
       <trans-unit id="a022348c23dfe55278a1c0409a74d1cc151d1d2d" datatype="html">
@@ -1307,7 +1307,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> स्रोत</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html">
         <source>Author</source>
@@ -1315,7 +1315,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Author</target>
+        <target xml:lang="ne-NP" state="translated">लेखक</target>
       </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html">
         <source>Year</source>
@@ -1347,7 +1347,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Publisher/Attribution</target>
+        <target xml:lang="ne-NP" state="translated">प्रकाशक / विशेषण</target>
       </trans-unit>
       <trans-unit id="d891222d75499aa82e5f979ffb001e642384d175" datatype="html">
         <source>Link to License</source>
@@ -1355,7 +1355,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Link to License</target>
+        <target xml:lang="ne-NP" state="translated">लाइसेन्स लिंक</target>
       </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
@@ -1363,7 +1363,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Open</target>
+        <target xml:lang="ne-NP" state="translated">खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html">
         <source>Default</source>
@@ -1371,7 +1371,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Default</target>
+        <target xml:lang="ne-NP" state="translated">पूर्वनिर्धारित</target>
       </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html">
         <source>Leader</source>
@@ -1379,7 +1379,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Leader</target>
+        <target xml:lang="ne-NP" state="translated">प्रबन्धक</target>
       </trans-unit>
       <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html">
         <source>learner</source>
@@ -1387,7 +1387,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">learner</target>
+        <target xml:lang="ne-NP" state="translated">सिक्न</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -1395,7 +1395,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Resource For</target>
+        <target xml:lang="ne-NP" state="translated">स्रोत लागि</target>
       </trans-unit>
       <trans-unit id="8a27a855a00b08d2ca981207638ea9097032412b" datatype="html">
         <source>Media</source>
@@ -1403,7 +1403,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Media</target>
+        <target xml:lang="ne-NP" state="translated">मिडिया</target>
       </trans-unit>
       <trans-unit id="6dffc29e9f023bc83a3d5ac080c870c6af20bd46" datatype="html">
         <source>Article Date</source>
@@ -1411,7 +1411,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Article Date</target>
+        <target xml:lang="ne-NP" state="translated">लेख मिति</target>
       </trans-unit>
       <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html">
         <source>Resource Type</source>
@@ -1419,7 +1419,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Resource Type</target>
+        <target xml:lang="ne-NP" state="translated">स्रोत प्रकार</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
@@ -1427,7 +1427,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Added By</target>
+        <target xml:lang="ne-NP" state="translated">द्वारा थपिएको</target>
       </trans-unit>
       <trans-unit id="e6cf591b31401e030391c1703785cec3430b56de" datatype="html">
         <source>Open URL</source>
