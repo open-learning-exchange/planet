@@ -1692,31 +1692,31 @@
         </context-group>
         <target xml:lang="en">Messages</target>
       </trans-unit>
-      <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html">
+      <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html" approved="yes">
         <source>Manager Settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Manager Settings</target>
+        <target xml:lang="en">Manager Settings</target>
       </trans-unit>
-      <trans-unit id="8bcabdf6b16cad0313a86c7e940c5e3ad7f9f8ab" datatype="html">
+      <trans-unit id="8bcabdf6b16cad0313a86c7e940c5e3ad7f9f8ab" datatype="html" approved="yes">
         <source>Notifications</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Notifications</target>
+        <target xml:lang="en">Notifications</target>
       </trans-unit>
-      <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html">
+      <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html" approved="yes">
         <source>No Notification</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">No Notification</target>
+        <target xml:lang="en">No Notification</target>
       </trans-unit>
-      <trans-unit id="92eee6be6de0b11c924e3ab27db30257159c0a7c" datatype="html">
+      <trans-unit id="92eee6be6de0b11c924e3ab27db30257159c0a7c" datatype="html" approved="yes">
         <source>Home</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
@@ -1726,17 +1726,17 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Home</target>
+        <target xml:lang="en">Home</target>
       </trans-unit>
-      <trans-unit id="452ef1b96854fe05618303ee601f8fed3b866c9f" datatype="html">
+      <trans-unit id="452ef1b96854fe05618303ee601f8fed3b866c9f" datatype="html" approved="yes">
         <source>Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Resources</target>
+        <target xml:lang="en">Resources</target>
       </trans-unit>
-      <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
+      <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html" approved="yes">
         <source>Meetups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
@@ -1750,17 +1750,17 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="en" state="translated">Meetups</target>
+        <target xml:lang="en">Meetups</target>
       </trans-unit>
-      <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html">
+      <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html" approved="yes">
         <source>Members</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Members</target>
+        <target xml:lang="en">Members</target>
       </trans-unit>
-      <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html">
+      <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html" approved="yes">
         <source>Users</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
@@ -1774,9 +1774,9 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Users</target>
+        <target xml:lang="en">Users</target>
       </trans-unit>
-      <trans-unit id="43a51f6aa1c907dfef5d2e40423995e30f56f236" datatype="html">
+      <trans-unit id="43a51f6aa1c907dfef5d2e40423995e30f56f236" datatype="html" approved="yes">
         <source>Surveys</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
@@ -1786,9 +1786,9 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Surveys</target>
+        <target xml:lang="en">Surveys</target>
       </trans-unit>
-      <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
+      <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html" approved="yes">
         <source>Logout</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.ts</context>
@@ -1798,87 +1798,87 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Logout</target>
+        <target xml:lang="en">Logout</target>
       </trans-unit>
-      <trans-unit id="34093757b83e0fbf2a692ef01232fd401af2483f" datatype="html">
+      <trans-unit id="34093757b83e0fbf2a692ef01232fd401af2483f" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</target>
+        <target xml:lang="en"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</target>
       </trans-unit>
-      <trans-unit id="3590f5c3ef2810f637316edb8aaa86b8e907f152" datatype="html">
+      <trans-unit id="3590f5c3ef2810f637316edb8aaa86b8e907f152" datatype="html" approved="yes">
         <source>pending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">pending</target>
+        <target xml:lang="en">pending</target>
       </trans-unit>
-      <trans-unit id="bd3a01457fab7894f736bc16a44092585a370111" datatype="html">
+      <trans-unit id="bd3a01457fab7894f736bc16a44092585a370111" datatype="html" approved="yes">
         <source>accepted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">accepted</target>
+        <target xml:lang="en">accepted</target>
       </trans-unit>
-      <trans-unit id="8179066a60d0a330f50dee8cbf6d6c08abb8551d" datatype="html">
+      <trans-unit id="8179066a60d0a330f50dee8cbf6d6c08abb8551d" datatype="html" approved="yes">
         <source>rejected</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">rejected</target>
+        <target xml:lang="en">rejected</target>
       </trans-unit>
-      <trans-unit id="7bf707ce2496032835753c747a41b9fb52bfdcc9" datatype="html">
+      <trans-unit id="7bf707ce2496032835753c747a41b9fb52bfdcc9" datatype="html" approved="yes">
         <source>Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></target>
+        <target xml:lang="en">Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></target>
       </trans-unit>
-      <trans-unit id="7f1a78505a133d74b1661d09c2db4ba93fbe60d4" datatype="html">
+      <trans-unit id="7f1a78505a133d74b1661d09c2db4ba93fbe60d4" datatype="html" approved="yes">
         <source> Communities </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"> Communities </target>
+        <target xml:lang="en"> Communities </target>
       </trans-unit>
-      <trans-unit id="daa52b3eb35d393bd15ae121c96b502ef4011163" datatype="html">
+      <trans-unit id="daa52b3eb35d393bd15ae121c96b502ef4011163" datatype="html" approved="yes">
         <source> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"> Delete </target>
+        <target xml:lang="en"> Delete </target>
       </trans-unit>
-      <trans-unit id="c0313c8016bf778e8022d3464a9dac8051c02441" datatype="html">
+      <trans-unit id="c0313c8016bf778e8022d3464a9dac8051c02441" datatype="html" approved="yes">
         <source>Your Notifications</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Your Notifications</target>
+        <target xml:lang="en">Your Notifications</target>
       </trans-unit>
-      <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html">
+      <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html" approved="yes">
         <source>Repeat Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="en" state="translated">Repeat Password</target>
+        <target xml:lang="en">Repeat Password</target>
       </trans-unit>
-      <trans-unit id="0332b165168e5892a3a2ca8164e609173580d0d9" datatype="html">
+      <trans-unit id="0332b165168e5892a3a2ca8164e609173580d0d9" datatype="html" approved="yes">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></target>
+        <target xml:lang="en">Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></target>
       </trans-unit>
       <trans-unit id="9db95d10dedf6f319ffec17a38e50157b7e336bb" datatype="html">
         <source>{VAR_SELECT, select, on {Connected} off {Offline} }</source>
@@ -1888,77 +1888,77 @@
         </context-group>
         <target xml:lang="en" state="needs-translation">{VAR_SELECT, select, on {Connected} off {Offline} }</target>
       </trans-unit>
-      <trans-unit id="5238405b3e8e1b72d2732f0ecbd83be35b98cd5d" datatype="html">
+      <trans-unit id="5238405b3e8e1b72d2732f0ecbd83be35b98cd5d" datatype="html" approved="yes">
         <source>Requests</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Requests</target>
+        <target xml:lang="en">Requests</target>
       </trans-unit>
-      <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html">
+      <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html" approved="yes">
         <source>Resend Registration Request</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Resend Registration Request</target>
+        <target xml:lang="en">Resend Registration Request</target>
       </trans-unit>
-      <trans-unit id="49599fd0b55ca84378584328e2d3644786bf6708" datatype="html">
+      <trans-unit id="49599fd0b55ca84378584328e2d3644786bf6708" datatype="html" approved="yes">
         <source>Delete Community</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Delete Community</target>
+        <target xml:lang="en">Delete Community</target>
       </trans-unit>
-      <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html">
+      <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</target>
+        <target xml:lang="en"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</target>
       </trans-unit>
-      <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html">
+      <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html" approved="yes">
         <source>List Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">List Resources</target>
+        <target xml:lang="en">List Resources</target>
       </trans-unit>
-      <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html">
+      <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html" approved="yes">
         <source>List Courses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">List Courses</target>
+        <target xml:lang="en">List Courses</target>
       </trans-unit>
-      <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html">
+      <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html" approved="yes">
         <source>List Meetups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">List Meetups</target>
+        <target xml:lang="en">List Meetups</target>
       </trans-unit>
-      <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html">
+      <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html" approved="yes">
         <source>Checking request status...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Checking request status...</target>
+        <target xml:lang="en">Checking request status...</target>
       </trans-unit>
-      <trans-unit id="23299f2edacf5a10fea838d6328872ba4df8093b" datatype="html">
+      <trans-unit id="23299f2edacf5a10fea838d6328872ba4df8093b" datatype="html" approved="yes">
         <source>Your request has not been accepted by parent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Your request has not been accepted by parent</target>
+        <target xml:lang="en">Your request has not been accepted by parent</target>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
@@ -1968,7 +1968,7 @@
         </context-group>
         <target xml:lang="en" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</target>
       </trans-unit>
-      <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html">
+      <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html" approved="yes">
         <source>Join</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
@@ -1978,207 +1978,207 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Join</target>
+        <target xml:lang="en">Join</target>
       </trans-unit>
-      <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html">
+      <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html" approved="yes">
         <source>Information</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Information</target>
+        <target xml:lang="en">Information</target>
       </trans-unit>
-      <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html">
+      <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html" approved="yes">
         <source>Date:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Date:</target>
+        <target xml:lang="en">Date:</target>
       </trans-unit>
-      <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html">
+      <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html" approved="yes">
         <source>at</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">at</target>
+        <target xml:lang="en">at</target>
       </trans-unit>
-      <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html">
+      <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html" approved="yes">
         <source>Recurring:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Recurring:</target>
+        <target xml:lang="en">Recurring:</target>
       </trans-unit>
-      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
+      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html" approved="yes">
         <source>Recurring Days: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Recurring Days: </target>
+        <target xml:lang="en">Recurring Days: </target>
       </trans-unit>
-      <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
+      <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html" approved="yes">
         <source>Location:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Location:</target>
+        <target xml:lang="en">Location:</target>
       </trans-unit>
-      <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
+      <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</target>
+        <target xml:lang="en"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</target>
       </trans-unit>
-      <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html">
+      <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html" approved="yes">
         <source>Start Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Start Date</target>
+        <target xml:lang="en">Start Date</target>
       </trans-unit>
-      <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html">
+      <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html" approved="yes">
         <source>End Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">End Date</target>
+        <target xml:lang="en">End Date</target>
       </trans-unit>
-      <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
+      <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html" approved="yes">
         <source>Recurring</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Recurring</target>
+        <target xml:lang="en">Recurring</target>
       </trans-unit>
-      <trans-unit id="a507c06d9cbc346d9bb3c644c960230e1e0ebdc1" datatype="html">
+      <trans-unit id="a507c06d9cbc346d9bb3c644c960230e1e0ebdc1" datatype="html" approved="yes">
         <source>Frequency</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Frequency</target>
+        <target xml:lang="en">Frequency</target>
       </trans-unit>
-      <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html">
+      <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html" approved="yes">
         <source>Daily</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Daily</target>
+        <target xml:lang="en">Daily</target>
       </trans-unit>
-      <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html">
+      <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html" approved="yes">
         <source>Weekly</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Weekly</target>
+        <target xml:lang="en">Weekly</target>
       </trans-unit>
-      <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
+      <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html" approved="yes">
         <source>None</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">None</target>
+        <target xml:lang="en">None</target>
       </trans-unit>
-      <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html">
+      <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html" approved="yes">
         <source>Start Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Start Time</target>
+        <target xml:lang="en">Start Time</target>
       </trans-unit>
-      <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html">
+      <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html" approved="yes">
         <source>End Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">End Time</target>
+        <target xml:lang="en">End Time</target>
       </trans-unit>
-      <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html">
+      <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html" approved="yes">
         <source>Category</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Category</target>
+        <target xml:lang="en">Category</target>
       </trans-unit>
-      <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html">
+      <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html" approved="yes">
         <source>Location</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Location</target>
+        <target xml:lang="en">Location</target>
       </trans-unit>
-      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
+      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html" approved="yes">
         <source>Save</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Save</target>
+        <target xml:lang="en">Save</target>
       </trans-unit>
-      <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html">
+      <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html" approved="yes">
         <source>Meetup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Meetup</target>
+        <target xml:lang="en">Meetup</target>
       </trans-unit>
-      <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html">
+      <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html" approved="yes">
         <source>Invite Member</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Invite Member</target>
+        <target xml:lang="en">Invite Member</target>
       </trans-unit>
-      <trans-unit id="3eed3c0167ac14df9b8fcf72108d32ea25436c5d" datatype="html">
+      <trans-unit id="3eed3c0167ac14df9b8fcf72108d32ea25436c5d" datatype="html" approved="yes">
         <source>Leave</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Leave</target>
+        <target xml:lang="en">Leave</target>
       </trans-unit>
-      <trans-unit id="e30452c9df56f02f4f636337a0aa4266b1cad074" datatype="html">
+      <trans-unit id="e30452c9df56f02f4f636337a0aa4266b1cad074" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </target>
+        <target xml:lang="en"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </target>
       </trans-unit>
-      <trans-unit id="4619dcdae28d0d5d520e16dcaa69e297638f7a53" datatype="html">
+      <trans-unit id="4619dcdae28d0d5d520e16dcaa69e297638f7a53" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></target>
+        <target xml:lang="en"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></target>
       </trans-unit>
-      <trans-unit id="05d3883f5f3c6883a1910e55f010bd07ec4a87d1" datatype="html">
+      <trans-unit id="05d3883f5f3c6883a1910e55f010bd07ec4a87d1" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
+        <target xml:lang="en"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
       </trans-unit>
       <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></source>
@@ -2196,37 +2196,37 @@
         </context-group>
         <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></target>
       </trans-unit>
-      <trans-unit id="6ff63bef1474a655b54c409d68e15ddadabadabf" datatype="html">
+      <trans-unit id="6ff63bef1474a655b54c409d68e15ddadabadabf" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
+        <target xml:lang="en"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
       </trans-unit>
-      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html">
+      <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
+        <target xml:lang="en"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
       </trans-unit>
-      <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html">
+      <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
+        <target xml:lang="en"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
       </trans-unit>
-      <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html">
+      <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html" approved="yes">
         <source>Recurring Days:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Recurring Days:</target>
+        <target xml:lang="en">Recurring Days:</target>
       </trans-unit>
       <trans-unit id="14c4ba961a7806de5331bbd4fd85f9e28bbc5038" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
@@ -2236,85 +2236,85 @@
         </context-group>
         <target xml:lang="en" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
-      <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html">
+      <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html" approved="yes">
         <source> - No member has Joined this Meetup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"> - No member has Joined this Meetup</target>
+        <target xml:lang="en"> - No member has Joined this Meetup</target>
       </trans-unit>
-      <trans-unit id="79a88476e6bce275e0b48d39beb09209ae26ced6" datatype="html">
+      <trans-unit id="79a88476e6bce275e0b48d39beb09209ae26ced6" datatype="html" approved="yes">
         <source>All Users</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">All Users</target>
+        <target xml:lang="en">All Users</target>
       </trans-unit>
-      <trans-unit id="f8b403888712c826f65a73a5e2c8204fa95da187" datatype="html">
+      <trans-unit id="f8b403888712c826f65a73a5e2c8204fa95da187" datatype="html" approved="yes">
         <source>Select All</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Select All</target>
+        <target xml:lang="en">Select All</target>
       </trans-unit>
-      <trans-unit id="fdd8c0ec42148f76f93fa98129edf03bb03ac990" datatype="html">
+      <trans-unit id="fdd8c0ec42148f76f93fa98129edf03bb03ac990" datatype="html" approved="yes">
         <source>Deselect All</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Deselect All</target>
+        <target xml:lang="en">Deselect All</target>
       </trans-unit>
-      <trans-unit id="659ee3b9f52e7d491906447d5005ebbfdeb72cba" datatype="html">
+      <trans-unit id="659ee3b9f52e7d491906447d5005ebbfdeb72cba" datatype="html" approved="yes">
         <source>Add Roles</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Add Roles</target>
+        <target xml:lang="en">Add Roles</target>
       </trans-unit>
-      <trans-unit id="f08c546eb82ddbf334823913a9ded9781dd298ee" datatype="html">
+      <trans-unit id="f08c546eb82ddbf334823913a9ded9781dd298ee" datatype="html" approved="yes">
         <source>Add Teams</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Add Teams</target>
+        <target xml:lang="en">Add Teams</target>
       </trans-unit>
-      <trans-unit id="fe29c5d80f15cf046e65d26f65f7a83bd8edf901" datatype="html">
+      <trans-unit id="fe29c5d80f15cf046e65d26f65f7a83bd8edf901" datatype="html" approved="yes">
         <source>Profile Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Profile Image</target>
+        <target xml:lang="en">Profile Image</target>
       </trans-unit>
-      <trans-unit id="4fcb6dbd1b656de4f606e061af0ed606d3fdc547" datatype="html">
+      <trans-unit id="4fcb6dbd1b656de4f606e061af0ed606d3fdc547" datatype="html" approved="yes">
         <source>User Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">User Name</target>
+        <target xml:lang="en">User Name</target>
       </trans-unit>
-      <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html">
+      <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html" approved="yes">
         <source>Roles</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Roles</target>
+        <target xml:lang="en">Roles</target>
       </trans-unit>
-      <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html">
+      <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html" approved="yes">
         <source>Action</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Action</target>
+        <target xml:lang="en">Action</target>
       </trans-unit>
       <trans-unit id="506bcfcdbb95044d7597c7f0833f25a68d37738a" datatype="html">
         <source>{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</source>
@@ -2345,85 +2345,85 @@
         </context-group>
         <target xml:lang="en" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
-      <trans-unit id="64ad662c1920d85083ceb4c8ccd31886811e5afb" datatype="html">
+      <trans-unit id="64ad662c1920d85083ceb4c8ccd31886811e5afb" datatype="html" approved="yes">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="en"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
-      <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html">
+      <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html" approved="yes">
         <source>Full Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Full Name</target>
+        <target xml:lang="en">Full Name</target>
       </trans-unit>
-      <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html">
+      <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html" approved="yes">
         <source>DOB</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">DOB</target>
+        <target xml:lang="en">DOB</target>
       </trans-unit>
-      <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html">
+      <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html" approved="yes">
         <source>Phone</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Phone</target>
+        <target xml:lang="en">Phone</target>
       </trans-unit>
-      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html">
+      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html" approved="yes">
         <source>Level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Level</target>
+        <target xml:lang="en">Level</target>
       </trans-unit>
-      <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html">
+      <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html" approved="yes">
         <source>Profile</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Profile</target>
+        <target xml:lang="en">Profile</target>
       </trans-unit>
-      <trans-unit id="3909338c4bd606fae7ba39a4d80533aa94514241" datatype="html">
+      <trans-unit id="3909338c4bd606fae7ba39a4d80533aa94514241" datatype="html" approved="yes">
         <source>BirthDate</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">BirthDate</target>
+        <target xml:lang="en">BirthDate</target>
       </trans-unit>
-      <trans-unit id="003d4f5e4909ccf01b6a204c688fd6dab15c20bd" datatype="html">
+      <trans-unit id="003d4f5e4909ccf01b6a204c688fd6dab15c20bd" datatype="html" approved="yes">
         <source>Gender</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Gender</target>
+        <target xml:lang="en">Gender</target>
       </trans-unit>
-      <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html">
+      <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">level</target>
+        <target xml:lang="en">level</target>
       </trans-unit>
-      <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html">
+      <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html" approved="yes">
         <source>Update</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="en" state="needs-translation">Update</target>
+        <target xml:lang="en">Update</target>
       </trans-unit>
     </body>
   </file>
