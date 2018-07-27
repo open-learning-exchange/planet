@@ -1600,7 +1600,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Open Time</target>
+        <target xml:lang="ne-NP" state="translated">खोल्ने समय</target>
       </trans-unit>
       <trans-unit id="2cab4f31f1acc2bfb5e4841afc24fc60a5a87e13" datatype="html">
         <source>Close Time</source>
@@ -1608,7 +1608,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Close Time</target>
+        <target xml:lang="ne-NP" state="translated">बन्द हुने समय</target>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html">
         <source>Source</source>
@@ -1616,7 +1616,8 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Source</target>
+        <target xml:lang="ne-NP" state="translated">श्रोत
+</target>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
@@ -1628,7 +1629,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"> Action </target>
+        <target xml:lang="ne-NP" state="translated"> कार्यहरू </target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -1636,7 +1637,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Close</target>
+        <target xml:lang="ne-NP" state="translated">बन्द गर्नु</target>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
         <source>Re-open</source>
@@ -1644,7 +1645,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Re-open</target>
+        <target xml:lang="ne-NP" state="translated">पुन: खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html">
         <source>Feedback title</source>
@@ -1652,7 +1653,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Feedback title</target>
+        <target xml:lang="ne-NP" state="translated">प्रतिक्रिया सूची</target>
       </trans-unit>
       <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html">
         <source>Type your reply here</source>
@@ -1660,7 +1661,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Type your reply here</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको उत्तर यहाँ टाइप गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html">
         <source>Menu</source>
@@ -1668,7 +1669,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Menu</target>
+        <target xml:lang="ne-NP" state="translated">मेनु</target>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
         <source>Planet Learning</source>
@@ -1688,7 +1689,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Messages</target>
+        <target xml:lang="ne-NP" state="translated">सन्देशहरू</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html">
         <source>Manager Settings</source>
@@ -1696,7 +1697,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Manager Settings</target>
+        <target xml:lang="ne-NP" state="translated">प्रबन्धक सेटिंग्स</target>
       </trans-unit>
       <trans-unit id="8bcabdf6b16cad0313a86c7e940c5e3ad7f9f8ab" datatype="html">
         <source>Notifications</source>
@@ -1704,7 +1705,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Notifications</target>
+        <target xml:lang="ne-NP" state="translated">सुचनाहरु</target>
       </trans-unit>
       <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html">
         <source>No Notification</source>
@@ -1712,7 +1713,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">No Notification</target>
+        <target xml:lang="ne-NP" state="translated">सूचनाहरू छैनन्।</target>
       </trans-unit>
       <trans-unit id="92eee6be6de0b11c924e3ab27db30257159c0a7c" datatype="html">
         <source>Home</source>
@@ -1724,7 +1725,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Home</target>
+        <target xml:lang="ne-NP" state="translated">गृह</target>
       </trans-unit>
       <trans-unit id="452ef1b96854fe05618303ee601f8fed3b866c9f" datatype="html">
         <source>Resources</source>
@@ -1732,7 +1733,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Resources</target>
+        <target xml:lang="ne-NP" state="translated">स्रोतहरू</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
         <source>Meetups</source>
@@ -1756,7 +1757,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Members</target>
+        <target xml:lang="ne-NP" state="translated">सदस्य</target>
       </trans-unit>
       <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html">
         <source>Users</source>
@@ -1772,7 +1773,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Users</target>
+        <target xml:lang="ne-NP" state="translated">प्रयोगकर्ताहरू</target>
       </trans-unit>
       <trans-unit id="43a51f6aa1c907dfef5d2e40423995e30f56f236" datatype="html">
         <source>Surveys</source>
@@ -1784,7 +1785,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Surveys</target>
+        <target xml:lang="ne-NP" state="translated">सर्वेक्षण</target>
       </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
@@ -1796,7 +1797,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Logout</target>
+        <target xml:lang="ne-NP" state="translated">लग अाउट</target>
       </trans-unit>
       <trans-unit id="34093757b83e0fbf2a692ef01232fd401af2483f" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</source>
@@ -1804,7 +1805,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> List</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> सूची</target>
       </trans-unit>
       <trans-unit id="3590f5c3ef2810f637316edb8aaa86b8e907f152" datatype="html">
         <source>pending</source>
