@@ -20,19 +20,17 @@ export class DialogsFormComponent {
     });
   }
 
-  constructor(public dialogRef: MatDialogRef<DialogsFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log(`DATA: ${data}`);
-  }
+  constructor(public dialogRef: MatDialogRef<DialogsFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  onSubmit(mForm, dialog) {
-    if (data) {
-      return this.data.okSubmit();
+  onSubmit(formGroup: FormGroup) {
+    if (this.data && formGroup.valid) {
+      return this.data.submitForm(formGroup.value);
     }
     // default behavior
-    if (mForm.valid) {
-      dialog.close(mForm.value);
+    if (formGroup.valid) {
+      this.dialogRef.close(formGroup.value);
     } else {
-      this.markFormAsTouched(mForm);
+      this.markFormAsTouched(formGroup);
     }
   }
 

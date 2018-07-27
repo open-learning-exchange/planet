@@ -2,47 +2,44 @@ import { Observable } from 'rxjs';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup
-} from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable()
 export class DialogsFormService {
+  dialogRef: MatDialogRef<DialogsFormComponent>; 
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
 
-  public confirm(title: string, fields: any, formGroup: any, okSubmit = null): Observable<boolean> {
-    let dialogRef: MatDialogRef<DialogsFormComponent>;
-    dialogRef = this.dialog.open(DialogsFormComponent, {
+  public confirm(title: string, fields: any, formGroup: any, submitForm = null): Observable<boolean> {
+    this.dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
-      data: okSubmit,
+      data: { submitForm: submitForm},
       autoFocus: false
     });
     if (formGroup instanceof FormGroup) {
-      dialogRef.componentInstance.modalForm = formGroup;
+      this.dialogRef.componentInstance.modalForm = formGroup;
     } else {
-      dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
+      this.dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
     }
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.fields = fields;
-    return dialogRef.afterClosed();
+    this.dialogRef.componentInstance.title = title;
+    this.dialogRef.componentInstance.fields = fields;
+    return this.dialogRef.afterClosed();
   }
 
-  public openDialog(title: string, fields: any, formGroup: any, okSubmit = null): Observable<boolean> {
-    let dialogRef: MatDialogRef<DialogsFormComponent>;
-    dialogRef = this.dialog.open(DialogsFormComponent, {
+  public openDialog(title: string, fields: any, formGroup: any, submitForm = null) {
+    this.dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
-      data: okSubmit
+      data: {submitForm: submitForm},
+      autoFocus: false
     });
     if (formGroup instanceof FormGroup) {
-      dialogRef.componentInstance.modalForm = formGroup;
+      this.dialogRef.componentInstance.modalForm = formGroup;
     } else {
-      dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
+      this.dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
     }
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.fields = fields;
+    this.dialogRef.componentInstance.title = title;
+    this.dialogRef.componentInstance.fields = fields;
   }
   public closeDialog() {
-    return dialogRef.afterClosed();
+    this.dialogRef.close();
   }
 }
