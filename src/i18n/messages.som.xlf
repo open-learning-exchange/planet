@@ -74,12 +74,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="so" state="translated">
-{VAR_DOORO, dooro, aqbal [accept] diid [reject] aanad laheyn {unlink} tirtirka {delete}}</target>
-        <alt-trans>
-          <target xml:lang="so">
-{VAR_DOORO, dooro, aqbal [aqbalid] diid [ku diiddan] aanad laheyn {furfuran} tirtirka {tirtir}}</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, accept {accept} reject {reject} unlink {unlink} delete {delete} }</target>
       </trans-unit>
       <trans-unit id="8af474afa842e4a721a11dbd41b653dbdd8af972" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
@@ -89,8 +84,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT_2, select, single {ka dib {VAR_SELECT, select, community {bulsho} nation {qaran} course {kooras} resource {khayraad} meetup {isweydaarsiga} user {isticmaale}}?
-      } many {selected {VAR_SELECT_1, select, community {beelaha} nation {quruumaha} course {koorsooyinka} resrouce {khayraadka} meetup {kulma} }?
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
+      } many {selected {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} }?
       } }</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
@@ -332,15 +327,11 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target xml:lang="so" state="translated">
-            <x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>furfuran
-          </target>
-        <alt-trans>
-          <target xml:lang="so">
-                        <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-qoraal="&lt;mat-icon&gt;"/>xariirin_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>furfuran
+        <target xml:lang="so" state="needs-translation">
+            
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
           
           </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="6361513ae85cb1490e45f7c47f0163d49289a4d2" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
@@ -349,8 +340,10 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target xml:lang="so" state="translated">
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Aqbal
+        <target xml:lang="so" state="needs-translation">
+            
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
+          
           </target>
       </trans-unit>
       <trans-unit id="812c985df8eb437425ef84753886b5118ea62be9" datatype="html">
@@ -360,8 +353,10 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="so" state="translated">
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>block<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Diidmo
+        <target xml:lang="so" state="needs-translation">
+            
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>block<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Reject
+          
           </target>
       </trans-unit>
       <trans-unit id="0b95c500acae46963cafa26a8270c90bf1fedcb6" datatype="html">
@@ -371,8 +366,10 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target xml:lang="so" state="translated">
-          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Tirtir
+        <target xml:lang="so" state="needs-translation">
+          
+          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
+        
         </target>
       </trans-unit>
       <trans-unit id="de80e491246200ef6b61aec7a244dd26f394fc3e" datatype="html">
@@ -1108,13 +1105,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="translated">Suaal<x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
-        <alt-trans>
-          <target xml:lang="so">Suaal <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
-        </alt-trans>
-        <alt-trans>
-          <target xml:lang="so">Suaal <x id="INTERPOLATION" equiv-text="{{suaalNum}}"/> of <x id="INTERPOLATION_1" equiv-qoraal="{{maxQuestions}}"/></target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">Question <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html">
         <source>Enter answer here</source>
@@ -1174,10 +1165,7 @@
           <context context-type="sourcefile">app/shared/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_SELECT,dooro, loo baahan yahay {This field is required} min {Lambarku ma hoos iman karo <x id="INTERPOLATION" equiv-qoraalka="{{number}}"/>} max {Lambarku ma dhaafi karo <x id="INTERPOLATION" equiv-qoraalka="{{number}}"/>} nuqul ah {Value already exists} email {Please enter a valid email} u eg number sireedka {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} qaab {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</target>
       </trans-unit>
       <trans-unit id="d7039076b24be09bd64cbfd5b38bb95363a89931" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -1196,10 +1184,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_DOORO, dooro, ha {Deselect} maya {Select} }</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
       </trans-unit>
       <trans-unit id="75c7f106f1b6a0fcee86b4bafe5ea74877382b03" datatype="html">
         <source>Step title</source>
@@ -1338,10 +1323,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, select, on {Show} off {Hide} }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_SELECT, dooro, darit {Show} damin {Hide} }</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, on {Show} off {Hide} }</target>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</source>
@@ -1929,10 +1911,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, select, on {Connected} off {Offline} }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_SELECT, dooro, darid {Connected} demin{Offline} }</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, on {Connected} off {Offline} }</target>
       </trans-unit>
       <trans-unit id="5238405b3e8e1b72d2732f0ecbd83be35b98cd5d" datatype="html">
         <source>Requests</source>
@@ -2012,10 +1991,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Tag</target>
-        <alt-trans>
-          <target xml:lang="so"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>cad<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Tag</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</target>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html">
         <source>Join</source>
@@ -2235,13 +2211,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Taariikhda Kulankue:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/>-<x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
-        <alt-trans>
-          <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Taariikhda Kulankue:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/>-<x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
-        </alt-trans>
-        <alt-trans>
-          <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Taariikhda Kulankue:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="f216acd1bbe77ddf9082913537c4f3b33ed36eac" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></source>
@@ -2249,10 +2219,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>wakhti la kulma:<x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/>-<x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></target>
-        <alt-trans>
-          <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>wakhti la kulma:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></target>
       </trans-unit>
       <trans-unit id="6ff63bef1474a655b54c409d68e15ddadabadabf" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></source>
@@ -2292,11 +2259,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Xubnaha ka midka ah:(<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
-        <alt-trans>
-          <target xml:lang="so"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>
-Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html">
         <source> - No member has Joined this Meetup</source>
@@ -2384,10 +2347,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_SELECT, dooro, 0 {Promote} 1 {Demote} }</target>
-        </alt-trans>
+        <target xml:lang="so" state="needs-translation">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
       </trans-unit>
       <trans-unit id="436d4f2b6d175f1deeb91d14618542f63567bd7d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
@@ -2396,15 +2356,11 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">112</context>
         </context-group>
-        <target xml:lang="so" state="translated">
-          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Fiiri Sawirka
-        </target>
-        <alt-trans>
-          <target xml:lang="so">
-                    <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>faylka_furan<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Fiiri Sawirka
+        <target xml:lang="so" state="needs-translation">
+          
+          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
         
         </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="761e7bc19e9488ae4447d0cd58a9c83b4d1844e2" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -2412,7 +2368,7 @@ Xubnaha ka midka ah: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="so" state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="64ad662c1920d85083ceb4c8ccd31886811e5afb" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Change password<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
