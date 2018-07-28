@@ -6,13 +6,13 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable()
 export class DialogsFormService {
-  dialogRef: MatDialogRef<DialogsFormComponent>; 
+  dialogRef: MatDialogRef<DialogsFormComponent>;
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
 
   public confirm(title: string, fields: any, formGroup: any, submitForm = null): Observable<boolean> {
     this.dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
-      data: { submitForm: submitForm},
+      data: { submitForm: submitForm },
       autoFocus: false
     });
     if (formGroup instanceof FormGroup) {
@@ -28,7 +28,7 @@ export class DialogsFormService {
   public openDialog(title: string, fields: any, formGroup: any, submitForm = null) {
     this.dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
-      data: {submitForm: submitForm},
+      data: { submitForm: submitForm },
       autoFocus: false
     });
     if (formGroup instanceof FormGroup) {

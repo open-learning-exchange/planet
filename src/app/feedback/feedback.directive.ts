@@ -88,7 +88,7 @@ export class FeedbackDirective {
         source: this.userService.getConfig().code,
         ...this.feedbackOf
       };
-    return this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
+    return this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url });
   }
 
   @HostListener('click')
