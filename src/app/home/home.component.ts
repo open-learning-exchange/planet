@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('content') private mainContent;
   user: any = {};
   userImgSrc = '';
+  userservice = '';
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -61,6 +62,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.getNotification();
     this.onUserUpdate();
+    this.userservice = this.userService.get();
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
     });

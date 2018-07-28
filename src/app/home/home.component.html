@@ -3,7 +3,7 @@
   <button mat-icon-button (click)="toggleNav()" i18n-title title="Menu"><mat-icon>menu</mat-icon></button>
   <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo"/>
   <h1 i18n>Planet Learning</h1>
-  <span class="toolbar-fill"></span>
+  <span class="toolbar-fill warn-text-color warn-text-align" *ngIf="userservice.roles.length === 0 && !userservice.isUserAdmin">You are not authorized. Please contact administrator.</span>
   <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
   <button mat-icon-button *ngIf="user.isUserAdmin" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
   <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
