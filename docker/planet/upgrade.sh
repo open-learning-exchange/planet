@@ -7,5 +7,10 @@ function upgrade {
   curl --unix-socket /var/run/docker.sock -X POST "http://localhost/images/create?fromImage=$1"
 }
 
+function rename {
+  curl --unix-socket /var/run/docker.sock -X POST "http://localhost/images/$1/tag?repo=$2"
+}
+
 upgrade "treehouses/planet:db-init"
 upgrade "treehouses/planet:$PLANET_VERSION"
+rename "treehouses/planet:$PLANET_VERSION" "treehouses/planet:local"
