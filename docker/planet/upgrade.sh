@@ -9,4 +9,3 @@ function upgrade {
 
 upgrade "treehouses/planet:db-init"
 upgrade "treehouses/planet:$PLANET_VERSION"
-upgrade "treehouses/couchdb:2.1.1"
