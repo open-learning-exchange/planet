@@ -13,6 +13,19 @@ import { SyncService } from '../shared/sync.service';
 export class ManagerSyncComponent implements OnInit {
 
   replicators = [];
+  replicatorsDoc = [];
+  pushList = [
+    { db: 'courses_progress' },
+    { db: 'feedback' },
+    { db: 'login_activities' },
+    { db: 'ratings' },
+    { db: 'resource_activities' }
+  ];
+
+  pullList = [
+    { db: 'feedback', selector: { source: this.userService.getConfig().code } },
+    { db: 'notifications', selector: { target: this.userService.getConfig().code } }
+  ];
 
   constructor(
     private couchService: CouchService,
@@ -26,14 +39,26 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   getReplicators() {
-    this.couchService.allDocs('_replicator').subscribe(data => {
-      this.replicators = data;
+    this.couchService.get('_scheduler/docs').pipe(switchMap(data => {
+      this.replicators = data.docs;
+      return this.couchService.allDocs('_replicator');
+    })).subscribe(rep => {
+      const defaultList = this.getDefaultList();
+      this.replicatorsDoc = rep.filter(r => {
+        const replicator = r.find((doc: any) => doc._id === r.id);
+        return replicator._replication_state === 'completed' && defaultList.indexOf(replicator._id) > -1;
+      });
     });
   }
 
+  getDefaultList() {
+    const addType = (type) => (val) => ( val.db + '_' + type );
+    return this.pushList.map(addType('push')).concat(this.pullList.map(addType('pull')));
+  }
+
   syncPlanet() {
-    const deleteArray = this.replicators.map(rep => {
-      return { _id: rep._id, _rev: rep._rev, _deleted: true };
+    const deleteArray = this.replicatorsDoc.map(rep => {
+      return { _id: rep.id, _rev: rep._rev, _deleted: true };
     });
     this.syncService.deleteReplicators(deleteArray).pipe(switchMap(data => {
       return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
@@ -44,21 +69,8 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   replicatorList() {
-    // List of replicators to push to parent planet
-    const pushList = [
-      { db: 'courses_progress' },
-      { db: 'feedback' },
-      { db: 'login_activities' },
-      { db: 'ratings' },
-      { db: 'resource_activities' }
-    ];
-    // List of replicators to pull from parent
-    const pullList = [
-      { db: 'feedback', selector: { source: this.userService.getConfig().code } },
-      { db: 'notifications', selector: { target: this.userService.getConfig().code } }
-    ];
     const addType = (type) => (val) => ({ ...val, type });
-    return pushList.map(addType('push')).concat(pullList.map(addType('pull')));
+    return this.pushList.map(addType('push')).concat(this.pullList.map(addType('pull')));
   }
 
 }

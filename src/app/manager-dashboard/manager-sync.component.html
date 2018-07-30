@@ -11,12 +11,14 @@
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators">
       <h3 matLine>
-        <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
+        <!-- <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon> -->
+        <mat-icon *ngIf="rep?.doc_id.includes('continuous'); else singleRep">repeat</mat-icon>
         <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
-        {{rep._id}}
+        {{rep.doc_id}}
       </h3>
       <p matLine>
-        <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span>
+        <!-- <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span> -->
+        <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
         <ng-container [ngSwitch]="rep?._replication_state">
         <!-- States: initializing, failed, error, running, pending, crashing, completed -->
         <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" title="{{rep._replication_state}}">error</mat-icon>
