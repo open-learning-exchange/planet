@@ -27,7 +27,7 @@
     </div>
     <div class="right-tile">
       <p i18n><b>Joined Members: ({{members.length}})</b></p>
-      <p *ngIf="members.length === 0; else memberList" i18n> - No member has Joined this team.</p>
+      <p *ngIf="members.length === 0; else memberList" i18n>No member has Joined this team.</p>
       <ng-template #memberList>
         <ul>
           <li *ngFor="let member of members">
