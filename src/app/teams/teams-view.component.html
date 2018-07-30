@@ -37,7 +37,7 @@
       </ng-template>
       <ng-container *ngIf="userStatus === 'member'">
         <p i18n><b>Requested Members: ({{team?.requests.length}})</b></p>
-        <p *ngIf="team?.requests.length === 0; else requestedList" i18n> - No member has requested to join.</p>
+        <p *ngIf="team?.requests.length === 0; else requestedList" i18n>No member has requested to join.</p>
         <ng-template #requestedList>
           <ul>
             <li *ngFor="let user of team?.requests">
