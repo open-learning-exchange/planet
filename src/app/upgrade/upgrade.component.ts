@@ -7,7 +7,6 @@ import { environment } from '../../environments/environment';
   styleUrls: [ './upgrade.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-
 export class UpgradeComponent {
   enabled: Boolean = true;
   message = 'Start upgrade';
