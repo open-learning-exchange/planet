@@ -4,6 +4,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDialog } from '@angular/material';
+import { DialogsAlertComponent } from '../shared/dialogs/dialogs-alert.component';
 
 @Component({
   templateUrl: './login.component.html',
@@ -14,13 +16,21 @@ export class LoginComponent implements OnInit {
 
   version: string = require( '../../../package.json').version;
   online = 'off';
+  alertMessages: any;
+  domainWarning = false;
 
   constructor(
     private couchService: CouchService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private dialog: MatDialog
+  ) {
+    this.domainWarning = window.location.hostname === ('localhost' || '127.0.0.1');
+  }
 
   ngOnInit() {
+    if ( this.domainWarning ) {
+      this.alertMessage();
+    }
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
       this.checkAdminExistence().pipe(
@@ -51,6 +61,14 @@ export class LoginComponent implements OnInit {
         return of(false); // user doesn't have permission so there is an admin
       })
     );
+  }
+
+  alertMessage() {
+    this.alertMessages = this.dialog.open(DialogsAlertComponent, {
+      data: {
+        message: 'Url can not be "localhost" or "127.0.0.1"'
+      }
+    });
   }
 
 }
