@@ -18,5 +18,9 @@ export const languages = [
   {
     'shortCode': 'ara',
     'name': 'عربى'
+  },
+  {
+    'shortCode': 'som',
+    'name': 'Somali'
   }
 ];

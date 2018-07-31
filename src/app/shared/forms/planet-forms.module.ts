@@ -6,6 +6,7 @@ import { FormErrorMessagesComponent } from './form-error-messages.component';
 import { PlanetRatingComponent } from './planet-rating.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
+import { PlanetTagInputComponent } from './planet-tag-input.component';
 
 @NgModule({
   imports: [
@@ -18,13 +19,15 @@ import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
     FormErrorMessagesComponent,
     PlanetRatingComponent,
     PlanetRatingStarsComponent,
-    PlanetStackedBarComponent
+    PlanetStackedBarComponent,
+    PlanetTagInputComponent
   ],
   declarations: [
     FormErrorMessagesComponent,
     PlanetRatingComponent,
     PlanetRatingStarsComponent,
-    PlanetStackedBarComponent
+    PlanetStackedBarComponent,
+    PlanetTagInputComponent
   ]
 })
 export class PlanetFormsModule {}

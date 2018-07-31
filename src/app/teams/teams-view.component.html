@@ -10,15 +10,13 @@
       Add Members
     </button>
     <ng-container [ngSwitch]="userStatus">
-      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team?._id, true)" i18n>
+      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
         Leave
       </button>
       <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()">
         <ng-container i18n>Request to Join</ng-container>
       </button>
-      <button i18n *ngSwitchCase="'requesting'" mat-button disabled>
-        Request pending
-      </button>
+      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
     </ng-container>
   </mat-toolbar>
   <div class="view-container">
@@ -26,20 +24,26 @@
       <p>{{team?.description}}</p>
     </div>
     <div class="right-tile">
-      <p i18n>Members</p>
-      <ul>
-        <li *ngFor="let member of members">
-          {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>
-        </li>
-      </ul>
-      <ng-container *ngIf="userStatus === 'member' && team?.requests.length > 0">
-        <p i18n>Requests</p>
+      <p i18n><b>Joined Members: ({{members.length}})</b></p>
+      <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
+      <ng-template #memberList>
         <ul>
-          <li *ngFor="let user of team?.requests">
-            {{user.replace('org.couchdb.user:','')}}
-            <button mat-button class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
+          <li *ngFor="let member of members">
+            {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>
           </li>
         </ul>
+      </ng-template>
+      <ng-container *ngIf="userStatus === 'member'">
+        <p i18n><b>Requested Members: ({{team?.requests.length}})</b></p>
+        <p *ngIf="team?.requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
+        <ng-template #requestedList>
+          <ul>
+            <li *ngFor="let user of team?.requests">
+              {{user.replace('org.couchdb.user:','')}}
+              <button mat-button class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
+            </li>
+          </ul>
+        </ng-template>
       </ng-container>
     </div>
   </div>

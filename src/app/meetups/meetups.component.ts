@@ -168,6 +168,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
+  addToMeetups(meetups) {
+    this.meetupService.attendMeetups(meetups).subscribe((res) => {
+      const msg = 'You have joined ' + meetups.length + ' meetups.';
+      this.planetMessageService.showMessage(msg);
+    });
+  }
+
   attendMeetup(meetup) {
     this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';

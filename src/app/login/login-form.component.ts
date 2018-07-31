@@ -9,17 +9,19 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
+import { SyncService } from '../shared/sync.service';
+import { PouchAuthService } from '../shared/database';
 
 const registerForm = {
   name: [],
   password: [ '', Validators.compose([
     Validators.required,
     CustomValidators.matchPassword('repeatPassword', false)
-    ]) ],
+  ]) ],
   repeatPassword: [ '', Validators.compose([
     Validators.required,
     CustomValidators.matchPassword('password', true)
-    ]) ]
+  ]) ]
 };
 
 const loginForm = {
@@ -40,7 +42,9 @@ export class LoginFormComponent {
     private userService: UserService,
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private syncService: SyncService,
+    private pouchAuthService: PouchAuthService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -87,16 +91,22 @@ export class LoginFormComponent {
     return this.router.navigateByUrl(this.returnUrl);
   }
 
-  createUser({ name, password }: {name: string, password: string}) {
-    this.couchService.put('_users/org.couchdb.user:' + name,
-      { 'name': name, 'password': password, 'roles': [], 'type': 'user', 'isUserAdmin': false, joinDate: Date.now() })
-    .pipe(switchMap(() => {
-      return this.couchService.put('shelf/org.couchdb.user:' + name, { });
-    })).subscribe((response: any) => {
-      this.planetMessageService.showMessage('User created: ' + response.id.replace('org.couchdb.user:', ''));
-      this.welcomeNotification(response.id);
-      this.login(this.userForm.value, true);
-    }, error => this.planetMessageService.showAlert('An error occurred please try again'));
+  createUser({ name, password }: { name: string, password: string }) {
+    const metadata = {
+      isUserAdmin: false,
+      joinDate: Date.now()
+    };
+
+    this.pouchAuthService.signup(name, password, metadata).pipe(
+      switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
+    ).subscribe(
+      res => {
+        this.planetMessageService.showMessage('User created: ' + res.id.replace('org.couchdb.user:', ''));
+        this.welcomeNotification(res.id);
+        this.login(this.userForm.value, true);
+      },
+      err => this.planetMessageService.showAlert('An error occurred please try again')
+    );
   }
 
   createParentSession({ name, password }) {
@@ -105,39 +115,72 @@ export class LoginFormComponent {
       { withCredentials: true, domain: this.userService.getConfig().parentDomain });
   }
 
-  login({ name, password }: {name: string, password: string}, isCreate: boolean) {
-    this.couchService.post('_session', { 'name': name, 'password': password }, { withCredentials: true })
-      .pipe(switchMap((data) => {
-        // Navigate into app
-        if (isCreate) {
-          return from(this.router.navigate( [ 'users/update/' + name ]));
-        } else {
-          return from(this.reRoute());
-        }
-      }), switchMap((routeSuccess) => {
-        if (!routeSuccess) {
-          throw routeSuccess;
-        }
-
-        // Post new session info to login_activity
-        const obsArr = [ this.userService.newSessionLog() ];
-        const localConfig = this.userService.getConfig();
-        const localAdminName = localConfig.adminName.split('@')[0];
-        // If not in e2e test or on a center, also add session to parent domain
-        if (!environment.test && localAdminName === name && localConfig.planetType !== 'center') {
-          obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
-        }
-        return forkJoin(obsArr).pipe(catchError(error => {
-          // 401 is for Unauthorized
-          if (error.status === 401) {
-            this.planetMessageService.showMessage('Can not login to parent planet.');
-          } else {
-            this.planetMessageService.showMessage('Error connecting to parent.');
-          }
-          return of(error);
-        }));
-      })).subscribe((res) => {
-
-      }, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
+  login({ name, password }: { name: string, password: string }, isCreate: boolean) {
+    this.pouchAuthService.login(name, password).pipe(
+      switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
+      switchMap(this.createSession(name, password)),
+      switchMap((sessionData) => {
+        const adminName = this.userService.getConfig().adminName.split('@')[0];
+        return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
+      })
+    ).subscribe(() => {}, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
   }
+
+  sendNotifications(userName, addedMember) {
+    const data = {
+      'user': 'org.couchdb.user:' + userName,
+      'message': 'New User ' + addedMember + ' has joined.',
+      'link': '/users/',
+      'linkParams': { 'search': addedMember },
+      'type': 'new user',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+    return this.couchService.post('notifications', data);
+  }
+
+  createSession(name, password) {
+    return () => {
+      // Post new session info to login_activity
+      const obsArr = this.loginObservables(name, password);
+      return forkJoin(obsArr).pipe(catchError(error => {
+        // 401 is for Unauthorized
+        if (error.status === 401) {
+          this.planetMessageService.showMessage('Can not login to parent planet.');
+        } else {
+          this.planetMessageService.showMessage('Error connecting to parent.');
+        }
+        return of(error);
+      }));
+    };
+  }
+
+  loginObservables(name, password) {
+    const obsArr = [ this.userService.newSessionLog() ];
+    const localConfig = this.userService.getConfig();
+    const localAdminName = localConfig.adminName.split('@')[0];
+    if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
+      return obsArr;
+    }
+    obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
+    if (localConfig.registrationRequest === 'pending') {
+      obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
+    }
+    return obsArr;
+  }
+
+  getConfigurationSyncDown(configuration, credentials) {
+    const replicators =  {
+      dbSource: 'communityregistrationrequests',
+      dbTarget: 'configurations',
+      type: 'pull',
+      date: true,
+      selector: {
+        code: configuration.code
+      }
+    };
+    return this.syncService.sync(replicators, credentials);
+  }
+
 }

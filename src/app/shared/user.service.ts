@@ -57,6 +57,10 @@ export class UserService {
     return this.configuration;
   }
 
+  setConfig(config) {
+    this.configuration = config;
+  }
+
   setUserConfigAndShelf(user: any) {
     return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
         // If not found in users database, just use userCtx object
