@@ -31,7 +31,7 @@
     *ngFor="let notification of notifications"
     (click)="readNotification(notification)">
     <p><b>{{notification.message}}</b><p>
-    <p class="small">{{notification.time | date: 'MMM d, yyyy'}}</p>
+    <p class="small">{{notification.time | date: 'mediumDate'}}</p>
     <mat-divider></mat-divider>
   </a>
   <a routerLink="/notifications" mat-menu-item>See All</a>
