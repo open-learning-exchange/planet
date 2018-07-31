@@ -75,11 +75,7 @@
           <context context-type="linenumber">2</context>
         </context-group>
         <target xml:lang="so" state="translated">
-{VAR_DOORO, dooro, aqbal [accept] diid [reject] aanad laheyn {unlink} tirtirka {delete}}</target>
-        <alt-trans>
-          <target xml:lang="so">
-{VAR_DOORO, dooro, aqbal [aqbalid] diid [ku diiddan] aanad laheyn {furfuran} tirtirka {tirtir}}</target>
-        </alt-trans>
+{VAR_SELECT, select, accept {accept} reject {reject} unlink {unlink} delete {delete} }</target>
       </trans-unit>
       <trans-unit id="8af474afa842e4a721a11dbd41b653dbdd8af972" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
@@ -1197,9 +1193,6 @@
           <context context-type="linenumber">3</context>
         </context-group>
         <target xml:lang="so" state="translated">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
-        <alt-trans>
-          <target xml:lang="so">{VAR_DOORO, dooro, ha {Deselect} maya {Select} }</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="75c7f106f1b6a0fcee86b4bafe5ea74877382b03" datatype="html">
         <source>Step title</source>
