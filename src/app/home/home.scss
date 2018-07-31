@@ -125,19 +125,7 @@
 .menu-item-notification {
   height: auto;
   white-space: unset;
-
-  b{
-    font-size: 1rem;
-    line-height: 1.4rem;
-  }
-
-  .not-date {
-    font-style: italic;
-    font-size: 0.8rem;
-    color: #000000;
-    display: block;
-    line-height: 1.2rem;
-  }
+  line-height: 1rem;
 }
 
 // Top toolbar is smaller on small screens
