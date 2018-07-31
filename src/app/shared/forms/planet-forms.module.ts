@@ -23,8 +23,6 @@ import { PlanetTagInputComponent } from './planet-tag-input.component';
     PlanetRatingStarsComponent,
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
-    TdTextEditorComponent,
-    TdMarkdownComponent,
     CovalentTextEditorModule,
     CovalentMarkdownModule
   ],
@@ -34,8 +32,6 @@ import { PlanetTagInputComponent } from './planet-tag-input.component';
     PlanetRatingStarsComponent,
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
-    TdTextEditorComponent,
-    TdMarkdownComponent,
     PlanetStackedBarComponent
   ]
 })
