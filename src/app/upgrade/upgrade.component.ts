@@ -42,7 +42,7 @@ export class UpgradeComponent {
       this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams })
         .subscribe(result => {
           result.split('\n').forEach(line => {
-            if (line.includes('timeout')) {
+            if (line.includes('timeout') || line.includes('server misbehaving')) {
               this.addLine(line, 'upgrade_timeout');
               return;
             }
@@ -50,7 +50,7 @@ export class UpgradeComponent {
             this.addLine(line, 'upgrade_success');
           });
 
-          if (result.includes('timeout')) {
+          if (result.includes('timeout') || result.includes('server misbehaving')) {
             this.handleTimeout();
             return;
           }
