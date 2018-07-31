@@ -28,11 +28,11 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    if ( this.domainWarning ) {
-      this.alertMessage();
-    }
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
+      if ( this.domainWarning ) {
+        this.alertMessage();
+      }
       this.checkAdminExistence().pipe(
         switchMap(noAdmin => {
           // false means there is admin
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
   alertMessage() {
     this.alertMessages = this.dialog.open(DialogsAlertComponent, {
       data: {
-        message: 'Url can not be "localhost" or "127.0.0.1"'
+        message: 'Some feature might not work on "localhost" or "127.0.0.1". Please use IP Address or hostname of your machine.'
       }
     });
   }
