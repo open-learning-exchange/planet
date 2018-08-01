@@ -1,7 +1,10 @@
 <mat-card class="dashboard-card">
   <div class="left-tile accent-color">
     <mat-icon svgIcon={{cardTitle}}></mat-icon>
-    <span>{{cardTitle}}</span>
+    <span><a *ngIf="cardTitle==='myLibrary'" routerLink="resources">{{cardTitle}}</a></span>
+    <span><a *ngIf="cardTitle==='myCourses'" routerLink="courses">{{cardTitle}}</a></span>
+    <span><a *ngIf="cardTitle==='myTeams'" routerLink="teams">{{cardTitle}}</a></span>
+    <span><a *ngIf="cardTitle==='myMeetups'" routerLink="meetups">{{cardTitle}}</a></span>
     <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="courses/myProgress">My Progress</a>
   </div>
   <div class="right-tile" #items>
