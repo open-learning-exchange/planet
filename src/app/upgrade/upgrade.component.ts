@@ -47,12 +47,15 @@ export class UpgradeComponent {
               return;
             }
 
+            if (line.includes('invalid reference format')) {
+              this.handleError(line);
+              return;
+            }
+
             this.addLine(line, 'upgrade_success');
           });
 
-          if (result.includes('timeout') ||
-              result.includes('server misbehaving') ||
-              result.includes('invalid reference format')) {
+          if (result.includes('timeout') || result.includes('server misbehaving')) {
             this.handleTimeout();
             return;
           }
