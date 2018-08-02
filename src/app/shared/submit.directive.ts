@@ -21,7 +21,7 @@ export class SubmitDirective implements OnDestroy {
   }
 
   ngOnDestroy() {
-    for (let entry of this.dialog.openDialogs) {
+    for (const entry of this.dialog.openDialogs) {
       if (entry === this.spinnerDialog) {
         this.spinnerDialog.close();
       }
