@@ -41,34 +41,38 @@ export class UpgradeComponent {
 
       this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams })
         .subscribe(result => {
-          result.split('\n').forEach(line => {
-            if (line.includes('timeout') || line.includes('server misbehaving')) {
-              this.addLine(line, 'upgrade_timeout');
-              return;
-            }
-
-            if (line.includes('invalid reference format')) {
-              this.handleError(line);
-              return;
-            }
-
-            this.addLine(line, 'upgrade_success');
-          });
-
-          if (result.includes('timeout') || result.includes('server misbehaving')) {
-            this.handleTimeout();
-            return;
-          }
-
-          this.message = 'Success';
-          this.error = false;
-          this.done = true;
+          this.handleResult(result);
         }, err => {
           this.handleError(err);
         });
     }, err => {
       this.handleError(err);
     });
+  }
+
+  handleResult(result) {
+    result.split('\n').forEach(line => {
+      if (line.includes('timeout') || line.includes('server misbehaving')) {
+        this.addLine(line, 'upgrade_timeout');
+        return;
+      }
+
+      if (line.includes('invalid reference format')) {
+        this.handleError(line);
+        return;
+      }
+
+      this.addLine(line, 'upgrade_success');
+    });
+
+    if (result.includes('timeout') || result.includes('server misbehaving')) {
+      this.handleTimeout();
+      return;
+    }
+
+    this.message = 'Success';
+    this.error = false;
+    this.done = true;
   }
 
   getDateTime() {
