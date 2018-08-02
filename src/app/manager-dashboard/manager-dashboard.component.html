@@ -21,8 +21,10 @@
     <button i18n mat-raised-button *ngIf="pushedItems?.resources?.length" (click)="getPushedItem('resources')">
       Get Resources ({{pushedItems?.resources?.length}})
     </button>
-    <a routerLink="sync" *ngIf="requestStatus === 'accepted'" i18n mat-raised-button>Manage Sync</a>
-    <a routerLink="/upgrade" i18n mat-raised-button>Upgrade</a>
+    <ng-container *ngIf="requestStatus === 'accepted'">
+      <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
+      <a routerLink="/upgrade" i18n mat-raised-button>Upgrade</a>
+    </ng-container>
     <a routerLink="/users" i18n mat-raised-button>Users</a>
   </div>
   <div class="view-container" *ngIf="planetType !== 'community'">
