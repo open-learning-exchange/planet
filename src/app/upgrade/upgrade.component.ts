@@ -50,7 +50,9 @@ export class UpgradeComponent {
             this.addLine(line, 'upgrade_success');
           });
 
-          if (result.includes('timeout') || result.includes('server misbehaving')) {
+          if (result.includes('timeout') ||
+              result.includes('server misbehaving') ||
+              result.includes('invalid reference format')) {
             this.handleTimeout();
             return;
           }
