@@ -135,7 +135,8 @@ export class CoursesService {
 
   getUsersCourses(userId) {
     this.couchService.post('courses_progress/_find', findDocuments({ 'userId': userId }, [ 'courseId' ])).subscribe(response => {
-      const courseIds = response.docs.map(c => c.courseId);
+      // Added [ 0 ] as when no record it will return all records
+      const courseIds = [ 0 ].concat(response.docs.map(c => c.courseId));
       this.getCourses({ ids: courseIds });
     });
   }
