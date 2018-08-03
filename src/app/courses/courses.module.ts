@@ -18,6 +18,7 @@ import { CoursesProgressBarComponent } from './progress-courses/courses-progress
 import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
 import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -30,7 +31,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     MaterialModule,
     ResourcesModule,
     ExamsModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    PlanetLanguageModule
   ],
   declarations: [
     CoursesComponent,
