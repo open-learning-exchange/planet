@@ -12,7 +12,6 @@ import { of } from 'rxjs';
 
 export class LoginComponent implements OnInit {
 
-  version: string = require( '../../../package.json').version;
   online = 'off';
 
   constructor(
@@ -51,6 +50,10 @@ export class LoginComponent implements OnInit {
         return of(false); // user doesn't have permission so there is an admin
       })
     );
+  }
+
+  getPlanetVersion() {
+    return require( '../../../package.json').version;
   }
 
 }
