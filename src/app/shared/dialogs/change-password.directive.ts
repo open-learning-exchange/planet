@@ -1,5 +1,7 @@
 import { Directive, HostListener, Input } from '@angular/core';
+// TODO add do operator?
 import { forkJoin, of } from 'rxjs';
+import { tap } from 'rxjs/operators'
 import { switchMap, catchError } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -70,61 +72,69 @@ export class ChangePasswordDirective {
     private validatorService: ValidatorService
   ) {}
 
+  //TODO: change behavior such that a wrong password input results in an error
   @HostListener('click')
   openChangePasswordForm() {
     const title = 'Change Password';
+    const onSubmit = (formGroup) => {
+      this.changePassword(formGroup, this.userDetail || this.userService.get())
+        .pipe(debug('Dialog onSubmit'))
+        .subscribe((responses) => {
+          this.showStatusOf(responses);
+          this.dialogsFormService.closeDialog();
+        }, (error) => this.planetMessageService.showAlert('Error changing password'));
+    };
     this.dialogsFormService
-      .confirm(title, changePasswordFields, this.changePasswordFormGroup)
-      .pipe(debug('Dialog confirm'))
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.changePassword(res, this.userDetail || this.userService.get());
-        }
-      });
+      .openDialog(title, changePasswordFields, this.changePasswordFormGroup, onSubmit);
+  }
+
+  showStatusOf(responses) {
+    const errors = responses.filter(response => response.ok === false);
+    if (errors.length === 0) {
+      this.planetMessageService.showMessage('Password successfully updated');
+    } else {
+      this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
+    }
   }
 
   changePassword(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
-    this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
-      return forkJoin([ ...responses.map(r => of(r)), this.reinitSession(userDetail.name, credentialData.password) ]);
-    })).subscribe((responses) => {
-      const errors = responses.filter(r => r.ok === false);
-      if (errors.length === 0) {
-        this.planetMessageService.showMessage('Password successfully updated');
-      } else {
-        this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
-      }
-    }, (error) => this.planetMessageService.showAlert('Error changing password'));
-  }
 
-  changePasswordRequest(userData) {
-    // Manager role also has isUserAdmin true so check role to be empty
-    const isUserAdmin = (this.userService.get().isUserAdmin && !this.userService.get().roles.length);
-    return this.couchService.put(this.dbName + '/' + userData._id, userData).pipe(switchMap((res) => {
-      if (isUserAdmin) {
-        return forkJoin([ of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData) ]);
-      }
-      return of(res);
+    const userHasAdminRole = this.userService.get().isUserAdmin;
+    const isUserManager = this.userService.get().roles.length;
+    const isUserAdmin = userHasAdminRole && !isUserManager;
+
+    return this.makeChangePasswordRequest(updateDoc, isUserAdmin).pipe(
+      switchMap((responses: any[]) => {
+      return forkJoin( responses.map(r => of(r)), this.reinitSession(userDetail.name, credentialData.password, isUserAdmin) );
     }));
   }
 
-  passwordError(reason: string) {
-    return () => {
-      return of({ ok: false, reason: reason });
-    };
+  makeChangePasswordRequest(userData, isUserAdmin) {
+    return this.couchService.put(this.dbName + '/' + userData._id, userData).pipe(switchMap((result) => {
+      if (isUserAdmin) {
+        return forkJoin([ of(result), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData) ]);
+      } else {
+        return of([ result ]);
+      }
+    }));
   }
-
-  reinitSession(username, password) {
+  reinitSession(username, password, isUserAdmin) {
     return forkJoin([
-      this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
-      this.couchService.post('_session', { 'name': this.userService.getConfig().adminName, 'password': password },
-        { withCredentials: true, domain: this.userService.getConfig().parentDomain })
+      this.updateSessionUser(username, password), 
+      ...(isUserAdmin ? [this.updateSessionAdmin(password)] : [ ])
     ]).pipe(catchError(() => {
       // Silent error for now so other specific messages are shown
       return of({ ok: true });
     }));
   }
-
+  updateSessionUser(username, password) {
+    return this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true });
+  }
+  updateSessionAdmin(password) {
+    return this.couchService.post('_session', { 'name': this.userService.getConfig().adminName, 'password': password },
+        { withCredentials: true, domain: this.userService.getConfig().parentDomain });
+  }
   updatePasswordOnParent(userData) {
     const adminName = 'org.couchdb.user:' + this.userService.getConfig().adminName;
     return this.couchService.get('_users/' + adminName , { domain: this.userService.getConfig().parentDomain })
@@ -146,6 +156,12 @@ export class ChangePasswordDirective {
       switchMap((response) => {
         return of(response);
       }));
+  }
+
+  passwordError(reason: string) {
+    return () => {
+      return of({ ok: false, reason: reason });
+    };
   }
 
 }

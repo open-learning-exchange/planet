@@ -23,7 +23,7 @@ export class DialogsFormComponent {
   constructor(public dialogRef: MatDialogRef<DialogsFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   onSubmit(formGroup: FormGroup) {
-    if (this.data && formGroup.valid) {
+    if (this.data.submitForm && formGroup.valid) {
       return this.data.submitForm(formGroup.value);
     }
     // default behavior
