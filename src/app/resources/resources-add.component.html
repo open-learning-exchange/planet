@@ -20,7 +20,7 @@
       </mat-grid-list>
       <div class="form-width-3">
         <mat-form-field class="full-width">
-          <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
+          <textarea maxlength="600" matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>

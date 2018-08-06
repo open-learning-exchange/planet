@@ -18,7 +18,7 @@
       </div>
       <div>
         <mat-form-field>
-          <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
+          <textarea maxlength="600" matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
           <mat-error>
             <planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages>
           </mat-error>
