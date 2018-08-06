@@ -8,16 +8,15 @@
   <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
-      <div>
-        <mat-form-field>
+      <div class="form-width-3">
+        <mat-form-field class="full-width">
           <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
           <mat-error>
             <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
           </mat-error>
         </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
+        <div>
+        <mat-form-field class="full-width">
           <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
           <mat-error>
             <planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages>
@@ -25,13 +24,13 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field style="width:205pt">
           <input matInput [matDatepicker]="datepickerStart" i18n-placeholder placeholder="Start Date" formControlName="startDate">
           <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
           <mat-datepicker #datepickerStart></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field style="width:205pt">
           <input matInput [matDatepicker]="datepickerEnd" i18n-placeholder placeholder="End Date" formControlName="endDate">
           <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
           <mat-datepicker #datepickerEnd></mat-datepicker>
@@ -39,30 +38,29 @@
         </mat-form-field>
       </div>
       <div>
-        <label i18n>Recurring</label>
+        <label i18n>Recurring Frequency  </label>
         <mat-radio-group formControlName="recurring">
-          <label i18n>Frequency</label>
-          <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
-          <mat-radio-button value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
-          <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
+          <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" il8n style="margin:10px">Daily  </mat-radio-button>
+          <mat-radio-button value="weekly" (change)="toggleDaily($event.value, true)" i18n style="margin:10px">Weekly  </mat-radio-button>
+          <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n style="margin:10px">None  </mat-radio-button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
-        </mat-radio-group>
+        </mat-radio-group><br>
       </div>
       <div *ngIf="meetupForm.controls.recurring.value==='weekly'">
         <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field style="width:205pt">
           <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field style="width:205pt">
           <input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field class="full-width">
           <mat-select i18n-placeholder placeholder="Category" formControlName="category">
             <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
           </mat-select>
@@ -70,7 +68,7 @@
             <planet-form-error-messages [control]="meetupForm.controls.category"></planet-form-error-messages>
           </mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="full-width">
           <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
           <mat-error>
             <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
@@ -79,6 +77,8 @@
       </div>
       <button mat-raised-button type="submit" color="primary" [disabled]="!meetupForm.dirty" i18n>Save</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      </div>
     </form>
   </div>
 </div>
+
