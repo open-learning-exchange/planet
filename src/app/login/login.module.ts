@@ -11,7 +11,6 @@ import { ConfigurationGuard } from '../configuration/configuration-guard.service
 import { MatTooltipModule } from '@angular/material';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { PlanetLanguageModule } from '../shared/planet-language.module';
-import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -22,7 +21,6 @@ import { PlanetLanguageModule } from '../shared/planet-language.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     ConfigurationModule,
-    PlanetLanguageModule,
     PlanetLanguageModule
   ],
   declarations: [
