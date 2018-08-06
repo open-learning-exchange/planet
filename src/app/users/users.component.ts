@@ -255,7 +255,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   back() {
-    this.router.navigate([ '/' ]);
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
   updateSelectedRoles(newSelection: string[]) {
