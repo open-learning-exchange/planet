@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MatDialog } from '@angular/material';
-import { DialogsAlertComponent } from '../shared/dialogs/dialogs-alert.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './login.component.html',
@@ -64,9 +64,11 @@ export class LoginComponent implements OnInit {
   }
 
   alertMessage() {
-    this.alertMessages = this.dialog.open(DialogsAlertComponent, {
+    this.alertMessages = this.dialog.open(DialogsPromptComponent, {
       data: {
-        message: 'Some feature might not work on "localhost" or "127.0.0.1". Please use IP Address or hostname of your machine.'
+        extraMessage: 'Some feature might not work on "localhost" or "127.0.0.1". Please use IP Address or hostname of your machine.',
+        cancelable: false,
+        showMainParagraph: false
       }
     });
   }

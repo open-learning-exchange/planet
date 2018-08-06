@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsPromptComponent } from './dialogs-prompt.component';
-import { DialogsAlertComponent } from './dialogs-alert.component';
 import { DialogsViewComponent } from './dialogs-view.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../forms/planet-forms.module';
@@ -30,8 +29,7 @@ import { ChangePasswordDirective } from './change-password.directive';
     FeedbackDirective,
     DialogsListComponent,
     DialogsLoadingComponent,
-    ChangePasswordDirective,
-    DialogsAlertComponent
+    ChangePasswordDirective
   ],
   declarations: [
     DialogsFormComponent,
@@ -40,8 +38,7 @@ import { ChangePasswordDirective } from './change-password.directive';
     FeedbackDirective,
     DialogsListComponent,
     DialogsLoadingComponent,
-    ChangePasswordDirective,
-    DialogsAlertComponent
+    ChangePasswordDirective
   ],
   providers: [
     DialogsFormService,
@@ -52,8 +49,7 @@ import { ChangePasswordDirective } from './change-password.directive';
     DialogsViewComponent,
     DialogsPromptComponent,
     DialogsListComponent,
-    DialogsLoadingComponent,
-    DialogsAlertComponent
+    DialogsLoadingComponent
   ]
 })
 export class PlanetDialogsModule {}
