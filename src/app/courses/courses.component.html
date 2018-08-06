@@ -73,11 +73,11 @@
         </button>
         <mat-cell>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission(element._id)"  >
+            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseAdmission(element._id)"  >
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
             </a>
-            <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
+            <a mat-menu-item *ngIf="element.admission && element.steps.length" (click)="courseResign(element._id)">
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
