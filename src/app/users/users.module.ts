@@ -10,6 +10,7 @@ import { UsersRouterModule } from './users-router.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { PlanetLanguageModule } from '../shared/planet-language.module';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     PlanetDialogsModule,
-    MaterialModule
+    MaterialModule,
+    PlanetLanguageModule
   ],
   declarations: [
     UsersComponent,
