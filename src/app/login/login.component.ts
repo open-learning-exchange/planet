@@ -16,22 +16,19 @@ export class LoginComponent implements OnInit {
 
   version: string = require( '../../../package.json').version;
   online = 'off';
-  alertMessages: any;
-  domainWarning = false;
 
   constructor(
     private couchService: CouchService,
     private router: Router,
     private dialog: MatDialog
-  ) {
-    this.domainWarning = window.location.hostname === ('localhost' || '127.0.0.1');
-  }
+  ) {}
 
   ngOnInit() {
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
-      if ( this.domainWarning ) {
-        this.alertMessage();
+      if (window.location.hostname === ('localhost' || '127.0.0.1')) {
+        // setTimeout fixes ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => this.alertMessage(), 50);
       }
       this.checkAdminExistence().pipe(
         switchMap(noAdmin => {
@@ -64,7 +61,7 @@ export class LoginComponent implements OnInit {
   }
 
   alertMessage() {
-    this.alertMessages = this.dialog.open(DialogsPromptComponent, {
+    this.dialog.open(DialogsPromptComponent, {
       data: {
         extraMessage: 'Some feature might not work on "localhost" or "127.0.0.1". Please use IP Address or hostname of your machine.',
         cancelable: false,
