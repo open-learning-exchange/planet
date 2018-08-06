@@ -29,7 +29,7 @@
     </ng-container>
     <ng-container *ngIf="!parent">
       <ng-container *ngIf="user.isUserAdmin">
-        <button *ngIf="planetType !== 'center'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
+        <button *ngIf="planetType !== 'center' && this.userService.getConfig().registrationRequest === 'accepted'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
           <span i18n>Send Courses</span>
           <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
@@ -71,46 +71,44 @@
         <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
-        <mat-cell>
-          <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseAdmission(element._id)"  >
-              <mat-icon>school</mat-icon>
-              <span i18n>Admission</span>
-            </a>
-            <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
-              <mat-icon>clear</mat-icon>
-              <span i18n>Resign</span>
-            </a>
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
-              <mat-icon>feedback</mat-icon>
-              <span i18n>Feedback</span>
-            </a>
-            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
-            </a>
-            <a mat-menu-item [routerLink]="['/courses/view', element._id]">
-              <mat-icon>visibility</mat-icon>
-              <span i18n>View Course</span>
-            </a>
-            <a mat-menu-item routerLink="add">
-              <mat-icon>credit_card</mat-icon>
-              <span i18n>Credits</span>
-            </a>
-            <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
-              <mat-icon>equalizer</mat-icon>
-              <span i18n>Progress</span>
-            </a>
-            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
-              <mat-icon>delete_forever</mat-icon>
-              <span i18n>Delete</span>
-            </button>
-          </mat-menu>
-        </mat-cell>
         <div class="course-progress" *ngIf="element.admission">
           <span i18n>Your progress:</span>
           <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
         </div>
+        <mat-menu #resourceMenu="matMenu">
+          <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseAdmission(element._id)"  >
+            <mat-icon>school</mat-icon>
+            <span i18n>Admission</span>
+          </a>
+          <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
+            <mat-icon>clear</mat-icon>
+            <span i18n>Resign</span>
+          </a>
+          <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+            <mat-icon>feedback</mat-icon>
+            <span i18n>Feedback</span>
+          </a>
+          <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
+            <mat-icon>folder</mat-icon>
+            <span i18n>Manage</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/courses/view', element._id]">
+            <mat-icon>visibility</mat-icon>
+            <span i18n>View Course</span>
+          </a>
+          <a mat-menu-item routerLink="add">
+            <mat-icon>credit_card</mat-icon>
+            <span i18n>Credits</span>
+          </a>
+          <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
+            <mat-icon>equalizer</mat-icon>
+            <span i18n>Progress</span>
+          </a>
+          <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
+            <mat-icon>delete_forever</mat-icon>
+            <span i18n>Delete</span>
+          </button>
+        </mat-menu>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="info">
