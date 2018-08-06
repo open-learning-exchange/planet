@@ -43,7 +43,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       this.createChart(this.courses, submissions);
     });
     this.submissionsService.updateSubmissions({ query: { 'selector': { 'user': this.user.name } } });
-    this.coursesService.getCourses({ ids: this.userService.shelf.courseIds });
+    this.coursesService.getUsersCourses(this.user._id);
   }
 
   ngOnDestroy() {

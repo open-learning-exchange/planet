@@ -1,6 +1,10 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { CouchService } from '../shared/couchdb.service';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
@@ -17,7 +21,7 @@ export class UpgradeComponent {
   cleanOutput = '';
   timeoutTrials = 0;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private couchService: CouchService, private userService: UserService) {
     this.addLine('Not started');
   }
 
@@ -32,37 +36,53 @@ export class UpgradeComponent {
   }
 
   upgrade() {
-    this.http.get(environment.upgradeAddress, { responseType: 'text' }).subscribe(result => {
-      result.split('\n').forEach(line => {
-        if (line.includes('timeout')) {
-          this.addLine(line, 'upgrade_timeout');
-          return;
-        }
+    this.getParentVersion().subscribe((parentVersion: string) => {
+      const requestParams = new HttpParams().set('v', parentVersion.trim());
 
-        this.addLine(line, 'upgrade_success');
-      });
-
-      if (result.includes('timeout')) {
-        this.handleTimeout();
-        return;
-      }
-
-      this.message = 'Success';
-      this.error = false;
-      this.done = true;
+      this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams })
+        .subscribe(result => {
+          this.handleResult(result);
+        }, err => {
+          this.handleError(err);
+        });
     }, err => {
       this.handleError(err);
     });
   }
 
-  getDateTime () {
+  handleResult(result) {
+    result.split('\n').forEach(line => {
+      if (line.includes('timeout') || line.includes('server misbehaving')) {
+        this.addLine(line, 'upgrade_timeout');
+        return;
+      }
+
+      if (line.includes('invalid reference format')) {
+        this.handleError(line);
+        return;
+      }
+
+      this.addLine(line, 'upgrade_success');
+    });
+
+    if (result.includes('timeout') || result.includes('server misbehaving')) {
+      this.handleTimeout();
+      return;
+    }
+
+    this.message = 'Success';
+    this.error = false;
+    this.done = true;
+  }
+
+  getDateTime() {
     const date = new Date();
-    const d = ('0'  + date.getDate()).slice(-2);
-    const M = ('0'  + date.getMonth()).slice(-2);
+    const d = ('0' + date.getDate()).slice(-2);
+    const M = ('0' + date.getMonth()).slice(-2);
     const Y = date.getFullYear();
-    const h = ('0'  + date.getHours()).slice(-2);
-    const m = ('0'  + date.getMinutes()).slice(-2);
-    const s = ('0'  + date.getSeconds()).slice(-2);
+    const h = ('0' + date.getHours()).slice(-2);
+    const m = ('0' + date.getMinutes()).slice(-2);
+    const s = ('0' + date.getSeconds()).slice(-2);
     return `[${d}/${M}/${Y} ${h}:${m}:${s}]`;
   }
 
@@ -102,5 +122,15 @@ export class UpgradeComponent {
     this.message = 'Start upgrade';
     this.error = true;
     this.done = true;
+  }
+
+  getParentVersion() {
+    const opts = {
+      domain: this.userService.getConfig().parentDomain,
+      responseType: 'text',
+      withCredentials: false,
+      headers: { 'Content-Type': 'text/plain' }
+    };
+    return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
   }
 }

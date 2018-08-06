@@ -133,4 +133,12 @@ export class CoursesService {
     return this.ratingService.createItemList(courses, ratings);
   }
 
+  getUsersCourses(userId) {
+    this.couchService.post('courses_progress/_find', findDocuments({ 'userId': userId }, [ 'courseId' ])).subscribe(response => {
+      // Added [ 0 ] as when no record it will return all records
+      const courseIds = response.docs.map(c => c.courseId).concat([ '0' ]);
+      this.getCourses({ ids: courseIds });
+    });
+  }
+
 }
