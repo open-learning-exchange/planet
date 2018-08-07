@@ -4,6 +4,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDialog } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './login.component.html',
@@ -17,12 +19,17 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private couchService: CouchService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
+      if (window.location.hostname === ('localhost' || '127.0.0.1')) {
+        // setTimeout fixes ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => this.alertMessage(), 50);
+      }
       this.checkAdminExistence().pipe(
         switchMap(noAdmin => {
           // false means there is admin
@@ -51,6 +58,16 @@ export class LoginComponent implements OnInit {
         return of(false); // user doesn't have permission so there is an admin
       })
     );
+  }
+
+  alertMessage() {
+    this.dialog.open(DialogsPromptComponent, {
+      data: {
+        extraMessage: 'Some feature might not work on "localhost" or "127.0.0.1". Please use IP Address or hostname of your machine.',
+        cancelable: false,
+        showMainParagraph: false
+      }
+    });
   }
 
 }
