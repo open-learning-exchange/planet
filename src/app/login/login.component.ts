@@ -14,8 +14,8 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 
 export class LoginComponent implements OnInit {
 
-  version: string = require( '../../../package.json').version;
   online = 'off';
+  planetVersion: string;
 
   constructor(
     private couchService: CouchService,
@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.getPlanetVersion();
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
       if (window.location.hostname === ('localhost' || '127.0.0.1')) {
@@ -58,6 +59,12 @@ export class LoginComponent implements OnInit {
         return of(false); // user doesn't have permission so there is an admin
       })
     );
+  }
+
+  getPlanetVersion() {
+    const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
+    this.couchService.getUrl('version', opts).pipe(catchError(() => of(require('../../../package.json').version)))
+      .subscribe((version: string) => this.planetVersion = version);
   }
 
   alertMessage() {
