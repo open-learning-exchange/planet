@@ -7,6 +7,7 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -26,7 +27,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private planetMessageService: PlanetMessageService,
   ) { }
 
   ngOnInit() {
@@ -77,6 +79,19 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   updateRating(itemId) {
     this.coursesService.requestCourse({ courseId: itemId, forceLatest: true });
+  }
+
+  courseToggle(courseId, type) {
+    if (type === 'resign') {
+      this.coursesService.courseResign(courseId).subscribe((res) => {
+        this.coursesService.updateCourse({ course: this.courseDetail, progress: this.progress });
+        this.planetMessageService.showMessage('Course successfully resigned from myCourses');
+      }, (error) => ((error)));
+    }else {
+      this.coursesService.courseAdmission(courseId).subscribe((res) => {
+        this.planetMessageService.showMessage('Course added to your dashboard');
+      }, (error) => ((error)));
+    }
   }
 
 }

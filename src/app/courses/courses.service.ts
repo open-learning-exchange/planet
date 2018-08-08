@@ -35,6 +35,7 @@ export class CoursesService {
       this.updateCourses(this.createCourseList(this.courses, ratings.docs));
       this.updateCourse({ course: this.createCourseList([ this.course ], ratings.docs)[0], progress: this.progress });
     });
+    console.log(this.userService.getShelf());
   }
 
   updateCourses(courses) {
@@ -139,6 +140,27 @@ export class CoursesService {
       const courseIds = response.docs.map(c => c.courseId).concat([ '0' ]);
       this.getCourses({ ids: courseIds });
     });
+  }
+
+  courseResign(courseId) {
+    const userShelf: any = { courseIds: [ ...this.userService.shelf.courseIds ], ...this.userService.shelf };
+    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
+    userShelf.courseIds.splice(myCourseIndex, 1);
+    return this.updateShelf(userShelf);
+  }
+
+  courseAdmission(courseId) {
+    const userShelf: any = { courseIds: [ ...this.userService.shelf.courseIds ], ...this.userService.shelf };
+    userShelf.courseIds.push(courseId);
+    return this.updateShelf(userShelf);
+  }
+
+  updateShelf(newShelf) {
+   return this.couchService.put('shelf/' + this.userService.get()._id, newShelf).pipe(switchMap((res) => {
+      newShelf._rev = res.rev;
+      this.userService.shelf = newShelf;
+      return of(res);
+    }));
   }
 
 }
