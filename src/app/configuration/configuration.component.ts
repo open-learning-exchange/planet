@@ -27,6 +27,13 @@ const removeProtocol = (str: string) => {
     .mat-raised-button {
       margin: 0px 2px 2px 0px;
     }
+    .configuration-form {
+      grid-template-areas: "none none ." "none none none";
+      justify-items: center;
+    }
+    .advanced {
+      grid-column-start: 2;
+    }
   ` ]
 })
 export class ConfigurationComponent implements OnInit {

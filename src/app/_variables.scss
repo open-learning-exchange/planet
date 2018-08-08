@@ -37,6 +37,12 @@ $view-container-height: calc(100vh - 352px);
 // Height of dashboard
 $dashboard-height: calc(100vh - 128px);
 $dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);
+// Widths for forms fitting 1, 2, or 3 mat-input-fields horizontally
+$form-width-3: 550px;
+$form-width-2: 365px;
+$form-width-1: 181px;
+// Width for form field in grid layout
+$form-field-width: 180px;
 
 /*
  * Old Planet Material Colors
