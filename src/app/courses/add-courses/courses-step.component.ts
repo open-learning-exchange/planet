@@ -21,7 +21,7 @@ export class CoursesStepComponent implements OnDestroy {
   stepForm: FormGroup;
   dialogRef: MatDialogRef<DialogsListComponent>;
   activeStep: any;
-  activeStepIndex: number = -1;
+  activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
 
   constructor(
