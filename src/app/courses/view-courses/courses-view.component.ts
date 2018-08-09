@@ -87,8 +87,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.coursesService.updateCourse({ course: this.courseDetail, progress: this.progress });
         this.planetMessageService.showMessage('Course successfully resigned from myCourses');
       }, (error) => ((error)));
-    }else {
+    } else {
       this.coursesService.courseAdmission(courseId).subscribe((res) => {
+        this.coursesService.updateCourse({ course: this.courseDetail, progress: this.progress });
         this.planetMessageService.showMessage('Course added to your dashboard');
       }, (error) => ((error)));
     }

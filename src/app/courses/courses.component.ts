@@ -265,7 +265,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setupList(this.courses.data,  this.userShelf.courseIds);
         this.planetMessageService.showMessage('Course successfully resigned from myCourses');
       }, (error) => ((error)));
-    }else {
+    } else {
       this.coursesService.courseAdmission(courseId).subscribe((res) => {
         this.setupList(this.courses.data,  this.userShelf.courseIds);
         this.planetMessageService.showMessage('Course added to your dashboard');
