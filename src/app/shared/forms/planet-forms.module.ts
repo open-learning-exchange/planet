@@ -9,6 +9,7 @@ import { PlanetRatingComponent } from './planet-rating.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
 import { PlanetTagInputComponent } from './planet-tag-input.component';
+import { PlanetStepListComponent, PlanetStepListFormDirective, PlanetStepListItemComponent } from './planet-step-list.component';
 
 @NgModule({
   imports: [
@@ -24,7 +25,10 @@ import { PlanetTagInputComponent } from './planet-tag-input.component';
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
     CovalentTextEditorModule,
-    CovalentMarkdownModule
+    CovalentMarkdownModule,
+    PlanetStepListComponent,
+    PlanetStepListFormDirective,
+    PlanetStepListItemComponent
   ],
   declarations: [
     FormErrorMessagesComponent,
@@ -32,7 +36,10 @@ import { PlanetTagInputComponent } from './planet-tag-input.component';
     PlanetRatingStarsComponent,
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
-    PlanetStackedBarComponent
+    PlanetStackedBarComponent,
+    PlanetStepListComponent,
+    PlanetStepListFormDirective,
+    PlanetStepListItemComponent
   ]
 })
 export class PlanetFormsModule {}
