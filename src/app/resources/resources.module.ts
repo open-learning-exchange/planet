@@ -29,7 +29,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     ResourcesComponent,
     ResourcesViewComponent,
     ResourcesViewerComponent,
-    ResourcesAddComponent
+    ResourcesAddComponent,
   ],
   exports: [ ResourcesViewerComponent ]
 })

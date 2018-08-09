@@ -1,4 +1,3 @@
-
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
@@ -29,7 +28,6 @@
       </button>
     </span>
   </mat-toolbar>
-
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="meetups" matSort>
       <ng-container matColumnDef="select">
@@ -49,7 +47,7 @@
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
           </h3>
           <div class="content">
-            <td-markdown [content]="element.description"></td-markdown>
+            <td-markdown>{{ element.description | truncate : 500}}</td-markdown>
           </div>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
             <mat-icon>more_vert</mat-icon>

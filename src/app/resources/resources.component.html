@@ -39,7 +39,6 @@
       <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
     </span>
   </mat-toolbar>
-
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" matSort>
       <ng-container matColumnDef="select">
@@ -61,7 +60,7 @@
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
           </h3>
-          <td-markdown class="content" [content]="element.description"></td-markdown>
+          <td-markdown class="content">{{element.description | truncate : 500}}</td-markdown>
           <mat-chip-list #tagsList class="tags-list">
             <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag)">
               {{tag}}

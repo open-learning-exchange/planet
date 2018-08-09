@@ -4,6 +4,7 @@ import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
 import { PlanetLanguageComponent } from './planet-language.component';
+import { TruncatePipe } from './truncate.pipe';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { PlanetLanguageComponent } from './planet-language.component';
   declarations: [
     PlanetLocalStatusComponent,
     SubmitDirective,
-    PlanetLanguageComponent
+    PlanetLanguageComponent,
+    TruncatePipe
   ]
 })
 export class SharedComponentsModule {}
