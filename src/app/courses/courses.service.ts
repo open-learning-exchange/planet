@@ -35,7 +35,6 @@ export class CoursesService {
       this.updateCourses(this.createCourseList(this.courses, ratings.docs));
       this.updateCourse({ course: this.createCourseList([ this.course ], ratings.docs)[0], progress: this.progress });
     });
-    console.log(this.userService.getShelf());
   }
 
   updateCourses(courses) {
@@ -142,16 +141,14 @@ export class CoursesService {
     });
   }
 
-  courseResign(courseId) {
+  courseResignAdmission(courseId, type) {
     const userShelf: any = { courseIds: [ ...this.userService.shelf.courseIds ], ...this.userService.shelf };
-    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
-    userShelf.courseIds.splice(myCourseIndex, 1);
-    return this.updateShelf(userShelf);
-  }
-
-  courseAdmission(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userService.shelf.courseIds ], ...this.userService.shelf };
-    userShelf.courseIds.push(courseId);
+    if (type === 'resign') {
+      const myCourseIndex = userShelf.courseIds.indexOf(courseId);
+      userShelf.courseIds.splice(myCourseIndex, 1);
+    } else {
+      userShelf.courseIds.push(courseId);
+    }
     return this.updateShelf(userShelf);
   }
 

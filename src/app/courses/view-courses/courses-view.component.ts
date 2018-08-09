@@ -82,17 +82,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   courseToggle(courseId, type) {
-    if (type === 'resign') {
-      this.coursesService.courseResign(courseId).subscribe((res) => {
-        this.coursesService.updateCourse({ course: this.courseDetail, progress: this.progress });
-        this.planetMessageService.showMessage('Course successfully resigned from myCourses');
-      }, (error) => ((error)));
-    } else {
-      this.coursesService.courseAdmission(courseId).subscribe((res) => {
-        this.coursesService.updateCourse({ course: this.courseDetail, progress: this.progress });
-        this.planetMessageService.showMessage('Course added to your dashboard');
-      }, (error) => ((error)));
-    }
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.coursesService.updateCourse({ course: this.courseDetail, progress: this.progress });
+      const admissionMessage = ( type === 'resign' ) ? 'Course successfully resigned from myCourses' : 'Course added to your dashboard';
+      this.planetMessageService.showMessage(admissionMessage);
+    }, (error) => ((error)));
   }
 
 }

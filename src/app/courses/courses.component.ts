@@ -260,17 +260,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   courseToggle(courseId, type) {
-    if (type === 'resign') {
-      this.coursesService.courseResign(courseId).subscribe((res) => {
-        this.setupList(this.courses.data,  this.userShelf.courseIds);
-        this.planetMessageService.showMessage('Course successfully resigned from myCourses');
-      }, (error) => ((error)));
-    } else {
-      this.coursesService.courseAdmission(courseId).subscribe((res) => {
-        this.setupList(this.courses.data,  this.userShelf.courseIds);
-        this.planetMessageService.showMessage('Course added to your dashboard');
-      }, (error) => ((error)));
-    }
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.setupList(this.courses.data, this.userShelf.courseIds);
+      const admissionMessage = ( type === 'resign' ) ? 'Course successfully resigned from myCourses' : 'Course added to your dashboard';
+      this.planetMessageService.showMessage(admissionMessage);
+    }, (error) => ((error)));
   }
 
   shareCourse(type, courses) {
