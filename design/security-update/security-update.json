@@ -169,7 +169,7 @@
 		}
   },
   {
-		"dbName": "shelf",
+		"dbName": "tablet_users",
 		"json": {
 			"admins": {
 				"names": [],
