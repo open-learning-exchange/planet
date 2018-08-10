@@ -167,5 +167,18 @@
 				"roles": []
 			}
 		}
-	}
+  },
+  {
+		"dbName": "shelf",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": ["satellite"],
+				"roles": []
+			}
+		}
+  }
 ]
