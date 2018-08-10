@@ -72,7 +72,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   dialogOkClick(db: string) {
     return (selected: any) => {
-      this.activeStep.resources = selected;
+      this.steps[this.activeStepIndex].resources = selected;
       this.stepsChange.emit(this.steps);
       this.dialogRef.close();
     };
