@@ -58,7 +58,10 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'feedback', selector: { source: this.userService.getConfig().code } },
       { db: 'notifications', selector: { target: this.userService.getConfig().code } }
     ];
-    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull')));
+    const internalList = [
+      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
+    ];
+    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
 }

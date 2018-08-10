@@ -282,6 +282,13 @@ export class ConfigurationComponent implements OnInit {
       code: configuration.code,
       selector: { 'sendOnAccept': true }
     };
+    const userReplicator = {
+      dbSource: '_users',
+      db: 'tablet_users',
+      selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } },
+      continuous: true,
+      type: 'internal'
+    };
     const pin = this.userService.createPin();
     forkJoin([
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
@@ -291,7 +298,8 @@ export class ConfigurationComponent implements OnInit {
         return forkJoin([
           // create replicator for pulling from parent at first as we do not have session
           this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
-          this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
+          this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
+          this.syncService.sync(userReplicator, credentials)
         ]);
       }),
       switchMap(() => this.couchService.post('configurations', configuration)),
