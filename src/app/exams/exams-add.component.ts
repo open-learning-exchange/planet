@@ -101,7 +101,7 @@ export class ExamsAddComponent implements OnInit {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       const courseExam = { ...this.documentInfo, ...examInfo, totalMarks: this.totalMarks(examInfo) };
       this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
-      this.router.navigate([ this.coursesService.returnUrl ]);
+      this.router.navigate([ this.coursesService.returnUrl, { 'continue': true } ]);
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred

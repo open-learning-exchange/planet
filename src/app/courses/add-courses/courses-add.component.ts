@@ -85,7 +85,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const storedCourse = this.coursesService.course;
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
@@ -94,15 +93,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
-        if (!storedCourse.form) {
+        if (this.route.snapshot.params.continue !== 'true') {
           this.setFormAndSteps({ form: data, steps: data.steps });
         }
       }, (error) => {
         console.log(error);
       });
     }
-    if (storedCourse.form) {
-      this.setFormAndSteps(storedCourse);
+    if (this.route.snapshot.params.continue === 'true') {
+      this.setFormAndSteps(this.coursesService.course);
     }
     this.coursesService.returnUrl = this.router.url;
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
