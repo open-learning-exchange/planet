@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, Subject, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -191,7 +191,12 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       oldRoles: [ ...user.roles ] || [ 'learner' ],
       isUserAdmin: roles.indexOf('manager') > -1
     };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
+    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(switchMap((response) => {
+      if (tempUser.isUserAdmin) {
+        return this.removeFromTabletUsers(tempUser);
+      }
+      return of({ });
+    })).subscribe((response) => {
       console.log('Success!');
       this.initializeData();
     }, (error) => {
@@ -252,6 +257,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Error!');
       console.log(error);
     });
+  }
+
+
+  removeFromTabletUsers(user) {
+    return this.couchService.delete('tablet_users/' + user._id + '?rev=' + user._rev);
   }
 
   back() {
