@@ -11,21 +11,19 @@
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators">
       <h3 matLine>
-        <!-- <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon> -->
-        <mat-icon *ngIf="rep?.doc_id.includes('continuous'); else singleRep">repeat</mat-icon>
+        <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
         <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
-        {{rep.doc_id}}
+        {{rep._id}}
       </h3>
       <p matLine>
-        <!-- <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span> -->
-        <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
+        <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span>
         <ng-container [ngSwitch]="rep?._replication_state">
         <!-- States: initializing, failed, error, running, pending, crashing, completed -->
-        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" title="{{rep._replication_state}}">error</mat-icon>
-        <mat-icon *ngSwitchCase="'running'" title="{{rep._replication_state}}">sync</mat-icon>
-        <mat-icon *ngSwitchCase="'pending'" title="{{rep._replication_state}}">pause</mat-icon>
-        <mat-icon *ngSwitchCase="'completed'" title="{{rep._replication_state}}">cloud_done</mat-icon>
-        <mat-icon *ngSwitchDefault>sync</mat-icon>
+        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" i18n-title title="Error">error</mat-icon>
+        <mat-icon *ngSwitchCase="'running'" i18n-title title="In Progress">sync</mat-icon>
+        <mat-icon *ngSwitchCase="'pending'" i18n-title title="Paused">pause</mat-icon>
+        <mat-icon *ngSwitchCase="'completed'" i18n-title title="Completed">cloud_done</mat-icon>
+        <mat-icon *ngSwitchDefault i18n-title title="In Progress">sync</mat-icon>
         </ng-container>
       </p>
     </mat-list-item>

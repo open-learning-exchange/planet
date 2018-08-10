@@ -13,7 +13,6 @@ import { SyncService } from '../shared/sync.service';
 export class ManagerSyncComponent implements OnInit {
 
   replicators = [];
-  replicatorsDoc = [];
   pushList = [
     { db: 'courses_progress' },
     { db: 'feedback' },
@@ -39,26 +38,22 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   getReplicators() {
-    this.couchService.get('_scheduler/docs').pipe(switchMap(data => {
-      this.replicators = data.docs;
-      return this.couchService.allDocs('_replicator');
-    })).subscribe(rep => {
-      const defaultList = this.getDefaultList();
-      this.replicatorsDoc = rep.filter(r => {
-        const replicator = r.find((doc: any) => doc._id === r.id);
-        return replicator._replication_state === 'completed' && defaultList.indexOf(replicator._id) > -1;
-      });
+    this.couchService.allDocs('_replicator').subscribe(data => {
+      this.replicators = data;
     });
   }
 
   getDefaultList() {
-    const addType = (type) => (val) => ( val.db + '_' + type );
+    const addType = (type) => (val) => val.db + '_' + type;
     return this.pushList.map(addType('push')).concat(this.pullList.map(addType('pull')));
   }
 
   syncPlanet() {
-    const deleteArray = this.replicatorsDoc.map(rep => {
-      return { _id: rep.id, _rev: rep._rev, _deleted: true };
+    const deleteArray = this.replicators.filter(rep => {
+      const defaultList = this.replicatorList((type) => (val) => val.db + '_' + type);
+      return rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1;
+    }).map(rep => {
+      return { ...rep, _deleted: true };
     });
     this.syncService.deleteReplicators(deleteArray).pipe(switchMap(data => {
       return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
@@ -68,9 +63,8 @@ export class ManagerSyncComponent implements OnInit {
     }, error => this.planetMessageService.showMessage(error));
   }
 
-  replicatorList() {
-    const addType = (type) => (val) => ({ ...val, type });
-    return this.pushList.map(addType('push')).concat(this.pullList.map(addType('pull')));
+  replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
+    return this.pushList.map(mapFunc('push')).concat(this.pullList.map(mapFunc('pull')));
   }
 
 }
