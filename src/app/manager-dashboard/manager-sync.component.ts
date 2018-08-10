@@ -13,18 +13,6 @@ import { SyncService } from '../shared/sync.service';
 export class ManagerSyncComponent implements OnInit {
 
   replicators = [];
-  pushList = [
-    { db: 'courses_progress' },
-    { db: 'feedback' },
-    { db: 'login_activities' },
-    { db: 'ratings' },
-    { db: 'resource_activities' }
-  ];
-
-  pullList = [
-    { db: 'feedback', selector: { source: this.userService.getConfig().code } },
-    { db: 'notifications', selector: { target: this.userService.getConfig().code } }
-  ];
 
   constructor(
     private couchService: CouchService,
@@ -43,11 +31,6 @@ export class ManagerSyncComponent implements OnInit {
     });
   }
 
-  getDefaultList() {
-    const addType = (type) => (val) => val.db + '_' + type;
-    return this.pushList.map(addType('push')).concat(this.pullList.map(addType('pull')));
-  }
-
   syncPlanet() {
     const deleteArray = this.replicators.filter(rep => {
       const defaultList = this.replicatorList((type) => (val) => val.db + '_' + type);
@@ -64,7 +47,18 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
-    return this.pushList.map(mapFunc('push')).concat(this.pullList.map(mapFunc('pull')));
+    const pushList = [
+      { db: 'courses_progress' },
+      { db: 'feedback' },
+      { db: 'login_activities' },
+      { db: 'ratings' },
+      { db: 'resource_activities' }
+    ];
+    const pullList = [
+      { db: 'feedback', selector: { source: this.userService.getConfig().code } },
+      { db: 'notifications', selector: { target: this.userService.getConfig().code } }
+    ];
+    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull')));
   }
 
 }
