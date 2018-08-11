@@ -16,7 +16,15 @@ import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
-  templateUrl: './meetups-add.component.html'
+  templateUrl: './meetups-add.component.html',
+  styles: [ `
+    .mat-radio-button {
+      margin: 10px;
+    }
+    .custom-input-width {
+      width: 50%;
+    }
+  ` ]
 })
 
 export class MeetupsAddComponent implements OnInit {
