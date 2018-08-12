@@ -61,7 +61,7 @@ export class UsersUpdateComponent implements OnInit {
       .subscribe((data) => {
         this.user = data;
         if (this.user.gender || this.user.name !== this.userService.get().name) {
-          this.redirectUrl = '../../profile/' + this.user.name;
+          this.redirectUrl = 'manager/users/profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
         if (data['_attachments']) {
@@ -155,7 +155,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
+    this.router.navigate([ this.redirectUrl ]);
   }
 
   onImageSelect(img) {
