@@ -10,7 +10,7 @@ import { UsersRouterModule } from './users-router.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
-import { PlanetLanguageModule } from '../shared/planet-language.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -22,7 +22,7 @@ import { PlanetLanguageModule } from '../shared/planet-language.module';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
-    PlanetLanguageModule
+    SharedComponentsModule
   ],
   declarations: [
     UsersComponent,
