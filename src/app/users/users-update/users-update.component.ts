@@ -61,7 +61,7 @@ export class UsersUpdateComponent implements OnInit {
       .subscribe((data) => {
         this.user = data;
         if (this.user.gender || this.user.name !== this.userService.get().name) {
-          this.redirectUrl = 'manager/users/profile/' + this.user.name;
+          this.redirectUrl = '../../profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
         if (data['_attachments']) {
@@ -137,7 +137,7 @@ export class UsersUpdateComponent implements OnInit {
         return of({ ok: true });
       })
     ).subscribe(() => {
-      this.router.navigate([ this.redirectUrl ]);
+      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -155,7 +155,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ this.redirectUrl ]);
+    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
   }
 
   onImageSelect(img) {
