@@ -142,22 +142,14 @@ export class CoursesService {
   }
 
   courseResignAdmission(courseId, type) {
-    const userShelf: any = { courseIds: [ ...this.userService.shelf.courseIds ], ...this.userService.shelf };
+    const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
-      const myCourseIndex = userShelf.courseIds.indexOf(courseId);
-      userShelf.courseIds.splice(myCourseIndex, 1);
+      const myCourseIndex = courseIds.indexOf(courseId);
+      courseIds.splice(myCourseIndex, 1);
     } else {
-      userShelf.courseIds.push(courseId);
+      courseIds.push(courseId);
     }
-    return this.updateShelf(userShelf);
-  }
-
-  updateShelf(newShelf) {
-   return this.couchService.put('shelf/' + this.userService.get()._id, newShelf).pipe(switchMap((res) => {
-      newShelf._rev = res.rev;
-      this.userService.shelf = newShelf;
-      return of(res);
-    }));
+    return this.userService.updateShelf(courseIds, 'courseIds');
   }
 
 }
