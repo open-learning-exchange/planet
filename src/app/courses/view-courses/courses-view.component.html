@@ -8,10 +8,10 @@
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
-      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!showExamButton && courseDetail.steps.length">
+      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
         Admission
       </button>
-      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="showExamButton">
+      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
         Resign
       </button>
     </ng-container>
@@ -50,7 +50,7 @@
               <mat-menu #resourceList="matMenu">
                 <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
               </mat-menu>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
             </mat-action-row>
           </mat-expansion-panel>
         </ng-container>
