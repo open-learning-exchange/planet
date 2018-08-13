@@ -3,8 +3,9 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
@@ -26,7 +27,8 @@ export class CoursesService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
       const { ids, opts } = this.currentParams;
@@ -149,7 +151,11 @@ export class CoursesService {
     } else {
       courseIds.push(courseId);
     }
-    return this.userService.updateShelf(courseIds, 'courseIds');
+    return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
+      const admissionMessage = type === 'resign' ? 'Course successfully resigned from myCourses' : 'Course added to your dashboard';
+      this.planetMessageService.showMessage(admissionMessage);
+      return res;
+    }));
   }
 
 }
