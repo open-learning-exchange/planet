@@ -8,9 +8,7 @@ import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { LoginFormComponent } from './login-form.component';
 import { LowercaseDirective } from '../shared/lowercase.directive';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
-import { MatTooltipModule } from '@angular/material';
 import { ConfigurationModule } from '../configuration/configuration.module';
-import { PlanetLanguageModule } from '../shared/planet-language.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
@@ -22,7 +20,6 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     ConfigurationModule,
-    PlanetLanguageModule,
     SharedComponentsModule
   ],
   declarations: [

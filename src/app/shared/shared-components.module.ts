@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
+import { PlanetLanguageComponent } from './planet-language.component';
 
 @NgModule({
   imports: [
@@ -10,11 +11,13 @@ import { SubmitDirective } from './submit.directive';
   ],
   exports: [
     PlanetLocalStatusComponent,
-    SubmitDirective
+    SubmitDirective,
+    PlanetLanguageComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
-    SubmitDirective
+    SubmitDirective,
+    PlanetLanguageComponent
   ]
 })
 export class SharedComponentsModule {}
