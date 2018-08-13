@@ -47,92 +47,98 @@
       <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     </ng-container>
   </mat-toolbar>
-  <mat-table #table [dataSource]="courses" matSort>
-    <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-        [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
-        </mat-checkbox>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="courseTitle">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-      <mat-cell  *matCellDef="let element" class="list-content-menu">
-        <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
-        </h3>
-        <td-markdown class="content">{{ element.description }}</td-markdown>
-	<planet-local-status [status]="element.localStatus"></planet-local-status>
-        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <div class="course-progress" *ngIf="element.admission">
-          <span i18n>Your progress:</span>
-          <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
-        </div>
-        <mat-menu #resourceMenu="matMenu">
-          <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseAdmission(element._id)"  >
-            <mat-icon>school</mat-icon>
-            <span i18n>Admission</span>
-          </a>
-          <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
-            <mat-icon>clear</mat-icon>
-            <span i18n>Resign</span>
-          </a>
-          <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
-            <mat-icon>feedback</mat-icon>
-            <span i18n>Feedback</span>
-          </a>
-          <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
-            <mat-icon>folder</mat-icon>
-            <span i18n>Manage</span>
-          </a>
-          <a mat-menu-item [routerLink]="['/courses/view', element._id]">
-            <mat-icon>visibility</mat-icon>
-            <span i18n>View Course</span>
-          </a>
-          <a mat-menu-item routerLink="add">
-            <mat-icon>credit_card</mat-icon>
-            <span i18n>Credits</span>
-          </a>
-          <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
-            <mat-icon>equalizer</mat-icon>
-            <span i18n>Progress</span>
-          </a>
-          <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
-            <mat-icon>delete_forever</mat-icon>
-            <span i18n>Delete</span>
+  
+  <ng-container *ngIf="courses.data.length; else notFoundMessage">
+    <mat-table #table [dataSource]="courses" matSort>
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="courseTitle">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
+        <mat-cell  *matCellDef="let element" class="list-content-menu">
+          <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
+          </h3>
+          <td-markdown class="content">{{ element.description }}</td-markdown>
+    <planet-local-status [status]="element.localStatus"></planet-local-status>
+          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+            <mat-icon>more_vert</mat-icon>
           </button>
-        </mat-menu>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="info">
-      <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <div>
-          <p>{{ "Grade Level: " + element.gradeLevel}}</p>
-          <p>{{ "Subject Level: " + element.subjectLevel}}</p>
-        </div>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="rating">
-      <mat-header-cell *matHeaderCellDef i18n>Rating</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <planet-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'course'"></planet-rating>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
-  </mat-table>
+          <div class="course-progress" *ngIf="element.admission">
+            <span i18n>Your progress:</span>
+            <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
+          </div>
+          <mat-menu #resourceMenu="matMenu">
+            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseAdmission(element._id)"  >
+              <mat-icon>school</mat-icon>
+              <span i18n>Admission</span>
+            </a>
+            <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
+              <mat-icon>clear</mat-icon>
+              <span i18n>Resign</span>
+            </a>
+            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+              <mat-icon>feedback</mat-icon>
+              <span i18n>Feedback</span>
+            </a>
+            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
+              <mat-icon>folder</mat-icon>
+              <span i18n>Manage</span>
+            </a>
+            <a mat-menu-item [routerLink]="['/courses/view', element._id]">
+              <mat-icon>visibility</mat-icon>
+              <span i18n>View Course</span>
+            </a>
+            <a mat-menu-item routerLink="add">
+              <mat-icon>credit_card</mat-icon>
+              <span i18n>Credits</span>
+            </a>
+            <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
+              <mat-icon>equalizer</mat-icon>
+              <span i18n>Progress</span>
+            </a>
+            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
+              <mat-icon>delete_forever</mat-icon>
+              <span i18n>Delete</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="info">
+        <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <p>{{ "Grade Level: " + element.gradeLevel}}</p>
+            <p>{{ "Subject Level: " + element.subjectLevel}}</p>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="rating">
+        <mat-header-cell *matHeaderCellDef i18n>Rating</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <planet-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'course'"></planet-rating>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    </mat-table>
 
-  <mat-paginator #paginator
-    [pageSize]="10"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPaginateChange($event)">
-  </mat-paginator>
+    <mat-paginator #paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPaginateChange($event)">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Course Found</div>
+  </ng-template>
 </div>
