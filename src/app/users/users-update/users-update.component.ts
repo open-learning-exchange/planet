@@ -137,7 +137,7 @@ export class UsersUpdateComponent implements OnInit {
         return of({ ok: true });
       })
     ).subscribe(() => {
-      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
+      this.goBack();
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
