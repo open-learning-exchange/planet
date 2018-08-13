@@ -5,6 +5,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
+import { UserService } from '../shared/user.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './submissions.component.html',
@@ -26,19 +28,26 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'name', 'status' ];
+  mode = 'grade';
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
+    this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
+    let query = {};
+    if (this.mode === 'survey') {
+      query = findDocuments({ 'user._id': this.userService.get()._id, type: 'survey' });
+    }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
       this.submissions.data = submissions;
     });
-    this.submissionsService.updateSubmissions({});
+    this.submissionsService.updateSubmissions(query);
     this.submissions.filterPredicate = filterSpecificFields([ 'parent.name' ]);
     this.submissions.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
@@ -61,8 +70,8 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([ '/' ]);
   }
 
-  gradeSubmission(submission) {
-    if (submission.status !== 'pending') {
+  submissionAction(submission) {
+    if (submission.status !== 'pending' || this.mode === 'survey') {
       this.router.navigate([
         './exam',
         { submissionId: submission._id, questionNum: 1, status: submission.status }
