@@ -1,35 +1,32 @@
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      {{stepInfo.stepTitle || 'Step ' + (stepNum)}}
-    </mat-panel-title>
-    <mat-panel-description>
-      <mat-icon *ngIf="stepInfo?.resources?.length">attach_file</mat-icon>
-      <mat-icon *ngIf="stepInfo?.exam?.questions.length">assignment</mat-icon>
-    </mat-panel-description>
-  </mat-expansion-panel-header>
-  <form class="vertical-form" [formGroup]="stepForm" (change)="stepChange()">
-    <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
-    </mat-form-field>
-    <mat-form-field>
-      <textarea
-        matInput
-        i18n-placeholder
-        placeholder="Description"
-        formControlName="description"
-        matTextareaAutosize
-        matAutosizeMaxRows="5"
-        matAutosizeMinRows="4">
-      </textarea>
-    </mat-form-field>
-  </form>
-  <div *ngIf="resources?.length"><span i18n>Attached resources: </span><span *ngFor="let resource of resources; let isLast= last">{{resource.title}}{{isLast ? '' : ', '}}</span></div>
-  <mat-action-row>
-    <a mat-raised-button color="primary" (click)="addExam(stepNum)">{{stepInfo.exam ? 'Update' : 'Add' }} Exam</a>
+<planet-step-list [steps]="steps" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
+  <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
+    <span>{{step.stepTitle || 'Step ' + (i+1)}}</span>
+    <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
+    <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
+    <span class="toolbar-fill"></span>
+    <button mat-icon-button *ngIf="!isFirst" (click)="moveStep($event,i,-1)"><mat-icon>arrow_upward</mat-icon></button>
+    <button mat-icon-button *ngIf="!isLast" (click)="moveStep($event,i,1)"><mat-icon>arrow_downward</mat-icon></button>
+    <button mat-icon-button (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
+  </planet-step-list-item>
+  <div planetStepListForm>
+    <form class="vertical-form" [formGroup]="stepForm">
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
+      </mat-form-field>
+      <mat-form-field>
+        <textarea
+          matInput
+          i18n-placeholder
+          placeholder="Description"
+          formControlName="description"
+          matTextareaAutosize
+          matAutosizeMaxRows="5"
+          matAutosizeMinRows="4">
+        </textarea>
+      </mat-form-field>
+    </form>
+    <div *ngIf="activeStep?.resources?.length"><span i18n>Attached resources: </span><span *ngFor="let resource of activeStep.resources; let isLast= last">{{resource.title}}{{isLast ? '' : ', '}}</span></div>
+    <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>
     <button mat-raised-button color="primary" (click)="attachItem('resources')">Add Resource</button>
-    <button mat-icon-button *ngIf="stepNum !== 1" (click)="moveUp()"><mat-icon>arrow_upward</mat-icon></button>
-    <button mat-icon-button *ngIf="stepCount !== stepNum" (click)="moveDown()"><mat-icon>arrow_downward</mat-icon></button>
-    <button mat-icon-button (click)="deleteStep()"><mat-icon>delete</mat-icon></button>
-  </mat-action-row>
-</mat-expansion-panel>
+  </div>
+</planet-step-list>

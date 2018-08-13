@@ -1,18 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
-  Validators
-} from '@angular/forms';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
-import { MatFormField, MatFormFieldControl } from '@angular/material';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
@@ -22,14 +17,22 @@ import { uniqueId } from '../../shared/utils';
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit {
+export class CoursesAddComponent implements OnInit, OnDestroy {
   // needs member document to implement
   members = [];
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
   documentInfo = { rev: '', id: '' };
   pageType = 'Add new';
-  steps = [];
+  private onDestroy$ = new Subject<void>();
+  private _steps = [];
+  get steps() {
+    return this._steps;
+  }
+  set steps(value: any[]) {
+    this._steps = value;
+    this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
+  }
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -48,6 +51,7 @@ export class CoursesAddComponent implements OnInit {
     private userService: UserService
   ) {
     this.createForm();
+    this.onFormChanges();
   }
 
   createForm() {
@@ -81,7 +85,6 @@ export class CoursesAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    const storedCourse = this.coursesService.course;
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
@@ -90,21 +93,37 @@ export class CoursesAddComponent implements OnInit {
         });
         this.pageType = 'Update';
         this.documentInfo = { rev: data._rev, id: data._id };
-        if (!storedCourse.form) {
+        if (this.route.snapshot.params.continue !== 'true') {
           this.setFormAndSteps({ form: data, steps: data.steps });
         }
       }, (error) => {
         console.log(error);
       });
     }
-    if (storedCourse.form) {
-      this.setFormAndSteps(storedCourse);
+    if (this.route.snapshot.params.continue === 'true') {
+      this.setFormAndSteps(this.coursesService.course);
     }
+    this.coursesService.returnUrl = this.router.url;
+    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+  }
+
+  ngOnDestroy() {
+    if (this.coursesService.stepIndex === undefined) {
+      this.coursesService.reset();
+    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   setFormAndSteps(course: any) {
     this.courseForm.patchValue(course.form);
     this.steps = course.steps || [];
+  }
+
+  onFormChanges() {
+    this.courseForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
+      this.coursesService.course = { form: value, steps: this.steps };
+    });
   }
 
   updateCourse(courseInfo) {
@@ -166,19 +185,7 @@ export class CoursesAddComponent implements OnInit {
   }
 
   navigateBack() {
-    this.coursesService.reset();
     this.router.navigate([ '/courses' ]);
-  }
-
-  addExam(stepIndex) {
-    this.coursesService.returnUrl = this.router.url;
-    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
-    this.coursesService.stepIndex = stepIndex;
-    if (this.steps[stepIndex].exam) {
-      this.router.navigate([ '/courses/update/exam/', this.steps[stepIndex].exam._id ]);
-    } else {
-      this.router.navigate([ '/courses/exam/' ]);
-    }
   }
 
   removeStep(pos) {
