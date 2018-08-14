@@ -523,7 +523,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Local URL</target>
+        <target xml:lang="ne-NP" state="translated">लोकल URL</target>
       </trans-unit>
       <trans-unit id="a158c27700fb4b55974f72418e1e17f45662d3f6" datatype="html" approved="yes">
         <source>Show Advanced Options</source>
@@ -2061,7 +2061,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Checking request status...</target>
+        <target xml:lang="ne-NP" state="translated">अनुरोध स्थिति जाँच गर्दै...</target>
       </trans-unit>
       <trans-unit id="23299f2edacf5a10fea838d6328872ba4df8093b" datatype="html">
         <source>Your request has not been accepted by parent</source>
@@ -2069,7 +2069,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="ne-NP" state="needs-translation">Your request has not been accepted by parent</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको अनुरोध अभिभावकद्वारा स्वीकार गरिएको छैन</target>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
