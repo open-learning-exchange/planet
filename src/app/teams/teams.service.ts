@@ -8,6 +8,8 @@ import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { findDocuments } from '../shared/mangoQueries';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -25,32 +27,43 @@ const addTeamDialogFields = [ {
 export class TeamsService {
 
   dbName = 'teams';
+  fg: FormGroup;
 
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
-    private userService: UserService
+    private userService: UserService,
+    private fb: FormBuilder,
   ) {}
 
-  addTeamDialog(shelf) {
-    const title = 'Create Team';
+  addTeamDialog(shelf, team?) {
+    const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
       name: [ '', Validators.required ],
       description: '',
       requests: [ [] ]
     };
+    this.fg = this.fb.group(formGroup);
+    if (team) {
+      this.fg.patchValue(team);
+    }
     return this.dialogsFormService
-      .confirm(title, addTeamDialogFields, formGroup)
+      .confirm(title, addTeamDialogFields, this.fg)
       .pipe(
         debug('Dialog confirm'),
         switchMap((response) => {
-          if (response !== undefined) {
+          if (response !== undefined && !team) {
             return this.createTeam(response);
+          } else if (response !== undefined && team) {
+            return this.updateTeam({ ...team, ...response });
           }
           return empty();
         }),
         switchMap((response) => {
-          return this.toggleTeamMembership({ _id: response.id }, false, shelf);
+          if (!team) {
+            return this.toggleTeamMembership({ _id: response.id }, false, shelf);
+          }
+          return of(response);
         })
       );
   }
