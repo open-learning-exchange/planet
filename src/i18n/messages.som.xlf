@@ -1901,7 +1901,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, ka dooro, daran {connected} dansan{Hide}}}</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, select, on {connected} off {Hide}}</target>
       </trans-unit>
       <trans-unit id="5238405b3e8e1b72d2732f0ecbd83be35b98cd5d" datatype="html" approved="yes">
         <source>Requests</source>
@@ -1981,7 +1981,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id = "START_TAG_MAT-ICON" ctype = "x-mat-icon" equiv-text = "&amp; mat; icon &amp; gt;" /> nadiifi <x id = "CLOSE_TAG_MAT-ICON" ctype = "x-mat-icon "equiv-text =" &amp; lt; / mat-icon &amp; gt; "/> bixi</target>
+        <target xml:lang="so" state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>bixi</target>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html" approved="yes">
         <source>Join</source>
@@ -2201,7 +2201,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id = "START_BOLD_TEXT" ctype = "xb" udub-text = "&amp; &amp; b &amp; gt;" /> Kulanka Kulanka: <x id = "CLOSE_BOLD_TEXT" ctype = "xb" equiv-text = "&amp; lt; / b &amp; gt; /> <x id = "INTERPOLATION_1" equiv-text = "{{meetupDetail.endDate | date: 'fullDate'}} "/>- id = "INTERPOLATION_1" equiv-text = "{{meetupDetail.endDate | date: 'fullDate'}} "/&gt;</target>
+        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Kulanka Kulanka:<x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="f216acd1bbe77ddf9082913537c4f3b33ed36eac" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></source>
