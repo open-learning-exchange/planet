@@ -1155,7 +1155,7 @@
           <context context-type="sourcefile">app/shared/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="so" state="translated">Tirada kama badnaan karto <x id = "INTERPOLATION" equiv-text = "{{number}}" />} max {Lambarka kama badan karo &lt;x id = Email {Fadlan horey u jirtaa] Email {Fadlan gali email sax ah} matchPassword {Passwords waa qasab}} invalidInt {Fadlan gali lambar} kuxiran xun}} "invalidHex {Hex ma shaqeynayo} Waqtiguu shaqeyn waayey} invalidDateFormat {Date is in format incorrect}} invalidDate {Date is invalid} invalidEndDate {Taariikhda dhammaadku ma noqon karo kahor intaan bilaabmin}} invalidEndTime {Waqtiga dambe ma noqon karo ka hor inta aan la bilaabin} taariikhda {Ma noqon karo kahor taariikhda hadda} invalidOldPassword {erayga hore maaha mid sax ah} qaab Hover for info dheeraad ah} invalidFirstCharacter {Waa inay bilaabaan warqad ama lambar}}</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, select, required {This field is required} min {Tirada kama badnaan karto <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {Lambarka kama badan karo <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Fadlan horey u jirtaa] email {Fadlan gali email sax ah} matchPassword {Passwords waa qasab} invalidInt {Fadlan gali lambar} InvalidPositive {kuxiran xun} invalidHex {Hex ma shaqeynayo} invalidTime {Waqtiguu shaqeyn waayey} invalidDateFormat {Date is in format incorrect}} invalidDate {Date is invalid} invalidEndDate {Taariikhda dhammaadku ma noqon karo kahor intaan bilaabmin} invalidEndTime {Waqtiga dambe ma noqon karo ka hor inta aan la bilaabin} dateInPast {Ma noqon karo kahor taariikhda hadda} invalidOldPassword {erayga hore maaha mid sax ah} pattern {qaab Hover for info dheeraad ah} invalidFirstCharacter {Waa inay bilaabaan warqad ama lambar}}</target>
       </trans-unit>
       <trans-unit id="d7039076b24be09bd64cbfd5b38bb95363a89931" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -1174,7 +1174,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, dooro, haa {Isku day}} maya [dooro}}</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, select, yes {Isku day} no {dooro}}</target>
       </trans-unit>
       <trans-unit id="75c7f106f1b6a0fcee86b4bafe5ea74877382b03" datatype="html" approved="yes">
         <source>Step title</source>
@@ -1313,7 +1313,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, ka dooro, daar {Show} dami{Hide}}}</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, select, on {Show} off {Hide}}</target>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</source>
