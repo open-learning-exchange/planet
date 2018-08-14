@@ -196,7 +196,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, { autoFocus: false,
       data: {
         okClick,
         amount,
