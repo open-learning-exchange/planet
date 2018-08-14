@@ -2209,7 +2209,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id = "START_BOLD_TEXT" ctype = "xb" ta dheereeya-text = "&amp; b &amp; gt;" /> Kulanka Kulanka: <x id = "CLOSE_BOLD_TEXT" ctype = "xb" equiv-text = "&amp; lt; / b &amp; gt; /> <x id = "INTERPOLATION" u siman-text = "{{meetupDetail.startTime}}" /> - <x id = "INTERPOLATION_1" equiv-text = "{{meetupDetail.endTime}}" /></target>
+        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Kulanka Kulanka:<x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endTime}}"/></target>
       </trans-unit>
       <trans-unit id="6ff63bef1474a655b54c409d68e15ddadabadabf" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Recurring:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></source>
