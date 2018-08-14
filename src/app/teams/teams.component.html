@@ -16,7 +16,6 @@
       <button mat-mini-fab (click)="addTeam()" ><mat-icon>add</mat-icon></button>
     </div>
   </mat-toolbar>
-
   <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
@@ -31,19 +30,31 @@
           <ng-container [ngSwitch]="element.userStatus">
             <ng-container *ngSwitchCase="'member'">
               <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
-                Leave
+                  <mat-icon class="margin-lr-3">clear</mat-icon>
+                  <span i18n>Leave</span>
               </button>
-              <button mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n>Manage</button>
+              <button mat-raised-button color="primary" (click)="addTeam(element.doc)">
+               <mat-icon class="margin-lr-3">mode_edit</mat-icon>
+               <span i18n>Manage</span>  
+              </button>
             </ng-container>
             <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
-              <ng-container i18n>Request to Join</ng-container>
+                <mat-icon class="margin-lr-3">group_add</mat-icon>
+                <span i18n>Request to Join</span>
             </button>
             <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>
-              Request pending
+                <mat-icon class="margin-lr-3">group_add</mat-icon>
+                <span i18n>Request pending</span>
             </button>
           </ng-container>
-          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>View Team</button>
-          <a mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n-title title="Feedback">Feedback</a>
+          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]">
+              <mat-icon class="margin-lr-3">visibility</mat-icon>
+              <span i18n>View Team</span>
+          </button>
+          <a mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n-title title="Feedback">
+              <mat-icon class="margin-lr-3">feedback</mat-icon>
+              <span i18n>Feedback</span>
+          </a>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -56,5 +67,5 @@
   </ng-container>
   <ng-template #notFoundMessage>
     <div class="view-container">No Team Found</div>
-  </ng-template>
+  </ng-template>  
 </div>
