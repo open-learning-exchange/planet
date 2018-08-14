@@ -9,9 +9,6 @@
           <context context-type="linenumber">1</context>
         </context-group>
         <target xml:lang="so">ltr</target>
-        <alt-trans>
-          <target xml:lang="so">liitar</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="f52df91ad79481987baa252e69202d15e60ae9e4" datatype="html" approved="yes">
         <source>
@@ -63,10 +60,6 @@
         </context-group>
         <target xml:lang="so" state="translated">Ma hubtaa inaad rabto <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/><x id="ICU" equiv-text="{data.amount, select, single {...} many {...}}"/>
   </target>
-        <alt-trans>
-          <target xml:lang="so">Ma hubtaa inaad rabto <x id="ICU" equiv-qoraal="{xogta.beddel nooca, dooro, aqbal {...} diidmo {...} furfuran {...} tirtir {...}}"/><x id="ICU" equiv-qoraal="{xogta.beddel nooca, dooro, aqbal {...} diidmo {...} furfuran {...} tirtir {...}}"/>
-  </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="b3b7b0b5d0a6b1dbab492e6d68ae1fa227d7bb58" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} reject {reject} unlink {unlink} delete {delete} }</source>
@@ -74,7 +67,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, dooro, aqbal {accept} diid {reject} furfuran{unlink} tirtir{delete} }</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, select, accept {aqbal} reject {diid} unlink {furfuran} delete {tirtir} }</target>
       </trans-unit>
       <trans-unit id="8af474afa842e4a721a11dbd41b653dbdd8af972" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
@@ -84,8 +77,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="so" state="translated">VAR_SELECT_2, dooro, hal {Kadib [VAR_SELECT, dooro, bulshada {community} qaran {nation} koorso {course} khayraadka{resource} la kulan {meetup} isticmaala {user} }?
-      } badan {la doortay {VAR_SELECT_1, dooro, bulshada {communities} qaran {nations} koorso {courses} khayraadka {resources} la kulan {meetups} }?
+        <target xml:lang="so" state="translated">{VAR_SELECT_2, select, single {Kadib {VAR_SELECT, select, community {bulshada} nation {qaran} course {koorso} resource {khayraadka} meetup {la kulan} user {isticmaala} }?
+      } many {la doortay {VAR_SELECT_1, select, community {bulshada} nation {qaran} course {koorso} resource {khayraadka} meetup {a kulan} }?
       } }</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
@@ -328,7 +321,7 @@
           <context context-type="linenumber">57</context>
         </context-group>
         <target xml:lang="so" state="translated">
-                        <x id = "START_TAG_MAT-ICON" ctype = "x-mat-icon" equiv-text = "&amp; mat; icon &amp; gt;" /> link_off <x id = "CLOSE_TAG_MAT-ICON" ctype = "x-mat-icon "Equiv-text =" &amp; lt; / mat-icon &amp; gt; "/> Xiriir
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Xiriir
           
           
           </target>
@@ -341,7 +334,7 @@
           <context context-type="linenumber">62</context>
         </context-group>
         <target xml:lang="so" state="translated">
-                        <x id = "START_TAG_MAT-ICON" ctype = "x-mat-icon" simiv-text = "&amp; mat; icon &amp; gt;" /> link <x id = "CLOSE_TAG_MAT-ICON" ctype = "x-mat-icon "Equiv-text =" &amp; lt; / mat-icon &amp; gt; "/> Ogol
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Ogol
           
           </target>
       </trans-unit>
@@ -353,7 +346,7 @@
           <context context-type="linenumber">65</context>
         </context-group>
         <target xml:lang="so" state="translated">
-                        <x id = "START_TAG_MAT-ICON" ctype = "x-mat-icon" equiv-text = "&amp; mat; icon &amp; gt;" /> block <x id = "CLOSE_TAG_MAT-ICON" ctype = "x-mat-icon "Equiv-text =" &amp; lt; / mat-icon &amp; gt; "/> Diido
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>block<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Diido
           
           </target>
       </trans-unit>
@@ -365,7 +358,7 @@
           <context context-type="linenumber">69</context>
         </context-group>
         <target xml:lang="so" state="translated">
-                    <x id = "START_TAG_MAT-ICON" ctype = "x-mat-icon" equiv-text = "&amp; mat; icon &amp; gt;" /> tirtiris <x id = "CLOSE_TAG_MAT-ICON" ctype = "x-mat-icon "Equiv-text =" &amp; lt; / mat-icon &amp; gt; "/> tirtir
+          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>tirtir
          
         </target>
       </trans-unit>
@@ -1102,7 +1095,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="so" state="translated">Su'aalaha <x id = "INTERPOLATION" u siman-text = "{{questionNum}}" /> ee <x id = "INTERPOLATION_1" equiv-text = "{{maxQuestions}}"></target>
+        <target xml:lang="so" state="translated">Su'aalaha <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> ee <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html" approved="yes">
         <source>Enter answer here</source>
