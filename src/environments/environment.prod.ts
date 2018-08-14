@@ -6,6 +6,6 @@ export const environment = {
   couchAddress: window.location.origin + '/db/',
   centerAddress: 'planet-center-address',
   centerProtocol: 'https',
-  parentProtocol: 'https',
+  parentProtocol: 'planet-parent-protocol',
   upgradeAddress: window.location.origin + '/upgrade'
 };

@@ -2,7 +2,6 @@
   <a mat-icon-button [routerLink]="parent ? ['/manager/courses'] : ['/courses']"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>Course</span>
 </mat-toolbar>
-
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
@@ -18,7 +17,7 @@
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="course-progress">
+    <div class="course-progress" *ngIf="showExamButton">
       <span i18n>Your progress:</span>
       <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>

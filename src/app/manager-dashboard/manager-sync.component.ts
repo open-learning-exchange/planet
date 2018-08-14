@@ -32,8 +32,11 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   syncPlanet() {
-    const deleteArray = this.replicators.map(rep => {
-      return { _id: rep._id, _rev: rep._rev, _deleted: true };
+    const deleteArray = this.replicators.filter(rep => {
+      const defaultList = this.replicatorList((type) => (val) => val.db + '_' + type);
+      return rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1;
+    }).map(rep => {
+      return { ...rep, _deleted: true };
     });
     this.syncService.deleteReplicators(deleteArray).pipe(switchMap(data => {
       return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
@@ -43,8 +46,7 @@ export class ManagerSyncComponent implements OnInit {
     }, error => this.planetMessageService.showMessage(error));
   }
 
-  replicatorList() {
-    // List of replicators to push to parent planet
+  replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
     const pushList = [
       { db: 'courses_progress' },
       { db: 'feedback' },
@@ -52,13 +54,14 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'ratings' },
       { db: 'resource_activities' }
     ];
-    // List of replicators to pull from parent
     const pullList = [
       { db: 'feedback', selector: { source: this.userService.getConfig().code } },
       { db: 'notifications', selector: { target: this.userService.getConfig().code } }
     ];
-    const addType = (type) => (val) => ({ ...val, type });
-    return pushList.map(addType('push')).concat(pullList.map(addType('pull')));
+    const internalList = [
+      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
+    ];
+    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
 }

@@ -12,6 +12,7 @@ import { DialogsListComponent } from './dialogs-list.component';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsLoadingComponent } from './dialogs-loading.component';
 import { ChangePasswordDirective } from './change-password.directive';
+import { SharedComponentsModule } from '../shared-components.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ChangePasswordDirective } from './change-password.directive';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    PlanetFormsModule
+    PlanetFormsModule,
+    SharedComponentsModule
   ],
   exports: [
     DialogsFormComponent,
