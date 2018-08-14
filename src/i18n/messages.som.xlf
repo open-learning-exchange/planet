@@ -2249,7 +2249,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id = "START_BOLD_TEXT" ctype = "xb" equiv-text = "&amp;" b &amp; gt; "/> Xubno ka mid ah xubnaha: (<x id =" INTERPOLATION "equiv-text =" {{members.length}} " ) <x id = "CLOSE_BOLD_TEXT" ctype = "xb" equiv-text = "&amp; lt; / b &amp; gt;" /></target>
+        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Xubno ka mid ah xubnaha: ( <x id="INTERPOLATION" equiv-text="{{members.length}}"/> )<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="67d17edc760cf3ae397ebd6869b3861cbcb566b7" datatype="html" approved="yes">
         <source> - No member has Joined this Meetup</source>
@@ -2337,7 +2337,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="so" state="translated">{VAR_SELECT, dooro, 0 {Promote} 1 {Demote} }</target>
+        <target xml:lang="so" state="translated">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
       </trans-unit>
       <trans-unit id="436d4f2b6d175f1deeb91d14618542f63567bd7d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
@@ -2347,7 +2347,7 @@ Khayraadka</target>
           <context context-type="linenumber">112</context>
         </context-group>
         <target xml:lang="so" state="translated">
-          <x id = "START_TAG_MAT-ICON" ctype = "x-mat-icon" equiv-text = "&amp; mat; icon &amp; gt;" /> folder_open <x id = "CLOSE_TAG_MAT-ICON" ctype = "x-mat-icon "Equiv-text =" &amp; lt; / mat-icon &amp; gt; "/> View Profile
+          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
         </target>
       </trans-unit>
       <trans-unit id="761e7bc19e9488ae4447d0cd58a9c83b4d1844e2" datatype="html">
