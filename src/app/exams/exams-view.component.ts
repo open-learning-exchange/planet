@@ -24,6 +24,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   mode = 'take';
   grade;
   submissionId: string;
+  fromSubmission = false;
 
   constructor(
     private router: Router,
@@ -43,6 +44,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const courseId = params.get('id');
       const submissionId = params.get('submissionId');
       const surveyId = params.get('surveyId');
+      const mode = params.get('mode');
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
         this.incorrectAnswer = false;
@@ -51,8 +53,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.getSurvey(surveyId);
         this.grade = 0;
       } else if (submissionId) {
-        this.mode = 'grade';
-        this.grade = undefined;
+        this.fromSubmission = true;
+        this.mode = mode || 'grade';
+        this.grade = mode === 'take' ? 0 : undefined;
         this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
       }
     });
@@ -135,8 +138,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submissionId = submission._id;
-      if (this.mode === 'grade') {
+      if (this.fromSubmission === true) {
         this.setQuestion(submission.parent.questions);
+      }
+      if (this.mode === 'grade') {
         this.answer = submission.answers[this.questionNum - 1];
         this.grade = this.answer.grade;
       }
