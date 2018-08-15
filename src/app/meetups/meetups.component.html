@@ -30,7 +30,7 @@
     </span>
   </mat-toolbar>
   
-  <ng-container *ngIf="meetups.data.length; else notFoundMessage">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="meetups" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>

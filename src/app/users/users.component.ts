@@ -49,6 +49,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   urlPrefix = environment.couchAddress + this.dbName + '/';
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
+  emptyData = false;
 
   constructor(
     private dialog: MatDialog,
@@ -138,6 +139,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         return userInfo;
       });
+      this.emptyData = !this.allUsers.data.length;
       this.applyFilter(this.searchValue);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
