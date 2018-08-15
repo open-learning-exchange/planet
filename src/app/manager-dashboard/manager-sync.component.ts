@@ -53,11 +53,13 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'login_activities' },
       { db: 'ratings' },
       { db: 'resource_activities' },
-      { dbSource: '_users', dbTarget: 'child_users' }
+      { dbSource: '_users', dbTarget: 'child_users' },
+      { db: 'submissions', selector: { source: this.userService.getConfig().code } }
     ];
     const pullList = [
       { db: 'feedback', selector: { source: this.userService.getConfig().code } },
-      { db: 'notifications', selector: { target: this.userService.getConfig().code } }
+      { db: 'notifications', selector: { target: this.userService.getConfig().code } },
+      { db: 'submissions', selector: { source: this.userService.getConfig().code } }
     ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }

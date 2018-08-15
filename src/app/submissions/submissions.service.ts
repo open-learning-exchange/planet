@@ -43,7 +43,7 @@ export class SubmissionsService {
   }
 
   private createNewSubmission({ parentId, parent, user, type }) {
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', planetCode: user.planetCode };
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode };
   }
 
   openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
@@ -129,7 +129,7 @@ export class SubmissionsService {
   sendSubmissionRequests(users: string[], { parentId, parent }) {
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
-      '$or': users.map((user: any) => ({ 'user._id': user._id, 'planetCode': user.planetCode }))
+      '$or': users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }))
     }).pipe(
       switchMap((submissions: any) => {
         const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
