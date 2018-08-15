@@ -94,8 +94,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (close) {
       this.examComplete();
     } else {
-      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+      this.moveQuestion(1);
     }
+  }
+
+  moveQuestion(direction: number) {
+    this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
   }
 
   examComplete() {
@@ -140,8 +144,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.submissionId = submission._id;
       if (this.fromSubmission === true) {
         this.setQuestion(submission.parent.questions);
-      }
-      if (this.mode === 'grade') {
         this.answer = submission.answers[this.questionNum - 1];
         this.grade = this.answer.grade;
       }

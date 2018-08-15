@@ -39,7 +39,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
-    let query = {};
+    let query: any;
     if (this.mode === 'survey') {
       query = findDocuments({ 'user._id': this.userService.get()._id, type: 'survey' });
     }
@@ -47,7 +47,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((submissions) => {
       this.submissions.data = submissions;
     });
-    this.submissionsService.updateSubmissions(query);
+    this.submissionsService.updateSubmissions({ query });
     this.submissions.filterPredicate = filterSpecificFields([ 'parent.name' ]);
     this.submissions.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
@@ -74,9 +74,19 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (submission.status !== 'pending' || this.mode === 'survey') {
       this.router.navigate([
         './exam',
-        { submissionId: submission._id, questionNum: 1, status: submission.status, mode: this.mode === 'grade' ? 'grade' : 'take' }
+        { submissionId: submission._id, questionNum: 1, status: submission.status, mode: this.surveyMode(this.mode, submission.type) }
       ], { relativeTo: this.route });
     }
+  }
+
+  surveyMode(listMode, submissionType) {
+    if (listMode === 'survey') {
+      return 'take';
+    }
+    if (submissionType === 'survey') {
+      return 'view';
+    }
+    return listMode;
   }
 
 }
