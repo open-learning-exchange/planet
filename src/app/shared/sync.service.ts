@@ -6,7 +6,6 @@ import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { debug } from '../debug-operator';
-import { LogsService } from './forms/logs.service';
 
 const passwordFormFields = [
   {
@@ -29,8 +28,8 @@ export class SyncService {
     private couchService: CouchService,
     private userService: UserService,
     private managerService: ManagerService,
-    private dialogsFormService: DialogsFormService,
-    private logService: LogsService
+    private logService: LogsService,
+    private dialogsFormService: DialogsFormService
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
@@ -47,10 +46,7 @@ export class SyncService {
   sync(replicator, credentials) {
     this.parentDomain = this.userService.getConfig().parentDomain || replicator.parentDomain;
     this.code = this.userService.getConfig().code || replicator.code;
-    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type)).pipe(
-      switchMap(res => {
-        return this.logService.addLogs({ type: 'sync' });
-      }));
+    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 
   deleteReplicators(replicators) {

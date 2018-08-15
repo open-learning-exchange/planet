@@ -6,6 +6,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { LogsService } from '../shared/forms/logs.service';
 
 @Component({
   templateUrl: './manager-sync.component.html'
@@ -19,7 +20,8 @@ export class ManagerSyncComponent implements OnInit {
     private couchService: CouchService,
     private userService: UserService,
     private syncService: SyncService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private logService: LogsService
   ) {}
 
   ngOnInit() {
@@ -45,9 +47,13 @@ export class ManagerSyncComponent implements OnInit {
     }).map(rep => {
       return { ...rep, _deleted: true };
     });
-    this.syncService.deleteReplicators(deleteArray).pipe(switchMap(data => {
-      return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
-    })).subscribe(data => {
+    this.syncService.deleteReplicators(deleteArray).pipe(
+      switchMap(data => {
+        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
+      }),
+      switchMap(res => {
+        return this.logService.addLogs({ type: 'sync' });
+      })).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
       this.getReplicators();
     }, error => this.planetMessageService.showMessage(error));
