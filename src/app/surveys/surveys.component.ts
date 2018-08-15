@@ -8,6 +8,7 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/user.service';
 
 @Component({
   'templateUrl': './surveys.component.html'
@@ -27,7 +28,8 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -68,7 +70,15 @@ export class SurveysComponent implements OnInit, AfterViewInit {
         columns: [ ...array.columns ]
       }), { tableData: [], columns: [] });
       this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: { ...response, allowMulti: true, okClick: this.sendSurvey(survey).bind(this) },
+        data: {
+          ...response,
+          allowMulti: true,
+          okClick: this.sendSurvey(survey).bind(this),
+          dropdownSettings: {
+            field: 'planetCode', startingValue: { value: this.userService.getConfig().code, text: 'Local' },
+          },
+          filterPredicate: filterSpecificFields([ 'name' ])
+        },
         height: '500px',
         width: '600px',
         autoFocus: false
