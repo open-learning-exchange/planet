@@ -130,7 +130,7 @@ export class SubmissionsService {
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
       '$or': users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }))
-    }).pipe(
+    })).pipe(
       switchMap((submissions: any) => {
         const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
         const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
