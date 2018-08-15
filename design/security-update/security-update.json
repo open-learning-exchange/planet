@@ -186,11 +186,24 @@
 		"json": {
 			"admins": {
 				"names": [],
-				"roles": ["nemo"]
+				"roles": []
 			},
 			"members": {
 				"names": [],
-				"roles": ["nemo"]
+				"roles": ["learner"]
+			}
+		}
+  },
+  {
+		"dbName": "replicator_users",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": ["manager"]
 			}
 		}
   }
