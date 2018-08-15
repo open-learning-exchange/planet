@@ -45,7 +45,7 @@ export class DialogsListComponent implements AfterViewInit {
     this.tableData.data = this.data.tableData;
     this.tableColumns = this.data.columns;
     this.disableRowClick = this.data.disableSelection || false;
-    this.emptySubmit = this.data.selectionOptional || false;
+    this.emptySubmit = this.data.selectionOptional || true;
     if (this.data.filterPredicate) {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
