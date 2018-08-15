@@ -51,7 +51,7 @@ export class TeamsService {
       .confirm(title, addTeamDialogFields, this.fg)
       .pipe(
         debug('Dialog confirm'),
-        switchMap((response) => {
+        switchMap((response: any) => {
           if (response !== undefined && !team) {
             return this.createTeam(response);
           } else if (response !== undefined && team) {
