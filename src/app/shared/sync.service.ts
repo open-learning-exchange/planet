@@ -5,6 +5,19 @@ import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
+import { debug } from '../debug-operator';
+import { LogsService } from './forms/logs.service';
+
+const passwordFormFields = [
+  {
+    'label': 'Password',
+    'type': 'textbox',
+    'inputType': 'password',
+    'name': 'password',
+    'placeholder': 'Password',
+    'required': true
+  }
+];
 
 @Injectable()
 export class SyncService {
@@ -15,7 +28,9 @@ export class SyncService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private dialogsFormService: DialogsFormService,
+    private logService: LogsService
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
@@ -32,7 +47,10 @@ export class SyncService {
   sync(replicator, credentials) {
     this.parentDomain = this.userService.getConfig().parentDomain || replicator.parentDomain;
     this.code = this.userService.getConfig().code || replicator.code;
-    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
+    return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type)).pipe(
+      switchMap(res => {
+        return this.logService.addLogs({ type: 'sync' });
+      }));
   }
 
   deleteReplicators(replicators) {
