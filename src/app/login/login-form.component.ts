@@ -94,6 +94,7 @@ export class LoginFormComponent {
   createUser({ name, password }: { name: string, password: string }) {
     const metadata = {
       isUserAdmin: false,
+      planetCode: this.userService.getConfig().code,
       joinDate: Date.now()
     };
 

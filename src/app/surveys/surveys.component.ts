@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } from '@angular/material';
+import { forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -58,7 +59,14 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   }
 
   openSendSurveyDialog(survey) {
-    this.dialogsListService.getListAndColumns('_users').subscribe(response => {
+    forkJoin([
+      this.dialogsListService.getListAndColumns('_users'),
+      this.dialogsListService.getListAndColumns('child_users')
+    ]).subscribe(responses => {
+      const response = responses.reduce((fullArray, array) => ({
+        tableData: [ ...fullArray.tableData, ...array.tableData ],
+        columns: [ ...array.columns ]
+      }), { tableData: [], columns: [] });
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: { ...response, allowMulti: true, okClick: this.sendSurvey(survey).bind(this) },
         height: '500px',

@@ -52,7 +52,8 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'feedback' },
       { db: 'login_activities' },
       { db: 'ratings' },
-      { db: 'resource_activities' }
+      { db: 'resource_activities' },
+      { dbSource: '_users', dbTarget: 'child_users' }
     ];
     const pullList = [
       { db: 'feedback', selector: { source: this.userService.getConfig().code } },

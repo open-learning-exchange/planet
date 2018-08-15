@@ -180,5 +180,18 @@
 				"roles": []
 			}
 		}
+  },
+  {
+		"dbName": "child_users",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": ["nemo"]
+			},
+			"members": {
+				"names": [],
+				"roles": ["nemo"]
+			}
+		}
   }
 ]
