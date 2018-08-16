@@ -58,6 +58,7 @@ export class CoursesStepComponent implements OnDestroy {
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
       const data = { okClick: this.dialogOkClick(db).bind(this),
         filterPredicate: filterSpecificFields([ 'title' ]),
+        selectionOptional: true,
         allowMulti: true,
         initialSelection,
         ...res };
