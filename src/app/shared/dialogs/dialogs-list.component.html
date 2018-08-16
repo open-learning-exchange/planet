@@ -20,8 +20,8 @@
   <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>
   <mat-row
     *matRowDef="let row; columns: tableColumns"
-    (click)="!disableRowClick ? selection.toggle(row._id) : ''"
-    [ngClass]="{highlight:selection.isSelected(row._id)}"
+    (click)="!disableRowClick ? selection.toggle(selectIdentifier(row)) : ''"
+    [ngClass]="{highlight:selection.isSelected(selectIdentifier(row))}"
     class="cursor-pointer">
   </mat-row>
 </mat-table>

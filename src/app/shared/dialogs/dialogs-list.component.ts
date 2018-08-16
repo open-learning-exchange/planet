@@ -30,7 +30,7 @@ export class DialogsListComponent implements AfterViewInit {
   pageEvent: PageEvent;
   disableRowClick: boolean;
   emptySubmit: boolean;
-  dropdownOptions: any[] = [];
+  dropdownOptions: any;
   dropdownFilter: any = {};
   dropdownField: string;
   @ViewChild('paginator') paginator: MatPaginator;
@@ -73,7 +73,7 @@ export class DialogsListComponent implements AfterViewInit {
     // Finds first instance that a filtered row id is not selected, and undefined if all are selected
     // Convert to boolean with ! (true = all selected, false = not all selected)
     const allShownSelected = !this.tableData.filteredData.find((row: any) => {
-      return this.selection.selected.indexOf(row._id) === -1;
+      return this.selection.selected.indexOf(this.selectIdentifier(row)) === -1;
     });
 
     if (this.tableData.filteredData.length === 0) {
@@ -86,16 +86,22 @@ export class DialogsListComponent implements AfterViewInit {
   masterToggle() {
     if (this.isAllSelected() === 'yes') {
       this.tableData.filteredData.forEach((row: any) => {
-        this.selection.deselect(row._id);
+        this.selection.deselect(this.selectIdentifier(row));
       });
     } else {
       // Only select items in the filter
-      this.tableData.filteredData.forEach((row: any) => this.selection.select(row._id));
+      this.tableData.filteredData.forEach((row: any) => this.selection.select(this.selectIdentifier(row)));
     }
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => row._id === id));
+    return this.selection.selected.map(id => this.tableData.data.find((row: any) => {
+      return this.selectIdentifier(row) === id;
+    }));
+  }
+
+  selectIdentifier(row: any) {
+    return row._id + (row.planetCode === undefined ? '' : row.planetCode);
   }
 
   allowSubmit() {
@@ -107,7 +113,7 @@ export class DialogsListComponent implements AfterViewInit {
       return;
     }
     this.dropdownField = dropdownSettings.field;
-    this.dropdownOptions = this.tableData.data.reduce((values, item) => {
+    this.dropdownOptions = this.tableData.data.reduce((values: any[], item: any) => {
         const value = item[dropdownSettings.field];
         if (values.findIndex(v => v.value === value) === -1) {
           values.push({ value, text: value });

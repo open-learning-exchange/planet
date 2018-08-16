@@ -29,7 +29,8 @@ export class DialogsListService {
       '$or': [
         { 'roles': { '$in': [ 'learner', 'leader' ] } },
         { 'isUserAdmin': true }
-      ]
+      ],
+      'requestId': { '$exists': false }
     };
     return {
       '_users': users,
