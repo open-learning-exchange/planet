@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class CoursesService {
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   courses: any = [];
-  private coursesUpdated = new BehaviorSubject<any[]>([]);
+  private coursesUpdated = new Subject<any[]>();
   coursesUpdated$ = this.coursesUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;

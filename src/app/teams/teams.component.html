@@ -17,7 +17,7 @@
     </div>
   </mat-toolbar>
 
-  <ng-container *ngIf="teams.data.length; else notFoundMessage">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
