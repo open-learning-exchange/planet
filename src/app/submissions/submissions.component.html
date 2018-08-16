@@ -23,7 +23,7 @@
         <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="gradeSubmission(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="5"

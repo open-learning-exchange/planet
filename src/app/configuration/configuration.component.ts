@@ -229,6 +229,7 @@ export class ConfigurationComponent implements OnInit {
         'type': 'user',
         'isUserAdmin': true,
         'joinDate': Date.now(),
+        'parentCode': configuration.code,
         ...this.contactFormGroup.value
       };
       this.createPlanet(credentials, configuration, adminName, userDetail);

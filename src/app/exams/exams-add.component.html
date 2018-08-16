@@ -26,6 +26,7 @@
           *ngFor="let question of questionsFormArray.controls; let i = index"
           [questionForm]="question"
           (questionRemove)="removeQuestion(i)"
+          [examType]="examType"
           ></planet-exam-question>
       </div>
     </form>
