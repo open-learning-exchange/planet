@@ -48,7 +48,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <ng-container *ngIf="courses.data.length; else notFoundMessage">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="courses" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>

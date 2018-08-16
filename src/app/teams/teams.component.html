@@ -17,11 +17,13 @@
     </div>
   </mat-toolbar>
   
-  <ng-container *ngIf="teams.data.length; else notFoundMessage">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.doc.name}}{{teams.data.length}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}{{teams.data.length}}</a>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>

@@ -13,7 +13,7 @@ import { Subject } from 'rxjs';
         <span i18n>Your Notifications</span>
       </mat-toolbar-row>
     </mat-toolbar>
-    <ng-container *ngIf="notifications.length; else notFoundMessage">
+    <ng-container *ngIf="!emptyData; else notFoundMessage">
       <mat-list role="list" *ngFor="let notification of notifications">
         <mat-list-item (click)="readNotification(notification)">
         <mat-divider></mat-divider>
@@ -34,6 +34,7 @@ import { Subject } from 'rxjs';
 export class NotificationsComponent implements OnInit {
   notifications = [];
   private onDestroy$ = new Subject<void>();
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -64,6 +65,7 @@ export class NotificationsComponent implements OnInit {
       [ { 'time': 'desc' } ]))
     .subscribe(notification => {
        this.notifications = notification;
+       this.emptyData = !this.notifications.length;
     }, (err) => console.log(err.error.reason));
   }
 

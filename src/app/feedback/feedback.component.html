@@ -22,7 +22,7 @@
     </mat-toolbar-row>
   </mat-toolbar>
   
-  <ng-container *ngIf="feedback.data.length; else notFoundMessage">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="feedback" matSort>
       <!-- Title Column -->
       <ng-container matColumnDef="title">
