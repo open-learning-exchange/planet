@@ -21,6 +21,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   userShelf: any = [];
   displayedColumns = [ 'name', 'action' ];
   dbName = 'teams';
+  emptyData = false;
 
   constructor(
     private userService: UserService,
@@ -46,6 +47,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((data: any) => {
       this.userShelf = this.userService.shelf;
       this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
+      this.emptyData = !this.teams.data.length;
     }, (error) => console.log(error));
   }
 

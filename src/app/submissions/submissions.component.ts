@@ -29,6 +29,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'name', 'status' ];
   mode = 'grade';
+  emptyData = false;
 
   constructor(
     private router: Router,
@@ -46,6 +47,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
       this.submissions.data = submissions;
+      this.emptyData = !this.submissions.data.length;
     });
     this.submissionsService.updateSubmissions({ query });
     this.submissions.filterPredicate = filterSpecificFields([ 'parent.name' ]);

@@ -35,7 +35,7 @@
     </span>
   </mat-toolbar>
   
-  <ng-container *ngIf="resources.data.length; else notFoundMessage">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>

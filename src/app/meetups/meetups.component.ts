@@ -39,6 +39,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   pageEvent: PageEvent;
   currentUser = this.userService.get();
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -56,6 +57,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
+      this.emptyData = !this.meetups.data.length;
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);

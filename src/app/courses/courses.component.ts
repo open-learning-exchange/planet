@@ -62,6 +62,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
   planetType = this.userService.getConfig().planetType;
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -97,6 +98,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((courses: any) => this.parent ? this.couchService.localComparison(this.dbName, courses) : of(courses))
     ).subscribe((courses: any) => {
       this.courses.data = courses;
+      this.emptyData = !this.courses.data.length;
     });
   }
 
@@ -259,17 +261,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
-  courseResign(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
-    userShelf.courseIds.splice(myCourseIndex, 1);
-    this.updateShelf(userShelf, 'Course successfully resigned');
-  }
-
-  courseAdmission(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    userShelf.courseIds.push(courseId);
-    this.updateShelf(userShelf, 'Course added to your dashboard');
+  courseToggle(courseId, type) {
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.setupList(this.courses.data, this.userShelf.courseIds);
+    }, (error) => ((error)));
   }
 
   shareCourse(type, courses) {
