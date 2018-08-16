@@ -261,17 +261,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
-  courseResign(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    const myCourseIndex = userShelf.courseIds.indexOf(courseId);
-    userShelf.courseIds.splice(myCourseIndex, 1);
-    this.updateShelf(userShelf, 'Course successfully resigned');
-  }
-
-  courseAdmission(courseId) {
-    const userShelf: any = { courseIds: [ ...this.userShelf.courseIds ], ...this.userShelf };
-    userShelf.courseIds.push(courseId);
-    this.updateShelf(userShelf, 'Course added to your dashboard');
+  courseToggle(courseId, type) {
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.setupList(this.courses.data, this.userShelf.courseIds);
+    }, (error) => ((error)));
   }
 
   shareCourse(type, courses) {
