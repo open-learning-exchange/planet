@@ -21,6 +21,12 @@ import { findDocuments } from '../../shared/mangoQueries';
     .mat-radio-button {
       margin: 10px;
     }
+    .mat-form-field {
+      margin-bottom: 10px;
+    }
+    .mat-radio-group {
+      margin: 10px;
+    }
     .custom-input-width {
       width: 50%;
     }
