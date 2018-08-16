@@ -116,6 +116,7 @@ curl -X PUT $COUCHURL/send_items
 curl -X PUT $COUCHURL/teams
 curl -X PUT $COUCHURL/tablet_users
 curl -X PUT $COUCHURL/child_users
+curl -X PUT $COUCHURL/replicator_users
 
 # Create design documents
 node ./design/create-design-docs.js
