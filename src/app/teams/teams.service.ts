@@ -8,8 +8,6 @@ import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { findDocuments } from '../shared/mangoQueries';
-import { FormBuilder, FormGroup } from '@angular/forms';
-
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -27,55 +25,42 @@ const addTeamDialogFields = [ {
 export class TeamsService {
 
   dbName = 'teams';
-  fg: FormGroup;
 
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
-    private fb: FormBuilder,
   ) {}
 
   addTeamDialog(shelf, team?) {
     const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ '', Validators.required ],
-      description: '',
-      requests: [ [] ]
+      name: [ team ? team.name : '', Validators.required ],
+      description: team ? team.description : '',
+      requests: [ team ? team.requests : [] ]
     };
-    this.fg = this.fb.group(formGroup);
-    if (team) {
-      this.fg.patchValue(team);
-    }
     return this.dialogsFormService
-      .confirm(title, addTeamDialogFields, this.fg)
+      .confirm(title, addTeamDialogFields, formGroup)
       .pipe(
         debug('Dialog confirm'),
         switchMap((response: any) => {
-          if (response !== undefined && !team) {
-            return this.createTeam(response);
-          } else if (response !== undefined && team) {
-            return this.updateTeam({ ...team, ...response });
+          if (response !== undefined) {
+            return this.updateTeam({ limit: 12, status: 'active', ...team, ...response });
           }
           return empty();
         }),
         switchMap((response) => {
           if (!team) {
-            return this.toggleTeamMembership({ _id: response.id }, false, shelf);
+            return this.toggleTeamMembership({ _id: response._id }, false, shelf);
           }
           return of(response);
         })
       );
   }
 
-  createTeam(team: any) {
-    return this.couchService.post(this.dbName + '/', { ...team, limit: '12', status: 'active' });
-  }
-
   updateTeam(team: any) {
-    return this.couchService.put(this.dbName + '/' + team._id, team).pipe(switchMap((res: any) => {
-      team._rev = res.rev;
-      return of(team);
+    return this.couchService.post(this.dbName, team).pipe(switchMap((res: any) => {
+      return of({ _rev: res.rev, _id: res.id, ...team });
     }));
   }
 
