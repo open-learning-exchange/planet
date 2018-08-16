@@ -47,8 +47,8 @@
       <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     </ng-container>
   </mat-toolbar>
-  
-  <ng-container *ngIf="courses.data.length; else notFoundMessage">
+
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="courses" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -78,11 +78,11 @@
             <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseAdmission(element._id)"  >
+            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
             </a>
-            <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
+            <a mat-menu-item *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>

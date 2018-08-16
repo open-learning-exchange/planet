@@ -62,6 +62,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+  emptyData = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -88,6 +89,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources;
+      this.emptyData = !this.resources.data.length;
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
     this.resources.filterPredicate = composeFilterFunctions(

@@ -30,6 +30,6 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="ok()" i18n>OK</button>
-  <button mat-button mat-dialog-close i18n *ngIf="cancelable">Cancel</button>
+  <button color="primary" mat-raised-button (click)="ok()" i18n>OK</button>
+  <button color="warn" mat-raised-button mat-dialog-close *ngIf="cancelable" i18n>Cancel</button>
 </mat-dialog-actions>
