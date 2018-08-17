@@ -144,6 +144,8 @@ multi_db_update $SECURITY _security
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
 # Increse http request size for large attachments
 upsert_doc _node/nonode@nohost/_config httpd/max_http_request_size '"1073741824"'
+# Increse replication timeout
+upsert_doc _node/nonode@nohost/_config replicator/connection_timeout '"300000"'
 
 # Make user database public
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'
