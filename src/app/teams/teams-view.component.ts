@@ -29,6 +29,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
+  userConfig = this.userService.getConfig();
 
   constructor(
     private couchService: CouchService,
