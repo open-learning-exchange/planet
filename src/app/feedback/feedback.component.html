@@ -21,85 +21,90 @@
       <span i18n>Your Current Lists of Feedback</span>
     </mat-toolbar-row>
   </mat-toolbar>
-
-  <mat-table #table [dataSource]="feedback" matSort>
-    <!-- Title Column -->
-    <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
-    </ng-container>
-    <!-- Type Column -->
-    <ng-container matColumnDef="type">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <ng-container [ngSwitch]="element.type">
-          <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
-          <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
-          <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
-        </ng-container>
-        <span>{{element.type}}</span>
-      </mat-cell>
-    </ng-container>
-    <!-- Priorty Column -->
-    <ng-container matColumnDef="priority">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
-    </ng-container>
-    <!-- Owner Column -->
-    <ng-container matColumnDef="owner">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Owner</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.owner}}</mat-cell>
-    </ng-container>
-    <!-- Status Column -->
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
-    </ng-container>
-    <!-- OpenTime Column -->
-    <ng-container matColumnDef="openTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Open Time</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.openTime | date: mediumDate}}</mat-cell>
-    </ng-container>
-    <!-- CloseTime Column -->
-    <ng-container matColumnDef="closeTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Close Time</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.closeTime | date: mediumDate}}</mat-cell>
-    </ng-container>
-    <!-- Source Column -->
-    <ng-container matColumnDef="source">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Source</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
+  
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="feedback" matSort>
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
       </ng-container>
-    <!-- Action Column -->
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-        <button mat-icon-button [matMenuTriggerFor]="resourceMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #resourceMenu="matMenu">
-          <button mat-menu-item [routerLink]="['view',element._id]">
-            <mat-icon>visibility</mat-icon>
-            <span i18n>View</span>
+      <!-- Type Column -->
+      <ng-container matColumnDef="type">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container [ngSwitch]="element.type">
+            <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
+            <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
+            <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
+          </ng-container>
+          <span>{{element.type}}</span>
+        </mat-cell>
+      </ng-container>
+      <!-- Priorty Column -->
+      <ng-container matColumnDef="priority">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
+      </ng-container>
+      <!-- Owner Column -->
+      <ng-container matColumnDef="owner">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Owner</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.owner}}</mat-cell>
+      </ng-container>
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+      </ng-container>
+      <!-- OpenTime Column -->
+      <ng-container matColumnDef="openTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Open Time</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.openTime | date: mediumDate}}</mat-cell>
+      </ng-container>
+      <!-- CloseTime Column -->
+      <ng-container matColumnDef="closeTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Close Time</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.closeTime | date: mediumDate}}</mat-cell>
+      </ng-container>
+      <!-- Source Column -->
+      <ng-container matColumnDef="source">
+          <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Source</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
+        </ng-container>
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
+        <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+          <button mat-icon-button [matMenuTriggerFor]="resourceMenu">
+            <mat-icon>more_vert</mat-icon>
           </button>
-          <button mat-menu-item (click)="deleteClick(element)">
-            <mat-icon>delete_forever</mat-icon>
-            <span i18n>Delete</span>
-          </button>
-          <button mat-menu-item *ngIf="element.status !== 'Closed'" (click)="closeFeedback(element)">
-            <mat-icon>close</mat-icon>
-            <span i18n>Close</span>
-          </button>
-          <button mat-menu-item *ngIf="element.status === 'Closed'" (click)="openFeedback(element)">
-            <mat-icon>lock_open</mat-icon>
-            <span i18n>Re-open</span>
-          </button>
-        </mat-menu>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns" class="cursor-pointer" [routerLink]="['view', row._id]">
-    </mat-row>
-  </mat-table>
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+          <mat-menu #resourceMenu="matMenu">
+            <button mat-menu-item [routerLink]="['view',element._id]">
+              <mat-icon>visibility</mat-icon>
+              <span i18n>View</span>
+            </button>
+            <button mat-menu-item (click)="deleteClick(element)">
+              <mat-icon>delete_forever</mat-icon>
+              <span i18n>Delete</span>
+            </button>
+            <button mat-menu-item *ngIf="element.status !== 'Closed'" (click)="closeFeedback(element)">
+              <mat-icon>close</mat-icon>
+              <span i18n>Close</span>
+            </button>
+            <button mat-menu-item *ngIf="element.status === 'Closed'" (click)="openFeedback(element)">
+              <mat-icon>lock_open</mat-icon>
+              <span i18n>Re-open</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns" class="cursor-pointer" [routerLink]="['view', row._id]">
+      </mat-row>
+    </mat-table>
+    <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Feedback Found</div>
+  </ng-template>
 </div>

@@ -8,6 +8,7 @@ const listColumns = {
   'resources': [ 'title' ],
   'courses': [ 'courseTitle' ],
   '_users': [ 'name' ],
+  'child_users': [ 'name' ],
   'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
 };
 
@@ -20,23 +21,27 @@ export class DialogsListService {
   ) {}
 
   defaultSelectors() {
+    const users = {
+      '$nor': [
+        { '_id': this.userService.get()._id },
+        { '_id': 'org.couchdb.user:satellite' }
+      ],
+      '$or': [
+        { 'roles': { '$in': [ 'learner', 'leader' ] } },
+        { 'isUserAdmin': true }
+      ],
+      'requestId': { '$exists': false }
+    };
     return {
-      '_users': {
-        '$nor': [
-          { '_id': this.userService.get()._id },
-          { '_id': 'org.couchdb.user:satellite' }
-        ],
-        '$or': [
-          { 'roles': { '$in': [ 'learner', 'leader' ] } },
-          { 'isUserAdmin': true }
-        ]
-      }
+      '_users': users,
+      'child_users': users
     };
   }
 
   getListAndColumns(db: string, selector?: any, opts: any = {}) {
     selector = selector || this.defaultSelectors()[db] || {};
-    return this.couchService.post(db + '/_find', findDocuments(selector), opts).pipe(map((res) => {
+    const fields = db === '_users' || db === 'child_users' ? this.userService.userProperties : [];
+    return this.couchService.post(db + '/_find', findDocuments(selector, fields), opts).pipe(map((res) => {
       return { tableData: res.docs, columns: listColumns[db] };
     }));
   }

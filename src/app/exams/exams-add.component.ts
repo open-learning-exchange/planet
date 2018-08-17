@@ -24,9 +24,11 @@ export class ExamsAddComponent implements OnInit {
   questionsFormArray: FormArray;
   documentInfo: any = {};
   pageType = 'Add';
+  examType = this.route.snapshot.paramMap.get('type') || 'courses';
   successMessage = 'New exam added';
   steps = [];
   showFormError = false;
+  returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
 
   constructor(
     private router: Router,
@@ -41,7 +43,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   createForm() {
-    const title = this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle;
+    const title = this.examType === 'courses' ? this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle : '';
     this.examForm = this.fb.group({
       name: [
         title,
@@ -55,7 +57,8 @@ export class ExamsAddComponent implements OnInit {
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
-      questions: this.fb.array([])
+      questions: this.fb.array([]),
+      type: this.examType
     });
     this.questionsFormArray = <FormArray>this.examForm.controls.questions;
   }
@@ -99,14 +102,22 @@ export class ExamsAddComponent implements OnInit {
   addExam(examInfo) {
     this.couchService.post(this.dbName, examInfo).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
-      const courseExam = { ...this.documentInfo, ...examInfo, totalMarks: this.totalMarks(examInfo) };
-      this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
-      this.router.navigate([ this.coursesService.returnUrl ]);
+      let routerParams = {};
+      if (this.examType === 'courses') {
+        this.appendExamToCourse(examInfo);
+        routerParams = { 'continue': true };
+      }
+      this.router.navigate([ this.returnUrl, routerParams ]);
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+  }
+
+  appendExamToCourse(examInfo) {
+    const courseExam = { ...this.documentInfo, ...examInfo, totalMarks: this.totalMarks(examInfo) };
+    this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
   }
 
   totalMarks(examInfo) {
@@ -140,7 +151,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate([ this.coursesService.returnUrl || 'courses' ]);
+    this.router.navigate([ this.returnUrl ]);
   }
 
 }

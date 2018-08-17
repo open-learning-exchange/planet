@@ -1,0 +1,36 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Surveys</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon class="input-icon">search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="space-container primary-link-hover">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill"></span>
+    <button mat-mini-fab (click)="routeToEditSurvey('add')">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-toolbar>
+  <mat-table #table [dataSource]="surveys" matSort>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Survey</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)">Edit Survey</button>
+          <button mat-raised-button color="primary" (click)="openSendSurveyDialog(element)">Send Survey</button>
+          <button mat-raised-button color="primary" (click)="recordSurvey(element)">Record Survey</button>
+        </mat-cell>
+      </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>

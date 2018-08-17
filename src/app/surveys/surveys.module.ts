@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ExamsAddComponent } from './exams-add.component';
-import { ExamsQuestionComponent } from './exams-question.component';
-import { ExamsViewComponent } from './exams-view.component';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
-import { SharedComponentsModule } from '../shared/shared-components.module';
+
+import { SurveysComponent } from './surveys.component';
+import { ExamsModule } from '../exams/exams.module';
+import { SurveysRouterModule } from './surveys-router.module';
 
 @NgModule({
   imports: [
@@ -18,15 +18,11 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
-    SharedComponentsModule
+    ExamsModule,
+    SurveysRouterModule
   ],
   declarations: [
-    ExamsAddComponent,
-    ExamsQuestionComponent,
-    ExamsViewComponent
-  ],
-  exports: [
-    ExamsAddComponent
+    SurveysComponent
   ]
 })
-export class ExamsModule {}
+export class SurveysModule {}

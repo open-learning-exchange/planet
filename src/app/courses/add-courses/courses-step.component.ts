@@ -1,67 +1,64 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
+import { CoursesService } from '../courses.service';
 
 @Component({
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html'
 })
-export class CoursesStepComponent implements OnChanges {
+export class CoursesStepComponent implements OnDestroy {
 
-  @Input() stepInfo: any = {
-    id: '',
-    stepTitle: '',
-    description: '',
-    resources: []
-  };
-  @Output() stepInfoChange = new EventEmitter<any>();
-  @Input() stepNum: number;
-  @Input() stepCount: number;
-  @Output() examClick = new EventEmitter<any>();
-  @Output() stepOrder = new EventEmitter<any>();
-  @Output() stepRemove = new EventEmitter<any>();
+  @Input() steps: any[];
+  @Output() stepsChange = new EventEmitter<any>();
 
   stepForm: FormGroup;
   dialogRef: MatDialogRef<DialogsListComponent>;
-  resources: any;
+  activeStep: any;
+  activeStepIndex = -1;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
+    private router: Router,
     private fb: FormBuilder,
     private dialogsListService: DialogsListService,
-    private dialog: MatDialog
-  ) {}
-
-  ngOnChanges() {
-    const { resources, ...stepForm } = this.stepInfo;
-    this.stepForm = this.fb.group(stepForm);
-    this.resources = resources;
+    private dialog: MatDialog,
+    private coursesService: CoursesService,
+  ) {
+    this.stepForm = this.fb.group({
+      id: '',
+      stepTitle: '',
+      description: ''
+    });
+    this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
+      this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
+      this.stepsChange.emit(this.steps);
+    });
   }
 
-  stepChange() {
-    this.stepInfoChange.emit({ ...this.stepForm.value, resources: this.resources });
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
-  addExam(stepNum: number) {
-    this.examClick.emit(stepNum - 1);
-  }
-
-  deleteStep() {
-    this.stepRemove.emit();
+  stepClick(index: number) {
+    this.activeStep = this.steps[index];
+    this.activeStepIndex = index;
+    this.stepForm.patchValue(this.steps[index]);
   }
 
   attachItem(db: string) {
-    const initialSelection = this.resources.map(resource => resource._id);
+    const initialSelection = this.activeStep.resources.map(resource => resource._id);
     this.dialogsListService.getListAndColumns(db).subscribe((res) => {
       const data = { okClick: this.dialogOkClick(db).bind(this),
         filterPredicate: filterSpecificFields([ 'title' ]),
+        selectionOptional: true,
         allowMulti: true,
         initialSelection,
         ...res };
@@ -76,18 +73,28 @@ export class CoursesStepComponent implements OnChanges {
 
   dialogOkClick(db: string) {
     return (selected: any) => {
-      this.resources = selected;
-      this.stepChange();
+      this.steps[this.activeStepIndex].resources = selected;
+      this.stepsChange.emit(this.steps);
       this.dialogRef.close();
     };
   }
 
-  moveUp() {
-    this.stepOrder.emit(this.stepNum - 2);
+  addExam() {
+    this.coursesService.stepIndex = this.activeStepIndex;
+    if (this.activeStep.exam) {
+      this.router.navigate([ '/courses/update/exam/', this.activeStep.exam._id ]);
+    } else {
+      this.router.navigate([ '/courses/exam/' ]);
+    }
   }
 
-  moveDown() {
-    this.stepOrder.emit(this.stepNum);
+  moveStep(event, i, direction = 0) {
+    event.stopPropagation();
+    const step = this.steps.splice(i, 1)[0];
+    if (direction !== 0) {
+      this.steps.splice(i + direction, 0, step);
+    }
+    this.stepsChange.emit(this.steps);
   }
 
 }

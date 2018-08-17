@@ -7,6 +7,7 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -18,7 +19,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
-  showExamButton = false;
+  isUserEnrolled = false;
   progress = { stepNum: 1 };
 
   constructor(
@@ -26,7 +27,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private planetMessageService: PlanetMessageService,
   ) { }
 
   ngOnInit() {
@@ -35,7 +37,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
       this.progress = progress;
-      this.showExamButton = this.checkMyCourses(course._id);
+      this.isUserEnrolled = this.checkMyCourses(course._id);
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
       (params: ParamMap) => this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true }),
@@ -77,6 +79,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   updateRating(itemId) {
     this.coursesService.requestCourse({ courseId: itemId, forceLatest: true });
+  }
+
+  courseToggle(courseId, type) {
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.isUserEnrolled = !this.isUserEnrolled;
+    }, (error) => ((error)));
   }
 
 }

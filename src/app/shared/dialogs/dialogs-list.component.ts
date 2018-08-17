@@ -6,6 +6,7 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MAT_DIALOG_DATA, MatPaginator, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
+import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
@@ -29,12 +30,16 @@ export class DialogsListComponent implements AfterViewInit {
   pageEvent: PageEvent;
   disableRowClick: boolean;
   emptySubmit: boolean;
+  dropdownOptions: any;
+  dropdownFilter: any = {};
+  dropdownField: string;
   @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[],
     columns: string[],
     okClick: any,
+    dropdownSettings: { field: string, startingValue?: { value: string, text: string } },
     filterPredicate?: any,
     allowMulti?: boolean,
     initialSelection?: any[],
@@ -49,6 +54,7 @@ export class DialogsListComponent implements AfterViewInit {
     if (this.data.filterPredicate) {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
+    this.setDropdownFilter(this.data.dropdownSettings);
   }
 
   ngAfterViewInit() {
@@ -60,14 +66,14 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
-    this.tableData.filter = filterValue;
+    this.tableData.filter = filterValue || ' ';
   }
 
   isAllSelected() {
     // Finds first instance that a filtered row id is not selected, and undefined if all are selected
     // Convert to boolean with ! (true = all selected, false = not all selected)
     const allShownSelected = !this.tableData.filteredData.find((row: any) => {
-      return this.selection.selected.indexOf(row._id) === -1;
+      return this.selection.selected.indexOf(this.selectIdentifier(row)) === -1;
     });
 
     if (this.tableData.filteredData.length === 0) {
@@ -80,20 +86,51 @@ export class DialogsListComponent implements AfterViewInit {
   masterToggle() {
     if (this.isAllSelected() === 'yes') {
       this.tableData.filteredData.forEach((row: any) => {
-        this.selection.deselect(row._id);
+        this.selection.deselect(this.selectIdentifier(row));
       });
     } else {
       // Only select items in the filter
-      this.tableData.filteredData.forEach((row: any) => this.selection.select(row._id));
+      this.tableData.filteredData.forEach((row: any) => this.selection.select(this.selectIdentifier(row)));
     }
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => row._id === id));
+    return this.selection.selected.map(id => this.tableData.data.find((row: any) => {
+      return this.selectIdentifier(row) === id;
+    }));
+  }
+
+  selectIdentifier(row: any) {
+    return row._id + (row.planetCode === undefined ? '' : row.planetCode);
   }
 
   allowSubmit() {
     return this.emptySubmit || this.selection.hasValue();
+  }
+
+  setDropdownFilter(dropdownSettings: any) {
+    if (dropdownSettings === undefined) {
+      return;
+    }
+    this.dropdownField = dropdownSettings.field;
+    this.dropdownOptions = this.tableData.data.reduce((values: any[], item: any) => {
+        const value = item[dropdownSettings.field];
+        if (values.findIndex(v => v.value === value) === -1) {
+          values.push({ value, text: value });
+        }
+        return values;
+      }, dropdownSettings.startingValue ? [ dropdownSettings.startingValue ] : []);
+    const otherFilterPredicates = this.tableData.filterPredicate;
+    this.dropdownFilter = dropdownSettings.startingValue.value ?
+      { [dropdownSettings.field]: dropdownSettings.startingValue.value } : { [dropdownSettings.field]: '' };
+    this.tableData.filterPredicate = composeFilterFunctions([ otherFilterPredicates, filterDropdowns(this.dropdownFilter) ]);
+    this.tableData.filter = ' ';
+  }
+
+  onFilterChange(filterValue: string, field: string) {
+    this.dropdownFilter[field] = filterValue === 'All' ? '' : filterValue;
+    // Force filter to update by setting it to a space if empty
+    this.tableData.filter = this.tableData.filter ? this.tableData.filter : ' ';
   }
 
 }

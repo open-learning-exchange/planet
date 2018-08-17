@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, BehaviorSubject, forkJoin, of } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
@@ -17,7 +18,7 @@ export class CoursesService {
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   courses: any = [];
-  private coursesUpdated = new BehaviorSubject<any[]>([]);
+  private coursesUpdated = new Subject<any[]>();
   coursesUpdated$ = this.coursesUpdated.asObservable();
   stepIndex: any;
   returnUrl: string;
@@ -26,7 +27,8 @@ export class CoursesService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
       const { ids, opts } = this.currentParams;
@@ -139,6 +141,21 @@ export class CoursesService {
       const courseIds = response.docs.map(c => c.courseId).concat([ '0' ]);
       this.getCourses({ ids: courseIds });
     });
+  }
+
+  courseResignAdmission(courseId, type) {
+    const courseIds: any = [ ...this.userService.shelf.courseIds ];
+    if (type === 'resign') {
+      const myCourseIndex = courseIds.indexOf(courseId);
+      courseIds.splice(myCourseIndex, 1);
+    } else {
+      courseIds.push(courseId);
+    }
+    return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
+      const admissionMessage = type === 'resign' ? 'Course successfully resigned from myCourses' : 'Course added to your dashboard';
+      this.planetMessageService.showMessage(admissionMessage);
+      return res;
+    }));
   }
 
 }

@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: '', component: UsersComponent },
   { path: 'profile/:name', component: UsersProfileComponent },
   { path: 'update/:name', component: UsersUpdateComponent },
+  { path: 'submission', component: UsersUpdateComponent, data: { submission: true } }
 ];
 
 @NgModule({
