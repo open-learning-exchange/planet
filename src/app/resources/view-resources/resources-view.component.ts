@@ -44,7 +44,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     return domain + this.dbName + '/';
   }
   // Use string rather than boolean for i18n select
-  fullView = 'off';
+  fullView = 'on';
   resourceId: string;
 
   ngOnInit() {
