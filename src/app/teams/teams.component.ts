@@ -22,6 +22,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'name', 'action' ];
   dbName = 'teams';
   emptyData = false;
+  user = this.userService.get();
 
   constructor(
     private userService: UserService,

@@ -9,7 +9,7 @@
     <button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
       Add Members
     </button>
-    <ng-container [ngSwitch]="userStatus">
+    <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || this.userService.getConfig().registrationRequest === 'accepted'">
       <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
         Leave
       </button>
