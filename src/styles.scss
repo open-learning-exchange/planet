@@ -434,4 +434,9 @@ body {
     justify-content: end;
   }
 
+  h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
 }
