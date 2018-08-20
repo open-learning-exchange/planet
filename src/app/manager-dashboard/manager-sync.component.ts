@@ -83,15 +83,16 @@ export class ManagerSyncComponent implements OnInit {
       this.couchService.findAll('replicator_users', { 'selector': {} })
     ]).pipe(
       switchMap(([ users, repUsers ]) => {
+        const planetCode = this.userService.getConfig().code;
         const newRepUsers = users.map((user: any) => {
           const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
             { _id, _rev, ...userProps } = user;
           return {
             ...repUser,
             ...userProps,
-            _id: user.name + '@' + user.planetCode,
+            _id: user.name + '@' + planetCode,
             couchId: user._id,
-            planetCode: this.userService.getConfig().code
+            planetCode: planetCode
           };
         });
         const deletedRepUsers = repUsers
