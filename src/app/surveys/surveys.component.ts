@@ -36,7 +36,6 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.getSurveys().subscribe((surveys) => {
       this.surveys.data = surveys;
-      console.log(this.surveys.data);
     });
   }
 
