@@ -27,10 +27,6 @@ export class LoginComponent implements OnInit {
     this.getPlanetVersion();
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
-      if (window.location.hostname === ('localhost' || '127.0.0.1')) {
-        // setTimeout fixes ExpressionChangedAfterItHasBeenCheckedError
-        setTimeout(() => this.alertMessage(), 50);
-      }
       this.checkAdminExistence().pipe(
         switchMap(noAdmin => {
           // false means there is admin
@@ -65,16 +61,6 @@ export class LoginComponent implements OnInit {
     const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
     this.couchService.getUrl('version', opts).pipe(catchError(() => of(require('../../../package.json').version)))
       .subscribe((version: string) => this.planetVersion = version);
-  }
-
-  alertMessage() {
-    this.dialog.open(DialogsPromptComponent, {
-      data: {
-        extraMessage: 'Some feature might not work on "localhost" or "127.0.0.1". Please use IP Address or hostname of your machine.',
-        cancelable: false,
-        showMainParagraph: false
-      }
-    });
   }
 
 }
