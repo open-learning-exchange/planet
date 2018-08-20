@@ -106,7 +106,7 @@ export class LoginFormComponent {
         this.welcomeNotification(res.id);
         this.login(this.userForm.value, true);
       },
-      err => this.planetMessageService.showAlert('An error occurred please try again')
+      this.loginError('An error occurred please try again')
     );
   }
 
@@ -124,7 +124,14 @@ export class LoginFormComponent {
         const adminName = this.userService.getConfig().adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
-    ).subscribe(() => {}, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
+    ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
+  }
+
+  loginError(message: string) {
+    return () => {
+      this.userForm.setErrors({ 'invalid': true });
+      this.planetMessageService.showAlert(message);
+    };
   }
 
   sendNotifications(userName, addedMember) {
