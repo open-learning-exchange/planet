@@ -86,7 +86,13 @@ export class ManagerSyncComponent implements OnInit {
         const newRepUsers = users.map((user: any) => {
           const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
             { _id, _rev, ...userProps } = user;
-          return { ...repUser, ...userProps, _id: user.name + '@' + user.planetCode, couchId: user._id, planetCode: this.userService.getConfig().code };
+          return {
+            ...repUser,
+            ...userProps,
+            _id: user.name + '@' + user.planetCode,
+            couchId: user._id,
+            planetCode: this.userService.getConfig().code
+          };
         });
         const deletedRepUsers = repUsers
           .filter((rUser: any) => users.findIndex((user: any) => rUser.couchId === user._id) < 0)
