@@ -42,7 +42,7 @@
         mat-raised-button
         color="primary"
         (click)="nextQuestion(questionNum)"
-        [planetSubmit]=true
+        [planetSubmit]="spinnerOn"
         [disabled]="answer === undefined || grade === undefined || grade === null"
         i18n>
         Submit Answer

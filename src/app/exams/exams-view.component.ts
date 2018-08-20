@@ -21,6 +21,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   maxQuestions = 0;
   answer: any = undefined;
   incorrectAnswer = false;
+  spinnerOn = true;
   mode = 'take';
   grade;
   submissionId: string;
@@ -45,6 +46,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       const surveyId = params.get('surveyId');
       const mode = params.get('mode');
+      this.spinnerOn = true;
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
         this.incorrectAnswer = false;
@@ -84,6 +86,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(() => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
+        this.spinnerOn = false;
       } else {
         this.routeToNext(close);
       }
@@ -100,6 +103,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   moveQuestion(direction: number) {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    this.spinnerOn = false;
   }
 
   examComplete() {
