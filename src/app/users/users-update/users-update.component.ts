@@ -60,7 +60,6 @@ export class UsersUpdateComponent implements OnInit {
     if (this.route.snapshot.data.submission === true) {
       this.submissionMode = true;
       this.redirectUrl = '/surveys';
-      console.log(this.submissionMode);
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name');
