@@ -19,6 +19,6 @@
   </mat-form-field>
   <button mat-button [planetSubmit]="userForm.valid">{{ createMode ? 'Create User' : 'SIGN-IN' }}</button>
   <a class = "addUser" [routerLink]="createMode ? ['/login'] : ['newuser']">
-    {{ createMode ? 'Already have an account?' : 'Are you new?' }}
+    {{ createMode ? 'Already have an account?' : 'Become a member' }}
   </a>
 </form>
