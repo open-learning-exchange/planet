@@ -10,11 +10,12 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
     MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule,
-     MatDialogModule
+     MatDialogModule, SharedComponentsModule
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent

@@ -12,39 +12,46 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3">
-      <button mat-button routerLink='/users' i18n>All Members</button>
+      <button mat-button routerLink='/teams/users' i18n>All Members</button>
       <button mat-mini-fab (click)="addTeam()" ><mat-icon>add</mat-icon></button>
     </div>
   </mat-toolbar>
 
-  <mat-table #table [dataSource]="teams" matSort>
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.doc.name}}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <ng-container [ngSwitch]="element.userStatus">
-          <button *ngSwitchCase="'member'" mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
-            Leave
-          </button>
-          <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
-            <ng-container i18n>Request to Join</ng-container>
-          </button>
-          <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>
-            Request pending
-          </button>
-        </ng-container>
-        <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>View Team</button>
-        <a mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n-title title="Feedback">Feedback</a>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-  <mat-paginator #paginator
-    [pageSize]="10"
-    [pageSizeOptions]="[5, 10, 20]">
-  </mat-paginator>
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="teams" matSort>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}</a>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container [ngSwitch]="element.userStatus">
+            <button *ngSwitchCase="'member'" mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
+              Leave
+            </button>
+            <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
+              <ng-container i18n>Request to Join</ng-container>
+            </button>
+            <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>
+              Request pending
+            </button>
+          </ng-container>
+          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>View Team</button>
+          <a mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n-title title="Feedback">Feedback</a>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Team Found</div>
+  </ng-template>
 </div>

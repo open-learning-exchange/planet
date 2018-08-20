@@ -1,5 +1,6 @@
 <mat-dialog-content>
-  <p i18n>Are you sure you want to {data.changeType, select, accept {accept} reject {reject} unlink {unlink} delete {delete}}
+  <p *ngIf="showMainParagraph" i18n>
+    Are you sure you want to {data.changeType, select, accept {accept} reject {reject} unlink {unlink} delete {delete}}
       the {data.amount, select, single
       {following {data.type, select,
         community {community}
@@ -29,6 +30,6 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="ok()" i18n>OK</button>
-  <button mat-button mat-dialog-close i18n>Cancel</button>
+  <button color="primary" mat-raised-button (click)="ok()" i18n>OK</button>
+  <button color="warn" mat-raised-button mat-dialog-close *ngIf="cancelable" i18n>Cancel</button>
 </mat-dialog-actions>

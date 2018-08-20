@@ -94,6 +94,7 @@ export class LoginFormComponent {
   createUser({ name, password }: { name: string, password: string }) {
     const metadata = {
       isUserAdmin: false,
+      planetCode: this.userService.getConfig().code,
       joinDate: Date.now()
     };
 
@@ -130,7 +131,7 @@ export class LoginFormComponent {
     const data = {
       'user': 'org.couchdb.user:' + userName,
       'message': 'New User ' + addedMember + ' has joined.',
-      'link': '/users/',
+      'link': '/manager/users/',
       'linkParams': { 'search': addedMember },
       'type': 'new user',
       'priority': 1,

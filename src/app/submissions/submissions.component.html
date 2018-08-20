@@ -12,20 +12,25 @@
 </mat-toolbar>
 
 <div class="space-container primary-link-hover">
-  <mat-table #table [dataSource]="submissions" matSort>
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="gradeSubmission(row)"></mat-row>
-  </mat-table>
-  <mat-paginator #paginator
-    [pageSize]="5"
-    [pageSizeOptions]="[5, 10, 20]">
-  </mat-paginator>
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="submissions" matSort>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 20]">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Record Found</div>
+  </ng-template>
 </div>

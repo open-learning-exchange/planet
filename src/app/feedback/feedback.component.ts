@@ -44,6 +44,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   user: any = {};
   private onDestroy$ = new Subject<void>();
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -89,6 +90,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.post(this.dbName + '/_find', findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
       .subscribe((data) => {
         this.feedback.data = data.docs;
+        this.emptyData = !this.feedback.data.length;
       }, (error) => this.message = 'There is a problem of getting data.');
   }
 

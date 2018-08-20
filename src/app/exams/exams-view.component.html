@@ -6,6 +6,8 @@
   <mat-toolbar class="primary-color font-size-1">
     <span i18n>Question {{questionNum}} of {{maxQuestions}}</span>
     <span class="toolbar-fill"></span>
+    <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
+  <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(questionNum)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container">
     <b>{{question.header}}</b>
@@ -30,9 +32,19 @@
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
         </mat-radio-group>
       </ng-container>
+      <ng-container *ngSwitchCase="'view'">
+        <p i18n>Response:<span> {{answer?.value?.text || answer?.value}}</span></p>
+      </ng-container>
     </ng-container>
     <div class="v-align-center">
-      <button mat-raised-button color="primary" (click)="nextQuestion(questionNum)" [disabled]="answer === undefined || grade === undefined || grade === null" i18n>
+      <button
+        *ngIf="mode !== 'view'"
+        mat-raised-button
+        color="primary"
+        (click)="nextQuestion(questionNum)"
+        [planetSubmit]=true
+        [disabled]="answer === undefined || grade === undefined || grade === null"
+        i18n>
         Submit Answer
       </button>
       <span class="small warn-text-color v-align-center" *ngIf="incorrectAnswer">

@@ -11,24 +11,24 @@
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
       <div>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+          <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+          <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
       <div>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
+          <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Language" formControlName="language" required>
+          <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode">
             <mat-option *ngFor="let language of languages" [value]="language.name">
               {{language.name}}
             </mat-option>
@@ -38,17 +38,17 @@
       </div>
       <div>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
+          <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [matDatepicker]="dp" [max]="maxDate" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" required>
+          <input matInput [matDatepicker]="dp" [max]="maxDate" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" [required]="!submissionMode">
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <div>
-          <mat-radio-group formControlName="gender" required>
+          <mat-radio-group formControlName="gender" [required]="!submissionMode">
             <label i18n>Gender</label>
             <mat-radio-button class="planet-radio-button" value="male">
               <div class="radio-icon-label">
@@ -66,7 +66,7 @@
       </div>
       <div>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="level" formControlName="level" required>
+          <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
             <mat-option *ngFor="let level of educationLevel" [value]="level">
               {{level}}
             </mat-option>
@@ -75,11 +75,11 @@
         </mat-form-field>
       </div>
       <div>
-        <button type="submit" mat-raised-button color="primary" i18n>Update</button>
+        <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
         <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
       </div>
     </form>
-    <div>
+    <div *ngIf="!submissionMode">
       <img class="profile-image-update" [src]="previewSrc">
       <div>
         <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="{ crop: [ { ratio: 1 } ] }"></ngx-img>

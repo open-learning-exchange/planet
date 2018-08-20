@@ -3,30 +3,10 @@
 :host {
   .view-container {
     display: grid;
-    grid-template-columns: 550px auto;
-    grid-column-gap: 1rem;
+    grid-template-columns: min-content auto;
+    grid-column-gap: 0.25rem;
     > * {
       overflow-y: auto;
-    }
-  }
-
-  form {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: flex-start;
-  }
-
-  @media only screen and (max-width: $screen-md) {
-    .view-container {
-      grid-template-columns: 365px auto;
-    }
-  }
-
-  @media only screen and (max-width: $screen-sm) {
-    .view-container {
-      grid-template-columns: 181px auto;
     }
   }
 }

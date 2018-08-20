@@ -14,6 +14,7 @@
     <button *ngIf="devMode"
       (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
     <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+    <a routerLink="/surveys" i18n mat-raised-button>Surveys</a>
     <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
     <button i18n mat-raised-button *ngIf="pushedItems?.courses?.length" (click)="getPushedItem('courses')">
       Get Courses ({{pushedItems?.courses?.length}})
@@ -23,9 +24,9 @@
     </button>
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
-      <a routerLink="/upgrade" i18n mat-raised-button>Upgrade</a>
+      <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
-    <a routerLink="/users" i18n mat-raised-button>Users</a>
+    <a routerLink="/manager/users" i18n mat-raised-button>Users</a>
   </div>
   <div class="view-container" *ngIf="planetType !== 'community'">
     <h3 i18n>Send On Accept</h3><br />

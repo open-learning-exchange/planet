@@ -44,6 +44,7 @@ export class UsersUpdateComponent implements OnInit {
   roles: string[] = [];
   languages = languages;
   maxDate = new Date();
+  submissionMode = false;
 
   constructor(
     private fb: FormBuilder,
@@ -56,12 +57,17 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.route.snapshot.data.submission === true) {
+      this.submissionMode = true;
+      this.redirectUrl = '/surveys';
+      return;
+    }
     this.urlName = this.route.snapshot.paramMap.get('name');
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
         if (this.user.gender || this.user.name !== this.userService.get().name) {
-          this.redirectUrl = '/users/profile/' + this.user.name;
+          this.redirectUrl = '../../profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
         if (data['_attachments']) {
@@ -79,27 +85,39 @@ export class UsersUpdateComponent implements OnInit {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: [ '', Validators.required ],
+      firstName: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       middleName: '',
-      lastName: [ '', Validators.required ],
-      email: [ '', [ Validators.required, Validators.email ] ],
-      language: [ '', Validators.required ],
-      phoneNumber: [ '', Validators.required ],
-      birthDate: [ '', Validators.compose([ CustomValidators.dateValidRequired, CustomValidators.notDateInFuture ]) ],
-      gender: [ '', Validators.required ],
-      level: [ '', Validators.required ]
+      lastName: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
+      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      phoneNumber: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      birthDate: [ '', [ this.conditionalValidator(CustomValidators.dateValidRequired).bind(this), CustomValidators.notDateInFuture ] ],
+      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      level: [ '', this.conditionalValidator(Validators.required).bind(this) ]
     });
+  }
+
+  conditionalValidator(validator: any) {
+    return (ac) => this.submissionMode ? null : validator(ac);
   }
 
   onSubmit() {
     if (this.editForm.valid) {
-      const attachment = this.file ? this.createAttachmentObj() : {};
-      this.updateUser(Object.assign({}, this.user, this.editForm.value, attachment));
+      this.submitUser();
     } else {
-        Object.keys(this.editForm.controls).forEach(field => {
+      Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+    }
+  }
+
+  submitUser() {
+    if (this.submissionMode) {
+      this.appendToSurvey(this.editForm.value);
+    } else {
+      const attachment = this.file ? this.createAttachmentObj() : {};
+      this.updateUser(Object.assign({}, this.user, this.editForm.value, attachment));
     }
   }
 
@@ -137,7 +155,7 @@ export class UsersUpdateComponent implements OnInit {
         return of({ ok: true });
       })
     ).subscribe(() => {
-      this.router.navigate([ this.redirectUrl ]);
+      this.goBack();
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -155,7 +173,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ this.redirectUrl ]);
+    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
   }
 
   onImageSelect(img) {
@@ -168,6 +186,15 @@ export class UsersUpdateComponent implements OnInit {
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
+  }
+
+  appendToSurvey(user) {
+    const submissionId = this.route.snapshot.params.id;
+    this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
+      return this.couchService.put('submissions/' + submissionId, { ...submission, user });
+    })).subscribe(() => {
+      this.goBack();
+    });
   }
 
 }

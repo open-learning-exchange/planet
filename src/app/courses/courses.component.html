@@ -29,7 +29,7 @@
     </ng-container>
     <ng-container *ngIf="!parent">
       <ng-container *ngIf="user.isUserAdmin">
-        <button *ngIf="planetType !== 'center'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
+        <button *ngIf="planetType !== 'center' && this.userService.getConfig().registrationRequest === 'accepted'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
           <span i18n>Send Courses</span>
           <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
@@ -47,37 +47,42 @@
       <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     </ng-container>
   </mat-toolbar>
-  <mat-table #table [dataSource]="courses" matSort>
-    <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-        [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-          [checked]="selection.isSelected(row)">
-        </mat-checkbox>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="courseTitle">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-      <mat-cell  *matCellDef="let element" class="list-content-menu">
-        <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
-        </h3>
-        <div class="content"><p>{{ element.description }}</p></div>
-        <planet-local-status [status]="element.localStatus"></planet-local-status>
-        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-cell>
+
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="courses" matSort>
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="courseTitle">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
+        <mat-cell  *matCellDef="let element" class="list-content-menu">
+          <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
+          </h3>
+          <td-markdown class="content">{{ element.description }}</td-markdown>
+    <planet-local-status [status]="element.localStatus"></planet-local-status>
+          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <div class="course-progress" *ngIf="element.admission">
+            <span i18n>Your progress:</span>
+            <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
+          </div>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission" (click)="courseAdmission(element._id)"  >
+            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>
               <span i18n>Admission</span>
             </a>
-            <a mat-menu-item *ngIf="element.admission" (click)="courseResign(element._id)">
+            <a mat-menu-item *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">
               <mat-icon>clear</mat-icon>
               <span i18n>Resign</span>
             </a>
@@ -107,34 +112,33 @@
             </button>
           </mat-menu>
         </mat-cell>
-        <div class="course-progress" *ngIf="element.admission">
-          <span i18n>Your progress:</span>
-          <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
-        </div>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="info">
-      <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <div>
-          <p>{{ "Grade Level: " + element.gradeLevel}}</p>
-          <p>{{ "Subject Level: " + element.subjectLevel}}</p>
-        </div>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="rating">
-      <mat-header-cell *matHeaderCellDef i18n>Rating</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <planet-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'course'"></planet-rating>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
-  </mat-table>
+      </ng-container>
+      <ng-container matColumnDef="info">
+        <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <p>{{ "Grade Level: " + element.gradeLevel}}</p>
+            <p>{{ "Subject Level: " + element.subjectLevel}}</p>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="rating">
+        <mat-header-cell *matHeaderCellDef i18n>Rating</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <planet-rating [rating]="element.rating" [itemId]="element._id" [parent]="parent" [ratingType]="'course'"></planet-rating>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+    </mat-table>
 
-  <mat-paginator #paginator
-    [pageSize]="10"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPaginateChange($event)">
-  </mat-paginator>
+    <mat-paginator #paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPaginateChange($event)">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Course Found</div>
+  </ng-template>
 </div>

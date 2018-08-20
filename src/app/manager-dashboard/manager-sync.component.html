@@ -5,7 +5,7 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button (click)="syncPlanet()" i18n><mat-icon>sync</mat-icon>Run Sync</button>
+    <button mat-button (click)="runSyncClick()" i18n><mat-icon>sync</mat-icon>Run Sync</button>
     <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
   </mat-toolbar>
   <mat-list>
@@ -19,11 +19,11 @@
         <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span>
         <ng-container [ngSwitch]="rep?._replication_state">
         <!-- States: initializing, failed, error, running, pending, crashing, completed -->
-        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" title="{{rep._replication_state}}">error</mat-icon>
-        <mat-icon *ngSwitchCase="'running'" title="{{rep._replication_state}}">sync</mat-icon>
-        <mat-icon *ngSwitchCase="'pending'" title="{{rep._replication_state}}">pause</mat-icon>
-        <mat-icon *ngSwitchCase="'completed'" title="{{rep._replication_state}}">cloud_done</mat-icon>
-        <mat-icon *ngSwitchDefault>sync</mat-icon>
+        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" i18n-title title="Error">error</mat-icon>
+        <mat-icon *ngSwitchCase="'running'" i18n-title title="In Progress">sync</mat-icon>
+        <mat-icon *ngSwitchCase="'pending'" i18n-title title="Paused">pause</mat-icon>
+        <mat-icon *ngSwitchCase="'completed'" i18n-title title="Completed">cloud_done</mat-icon>
+        <mat-icon *ngSwitchDefault i18n-title title="In Progress">sync</mat-icon>
         </ng-container>
       </p>
     </mat-list-item>

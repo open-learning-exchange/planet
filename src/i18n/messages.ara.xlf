@@ -633,7 +633,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Submit</target>
+        <target xml:lang="ar" state="translated">إرسال</target>
       </trans-unit>
       <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</source>
@@ -661,7 +661,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Course Title</target>
+        <target xml:lang="ar" state="translated">عنوان الدورة التدريبية</target>
       </trans-unit>
       <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html">
         <source>Description</source>
@@ -681,7 +681,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Description</target>
+        <target xml:lang="ar" state="translated">الوصف</target>
       </trans-unit>
       <trans-unit id="c420749a4d671195164749dc99bb89d9fc40c718" datatype="html">
         <source>Member Limit</source>
@@ -689,7 +689,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Member Limit</target>
+        <target xml:lang="ar" state="translated">الحد الأقصى للعضو</target>
       </trans-unit>
       <trans-unit id="162a0cdc541668672140bc2905c4ecd1e51f4019" datatype="html">
         <source>Language of Instruction</source>
@@ -697,7 +697,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Language of Instruction</target>
+        <target xml:lang="ar" state="translated">لغة التعليمات</target>
       </trans-unit>
       <trans-unit id="e2ec6c55b25c3243cda9a5e14ca9cf5cb6457433" datatype="html">
         <source>Grade Level</source>
@@ -705,7 +705,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Grade Level</target>
+        <target xml:lang="ar" state="translated">المستوى الدراسي</target>
       </trans-unit>
       <trans-unit id="85f929f5065179d0605ed68115b8915deaf7e710" datatype="html">
         <source>Subject Level</source>
@@ -713,7 +713,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Subject Level</target>
+        <target xml:lang="ar" state="translated">مستوى الموضوع</target>
       </trans-unit>
       <trans-unit id="a0c7e8516852d2b5888c8a00894acd60aad61317" datatype="html">
         <source>Method</source>
@@ -721,7 +721,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Method</target>
+        <target xml:lang="ar" state="translated">الأسلوب</target>
       </trans-unit>
       <trans-unit id="7eec194fdb5177fb2a2b67ddfd1a5c71a943eb9d" datatype="html">
         <source>Courses</source>
@@ -765,7 +765,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ar" state="translated">All</target>
+        <target xml:lang="ar" state="translated">جميع</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
@@ -793,7 +793,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Title</target>
+        <target xml:lang="ar" state="translated">عنوان</target>
       </trans-unit>
       <trans-unit id="5aacbee9239d7422e3c92fd18293df496818c4b6" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Reset<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -857,7 +857,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ar" state="translated"> Title </target>
+        <target xml:lang="ar" state="translated"> عنوان </target>
       </trans-unit>
       <trans-unit id="0959cf719affa339c7223bcb273d12260028c47d" datatype="html">
         <source>Admission</source>
@@ -873,7 +873,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Resign</target>
+        <target xml:lang="ar" state="translated">الاستقالة</target>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html">
         <source>Manage</source>
@@ -889,7 +889,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Manage</target>
+        <target xml:lang="ar" state="translated">الفيديو الأصلي</target>
       </trans-unit>
       <trans-unit id="beed332f1562199b0a99c6216be53aa1d7d2171b" datatype="html">
         <source>View Course</source>
@@ -897,7 +897,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="ar" state="translated">View Course</target>
+        <target xml:lang="ar" state="needs-translation">View Course</target>
       </trans-unit>
       <trans-unit id="2d24d1eb8d295534d8669dbeaf56201c141285af" datatype="html">
         <source>Credits</source>
@@ -905,7 +905,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Credits</target>
+        <target xml:lang="ar" state="needs-translation">Credits</target>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html">
         <source>Progress</source>
@@ -913,7 +913,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Progress</target>
+        <target xml:lang="ar" state="translated">مستوى التقدم</target>
       </trans-unit>
       <trans-unit id="30c21093bd539da428afa90407b8f780c147e64d" datatype="html">
         <source> Information </source>
@@ -1021,7 +1021,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Add Question</target>
+        <target xml:lang="ar" state="translated">إضافة سؤال</target>
       </trans-unit>
       <trans-unit id="fd87282e3b9eb7f9672eee9c00846dc6a6fa27f9" datatype="html">
         <source>Exam Title</source>
@@ -1037,7 +1037,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Step</target>
+        <target xml:lang="ar" state="translated">خطوات</target>
       </trans-unit>
       <trans-unit id="86a03cba21504143b18dea634f76513c1b18685a" datatype="html">
         <source>Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></source>
@@ -1073,7 +1073,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target xml:lang="ar" state="translated"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="c87fc952938382700c1d2c56bdb02b8a55b4941d" datatype="html">
         <source>Question <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></source>
@@ -1363,7 +1363,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Open</target>
+        <target xml:lang="ar" state="translated">فتح</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html">
         <source>Default</source>
@@ -1627,7 +1627,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target xml:lang="ar" state="translated"> Action </target>
+        <target xml:lang="ar" state="translated"> النشاطات </target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -1679,7 +1679,7 @@
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Planet Learning</target>
+        <target xml:lang="ar" state="needs-translation">Planet Learning</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html">
         <source>Messages</source>
@@ -1747,7 +1747,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Meetups</target>
+        <target xml:lang="ar" state="translated">اجتماعاتي</target>
       </trans-unit>
       <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html">
         <source>Members</source>
@@ -1811,7 +1811,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target xml:lang="ar" state="translated">pending</target>
+        <target xml:lang="ar" state="needs-translation">pending</target>
       </trans-unit>
       <trans-unit id="bd3a01457fab7894f736bc16a44092585a370111" datatype="html">
         <source>accepted</source>
@@ -1819,7 +1819,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="ar" state="translated">accepted</target>
+        <target xml:lang="ar" state="needs-translation">accepted</target>
       </trans-unit>
       <trans-unit id="8179066a60d0a330f50dee8cbf6d6c08abb8551d" datatype="html">
         <source>rejected</source>
@@ -1827,7 +1827,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ar" state="translated">rejected</target>
+        <target xml:lang="ar" state="needs-translation">rejected</target>
       </trans-unit>
       <trans-unit id="7bf707ce2496032835753c747a41b9fb52bfdcc9" datatype="html">
         <source>Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></source>
@@ -1843,7 +1843,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ar" state="translated"> Communities </target>
+        <target xml:lang="ar" state="needs-translation"> Communities </target>
       </trans-unit>
       <trans-unit id="daa52b3eb35d393bd15ae121c96b502ef4011163" datatype="html">
         <source> Delete </source>
@@ -1851,7 +1851,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="ar" state="translated"> Delete </target>
+        <target xml:lang="ar" state="translated"> حذف </target>
       </trans-unit>
       <trans-unit id="c0313c8016bf778e8022d3464a9dac8051c02441" datatype="html">
         <source>Your Notifications</source>
@@ -1867,7 +1867,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Repeat Password</target>
+        <target xml:lang="ar" state="needs-translation">Repeat Password</target>
       </trans-unit>
       <trans-unit id="0332b165168e5892a3a2ca8164e609173580d0d9" datatype="html">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ version }}"/></source>
@@ -2039,7 +2039,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Start Date</target>
+        <target xml:lang="ar" state="needs-translation">Start Date</target>
       </trans-unit>
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html">
         <source>End Date</source>
@@ -2047,7 +2047,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ar" state="translated">End Date</target>
+        <target xml:lang="ar" state="needs-translation">End Date</target>
       </trans-unit>
       <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
         <source>Recurring</source>
@@ -2095,7 +2095,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Start Time</target>
+        <target xml:lang="ar" state="translated">وقت البداية</target>
       </trans-unit>
       <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html">
         <source>End Time</source>
@@ -2103,7 +2103,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target xml:lang="ar" state="translated">End Time</target>
+        <target xml:lang="ar" state="translated">وقت النهاية</target>
       </trans-unit>
       <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html">
         <source>Category</source>
@@ -2119,7 +2119,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Location</target>
+        <target xml:lang="ar" state="translated">موقع</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
@@ -2127,7 +2127,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target xml:lang="ar" state="translated">Save</target>
+        <target xml:lang="ar" state="translated">إرسال</target>
       </trans-unit>
       <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html">
         <source>Meetup</source>
