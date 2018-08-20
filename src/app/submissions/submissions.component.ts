@@ -42,7 +42,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
     let query: any;
     if (this.mode === 'survey') {
-      query = findDocuments({ 'user._id': this.userService.get()._id, type: 'survey' });
+      query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {

@@ -93,7 +93,7 @@ export class DashboardComponent implements OnInit {
 
   getSurveys() {
     this.submissionsService.getSubmissions(findDocuments({
-      'user._id': this.userService.get()._id,
+      'user.name': this.userService.get().name,
       type: 'survey',
        status: 'pending'
     })).subscribe((surveys) => {
