@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;

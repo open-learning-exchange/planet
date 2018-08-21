@@ -37,7 +37,7 @@ export class UsersUpdateComponent implements OnInit {
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
   uploadImage = false;
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   redirectUrl = '/';
   file: any;

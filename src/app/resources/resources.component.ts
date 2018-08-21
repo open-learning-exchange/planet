@@ -54,7 +54,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   tagFilter = new FormControl([]);
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {

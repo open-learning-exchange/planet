@@ -15,9 +15,9 @@ import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
-  // RegEx grabs the fragment of the string between '//' and '/'
+  // RegEx grabs the fragment of the string between '//' and last character
   // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)\//.exec(str)[1];
+  return /\/\/(.*?)$/.exec(str)[1];
 };
 
 @Component({

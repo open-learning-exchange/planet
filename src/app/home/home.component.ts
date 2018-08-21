@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     if (this.user._attachments) {
       const filename = Object.keys(this.user._attachments)[0];
-      this.userImgSrc = environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+      this.userImgSrc = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/' + filename;
     } else {
       this.userImgSrc = '';
     }
