@@ -69,7 +69,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   resourceUrl(resource) {
     if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
-      return environment.couchAddress + 'resources/' + resource._id + '/' + filename;
+      return environment.couchAddress + '/resources/' + resource._id + '/' + filename;
     }
   }
 

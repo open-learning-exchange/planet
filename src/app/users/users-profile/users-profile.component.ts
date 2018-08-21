@@ -25,7 +25,7 @@ export class UsersProfileComponent implements OnInit {
   userDetail: any = {};
   user: any = {};
   imageSrc = '';
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
 
   constructor(
