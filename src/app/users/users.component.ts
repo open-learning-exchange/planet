@@ -94,6 +94,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.allUsers.filter = filterValue;
     this.changeFilter(this.filterAssociated ? 'associated' : 'local');
   }
