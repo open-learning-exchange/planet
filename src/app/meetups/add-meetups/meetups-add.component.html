@@ -7,7 +7,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
   <div class="view-container">
-    <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
+    <form class="view-container" class="form-full-spacing" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
       <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>

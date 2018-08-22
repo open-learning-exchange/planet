@@ -16,7 +16,14 @@ import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
-  templateUrl: './meetups-add.component.html'
+  templateUrl: './meetups-add.component.html',
+  styles: [ `
+    .form-full-spacing {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  ` ]
 })
 
 export class MeetupsAddComponent implements OnInit {
