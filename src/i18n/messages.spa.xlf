@@ -17,8 +17,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">
-    Oops!</target>
+        <target xml:lang="es-ES" state="translated">
+    ¡Uy!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html">
         <source>
@@ -38,8 +38,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">
-    Sorry, an error has occured, Requested page not found!
+        <target xml:lang="es-ES" state="translated">
+    Lo sentimos, la página que estás buscando no existe o se ha movido!
   </target>
       </trans-unit>
       <trans-unit id="a008bcc957d031735f52caa28f05b132266c960c" datatype="html">
@@ -93,7 +93,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">OK</target>
+        <target xml:lang="es-ES" state="translated">Aceptar</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
@@ -133,7 +133,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target xml:lang="es-ES" state="translated">Nombre: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -141,7 +141,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target xml:lang="es-ES" state="translated">Código: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -149,7 +149,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target xml:lang="es-ES" state="translated">URL local: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="a773e23ee56a2fdee79cba8081bbba2a32a1f8ac" datatype="html">
         <source>Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -157,7 +157,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target xml:lang="es-ES" state="translated">URL externa: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -165,7 +165,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target xml:lang="es-ES" state="translated">Tipo de planet: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
@@ -173,7 +173,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target xml:lang="es-ES" state="translated">Fecha de creación: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -181,7 +181,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target xml:lang="es-ES" state="translated">Idioma: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -189,7 +189,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target xml:lang="es-ES" state="translated">Estado: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -197,7 +197,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target xml:lang="es-ES" state="translated">Correo electrónico: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -205,7 +205,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target xml:lang="es-ES" state="translated">Número de teléfono: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="7c2fe53d437c5c9915174de6a0ed5aea0f83467a" datatype="html">
         <source>Requests List</source>
@@ -213,7 +213,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Requests List</target>
+        <target xml:lang="es-ES" state="translated">Lista de peticiones</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
@@ -233,7 +233,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Search</target>
+        <target xml:lang="es-ES" state="translated">Buscar</target>
       </trans-unit>
       <trans-unit id="2d78f8c2108598d4f1f05bce677f97d0c7a64d98" datatype="html">
         <source>Your Current List of Requests</source>
@@ -241,7 +241,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Your Current List of Requests</target>
+        <target xml:lang="es-ES" state="translated">Lista actual de peticiones</target>
       </trans-unit>
       <trans-unit id="68572de01b84c678be4bf8a27b990ecac2f41ce9" datatype="html">
         <source>Code</source>
@@ -257,7 +257,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Code</target>
+        <target xml:lang="es-ES" state="translated">Código</target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
         <source>URL</source>
@@ -269,7 +269,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">URL</target>
+        <target xml:lang="es-ES" state="translated">URL</target>
       </trans-unit>
       <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html">
         <source>Created Date</source>
@@ -281,7 +281,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Created Date</target>
+        <target xml:lang="es-ES" state="translated">Fecha de creación</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
         <source>Actions</source>
@@ -289,7 +289,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Actions</target>
+        <target xml:lang="es-ES" state="translated">Acciones</target>
       </trans-unit>
       <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html">
         <source>View</source>
@@ -309,7 +309,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">View</target>
+        <target xml:lang="es-ES" state="translated">Ver</target>
       </trans-unit>
       <trans-unit id="06ab37164fa01d9d68cee6d59bcf4b02172d01f0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
@@ -369,7 +369,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Create Admin</target>
+        <target xml:lang="es-ES" state="translated">Crear administrador</target>
       </trans-unit>
       <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
         <source>Username</source>
@@ -381,7 +381,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Username</target>
+        <target xml:lang="es-ES" state="translated">Nombre de usuario</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -393,7 +393,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Password</target>
+        <target xml:lang="es-ES" state="translated">Contraseña</target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html">
         <source>Confirm Password</source>
@@ -401,7 +401,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Confirm Password</target>
+        <target xml:lang="es-ES" state="translated">Confirma contraseña</target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html">
         <source>Next</source>
@@ -413,7 +413,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Next</target>
+        <target xml:lang="es-ES" state="translated">Siguiente</target>
       </trans-unit>
       <trans-unit id="e10987c002a684f07c8747979b7fde44d2c7cef8" datatype="html">
         <source>Set Up Configuration</source>
@@ -421,7 +421,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Set Up Configuration</target>
+        <target xml:lang="es-ES" state="translated">Establecer la configuración</target>
       </trans-unit>
       <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html">
         <source>Nation</source>
@@ -429,7 +429,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Nation</target>
+        <target xml:lang="es-ES" state="translated">Nación</target>
       </trans-unit>
       <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html">
         <source>Community</source>
@@ -437,7 +437,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Community</target>
+        <target xml:lang="es-ES" state="translated">Comunidad</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html">
         <source>Select Nation/Community</source>
@@ -445,7 +445,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Select Nation/Community</target>
+        <target xml:lang="es-ES" state="translated">Seleccione nacion/comunidad</target>
       </trans-unit>
       <trans-unit id="4c5801cfafb0bf7b68021fe73093f522544fed30" datatype="html">
         <source>Nation(s)</source>
@@ -453,7 +453,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Nation(s)</target>
+        <target xml:lang="es-ES" state="translated">Nacion(es)</target>
       </trans-unit>
       <trans-unit id="fc60c6126b9d7048411532b9bd15a83228a27f77" datatype="html">
         <source>Center</source>
@@ -461,7 +461,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Center</target>
+        <target xml:lang="es-ES" state="translated">Centro</target>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html">
         <source>Name</source>
@@ -477,7 +477,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Name</target>
+        <target xml:lang="es-ES" state="translated">Nombre</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html">
         <source>Language</source>
@@ -497,7 +497,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Language</target>
+        <target xml:lang="es-ES" state="translated">Idioma</target>
       </trans-unit>
       <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html">
         <source>Local URL</source>
@@ -505,7 +505,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Local URL</target>
+        <target xml:lang="es-ES" state="translated">URL local</target>
       </trans-unit>
       <trans-unit id="a158c27700fb4b55974f72418e1e17f45662d3f6" datatype="html">
         <source>Show Advanced Options</source>
@@ -513,7 +513,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Show Advanced Options</target>
+        <target xml:lang="es-ES" state="translated">Muestra opciones avanzadas</target>
       </trans-unit>
       <trans-unit id="5625ca84c68ea5de3d37a188acc4a555b2263164" datatype="html">
         <source>You have changed the advanced option. Please confirm that you wanted to change it.</source>
@@ -521,7 +521,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">You have changed the advanced option. Please confirm that you wanted to change it.</target>
+        <target xml:lang="es-ES" state="translated">Has cambiado las opciones avanzadas. Presiona confirmar para aplicar los cambios.</target>
       </trans-unit>
       <trans-unit id="d09710672702802c0988db004ce798ec31cb3666" datatype="html">
         <source>I confirm the changes.</source>
@@ -529,7 +529,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">I confirm the changes.</target>
+        <target xml:lang="es-ES" state="translated">Confirmo los cambios.</target>
       </trans-unit>
       <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html">
         <source>Back</source>
@@ -541,7 +541,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Back</target>
+        <target xml:lang="es-ES" state="translated">Volver</target>
       </trans-unit>
       <trans-unit id="43161dab615da78790ff6e28f5730e88b96e21e0" datatype="html">
         <source>Contact Details</source>
@@ -549,7 +549,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Contact Details</target>
+        <target xml:lang="es-ES" state="translated">Detalles de contacto</target>
       </trans-unit>
       <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
         <source>First Name</source>
@@ -1037,7 +1037,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Step</target>
+        <target xml:lang="es-ES" state="translated">Paso</target>
       </trans-unit>
       <trans-unit id="86a03cba21504143b18dea634f76513c1b18685a" datatype="html">
         <source>Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></source>
@@ -1045,7 +1045,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
+        <target xml:lang="es-ES" state="translated">Previos intentos: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html">
         <source>
@@ -1055,8 +1055,8 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">
-      Open resource new tab
+        <target xml:lang="es-ES" state="translated">
+      Abrir recurso en una nueva pestaña
     </target>
       </trans-unit>
       <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html">
@@ -1065,7 +1065,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">List of Resources</target>
+        <target xml:lang="es-ES" state="translated">Lista de recursos</target>
       </trans-unit>
       <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
@@ -1073,7 +1073,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target xml:lang="es-ES" state="translated"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="c87fc952938382700c1d2c56bdb02b8a55b4941d" datatype="html">
         <source>Question <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></source>
@@ -1089,7 +1089,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Enter answer here</target>
+        <target xml:lang="es-ES" state="translated">Ingresa tu respuesta aquí</target>
       </trans-unit>
       <trans-unit id="eb5afce50958c64ab0a831a30db94c7ff967576c" datatype="html">
         <source>Submitted answer:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -1097,7 +1097,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Submitted answer:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="es-ES" state="translated">Respuesta enviada:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="3db39135c783da4bb320d5826f4de893f62c7e1b" datatype="html">
         <source>Correct</source>
@@ -1105,7 +1105,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Correct</target>
+        <target xml:lang="es-ES" state="translated">Correcto</target>
       </trans-unit>
       <trans-unit id="8b42d54000704393a3c06e5f8b668880014f6986" datatype="html">
         <source>Incorrect</source>
@@ -1113,7 +1113,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Incorrect</target>
+        <target xml:lang="es-ES" state="translated">Incorrecto</target>
       </trans-unit>
       <trans-unit id="12530729254d51dd0c7513ca846cdd5e417ea3a6" datatype="html">
         <source>
@@ -1123,8 +1123,8 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">
-        Submit Answer
+        <target xml:lang="es-ES" state="translated">
+        Enviar respuesta
       </target>
       </trans-unit>
       <trans-unit id="e3b437177444483ae45895ed7db8dca06a1d7568" datatype="html">
@@ -1133,7 +1133,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Incorrect answer, please try again</target>
+        <target xml:lang="es-ES" state="translated">Contraseña incorrecta, vuelve a intentarlo</target>
       </trans-unit>
       <trans-unit id="52c61ad3237bb31120f504b3c3a5e70ca6988539" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</source>
@@ -1150,8 +1150,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">
-    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target xml:lang="es-ES" state="translated">
+    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> todos
   </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
@@ -1168,7 +1168,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Step title</target>
+        <target xml:lang="es-ES" state="translated">Titulo del paso</target>
       </trans-unit>
       <trans-unit id="9c00b704f800f910a8cc54de6074d9ff643586da" datatype="html">
         <source>Attached resources: </source>
@@ -1176,7 +1176,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Attached resources: </target>
+        <target xml:lang="es-ES" state="translated">Recursos adjuntos: </target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html">
         <source>Library</source>
@@ -1192,7 +1192,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Library</target>
+        <target xml:lang="es-ES" state="translated">Biblioteca</target>
       </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html">
         <source>Subject(s)</source>
@@ -1204,7 +1204,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Subject(s)</target>
+        <target xml:lang="es-ES" state="translated">Temática(s)</target>
       </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html">
         <source>Level(s)</source>
@@ -1216,7 +1216,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Level(s)</target>
+        <target xml:lang="es-ES" state="translated">Nivel(es)</target>
       </trans-unit>
       <trans-unit id="8292faed3a05482dd8f2a9368bbe5bfcbe9a9a50" datatype="html">
         <source>Add to myLibrary</source>
@@ -1228,7 +1228,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Add to myLibrary</target>
+        <target xml:lang="es-ES" state="translated">Añadir a mi biblioteca</target>
       </trans-unit>
       <trans-unit id="95b8dfb6cc7200a7c8c8637c610ee8f40ff1a42d" datatype="html">
         <source>Remove from myLibrary</source>
@@ -1236,7 +1236,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Remove from myLibrary</target>
+        <target xml:lang="es-ES" state="translated">Eliminar de mi biblioteca</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html">
         <source>Feedback</source>
@@ -1264,7 +1264,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Feedback</target>
+        <target xml:lang="es-ES" state="translated">Comentarios</target>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html">
         <source>Download file</source>
@@ -1272,7 +1272,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Download file</target>
+        <target xml:lang="es-ES" state="translated">Descargar archivo</target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html">
         <source>Rating</source>
@@ -1280,7 +1280,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Rating</target>
+        <target xml:lang="es-ES" state="translated">Calificación</target>
       </trans-unit>
       <trans-unit id="a35562563b046bb09e22a6599f2da51fa8111a83" datatype="html">
         <source><x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
@@ -1289,8 +1289,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">
-      <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
+        <target xml:lang="es-ES" state="translated">
+      <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> detalles
     </target>
       </trans-unit>
       <trans-unit id="a022348c23dfe55278a1c0409a74d1cc151d1d2d" datatype="html">
@@ -1307,7 +1307,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</target>
+        <target xml:lang="es-ES" state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> recursos</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html">
         <source>Author</source>
@@ -1315,7 +1315,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Author</target>
+        <target xml:lang="es-ES" state="translated">Autor</target>
       </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html">
         <source>Year</source>
@@ -1323,7 +1323,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Year</target>
+        <target xml:lang="es-ES" state="translated">Año</target>
       </trans-unit>
       <trans-unit id="a0843de0a64adcc7ee6a946408b6876cd8abdcae" datatype="html">
         <source>English</source>
@@ -1331,7 +1331,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">English</target>
+        <target xml:lang="es-ES" state="translated">Inglés</target>
       </trans-unit>
       <trans-unit id="e00fde81f1d8d3a8585bc2e03445dd63ceeb3b55" datatype="html">
         <source>Español</source>
@@ -1339,7 +1339,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Español</target>
+        <target xml:lang="es-ES" state="translated">Español</target>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html">
         <source>Publisher/Attribution</source>
@@ -1347,7 +1347,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Publisher/Attribution</target>
+        <target xml:lang="es-ES" state="translated">Editor/Fuente</target>
       </trans-unit>
       <trans-unit id="d891222d75499aa82e5f979ffb001e642384d175" datatype="html">
         <source>Link to License</source>
@@ -1355,7 +1355,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Link to License</target>
+        <target xml:lang="es-ES" state="translated">Enlace a la licencia</target>
       </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
@@ -1363,7 +1363,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Open</target>
+        <target xml:lang="es-ES" state="translated">Abrir</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html">
         <source>Default</source>
@@ -1371,7 +1371,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Default</target>
+        <target xml:lang="es-ES" state="translated">Por defecto</target>
       </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html">
         <source>Leader</source>
@@ -1379,7 +1379,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Leader</target>
+        <target xml:lang="es-ES" state="translated">Líder</target>
       </trans-unit>
       <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html">
         <source>learner</source>
@@ -1387,7 +1387,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">learner</target>
+        <target xml:lang="es-ES" state="translated">estudiante</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -1395,7 +1395,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Resource For</target>
+        <target xml:lang="es-ES" state="translated">Recurso para</target>
       </trans-unit>
       <trans-unit id="8a27a855a00b08d2ca981207638ea9097032412b" datatype="html">
         <source>Media</source>
@@ -1403,7 +1403,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Media</target>
+        <target xml:lang="es-ES" state="translated">Medios</target>
       </trans-unit>
       <trans-unit id="6dffc29e9f023bc83a3d5ac080c870c6af20bd46" datatype="html">
         <source>Article Date</source>
@@ -1411,7 +1411,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Article Date</target>
+        <target xml:lang="es-ES" state="translated">Fecha del artículo</target>
       </trans-unit>
       <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html">
         <source>Resource Type</source>
@@ -1419,7 +1419,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Resource Type</target>
+        <target xml:lang="es-ES" state="translated">Tipo de recurso</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
@@ -1427,7 +1427,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Added By</target>
+        <target xml:lang="es-ES" state="translated">Añadido por</target>
       </trans-unit>
       <trans-unit id="e6cf591b31401e030391c1703785cec3430b56de" datatype="html">
         <source>Open URL</source>
@@ -1435,7 +1435,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Open URL</target>
+        <target xml:lang="es-ES" state="translated">Abrir URL</target>
       </trans-unit>
       <trans-unit id="b8b0ff24acc2df6a8482367d06e3801ae977b370" datatype="html">
         <source>Open Which File</source>
@@ -1451,7 +1451,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Delete File</target>
+        <target xml:lang="es-ES" state="translated">Eliminar archivo</target>
       </trans-unit>
       <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html">
         <source>Average</source>
@@ -1459,7 +1459,7 @@
           <context context-type="sourcefile">app/resources/rating-resources/resources-rating.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Average</target>
+        <target xml:lang="es-ES" state="translated">Promedio</target>
       </trans-unit>
       <trans-unit id="26bff472b6d1cdf6b0479ef9cb93cc0181fcab31" datatype="html">
         <source>Question Title</source>
@@ -1467,7 +1467,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Question Title</target>
+        <target xml:lang="es-ES" state="translated">Título de la pregunta</target>
       </trans-unit>
       <trans-unit id="0e397f4323ef7fdf3ede2ad587b5d01e77077717" datatype="html">
         <source>Question Description</source>
@@ -1475,7 +1475,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Question Description</target>
+        <target xml:lang="es-ES" state="translated">Descripción de la pregunta</target>
       </trans-unit>
       <trans-unit id="3e242f213dd1a0754aad9164aa80887d67708500" datatype="html">
         <source>Input</source>
@@ -1483,7 +1483,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Input</target>
+        <target xml:lang="es-ES" state="translated">Entrada</target>
       </trans-unit>
       <trans-unit id="424db012720017cb636ef33ab50fd0c909f54469" datatype="html">
         <source>Multiple Choice</source>
@@ -1907,7 +1907,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Delete Community</target>
+        <target xml:lang="es-ES" state="translated">Eliminar comunidad</target>
       </trans-unit>
       <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
@@ -1915,7 +1915,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</target>
+        <target xml:lang="es-ES" state="translated"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> Lista</target>
       </trans-unit>
       <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html">
         <source>List Resources</source>
@@ -1923,7 +1923,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">List Resources</target>
+        <target xml:lang="es-ES" state="translated">Lista de recursos</target>
       </trans-unit>
       <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html">
         <source>List Courses</source>
@@ -1931,7 +1931,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">List Courses</target>
+        <target xml:lang="es-ES" state="translated">Lista de cursos</target>
       </trans-unit>
       <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html">
         <source>List Meetups</source>
@@ -1939,7 +1939,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">List Meetups</target>
+        <target xml:lang="es-ES" state="translated">Lista de reuniones</target>
       </trans-unit>
       <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html">
         <source>Checking request status...</source>
@@ -1947,7 +1947,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Checking request status...</target>
+        <target xml:lang="es-ES" state="translated">Comprobando el estado de las peticiones...</target>
       </trans-unit>
       <trans-unit id="23299f2edacf5a10fea838d6328872ba4df8093b" datatype="html">
         <source>Your request has not been accepted by parent</source>
@@ -1955,7 +1955,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Your request has not been accepted by parent</target>
+        <target xml:lang="es-ES" state="translated">Tu solicitud no ha sido aceptada por parent</target>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
@@ -1975,7 +1975,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Join</target>
+        <target xml:lang="es-ES" state="translated">Unirme</target>
       </trans-unit>
       <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html">
         <source>Information</source>
@@ -1983,7 +1983,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Information</target>
+        <target xml:lang="es-ES" state="translated">Información</target>
       </trans-unit>
       <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html">
         <source>Date:</source>
@@ -1991,7 +1991,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Date:</target>
+        <target xml:lang="es-ES" state="translated">Fecha:</target>
       </trans-unit>
       <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html">
         <source>at</source>
@@ -1999,7 +1999,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">at</target>
+        <target xml:lang="es-ES" state="translated">en</target>
       </trans-unit>
       <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html">
         <source>Recurring:</source>
@@ -2007,7 +2007,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Recurring:</target>
+        <target xml:lang="es-ES" state="translated">Se repite:</target>
       </trans-unit>
       <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
         <source>Recurring Days: </source>
@@ -2015,7 +2015,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Recurring Days: </target>
+        <target xml:lang="es-ES" state="translated">Se repite en: </target>
       </trans-unit>
       <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html">
         <source>Location:</source>
@@ -2023,7 +2023,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Location:</target>
+        <target xml:lang="es-ES" state="translated">Ubicación:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2031,7 +2031,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</target>
+        <target xml:lang="es-ES" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Reuniones</target>
       </trans-unit>
       <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html">
         <source>Start Date</source>
@@ -2039,7 +2039,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Start Date</target>
+        <target xml:lang="es-ES" state="translated">Fecha de inicio</target>
       </trans-unit>
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html">
         <source>End Date</source>
@@ -2047,7 +2047,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">End Date</target>
+        <target xml:lang="es-ES" state="translated">Fecha de fin</target>
       </trans-unit>
       <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
         <source>Recurring</source>
@@ -2055,7 +2055,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Recurring</target>
+        <target xml:lang="es-ES" state="translated">Se repite</target>
       </trans-unit>
       <trans-unit id="a507c06d9cbc346d9bb3c644c960230e1e0ebdc1" datatype="html">
         <source>Frequency</source>
@@ -2063,7 +2063,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Frequency</target>
+        <target xml:lang="es-ES" state="translated">Frecuencia</target>
       </trans-unit>
       <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html">
         <source>Daily</source>
@@ -2071,7 +2071,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Daily</target>
+        <target xml:lang="es-ES" state="translated">Diariamente</target>
       </trans-unit>
       <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html">
         <source>Weekly</source>
@@ -2079,7 +2079,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Weekly</target>
+        <target xml:lang="es-ES" state="translated">Semanalmente</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
         <source>None</source>
@@ -2087,7 +2087,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">None</target>
+        <target xml:lang="es-ES" state="translated">Nunca</target>
       </trans-unit>
       <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html">
         <source>Start Time</source>
@@ -2095,7 +2095,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Start Time</target>
+        <target xml:lang="es-ES" state="translated">Hora de inicio</target>
       </trans-unit>
       <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html">
         <source>End Time</source>
@@ -2103,7 +2103,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">End Time</target>
+        <target xml:lang="es-ES" state="translated">Hora de finalización</target>
       </trans-unit>
       <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html">
         <source>Category</source>
@@ -2111,7 +2111,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Category</target>
+        <target xml:lang="es-ES" state="translated">Categoría</target>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html">
         <source>Location</source>
@@ -2119,7 +2119,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Location</target>
+        <target xml:lang="es-ES" state="translated">Ubicación</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
@@ -2127,7 +2127,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Save</target>
+        <target xml:lang="es-ES" state="translated">Guardar</target>
       </trans-unit>
       <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html">
         <source>Meetup</source>
@@ -2135,7 +2135,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Meetup</target>
+        <target xml:lang="es-ES" state="translated">Reunión</target>
       </trans-unit>
       <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html">
         <source>Invite Member</source>
@@ -2143,7 +2143,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Invite Member</target>
+        <target xml:lang="es-ES" state="translated">Añadir miembro</target>
       </trans-unit>
       <trans-unit id="3eed3c0167ac14df9b8fcf72108d32ea25436c5d" datatype="html">
         <source>Leave</source>
@@ -2151,7 +2151,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation">Leave</target>
+        <target xml:lang="es-ES" state="translated">Abandonar</target>
       </trans-unit>
       <trans-unit id="e30452c9df56f02f4f636337a0aa4266b1cad074" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/></source>
@@ -2159,7 +2159,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </target>
+        <target xml:lang="es-ES" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Titulo de reunion:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/> </target>
       </trans-unit>
       <trans-unit id="4619dcdae28d0d5d520e16dcaa69e297638f7a53" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></source>
@@ -2167,7 +2167,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Created By:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></target>
+        <target xml:lang="es-ES" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Creado por:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.createdBy}}"/><x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/></target>
       </trans-unit>
       <trans-unit id="05d3883f5f3c6883a1910e55f010bd07ec4a87d1" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/></source>
@@ -2175,7 +2175,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="es-ES" state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
+        <target xml:lang="es-ES" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Categoría:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
       </trans-unit>
       <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></source>

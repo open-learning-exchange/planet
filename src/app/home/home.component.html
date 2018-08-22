@@ -30,7 +30,8 @@
     mat-menu-item
     *ngFor="let notification of notifications"
     (click)="readNotification(notification)">
-    {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
+    <p><b>{{notification.message}}</b><p>
+    <p class="small">{{notification.time | date: 'mediumDate'}}</p>
     <mat-divider></mat-divider>
   </a>
   <a routerLink="/notifications" mat-menu-item>See All</a>
@@ -90,7 +91,7 @@
     <!--Bottom part-->
     <ul class="bottom-nav">
       <li>
-        <a mat-button routerLink="/" i18n-title title="Surveys">
+        <a mat-button routerLink="/surveys" i18n-title title="Surveys">
           <mat-icon svgIcon="surveys"></mat-icon>
           <label i18n>Surveys</label>
         </a>

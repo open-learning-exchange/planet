@@ -21,6 +21,7 @@ import { uniqueId } from '../shared/utils';
 export class ExamsQuestionComponent implements OnInit {
 
   @Input() questionForm: FormGroup;
+  @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
   correctCheckboxes: any = {};

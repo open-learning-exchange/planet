@@ -37,14 +37,14 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   // If parent route, url will use parent domain.  If not uses this domain.
   parent = this.route.snapshot.data.parent;
   get urlPrefix()  {
-    let domain = environment.couchAddress;
+    let domain = environment.couchAddress + '/';
     if (this.parent) {
       domain = 'http://' + this.userService.getConfig().parentDomain + '/';
     }
     return domain + this.dbName + '/';
   }
   // Use string rather than boolean for i18n select
-  fullView = 'off';
+  fullView = 'on';
   resourceId: string;
 
   ngOnInit() {

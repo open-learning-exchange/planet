@@ -145,7 +145,7 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
           ]).subscribe((data) => {
             community.registrationRequest = 'accepted';
             this.updateRev(data, this.communities.data);
-            this.getCommunityList();
+            this.getCommunityList(this.searchValue);
             this.editDialog.close();
           }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
       }

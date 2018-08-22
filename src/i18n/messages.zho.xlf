@@ -27,8 +27,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="zh-CN" state="needs-translation">
-    404 Not Found</target>
+        <target xml:lang="zh-CN" state="translated">
+    页面未找到</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html">
         <source>

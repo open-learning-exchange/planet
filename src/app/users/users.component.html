@@ -16,7 +16,7 @@
   </mat-button-toggle-group>
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type text to search...">
+    <input matInput (keyup)="applyFilter($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Type text to search...">
   </mat-form-field>
 </mat-toolbar>
 
@@ -39,79 +39,84 @@
     </div>
   </mat-toolbar>
 
-  <mat-table #table [dataSource]="allUsers" matSort>
-    <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
-      </mat-checkbox>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
-          [checked]="selection.isSelected(row.doc._id)">
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="allUsers" matSort>
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="profile">
-      <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <div *ngIf="element.imageSrc; else noImage">
-          <img class="profile-image cursor-pointer" [src]="element.imageSrc" routerLink="/users/profile/{{element.doc.name}}">
-        </div>
-        <ng-template #noImage>
-          <img class="profile-image cursor-pointer" src="assets/avatar.png" routerLink="/users/profile/{{element.doc.name}}">
-        </ng-template>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>User Name</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.doc.name}}</mat-cell>
-    </ng-container>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
+            [checked]="selection.isSelected(row.doc._id)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="profile">
+        <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div *ngIf="element.imageSrc; else noImage">
+            <img class="profile-image cursor-pointer" [src]="element.imageSrc" routerLink="profile/{{element.doc.name}}">
+          </div>
+          <ng-template #noImage>
+            <img class="profile-image cursor-pointer" src="assets/avatar.png" routerLink="profile/{{element.doc.name}}">
+          </ng-template>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>User Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.doc.name}}</mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="roles">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <mat-chip-list>
-          <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
-            {{role}}
-            <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
-          </mat-chip>
-          <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
-      </mat-chip-list>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <span *ngIf="isUserAdmin">
-          <span *ngIf="!element.doc.isUserAdmin">
-            <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
-              <mat-icon>lock</mat-icon>
+      <ng-container matColumnDef="roles">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <mat-chip-list>
+            <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
+              {{role}}
+              <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
+            </mat-chip>
+            <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
+        </mat-chip-list>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span *ngIf="isUserAdmin">
+            <span *ngIf="!element.doc.isUserAdmin">
+              <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
+                <mat-icon>lock</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [])">
+                <mat-icon>lock_open</mat-icon>
+              </button>
+            </span>
+            <button mat-raised-button color="primary" (click)="deleteClick(element.doc)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
+              <mat-icon>delete</mat-icon>Delete
             </button>
-            <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [])">
-              <mat-icon>lock_open</mat-icon>
-            </button>
+            <a
+              *ngIf="element.doc.roles.length > 0 && !filterAssociated"
+              (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
+              mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
-          <button mat-raised-button color="primary" (click)="deleteClick(element.doc)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
-            <mat-icon>delete</mat-icon>Delete
-          </button>
-          <a
-            *ngIf="element.doc.roles.length > 0 && !filterAssociated"
-            (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
-            mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
-        </span>
-        <a routerLink="/users/profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
-          <mat-icon>folder_open</mat-icon>View Profile
-        </a>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row.doc._id)}" ></mat-row>
-  </mat-table>
-  <mat-paginator #paginator
-    [pageSize]="10"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPaginateChange($event)">
-  </mat-paginator>
+          <a routerLink="profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
+            <mat-icon>folder_open</mat-icon>View Profile
+          </a>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row.doc._id)}" ></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPaginateChange($event)">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No User Found</div>
+  </ng-template>
 </div>

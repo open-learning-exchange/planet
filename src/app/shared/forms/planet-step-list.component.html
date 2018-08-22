@@ -1,0 +1,9 @@
+<mat-nav-list *ngIf="listMode">
+  <mat-list-item *ngFor="let stepListItem of stepListItems; index as i" (click)="stepClick(i)">
+    <ng-template [ngTemplateOutlet]="stepListItem.template"></ng-template>
+  </mat-list-item>
+</mat-nav-list>
+<ng-container *ngIf="!listMode">
+  <button class="back-button" (click)="toList()" mat-button><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
+  <ng-content selector="planet-step-list-form"></ng-content>
+</ng-container>

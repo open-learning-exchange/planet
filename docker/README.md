@@ -38,7 +38,7 @@ I will divide this how to use into two sections, for development and for product
    (Optional: update planet.yml with specific images from https://hub.docker.com/r/treehouses/planet/tags/)
 
 ```
-docker-compose -f planet.yml -p planet up -d --build
+docker-compose -f planet.yml -f install.yml -p planet up -d --build
 ```
 
 See if the docker containers running

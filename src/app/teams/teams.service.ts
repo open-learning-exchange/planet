@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { dedupeShelfReduce } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { of, empty } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map, takeWhile } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
+import { findDocuments } from '../shared/mangoQueries';
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -27,47 +29,45 @@ export class TeamsService {
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
-  addTeamDialog(shelf) {
-    const title = 'Create Team';
+  addTeamDialog(shelf, team?) {
+    const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ '', Validators.required ],
-      description: '',
-      requests: [ [] ]
+      name: [ team ? team.name : '', Validators.required ],
+      description: team ? team.description : '',
+      requests: [ team ? team.requests : [] ]
     };
     return this.dialogsFormService
       .confirm(title, addTeamDialogFields, formGroup)
       .pipe(
         debug('Dialog confirm'),
-        switchMap((response) => {
+        switchMap((response: any) => {
           if (response !== undefined) {
-            return this.createTeam(response);
+            return this.updateTeam({ limit: 12, status: 'active', ...team, ...response });
           }
           return empty();
         }),
         switchMap((response) => {
-          return this.toggleTeamMembership(response.id, false, shelf);
+          if (!team) {
+            return this.toggleTeamMembership({ _id: response._id }, false, shelf);
+          }
+          return of(response);
         })
       );
   }
 
-  createTeam(team: any) {
-    return this.couchService.post(this.dbName + '/', { ...team, limit: '12' });
-  }
-
   updateTeam(team: any) {
-    return this.couchService.put(this.dbName + '/' + team._id, team).pipe(switchMap((res: any) => {
-      team._rev = res.rev;
-      return of(team);
+    return this.couchService.post(this.dbName, team).pipe(switchMap((res: any) => {
+      return of({ _rev: res.rev, _id: res.id, ...team });
     }));
   }
 
   requestToJoinTeam(team, userId) {
     team = {
       ...team,
-      requests: team.requests.concat([ userId ]).reduce(this.dedupeArrayReduce, [])
+      requests: team.requests.concat([ userId ]).reduce(dedupeShelfReduce, [])
     };
     return this.updateTeam(team);
   }
@@ -77,15 +77,27 @@ export class TeamsService {
     return this.updateTeam({ ...team, requests: newRequestArray });
   }
 
-  toggleTeamMembership(teamId, leaveTeam, shelf) {
+  toggleTeamMembership(team, leaveTeam, shelf) {
+    const teamId = team._id;
     shelf = this.updateTeamShelf(teamId, leaveTeam, shelf);
-    return this.couchService.put('shelf/' + shelf._id, shelf).pipe(switchMap((data) => {
-      shelf._rev = data.rev;
-      if (this.userService.get()._id === shelf._id) {
-        this.userService.shelf = shelf;
-      }
-      return of(data);
-    }));
+    return this.couchService.put('shelf/' + shelf._id, shelf).pipe(
+      switchMap((data) => {
+        shelf._rev = data.rev;
+        if (this.userService.get()._id === shelf._id) {
+          this.userService.shelf = shelf;
+        }
+        return of(team);
+      }),
+      switchMap(() => leaveTeam ? this.isTeamEmpty(teamId) : of(team)),
+      switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
+      switchMap((newTeam) => of({ ...team, ...newTeam }))
+    );
+  }
+
+  getTeamMembers(teamId) {
+    return this.couchService.post('shelf/_find', findDocuments({
+      'myTeamIds': { '$in': [ teamId ] }
+    }, 0));
   }
 
   updateTeamShelf(teamId, leaveTeam, shelf) {
@@ -93,16 +105,50 @@ export class TeamsService {
     if (leaveTeam) {
       myTeamIds.splice(myTeamIds.indexOf(teamId), 1);
     } else {
-      myTeamIds = myTeamIds.concat([ teamId ]).reduce(this.dedupeArrayReduce, []);
+      myTeamIds = myTeamIds.concat([ teamId ]).reduce(dedupeShelfReduce, []);
     }
     return { ...shelf, myTeamIds };
   }
 
-  dedupeArrayReduce(items, item) {
-    if (items.indexOf(item) > -1) {
-      return items;
-    }
-    return items.concat(item);
+  isTeamEmpty(teamId) {
+    return this.getTeamMembers(teamId).pipe(map((data) => data.docs.length === 0));
+  }
+
+  sendNotifications(type, members, notificationParams) {
+    const notify = members.map((user: any) => {
+      if (type === 'request') {
+        return this.requestNotification(user._id, notificationParams);
+      } else {
+        return this.memberAddNotification(user._id, notificationParams);
+      }
+    });
+    return this.couchService.post('notifications/_bulk_docs', { docs: notify });
+  }
+
+  memberAddNotification(userId, { team, url, newMembersLength }) {
+    return {
+      'user': userId,
+      'message': newMembersLength + ' member(s) has been added to ' + team.name + ' team. ',
+      'link': url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+  }
+
+  requestNotification(userId, { team, url }) {
+    return {
+      'user': userId,
+      'message': this.userService.get().name + ' has requested to join ' + team.name + ' team. ',
+      'link': url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
   }
 
 }

@@ -15,9 +15,9 @@ import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
 
 const removeProtocol = (str: string) => {
-  // RegEx grabs the fragment of the string between '//' and '/'
+  // RegEx grabs the fragment of the string between '//' and last character
   // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)\//.exec(str)[1];
+  return /\/\/(.*?)$/.exec(str)[1];
 };
 
 @Component({
@@ -26,6 +26,13 @@ const removeProtocol = (str: string) => {
   styles: [ `
     .mat-raised-button {
       margin: 0px 2px 2px 0px;
+    }
+    .configuration-form {
+      grid-template-areas: "none none ." "none none none";
+      justify-items: center;
+    }
+    .advanced {
+      grid-column-start: 2;
     }
   ` ]
 })
@@ -222,6 +229,7 @@ export class ConfigurationComponent implements OnInit {
         'type': 'user',
         'isUserAdmin': true,
         'joinDate': Date.now(),
+        'parentCode': configuration.code,
         ...this.contactFormGroup.value
       };
       this.createPlanet(credentials, configuration, adminName, userDetail);
@@ -275,6 +283,13 @@ export class ConfigurationComponent implements OnInit {
       code: configuration.code,
       selector: { 'sendOnAccept': true }
     };
+    const userReplicator = {
+      dbSource: '_users',
+      db: 'tablet_users',
+      selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } },
+      continuous: true,
+      type: 'internal'
+    };
     const pin = this.userService.createPin();
     forkJoin([
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
@@ -284,7 +299,8 @@ export class ConfigurationComponent implements OnInit {
         return forkJoin([
           // create replicator for pulling from parent at first as we do not have session
           this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
-          this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials)
+          this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
+          this.syncService.sync(userReplicator, credentials)
         ]);
       }),
       switchMap(() => this.couchService.post('configurations', configuration)),
@@ -297,7 +313,7 @@ export class ConfigurationComponent implements OnInit {
           // then add a shelf for that user
           this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
           // then post configuration to parent planet's registration requests
-          this.couchService.post('communityregistrationrequests', { ...configuration, _id: conf._id }, {
+          this.couchService.post('communityregistrationrequests', { ...configuration, _id: conf.id }, {
             domain: configuration.parentDomain
           }).pipe(
             this.addUserToParentPlanet(userDetail, adminName, configuration),

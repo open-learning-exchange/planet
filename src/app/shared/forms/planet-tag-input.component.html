@@ -1,0 +1,20 @@
+<mat-chip-list #tagsList>
+  <mat-chip *ngFor="let tag of _value" [removable]="true" (removed)="removeTag(tag)">
+    {{tag}}
+    <mat-icon matChipRemove>clear</mat-icon>
+  </mat-chip>
+  <input
+    #tagInput
+    [formControl]="inputControl"
+    [matAutocomplete]="tagAuto"
+    [matChipInputFor]="tagsList"
+    [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+    [matChipInputAddOnBlur]="true"
+    (matChipInputTokenEnd)="inputAddTag($event)"
+    required>
+</mat-chip-list>
+<mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="autocompleteAddTag($event)">
+  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag.key">
+    {{tag.key}}
+  </mat-option>
+</mat-autocomplete>

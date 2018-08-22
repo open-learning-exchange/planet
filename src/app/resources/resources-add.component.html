@@ -5,110 +5,103 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1" i18n>{{pageType}} resource</mat-toolbar>
   <div class="view-container">
-    <form class="view-container" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
-      <mat-grid-list cols="3">
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
-          <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Author" formControlName="author">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
-        </mat-form-field>
-      </mat-grid-list>
-      <div class="form-width-3">
-        <mat-form-field class="full-width">
-          <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
-          <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
-      <mat-grid-list cols="3">
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Language" formControlName="language">
-            <mat-option i18n value="English">English</mat-option>
-            <mat-option i18n value="Spanish">Español</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
-        </mat-form-field>
-      </mat-grid-list>
-      <mat-grid-list cols="3">
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple required>
-            <mat-option *ngFor="let subject of constants.subjectList" [value]="subject">{{subject}}</mat-option>
-          </mat-select>
-          <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple required>
-            <mat-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-option>
-          </mat-select>
-          <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
-            <mat-option *ngFor="let open of constants.openWith" [value]="open">
-            {{ open }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-grid-list>
-      <mat-grid-list cols="3">
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" multiple>
-            <mat-option i18n value="default">Default</mat-option>
-            <mat-option i18n value="leader">Leader</mat-option>
-            <mat-option i18n value="learner">learner</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Media" formControlName="medium">
-            <mat-option *ngFor="let medium of constants.media" [value]="medium">
-            {{ medium }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput [value]="resourceForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
-        </mat-form-field>
-      </mat-grid-list>
-      <mat-grid-list cols="3">
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
-            <mat-option *ngFor="let type of constants.resourceType" [value]="type">
-            {{ type }}
-            </mat-option>
-          </mat-select>
+    <form class="form-spacing" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
+        <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-          <input matInput  i18n-placeholder [(ngModel)]="userDetail.name" placeholder="Added By" formControlName="addedBy" readonly>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Open URL" formControlName="openUrl" >
-        </mat-form-field>
-      </mat-grid-list>
-      <mat-grid-list cols="1">
-        <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
-        </mat-form-field>
+        <input matInput  i18n-placeholder placeholder="Author" formControlName="author">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
+        <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <planet-tag-input [formControl]="resourceForm.controls.tags" i18n-placeholder placeholder="Labels"></planet-tag-input>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Language" formControlName="language">
+          <mat-option i18n value="English">English</mat-option>
+          <mat-option i18n value="Spanish">Español</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput  i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput  i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple required>
+          <mat-option *ngFor="let subject of constants.subjectList" [value]="subject">{{subject}}</mat-option>
+        </mat-select>
+        <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple required>
+          <mat-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-option>
+        </mat-select>
+        <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
+          <mat-option *ngFor="let open of constants.openWith" [value]="open">
+          {{ open }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" multiple>
+          <mat-option i18n value="default">Default</mat-option>
+          <mat-option i18n value="leader">Leader</mat-option>
+          <mat-option i18n value="learner">learner</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Media" formControlName="medium">
+          <mat-option *ngFor="let medium of constants.media" [value]="medium">
+          {{ medium }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [value]="resourceForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
+          <mat-option *ngFor="let type of constants.resourceType" [value]="type">
+          {{ type }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput  i18n-placeholder [(ngModel)]="userDetail.name" placeholder="Added By" formControlName="addedBy" readonly>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput  i18n-placeholder placeholder="Open URL" formControlName="openUrl" >
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput  i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
+      </mat-form-field>
+      <div class="inner-gaps by-column full-width">
         <label i18n>File Upload:</label>
         <input type="file" (change)="bindFile($event)" />
-        <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
-      </mat-grid-list>
-      <mat-grid-list cols="1">
-        <mat-checkbox [disabled]="disableDownload" formControlName="isDownloadable">File downloadable</mat-checkbox>
-      </mat-grid-list>
-      <div *ngIf="pageType==='Update'">
-        <mat-checkbox (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
       </div>
-      <button mat-raised-button type="submit" color="primary" [disabled]="isSubmitted" i18n>Submit</button>
-      <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
+      <div class="inner-gaps full-width">
+        <mat-checkbox [disabled]="disableDownload" formControlName="isDownloadable">File downloadable</mat-checkbox>
+        <ng-container *ngIf="pageType==='Update'">
+          <mat-checkbox (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
+        </ng-container>
+      </div>
+      <div class="inner-gaps by-column full-width align-end">
+        <button mat-raised-button type="submit" [planetSubmit]="resourceForm.valid" color="primary" i18n>Submit</button>
+        <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      </div>
     </form>
   </div>
 </div>

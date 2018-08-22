@@ -5,12 +5,11 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { Observable, of } from 'rxjs';
-import { MatFormField, MatFormFieldControl } from '@angular/material';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
-import { NgxImgModule } from 'ngx-img';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 import emailMask from 'text-mask-addons/dist/emailMask';
@@ -39,13 +38,14 @@ export class UsersUpdateComponent implements OnInit {
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
   uploadImage = false;
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   redirectUrl = '/';
   file: any;
   roles: string[] = [];
   languages = languages;
   maxDate = new Date();
+  submissionMode = false;
   eMask = emailMask;
 
   constructor(
@@ -59,12 +59,17 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.route.snapshot.data.submission === true) {
+      this.submissionMode = true;
+      this.redirectUrl = '/surveys';
+      return;
+    }
     this.urlName = this.route.snapshot.paramMap.get('name');
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data) => {
         this.user = data;
         if (this.user.gender || this.user.name !== this.userService.get().name) {
-          this.redirectUrl = '/users/profile/' + this.user.name;
+          this.redirectUrl = '../../profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
         if (data['_attachments']) {
@@ -82,27 +87,39 @@ export class UsersUpdateComponent implements OnInit {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: [ '', Validators.required ],
+      firstName: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       middleName: '',
-      lastName: [ '', Validators.required ],
-      email: [ '', [ Validators.required, Validators.email ] ],
-      language: [ '', Validators.required ],
-      phoneNumber: [ '', Validators.required ],
-      birthDate: [ '', Validators.compose([ CustomValidators.dateValidRequired, CustomValidators.notDateInFuture ]) ],
-      gender: [ '', Validators.required ],
-      level: [ '', Validators.required ]
+      lastName: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
+      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      phoneNumber: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      birthDate: [ '', [ this.conditionalValidator(CustomValidators.dateValidRequired).bind(this), CustomValidators.notDateInFuture ] ],
+      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      level: [ '', this.conditionalValidator(Validators.required).bind(this) ]
     });
+  }
+
+  conditionalValidator(validator: any) {
+    return (ac) => this.submissionMode ? null : validator(ac);
   }
 
   onSubmit() {
     if (this.editForm.valid) {
-      const attachment = this.file ? this.createAttachmentObj() : {};
-      this.updateUser(Object.assign({}, this.user, this.editForm.value, attachment));
+      this.submitUser();
     } else {
-        Object.keys(this.editForm.controls).forEach(field => {
+      Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+    }
+  }
+
+  submitUser() {
+    if (this.submissionMode) {
+      this.appendToSurvey(this.editForm.value);
+    } else {
+      const attachment = this.file ? this.createAttachmentObj() : {};
+      this.updateUser(Object.assign({}, this.user, this.editForm.value, attachment));
     }
   }
 
@@ -127,20 +144,38 @@ export class UsersUpdateComponent implements OnInit {
 
   updateUser(userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo }).subscribe((res) => {
-      userInfo._rev = res.rev;
-      if (this.user.name === this.userService.get().name) {
-        this.userService.set(userInfo);
-      }
-      this.router.navigate([ this.redirectUrl ]);
+    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo })
+    .pipe(
+      switchMap(res => {
+        userInfo._rev = res.rev;
+        if (this.user.name === this.userService.get().name) {
+          this.userService.set(userInfo);
+        }
+        if (this.userService.getConfig().adminName === this.user.name + '@' + this.userService.getConfig().code) {
+          return this.updateConfigurationContact(userInfo);
+        }
+        return of({ ok: true });
+      })
+    ).subscribe(() => {
+      this.goBack();
     },  (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
   }
 
+  updateConfigurationContact(userInfo) {
+    const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
+    const newConfig = { ...this.userService.getConfig(), firstName, lastName, middleName, email, phoneNumber };
+    return this.couchService.put('configurations/' + this.userService.getConfig()._id, newConfig)
+    .pipe(map((res) => {
+      this.userService.setConfig(newConfig);
+      return res;
+    }));
+  }
+
   goBack() {
-    this.router.navigate([ this.redirectUrl ]);
+    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
   }
 
   onImageSelect(img) {
@@ -153,6 +188,15 @@ export class UsersUpdateComponent implements OnInit {
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
+  }
+
+  appendToSurvey(user) {
+    const submissionId = this.route.snapshot.params.id;
+    this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
+      return this.couchService.put('submissions/' + submissionId, { ...submission, user });
+    })).subscribe(() => {
+      this.goBack();
+    });
   }
 
 }

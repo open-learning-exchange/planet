@@ -5,6 +5,7 @@ import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
+import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   templateUrl: './exams-view.component.html',
@@ -20,49 +21,43 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   maxQuestions = 0;
   answer: any = undefined;
   incorrectAnswer = false;
+  spinnerOn = true;
   mode = 'take';
   grade;
+  submissionId: string;
+  fromSubmission = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private userService: UserService
+    private userService: UserService,
+    private couchService: CouchService
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress }: { course: any, progress: any }) => {
-      // To be readable by non-technical people stepNum & questionNum param will start at 1
-      const step = course.steps[this.stepNum - 1];
-      this.setQuestion(step.exam.questions);
-      this.submissionsService.openSubmission({
-        parentId: step.exam._id + '@' + course._id,
-        parent: step.exam,
-        user: this.userService.get().name,
-        type: 'exam' });
-    });
-    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
-      if (this.mode === 'grade') {
-        this.setQuestion(submission.parent.questions);
-        this.answer = submission.answers[this.questionNum - 1];
-        this.grade = this.answer.grade;
-      }
-    });
+    this.setCourseListener();
+    this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.questionNum = +params.get('questionNum'); // Leading + forces string to number
       this.stepNum = +params.get('stepNum');
       const courseId = params.get('id');
       const submissionId = params.get('submissionId');
+      const surveyId = params.get('surveyId');
+      const mode = params.get('mode');
+      this.spinnerOn = true;
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
         this.incorrectAnswer = false;
         this.grade = 0;
+      } else if (surveyId) {
+        this.getSurvey(surveyId);
+        this.grade = 0;
       } else if (submissionId) {
-        this.mode = 'grade';
-        this.grade = undefined;
+        this.fromSubmission = true;
+        this.mode = mode || 'grade';
+        this.grade = mode === 'take' ? 0 : undefined;
         this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
       }
     });
@@ -91,6 +86,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(() => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
+        this.spinnerOn = false;
       } else {
         this.routeToNext(close);
       }
@@ -99,9 +95,22 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   routeToNext (close) {
     if (close) {
-      this.goBack();
+      this.examComplete();
     } else {
-      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + 1 } ], { relativeTo: this.route });
+      this.moveQuestion(1);
+    }
+  }
+
+  moveQuestion(direction: number) {
+    this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    this.spinnerOn = false;
+  }
+
+  examComplete() {
+    if (this.route.snapshot.data.newUser === true) {
+      this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
+    } else {
+      this.goBack();
     }
   }
 
@@ -109,9 +118,46 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 
+  setTakingExam(exam, parentId, type) {
+    const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get().name;
+    this.setQuestion(exam.questions);
+    this.submissionsService.openSubmission({
+      parentId,
+      parent: exam,
+      user,
+      type });
+  }
+
   setQuestion(questions: any[]) {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
+  }
+
+  setCourseListener() {
+    this.coursesService.courseUpdated$
+    .pipe(takeUntil(this.onDestroy$))
+    .subscribe(({ course, progress }: { course: any, progress: any }) => {
+      // To be readable by non-technical people stepNum & questionNum param will start at 1
+      const step = course.steps[this.stepNum - 1];
+      this.setTakingExam(step.exam, step.exam._id + '@' + course._id, 'exam');
+    });
+  }
+
+  setSubmissionListener() {
+    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+      this.submissionId = submission._id;
+      if (this.fromSubmission === true) {
+        this.setQuestion(submission.parent.questions);
+        this.answer = submission.answers[this.questionNum - 1];
+        this.grade = this.answer.grade;
+      }
+    });
+  }
+
+  getSurvey(surveyId: string) {
+    this.couchService.get('exams/' + surveyId).subscribe((survey) => {
+      this.setTakingExam(survey, survey._id, 'survey');
+    });
   }
 
 }

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import {
+  MatAutocompleteModule,
   MatBadgeModule,
   MatButtonModule,
   MatButtonToggleModule,
@@ -24,6 +25,7 @@ import {
   MatSnackBarModule,
   MatSortModule,
   MatStepperModule,
+  MatProgressSpinnerModule,
   MatTableModule,
   MatToolbarModule,
   MatTooltipModule,
@@ -32,6 +34,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   exports: [
+    MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -50,6 +53,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatNativeDateModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,

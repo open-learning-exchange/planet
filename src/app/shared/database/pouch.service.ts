@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
+import PouchDBAuth from 'pouchdb-authentication';
 import PouchDBFind from 'pouchdb-find';
 import { throwError, from } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
+PouchDB.plugin(PouchDBAuth);
 PouchDB.plugin(PouchDBFind);
 
 @Injectable()
 export class PouchService {
-  private baseUrl = environment.couchAddress;
+  private baseUrl = environment.couchAddress + '/';
   private localDBs;
+  private authDB;
   private databases = [];
 
   constructor() {
@@ -24,6 +27,15 @@ export class PouchService {
         }
       });
       this.localDBs[db] = pouchDB;
+    });
+
+    // test is a placeholder temp database
+    // we need a central remote database
+    // since we will have different levels of authentication (manager, intern)
+    // we will have to create corresponding documents in couchdb and we can sync
+    // we can decide that when the user is being created for the first time?
+    this.authDB = new PouchDB(this.baseUrl + 'test', {
+      skip_setup: true
     });
   }
 
@@ -59,6 +71,10 @@ export class PouchService {
 
   getLocalPouchDB(db) {
     return this.localDBs[db];
+  }
+
+  getAuthDB() {
+    return this.authDB;
   }
 
   private handleError(err) {

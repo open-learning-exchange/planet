@@ -10,23 +10,48 @@ import { PlanetFormsModule } from '../forms/planet-forms.module';
 import { FeedbackDirective } from '../../feedback/feedback.directive';
 import { DialogsListComponent } from './dialogs-list.component';
 import { DialogsListService } from './dialogs-list.service';
+import { DialogsLoadingComponent } from './dialogs-loading.component';
 import { ChangePasswordDirective } from './change-password.directive';
+import { SharedComponentsModule } from '../shared-components.module';
+
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, PlanetFormsModule
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    SharedComponentsModule
   ],
   exports: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective, DialogsListComponent, ChangePasswordDirective
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    FeedbackDirective,
+    DialogsListComponent,
+    DialogsLoadingComponent,
+    ChangePasswordDirective
   ],
   declarations: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, FeedbackDirective, DialogsListComponent, ChangePasswordDirective
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    FeedbackDirective,
+    DialogsListComponent,
+    DialogsLoadingComponent,
+    ChangePasswordDirective
   ],
   providers: [
-    DialogsFormService, DialogsListService
+    DialogsFormService,
+    DialogsListService
   ],
   entryComponents: [
-    DialogsFormComponent, DialogsViewComponent, DialogsPromptComponent, DialogsListComponent
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    DialogsListComponent,
+    DialogsLoadingComponent
   ]
 })
 export class PlanetDialogsModule {}

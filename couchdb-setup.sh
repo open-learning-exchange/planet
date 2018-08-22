@@ -114,11 +114,15 @@ curl -X PUT $COUCHURL/courses_progress
 curl -X PUT $COUCHURL/attachments
 curl -X PUT $COUCHURL/send_items
 curl -X PUT $COUCHURL/teams
+curl -X PUT $COUCHURL/tablet_users
+curl -X PUT $COUCHURL/child_users
+curl -X PUT $COUCHURL/replicator_users
 
 # Create design documents
 node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
+upsert_doc resources _design/resources @./design/resources/resources-design.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST
@@ -140,6 +144,8 @@ multi_db_update $SECURITY _security
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
 # Increse http request size for large attachments
 upsert_doc _node/nonode@nohost/_config httpd/max_http_request_size '"1073741824"'
+# Increse replication timeout
+upsert_doc _node/nonode@nohost/_config replicator/connection_timeout '"300000"'
 
 # Make user database public
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'

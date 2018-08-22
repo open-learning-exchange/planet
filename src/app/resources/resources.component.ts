@@ -5,17 +5,18 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from 
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil, map, switchMap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields, filterDropdowns, composeFilterFunctions } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterArrayField, filterTags } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
-import * as constants from './resources-constants';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
+import { FormControl } from '../../../node_modules/@angular/forms';
+import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -23,6 +24,9 @@ import { dedupeShelfReduce } from '../shared/utils';
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
+    }
+    .mat-column-tags {
+      max-width: 125px;
     }
     .mat-column-rating {
       max-width: 225px;
@@ -46,15 +50,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   displayedColumns = [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
-  subjectList: any = constants.subjectList;
-  levelList: any = constants.levelList;
   currentUser = this.userService.get();
-  filter = {
-    'subject': '',
-    'level': ''
-  };
+  tagFilter = new FormControl([]);
+  tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
@@ -62,6 +62,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+  emptyData = false;
+
+  @ViewChild(PlanetTagInputComponent)
+  private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
     private couchService: CouchService,
@@ -76,15 +80,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((resources) => {
-       // Sort in descending createdDate order, so the new resource can be shown on the top
-      resources.sort((a, b) => b.createdDate - a.createdDate);
+    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$)).pipe(
+      map((resources) => {
+        // Sort in descending createdDate order, so the new resource can be shown on the top
+        resources.sort((a, b) => b.createdDate - a.createdDate);
+        return this.setupList(resources, this.userService.shelf.resourceIds);
+      }),
+      switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
+    ).subscribe((resources) => {
       this.resources.data = resources;
-      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
+      this.emptyData = !this.resources.data.length;
     });
     this.resourcesService.updateResources({ opts: this.getOpts });
-    this.resources.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'title' ]) ]);
+    this.resources.filterPredicate = composeFilterFunctions(
+      [ filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
+    );
     this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
         case 'rating':
@@ -97,14 +107,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((shelf: any) => {
         this.setupList(this.resources.data, shelf.resourceIds);
       });
+    this.tagFilter.valueChanges.subscribe((tags) => {
+      this.tagFilterValue = tags;
+      this.resources.filter = this.resources.filter || ' ';
+    });
   }
 
   setupList(resourcesRes, myLibrarys) {
-    resourcesRes.forEach((resource: any) => {
+    return resourcesRes.map((resource: any) => {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
-      resource.libraryInfo = myLibraryIndex > -1;
+      return { ...resource, libraryInfo: myLibraryIndex > -1 };
     });
   }
 
@@ -263,27 +277,24 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
-  onDropdownFilterChange(filterValue: string, field: string) {
-    this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    // Force filter to update by setting it to a space if empty
-    this.resources.filter = this.resources.filter ? this.resources.filter : ' ';
+  onTagsChange(newTags) {
+    this.tagFilterValue = newTags;
   }
 
   resetFilter() {
-    this.filter.level = '';
-    this.filter.subject = '';
+    this.tagFilter.setValue([]);
+    this.tagFilterValue = [];
     this.titleSearch = '';
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
-      if (val) {
-        return ' ';
-      }
-      return emptySpace;
-    }, '');
+    return this.tagFilter.value.length > 0 ? ' ' : '';
+  }
+
+  addTag(tag: string) {
+    this.tagInputComponent.addTag(tag);
   }
 
 }

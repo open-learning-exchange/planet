@@ -1,7 +1,7 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
   <mat-step *ngIf="configurationType === 'new'" [stepControl]="loginForm" [optional]="configurationType === 'update'">
     <ng-template matStepLabel i18n>Create Admin</ng-template>
-    <form [formGroup]="loginForm">
+    <form class="form-spacing" [formGroup]="loginForm">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.name"></planet-form-error-messages></mat-error>
@@ -14,14 +14,16 @@
         <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+      <div class="full-width">
+        <button mat-raised-button color="primary" matStepperNext i18n>Next</button>
+      </div>
     </form>
     <div id="login-status">{{message}}</div>
   </mat-step>
 
   <mat-step [stepControl]="configurationFormGroup">
     <ng-template matStepLabel i18n>{{configurationType === 'new' ? 'Set Up' : 'Update'}} Configuration</ng-template>
-    <form [formGroup]="configurationFormGroup">
+    <form class="form-spacing configuration-form" [formGroup]="configurationFormGroup">
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Select Nation/Community" (selectionChange)="onChange($event.value)" formControlName="planetType" required>
           <mat-option value="nation" i18n>Nation</mat-option>
@@ -38,21 +40,19 @@
       <mat-form-field *ngIf="nationOrCommunity === 'nation'">
         <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
       </mat-form-field>
-      <div>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Code" formControlName="code" required readonly>
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
-      <div *ngIf="showAdvancedOptions">
+      <mat-form-field class="new-line">
+        <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Code" formControlName="code" required readonly>
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
+        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <div class="full-width" *ngIf="showAdvancedOptions">
         <span>Advanced Options:</span>
         <mat-form-field *ngIf="showAdvancedOptions">
           <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
@@ -77,32 +77,28 @@
   </mat-step>
 
   <mat-step [stepControl]="contactFormGroup">
-    <form [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
+    <form class="form-spacing" [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
       <ng-template matStepLabel i18n>{{configurationType === 'new' ? '' : 'Update'}} Contact Details</ng-template>
-      <div>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
-          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
-          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
-          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
-          <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
-      <div>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
+        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
+        <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <div class="full-width">
         <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
         <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
       </div>

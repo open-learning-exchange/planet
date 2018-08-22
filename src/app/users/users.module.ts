@@ -10,6 +10,7 @@ import { UsersRouterModule } from './users-router.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
@@ -22,6 +23,7 @@ import { TextMaskModule } from 'angular2-text-mask';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
+    SharedComponentsModule,
     TextMaskModule
   ],
   declarations: [

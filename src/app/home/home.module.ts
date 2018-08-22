@@ -14,8 +14,8 @@ import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
-import { PlanetLanguageModule } from '../shared/planet-language.module';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -28,7 +28,7 @@ import { UpgradeComponent } from '../upgrade/upgrade.component';
     HttpClientModule,
     HttpClientJsonpModule,
     PlanetDialogsModule,
-    PlanetLanguageModule
+    SharedComponentsModule
   ],
   declarations: [
     HomeComponent,

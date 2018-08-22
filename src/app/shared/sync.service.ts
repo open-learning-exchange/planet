@@ -89,11 +89,12 @@ export class SyncService {
     return {
       // Name the id always after the local database
       '_id': (type === 'push' ? dbSource : dbTarget) + '_' + type + (replicator.date ? '_' + Date.now() : ''),
-      'source': this.dbObj(dbSource, credentials, type === 'pull'),
-      'target': this.dbObj(dbTarget, credentials, type !== 'pull'),
+      'source': this.dbObj(dbSource, credentials, type === 'pull' && type !== 'internal'),
+      'target': this.dbObj(dbTarget, credentials, type !== 'pull' && type !== 'internal'),
       'selector': replicator.selector,
       'create_target':  false,
-      'owner': credentials.name
+      'owner': credentials.name,
+      'continuous': replicator.continuous
     };
   }
 
@@ -103,7 +104,7 @@ export class SyncService {
 
   private dbObj(dbName, credentials, parent: boolean) {
     const username = credentials.name + (parent ? '@' + this.code : '');
-    const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
+    const domain = parent ? this.parentDomain + '/' : environment.syncAddress + '/';
     const protocol = parent ? environment.parentProtocol + '://' : '';
     return {
       'headers': {

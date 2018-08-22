@@ -25,9 +25,9 @@ import { CoursesService } from './courses/courses.service';
 import { SHARED_SERVICES } from './shared/database';
 import { SyncService } from './shared/sync.service';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
-import { PlanetLanguageModule } from './shared/planet-language.module';
 import { TeamsService } from './teams/teams.service';
 import { RatingService } from './shared/forms/rating.service';
+import { TagsService } from './shared/forms/tags.service';
 import { FormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 
@@ -44,8 +44,7 @@ import { TextMaskModule } from 'angular2-text-mask';
     NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
-      : [],
-    PlanetLanguageModule
+      : []
   ],
   declarations: [
     AppComponent, PageNotFoundComponent
@@ -64,7 +63,8 @@ import { TextMaskModule } from 'angular2-text-mask';
     ...SHARED_SERVICES,
     SyncService,
     TeamsService,
-    RatingService
+    RatingService,
+    TagsService
   ],
   bootstrap: [ AppComponent ]
 })

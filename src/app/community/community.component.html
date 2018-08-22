@@ -12,9 +12,6 @@
     <mat-button-toggle value="pending" [checked]="this.filter.registrationRequest === 'pending'">
       Pending
     </mat-button-toggle>
-    <mat-button-toggle value="rejected" [checked]="this.filter.registrationRequest === 'rejected'">
-      Rejected
-    </mat-button-toggle>
     <mat-button-toggle value="accepted" [checked]="this.filter.registrationRequest === 'accepted'">
       Connected
     </mat-button-toggle>
@@ -64,9 +61,6 @@
         <ng-container *ngIf="element.registrationRequest === 'pending'">
           <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>
             <mat-icon>link</mat-icon>Accept
-          </button>
-          <button mat-raised-button color="primary" (click)="updateClick(element, 'reject')" i18n>
-            <mat-icon>block</mat-icon>Reject
           </button>
         </ng-container>
         <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')" i18n>

@@ -25,7 +25,7 @@ export class UsersProfileComponent implements OnInit {
   userDetail: any = {};
   user: any = {};
   imageSrc = '';
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
 
   constructor(
@@ -64,7 +64,7 @@ export class UsersProfileComponent implements OnInit {
   goBack() {
     const currentUser = this.userService.get();
     if (currentUser.isUserAdmin) {
-      this.router.navigate([ '/users' ]);
+      this.router.navigate([ '../../' ], { relativeTo: this.route });
     } else {
       this.router.navigate([ '/' ]);
     }

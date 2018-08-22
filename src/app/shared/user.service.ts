@@ -29,6 +29,7 @@ export class UserService {
   sessionStart: number;
   sessionRev: string;
   sessionId: string;
+  userProperties: string[] = [];
 
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
@@ -57,6 +58,10 @@ export class UserService {
     return this.configuration;
   }
 
+  setConfig(config) {
+    this.configuration = config;
+  }
+
   setUserConfigAndShelf(user: any) {
     return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
         // If not found in users database, just use userCtx object
@@ -68,6 +73,7 @@ export class UserService {
           // Remove hashed password information from the data object
           const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
           this.user = profile;
+          this.userProperties = Object.keys(profile);
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {

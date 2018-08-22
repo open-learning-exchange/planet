@@ -15,6 +15,10 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
+      <button mat-button [disabled]="!selection.selected.length" (click)="addToMeetups(selection.selected)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join</span>
+        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+      </button>
       <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
         <span i18n>Delete</span>
@@ -25,74 +29,80 @@
       </button>
     </span>
   </mat-toolbar>
-  <mat-table #table [dataSource]="meetups" matSort>
-    <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row._id) : null" [checked]="selection.isSelected(row._id)">
-        </mat-checkbox>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="list-content-menu">
-        <h3 class="header">
-          <a [routerLink]="['view', element._id]">{{element.title}}</a>
-        </h3>
-        <div class="content">
-          <p>{{ element.description }}</p>
-        </div>
-        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-cell>
-          <mat-menu #meetupMenu="matMenu">
-            <a mat-menu-item (click)="attendMeetup(element)">
-              <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
-              <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
-            </a>
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'meetups', 'item': element._id}" i18n-title title="Feedback">
-              <mat-icon>feedback</mat-icon>
-              <span i18n>Feedback</span>
-            </a>
-            <a mat-menu-item [routerLink]="['/meetups/update', element._id]" *ngIf="currentUser.name === element.createdBy">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
-            </a>
-            <a mat-menu-item [routerLink]="['/meetups/view', element._id]">
-              <mat-icon>visibility</mat-icon>
-              <span i18n>View</span>
-            </a>
-            <ng-container *ngIf="currentUser.name === element.createdBy || currentUser.isUserAdmin">
-              <button mat-menu-item (click)="deleteClick(element)">
-                <mat-icon>delete_forever</mat-icon>
-                <span i18n>Delete</span>
-              </button>
-            </ng-container>
-          </mat-menu>
+  
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="meetups" matSort>
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null" [checked]="selection.isSelected(row._id)">
+          </mat-checkbox>
         </mat-cell>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="info">
-      <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <div>
-          <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span i18n>at</span>{{ ' ' + element.startTime }} {{ element.endTime ? '-' : '' }} {{ element.endTime }}</p>
-          <p><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
-          <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-          <p><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
-        </div>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
-  </mat-table>
-  <mat-paginator #paginator
-    [pageSize]="5"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPaginateChange($event)">
-  </mat-paginator>
+      </ng-container>
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="list-content-menu">
+          <h3 class="header">
+            <a [routerLink]="['view', element._id]">{{element.title}}</a>
+          </h3>
+          <div class="content">
+            <p>{{ element.description }}</p>
+          </div>
+          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-cell>
+            <mat-menu #meetupMenu="matMenu">
+              <a mat-menu-item (click)="attendMeetup(element)">
+                <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
+                <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
+              </a>
+              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'meetups', 'item': element._id}" i18n-title title="Feedback">
+                <mat-icon>feedback</mat-icon>
+                <span i18n>Feedback</span>
+              </a>
+              <a mat-menu-item [routerLink]="['/meetups/update', element._id]" *ngIf="currentUser.name === element.createdBy">
+                <mat-icon>folder</mat-icon>
+                <span i18n>Manage</span>
+              </a>
+              <a mat-menu-item [routerLink]="['/meetups/view', element._id]">
+                <mat-icon>visibility</mat-icon>
+                <span i18n>View</span>
+              </a>
+              <ng-container *ngIf="currentUser.name === element.createdBy || currentUser.isUserAdmin">
+                <button mat-menu-item (click)="deleteClick(element)">
+                  <mat-icon>delete_forever</mat-icon>
+                  <span i18n>Delete</span>
+                </button>
+              </ng-container>
+            </mat-menu>
+          </mat-cell>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="info">
+        <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span i18n>at</span>{{ ' ' + element.startTime }} {{ element.endTime ? '-' : '' }} {{ element.endTime }}</p>
+            <p><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
+            <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
+            <p><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPaginateChange($event)">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Meetups Found</div>
+  </ng-template>
 </div>

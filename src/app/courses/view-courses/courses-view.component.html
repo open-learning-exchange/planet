@@ -2,15 +2,22 @@
   <a mat-icon-button [routerLink]="parent ? ['/manager/courses'] : ['/courses']"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>Course</span>
 </mat-toolbar>
-
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
     <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!parent">
+      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
+        Admission
+      </button>
+      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
+        Resign
+      </button>
+    </ng-container>
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="course-progress">
+    <div class="course-progress" *ngIf="isUserEnrolled">
       <span i18n>Your progress:</span>
       <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>
@@ -21,7 +28,8 @@
         <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
         <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
         <p i18n><b>Method:</b> {{courseDetail.method}}</p>
-        <p i18n><b>Description:</b> {{courseDetail.description}}</p>
+        <p><b i18n>Description:</b></p>
+        <td-markdown [content]="courseDetail.description"></td-markdown>
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
@@ -41,7 +49,7 @@
               <mat-menu #resourceList="matMenu">
                 <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
               </mat-menu>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && showExamButton" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
             </mat-action-row>
           </mat-expansion-panel>
         </ng-container>

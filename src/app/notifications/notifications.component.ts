@@ -13,22 +13,28 @@ import { Subject } from 'rxjs';
         <span i18n>Your Notifications</span>
       </mat-toolbar-row>
     </mat-toolbar>
-    <mat-list role="list" *ngFor="let notification of notifications">
-      <mat-list-item (click)="readNotification(notification)">
-      <mat-divider></mat-divider>
-        <p [ngClass]="{'primary-text-color':notification.status==='unread'}">
-          <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'">
-            {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
-          </a>
-        </p>
-      </mat-list-item>
-    </mat-list>
+    <ng-container *ngIf="!emptyData; else notFoundMessage">
+      <mat-list role="list" *ngFor="let notification of notifications">
+        <mat-list-item (click)="readNotification(notification)">
+        <mat-divider></mat-divider>
+          <p [ngClass]="{'primary-text-color':notification.status==='unread'}">
+            <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'">
+              {{notification.message}} {{notification.time | date: 'MMM d, yyyy'}}
+            </a>
+          </p>
+        </mat-list-item>
+      </mat-list>
+    </ng-container>
+    <ng-template #notFoundMessage>
+      <div class="view-container">No Notification Found</div>
+    </ng-template>
   </div>
   `
 })
 export class NotificationsComponent implements OnInit {
   notifications = [];
   private onDestroy$ = new Subject<void>();
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -59,6 +65,7 @@ export class NotificationsComponent implements OnInit {
       [ { 'time': 'desc' } ]))
     .subscribe(notification => {
        this.notifications = notification;
+       this.emptyData = !this.notifications.length;
     }, (err) => console.log(err.error.reason));
   }
 

@@ -7,6 +7,7 @@ import { map, catchError } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
+import { SubmissionsService } from '../submissions/submissions.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -19,10 +20,12 @@ export class DashboardComponent implements OnInit {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   dateNow = Date.now();
   visits = 0;
+  surveys = [];
 
   constructor(
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private submissionsService: SubmissionsService
   ) {
     this.userService.shelfChange$.pipe()
       .subscribe(() => {
@@ -32,6 +35,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     const userShelf = this.userService.shelf;
+    this.getSurveys();
 
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
@@ -85,5 +89,15 @@ export class DashboardComponent implements OnInit {
       && shelf.meetupIds.length === 0
       && shelf.myTeamIds.length === 0
       && shelf.resourceIds.length === 0;
+  }
+
+  getSurveys() {
+    this.submissionsService.getSubmissions(findDocuments({
+      'user.name': this.userService.get().name,
+      type: 'survey',
+       status: 'pending'
+    })).subscribe((surveys) => {
+      this.surveys = surveys;
+    });
   }
 }

@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
@@ -20,12 +21,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   userShelf: any = [];
   displayedColumns = [ 'name', 'action' ];
   dbName = 'teams';
+  emptyData = false;
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private router: Router
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -41,9 +44,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
-    this.couchService.allDocs(this.dbName).subscribe((data: any) => {
+    this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((data: any) => {
       this.userShelf = this.userService.shelf;
       this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
+      this.emptyData = !this.teams.data.length;
     }, (error) => console.log(error));
   }
 
@@ -61,25 +65,34 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addTeam() {
-    this.teamsService.addTeamDialog(this.userShelf).subscribe(() => {
+  addTeam(team?) {
+    this.teamsService.addTeamDialog(this.userShelf, team).subscribe(() => {
       this.getTeams();
-      this.planetMessageService.showMessage('Team created');
+      const msg = team ? 'Team updated' : 'Team created';
+      this.planetMessageService.showMessage(msg);
     });
   }
 
-  toggleMembership(teamId, leaveTeam) {
-    this.teamsService.toggleTeamMembership(teamId, leaveTeam, this.userShelf).subscribe(() => {
+  toggleMembership(team, leaveTeam) {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
+      if (newTeam.status === 'archived') {
+        this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+      }
     });
   }
 
   requestToJoin(team) {
-    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).subscribe((newTeam) => {
-      this.teams.data = this.teamList(this.teams.data.map((t: any) => t.doc._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
-      this.planetMessageService.showMessage('Request to join team sent');
-    });
+    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
+      switchMap((newTeam) => {
+        this.teams.data = this.teamList(this.teams.data.map((t: any) => t.doc._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
+        return this.teamsService.getTeamMembers(newTeam._id);
+      }),
+      switchMap((response) => {
+        return this.teamsService.sendNotifications('request', response.docs, { team, url: this.router.url + '/view/' + team._id });
+      })
+    ).subscribe(() => this.planetMessageService.showMessage('Request to join team sent'));
   }
 
   // If multiple team is added then need to check

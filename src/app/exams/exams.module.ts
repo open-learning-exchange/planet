@@ -8,6 +8,7 @@ import { ExamsViewComponent } from './exams-view.component';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -16,12 +17,16 @@ import { MaterialModule } from '../shared/material.module';
     ReactiveFormsModule,
     PlanetFormsModule,
     PlanetDialogsModule,
-    MaterialModule
+    MaterialModule,
+    SharedComponentsModule
   ],
   declarations: [
     ExamsAddComponent,
     ExamsQuestionComponent,
     ExamsViewComponent
+  ],
+  exports: [
+    ExamsAddComponent
   ]
 })
 export class ExamsModule {}

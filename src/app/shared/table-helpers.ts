@@ -1,3 +1,5 @@
+import { FormControl } from '../../../node_modules/@angular/forms';
+
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
   // If field is an array field, check if one value matches.  If not check if values match exactly.
   const noMatch = data[field] instanceof Array ? data[field].indexOf(val) === -1 : val.toLowerCase() !== data[field].toLowerCase();
@@ -41,6 +43,23 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
       return trueIfExists === (getProperty(data, keys) !== undefined);
     }
     return true;
+  };
+};
+
+const matchAllItems = (filterItems: string[], propItems: string[]) => {
+  return filterItems.reduce((isMatch, filter) => isMatch && propItems.indexOf(filter) > -1, true);
+};
+
+export const filterArrayField = (filterField: string, filterItems: string[]) => {
+  return (data: any, filter: string) => {
+    const keys = filterField.split('.');
+    return matchAllItems(filterItems, getProperty(data, keys) || []);
+  };
+};
+
+export const filterTags = (filterField, filterControl: FormControl) => {
+  return (data: any, filter: string) => {
+    return filterArrayField(filterField, filterControl.value)(data, filter);
   };
 };
 

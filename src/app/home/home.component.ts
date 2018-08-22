@@ -9,6 +9,7 @@ import { interval, Subject, forkJoin } from 'rxjs';
 import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
+import { PouchAuthService } from '../shared/database';
 
 @Component({
   templateUrl: './home.component.html',
@@ -48,7 +49,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private pouchAuthService: PouchAuthService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -98,7 +100,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     if (this.user._attachments) {
       const filename = Object.keys(this.user._attachments)[0];
-      this.userImgSrc = environment.couchAddress + '_users/org.couchdb.user:' + this.user.name + '/' + filename;
+      this.userImgSrc = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/' + filename;
     } else {
       this.userImgSrc = '';
     }
@@ -116,7 +118,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   logoutClick() {
     this.userService.endSessionLog().pipe(switchMap(() => {
-      const obsArr = [ this.couchService.delete('_session', { withCredentials: true }) ];
+      const obsArr = [ this.pouchAuthService.logout() ];
       const localAdminName = this.userService.getConfig().adminName.split('@')[0];
       if (localAdminName === this.userService.get().name) {
         obsArr.push(

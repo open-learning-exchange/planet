@@ -9,57 +9,40 @@
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <form [formGroup]="courseForm" novalidate>
-      <mat-form-field class="full-width">
-        <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
-        <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field class="full-width">
-        <textarea
-          matInput
-          i18n-placeholder
-          placeholder="Description"
-          formControlName="description"
-          required
-          matTextareaAutosize
-          matAutosizeMaxRows="5"
-          matAutosizeMinRows="4">
-        </textarea>
-        <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Member Limit" type="number" formControlName="memberLimit">
-        <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel">
-          <mat-option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel">
-          <mat-option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Method" formControlName="method">
-      </mat-form-field>
-    </form>
-    <div>
-      <planet-courses-step
-        *ngFor="let step of steps; index as i; trackBy: stepTrackByFn"
-        (stepRemove)="removeStep(i)"
-        (stepOrder)="orderStep(i, $event)"
-        [(stepInfo)]="steps[i]"
-        [stepCount]="steps.length"
-        [stepNum]="i+1"
-        (examClick)="addExam($event)"></planet-courses-step>
+    <div class="form-container">
+      <form [formGroup]="courseForm" class="form-spacing" novalidate>
+        <mat-form-field class="full-width">
+          <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
+          <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <td-text-editor class="full-width" formControlName="description"></td-text-editor>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Member Limit" type="number" formControlName="memberLimit">
+          <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel">
+            <mat-option *ngFor="let grade of gradeLevels" [value]="grade">{{grade}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel">
+            <mat-option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Method" formControlName="method">
+        </mat-form-field>
+      </form>
     </div>
     <div>
-      <button type="submit" (click)="onSubmit()" mat-raised-button color="primary" i18n>Submit</button>
+      <planet-courses-step [(steps)]="steps"></planet-courses-step>
+    </div>
+    <div>
+      <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
       <button type="button" mat-raised-button color="warn" (click)="navigateBack()" i18n>Cancel</button>
       <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
     </div>
