@@ -10,17 +10,14 @@ import { uniqueId } from '../shared/utils';
   selector: 'planet-exam-question',
   templateUrl: 'exams-question.component.html',
   styles: [ `
-    .survey-question-choices {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 180px);
-      align-items: center;
-      grid-column-gap: 5px;
-    }
-    .exam-question-choices {
+    .question-choices {
       display: grid;
       grid-template-columns: repeat(auto-fill, 180px 24px);
       align-items: center;
       grid-column-gap: 5px;
+    }
+    .survey-question {
+      grid-template-columns: repeat(auto-fill, 180px);
     }
   ` ]
 })
