@@ -26,14 +26,14 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
-        <p i18n>Submitted answer:<span> {{answer?.value?.text || answer?.value}}</span></p>
+        <p i18n>Submitted answer:<span> {{answer?.text || answer}}</span></p>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
         </mat-radio-group>
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
-        <p i18n>Response:<span> {{answer?.value?.text || answer?.value}}</span></p>
+        <p i18n>Response:<span> {{answer?.text || answer}}</span></p>
       </ng-container>
     </ng-container>
     <div class="v-align-center">
