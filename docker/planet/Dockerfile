@@ -29,6 +29,6 @@ RUN apk add --update \
     spawn-fcgi \
     curl
 COPY docker/planet/scripts/docker-entrypoint.sh ./
-COPY docker/planet/upgrade.sh /usr/share/nginx/html
+COPY docker/planet/appscripts/ /usr/share/nginx/html
 
 CMD ./docker-entrypoint.sh
