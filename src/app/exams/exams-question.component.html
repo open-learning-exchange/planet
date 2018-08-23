@@ -33,7 +33,8 @@
       </mat-form-field>
       <button type="button" mat-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value === 'select'">Add Choice</button>
     </div>
-    <div class="question-choices">
+    <div class="question-choices"
+      [ngClass]="{'survey-question': examType === 'surveys'}">
       <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
