@@ -7,9 +7,9 @@ export class PlanetMessageService {
     private snackBar: MatSnackBar
   ) { }
 
-  showMessage(message: string) {
+  showMessage(message: string, time?: number) {
     this.snackBar.open(message, undefined, {
-      duration: 3000,
+      duration: time || 3000,
     });
   }
 

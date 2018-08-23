@@ -130,7 +130,7 @@ export class LoginFormComponent {
   loginError(message: string) {
     return () => {
       this.userForm.setErrors({ 'invalid': true });
-      this.planetMessageService.showAlert(message);
+      this.planetMessageService.showMessage(message, 10000);
     };
   }
 
