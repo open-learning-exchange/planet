@@ -1,0 +1,29 @@
+services:
+  couchdb:
+    expose:
+      - 5984
+    image: treehouses/couchdb:2.1.2
+    ports:
+      - "5984:5984"
+  db-init:
+    image: treehouses/planet:db-init-latest
+    depends_on:
+      - couchdb
+    environment:
+      - COUCHDB_HOST=http://couchdb:5984
+  planet:
+    image: treehouses/planet:latest
+    ports:
+      - "3000:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/vagrant/dist:/usr/share/nginx/html/eng:ro"
+    environment:
+      - MULTIPLE_IPS=true
+      - HOST_PROTOCOL=http
+      - DB_HOST=127.0.0.1
+      - DB_PORT=2200
+      - CENTER_ADDRESS=earth.ole.org:2200
+    depends_on:
+      - couchdb
+version: "2"
