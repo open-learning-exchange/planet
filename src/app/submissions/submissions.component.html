@@ -3,7 +3,7 @@
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span i18n>Submissions</span>
+  <span i18n>{mode, select, survey {Surveys} grade {Submissions}}</span>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
