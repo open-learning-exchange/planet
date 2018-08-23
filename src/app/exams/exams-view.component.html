@@ -43,7 +43,7 @@
         color="primary"
         (click)="nextQuestion(questionNum)"
         [planetSubmit]="spinnerOn"
-        [disabled]="answer === undefined || grade === undefined || grade === null"
+        [disabled]="answer === undefined || answer === '' || grade === undefined || grade === null"
         i18n>
         Submit Answer
       </button>
