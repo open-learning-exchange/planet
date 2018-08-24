@@ -108,7 +108,7 @@ module.exports = { "validate_doc_update":
     }
 
     if (!is_server_or_database_admin(userCtx, secObj)) {
-      var openLearnerRole = secObj.members.roles.indexOf('openlearner') > -1;
+      var openLearnerRole = secObj.admins.roles.indexOf('openlearner') > -1;
       if (oldDoc) { // validate non-admin updates
         if (userCtx.name !== newDoc.name) {
           throw({
