@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { switchMap, mergeMap } from 'rxjs/operators';
+import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
@@ -40,14 +40,11 @@ export class ConfigurationService {
     });
   }
 
-  addUserToParentPlanet(userDetail, adminName, configuration) {
+  addUserToParentPlanet(userDetail: any, adminName, configuration) {
     return mergeMap((data: any) => {
       // then add user to parent planet with id of configuration and isUserAdmin set to false
-      userDetail['requestId'] = data.id;
-      userDetail['isUserAdmin'] = false;
-      return this.createUser(adminName, { ...userDetail,
-        name: adminName
-      }, {
+      userDetail = { ...userDetail, requestId: data.id, isUserAdmin: false, roles: [], name: adminName };
+      return this.createUser(adminName, userDetail, {
         domain: configuration.parentDomain
       });
     });
@@ -61,7 +58,7 @@ export class ConfigurationService {
     });
   }
 
-  createPlanet(admin, configuration, credentials) {
+  createReplicators(configuration, credentials) {
     const replicatorObj = {
       type: 'pull',
       parentDomain: configuration.parentDomain,
@@ -75,6 +72,26 @@ export class ConfigurationService {
       continuous: true,
       type: 'internal'
     };
+    return forkJoin([
+      // create replicator for pulling from parent at first as we do not have session
+      this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
+      this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
+      this.syncService.sync(userReplicator, credentials)
+    ]);
+  }
+
+  addPlanetToParent(configuration, isNewConfig, userDetail?) {
+    return this.couchService.post('communityregistrationrequests', configuration, {
+      domain: configuration.parentDomain
+    }).pipe(
+      takeWhile(() => isNewConfig),
+      this.addUserToParentPlanet(userDetail, configuration.adminName, configuration),
+      this.addUserToShelf(configuration.adminName, configuration),
+      this.createRequestNotification(configuration)
+    );
+  }
+
+  createPlanet(admin, configuration, credentials) {
     const userDetail: any = {
       ...admin,
       'roles': [],
@@ -88,14 +105,7 @@ export class ConfigurationService {
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
     ]).pipe(
-      switchMap(res => {
-        return forkJoin([
-          // create replicator for pulling from parent at first as we do not have session
-          this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
-          this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
-          this.syncService.sync(userReplicator, credentials)
-        ]);
-      }),
+      switchMap(this.createReplicators),
       switchMap(() => this.couchService.post('configurations', configuration)),
       switchMap((conf) => {
         return forkJoin([
@@ -106,13 +116,7 @@ export class ConfigurationService {
           // then add a shelf for that user
           this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
           // then post configuration to parent planet's registration requests
-          this.couchService.post('communityregistrationrequests', { ...configuration, _id: conf.id }, {
-            domain: configuration.parentDomain
-          }).pipe(
-            this.addUserToParentPlanet(userDetail, configuration.adminName, configuration),
-            this.addUserToShelf(configuration.adminName, configuration),
-            this.createRequestNotification(configuration)
-          )
+          this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
         ]);
       })
     );
@@ -133,31 +137,9 @@ export class ConfigurationService {
       const { _rev: localRev, ...localConfig } = configuration;
       // if parent record not found set empty
       const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
-      return res.docs.length ? this.update(configuration, { ...localConfig, ...parentConfig })
-        : this.reSubmit(configuration, { ...localConfig, ...parentConfig });
+      const { _rev = '', _id = '', ...userDetail } = { ...this.userService.get(), ...this.userService.credentials };
+      return this.addPlanetToParent({ ...localConfig, ...parentConfig }, res.docs.length === 0, userDetail);
     }));
-  }
-
-  update(configuration, newConfig) {
-    return this.couchService.post(
-      'communityregistrationrequests',
-      newConfig,
-      { domain: configuration.parentDomain }
-    );
-  }
-
-  reSubmit(configuration, newConfig) {
-    const { _rev: userRev, _id: userId, ...userDetail } = this.userService.get();
-    const adminName = configuration.adminName;
-    return this.syncService.openConfirmation().pipe(
-      switchMap((credentials) => {
-        return this.update(configuration, newConfig).pipe(
-          this.addUserToParentPlanet({ ...userDetail, roles: [], ...credentials }, adminName, configuration),
-          this.addUserToShelf(adminName, configuration),
-          this.createRequestNotification(configuration)
-        );
-      })
-    );
   }
 
   createUser(name, details, opts?) {

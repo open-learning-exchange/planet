@@ -231,11 +231,15 @@ export class ConfigurationComponent implements OnInit {
       this.configuration, this.configurationFormGroup.value, this.contactFormGroup.value
     );
     if (this.configurationType === 'update') {
-      this.configurationService.updateConfiguration(configuration).subscribe(() => {
-        // Navigate back to the manager dashboard
-        this.router.navigate([ '/manager' ]);
-        this.planetMessageService.showMessage('Configuration Updated Successfully');
-      }, err => this.planetMessageService.showAlert('There was an error updating the configuration'));
+      this.configurationService.updateConfiguration(configuration).subscribe(
+        null,
+        err => this.planetMessageService.showAlert('There was an error updating the configuration'),
+        () => {
+          // Navigate back to the manager dashboard
+          this.router.navigate([ '/manager' ]);
+          this.planetMessageService.showMessage('Configuration Updated Successfully');
+        }
+      );
     } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
       this.configurationService.createPlanet(admin, configuration, credentials).subscribe((data) => {
