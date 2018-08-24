@@ -269,6 +269,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
   }
 
+  libraryToggle(resourceId, type) {
+    this.resourcesService.libraryAddRemove(resourceId, type).subscribe((res) => {
+      this.setupList(this.resources.data , this.userService.shelf.resourceIds);
+    }, (error) => ((error)));
+  }
+
   shareResource(type, resources) {
     const msg = (type === 'pull' ? 'fetch' : 'send');
     this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: resources, type: type, date: true } ])
