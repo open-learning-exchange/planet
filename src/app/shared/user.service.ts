@@ -30,6 +30,7 @@ export class UserService {
   sessionRev: string;
   sessionId: string;
   userProperties: string[] = [];
+  credentials: any;
 
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
@@ -72,6 +73,7 @@ export class UserService {
         if (userData) {
           // Remove hashed password information from the data object
           const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
+          this.credentials = { derived_key, iterations, password_scheme, salt };
           this.user = profile;
           this.userProperties = Object.keys(profile);
         }

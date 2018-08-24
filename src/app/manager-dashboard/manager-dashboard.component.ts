@@ -14,6 +14,7 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -42,7 +43,8 @@ export class ManagerDashboardComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private syncService: SyncService
+    private syncService: SyncService,
+    private configurationService: ConfigurationService
   ) {}
 
   ngOnInit() {
@@ -69,30 +71,15 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   resendConfig() {
-    const { _id, _rev, ...config } = this.userService.getConfig();
-    let userDetail: any, userRev;
-    this.couchService.get('_users/org.couchdb.user:' + this.userService.get().name)
-      .pipe(switchMap((user: any) => {
-        // Outer parenthesis allow for object destructuring on existing variables
-        ({ _rev: userRev, ...userDetail } = user);
-        userDetail.isUserAdmin = false;
-        return this.couchService.post('communityregistrationrequests', config, { domain: config.parentDomain });
-      }), switchMap((res: any) => {
-        userDetail.requestId = res.id;
-        return forkJoin([ this.findOnParent('_users', userDetail), this.findOnParent('shelf', userDetail) ]);
-      }), switchMap(([ user, shelf ]) => {
-        if (user.docs[0]) {
-          userDetail._rev = user.docs[0]._rev;
-        }
-        const obs = [ this.couchService.put('_users/org.couchdb.user:' + userDetail.name, userDetail, { domain: config.parentDomain }) ];
-        if (!shelf) {
-          obs.push(this.couchService.put('shelf/org.couchdb.user:' + userDetail.name, {}, { domain: config.parentDomain }));
-        }
-        return forkJoin(obs);
-      })).subscribe((res: any) => {
+    const { _rev, ...configuration } = this.userService.getConfig();
+    const userDetail = { ...this.userService.get(), ...this.userService.credentials };
+    this.configurationService.addPlanetToParent(configuration, true, userDetail).subscribe(null,
+      error => this.planetMessageService.showAlert('An error occurred please try again.'),
+      () => {
         this.planetMessageService.showMessage('Registration request has been sent successfully.');
         this.showResendConfiguration = false;
-      }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
+      }
+    );
   }
 
   checkRequestStatus() {
