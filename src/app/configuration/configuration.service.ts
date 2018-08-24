@@ -41,9 +41,10 @@ export class ConfigurationService {
   }
 
   addUserToParentPlanet(userDetail: any, adminName, configuration) {
+    const { _id, _rev, ...user } = userDetail;
     return mergeMap((data: any) => {
       // then add user to parent planet with id of configuration and isUserAdmin set to false
-      userDetail = { ...userDetail, requestId: data.id, isUserAdmin: false, roles: [], name: adminName };
+      userDetail = { ...user, requestId: data.id, isUserAdmin: false, roles: [], name: adminName };
       return this.createUser(adminName, userDetail, {
         domain: configuration.parentDomain
       });
@@ -81,6 +82,9 @@ export class ConfigurationService {
   }
 
   addPlanetToParent(configuration, isNewConfig, userDetail?) {
+    if (isNewConfig) {
+      configuration.registrationRequest = 'pending';
+    }
     return this.couchService.post('communityregistrationrequests', configuration, {
       domain: configuration.parentDomain
     }).pipe(
@@ -137,7 +141,7 @@ export class ConfigurationService {
       const { _rev: localRev, ...localConfig } = configuration;
       // if parent record not found set empty
       const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
-      const { _rev = '', _id = '', ...userDetail } = { ...this.userService.get(), ...this.userService.credentials };
+      const userDetail = { ...this.userService.get(), ...this.userService.credentials };
       return this.addPlanetToParent({ ...localConfig, ...parentConfig }, res.docs.length === 0, userDetail);
     }));
   }
