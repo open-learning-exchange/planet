@@ -216,24 +216,32 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
-    if (this.allValid()) {
-      const {
-        confirmPassword,
-        ...credentials
-      } = this.loginForm.value;
-      const configuration = Object.assign(
-        {
-          registrationRequest: 'pending',
-          adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
-        },
-        this.configuration, this.configurationFormGroup.value, this.contactFormGroup.value
-      );
+    if (!this.allValid()) {
+      return;
+    }
+    const {
+      confirmPassword,
+      ...credentials
+    } = this.loginForm.value;
+    const configuration = Object.assign(
+      {
+        registrationRequest: 'pending',
+        adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
+      },
+      this.configuration, this.configurationFormGroup.value, this.contactFormGroup.value
+    );
+    if (this.configurationType === 'update') {
+      this.configurationService.updateConfiguration(configuration).subscribe(() => {
+        // Navigate back to the manager dashboard
+        this.router.navigate([ '/manager' ]);
+        this.planetMessageService.showMessage('Configuration Updated Successfully');
+      }, err => this.planetMessageService.showAlert('There was an error updating the configuration'));
+    } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
-      this.configurationService.onSubmitConfiguration(
-        this.configurationType,
-        configuration,
-        admin
-      );
+      this.configurationService.createPlanet(admin, configuration, credentials).subscribe((data) => {
+        this.planetMessageService.showMessage('Admin created: ' + credentials.name);
+        this.router.navigate([ '/login' ]);
+      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
   }
 

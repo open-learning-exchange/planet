@@ -21,22 +21,6 @@ export class ConfigurationService {
     private syncService: SyncService
   ) {}
 
-  onSubmitConfiguration(configurationType, configuration, admin) {
-    if (configurationType === 'update') {
-      this.updateConfiguration(configuration);
-    } else {
-      const userDetail: any = {
-        ...admin,
-        'roles': [],
-        'type': 'user',
-        'isUserAdmin': true,
-        'joinDate': Date.now(),
-        'parentCode': configuration.code
-      };
-      this.createPlanet({ 'name': admin.name, 'password': admin.password }, configuration, configuration.adminName, userDetail);
-    }
-  }
-
   createRequestNotification(configuration) {
     return mergeMap(data => {
       const requestNotification = {
@@ -77,7 +61,7 @@ export class ConfigurationService {
     });
   }
 
-  createPlanet(credentials, configuration, adminName, userDetail) {
+  createPlanet(admin, configuration, credentials) {
     const replicatorObj = {
       type: 'pull',
       parentDomain: configuration.parentDomain,
@@ -91,8 +75,16 @@ export class ConfigurationService {
       continuous: true,
       type: 'internal'
     };
+    const userDetail: any = {
+      ...admin,
+      'roles': [],
+      'type': 'user',
+      'isUserAdmin': true,
+      'joinDate': Date.now(),
+      'parentCode': configuration.code
+    };
     const pin = this.userService.createPin();
-    forkJoin([
+    return forkJoin([
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
     ]).pipe(
@@ -117,21 +109,17 @@ export class ConfigurationService {
           this.couchService.post('communityregistrationrequests', { ...configuration, _id: conf.id }, {
             domain: configuration.parentDomain
           }).pipe(
-            this.addUserToParentPlanet(userDetail, adminName, configuration),
-            this.addUserToShelf(adminName, configuration),
+            this.addUserToParentPlanet(userDetail, configuration.adminName, configuration),
+            this.addUserToShelf(configuration.adminName, configuration),
             this.createRequestNotification(configuration)
           )
         ]);
       })
-    )
-    .subscribe((data) => {
-      this.planetMessageService.showMessage('Admin created: ' + credentials.name);
-      this.router.navigate([ '/login' ]);
-    }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+    );
   }
 
   updateConfiguration(configuration) {
-    this.couchService.put(
+    return this.couchService.put(
       'configurations/' + configuration._id,
       configuration
     ).pipe(switchMap(() => {
@@ -147,14 +135,7 @@ export class ConfigurationService {
       const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
       return res.docs.length ? this.update(configuration, { ...localConfig, ...parentConfig })
         : this.reSubmit(configuration, { ...localConfig, ...parentConfig });
-    })).subscribe(() => {
-      // Navigate back to the manager dashboard
-      this.router.navigate([ '/manager' ]);
-      this.planetMessageService.showMessage('Configuration Updated Successfully');
-    }, err => {
-      // Connect to an error display component to show user that an error has occured
-      console.log(err);
-    });
+    }));
   }
 
   update(configuration, newConfig) {
