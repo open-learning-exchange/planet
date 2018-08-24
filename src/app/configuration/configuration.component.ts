@@ -103,7 +103,8 @@ export class ConfigurationComponent implements OnInit {
         Validators.required,
         this.parentUniqueValidator('code')
       ],
-      createdDate: Date.now()
+      createdDate: Date.now(),
+      autoAccept: true
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', Validators.required ],
