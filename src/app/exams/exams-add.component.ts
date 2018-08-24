@@ -107,7 +107,7 @@ export class ExamsAddComponent implements OnInit {
         this.appendExamToCourse(examInfo);
         routerParams = { 'continue': true };
       }
-      this.router.navigate([ this.returnUrl, routerParams ]);
+      this.goBack();
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -150,8 +150,8 @@ export class ExamsAddComponent implements OnInit {
     this.questionsFormArray.removeAt(index);
   }
 
-  cancel() {
-    this.router.navigate([ this.returnUrl ]);
+  goBack() {
+    this.router.navigateByUrl(this.returnUrl);
   }
 
 }
