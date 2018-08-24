@@ -209,14 +209,32 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
+  allValid() {
+    return (this.configurationType === 'update' || this.loginForm.valid) &&
+      this.configurationFormGroup.valid &&
+      this.contactFormGroup.valid;
+  }
+
   onSubmitConfiguration() {
-    this.configurationService.onSubmitConfiguration(
-      this.configurationType,
-      this.configuration,
-      this.configurationFormGroup,
-      this.contactFormGroup,
-      this.loginForm
-    );
+    if (this.allValid()) {
+      const {
+        confirmPassword,
+        ...credentials
+      } = this.loginForm.value;
+      const configuration = Object.assign(
+        {
+          registrationRequest: 'pending',
+          adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
+        },
+        this.configuration, this.configurationFormGroup.value, this.contactFormGroup.value
+      );
+      const admin = Object.assign(credentials, this.contactFormGroup.value);
+      this.configurationService.onSubmitConfiguration(
+        this.configurationType,
+        configuration,
+        admin
+      );
+    }
   }
 
 }

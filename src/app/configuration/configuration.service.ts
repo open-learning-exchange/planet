@@ -21,30 +21,19 @@ export class ConfigurationService {
     private syncService: SyncService
   ) {}
 
-  onSubmitConfiguration(configurationType, oldConfiguration, configurationFormGroup, contactFormGroup, loginForm) {
+  onSubmitConfiguration(configurationType, configuration, admin) {
     if (configurationType === 'update') {
-      this.updateConfiguration(oldConfiguration, configurationFormGroup, contactFormGroup);
-    } else if (loginForm.valid && configurationFormGroup.valid && contactFormGroup.valid) {
-      const {
-        confirmPassword,
-        ...credentials
-      } = loginForm.value;
-      const adminName = credentials.name + '@' + configurationFormGroup.controls.code.value;
-      const configuration = Object.assign({
-          registrationRequest: 'pending',
-          adminName
-        },
-        configurationFormGroup.value, contactFormGroup.value);
+      this.updateConfiguration(configuration);
+    } else {
       const userDetail: any = {
-        ...credentials,
+        ...admin,
         'roles': [],
         'type': 'user',
         'isUserAdmin': true,
         'joinDate': Date.now(),
-        'parentCode': configuration.code,
-        ...contactFormGroup.value
+        'parentCode': configuration.code
       };
-      this.createPlanet(credentials, configuration, adminName, userDetail);
+      this.createPlanet({ 'name': admin.name, 'password': admin.password }, configuration, configuration.adminName, userDetail);
     }
   }
 
@@ -141,38 +130,31 @@ export class ConfigurationService {
     }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
   }
 
-  updateConfiguration(oldConfiguration, configurationFormGroup, contactFormGroup) {
-      if (configurationFormGroup.valid && contactFormGroup.valid) {
-      const configuration = Object.assign(
-        oldConfiguration,
-        configurationFormGroup.value,
-        contactFormGroup.value
+  updateConfiguration(configuration) {
+    this.couchService.put(
+      'configurations/' + configuration._id,
+      configuration
+    ).pipe(switchMap(() => {
+      return this.couchService.post(
+        'communityregistrationrequests/_find',
+        findDocuments({ 'code': configuration.code }),
+        { domain: configuration.parentDomain }
       );
-      this.couchService.put(
-        'configurations/' + oldConfiguration._id,
-        configuration
-      ).pipe(switchMap(() => {
-        return this.couchService.post(
-          'communityregistrationrequests/_find',
-          findDocuments({ 'code': configuration.code }),
-          { domain: configuration.parentDomain }
-        );
-      }), switchMap((res) => {
-        // Remove local revision as it will have conflict with parent
-        const { _rev: localRev, ...localConfig } = configuration;
-        // if parent record not found set empty
-        const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
-        return res.docs.length ? this.update(configuration, { ...localConfig, ...parentConfig })
-          : this.reSubmit(configuration, { ...localConfig, ...parentConfig });
-      })).subscribe(() => {
-        // Navigate back to the manager dashboard
-        this.router.navigate([ '/manager' ]);
-        this.planetMessageService.showMessage('Configuration Updated Successfully');
-      }, err => {
-        // Connect to an error display component to show user that an error has occured
-        console.log(err);
-      });
-    }
+    }), switchMap((res) => {
+      // Remove local revision as it will have conflict with parent
+      const { _rev: localRev, ...localConfig } = configuration;
+      // if parent record not found set empty
+      const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
+      return res.docs.length ? this.update(configuration, { ...localConfig, ...parentConfig })
+        : this.reSubmit(configuration, { ...localConfig, ...parentConfig });
+    })).subscribe(() => {
+      // Navigate back to the manager dashboard
+      this.router.navigate([ '/manager' ]);
+      this.planetMessageService.showMessage('Configuration Updated Successfully');
+    }, err => {
+      // Connect to an error display component to show user that an error has occured
+      console.log(err);
+    });
   }
 
   update(configuration, newConfig) {
