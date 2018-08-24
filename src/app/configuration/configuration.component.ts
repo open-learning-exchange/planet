@@ -215,10 +215,7 @@ export class ConfigurationComponent implements OnInit {
       this.contactFormGroup.valid;
   }
 
-  onSubmitConfiguration() {
-    if (!this.allValid()) {
-      return;
-    }
+  createConfigurationDocs() {
     const {
       confirmPassword,
       ...credentials
@@ -230,9 +227,16 @@ export class ConfigurationComponent implements OnInit {
       },
       this.configuration, this.configurationFormGroup.value, this.contactFormGroup.value
     );
+    return { credentials, configuration };
+  }
+
+  onSubmitConfiguration() {
+    if (!this.allValid()) {
+      return;
+    }
+    const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
-      this.configurationService.updateConfiguration(configuration).subscribe(
-        null,
+      this.configurationService.updateConfiguration(configuration).subscribe(null,
         err => this.planetMessageService.showAlert('There was an error updating the configuration'),
         () => {
           // Navigate back to the manager dashboard
