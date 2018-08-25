@@ -12,6 +12,7 @@ import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
+import emailMask from 'text-mask-addons/dist/emailMask';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -45,6 +46,7 @@ export class UsersUpdateComponent implements OnInit {
   languages = languages;
   maxDate = new Date();
   submissionMode = false;
+  eMask = emailMask;
 
   constructor(
     private fb: FormBuilder,
