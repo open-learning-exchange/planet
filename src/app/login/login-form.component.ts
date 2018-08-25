@@ -92,13 +92,16 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: { name: string, password: string }) {
-    const metadata = {
-      isUserAdmin: false,
-      planetCode: this.userService.getConfig().code,
-      joinDate: Date.now()
+    const opts = {
+      metadata: {
+        isUserAdmin: false,
+        planetCode: this.userService.getConfig().code,
+        joinDate: Date.now(),
+      },
+      roles: this.userService.getConfig().autoAccept ? [ 'learner' ] : []
     };
 
-    this.pouchAuthService.signup(name, password, metadata).pipe(
+    this.pouchAuthService.signup(name, password, opts).pipe(
       switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
     ).subscribe(
       res => {
