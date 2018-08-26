@@ -99,6 +99,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.changeFilter(this.filterAssociated ? 'associated' : 'local');
   }
 
+  searchChanged(searchText: string) {
+    this.router.navigate([ '..', { search: searchText } ], { relativeTo: this.route });
+    this.applyFilter(searchText);
+  }
+
   ngAfterViewInit() {
     this.allUsers.sort = this.sort;
     this.allUsers.paginator = this.paginator;
