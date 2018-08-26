@@ -5,7 +5,7 @@
 
 <div class="space-container">
 <mat-toolbar class="primary-color font-size-1">
-    <h3 class="margin-lr-3">{{resource?.title}}</h3>
+    <h3 class="margin-lr-3 overflow-ellipses">{{resource?.title}}</h3>
     <button mat-button (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>

@@ -4,7 +4,7 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <h3 class="margin-lr-3">{{team?.name}}</h3>
+    <h3 class="margin-lr-3 overflow-ellipses">{{team?.name}}</h3>
     <span class="toolbar-fill"></span>
     <button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
       Add Members

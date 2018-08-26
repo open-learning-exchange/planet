@@ -4,7 +4,7 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <h3 class="margin-lr-3">{{courseDetail.courseTitle}}</h3>
+    <h3 class="margin-lr-3 overflow-ellipses">{{courseDetail.courseTitle}}</h3>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
       <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
