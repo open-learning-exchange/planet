@@ -23,7 +23,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
-  userConfig = this.userService.getConfig();
 
   constructor(
     private userService: UserService,
