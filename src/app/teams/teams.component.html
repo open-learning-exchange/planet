@@ -13,7 +13,7 @@
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3">
       <button mat-button routerLink='/teams/users' i18n>All Members</button>
-      <button mat-mini-fab *ngIf="user.isUserAdmin || user.roles.length != 0" (click)="addTeam()"><mat-icon>add</mat-icon></button>
+      <button mat-mini-fab *ngIf="user.isUserAdmin || user.roles.length" (click)="addTeam()"><mat-icon>add</mat-icon></button>
     </div>
   </mat-toolbar>
 
@@ -28,7 +28,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length != 0">
+          <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
                 Leave
