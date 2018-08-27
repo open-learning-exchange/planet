@@ -63,7 +63,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((resourceArr) => {
         this.resource = resourceArr[0];
-        this.isUserEnrolled = this.checkMyResource(this.resource._id);
+        this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
       });
   }
 
@@ -101,10 +101,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
-  }
-
-  checkMyResource(resourceId: string) {
-    return this.userService.shelf.resourceIds.includes(resourceId);
   }
 
 }

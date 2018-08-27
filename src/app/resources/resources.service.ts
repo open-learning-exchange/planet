@@ -75,8 +75,7 @@ export class ResourcesService {
     return this.ratingService.createItemList(resourcesRes, ratings);
   }
 
-  libraryAddRemove(resources, type) {
-    const resourceIds = resources.map((resource) => resource._id || resource);
+  libraryAddRemove(resourceIds, type) {
     return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map((res) => {
       const admissionMessage = type === 'remove' ? 'Resource successfully removed from myLibrary' : 'Resource added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
