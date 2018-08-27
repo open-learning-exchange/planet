@@ -53,6 +53,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
   tagFilterValue = [];
+  userShelf: any = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
@@ -80,11 +81,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.userShelf = this.userService.shelf;
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$)).pipe(
       map((resources) => {
         // Sort in descending createdDate order, so the new resource can be shown on the top
         resources.sort((a, b) => b.createdDate - a.createdDate);
-        return this.setupList(resources, this.userService.shelf.resourceIds);
+        this.userShelf = this.userService.shelf;
+        return this.setupList(resources, this.userShelf.resourceIds);
       }),
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
@@ -106,7 +109,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
-        this.setupList(this.resources.data, shelf.resourceIds);
+        this.userShelf = this.userService.shelf;
+        this.resources.data = this.setupList(this.resources.data, shelf.resourceIds);
       });
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
@@ -271,9 +275,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   libraryToggle(resourceId, type) {
-    this.resourcesService.libraryAddRemove(resourceId, type).subscribe((res) => {
-      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
-    }, (error) => ((error)));
+    this.resourcesService.libraryAddRemove(resourceId, type).subscribe((res) => { }, (error) => ((error)));
   }
 
   shareResource(type, resources) {
