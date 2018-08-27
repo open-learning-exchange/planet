@@ -75,15 +75,9 @@ export class ResourcesService {
     return this.ratingService.createItemList(resourcesRes, ratings);
   }
 
-  libraryAddRemove(resourceId, type) {
-    const currentShelf = this.userService.shelf;
-    let resourceIds = [ ...currentShelf.resourceIds ];
-    if (type === 'remove') {
-      resourceIds.splice(resourceIds.indexOf(resourceId), 1);
-    } else {
-      resourceIds = [ resourceId ].concat(resourceIds).reduce(dedupeShelfReduce, []);
-    }
-    return this.userService.updateShelf(resourceIds, 'resourceIds').pipe(map((res) => {
+  libraryAddRemove(resources, type) {
+    const resourceIds = resources.map((resource) => resource._id || resource);
+    return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map((res) => {
       const admissionMessage = type === 'remove' ? 'Resource successfully removed from myLibrary' : 'Resource added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;

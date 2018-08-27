@@ -23,7 +23,7 @@
       <button *ngIf="this.userService.get().isUserAdmin && this.userService.getConfig().registrationRequest === 'accepted'" mat-button [disabled]="!selection.selected.length" (click)="shareResource('push', selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon><span i18n>Send resource</span>
       </button>
-      <button mat-button [disabled]="!selection.selected.length" (click)="addToLibrary(selection.selected)">
+      <button mat-button [disabled]="!selection.selected.length" (click)="libraryToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
         <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
       </button>
@@ -34,7 +34,7 @@
       <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
     </span>
   </mat-toolbar>
-  
+
   <ng-container *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" matSort>
       <ng-container matColumnDef="select">
@@ -45,8 +45,8 @@
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-            [checked]="selection.isSelected(row)">
+          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -67,10 +67,10 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #resourceMenu="matMenu">
-            <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle(element._id, 'add')">
+            <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
               <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
             </a>
-            <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle(element._id, 'remove')">
+            <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
               <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
             </a>
             <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
@@ -99,7 +99,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="10"
