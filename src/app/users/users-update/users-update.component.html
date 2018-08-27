@@ -26,11 +26,11 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field class="custom-input-width">
           <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="custom-input-width">
           <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode">
             <mat-option *ngFor="let language of languages" [value]="language.name">
               {{language.name}}
@@ -40,11 +40,11 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field class="custom-input-width">
           <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="custom-input-width">
           <input matInput [matDatepicker]="dp" [max]="maxDate" i18n-placeholder placeholder="BirthDate" formControlName="birthDate" [required]="!submissionMode">
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
@@ -68,7 +68,7 @@
         </div>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field class="custom-input-width">
           <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
             <mat-option *ngFor="let level of educationLevel" [value]="level">
               {{level}}

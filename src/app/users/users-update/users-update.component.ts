@@ -24,6 +24,12 @@ import { StateService } from '../../shared/state.service';
     .view-container form {
       margin: 0 10px 10px 0;
     }
+    .custom-input-width {
+      width: 50%;
+    }
+    .mat-form-field {
+      margin-bottom: 10px;
+    }
   ` ]
 })
 export class UsersUpdateComponent implements OnInit {
