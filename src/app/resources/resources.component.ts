@@ -103,6 +103,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           return item[property].toLowerCase();
       }
     };
+
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.setupList(this.resources.data, shelf.resourceIds);
@@ -271,7 +272,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   libraryToggle(resourceId, type) {
     this.resourcesService.libraryAddRemove(resourceId, type).subscribe((res) => {
-      this.setupList(this.resources.data , this.userService.shelf.resourceIds);
+      this.setupList(this.resources.data, this.userService.shelf.resourceIds);
     }, (error) => ((error)));
   }
 

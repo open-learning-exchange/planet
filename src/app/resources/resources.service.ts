@@ -77,13 +77,13 @@ export class ResourcesService {
 
   libraryAddRemove(resourceId, type) {
     const currentShelf = this.userService.shelf;
-    const resourceIds = [ ...currentShelf.resourceIds ];
-    if (type === 'remmove') {
+    let resourceIds = [ ...currentShelf.resourceIds ];
+    if (type === 'remove') {
       resourceIds.splice(resourceIds.indexOf(resourceId), 1);
     } else {
-      resourceIds.concat(currentShelf.resourceIds).reduce(dedupeShelfReduce, []);
+      resourceIds = [ resourceId ].concat(resourceIds).reduce(dedupeShelfReduce, []);
     }
-    return this.userService.updateShelf(resourceId, 'resourceId').pipe(map((res) => {
+    return this.userService.updateShelf(resourceIds, 'resourceIds').pipe(map((res) => {
       const admissionMessage = type === 'remove' ? 'Resource successfully removed from myLibrary' : 'Resource added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
