@@ -98,7 +98,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   libraryToggle(resourceId, type) {
-    this.resourcesService.libraryAddRemove(resourceId, type).subscribe((res) => {
+    this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
   }
