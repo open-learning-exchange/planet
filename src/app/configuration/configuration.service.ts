@@ -109,7 +109,7 @@ export class ConfigurationService {
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
     ]).pipe(
-      switchMap(this.createReplicators),
+      switchMap(() => this.createReplicators(configuration, credentials)),
       switchMap(() => this.couchService.post('configurations', configuration)),
       switchMap((conf) => {
         return forkJoin([
