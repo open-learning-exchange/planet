@@ -25,7 +25,7 @@
       <p i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
       <p i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
       <p i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
-      <p i18n><b>Description:</b> {{meetupDetail.description}}</p>
+      <p i18n><b>Description:</b></p><td-markdown [content]="meetupDetail.description"></td-markdown>
       <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days:</b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
     </div>
     <div class="right-tile">

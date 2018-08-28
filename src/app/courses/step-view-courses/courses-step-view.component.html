@@ -37,7 +37,7 @@
     <button mat-icon-button [disabled]="stepNum === maxStep || (stepDetail?.exam?.questions.length && !examPassed)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="description">{{stepDetail.description}}</div>
+    <td-markdown class="description" [content]="stepDetail.description"></td-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
       [resourceId]="resource._id"

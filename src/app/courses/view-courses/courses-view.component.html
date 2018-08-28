@@ -43,7 +43,7 @@
                 <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
               </mat-panel-description>
             </mat-expansion-panel-header>
-            {{step.description}}
+            <td-markdown>{{step.description}}</td-markdown>
             <mat-action-row>
               <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
               <mat-menu #resourceList="matMenu">
