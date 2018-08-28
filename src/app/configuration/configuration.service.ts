@@ -7,6 +7,7 @@ import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -95,6 +96,21 @@ export class ConfigurationService {
     );
   }
 
+  postConfiguration(configuration) {
+    return this.couchService.post('configurations', configuration).pipe(
+      switchMap(() => this.updateAutoAccept(configuration.autoAccept))
+    );
+  }
+
+  updateAutoAccept(autoAccept) {
+    return this.couchService.get('_users/_security').pipe(switchMap((security) => {
+      security.admins.roles = autoAccept ?
+        security.admins.roles.concat([ 'openlearner' ]).reduce(dedupeShelfReduce, []) :
+        security.admins.roles.filter(role => role !== 'openlearner');
+      return this.couchService.put('_users/_security', security);
+    }));
+  }
+
   createPlanet(admin, configuration, credentials) {
     const userDetail: any = {
       ...admin,
@@ -110,7 +126,7 @@ export class ConfigurationService {
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
-      switchMap(() => this.couchService.post('configurations', configuration)),
+      switchMap(() => this.postConfiguration(configuration)),
       switchMap((conf) => {
         return forkJoin([
           // When creating a planet, add admin
@@ -127,10 +143,7 @@ export class ConfigurationService {
   }
 
   updateConfiguration(configuration) {
-    return this.couchService.put(
-      'configurations/' + configuration._id,
-      configuration
-    ).pipe(switchMap(() => {
+    return this.postConfiguration(configuration).pipe(switchMap(() => {
       return this.couchService.post(
         'communityregistrationrequests/_find',
         findDocuments({ 'code': configuration.code }),
