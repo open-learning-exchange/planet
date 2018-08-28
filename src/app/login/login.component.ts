@@ -4,8 +4,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { MatDialog } from '@angular/material';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './login.component.html',
@@ -19,8 +17,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private couchService: CouchService,
-    private router: Router,
-    private dialog: MatDialog
+    private router: Router
   ) {}
 
   ngOnInit() {
