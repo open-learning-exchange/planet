@@ -10,6 +10,14 @@
       {fullView, select, on {Show} off {Hide}} details
     </button>
     <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!parent">
+      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
+        Add to myLibrary
+      </button>
+      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
+        Remove from myLibrary
+      </button>
+    </ng-container>
     <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.isDownloadable">
       <mat-icon>file_download</mat-icon>
     </a>
