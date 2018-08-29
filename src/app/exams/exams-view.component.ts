@@ -122,7 +122,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setTakingExam(exam, parentId, type) {
-    const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get().name;
+    const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
     this.submissionsService.openSubmission({
       parentId,
