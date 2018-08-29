@@ -15,7 +15,12 @@
     grid-area: view;
   }
 
-  .course-detail, .course-view, .step-title  {
+  .course-detail, .course-view {
     overflow: auto;
+  }
+
+  .step-title {
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
