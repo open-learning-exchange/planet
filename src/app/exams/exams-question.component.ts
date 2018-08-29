@@ -3,9 +3,13 @@ import {
   FormGroup,
   FormControl,
   FormArray,
+  FormBuilder,
   Validators
 } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   selector: 'planet-exam-question',
@@ -24,19 +28,29 @@ import { uniqueId } from '../shared/utils';
 })
 export class ExamsQuestionComponent implements OnChanges {
 
-  @Input() questionForm: FormGroup;
+  @Input() question: any = {};
+  @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
   correctCheckboxes: any = {};
+  questionForm: FormGroup = this.newQuestionForm();
+  initializing = true;
+  private onDestroy$ = new Subject<void>();
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit() {
+    this.questionForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
+      if (!this.initializing) {
+        this.questionChange.emit(value);
+      }
+    });
+  }
 
   ngOnChanges() {
-    this.choices = <FormArray>this.questionForm.controls.choices;
-    const correctChoice = this.questionForm.controls.correctChoice.value;
-    this.choices.controls.forEach((choice: any) =>
-      this.correctCheckboxes[choice.controls.id.value] = correctChoice.indexOf(choice.controls.id.value) > -1);
+    this.initializing = true;
+    this.updateQuestion(this.question);
   }
 
   addChoice() {
@@ -80,6 +94,42 @@ export class ExamsQuestionComponent implements OnChanges {
     while (this.choices.length !== 0) {
       this.removeChoice(0);
     }
+  }
+
+  newQuestionForm(question: any = {}, choices = []) {
+    return this.fb.group(Object.assign(
+      {
+        body: [ '', Validators.required ],
+        type: 'input',
+        correctChoice: ''
+      },
+      question,
+      {
+        marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
+        choices: this.fb.array(choices || [])
+      }
+    ));
+  }
+
+  updateQuestion(question: any = { choices: [] }) {
+    const choices = question.choices.map((choice) => {
+      return new FormGroup({
+        'text': new FormControl(choice.text),
+        'id': new FormControl(choice.id)
+      });
+    });
+    this.questionForm.patchValue(question);
+    this.questionForm.patchValue({ choices });
+    this.questionForm.get('body').setValue(question.body);
+    this.setChoices(choices);
+    this.initializing = false;
+  }
+
+  setChoices(choices) {
+    this.choices = this.fb.array(choices);
+    const correctChoice = this.questionForm.controls.correctChoice.value;
+    this.choices.controls.forEach((choice: any) =>
+      this.correctCheckboxes[choice.controls.id.value] = correctChoice === choice.controls.id.value);
   }
 
 }

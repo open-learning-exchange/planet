@@ -22,8 +22,6 @@ import { CustomValidators } from '../validators/custom-validators';
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
   examForm: FormGroup;
-  questionsFormArray: any[];
-  question: FormGroup = this.fb.group(this.newQuestionForm());
   documentInfo: any = {};
   pageType = 'Add';
   courseName = '';
@@ -34,6 +32,14 @@ export class ExamsAddComponent implements OnInit {
   returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
   private onDestroy$ = new Subject<void>();
+  private _question: any
+  get question(): any {
+    return this._question;
+  }
+  set question(newQuestion: any) {
+    this.examForm.controls.questions.value[this.activeQuestionIndex] = newQuestion;
+    this._question = newQuestion;
+  }
 
   constructor(
     private router: Router,
@@ -62,7 +68,6 @@ export class ExamsAddComponent implements OnInit {
       questions: [ [] ],
       type: this.examType
     });
-    this.questionsFormArray = this.examForm.controls.questions.value;
   }
 
   ngOnInit() {
@@ -74,17 +79,11 @@ export class ExamsAddComponent implements OnInit {
         this.documentInfo = { _rev: data._rev, _id: data._id };
         this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
         this.examForm.patchValue(data);
-        if (data.questions) {
-          data.questions.forEach((question) => this.questionsFormArray.push(question));
-        }
       }, (error) => {
         console.log(error);
       });
     }
     this.courseName = this.coursesService.course.form.courseTitle;
-    this.question.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
-      this.examForm.controls.questions.value[this.activeQuestionIndex] = { ...value };
-    });
   }
 
   onSubmit() {
@@ -137,24 +136,13 @@ export class ExamsAddComponent implements OnInit {
     return examInfo.questions.reduce((total: number, question: any) => total + question.marks, 0);
   }
 
-<<<<<<< HEAD
-  addQuestion(question: any = { choices: [] }) {
-    const choices = question.choices.map((choice) => {
-      return new FormGroup({
-        'text': new FormControl(choice.text, Validators.required),
-        'id': new FormControl(choice.id)
-      });
-    });
-    this.questionsFormArray.push(this.fb.group(Object.assign(
-=======
   stepClick(index: number) {
     this.activeQuestionIndex = index;
-    this.updateQuestion(this.questionsFormArray[index]);
+    this.question = this.examForm.get('questions').value[index];
   }
 
   newQuestionForm(question: any = {}, choices = []) {
     return Object.assign(
->>>>>>> Exams use planet-step-list
       {
         body: [ '', Validators.required ],
         type: 'input'
@@ -183,7 +171,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addQuestion() {
-    this.questionsFormArray.push({
+    this.examForm.get('questions').value.push({
       body: '',
       type: 'input',
       correctChoice: '',
@@ -193,7 +181,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   removeQuestion(index) {
-    this.questionsFormArray.splice(index, 1);
+    this.examForm.get('questions').value.splice(index, 1);
   }
 
   goBack() {
