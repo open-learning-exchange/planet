@@ -139,7 +139,6 @@ export class ExamsAddComponent implements OnInit {
     });
     this.questionsFormArray.push(this.fb.group(Object.assign(
       {
-        header: '',
         body: [ '', Validators.required ],
         type: 'input'
       },
