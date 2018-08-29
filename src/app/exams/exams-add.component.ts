@@ -3,10 +3,11 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormArray,
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -21,7 +22,8 @@ import { CustomValidators } from '../validators/custom-validators';
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
   examForm: FormGroup;
-  questionsFormArray: FormArray;
+  questionsFormArray: any[];
+  question: FormGroup = this.fb.group(this.newQuestionForm());
   documentInfo: any = {};
   pageType = 'Add';
   courseName = '';
@@ -30,6 +32,8 @@ export class ExamsAddComponent implements OnInit {
   steps = [];
   showFormError = false;
   returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
+  activeQuestionIndex = -1;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -55,10 +59,10 @@ export class ExamsAddComponent implements OnInit {
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
-      questions: this.fb.array([]),
+      questions: [ [] ],
       type: this.examType
     });
-    this.questionsFormArray = <FormArray>this.examForm.controls.questions;
+    this.questionsFormArray = this.examForm.controls.questions.value;
   }
 
   ngOnInit() {
@@ -71,13 +75,16 @@ export class ExamsAddComponent implements OnInit {
         this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
         this.examForm.patchValue(data);
         if (data.questions) {
-          data.questions.forEach((question) => this.addQuestion(question));
+          data.questions.forEach((question) => this.questionsFormArray.push(question));
         }
       }, (error) => {
         console.log(error);
       });
     }
     this.courseName = this.coursesService.course.form.courseTitle;
+    this.question.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
+      this.examForm.controls.questions.value[this.activeQuestionIndex] = { ...value };
+    });
   }
 
   onSubmit() {
@@ -130,6 +137,7 @@ export class ExamsAddComponent implements OnInit {
     return examInfo.questions.reduce((total: number, question: any) => total + question.marks, 0);
   }
 
+<<<<<<< HEAD
   addQuestion(question: any = { choices: [] }) {
     const choices = question.choices.map((choice) => {
       return new FormGroup({
@@ -138,6 +146,15 @@ export class ExamsAddComponent implements OnInit {
       });
     });
     this.questionsFormArray.push(this.fb.group(Object.assign(
+=======
+  stepClick(index: number) {
+    this.activeQuestionIndex = index;
+    this.updateQuestion(this.questionsFormArray[index]);
+  }
+
+  newQuestionForm(question: any = {}, choices = []) {
+    return Object.assign(
+>>>>>>> Exams use planet-step-list
       {
         body: [ '', Validators.required ],
         type: 'input'
@@ -151,11 +168,32 @@ export class ExamsAddComponent implements OnInit {
           CustomValidators.choiceSelected(this.examType === 'courses')
         ]
       }
-    )));
+    );
+  }
+
+  updateQuestion(question: any = { choices: [] }) {
+    const choices = question.choices.map((choice) => {
+      return new FormGroup({
+        'text': new FormControl(choice.text),
+        'id': new FormControl(choice.id)
+      });
+    });
+    this.question.patchValue(question);
+    this.question.patchValue({ choices });
+  }
+
+  addQuestion() {
+    this.questionsFormArray.push({
+      body: '',
+      type: 'input',
+      correctChoice: '',
+      marks: 1,
+      choices: []
+    });
   }
 
   removeQuestion(index) {
-    this.questionsFormArray.removeAt(index);
+    this.questionsFormArray.splice(index, 1);
   }
 
   goBack() {

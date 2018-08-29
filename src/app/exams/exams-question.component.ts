@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -22,7 +22,7 @@ import { uniqueId } from '../shared/utils';
     }
   ` ]
 })
-export class ExamsQuestionComponent implements OnInit {
+export class ExamsQuestionComponent implements OnChanges {
 
   @Input() questionForm: FormGroup;
   @Input() examType = 'courses';
@@ -32,7 +32,7 @@ export class ExamsQuestionComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
+  ngOnChanges() {
     this.choices = <FormArray>this.questionForm.controls.choices;
     const correctChoice = this.questionForm.controls.correctChoice.value;
     this.choices.controls.forEach((choice: any) =>

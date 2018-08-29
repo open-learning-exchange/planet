@@ -24,14 +24,14 @@
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
-      <div class="exam-questions">
-        <planet-exam-question
-          *ngFor="let question of questionsFormArray.controls; let i = index"
-          [questionForm]="question"
-          (questionRemove)="removeQuestion(i)"
-          [examType]="examType"
-          ></planet-exam-question>
-      </div>
+      <planet-step-list class="exam-questions" [steps]="questionsFormArray" (stepsChange)="stepsMoved($event)" [nameProp]="'body'" (stepClicked)="stepClick($event)">
+        <planet-step-list-item *ngFor="let question of questionsFormArray; index as i">
+          <span>{{'Question ' + (i+1)}}</span>
+        </planet-step-list-item>
+        <div planetStepListForm>
+          <planet-exam-question [questionForm]="question" [examType]="examType"></planet-exam-question>
+        </div>
+      </planet-step-list>
     </form>
   </div>
 </div>
