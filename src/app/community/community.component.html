@@ -57,6 +57,9 @@
             <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
               Communities
             </button>
+            <button mat-raised-button color="warn" (click)="updateClick(element, 'live')" i18n>
+              <mat-icon>visibility</mat-icon>{{element.live ? 'Offline' : 'Live'}}
+            </button>
           </ng-container>
           <ng-container *ngIf="element.registrationRequest === 'pending'">
             <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>

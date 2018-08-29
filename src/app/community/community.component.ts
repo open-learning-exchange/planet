@@ -136,12 +136,25 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
         case 'unlink':
           this.deleteCommunity(community);
           break;
+        case 'live':
+          this.couchService.put('communityregistrationrequests/' + communityId,
+          { ...community, live: !community.live })
+          .subscribe((data) => {
+            community.live = !community.live;
+            this.updateRev(data, this.communities.data);
+            this.getCommunityList(this.searchValue);
+            this.editDialog.close();
+          }, (error) => {
+            this.editDialog.componentInstance.message = 'Nation update failed';
+          });
+          break;
         case 'accept':
           forkJoin([
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
             // update registration request to accepted
-            this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
+            this.couchService.put('communityregistrationrequests/' + communityId,
+            { ...community, registrationRequest: 'accepted', hide: true })
           ]).subscribe((data) => {
             community.registrationRequest = 'accepted';
             this.updateRev(data, this.communities.data);

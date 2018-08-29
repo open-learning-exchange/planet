@@ -33,13 +33,14 @@
       </mat-form-field>
       <mat-form-field *ngIf="nationOrCommunity === 'community'">
         <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" (selectionChange)="onChangeNation()" required>
-          <mat-option *ngFor="let nation of nations" [value]="nation.localDomain">{{nation.name}}</mat-option>
+          <mat-option *ngFor="let nation of filterNations" [value]="nation.localDomain">{{nation.name}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field *ngIf="nationOrCommunity === 'nation'">
         <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
       </mat-form-field>
+      <button mat-icon-button (click)="toggleNations()"><mat-icon>visibility</mat-icon></button>
       <mat-form-field class="new-line">
         <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>

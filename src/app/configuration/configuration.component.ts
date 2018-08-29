@@ -49,6 +49,8 @@ export class ConfigurationComponent implements OnInit {
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
   configuration: any = {};
+  filterNations = [];
+  toggleStatus = false;
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
   constructor(
@@ -179,12 +181,18 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
+  toggleNations() {
+    this.filterNations = this.nations.filter(n => this.toggleStatus || n.live);
+    this.toggleStatus = !this.toggleStatus;
+  }
+
   getNationList() {
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;
+        this.toggleNations();
       }, (error) => this.planetMessageService.showAlert('There is a problem getting the list of nations'));
   }
 
