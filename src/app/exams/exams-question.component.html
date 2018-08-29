@@ -11,19 +11,7 @@
     <mat-form-field>
       <input matInput i18n-placeholder placeholder="Question Title" formControlName="header">
     </mat-form-field>
-    <mat-form-field>
-      <textarea
-        matInput
-        i18n-placeholder
-        placeholder="Question Description"
-        formControlName="body"
-        matTextareaAutosize
-        matAutosizeMaxRows="5"
-        matAutosizeMinRows="4"
-        required>
-      </textarea>
-      <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
-    </mat-form-field>
+    <td-text-editor formControlName="body"></td-text-editor>
     <div>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
