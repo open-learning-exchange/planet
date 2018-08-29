@@ -23,6 +23,11 @@
               {{option.text}}
             </mat-radio-button>
           </mat-radio-group>
+          <div *ngSwitchCase="'selectMultiple'" class="question-list">
+            <mat-checkbox *ngFor="let option of question.choices" [value]="option" (change)="setAnswer($event, option)">
+              {{option.text}}
+            </mat-checkbox>
+          </div>
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
