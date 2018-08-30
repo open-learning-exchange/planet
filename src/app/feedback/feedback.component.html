@@ -21,8 +21,8 @@
       <span i18n>Your Current Lists of Feedback</span>
     </mat-toolbar-row>
   </mat-toolbar>
-  
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="feedback" matSort>
       <!-- Title Column -->
       <ng-container matColumnDef="title">
@@ -103,7 +103,7 @@
       </mat-row>
     </mat-table>
     <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" i18n></mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Feedback Found</div>
   </ng-template>

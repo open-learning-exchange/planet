@@ -299,7 +299,7 @@ body {
   }
 
   .space-container {
-    margin: 64px 30px;
+    margin: 0.75rem;
   }
 
   .primary-link-hover a:hover {
@@ -317,6 +317,23 @@ body {
   .view-container.view-full-height {
     height: $view-container-height;
   }
+
+  .view-container.view-full-height.view-table {
+    padding: 0;
+    position: relative;
+    display: grid;
+    // 56px is height of paginator
+    grid-template-rows: 1fr 56px;
+    mat-table {
+      overflow-y: auto;
+      mat-header-row {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+    }
+  }
+
 
   // Width of a form with 3 standard matInputs (180px + 10px of padding)
   .form-width-3 {
