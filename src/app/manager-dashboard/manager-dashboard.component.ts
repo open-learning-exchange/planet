@@ -71,9 +71,9 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   resendConfig() {
-    const { _rev, ...configuration } = this.userService.getConfig();
+    const configuration = this.userService.getConfig();
     const userDetail = { ...this.userService.get(), ...this.userService.credentials };
-    this.configurationService.addPlanetToParent(configuration, true, userDetail).subscribe(null,
+    this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
       error => this.planetMessageService.showAlert('An error occurred please try again.'),
       () => {
         this.planetMessageService.showMessage('Registration request has been sent successfully.');
