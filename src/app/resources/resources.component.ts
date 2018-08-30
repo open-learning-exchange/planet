@@ -182,7 +182,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(resource) {
-    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
+    if (this.currentUser.isUserAdmin || resource.addedBy === this.currentUser.name) {
+      this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
+    } else { this.planetMessageService.showMessage('You are not authorized to delete this resource'); }
   }
 
   deleteSelected() {
