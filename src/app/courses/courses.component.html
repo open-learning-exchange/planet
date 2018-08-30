@@ -48,7 +48,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="courses" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -137,7 +137,7 @@
       [pageSizeOptions]="[5, 10, 20]"
       (page)="onPaginateChange($event)">
     </mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Course Found</div>
   </ng-template>

@@ -17,7 +17,7 @@
     </div>
   </mat-toolbar>
 
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
@@ -53,7 +53,7 @@
       [pageSize]="10"
       [pageSizeOptions]="[5, 10, 20]">
     </mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Team Found</div>
   </ng-template>

@@ -12,7 +12,7 @@
 </mat-toolbar>
 
 <div class="space-container primary-link-hover">
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="submissions" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
@@ -29,7 +29,7 @@
       [pageSize]="5"
       [pageSizeOptions]="[5, 10, 20]">
     </mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Record Found</div>
   </ng-template>

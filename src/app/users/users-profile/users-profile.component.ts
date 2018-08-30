@@ -9,9 +9,6 @@ import { switchMap } from 'rxjs/operators';
 @Component({
   templateUrl: './users-profile.component.html',
   styles: [ `
-    .space-container {
-      margin: 64px 30px;
-    }
     .profile-container {
       max-width: 900px;
       display: grid;
