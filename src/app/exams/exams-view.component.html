@@ -11,7 +11,7 @@
   </mat-toolbar>
   <div class="view-container">
     <b>{{question.header}}</b>
-    <p>{{question.body}}</p>
+    <td-markdown [content]="question.body"></td-markdown>
     <ng-container [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question.type">
