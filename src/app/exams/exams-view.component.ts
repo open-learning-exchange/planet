@@ -164,4 +164,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  setAnswer(event, option) {
+    this.answer = this.answer === undefined ? [] : this.answer;
+    if (event.checked === true) {
+      this.answer.push(option);
+    } else if (event.checked === false) {
+      this.answer.splice(this.answer.indexOf(option), 1);
+    }
+  }
+
 }
