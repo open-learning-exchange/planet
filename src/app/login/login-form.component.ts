@@ -58,7 +58,7 @@ export class LoginFormComponent {
     this.userForm = this.formBuilder.group(formObj);
   }
 
-  createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
+  createMode: boolean = this.router.url.split('?')[0] === '/login/newmember';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
   onSubmit() {
