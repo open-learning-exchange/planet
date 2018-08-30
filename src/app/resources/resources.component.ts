@@ -186,11 +186,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSelected() {
+    const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
     let amount = 'many',
-      okClick = this.deleteResources(this.selection.selected),
+      okClick = this.deleteResources(resources),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const resource = this.selection.selected[0];
+    if (resources.length === 1) {
+      const resource: any = resources[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
       displayName = resource.title;
