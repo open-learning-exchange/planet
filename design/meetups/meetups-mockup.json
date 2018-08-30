@@ -1,6 +1,7 @@
 {
     "docs":[
-        {
+        {   
+            "_id": "ce3e25c980e7a942aaf691dee50003bf",
             "kind": "Meetup",
             "title": "Happy Hacking Hangout",
             "description": "this is our Team Meeting",
@@ -19,6 +20,7 @@
             "createdDate": 1519624800000
          },
          {
+            "_id": "ce3e25c980e7a942aaf691dee50006cf",
             "kind": "Meetup",
             "title": "Angular Hangout",
             "description": "this is our Angular Meeting",
@@ -34,6 +36,7 @@
             "createdDate": 1519624800000
          },
          {
+            "_id": "ce3e25c980e7a942aaf691dee500070d",
             "kind": "Meetup",
             "title": "Social Awareness",
             "description": "Social Awareness program",
@@ -49,6 +52,7 @@
             "createdDate": 1519624800000
          },
          {
+            "_id": "ce3e25c980e7a942aaf691dee50012be",
             "kind": "Meetup",
             "title": "Demo",
             "description": "Demo about the projects",
@@ -72,6 +76,7 @@
             "createdDate": 1519624800000
          },
          {
+            "_id": "ce3e25c980e7a942aaf691dee500154f",
             "kind": "Meetup",
             "title": "Meeting",
             "description": "To discuss about planet issue",
