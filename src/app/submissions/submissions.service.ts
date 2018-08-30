@@ -46,8 +46,8 @@ export class SubmissionsService {
     return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode };
   }
 
-  openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
-    const selector = submissionId ? { '_id': submissionId } : { parentId, user };
+  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
+    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name };
     this.couchService.post('submissions/_find', { selector })
       .subscribe((res) => {
         let attempts = res.docs.length - 1;
@@ -114,7 +114,7 @@ export class SubmissionsService {
 
   filterSubmissions(submissions, parentId) {
     return submissions.filter(s => s.parentId === parentId).reduce((subs, submission) => {
-      const userSubmissionIndex = subs.findIndex((s) => s.user === submission.user);
+      const userSubmissionIndex = subs.findIndex((s) => s.user._id === submission.user._id);
       if (userSubmissionIndex !== -1) {
         const oldSubmission = subs[userSubmissionIndex];
         subs[userSubmissionIndex] = this.calcTotalGrade(submission) > this.calcTotalGrade(oldSubmission) ?

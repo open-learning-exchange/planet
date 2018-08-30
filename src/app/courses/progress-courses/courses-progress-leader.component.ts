@@ -42,7 +42,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
           const answers = submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
           return {
             items: answers,
-            label: submission.user
+            label: submission.user.name
           };
         }
       );
