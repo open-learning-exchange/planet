@@ -115,7 +115,7 @@ export class DialogsListComponent implements AfterViewInit {
     this.dropdownField = dropdownSettings.field;
     this.dropdownOptions = this.tableData.data.reduce((values: any[], item: any) => {
         const value = item[dropdownSettings.field];
-        if (values.findIndex(v => v.value === value) === -1) {
+        if (value && values.findIndex(v => v.value === value) === -1) {
           values.push({ value, text: value });
         }
         return values;
