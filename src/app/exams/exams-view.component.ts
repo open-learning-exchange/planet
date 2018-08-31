@@ -26,6 +26,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   grade;
   submissionId: string;
   fromSubmission = false;
+  currentRoute;
 
   constructor(
     private router: Router,
@@ -61,6 +62,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
       }
     });
+    this.currentRoute = this.route.snapshot.data.mySurveys === true ? 'survey' : 'exam';
   }
 
   ngOnDestroy() {
