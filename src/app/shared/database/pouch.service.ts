@@ -35,8 +35,11 @@ export class PouchService {
     // we will have to create corresponding documents in couchdb and we can sync
     // we can decide that when the user is being created for the first time?
     this.authDB = new PouchDB(this.baseUrl + 'test', {
-      skip_setup: true
-    });
+      fetch(url, opts) {
+        opts.credentials = 'include';
+        return (PouchDB as any).fetch(url, opts);
+      }
+    } as PouchDB.Configuration.RemoteDatabaseConfiguration);
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
