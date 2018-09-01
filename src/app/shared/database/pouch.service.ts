@@ -12,12 +12,12 @@ PouchDB.plugin(PouchDBFind);
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
-  private localDBs;
+  private localDBs = new Map<string, any>([ [ 'feedback', null ] ]);
   private authDB;
-  private databases = [];
+  private databases = new Set([ 'feedback' ]);
 
   constructor() {
-    this.databases.forEach(db => {
+    for (const db of this.databases.values()) {
       const pouchDB = new PouchDB(`local-${db}`);
 
       // indexes the field for faster lookup
@@ -26,8 +26,9 @@ export class PouchService {
           fields: [ 'kind', 'createdAt' ]
         }
       });
-      this.localDBs[db] = pouchDB;
-    });
+
+      this.localDBs.set(db, pouchDB);
+    }
 
     // test is a placeholder temp database
     // we need a central remote database
@@ -45,27 +46,27 @@ export class PouchService {
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    this.databases.forEach(db => {
-      this.localDBs[db].replicate.from(this.baseUrl + db);
-    });
+    for (const db of this.databases.values()) {
+        this.localDBs.get(db).replicate.from(this.baseUrl + db);
+    }
   }
 
   replicateToRemoteDBs() {
-    this.databases.forEach(db => {
-      this.localDBs[db].replicate.to(this.baseUrl + db, {
-        filter(doc) {
-          return doc.pouchIndex === db;
-        }
-      });
-    });
+    for (const db of this.databases.values()) {
+        this.localDBs.get(db).replicate.to(this.baseUrl + db, {
+          filter(doc) {
+            return doc.pouchIndex === db;
+          }
+        });
+    }
   }
 
   replicateFromRemoteDB(db) {
-    return this.replicate(this.localDBs[db].replicate.from(this.baseUrl + db));
+    return this.replicate(this.localDBs.get(db).replicate.from(this.baseUrl + db));
   }
 
   replicateToRemoteDB(db) {
-    return this.replicate(this.localDBs[db].replicate.to(this.baseUrl + db));
+    return this.replicate(this.localDBs.get(db).replicate.to(this.baseUrl + db));
   }
 
   replicate(replicateFn) {
@@ -73,7 +74,7 @@ export class PouchService {
   }
 
   getLocalPouchDB(db) {
-    return this.localDBs[db];
+    return this.localDBs.get(db);
   }
 
   getAuthDB() {
