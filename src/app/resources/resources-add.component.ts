@@ -34,6 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   pageType = 'Add new';
   disableDownload = true;
   resourceFilename = '';
+  fileSizeExceeds = false;
 
   constructor(
     private router: Router,
@@ -117,7 +118,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.resourceForm.valid) {
+    if (this.resourceForm.valid && !this.fileSizeExceeds) {
       const fileObs: Observable<any> = this.createFileObs();
       fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
         const { _id, _rev } = this.existingResource;
@@ -233,8 +234,17 @@ export class ResourcesAddComponent implements OnInit {
     this.router.navigate([ '/resources' ]);
   }
 
-  bindFile(event) {
+  checkFileSize(event) {
     this.file = event.target.files[0];
+    this.fileSizeExceeds = this.file.size/1024/1024 > 512;
+    if (!this.fileSizeExceeds) {
+      this.bindFile();
+    }
+  }
+
+  bindFile() {
+    // this.file = event.target.files[0];
+    // console.log(this.file.size + "bytes");
     this.disableDownload = false;
   }
 

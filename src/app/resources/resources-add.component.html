@@ -86,7 +86,8 @@
       </mat-form-field>
       <div class="inner-gaps by-column full-width">
         <label i18n>File Upload:</label>
-        <input type="file" (change)="bindFile($event)" />
+        <input type="file" (change)="checkFileSize($event)" />
+        <label i18 class="warn-text-color" *ngIf="fileSizeExceeds">File size cannot exceed more than 512 MB</label>
       </div>
       <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
       <div class="inner-gaps full-width">
@@ -96,7 +97,7 @@
         </ng-container>
       </div>
       <div class="inner-gaps by-column full-width align-end">
-        <button mat-raised-button type="submit" [planetSubmit]="resourceForm.valid" color="primary" i18n>Submit</button>
+        <button mat-raised-button type="submit" [planetSubmit]="resourceForm.valid && !fileSizeExceeds" color="primary" i18n>Submit</button>
         <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
       </div>
     </form>
