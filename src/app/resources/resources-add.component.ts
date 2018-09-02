@@ -236,7 +236,7 @@ export class ResourcesAddComponent implements OnInit {
 
   checkFileSize(event) {
     this.file = event.target.files[0];
-    this.fileSizeExceeds = this.file.size/1024/1024 > 512;
+    this.fileSizeExceeds = this.file.size / 1024 / 1024 > 512;
     if (!this.fileSizeExceeds) {
       this.bindFile();
     }
