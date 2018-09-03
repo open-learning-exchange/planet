@@ -58,7 +58,9 @@ export class ResourcesService {
   }
 
   getAllResources(opts: any) {
-    return this.couchService.allDocs(this.dbName, opts);
+    return this.couchService.findAll(this.dbName, findDocuments({
+      '_id': { '$gt': null }
+    }, [ '_id', '_rev', 'title', 'description', 'createdDate', 'tags' ], [], 1000), opts);
   }
 
   getResources(resourceIds: string[], opts: any) {
