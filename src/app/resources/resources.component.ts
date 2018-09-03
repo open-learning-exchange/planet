@@ -140,8 +140,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.resources.data.length;
-    return numSelected === numRows;
+    const pageSize = this.paginator.pageSize;
+    const leftOverRows = this.resources.data.length % pageSize ;
+    return numSelected === pageSize || numSelected === leftOverRows;
   }
 
   applyResFilter(filterResValue: string) {
@@ -150,9 +151,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.resources.data.forEach((row: any) => this.selection.select(row._id));
+    this.resources.data.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   // Keeping for reference.  Need to refactor for service.
