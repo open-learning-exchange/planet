@@ -25,7 +25,6 @@ export class ExamsAddComponent implements OnInit {
   documentInfo: any = {};
   pageType = 'Add';
   examType = this.route.snapshot.paramMap.get('type') || 'courses';
-  title = this.route.snapshot.paramMap.get('type') === 'surveys' ? 'Survey Title' : 'Exam Title';
   successMessage = 'New exam added';
   steps = [];
   showFormError = false;
