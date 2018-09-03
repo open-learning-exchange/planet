@@ -16,10 +16,7 @@
       <mat-form-field>
         <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
       </mat-form-field>
-      <mat-form-field class="full-width">
-        <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
-        <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
-      </mat-form-field>
+      <td-text-editor class="full-width" formControlName="description" required></td-text-editor>
       <mat-form-field class="full-width">
         <planet-tag-input [formControl]="resourceForm.controls.tags" i18n-placeholder placeholder="Labels"></planet-tag-input>
       </mat-form-field>
