@@ -20,7 +20,7 @@ import { debug } from '../debug-operator';
       max-width: 44px;
     }
     .mat-column-info {
-      max-width: 225px;
+      max-width: 500px;
     }
   ` ]
 })
