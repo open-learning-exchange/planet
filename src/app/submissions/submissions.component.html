@@ -24,7 +24,7 @@
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef i18n>Submitted by</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.user.name}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.user.name ? element.user.name : ''}}</mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
