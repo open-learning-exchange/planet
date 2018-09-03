@@ -26,7 +26,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   grade;
   submissionId: string;
   fromSubmission = false;
-  examType = this.route.snapshot.data.mySurveys === true ? 'survey' : 'exam';
+  examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
 
   constructor(
     private router: Router,
