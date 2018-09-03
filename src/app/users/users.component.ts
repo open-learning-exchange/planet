@@ -66,8 +66,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.route.paramMap.pipe(
       takeUntil(this.onDestroy$)
     ).subscribe((params: ParamMap) => {
-      const searchValue = params.get('search');
-      this.searchValue = searchValue;
+      this.applyFilter(params.get('search'));
     });
     this.initializeData();
   }
@@ -100,8 +99,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   searchChanged(searchText: string) {
-    this.router.navigate([ '..', { search: searchText } ], { relativeTo: this.route });
-    this.applyFilter(searchText);
+    this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
   }
 
   ngAfterViewInit() {
@@ -146,7 +144,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         return userInfo;
       });
       this.emptyData = !this.allUsers.data.length;
-      this.applyFilter(this.searchValue);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');
