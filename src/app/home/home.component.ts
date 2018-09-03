@@ -11,7 +11,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { PouchAuthService } from '../shared/database';
 import { MatDialog } from '@angular/material';
-import { DialogsFormComponent } from '../shared/dialogs/dialogs-form.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
