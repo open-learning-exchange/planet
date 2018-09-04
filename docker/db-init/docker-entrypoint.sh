@@ -19,14 +19,19 @@ done
 
 #CORS SETUP
 add-cors-to-couchdb $COUCHDB_HOST
+if [[ -z $INSTALL ]]; then
+  INSTALLFLAG=""
+else
+  INSTALLFLAG=-i
+fi
 
 #MIGRATOR
 if [[ -z "${COUCHDB_USER}" ]]; then
-    ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN
+    ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN $INSTALLFLAG
   else
     if [[ -z "${COUCHDB_PASS}" ]]; then
       echo "The COUCHDB_PASS is not set. Exiting..."
     else
-      ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS
+      ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS $INSTALLFLAG
     fi
 fi

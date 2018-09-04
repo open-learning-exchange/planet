@@ -90,7 +90,7 @@ export class CouchService {
     }));
   }
 
-  findAll(db: string, query: any, opts?: any) {
+  findAll(db: string, query: any = { 'selector': { '_id': { '$gt': null } } }, opts?: any) {
     console.log(query);
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
       return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
