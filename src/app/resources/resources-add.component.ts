@@ -34,6 +34,11 @@ export class ResourcesAddComponent implements OnInit {
   pageType = 'Add new';
   disableDownload = true;
   resourceFilename = '';
+  dateMask = {
+    guide: true,
+    showMask : true,
+    mask: [  /\d/, /\d/, /\d/, /\d/  ]
+  };
 
   constructor(
     private router: Router,

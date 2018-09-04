@@ -27,7 +27,7 @@
       </div>
       <div>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
+          <input matInput i18n-placeholder [textMask]="{mask: eMask}" placeholder="Email" formControlName="email" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
