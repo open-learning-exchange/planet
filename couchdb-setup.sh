@@ -146,9 +146,11 @@ then
   # When attachment database is implemented in app, uncomment below line and delete above line
   # insert_attachments attachments ./design/resources/resources-attachment-mockup.json
   # Add permission in databases
-  SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
+  SECURITY=$(add_security_admin_roles ./design/security-update/security-update-once.json manager)
   multi_db_update $SECURITY _security
 fi
+SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
+multi_db_update $SECURITY _security
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
 # Increse http request size for large attachments
