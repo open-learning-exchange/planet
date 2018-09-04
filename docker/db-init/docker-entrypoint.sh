@@ -20,9 +20,9 @@ done
 #CORS SETUP
 add-cors-to-couchdb $COUCHDB_HOST
 if [[ -z $INSTALL ]]; then
-  $INSTALLFLAG=""
+  INSTALLFLAG=""
 else
-  $INSTALLFLAG="-i"
+  INSTALLFLAG=-i
 fi
 
 #MIGRATOR
