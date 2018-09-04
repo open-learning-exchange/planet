@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -30,6 +30,9 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = [ 'name', 'status', 'user' ];
   mode = 'grade';
   emptyData = false;
+  filter = {
+    type: 'exam'
+  };
 
   constructor(
     private router: Router,
@@ -48,9 +51,10 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((submissions) => {
       this.submissions.data = submissions;
       this.emptyData = !this.submissions.data.length;
+      this.applyFilter('');
     });
     this.submissionsService.updateSubmissions({ query });
-    this.submissions.filterPredicate = filterSpecificFields([ 'parent.name' ]);
+    this.submissions.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ]) ]);
     this.submissions.sortingDataAccessor = (item, property) => item[property].toLowerCase();
   }
 
@@ -65,7 +69,24 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    this.submissions.filter = filterValue;
+    this.submissions.filter = filterValue || this.dropdownsFill();
+  }
+
+  onFilterChange(filterValue: string, field: string) {
+    this.filter[field] = filterValue;
+    // Force filter to update by setting it to a space if empty
+    this.submissions.filter = this.submissions.filter || ' ';
+  }
+
+  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+  // search text is deleted, but does not run when there are no active filters.
+  dropdownsFill() {
+    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
+      if (val) {
+        return ' ';
+      }
+      return emptySpace;
+    }, '');
   }
 
   goBack() {
