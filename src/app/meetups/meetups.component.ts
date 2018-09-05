@@ -71,8 +71,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.meetups.data.length;
-    return numSelected === numRows;
+    const pageSize = this.paginator.pageSize;
+    const leftOverRows = this.meetups.data.length % pageSize ;
+    return numSelected === pageSize || numSelected === leftOverRows;
   }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -80,9 +81,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.meetups.data.forEach((row: any) => this.selection.select(row._id));
+      this.selection.clear() :
+      this.meetups.data.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {
