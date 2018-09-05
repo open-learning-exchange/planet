@@ -22,9 +22,8 @@ const mime = new Mime(require('mime/types/standard.json'));
   templateUrl: './resources-add.component.html',
   styles: [ `
     .form-full-spacing {
-      display: flex;
-      flex-wrap: wrap;
-    }
+      max-width:550px
+  }
   ` ]
 })
 
