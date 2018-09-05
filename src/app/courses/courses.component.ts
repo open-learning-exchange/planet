@@ -217,7 +217,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.courses.data.forEach(row => this.selection.select(row));
+    this.courses.data.forEach((row: any) => this.selection.select(row._id));
   }
 
   onFilterChange(filterValue: string, field: string) {
