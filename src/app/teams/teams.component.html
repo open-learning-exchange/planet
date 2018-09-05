@@ -13,11 +13,11 @@
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3">
       <button mat-button routerLink='/teams/users' i18n>All Members</button>
-      <button mat-mini-fab (click)="addTeam()" ><mat-icon>add</mat-icon></button>
+      <button mat-mini-fab *ngIf="user.isUserAdmin || user.roles.length" (click)="addTeam()"><mat-icon>add</mat-icon></button>
     </div>
   </mat-toolbar>
 
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
@@ -28,7 +28,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container [ngSwitch]="element.userStatus">
+          <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
                 Leave
@@ -51,9 +51,9 @@
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="10"
-      [pageSizeOptions]="[5, 10, 20]">
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Team Found</div>
   </ng-template>

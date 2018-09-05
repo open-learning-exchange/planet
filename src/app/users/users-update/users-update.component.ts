@@ -16,9 +16,6 @@ import { CustomValidators } from '../../validators/custom-validators';
 @Component({
   templateUrl: './users-update.component.html',
   styles: [ `
-    .space-container {
-      margin: 64px 30px;
-    }
     .view-container {
       display: flex;
       flex-wrap: wrap;

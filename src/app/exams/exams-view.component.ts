@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -81,6 +81,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       case 'grade':
         obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
         break;
+      default:
+        obs = of({});
+        break;
     }
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
@@ -119,7 +122,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setTakingExam(exam, parentId, type) {
-    const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get().name;
+    const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
     this.submissionsService.openSubmission({
       parentId,
@@ -148,8 +151,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.submissionId = submission._id;
       if (this.fromSubmission === true) {
         this.setQuestion(submission.parent.questions);
-        this.answer = submission.answers[this.questionNum - 1];
-        this.grade = this.answer.grade;
+        const ans = submission.answers[this.questionNum - 1];
+        this.answer = ans ? ans.value : undefined;
+        this.grade = ans ? ans.grade || this.grade : this.grade;
       }
     });
   }
@@ -158,6 +162,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.couchService.get('exams/' + surveyId).subscribe((survey) => {
       this.setTakingExam(survey, survey._id, 'survey');
     });
+  }
+
+  setAnswer(event, option) {
+    this.answer = this.answer === undefined ? [] : this.answer;
+    if (event.checked === true) {
+      this.answer.push(option);
+    } else if (event.checked === false) {
+      this.answer.splice(this.answer.indexOf(option), 1);
+    }
   }
 
 }

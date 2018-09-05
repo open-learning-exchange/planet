@@ -72,19 +72,19 @@ press `CTRL+C` to exit logs view
 3. When you're done, you can do the following command
 
 ```
-docker-compose -f planet.yml -p planet stop
+docker-compose -f planet.yml -f install.yml -p planet stop
 ```
 
 4. When you go back to code
 
 ```
-docker-compose -f planet.yml -p planet start
+docker-compose -f planet.yml -f install.yml -p planet start
 ```
 
 5. When you have to delete the environment
 
 ```
-docker-compose -f planet.yml -p planet down
+docker-compose -f planet.yml -f install.yml -p planet down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.

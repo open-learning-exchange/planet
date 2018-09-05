@@ -103,9 +103,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           return item[property].toLowerCase();
       }
     };
+
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
-        this.setupList(this.resources.data, shelf.resourceIds);
+        this.resources.data = this.setupList(this.resources.data, shelf.resourceIds);
       });
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
@@ -151,7 +152,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   masterToggle() {
     this.isAllSelected() ?
     this.selection.clear() :
-    this.resources.data.forEach(row => this.selection.select(row));
+    this.resources.data.forEach((row: any) => this.selection.select(row._id));
   }
 
   // Keeping for reference.  Need to refactor for service.
@@ -185,11 +186,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSelected() {
+    const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
     let amount = 'many',
-      okClick = this.deleteResources(this.selection.selected),
+      okClick = this.deleteResources(resources),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const resource = this.selection.selected[0];
+    if (resources.length === 1) {
+      const resource: any = resources[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
       displayName = resource.title;
@@ -245,33 +247,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  updateShelf(newShelf, msg: string) {
-    this.couchService.put('shelf/' + this.userService.get()._id, newShelf).subscribe((res) =>  {
-      newShelf._rev = res.rev;
-      this.userService.shelf = newShelf;
-      this.planetMessageService.showMessage(msg + ' mylibrary');
-    }, (error) => (error));
-  }
-
-  addToLibrary(resources) {
-    const currentShelf = this.userService.shelf;
-    const resourceIds = resources.map((data) => {
-      return data._id;
-    }).concat(currentShelf.resourceIds).reduce(dedupeShelfReduce, []);
-    const msg = resources.length === 1 ? resources[0].title + ' have been added to' : resources.length + ' resources have been added to';
-    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), msg);
-  }
-
-  removeFromLibrary(resourceId, resourceTitle) {
-    const currentShelf = this.userService.shelf;
-    const resourceIds = [ ...currentShelf.resourceIds ];
-    resourceIds.splice(resourceIds.indexOf(resourceId), 1);
-    this.updateShelf(Object.assign({}, currentShelf, { resourceIds }), resourceTitle + ' removed from ');
+  libraryToggle(resourceIds, type) {
+    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => { }, (error) => ((error)));
   }
 
   shareResource(type, resources) {
-    const msg = (type === 'pull' ? 'fetch' : 'send');
-    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items: resources, type: type, date: true } ])
+    const msg = (type === 'pull' ? 'fetch' : 'send'),
+      items = resources.map(id => this.resources.data.find((resource: any) => resource._id === id));
+    this.syncService.confirmPasswordAndRunReplicators([ { db: this.dbName, items, type: type, date: true } ])
     .subscribe((response: any) => {
       this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
     }, () => error => this.planetMessageService.showMessage(error));

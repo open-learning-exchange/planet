@@ -29,8 +29,8 @@
       </button>
     </span>
   </mat-toolbar>
-  
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="meetups" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -49,7 +49,7 @@
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
           </h3>
           <div class="content">
-            <p>{{ element.description }}</p>
+            <td-markdown [content]="element.description"></td-markdown>
           </div>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
             <mat-icon>more_vert</mat-icon>
@@ -98,10 +98,10 @@
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="5"
-      [pageSizeOptions]="[5, 10, 20]"
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
       (page)="onPaginateChange($event)">
     </mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Meetups Found</div>
   </ng-template>

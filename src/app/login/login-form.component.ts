@@ -11,6 +11,7 @@ import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 const registerForm = {
   name: [],
@@ -44,7 +45,8 @@ export class LoginFormComponent {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private syncService: SyncService,
-    private pouchAuthService: PouchAuthService
+    private pouchAuthService: PouchAuthService,
+    private configurationService: ConfigurationService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -92,13 +94,17 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: { name: string, password: string }) {
-    const metadata = {
-      isUserAdmin: false,
-      planetCode: this.userService.getConfig().code,
-      joinDate: Date.now()
+    const configuration = this.configurationService.configuration;
+    const opts = {
+      metadata: {
+        isUserAdmin: false,
+        planetCode: configuration.code,
+        joinDate: Date.now(),
+      },
+      roles: configuration.autoAccept ? [ 'learner' ] : []
     };
 
-    this.pouchAuthService.signup(name, password, metadata).pipe(
+    this.pouchAuthService.signup(name, password, opts).pipe(
       switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
     ).subscribe(
       res => {

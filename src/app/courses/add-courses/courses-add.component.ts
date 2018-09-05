@@ -103,7 +103,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (this.route.snapshot.params.continue === 'true') {
       this.setFormAndSteps(this.coursesService.course);
     }
-    this.coursesService.returnUrl = this.router.url;
+    const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
+    this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
   }
 

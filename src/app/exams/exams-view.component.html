@@ -11,7 +11,7 @@
   </mat-toolbar>
   <div class="view-container">
     <b>{{question.header}}</b>
-    <p>{{question.body}}</p>
+    <td-markdown [content]="question.body"></td-markdown>
     <ng-container [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question.type">
@@ -23,17 +23,26 @@
               {{option.text}}
             </mat-radio-button>
           </mat-radio-group>
+          <div *ngSwitchCase="'selectMultiple'" class="question-list">
+            <mat-checkbox *ngFor="let option of question.choices" [value]="option" (change)="setAnswer($event, option)">
+              {{option.text}}
+            </mat-checkbox>
+          </div>
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
-        <p i18n>Submitted answer:<span> {{answer?.value?.text || answer?.value}}</span></p>
+        <p i18n>Submitted answer:<span> {{answer?.text || answer}}</span></p>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
         </mat-radio-group>
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
-        <p i18n>Response:<span> {{answer?.value?.text || answer?.value}}</span></p>
+        <p i18n>Response:</p>
+        <ng-container *ngIf="question.type === 'selectMultiple'; else singleAnswer">
+          <p *ngFor="let a of answer">{{a?.text || a}}</p>
+        </ng-container>
+        <ng-template #singleAnswer><p> {{answer?.text || answer}}</p></ng-template>
       </ng-container>
     </ng-container>
     <div class="v-align-center">
@@ -43,7 +52,7 @@
         color="primary"
         (click)="nextQuestion(questionNum)"
         [planetSubmit]="spinnerOn"
-        [disabled]="answer === undefined || grade === undefined || grade === null"
+        [disabled]="answer === undefined || answer === '' || grade === undefined || grade === null"
         i18n>
         Submit Answer
       </button>

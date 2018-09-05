@@ -7,3 +7,12 @@ export const dedupeShelfReduce = (ids, id) => {
     }
     return ids.concat(id);
   };
+
+export const removeFromArray = (startArray = [], removeArray = []) => {
+  return startArray.filter(item => removeArray.indexOf(item) === -1);
+};
+
+export const addToArray = (startArray = [], addArray = []) => {
+  return startArray.concat(addArray).reduce(dedupeShelfReduce, []);
+};
+

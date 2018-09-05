@@ -1,0 +1,15 @@
+[
+	{
+		"dbName": "_users",
+		"json": {
+			"admins": {
+				"names": [],
+				"roles": []
+			},
+			"members": {
+				"names": [],
+				"roles": []
+			}
+		}
+  }
+]
