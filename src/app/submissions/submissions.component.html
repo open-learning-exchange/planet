@@ -5,6 +5,17 @@
   </button>
   <span i18n>{mode, select, survey {Surveys} grade {Submissions}}</span>
   <span class="toolbar-fill"></span>
+  <mat-button-toggle-group
+    class="margin-lr-5 font-size-1"
+    (change)="onFilterChange($event.value, 'type')"
+    #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'">
+      Exams
+    </mat-button-toggle>
+    <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'">
+      Surveys
+    </mat-button-toggle>
+  </mat-button-toggle-group>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
@@ -21,6 +32,13 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="user">
+        <mat-header-cell *matHeaderCellDef i18n>Submitted by</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span *ngIf="element.submittedBy !== ''; else unknownLabel">{{element.submittedBy}}</span>
+          <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
+        </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
