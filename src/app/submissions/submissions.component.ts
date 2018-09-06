@@ -49,7 +49,9 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
-      this.submissions.data = submissions;
+      this.submissions.data = submissions.map(submission => ({
+        ...submission, submittedBy: submission.user.name || (submission.user.firstName + ' ' + submission.user.lastName).trim()
+      }));
       this.emptyData = !this.submissions.data.length;
       this.applyFilter('');
     });
