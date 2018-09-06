@@ -70,10 +70,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const pageSize = this.paginator.pageSize;
-    const leftOverRows = this.meetups.data.length % pageSize ;
-    return numSelected === pageSize || numSelected === leftOverRows;
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
   }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();

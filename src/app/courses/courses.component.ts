@@ -208,10 +208,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const pageSize = this.paginator.pageSize;
-    const leftOverRows = this.courses.data.length % pageSize ;
-    return numSelected === pageSize || numSelected === leftOverRows;
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
