@@ -51,9 +51,8 @@ export class ManagerSyncComponent implements OnInit {
       switchMap(data => {
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
       }),
-      switchMap(res => {
-        return this.logService.addLogs({ type: 'sync' });
-      })).subscribe(data => {
+      switchMap(res => this.logService.addLogs({ type: 'sync' }))
+    ).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
       this.getReplicators();
     }, error => this.planetMessageService.showMessage(error));
@@ -67,6 +66,7 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'ratings' },
       { db: 'resource_activities' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
+      { dbSource: 'activity_logs', dbTarget: 'child_activities' },
       { db: 'submissions', selector: { source: this.userService.getConfig().code } }
     ];
     const pullList = [

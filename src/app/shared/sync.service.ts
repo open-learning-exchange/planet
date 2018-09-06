@@ -5,18 +5,6 @@ import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { debug } from '../debug-operator';
-
-const passwordFormFields = [
-  {
-    'label': 'Password',
-    'type': 'textbox',
-    'inputType': 'password',
-    'name': 'password',
-    'placeholder': 'Password',
-    'required': true
-  }
-];
 
 @Injectable()
 export class SyncService {
@@ -27,9 +15,7 @@ export class SyncService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private managerService: ManagerService,
-    private logService: LogsService,
-    private dialogsFormService: DialogsFormService
+    private managerService: ManagerService
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {

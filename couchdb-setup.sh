@@ -121,6 +121,7 @@ curl -X PUT $COUCHURL/tablet_users
 curl -X PUT $COUCHURL/child_users
 curl -X PUT $COUCHURL/replicator_users
 curl -X PUT $COUCHURL/activity_logs
+curl -X PUT $COUCHURL/child_activities
 
 # Create design documents
 node ./design/create-design-docs.js
@@ -135,6 +136,8 @@ upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"t
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
 upsert_doc feedback _index '{"index":{"fields":[{"openTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc communityregistrationrequests _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"time-index"}' POST
+upsert_doc activity_logs _index '{"index":{"fields":[{"createdTime":"desc"}]},"name":"time-index"}' POST
+upsert_doc child_activities _index '{"index":{"fields":[{"createdTime":"desc"}]},"name":"time-index"}' POST
 # Only insert dummy data and update security on install
 # _users security is set in app and auto accept will be overwritten if set here
 if (($ISINSTALL))
