@@ -16,3 +16,4 @@ export const addToArray = (startArray = [], addArray = []) => {
   return startArray.concat(addArray).reduce(dedupeShelfReduce, []);
 };
 
+export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
