@@ -40,6 +40,13 @@
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="time">
+        <mat-header-cell *matHeaderCellDef i18n>Submitted Date</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span *ngIf="element.time; else unknownTime">{{element.time | date: 'mediumDate'}}</span>
+          <ng-template #unknownTime><span i18n>Unknown</span></ng-template>
+        </mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
     </mat-table>

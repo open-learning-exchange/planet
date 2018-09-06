@@ -27,7 +27,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns = [ 'name', 'status', 'user' ];
+  displayedColumns = [ 'name', 'status', 'user', 'time' ];
   mode = 'grade';
   emptyData = false;
   filter = {

@@ -64,7 +64,7 @@ export class SubmissionsService {
   }
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], time: Date.now() };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
       value: answer,
@@ -78,7 +78,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], time: Date.now() };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }
@@ -134,7 +134,6 @@ export class SubmissionsService {
       switchMap((submissions: any) => {
         const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
         const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
-        console.log(newSubmissions);
         return this.couchService.post('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
         });
