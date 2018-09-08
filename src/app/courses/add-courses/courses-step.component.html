@@ -1,4 +1,4 @@
-<planet-step-list [steps]="steps" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
+<planet-step-list [steps]="steps" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)" [stepChecked]="stepFinished">
   <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
     <span>{{step.stepTitle || 'Step ' + (i+1)}}</span>
     <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
@@ -13,7 +13,10 @@
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
       </mat-form-field>
-      <td-text-editor formControlName="description"></td-text-editor>
+      <div>
+        <td-text-editor formControlName="description"></td-text-editor>
+        <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
+      </div>
     </form>
     <div *ngIf="activeStep?.resources?.length"><span i18n>Attached resources: </span><span *ngFor="let resource of activeStep.resources; let isLast= last">{{resource.title}}{{isLast ? '' : ', '}}</span></div>
     <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>

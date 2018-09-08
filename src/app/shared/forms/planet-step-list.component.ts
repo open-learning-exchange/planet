@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, Directive, ContentChildren, ViewChild, TemplateRef } from '@angular/core';
+import { Component, Input, EventEmitter, Output, Directive, ContentChildren, ViewChild, TemplateRef, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'planet-step-list-item',
@@ -18,13 +18,15 @@ export class PlanetStepListItemComponent {
     }
   ` ]
 })
-export class PlanetStepListComponent {
+export class PlanetStepListComponent implements OnChanges {
 
   @Input() steps: any[];
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Output() stepClicked = new EventEmitter<number>();
   @Output() stepUpdated = new EventEmitter<number>();
+  stepFinished: boolean;
+  @Input() stepChecked: boolean;
 
   @ContentChildren(PlanetStepListItemComponent) stepListItems;
 
@@ -33,17 +35,25 @@ export class PlanetStepListComponent {
 
   constructor() {}
 
+  ngOnChanges() {
+    this.stepFinished = this.stepChecked;
+  }
+
   stepClick(index: number) {
     this.listMode = false;
     this.openIndex = index;
     this.stepClicked.emit(index);
+    if  (this.stepChecked === undefined) {
+      this.stepFinished = false;
+    } else if  (this.stepChecked === true) {
+      this.stepFinished = true;
+    }
   }
 
   toList() {
     this.listMode = true;
     this.stepUpdated.emit(this.openIndex);
   }
-
 }
 
 @Directive({

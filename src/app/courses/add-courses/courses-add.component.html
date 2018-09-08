@@ -42,10 +42,10 @@
       </form>
     </div>
     <div>
-      <planet-courses-step [(steps)]="steps"></planet-courses-step>
+      <planet-courses-step [(steps)]="steps" (currentStepChange)="checkStep($event)"></planet-courses-step>
     </div>
     <div>
-      <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
+      <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" [disabled]="currentStepChecked !== true" i18n>Submit</button>
       <button type="button" mat-raised-button color="warn" (click)="navigateBack()" i18n>Cancel</button>
       <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
     </div>

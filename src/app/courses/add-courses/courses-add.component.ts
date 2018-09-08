@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -33,6 +33,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this._steps = value;
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
   }
+
+  currentStepChecked: boolean;
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -203,4 +205,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
+  checkStep(event: boolean) {
+    event === false ? this.currentStepChecked = false : this.currentStepChecked = true;
+  }
 }

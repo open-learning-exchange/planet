@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { CoursesService } from '../courses.service';
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html'
 })
-export class CoursesStepComponent implements OnDestroy {
+export class CoursesStepComponent implements AfterViewChecked, OnDestroy {
 
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any>();
@@ -23,6 +23,9 @@ export class CoursesStepComponent implements OnDestroy {
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
+  stepFinished: boolean;
+  stepDescription: string;
+  @Output() currentStepChange = new EventEmitter<boolean>();
 
   constructor(
     private router: Router,
@@ -34,12 +37,22 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepForm = this.fb.group({
       id: '',
       stepTitle: '',
-      description: ''
+      description: [ '', Validators.required ]
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
       this.stepsChange.emit(this.steps);
     });
+  }
+
+  ngAfterViewChecked() {
+    if ( this.stepForm.get('description').valid === true) {
+      this.stepFinished = true;
+      this.currentStepChange.emit(true);
+    } else {
+      this.stepFinished = false;
+      this.currentStepChange.emit(false);
+    }
   }
 
   ngOnDestroy() {
