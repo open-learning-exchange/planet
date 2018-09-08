@@ -11,7 +11,6 @@ import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   imports: [
@@ -24,8 +23,7 @@ import { TextMaskModule } from 'angular2-text-mask';
     HttpClientModule,
     HttpClientJsonpModule,
     PlanetDialogsModule,
-    SharedComponentsModule,
-    TextMaskModule
+    SharedComponentsModule
   ],
   declarations: [
     ResourcesComponent,

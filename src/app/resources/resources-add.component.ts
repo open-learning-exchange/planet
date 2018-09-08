@@ -34,11 +34,6 @@ export class ResourcesAddComponent implements OnInit {
   pageType = 'Add new';
   disableDownload = true;
   resourceFilename = '';
-  dateMask = {
-    guide: true,
-    showMask : true,
-    mask: [  /\d/, /\d/, /\d/, /\d/  ]
-  };
 
   constructor(
     private router: Router,
@@ -82,7 +77,7 @@ export class ResourcesAddComponent implements OnInit {
           : ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
       ],
       author: '',
-      year: '',
+      year: [ '', Validators.pattern('^[0-9]+$')  ],
       description: [ '', Validators.required ],
       tags: [ [] ],
       language: '',
