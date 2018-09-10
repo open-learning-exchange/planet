@@ -14,13 +14,19 @@ import { dedupeShelfReduce } from '../shared/utils';
 })
 export class ConfigurationService {
 
+  configuration: any;
+
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private userService: UserService,
     private syncService: SyncService
-  ) {}
+  ) {
+    this.couchService.findAll('configurations').subscribe((res) => {
+      this.configuration = res[0];
+    });
+  }
 
   createRequestNotification(configuration) {
     return mergeMap(data => {

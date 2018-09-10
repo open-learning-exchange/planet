@@ -78,8 +78,7 @@ export class CouchService {
   }
 
   localComparison(db: string, parentDocs: any[]) {
-    const ids = parentDocs.map((parentDoc: any) => parentDoc._id);
-    return this.findAll(db, findDocuments({ '_id': inSelector(ids) })).pipe(map((localDocs) => {
+    return this.findAll(db, findDocuments({ '_id': { '$gt': null } }, 0, 0, 1000)).pipe(map((localDocs) => {
       return parentDocs.map((parentDoc) => {
         const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
         return {
@@ -90,7 +89,7 @@ export class CouchService {
     }));
   }
 
-  findAll(db: string, query: any, opts?: any) {
+  findAll(db: string, query: any = { 'selector': { '_id': { '$gt': null } } }, opts?: any) {
     console.log(query);
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
       return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
