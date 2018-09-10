@@ -110,6 +110,7 @@ export class ConfigurationService {
 
   updateAutoAccept(autoAccept) {
     return this.couchService.get('_users/_security').pipe(switchMap((security) => {
+      security.admins = security.admins === undefined ? { roles: [] } : security.admins;
       security.admins.roles = autoAccept ?
         security.admins.roles.concat([ 'openlearner' ]).reduce(dedupeShelfReduce, []) :
         security.admins.roles.filter(role => role !== 'openlearner');
