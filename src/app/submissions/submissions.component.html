@@ -43,7 +43,7 @@
       <ng-container matColumnDef="time">
         <mat-header-cell *matHeaderCellDef i18n>Submitted Date</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span *ngIf="element.time; else unknownTime">{{element.time | date: 'mediumDate'}}</span>
+          <span *ngIf="element.lastUpdateTime; else unknownTime">{{element.lastUpdateTime | date: 'medium'}}</span>
           <ng-template #unknownTime><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>
