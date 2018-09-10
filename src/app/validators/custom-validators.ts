@@ -17,7 +17,7 @@ export class CustomValidators {
   }
 
   static choiceSelected(): ValidatorFn {
-    let inputtype : AbstractControl;
+    let inputtype: AbstractControl;
     return (ac: AbstractControl): ValidationErrors =>  {
        inputtype = ac.parent.get('type');
        console.log(inputtype.value, ac.value);
@@ -28,7 +28,7 @@ export class CustomValidators {
          console.log('not called');
          return null;
        }
-    }; 
+    };
   }
 
   static hexValidator(ac: AbstractControl): ValidationErrors {
