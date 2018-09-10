@@ -62,7 +62,6 @@ export class DashboardComponent implements OnInit {
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
-
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
