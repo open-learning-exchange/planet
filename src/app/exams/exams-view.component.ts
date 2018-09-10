@@ -73,20 +73,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     let obs: any;
     switch (this.mode) {
       case 'take':
-      if (this.question.correctChoice){
-        if (this.answer === Array) {
+        if (this.question.correctChoice) {
+          if (this.answer instanceof Array) {
             correctAnswer = this.answer.reduce((correct, ans) => {
-            // Right now only one correct choice is available
-            return correct && ans.id === this.question.correctChoice;
-            // Check with all correctChoice
-            //return correct && this.question.correctChoice.indexOf(ans.id) > -1
-          }, this.answer.length === this.question.correctchoice.length);
-        } else {
-          correctAnswer =  this.answer.id === this.question.correctchoice;
+              // Right now only one correct choice is available
+              return correct && ans.id === this.question.correctChoice;
+              // Check with all correctChoice
+              // return correct && this.question.correctChoice.indexOf(ans.id) > -1
+            // }, this.answer.length === this.question.correctChoice.length);
+            }, true);
+          } else {
+            correctAnswer = this.answer.id === this.question.correctChoice;
+          }
         }
-      }  else correctAnswer;
-     
-        //correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : correctAnswer;
         obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close);
         this.answer = undefined;
         break;
