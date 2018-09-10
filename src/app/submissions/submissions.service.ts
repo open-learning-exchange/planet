@@ -43,7 +43,8 @@ export class SubmissionsService {
   }
 
   private createNewSubmission({ parentId, parent, user, type }) {
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode, lastUpdateTime: Date.now() };
+    const times = { startTime: Date.now(), lastUpdateTime: Date.now() };
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode, ...times };
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
@@ -78,7 +79,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: Date.now() };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }
