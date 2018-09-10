@@ -209,16 +209,17 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.courses.data.length;
-    return numSelected === numRows;
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.courses.data.forEach((row: any) => this.selection.select(row._id));
+    this.courses.data.slice(start, end).forEach(row => this.selection.select(row));
   }
 
   onFilterChange(filterValue: string, field: string) {
