@@ -2,7 +2,8 @@ import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import {
   FormGroup,
   FormControl,
-  FormArray
+  FormArray,
+  Validators
 } from '@angular/forms';
 import { uniqueId } from '../shared/utils';
 
@@ -42,7 +43,7 @@ export class ExamsQuestionComponent implements OnInit {
     const newId = uniqueId();
     this.correctCheckboxes[newId] = false;
     this.choices.push(new FormGroup({
-      'text': new FormControl(''),
+      'text': new FormControl('', Validators.required),
       'id': new FormControl(newId)
     }));
   }
