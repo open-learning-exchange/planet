@@ -37,6 +37,15 @@ export class DashboardComponent implements OnInit {
     const userShelf = this.userService.shelf;
     this.getSurveys();
 
+    this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
+      .pipe(
+        catchError(() => {
+          return of({ docs: [] });
+        })
+      ).subscribe((res: any) => {
+        this.visits = res.docs.length;
+      });
+
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
       return;
@@ -53,15 +62,6 @@ export class DashboardComponent implements OnInit {
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = dashboardItems[3];
     });
-
-    this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
-      .pipe(
-        catchError(() => {
-          return of({ docs: [] });
-        })
-      ).subscribe((res: any) => {
-        this.visits = res.docs.length;
-      });
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
