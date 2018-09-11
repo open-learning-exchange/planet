@@ -16,19 +16,20 @@ export class CustomValidators {
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
-  static choiceSelected(): ValidatorFn {
-    let inputtype: AbstractControl;
-    return (ac: AbstractControl): ValidationErrors =>  {
-       inputtype = ac.parent.get('type');
-       console.log(inputtype.value, ac.value);
-       if (inputtype.value !== 'input' && !ac.value) {
-         console.log('called');
-         return { required : true };
-       } else {
-         console.log('not called');
-         return null;
-       }
-    };
+  static choiceSelected(ac: AbstractControl): ValidationErrors {
+    if (!ac.parent) {
+      return null;
+    }
+
+    const inputtype = ac.parent.get('type');
+    console.log(inputtype.value, ac.value);
+    if (inputtype.value !== 'input' && !ac.value) {
+      console.log('called');
+      return { required : true };
+    } else {
+      console.log('not called');
+      return null;
+    }
   }
 
   static hexValidator(ac: AbstractControl): ValidationErrors {

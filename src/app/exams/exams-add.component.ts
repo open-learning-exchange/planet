@@ -140,7 +140,7 @@ export class ExamsAddComponent implements OnInit {
         header: '',
         body: [ '', Validators.required ],
         type: 'input',
-        correctChoice: [ '' ]
+        correctChoice: [ '', CustomValidators.choiceSelected ]
       },
       question,
       {
