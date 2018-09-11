@@ -46,7 +46,9 @@ export class CoursesStepComponent implements AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if ( this.stepForm.get('description').valid === true) {
+    const descriptionValue = String(this.stepForm.get('description').value);
+     // can't create course step when description is empty or only contains empty spaces
+    if ((/^\s*$/.test(descriptionValue) !== true) && (this.stepForm.get('description').valid === true)) {
       this.stepFinished = true;
       this.currentStepChange.emit(true);
     } else {
