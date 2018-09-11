@@ -60,7 +60,7 @@ export class ResourcesService {
   getAllResources(opts: any) {
     return this.couchService.findAll(this.dbName, findDocuments({
       '_id': { '$gt': null }
-    }, [ '_id', '_rev', 'title', 'description', 'createdDate', 'tags' ], [], 1000), opts);
+    }, [ '_id', '_rev', 'title', 'description', 'createdDate', 'tags', 'isDownloadable', 'filename' ], [], 1000), opts);
   }
 
   getResources(resourceIds: string[], opts: any) {
