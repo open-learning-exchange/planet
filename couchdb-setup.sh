@@ -121,14 +121,16 @@ curl -X PUT $COUCHURL/tablet_users
 curl -X PUT $COUCHURL/child_users
 curl -X PUT $COUCHURL/replicator_users
 curl -X PUT $COUCHURL/activity_logs
-curl -X PUT $COUCHURL/child_activities
 
 # Create design documents
 node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 upsert_doc resources _design/resources @./design/resources/resources-design.json
+upsert_doc ratings _design/ratings @./design/ratings/ratings-design.json
+upsert_doc resource_activities _design/resource_activities @./design/resource_activities/resource_activities-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
+
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST
@@ -137,7 +139,6 @@ upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-
 upsert_doc feedback _index '{"index":{"fields":[{"openTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc communityregistrationrequests _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"time-index"}' POST
 upsert_doc activity_logs _index '{"index":{"fields":[{"createdTime":"desc"}]},"name":"time-index"}' POST
-upsert_doc child_activities _index '{"index":{"fields":[{"createdTime":"desc"}]},"name":"time-index"}' POST
 # Only insert dummy data and update security on install
 # _users security is set in app and auto accept will be overwritten if set here
 if (($ISINSTALL))

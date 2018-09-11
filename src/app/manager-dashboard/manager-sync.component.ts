@@ -66,7 +66,7 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'ratings' },
       { db: 'resource_activities' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
-      { dbSource: 'activity_logs', dbTarget: 'child_activities' },
+      { dbSource: 'activity_logs' },
       { db: 'submissions', selector: { source: this.userService.getConfig().code } }
     ];
     const pullList = [

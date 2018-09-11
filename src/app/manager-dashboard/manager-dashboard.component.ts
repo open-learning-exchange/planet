@@ -25,6 +25,7 @@ export class ManagerDashboardComponent implements OnInit {
   displayDashboard = true;
   message = '';
   planetType = this.userService.getConfig().planetType;
+  planetConfig = this.userService.getConfig();
   showResendConfiguration = false;
   requestStatus = 'loading';
   devMode = isDevMode();
@@ -34,6 +35,7 @@ export class ManagerDashboardComponent implements OnInit {
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
   pin: string;
+  activityLogs = {};
 
   constructor(
     private userService: UserService,
@@ -57,13 +59,14 @@ export class ManagerDashboardComponent implements OnInit {
       // A non-admin user cannot receive all user docs
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
-    } else if (this.userService.getConfig().planetType !== 'center') {
+    } else if (this.planetType !== 'center') {
       const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
       this.getVersion({ domain: this.userService.getConfig().parentDomain, ...opts })
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
+    this.getLogs();
   }
 
   getSatellitePin() {
@@ -237,6 +240,24 @@ export class ManagerDashboardComponent implements OnInit {
 
   getVersion(opts: any = {}) {
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
+  }
+
+  getLogs() {
+    forkJoin([
+      this.couchService.post('activity_logs/_find', findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'login' }, 1, [ { 'createdTime' : 'desc' } ])),
+      this.couchService.post('activity_logs/_find', findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'upgrade' }, 1, [ { 'createdTime' : 'desc' } ])),
+      this.couchService.post('activity_logs/_find', findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'sync' }, 1, [ { 'createdTime' : 'desc' } ])),
+      this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?group_level=3&startkey=["'+this.planetConfig.code+'", "'+this.planetConfig.parentDomain+'", "visit"]&endkey=["'+this.planetConfig.code+'0", "'+this.planetConfig.parentDomain+'", "visit"]'),
+      this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?group_level=3&startkey=["'+this.planetConfig.code+'", "'+this.planetConfig.parentDomain+'", "download"]&endkey=["'+this.planetConfig.code+'0", "'+this.planetConfig.parentDomain+'", "download"]'),
+      this.couchService.get('ratings/_design/ratings/_view/count_ratings?group_level=2&startkey=["'+this.planetConfig.code+'", "'+this.planetConfig.parentDomain+'"]&endkey=["'+this.planetConfig.code+'0", "'+this.planetConfig.parentDomain+'"]')
+    ]).subscribe(data => {
+      this.activityLogs['last_admin_login'] = data[0].rows[0] || {};
+      this.activityLogs['last_upgrade'] = data[1].rows[0] || {};
+      this.activityLogs['last_sync'] = data[2].rows[0] || {};
+      this.activityLogs['resource_visits'] = data[3].rows[0] || {};
+      this.activityLogs['resource_downloads'] = data[4].rows[0] || {};
+      this.activityLogs['ratings'] = data[5].rows[0] || {};
+    })
   }
 
 }

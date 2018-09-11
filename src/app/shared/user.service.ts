@@ -123,6 +123,8 @@ export class UserService {
       type: 'login',
       loginTime: this.sessionStart,
       logoutTime: logoutTime,
+      createdOn: this.configuration.code,
+      parentDomain: this.configuration.parentDomain
     }, this.sessionRev ? {
       _rev: this.sessionRev
     } : {});

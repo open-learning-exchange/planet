@@ -73,7 +73,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       'resource': resourceId,
       'user': this.userService.get().name,
       'activity': activity,
-      'time': Date.now()
+      'time': Date.now(),
+      'createdOn': this.userService.getConfig().code,
+      'parentDomain': this.userService.getConfig().parentDomain
     };
     this.couchService.post('resource_activities', data)
       .subscribe((response) => {

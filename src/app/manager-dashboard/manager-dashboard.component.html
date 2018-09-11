@@ -52,4 +52,12 @@
     <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
   </div>
   <div>{{message}}</div>
+  <div>
+    <span i18n>Last Admin Login:</span> {{activityLogs?.last_admin_login?.createdTime}}<br/>
+    <span i18n>Last Upgrade:</span> {{activityLogs?.last_upgrade?.createdTime}}<br/>
+    <span i18n>Last Sync:</span> {{activityLogs?.last_sync?.createdTime}}<br/>
+    <span i18n>Total Visits:</span> {{activityLogs?.resource_visits?.value}}<br/>
+    <span i18n>Total Downloads:</span> {{activityLogs?.resource_downloads?.value}}<br/>
+    <span i18n>Total Ratings:</span> {{activityLogs?.ratings?.value}}
+  </div>
 </div>
