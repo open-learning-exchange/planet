@@ -93,6 +93,7 @@ export class ResourcesAddComponent implements OnInit {
       addedBy: '',
       openUrl: [],
       openWhichFile: '',
+      inputFile: '',
       isDownloadable: '',
       sourcePlanet: this.userService.getConfig().code,
       resideOn: this.userService.getConfig().code,
@@ -118,7 +119,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.resourceForm.valid && !this.fileSizeExceeds) {
+    if (this.resourceForm.valid) {
       const fileObs: Observable<any> = this.createFileObs();
       fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
         const { _id, _rev } = this.existingResource;
@@ -236,16 +237,12 @@ export class ResourcesAddComponent implements OnInit {
 
   checkFileSize(event) {
     this.file = event.target.files[0];
-    this.fileSizeExceeds = this.file.size / 1024 / 1024 > 512;
-    if (!this.fileSizeExceeds) {
-      this.bindFile();
+    // this.fileSizeExceeds = this.file.size / 1024 / 1024 > 512;
+      if (!(this.file.size / 1024 / 1024 > 512)) {
+        this.disableDownload = false;
+      } else { 
+        console.log(this.resourceForm.data.controls['inputFile'].value)
+      }
     }
+  
   }
-
-  bindFile() {
-    // this.file = event.target.files[0];
-    // console.log(this.file.size + "bytes");
-    this.disableDownload = false;
-  }
-
-}
