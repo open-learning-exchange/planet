@@ -61,7 +61,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     if (notification.status === 'unread') {
       this.couchService.put('notifications/' + notification._id, updateNotificaton)
       .subscribe((data) => {
-        this.notifications.data = this.notifications.data.map(n => {
+        this.notifications.data = this.notifications.data.map((n: any) => {
           if (n._id === data.id) {
             return Object.assign(updateNotificaton, { _rev: data.rev });
           }
