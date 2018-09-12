@@ -1,0 +1,28 @@
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>Your Notifications</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="notifications">
+      <ng-container matColumnDef="message">
+        <mat-cell *matCellDef="let element" (click)="readNotification(element)">
+          <p [ngClass]="{'primary-text-color':element.status==='unread'}">
+            <a [routerLink]="element.link ? [ element.link, element.linkParams || {} ] : '/element'">
+              {{element.message}} {{element.time | date: 'MMM d, yyyy'}}
+            </a>
+          </p>
+        </mat-cell>
+      </ng-container>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+    </mat-paginator>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Notification Found</div>
+  </ng-template>
+</div>
