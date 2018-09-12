@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },
   { path: 'configuration', component: ManagerDashboardConfigurationComponent, data: { update: true } },
   { path: 'users', loadChildren: '../users/users.module#UsersModule' },
+  { path: 'activity_logs', loadChildren: '../activity-logs/activity-logs.module#ActivityLogsModule' },
   ];
 
 @NgModule({

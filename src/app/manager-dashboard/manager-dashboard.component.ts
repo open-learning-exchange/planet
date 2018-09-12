@@ -35,7 +35,7 @@ export class ManagerDashboardComponent implements OnInit {
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
   pin: string;
-  activityLogs = {};
+  activityLogs: any = {};
 
   constructor(
     private userService: UserService,
@@ -245,30 +245,25 @@ export class ManagerDashboardComponent implements OnInit {
   getLogs() {
     forkJoin([
       this.couchService.post('activity_logs/_find',
-        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'login' }, 1, [ { 'createdTime' : 'desc' } ])),
+        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'login' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
       this.couchService.post('activity_logs/_find',
-        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'upgrade' }, 1, [ { 'createdTime' : 'desc' } ])),
+        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'upgrade' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
       this.couchService.post('activity_logs/_find',
-        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'sync' }, 1, [ { 'createdTime' : 'desc' } ])),
+        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'sync' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
       this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?'
         + 'startkey=["' + this.planetConfig.code + '", "' + this.planetConfig.parentDomain + '", "visit"]'
         + '&endkey=["' + this.planetConfig.code + '0", "' + this.planetConfig.parentDomain + '", "visit"]'
-        + '&group_level=3'),
-      this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?'
-        + 'startkey=["' + this.planetConfig.code + '", "' + this.planetConfig.parentDomain + '", "download"]'
-        + '&endkey=["' + this.planetConfig.code + '0", "' + this.planetConfig.parentDomain + '", "download"]'
         + '&group_level=3'),
       this.couchService.get('ratings/_design/ratings/_view/count_ratings?'
         + 'startkey=["' + this.planetConfig.code + '", "' + this.planetConfig.parentDomain + '"]'
         + '&endkey=["' + this.planetConfig.code + '0", "' + this.planetConfig.parentDomain + '"]'
         + '&group_level=2')
     ]).subscribe(data => {
-      this.activityLogs['last_admin_login'] = data[0].rows[0] || {};
-      this.activityLogs['last_upgrade'] = data[1].rows[0] || {};
-      this.activityLogs['last_sync'] = data[2].rows[0] || {};
+      this.activityLogs['last_admin_login'] = data[0].docs[0] || {};
+      this.activityLogs['last_upgrade'] = data[1].docs[0] || {};
+      this.activityLogs['last_sync'] = data[2].docs[0] || {};
       this.activityLogs['resource_visits'] = data[3].rows[0] || {};
-      this.activityLogs['resource_downloads'] = data[4].rows[0] || {};
-      this.activityLogs['ratings'] = data[5].rows[0] || {};
+      this.activityLogs['ratings'] = data[4].rows[0] || {};
     });
   }
 

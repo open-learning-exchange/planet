@@ -27,6 +27,7 @@
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
     <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
+    <a routerLink="/activity_logs" i18n mat-raised-button>Activity Logs</a>
   </div>
   <div class="view-container" *ngIf="planetType !== 'community'">
     <h3 i18n>Send On Accept</h3><br />
@@ -53,11 +54,10 @@
   </div>
   <div>{{message}}</div>
   <div>
-    <span i18n>Last Admin Login:</span> {{activityLogs?.last_admin_login?.createdTime}}<br/>
-    <span i18n>Last Upgrade:</span> {{activityLogs?.last_upgrade?.createdTime}}<br/>
-    <span i18n>Last Sync:</span> {{activityLogs?.last_sync?.createdTime}}<br/>
+    <span i18n>Last Admin Login:</span> {{activityLogs?.last_admin_login?.createdTime | date: 'medium'}}<br/>
+    <span i18n>Last Upgrade:</span> {{activityLogs?.last_upgrade?.createdTime | date: 'medium'}}<br/>
+    <span i18n>Last Sync:</span> {{activityLogs?.last_sync?.createdTime | date: 'medium'}}<br/>
     <span i18n>Total Visits:</span> {{activityLogs?.resource_visits?.value}}<br/>
-    <span i18n>Total Downloads:</span> {{activityLogs?.resource_downloads?.value}}<br/>
     <span i18n>Total Ratings:</span> {{activityLogs?.ratings?.value}}
   </div>
 </div>
