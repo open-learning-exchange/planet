@@ -34,7 +34,6 @@ export class ResourcesAddComponent implements OnInit {
   pageType = 'Add new';
   disableDownload = true;
   resourceFilename = '';
-  fileSizeExceeds = false;
 
   constructor(
     private router: Router,
@@ -236,13 +235,13 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   checkFileSize(event) {
+    console.log('called');
     this.file = event.target.files[0];
     // this.fileSizeExceeds = this.file.size / 1024 / 1024 > 512;
-      if (!(this.file.size / 1024 / 1024 > 512)) {
+    if (!(this.file.size / 1024 / 1024 > 512)) {
         this.disableDownload = false;
-      } else { 
-        console.log(this.resourceForm.data.controls['inputFile'].value)
-      }
-    }
-  
+        this.resourceForm.controls['inputFile'].setErrors({ 'error': false });
+      } else { this.resourceForm.controls['inputFile'].setErrors({ ' error ': true }); }
   }
+
+}

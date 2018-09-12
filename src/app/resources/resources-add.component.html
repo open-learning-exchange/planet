@@ -86,7 +86,7 @@
       </mat-form-field>
       <div class="inner-gaps by-column full-width">
         <label i18n>File Upload:</label>
-        <input type="file" (change)="checkFileSize($event)" formControlName="inputFile" />
+        <input type="file" (change)="checkFileSize($event)" formControlName="inputFile"/>
         <label i18n class="warn-text-color" *ngIf="!resourceForm.valid">File size cannot exceed more than 512 MB</label>
       </div>
       <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
