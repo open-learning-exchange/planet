@@ -50,6 +50,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  loginCountByuser = {};
 
   constructor(
     private dialog: MatDialog,
@@ -69,6 +70,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applyFilter(params.get('search'));
     });
     this.initializeData();
+    this.getAllLoginActivities();
   }
 
   ngOnDestroy() {
@@ -83,7 +85,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterAssociated = true;
         break;
       default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
+        this.displayedColumns = [ 'select', 'profile', 'name', 'visits', 'roles', 'action' ];
         this.filterAssociated = false;
         break;
     }
@@ -276,6 +278,22 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateSelectedRoles(newSelection: string[]) {
     this.selectedRoles = newSelection;
+  }
+
+  getAllLoginActivities() {
+    return this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 3 }).pipe(
+      debug('get loggedin users')
+    ).subscribe((response) =>{
+        console.log("allusers");
+        // console.log(this.allUsers);
+
+        this.allUsers.data.map((user)=>{
+          console.log(user.doc.name);
+          console.log(response.filter(res=>res.user===user.doc.name).length);
+          this.loginCountByuser[user.doc.name] = response.filter(res=>res.user===user.doc.name).length;         
+        });
+    });
+   
   }
 
 }
