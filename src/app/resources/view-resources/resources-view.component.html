@@ -11,6 +11,7 @@
     </button>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
+      <a mat-raised-button [href]="resourceSrc" target="_blank" color="accent">Open in new tab</a>
       <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
         Add to myLibrary
       </button>
@@ -33,7 +34,6 @@
       <p><b>to License:</b> <a href={{resource?.linkToLicense}} target="_blank">{{resource?.linkToLicense}}</a></p>
       <p><b>Resource:</b> {{ resource?.resourceFor }}</p>
       <p><b>Type:</b> {{ resource?.resourceType }}</p>
-      <a mat-raised-button [href]="resourceSrc" target="_blank" color="primary" *ngIf="mediaType === 'HTML'">Open in new tab</a>
     </div>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
