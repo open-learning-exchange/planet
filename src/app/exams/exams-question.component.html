@@ -12,6 +12,7 @@
       <input matInput i18n-placeholder placeholder="Question Title" formControlName="header">
     </mat-form-field>
     <td-text-editor formControlName="body"></td-text-editor>
+    <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
     <div>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
