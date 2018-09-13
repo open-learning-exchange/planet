@@ -26,7 +26,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   grade;
   submissionId: string;
   fromSubmission = false;
-  examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
+  examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
 
   constructor(
     private router: Router,
@@ -151,6 +151,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submissionId = submission._id;
       if (this.fromSubmission === true) {
+        this.examType = submission.parent.type;
         this.setQuestion(submission.parent.questions);
         const ans = submission.answers[this.questionNum - 1];
         this.answer = ans ? ans.value : undefined;
