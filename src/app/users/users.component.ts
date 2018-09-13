@@ -50,7 +50,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
-  loginCountByuser = {};
+  loginCountByuser = <any>{};
 
   constructor(
     private dialog: MatDialog,
