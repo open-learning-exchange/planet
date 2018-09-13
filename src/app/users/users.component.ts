@@ -281,19 +281,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getAllLoginActivities() {
-    return this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 3 }).pipe(
-      debug('get loggedin users')
-    ).subscribe((response) =>{
-        console.log("allusers");
-        // console.log(this.allUsers);
-
-        this.allUsers.data.map((user)=>{
-          console.log(user.doc.name);
-          console.log(response.filter(res=>res.user===user.doc.name).length);
-          this.loginCountByuser[user.doc.name] = response.filter(res=>res.user===user.doc.name).length;         
+    return this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 3 })
+    .pipe(debug('get loggedin users'))
+    .subscribe((response) => {
+        this.allUsers.data.map((user)=> {
+           this.loginCountByuser[user.doc.name] = response.filter(res=>res.user===user.doc.name).length;         
         });
-    });
-   
+    });   
   }
 
 }
