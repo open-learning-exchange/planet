@@ -29,6 +29,8 @@ import { TeamsService } from './teams/teams.service';
 import { RatingService } from './shared/forms/rating.service';
 import { TagsService } from './shared/forms/tags.service';
 import { ManagerService } from './manager-dashboard/manager.service';
+import { FormsModule } from '@angular/forms';
+import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   imports: [
@@ -38,6 +40,8 @@ import { ManagerService } from './manager-dashboard/manager.service';
     BrowserAnimationsModule,
     MaterialModule,
     PlanetDialogsModule,
+    FormsModule,
+    TextMaskModule,
     NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')

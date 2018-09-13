@@ -84,7 +84,7 @@ export class ResourcesAddComponent implements OnInit {
           : ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
       ],
       author: '',
-      year: '',
+      year: [ '', Validators.pattern('^[0-9]+$')  ],
       description: [ '', Validators.required ],
       tags: [ [] ],
       language: '',
