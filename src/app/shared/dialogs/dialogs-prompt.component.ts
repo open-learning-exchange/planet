@@ -21,6 +21,7 @@ export class DialogsPromptComponent {
   message = '';
   showMainParagraph: boolean;
   cancelable: boolean;
+  spinnerOn = true;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsPromptComponent>,
