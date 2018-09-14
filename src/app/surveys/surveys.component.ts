@@ -18,8 +18,9 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
+  allSubmisson: any;
 
   constructor(
     private couchService: CouchService,
@@ -35,8 +36,12 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-    this.getSurveys().subscribe((surveys) => {
-      this.surveys.data = surveys;
+    this.getSurveys()
+    .subscribe((surveys) => {
+      this.getSubmission().subscribe((submissions) => {
+        this.surveys.data = surveys;
+        this.allSubmisson = submissions;
+      });
     });
   }
 
@@ -45,9 +50,19 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     this.surveys.paginator = this.paginator;
   }
 
+  getTaken(testId: String) {
+    return this.allSubmisson.filter(data => data.parentId === testId).length;
+  }
+
   getSurveys() {
     return this.couchService.findAll('exams', { 'selector': { 'type': 'surveys' } });
   }
+
+  getSubmission() {
+    // get the no of submisson for each test from submisson table
+    return this.couchService.findAll('submissions', { 'selector': { 'type': 'survey' } });
+  }
+
 
   goBack() {
     this.router.navigate([ '/manager' ]);
