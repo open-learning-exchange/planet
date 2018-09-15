@@ -21,7 +21,7 @@ export class DialogsPromptComponent {
   message = '';
   showMainParagraph: boolean;
   cancelable: boolean;
-  spinnerOn = true;
+  spinnerOn: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsPromptComponent>,
@@ -32,6 +32,7 @@ export class DialogsPromptComponent {
     this.showMainParagraph = this.setDefault(this.data.showMainParagraph, true);
     this.cancelable = this.setDefault(this.data.cancelable, true);
     this.data.okClick = this.setDefault(this.data.okClick, this.close.bind(this));
+    this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
   }
 
   ok() {
