@@ -88,7 +88,7 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     # Add CouchDB Docker
-    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.1.2
+    sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.2.0
     # Install Angular CLI
     #sudo npm install -g @angular/cli
     #sudo npm install -g webdriver-manager

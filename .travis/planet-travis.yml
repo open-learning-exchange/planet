@@ -2,7 +2,7 @@ services:
   couchdb:
     expose:
       - 5984
-    image: treehouses/couchdb:2.1.1
+    image: treehouses/couchdb:2.2.0
     ports:
       - "5984:5984"
       - "5986:5986"
