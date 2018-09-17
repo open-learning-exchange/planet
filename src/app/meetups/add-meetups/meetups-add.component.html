@@ -34,9 +34,8 @@
         </mat-form-field>
       </div>
       <div>
-        <label i18n>Recurring</label>
+        <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">
-          <label i18n>Frequency</label>
           <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
           <mat-radio-button value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
           <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
