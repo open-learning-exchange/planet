@@ -49,6 +49,8 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
+      // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
+      submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       const fullName = (firstName, lastName) => ((firstName || '') + ' ' + (lastName || '')).trim();
       this.submissions.data = submissions.map(submission => ({
         ...submission, submittedBy: submission.user.name || fullName(submission.user.firstName, submission.user.lastName)
