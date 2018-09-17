@@ -40,6 +40,7 @@ export class ConfigurationService {
         'status': 'unread',
         'time': Date.now()
       };
+      this.configuration = configuration;
       // Send notification to parent
       return this.couchService.post('notifications', requestNotification, {
         domain: configuration.parentDomain
