@@ -65,13 +65,13 @@ export class DashboardComponent implements OnInit {
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
-    return this.couchService.post(db + '/_find', findDocuments({ '_id': { '$in': shelf } }, 0 ))
+    return this.couchService.bulkGet(db, shelf)
       .pipe(
         catchError(() => {
-          return of({ docs: [] });
+          return of([]);
         }),
-        map(response => {
-          return response.docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
+        map(docs => {
+          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
         })
       );
   }

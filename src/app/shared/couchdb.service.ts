@@ -98,6 +98,13 @@ export class CouchService {
     }), flatMap(({ docs }) => docs), toArray());
   }
 
+  bulkGet(db: string, ids: string[], opts?: any) {
+    const docs = ids.map(id => ({ id }));
+    return this.post(db + '/_bulk_get', { docs }, opts).pipe(
+      map((response: any) => response.results.map((result: any) => result.docs[0].ok))
+    );
+  }
+
   stream(method: string, db: string) {
     const url = this.baseUrl + db;
     const req = new HttpRequest(method, url, {
