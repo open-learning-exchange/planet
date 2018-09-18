@@ -53,16 +53,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
-        const getOpts: any = { resourceIds: [ this.resourceId ] };
-        if (this.parent) {
-          getOpts.opts = { domain: this.userService.getConfig().parentDomain };
-        }
         this.resourceActivity(this.resourceId, 'visit');
-        this.resourcesService.updateResources(getOpts);
+        this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
-    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe((resourceArr) => {
-        this.resource = resourceArr[0];
+    this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
+      .subscribe((resources) => {
+        this.resource = resources.find((r: any) => r._id === this.resourceId);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
       });
   }
@@ -93,8 +89,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
-  updateRating(itemId) {
-    this.resourcesService.updateResources({ resourceIds: [ itemId ], updateCurrentResources: true });
+  updateRating() {
+    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
   libraryToggle(resourceId, type) {

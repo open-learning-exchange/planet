@@ -42,11 +42,11 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   ngOnChanges() {
     if (this.resource === undefined || this.resource._id !== this.resourceId) {
-      this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
-        .subscribe((resourceArr) => {
-          this.setResource(resourceArr[0]);
+      this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
+        .subscribe((resources) => {
+          this.setResource(resources.find((r: any) => r._id === this.resourceId));
         });
-      this.resourcesService.updateResources({ resourceIds: [ this.resourceId ] });
+      this.resourcesService.requestResourcesUpdate(this.parent);
     } else {
       this.setResource(this.resource);
     }
