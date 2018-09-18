@@ -12,10 +12,17 @@
     margin-bottom: 15px;
   }
 
+  .question-list mat-checkbox {
+    margin: 5px;
+  }
+
+  .question-list mat-checkbox:last-child {
+    margin-bottom: 15px;
+  }
+
   .v-align-center {
       display: flex;
       align-items: center;
-      padding-top: 10px;
   }
 
   .question-header {
