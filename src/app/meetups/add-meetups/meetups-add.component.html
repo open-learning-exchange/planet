@@ -8,14 +8,12 @@
   <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
-      <div class="form-width-3">
-        <mat-form-field class="full-width">
-          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field class="full-width">
+        <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
       <div>
         <td-text-editor class="full-width" formControlName="description" required></td-text-editor>
         <mat-error>
@@ -44,6 +42,7 @@
           <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
+      </div>
       <div *ngIf="meetupForm.controls.recurring.value==='weekly'">
         <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
@@ -57,24 +56,22 @@
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
-        <mat-form-field class="full-width">
-          <mat-select i18n-placeholder placeholder="Category" formControlName="category">
-            <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
-          </mat-select>
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.category"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field class="full-width">
+        <mat-select i18n-placeholder placeholder="Category" formControlName="category">
+          <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+        </mat-select>
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.category"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
       <button mat-raised-button type="submit" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" i18n>Save</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
-      </div>
     </form>
   </div>
 </div>
