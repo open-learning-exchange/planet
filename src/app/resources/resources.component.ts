@@ -80,7 +80,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$)).pipe(
+    this.resourcesService.resourcesListener(this.parent).pipe(
+      takeUntil(this.onDestroy$),
       map((resources) => {
         // Sort in descending createdDate order, so the new resource can be shown on the top
         resources.sort((a, b) => b.createdDate - a.createdDate);
@@ -91,7 +92,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.data = resources;
       this.emptyData = !this.resources.data.length;
     });
-    this.resourcesService.updateResources({ opts: this.getOpts });
+    this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = composeFilterFunctions(
       [ filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
     );
@@ -236,7 +237,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
-          this.resourcesService.updateResources({ opts: this.getOpts });
+          this.resourcesService.requestResourcesUpdate(this.parent);
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
