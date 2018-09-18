@@ -13,17 +13,7 @@
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
       </mat-form-field>
-      <mat-form-field>
-        <textarea
-          matInput
-          i18n-placeholder
-          placeholder="Description"
-          formControlName="description"
-          matTextareaAutosize
-          matAutosizeMaxRows="5"
-          matAutosizeMinRows="4">
-        </textarea>
-      </mat-form-field>
+      <td-text-editor formControlName="description"></td-text-editor>
     </form>
     <div *ngIf="activeStep?.resources?.length"><span i18n>Attached resources: </span><span *ngFor="let resource of activeStep.resources; let isLast= last">{{resource.title}}{{isLast ? '' : ', '}}</span></div>
     <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>

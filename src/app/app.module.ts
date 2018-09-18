@@ -28,6 +28,7 @@ import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
 import { TeamsService } from './teams/teams.service';
 import { RatingService } from './shared/forms/rating.service';
 import { TagsService } from './shared/forms/tags.service';
+import { ManagerService } from './manager-dashboard/manager.service';
 
 @NgModule({
   imports: [
@@ -60,7 +61,8 @@ import { TagsService } from './shared/forms/tags.service';
     SyncService,
     TeamsService,
     RatingService,
-    TagsService
+    TagsService,
+    ManagerService
   ],
   bootstrap: [ AppComponent ]
 })

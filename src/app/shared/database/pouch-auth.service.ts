@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { from, throwError, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
@@ -29,8 +29,8 @@ export class PouchAuthService {
     );
   }
 
-  signup(username, password, metadata?) {
-    return from(this.authDB.signUp(username, password, { metadata })).pipe(
+  signup(username, password, opts = {}) {
+    return from(this.authDB.signUp(username, password, opts)).pipe(
       catchError(this.handleError)
     );
   }

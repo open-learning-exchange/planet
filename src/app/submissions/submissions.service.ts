@@ -43,11 +43,12 @@ export class SubmissionsService {
   }
 
   private createNewSubmission({ parentId, parent, user, type }) {
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode };
+    const times = { startTime: Date.now(), lastUpdateTime: Date.now() };
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode, ...times };
   }
 
-  openSubmission({ parentId = '', parent = '', user = '', type = '', submissionId = '', status = 'pending' }) {
-    const selector = submissionId ? { '_id': submissionId } : { parentId, user };
+  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
+    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name };
     this.couchService.post('submissions/_find', { selector })
       .subscribe((res) => {
         let attempts = res.docs.length - 1;
@@ -64,7 +65,7 @@ export class SubmissionsService {
   }
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: Date.now() };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
       value: answer,
@@ -78,7 +79,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ] };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: Date.now() };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }
@@ -114,7 +115,7 @@ export class SubmissionsService {
 
   filterSubmissions(submissions, parentId) {
     return submissions.filter(s => s.parentId === parentId).reduce((subs, submission) => {
-      const userSubmissionIndex = subs.findIndex((s) => s.user === submission.user);
+      const userSubmissionIndex = subs.findIndex((s) => s.user._id === submission.user._id);
       if (userSubmissionIndex !== -1) {
         const oldSubmission = subs[userSubmissionIndex];
         subs[userSubmissionIndex] = this.calcTotalGrade(submission) > this.calcTotalGrade(oldSubmission) ?
@@ -134,7 +135,6 @@ export class SubmissionsService {
       switchMap((submissions: any) => {
         const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
         const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
-        console.log(newSubmissions);
         return this.couchService.post('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
         });

@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject, forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
+import { UserService } from '../shared/user.service';
+import { dedupeShelfReduce } from '../shared/utils';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Injectable()
 export class ResourcesService {
@@ -15,7 +18,9 @@ export class ResourcesService {
 
   constructor(
     private couchService: CouchService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
       const { resourceIds, opts } = this.currentParams;
@@ -53,7 +58,9 @@ export class ResourcesService {
   }
 
   getAllResources(opts: any) {
-    return this.couchService.allDocs(this.dbName, opts);
+    return this.couchService.findAll(this.dbName, findDocuments({
+      '_id': { '$gt': null }
+    }, [ '_id', '_rev', 'title', 'description', 'createdDate', 'tags', 'isDownloadable', 'filename' ], [], 1000), opts);
   }
 
   getResources(resourceIds: string[], opts: any) {
@@ -70,4 +77,11 @@ export class ResourcesService {
     return this.ratingService.createItemList(resourcesRes, ratings);
   }
 
+  libraryAddRemove(resourceIds, type) {
+    return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map((res) => {
+      const admissionMessage = type === 'remove' ? 'Resource successfully removed from myLibrary' : 'Resource added to your dashboard';
+      this.planetMessageService.showMessage(admissionMessage);
+      return res;
+    }));
+  }
 }

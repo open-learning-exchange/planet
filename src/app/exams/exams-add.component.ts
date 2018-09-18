@@ -48,10 +48,7 @@ export class ExamsAddComponent implements OnInit {
       name: [
         title,
         Validators.required,
-        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        this.route.snapshot.url[0].path === 'update'
-        ? ac => this.validatorService.isNameAvailible$(this.dbName, 'name', ac, this.route.snapshot.params.id)
-        : ac => this.validatorService.isUnique$(this.dbName, 'name', ac)
+        this.nameValidator()
       ],
       passingPercentage: [
         100,
@@ -70,6 +67,7 @@ export class ExamsAddComponent implements OnInit {
       .subscribe((data) => {
         this.pageType = 'Update';
         this.documentInfo = { _rev: data._rev, _id: data._id };
+        this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
         this.examForm.patchValue(data);
         if (data.questions) {
           data.questions.forEach((question) => this.addQuestion(question));
@@ -87,6 +85,12 @@ export class ExamsAddComponent implements OnInit {
       this.checkValidFormComponent(this.examForm);
       this.showFormError = true;
     }
+  }
+
+  nameValidator(exception = '') {
+    return ac => this.validatorService.isUnique$(
+      this.dbName, 'name', ac, { exceptions: [ exception ], selectors: { type: this.examType } }
+    );
   }
 
   checkValidFormComponent(formField) {

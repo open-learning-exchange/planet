@@ -1,0 +1,9 @@
+services:
+  couchdb:
+    volumes:
+      - "/srv/planet/data:/opt/couchdb/data"
+      - "/srv/planet/log:/opt/couchdb/var/log"
+  planet:
+    volumes:
+      - "/srv/planet/pwd:/usr/share/nginx/html/credentials"
+version: "2"

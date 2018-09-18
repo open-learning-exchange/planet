@@ -4,6 +4,7 @@ import { catchError, switchMap, map } from 'rxjs/operators';
 import { of, Observable, Subject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
+import { addToArray, removeFromArray } from './utils';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -171,6 +172,12 @@ export class UserService {
       this.sessionRev = res.rev;
       return res;
     }));
+  }
+
+  changeShelf(ids: string[], shelfName: string, type: string) {
+    const currentIds = this.shelf[shelfName];
+    const newIds: string[] = type === 'remove' ? removeFromArray(currentIds, ids) : addToArray(currentIds, ids);
+    return this.updateShelf(newIds, shelfName);
   }
 
   updateShelf(ids: string[], shelfName: string) {
