@@ -4,22 +4,37 @@ import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
 import { of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ConfigurationService } from '../../configuration/configuration.service';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
 
 @Injectable()
 export class RatingService {
   private dbName = 'ratings';
-  private ratingsUpdated = new Subject<void>();
+  private ratingsUpdated = new Subject<any>();
   ratingsUpdated$ = this.ratingsUpdated.asObservable();
+  ratings: any[];
 
   constructor(
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private configurationService: ConfigurationService
   ) {}
 
-  updateRatings() {
-    this.ratingsUpdated.next();
+  updateRatings(parent: boolean) {
+    this.ratingsUpdated.next({ ratings: this.ratings, parent });
+  }
+
+  newRatings(parent: boolean) {
+    const opts = parent ? { domain: this.configurationService.configuration.parentDomain } : {};
+    this.couchService.findAll(this.dbName, undefined, opts).pipe(catchError(err => {
+      // If there's an error, return a fake couchDB empty response
+      // so resources can be displayed.
+      return of([]);
+    })).subscribe((res: any) => {
+      this.ratings = res;
+      this.ratingsUpdated.next({ ratings: res, parent });
+    });
   }
 
   getRatings({ itemIds, type }: {itemIds: string[], type: string}, opts: any) {
