@@ -135,4 +135,18 @@ export class CouchService {
     return (local < parent) ? 'newerAvailable' : (local > parent) ? 'parentOlder' : 'mismatch';
   }
 
+  combineChanges(docs: any[], changesDocs: any[]) {
+    return docs.reduce((newDocs: any[], doc: any) => {
+      const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
+      if (changesDoc && changesDoc._deleted === true) {
+        return newDocs;
+      }
+      newDocs.push(changesDoc !== undefined ? changesDoc : doc);
+      return newDocs;
+    }, []).concat(
+      changesDocs.filter((cDoc: any) =>
+        cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
+    );
+  }
+
 }
