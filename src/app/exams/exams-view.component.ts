@@ -23,6 +23,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   incorrectAnswer = false;
   spinnerOn = true;
   mode = 'take';
+  title = '';
   grade;
   submissionId: string;
   fromSubmission = false;
@@ -122,9 +123,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 
-  setTakingExam(exam, parentId, type) {
+  setTakingExam(exam, parentId, type, title) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
+    this.title = title;
     this.submissionsService.openSubmission({
       parentId,
       parent: exam,
@@ -143,7 +145,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     .subscribe(({ course, progress }: { course: any, progress: any }) => {
       // To be readable by non-technical people stepNum & questionNum param will start at 1
       const step = course.steps[this.stepNum - 1];
-      this.setTakingExam(step.exam, step.exam._id + '@' + course._id, 'exam');
+      this.setTakingExam(step.exam, step.exam._id + '@' + course._id, 'exam', step.stepTitle);
     });
   }
 
@@ -152,6 +154,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.submissionId = submission._id;
       if (this.fromSubmission === true) {
         this.examType = submission.parent.type;
+        this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
         const ans = submission.answers[this.questionNum - 1];
         this.answer = ans ? ans.value : undefined;
@@ -162,7 +165,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   getSurvey(surveyId: string) {
     this.couchService.get('exams/' + surveyId).subscribe((survey) => {
-      this.setTakingExam(survey, survey._id, 'survey');
+      this.setTakingExam(survey, survey._id, 'survey', survey.name);
     });
   }
 
