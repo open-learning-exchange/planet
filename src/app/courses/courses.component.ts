@@ -219,7 +219,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.courses.data.slice(start, end).forEach(row => this.selection.select(row));
+    this.courses.data.slice(start, end).forEach(row => this.selection.select(row._id));
   }
 
   onFilterChange(filterValue: string, field: string) {
