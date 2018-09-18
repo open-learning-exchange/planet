@@ -15,13 +15,15 @@
             <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
           </mat-error>
         </mat-form-field>
-        <mat-form-field class="full-width">
-          <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field class="custom-input-width">
+      </div>
+      <div>
+        <td-text-editor class="full-width" formControlName="description" required></td-text-editor>
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages>
+        </mat-error>
+      </div>
+      <div>
+        <mat-form-field>
           <input matInput [matDatepicker]="datepickerStart" i18n-placeholder placeholder="Start Date" formControlName="startDate">
           <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
           <mat-datepicker #datepickerStart></mat-datepicker>
@@ -33,9 +35,11 @@
           <mat-datepicker #datepickerEnd></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
+      </div>
+      <div>
         <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">
-          <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" il8n>Daily</mat-radio-button>
+          <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
           <mat-radio-button value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
           <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>

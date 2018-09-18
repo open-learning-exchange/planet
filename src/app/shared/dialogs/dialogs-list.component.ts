@@ -113,18 +113,23 @@ export class DialogsListComponent implements AfterViewInit {
       return;
     }
     this.dropdownField = dropdownSettings.field;
-    this.dropdownOptions = this.tableData.data.reduce((values: any[], item: any) => {
-        const value = item[dropdownSettings.field];
-        if (values.findIndex(v => v.value === value) === -1) {
-          values.push({ value, text: value });
-        }
-        return values;
-      }, dropdownSettings.startingValue ? [ dropdownSettings.startingValue ] : []);
+    this.dropdownOptions = this.reduceDropDown(dropdownSettings);
     const otherFilterPredicates = this.tableData.filterPredicate;
     this.dropdownFilter = dropdownSettings.startingValue.value ?
       { [dropdownSettings.field]: dropdownSettings.startingValue.value } : { [dropdownSettings.field]: '' };
-    this.tableData.filterPredicate = composeFilterFunctions([ otherFilterPredicates, filterDropdowns(this.dropdownFilter) ]);
+    this.tableData.filterPredicate = this.dropdownFilter.value ?
+      composeFilterFunctions([ otherFilterPredicates, filterDropdowns(this.dropdownFilter) ]) : otherFilterPredicates;
     this.tableData.filter = ' ';
+  }
+
+  reduceDropDown(dropdownSettings) {
+    return this.tableData.data.reduce((values: any[], item: any) => {
+      const value = item[dropdownSettings.field];
+      if (value && values.findIndex(v => v.value === value) === -1) {
+        values.push({ value, text: value });
+      }
+      return values;
+    }, dropdownSettings.startingValue ? [ dropdownSettings.startingValue ] : []);
   }
 
   onFilterChange(filterValue: string, field: string) {

@@ -16,9 +16,6 @@ import { CustomValidators } from '../../validators/custom-validators';
 @Component({
   templateUrl: './users-update.component.html',
   styles: [ `
-    .space-container {
-      margin: 64px 30px;
-    }
     .view-container {
       display: flex;
       flex-wrap: wrap;
@@ -37,7 +34,7 @@ export class UsersUpdateComponent implements OnInit {
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
   uploadImage = false;
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   redirectUrl = '/';
   file: any;

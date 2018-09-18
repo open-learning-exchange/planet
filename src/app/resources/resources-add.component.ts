@@ -47,6 +47,13 @@ export class ResourcesAddComponent implements OnInit {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
     this.createForm();
+    this.resourceForm.setValidators(() => {
+      if (this.file && this.file.size / 1024 / 1024 > 512) {
+        return { 'fileTooBig': true };
+      } else {
+        return null;
+      }
+    });
   }
 
   ngOnInit() {
@@ -236,6 +243,7 @@ export class ResourcesAddComponent implements OnInit {
   bindFile(event) {
     this.file = event.target.files[0];
     this.disableDownload = false;
+    this.resourceForm.updateValueAndValidity();
   }
 
 }

@@ -51,7 +51,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.submissionsService.openSubmission({
           parentId: this.stepDetail.exam._id + '@' + course._id,
           parent: this.stepDetail.exam,
-          user: this.userService.get().name,
+          user: this.userService.get(),
           type: 'exam' });
       }
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;

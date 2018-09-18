@@ -11,7 +11,7 @@ PouchDB.plugin(PouchDBFind);
 
 @Injectable()
 export class PouchService {
-  private baseUrl = environment.couchAddress;
+  private baseUrl = environment.couchAddress + '/';
   private localDBs;
   private authDB;
   private databases = [];

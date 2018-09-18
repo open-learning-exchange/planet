@@ -16,10 +16,7 @@
       <mat-form-field>
         <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
       </mat-form-field>
-      <mat-form-field class="full-width">
-        <textarea matInput i18n-placeholder placeholder="Description" formControlName="description" required></textarea>
-        <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
-      </mat-form-field>
+      <td-text-editor class="full-width" formControlName="description" required></td-text-editor>
       <mat-form-field class="full-width">
         <planet-tag-input [formControl]="resourceForm.controls.tags" i18n-placeholder placeholder="Labels"></planet-tag-input>
       </mat-form-field>
@@ -90,10 +87,11 @@
       <div class="inner-gaps by-column full-width">
         <label i18n>File Upload:</label>
         <input type="file" (change)="bindFile($event)" />
+        <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
       </div>
       <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
       <div class="inner-gaps full-width">
-        <mat-checkbox [disabled]="disableDownload" formControlName="isDownloadable">File downloadable</mat-checkbox>
+        <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable">File downloadable</mat-checkbox>
         <ng-container *ngIf="pageType==='Update'">
           <mat-checkbox (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
         </ng-container>

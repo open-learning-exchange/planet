@@ -58,7 +58,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.submissionsService.openSubmission({
       parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
       parent: stepDetail.exam,
-      user: this.userService.get().name,
+      user: this.userService.get(),
       type: 'exam' });
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
@@ -69,7 +69,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   resourceUrl(resource) {
     if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
-      return environment.couchAddress + 'resources/' + resource._id + '/' + filename;
+      return environment.couchAddress + '/resources/' + resource._id + '/' + filename;
     }
   }
 

@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: '', component: LoginComponent,
     children: [
       { path: '', component: LoginFormComponent },
-      { path: 'newuser', component: LoginFormComponent },
+      { path: 'newmember', component: LoginFormComponent },
       { path: 'configuration', component: ConfigurationComponent,
       canActivate: [ ConfigurationGuard ] }
     ]

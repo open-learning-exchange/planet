@@ -48,7 +48,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="courses" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -58,8 +58,8 @@
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="$event ? selection.toggle(row) : null"
-            [checked]="selection.isSelected(row)">
+          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -98,10 +98,6 @@
               <mat-icon>visibility</mat-icon>
               <span i18n>View Course</span>
             </a>
-            <a mat-menu-item routerLink="add">
-              <mat-icon>credit_card</mat-icon>
-              <span i18n>Credits</span>
-            </a>
             <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
@@ -129,15 +125,15 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
     </mat-table>
 
     <mat-paginator #paginator
       [pageSize]="10"
-      [pageSizeOptions]="[5, 10, 20]"
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
       (page)="onPaginateChange($event)">
     </mat-paginator>
-  </ng-container>
+  </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No Course Found</div>
   </ng-template>

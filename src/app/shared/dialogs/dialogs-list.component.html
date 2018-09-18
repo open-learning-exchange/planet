@@ -2,7 +2,7 @@
   <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3" *ngIf="data.allowMulti && isAllSelected()!=='hidden'">
     {isAllSelected(), select, yes {Deselect} no {Select}} all
   </button>
-  <mat-form-field *ngIf="dropdownField" class="font-size-1 margin-lr-3">
+  <mat-form-field *ngIf="dropdownField && dropdownOptions.length > 1" class="font-size-1 margin-lr-3">
     <mat-select [placeholder]="dropdownField" [value]="data.dropdownSettings.startingValue.value" (selectionChange)="onFilterChange($event.value, dropdownField)">
       <mat-option *ngFor="let option of dropdownOptions" value={{option.value}}>{{option.text}}</mat-option>
     </mat-select>
@@ -27,7 +27,7 @@
 </mat-table>
 <mat-paginator #paginator
   [pageSize]="5"
-  [pageSizeOptions]="[5, 10, 20]">
+  [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
 </mat-paginator>
 <mat-dialog-actions>
   <button mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>

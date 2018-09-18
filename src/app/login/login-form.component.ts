@@ -11,6 +11,7 @@ import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 const registerForm = {
   name: [],
@@ -44,7 +45,8 @@ export class LoginFormComponent {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private syncService: SyncService,
-    private pouchAuthService: PouchAuthService
+    private pouchAuthService: PouchAuthService,
+    private configurationService: ConfigurationService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -56,7 +58,7 @@ export class LoginFormComponent {
     this.userForm = this.formBuilder.group(formObj);
   }
 
-  createMode: boolean = this.router.url.split('?')[0] === '/login/newuser';
+  createMode: boolean = this.router.url.split('?')[0] === '/login/newmember';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
   onSubmit() {
@@ -92,13 +94,17 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: { name: string, password: string }) {
-    const metadata = {
-      isUserAdmin: false,
-      planetCode: this.userService.getConfig().code,
-      joinDate: Date.now()
+    const configuration = this.configurationService.configuration;
+    const opts = {
+      metadata: {
+        isUserAdmin: false,
+        planetCode: configuration.code,
+        joinDate: Date.now(),
+      },
+      roles: configuration.autoAccept ? [ 'learner' ] : []
     };
 
-    this.pouchAuthService.signup(name, password, metadata).pipe(
+    this.pouchAuthService.signup(name, password, opts).pipe(
       switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
     ).subscribe(
       res => {
@@ -106,7 +112,7 @@ export class LoginFormComponent {
         this.welcomeNotification(res.id);
         this.login(this.userForm.value, true);
       },
-      err => this.planetMessageService.showAlert('An error occurred please try again')
+      this.loginError('An error occurred please try again')
     );
   }
 
@@ -124,7 +130,14 @@ export class LoginFormComponent {
         const adminName = this.userService.getConfig().adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
-    ).subscribe(() => {}, (error) => this.planetMessageService.showAlert('Username and/or password do not match'));
+    ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
+  }
+
+  loginError(message: string) {
+    return () => {
+      this.userForm.setErrors({ 'invalid': true });
+      this.planetMessageService.showAlert(message);
+    };
   }
 
   sendNotifications(userName, addedMember) {

@@ -9,7 +9,7 @@
     <button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
       Add Members
     </button>
-    <ng-container [ngSwitch]="userStatus">
+    <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
         Leave
       </button>
@@ -40,7 +40,7 @@
           <ul>
             <li *ngFor="let user of team?.requests">
               {{user.replace('org.couchdb.user:','')}}
-              <button mat-button class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
+              <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
             </li>
           </ul>
         </ng-template>

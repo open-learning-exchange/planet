@@ -26,14 +26,17 @@ insert_docs() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:" option; do
+while getopts "u:w:p:h:i" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
+    i) INSTALLFLAG=1;;
   esac
 done
+
+ISINSTALL=${INSTALLFLAG:-0}
 
 if [ -z "$HOST" ]
 then
@@ -123,6 +126,7 @@ node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 upsert_doc resources _design/resources @./design/resources/resources-design.json
+upsert_doc _users _design/_auth @./design/users/_auth.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST
@@ -130,20 +134,29 @@ upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"t
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
 upsert_doc feedback _index '{"index":{"fields":[{"openTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc communityregistrationrequests _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"time-index"}' POST
-# Insert dummy data docs
-insert_docs meetups ./design/meetups/meetups-mockup.json
-insert_docs courses ./design/courses/courses-mockup.json
-insert_docs resources ./design/resources/resources-mockup.json
-insert_attachments resources ./design/resources/resources-attachment-mockup.json
-# When attachment database is implemented in app, uncomment below line and delete above line
-# insert_attachments attachments ./design/resources/resources-attachment-mockup.json
-# Add permission in databases
+# Only insert dummy data and update security on install
+# _users security is set in app and auto accept will be overwritten if set here
+if (($ISINSTALL))
+then
+  # Insert dummy data docs
+  insert_docs meetups ./design/meetups/meetups-mockup.json
+  insert_docs courses ./design/courses/courses-mockup.json
+  insert_docs resources ./design/resources/resources-mockup.json
+  insert_attachments resources ./design/resources/resources-attachment-mockup.json
+  # When attachment database is implemented in app, uncomment below line and delete above line
+  # insert_attachments attachments ./design/resources/resources-attachment-mockup.json
+  # Add permission in databases
+  SECURITY=$(add_security_admin_roles ./design/security-update/security-update-once.json manager)
+  multi_db_update $SECURITY _security
+fi
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
 # Increse http request size for large attachments
 upsert_doc _node/nonode@nohost/_config httpd/max_http_request_size '"1073741824"'
+# Increse replication timeout
+upsert_doc _node/nonode@nohost/_config replicator/connection_timeout '"300000"'
 
 # Make user database public
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'

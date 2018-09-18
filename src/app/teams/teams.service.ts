@@ -29,40 +29,38 @@ export class TeamsService {
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
-  addTeamDialog(shelf) {
-    const title = 'Create Team';
+  addTeamDialog(shelf, team?) {
+    const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ '', Validators.required ],
-      description: '',
-      requests: [ [] ]
+      name: [ team ? team.name : '', Validators.required ],
+      description: team ? team.description : '',
+      requests: [ team ? team.requests : [] ]
     };
     return this.dialogsFormService
       .confirm(title, addTeamDialogFields, formGroup)
       .pipe(
         debug('Dialog confirm'),
-        switchMap((response) => {
+        switchMap((response: any) => {
           if (response !== undefined) {
-            return this.createTeam(response);
+            return this.updateTeam({ limit: 12, status: 'active', ...team, ...response });
           }
           return empty();
         }),
         switchMap((response) => {
-          return this.toggleTeamMembership({ _id: response.id }, false, shelf);
+          if (!team) {
+            return this.toggleTeamMembership({ _id: response._id }, false, shelf);
+          }
+          return of(response);
         })
       );
   }
 
-  createTeam(team: any) {
-    return this.couchService.post(this.dbName + '/', { ...team, limit: '12', status: 'active' });
-  }
-
   updateTeam(team: any) {
-    return this.couchService.put(this.dbName + '/' + team._id, team).pipe(switchMap((res: any) => {
-      team._rev = res.rev;
-      return of(team);
+    return this.couchService.post(this.dbName, team).pipe(switchMap((res: any) => {
+      return of({ _rev: res.rev, _id: res.id, ...team });
     }));
   }
 

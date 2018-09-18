@@ -2,9 +2,10 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { UserService } from '../shared/user.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
@@ -21,7 +22,12 @@ export class UpgradeComponent {
   cleanOutput = '';
   timeoutTrials = 0;
 
-  constructor(private http: HttpClient, private couchService: CouchService, private userService: UserService) {
+  constructor(
+    private http: HttpClient,
+    private couchService: CouchService,
+    private userService: UserService,
+    private managerService: ManagerService
+  ) {
     this.addLine('Not started');
   }
 
@@ -36,18 +42,18 @@ export class UpgradeComponent {
   }
 
   upgrade() {
-    this.getParentVersion().subscribe((parentVersion: string) => {
-      const requestParams = new HttpParams().set('v', parentVersion.trim());
-
-      this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams })
-        .subscribe(result => {
-          this.handleResult(result);
-        }, err => {
-          this.handleError(err);
-        });
-    }, err => {
-      this.handleError(err);
-    });
+    let parentVersion: string;
+    this.getParentVersion().pipe(
+      switchMap((pVersion: string) => {
+        parentVersion = pVersion;
+        return this.managerService.openPasswordConfirmation();
+      }),
+      switchMap((credentials) => this.postAdminCredentials(credentials)),
+      switchMap(() => {
+        const requestParams = new HttpParams().set('v', parentVersion.trim());
+        return this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams });
+      })
+    ).subscribe(result => this.handleResult(result), err => this.handleError(err));
   }
 
   handleResult(result) {
@@ -133,4 +139,14 @@ export class UpgradeComponent {
     };
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
   }
+
+  postAdminCredentials({ name, password }) {
+    const opts = {
+      responseType: 'text',
+      withCredentials: false,
+      headers: { 'Content-Type': 'text/plain' }
+    };
+    return this.couchService.getUrl('updateyml?u=' + name + ',' + password, opts);
+  }
+
 }

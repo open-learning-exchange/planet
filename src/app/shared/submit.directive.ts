@@ -1,11 +1,11 @@
-import { Directive, HostListener, Input, OnDestroy } from '@angular/core';
+import { Directive, HostListener, Input, OnChanges, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsLoadingComponent } from './dialogs/dialogs-loading.component';
 
 @Directive({
   selector: '[planetSubmit]'
 })
-export class SubmitDirective implements OnDestroy {
+export class SubmitDirective implements OnChanges, OnDestroy {
 
   constructor(public dialog: MatDialog) { }
 
@@ -20,7 +20,17 @@ export class SubmitDirective implements OnDestroy {
     }
   }
 
+  ngOnChanges() {
+    if (this.validSubmit === false) {
+      this.closeSpinner();
+    }
+  }
+
   ngOnDestroy() {
+    this.closeSpinner();
+  }
+
+  closeSpinner() {
     for (const entry of this.dialog.openDialogs) {
       if (entry === this.spinnerDialog) {
         this.spinnerDialog.close();

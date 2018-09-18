@@ -16,6 +16,9 @@ import { uniqueId } from '../shared/utils';
       align-items: center;
       grid-column-gap: 5px;
     }
+    .survey-question {
+      grid-template-columns: repeat(auto-fill, 180px);
+    }
   ` ]
 })
 export class ExamsQuestionComponent implements OnInit {

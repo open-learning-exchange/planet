@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
-  urlPrefix = environment.couchAddress + this.dbName + '/';
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
@@ -66,8 +66,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.route.paramMap.pipe(
       takeUntil(this.onDestroy$)
     ).subscribe((params: ParamMap) => {
-      const searchValue = params.get('search');
-      this.searchValue = searchValue;
+      this.applyFilter(params.get('search'));
     });
     this.initializeData();
   }
@@ -94,8 +93,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.allUsers.filter = filterValue;
     this.changeFilter(this.filterAssociated ? 'associated' : 'local');
+  }
+
+  searchChanged(searchText: string) {
+    this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
   }
 
   ngAfterViewInit() {
@@ -108,16 +112,17 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.allUsers.data.length;
-    return numSelected === numRows;
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.allUsers.data.forEach((row: any) => this.selection.select(row.doc._id));
+    this.allUsers.data.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
   }
 
   getUsers() {
@@ -140,7 +145,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         return userInfo;
       });
       this.emptyData = !this.allUsers.data.length;
-      this.applyFilter(this.searchValue);
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');

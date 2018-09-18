@@ -22,6 +22,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'name', 'action' ];
   dbName = 'teams';
   emptyData = false;
+  user = this.userService.get();
 
   constructor(
     private userService: UserService,
@@ -65,10 +66,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addTeam() {
-    this.teamsService.addTeamDialog(this.userShelf).subscribe(() => {
+  addTeam(team?) {
+    this.teamsService.addTeamDialog(this.userShelf, team).subscribe(() => {
       this.getTeams();
-      this.planetMessageService.showMessage('Team created');
+      const msg = team ? 'Team updated' : 'Team created';
+      this.planetMessageService.showMessage(msg);
     });
   }
 

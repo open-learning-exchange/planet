@@ -1,23 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { Validators } from '@angular/forms';
-import { DialogsFormService } from './dialogs/dialogs-form.service';
-import { throwError, forkJoin, of } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { debug } from '../debug-operator';
-
-const passwordFormFields = [
-  {
-    'label': 'Password',
-    'type': 'textbox',
-    'inputType': 'password',
-    'name': 'password',
-    'placeholder': 'Password',
-    'required': true
-  }
-];
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Injectable()
 export class SyncService {
@@ -28,11 +15,11 @@ export class SyncService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService
+    private managerService: ManagerService
   ) {}
 
   confirmPasswordAndRunReplicators(replicators) {
-    return this.openConfirmation().pipe(switchMap((credentials) => {
+    return this.managerService.openPasswordConfirmation().pipe(switchMap((credentials) => {
       return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
     }));
   }
@@ -45,39 +32,6 @@ export class SyncService {
 
   deleteReplicators(replicators) {
     return this.couchService.post('_replicator/_bulk_docs', { docs: replicators });
-  }
-
-  public openConfirmation() {
-    const title = 'Admin Confirmation';
-    let passwordInvalid = null;
-    const formGroup = {
-      password: [ '', [ Validators.required, () => passwordInvalid ] ]
-    };
-    return this.dialogsFormService
-    .confirm(title, passwordFormFields, formGroup)
-    .pipe(
-      debug('Dialog confirm'),
-      switchMap((response: any) => {
-        if (response !== undefined) {
-          return this.verifyPassword(response.password);
-        }
-        return throwError('Invalid password');
-      }),
-      catchError((err) => {
-        passwordInvalid = { 'invalidPassword': true };
-        return throwError(err);
-      })
-    );
-  }
-
-  private verifyPassword(password) {
-    return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(switchMap((data) => {
-      if (!data.ok) {
-        return throwError('Invalid password');
-      }
-      return of({ name: this.userService.get().name, password });
-    }));
   }
 
   private syncParams(replicator, credentials, type) {
@@ -104,7 +58,7 @@ export class SyncService {
 
   private dbObj(dbName, credentials, parent: boolean) {
     const username = credentials.name + (parent ? '@' + this.code : '');
-    const domain = parent ? this.parentDomain + '/' : environment.couchAddress;
+    const domain = parent ? this.parentDomain + '/' : environment.syncAddress + '/';
     const protocol = parent ? environment.parentProtocol + '://' : '';
     return {
       'headers': {

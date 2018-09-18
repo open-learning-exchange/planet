@@ -34,17 +34,18 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   resourceSrc = '';
   pdfSrc: any;
   contentType = '';
+  isUserEnrolled = false;
   // If parent route, url will use parent domain.  If not uses this domain.
   parent = this.route.snapshot.data.parent;
   get urlPrefix()  {
-    let domain = environment.couchAddress;
+    let domain = environment.couchAddress + '/';
     if (this.parent) {
       domain = 'http://' + this.userService.getConfig().parentDomain + '/';
     }
     return domain + this.dbName + '/';
   }
   // Use string rather than boolean for i18n select
-  fullView = 'off';
+  fullView = 'on';
   resourceId: string;
 
   ngOnInit() {
@@ -62,6 +63,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((resourceArr) => {
         this.resource = resourceArr[0];
+        this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
       });
   }
 
@@ -93,6 +95,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   updateRating(itemId) {
     this.resourcesService.updateResources({ resourceIds: [ itemId ], updateCurrentResources: true });
+  }
+
+  libraryToggle(resourceId, type) {
+    this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
+      this.isUserEnrolled = !this.isUserEnrolled;
+    }, (error) => ((error)));
   }
 
 }

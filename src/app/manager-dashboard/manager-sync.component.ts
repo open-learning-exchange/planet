@@ -83,17 +83,28 @@ export class ManagerSyncComponent implements OnInit {
       this.couchService.findAll('replicator_users', { 'selector': {} })
     ]).pipe(
       switchMap(([ users, repUsers ]) => {
-        const newRepUsers = users.map((user: any) => {
-          const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
-            { _id, _rev, ...userProps } = user;
-          return { ...repUser, ...userProps, _id: user.name + '@' + user.planetCode, couchId: user._id };
-        });
+        const newRepUsers = this.createReplicatorUserDoc(users, repUsers);
         const deletedRepUsers = repUsers
           .filter((rUser: any) => users.findIndex((user: any) => rUser.couchId === user._id) < 0)
           .map((rUser: any) => ({ ...rUser, '_deleted': true }));
         return this.couchService.post('replicator_users/_bulk_docs', { docs: newRepUsers.concat(deletedRepUsers) });
       })
     );
+  }
+
+  createReplicatorUserDoc(users: any[], repUsers: any[]) {
+    const planetCode = this.userService.getConfig().code;
+    return users.map((user: any) => {
+      const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
+        { _id, _rev, ...userProps } = user;
+      return {
+        ...repUser,
+        ...userProps,
+        _id: user.name + '@' + planetCode,
+        couchId: user._id,
+        planetCode: planetCode
+      };
+    });
   }
 
 }

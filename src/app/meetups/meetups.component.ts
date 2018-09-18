@@ -20,7 +20,7 @@ import { debug } from '../debug-operator';
       max-width: 44px;
     }
     .mat-column-info {
-      max-width: 225px;
+      max-width: 500px;
     }
   ` ]
 })
@@ -70,9 +70,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.meetups.data.length;
-    return numSelected === numRows;
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
   }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -80,9 +79,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.meetups.data.forEach((row: any) => this.selection.select(row._id));
+    this.meetups.data.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {

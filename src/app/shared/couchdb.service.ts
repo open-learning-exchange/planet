@@ -20,7 +20,7 @@ export class CouchService {
   }
 
   private couchDBReq(type: string, db: string, [ domain, protocol, opts ]: any[], data?: any) {
-    const url = domain ? (protocol || environment.parentProtocol) + '://' + domain + '/' + db : this.baseUrl + db;
+    const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
       httpReq = this.http[type](url, data, opts);
@@ -78,8 +78,7 @@ export class CouchService {
   }
 
   localComparison(db: string, parentDocs: any[]) {
-    const ids = parentDocs.map((parentDoc: any) => parentDoc._id);
-    return this.findAll(db, findDocuments({ '_id': inSelector(ids) })).pipe(map((localDocs) => {
+    return this.findAll(db, findDocuments({ '_id': { '$gt': null } }, 0, 0, 1000)).pipe(map((localDocs) => {
       return parentDocs.map((parentDoc) => {
         const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
         return {
@@ -90,13 +89,20 @@ export class CouchService {
     }));
   }
 
-  findAll(db: string, query: any, opts?: any) {
+  findAll(db: string, query: any = { 'selector': { '_id': { '$gt': null } } }, opts?: any) {
     console.log(query);
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
       return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
     }), takeWhile((res) => {
       return res.docs.length > 0;
     }), flatMap(({ docs }) => docs), toArray());
+  }
+
+  bulkGet(db: string, ids: string[], opts?: any) {
+    const docs = ids.map(id => ({ id }));
+    return this.post(db + '/_bulk_get', { docs }, opts).pipe(
+      map((response: any) => response.results.map((result: any) => result.docs[0].ok))
+    );
   }
 
   stream(method: string, db: string) {
@@ -115,7 +121,7 @@ export class CouchService {
 
   getUrl(url: string, reqOpts?: any) {
     const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
-    const domain = domainWithPort ? domainWithPort.split(':')[0] : '';
+    const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
     const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
     return this.http.get(urlPrefix + '/' + url, opts);
   }

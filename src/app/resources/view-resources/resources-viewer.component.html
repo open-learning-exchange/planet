@@ -10,6 +10,6 @@
   </audio>
   <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
     oallowfullscreen msallowfullscreen ></iframe>
-  <div *ngSwitchCase="'other'"><a mat-button-raised href={{resourceSrc}}>Open File</a></div>
+  <div *ngSwitchCase="'other'"><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
   <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
 </div>

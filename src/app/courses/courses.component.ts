@@ -16,7 +16,7 @@ import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -144,11 +144,12 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSelected() {
+    const selected = this.selection.selected.map(courseId => findByIdInArray(this.courses.data, courseId));
     let amount = 'many',
-      okClick = this.deleteCourses(this.selection.selected),
+      okClick = this.deleteCourses(selected),
       displayName = '';
-    if (this.selection.selected.length === 1) {
-      const course = this.selection.selected[0];
+    if (selected.length === 1) {
+      const course = selected[0];
       amount = 'single';
       okClick = this.deleteCourse(course);
       displayName = course.courseTitle;
@@ -178,7 +179,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: courseId, _rev: courseRev } = course;
       this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
         .subscribe((data) => {
-          this.selection.deselect(course);
+          this.selection.deselect(course._id);
           // It's safer to remove the item from the array based on its id than to splice based on the index
           this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
           this.deleteDialog.close();
@@ -208,16 +209,17 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.courses.data.length;
-    return numSelected === numRows;
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.courses.data.forEach(row => this.selection.select(row));
+    this.courses.data.slice(start, end).forEach(row => this.selection.select(row));
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -267,7 +269,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, (error) => ((error)));
   }
 
-  shareCourse(type, courses) {
+  shareCourse(type, courseIds) {
+    const courses = courseIds.map(courseId => findByIdInArray(this.courses.data, courseId));
     const msg = (type === 'pull' ? 'fetch' : 'send');
     const { resources, exams } = this.coursesService.attachedItemsOfCourses(courses);
     this.syncService.confirmPasswordAndRunReplicators([
@@ -294,7 +297,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendCourse(db: string) {
     return (selected: any) => {
-      const coursesToSend = this.selection.selected.map(course => ({ db, sendTo: selected[0].code, item: course }));
+      const coursesToSend = this.selection.selected.map(courseId => ({
+        db, sendTo: selected[0].code, item: findByIdInArray(this.courses.data, courseId)
+      }));
       this.couchService.post('send_items/_bulk_docs', { 'docs': coursesToSend }).subscribe(() => {
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
