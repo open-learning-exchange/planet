@@ -2,8 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -21,8 +19,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-    private router: Router,
     private userService: UserService,
     private resourcesService: ResourcesService
   ) { }
