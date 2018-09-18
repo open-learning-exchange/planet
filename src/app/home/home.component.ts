@@ -10,6 +10,8 @@ import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { PouchAuthService } from '../shared/database';
+import { MatDialog } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './home.component.html',
@@ -29,6 +31,7 @@ import { PouchAuthService } from '../shared/database';
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   sidenavState = 'closed';
   notifications = [];
+  logoutDialog: any;
   @ViewChild('content') private mainContent;
   user: any = {};
   userImgSrc = '';
@@ -50,7 +53,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private couchService: CouchService,
     private router: Router,
     private userService: UserService,
-    private pouchAuthService: PouchAuthService
+    private pouchAuthService: PouchAuthService,
+    private dialog: MatDialog
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -116,20 +120,33 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     alert('You are going to switch in ' + servedUrl + ' environment');
   }
 
-  logoutClick() {
-    this.userService.endSessionLog().pipe(switchMap(() => {
-      const obsArr = [ this.pouchAuthService.logout() ];
-      const localAdminName = this.userService.getConfig().adminName.split('@')[0];
-      if (localAdminName === this.userService.get().name) {
-        obsArr.push(
-          this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parentDomain }),
-        );
+  confirmLogout() {
+    this.logoutDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.logoutClick(),
+        changeType: 'logout',
+        type: 'user'
       }
-      return forkJoin(obsArr);
-    })).subscribe((response: any) => {
-        this.userService.unset();
-        this.router.navigate([ '/login' ], {});
-    }, err => console.log(err));
+    });
+  }
+
+  logoutClick() {
+    return  () => {
+      this.userService.endSessionLog().pipe(switchMap(() => {
+        const obsArr = [ this.pouchAuthService.logout() ];
+        const localAdminName = this.userService.getConfig().adminName.split('@')[0];
+        if (localAdminName === this.userService.get().name) {
+          obsArr.push(
+            this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parentDomain }),
+          );
+        }
+        return forkJoin(obsArr);
+      })).subscribe((response: any) => {
+          this.userService.unset();
+          this.logoutDialog.close();
+          this.router.navigate([ '/login' ], {});
+      }, err => console.log(err));
+    };
   }
 
   getNotification() {

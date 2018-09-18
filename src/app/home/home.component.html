@@ -19,7 +19,7 @@
     <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
     <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
     <button mat-menu-item i18n planetChangePassword>Change Password</button>
-    <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+    <button mat-menu-item i18n (click)="confirmLogout()">Logout</button>
   </mat-menu>
 </mat-toolbar>
 <!--Notification dropdown menu-->
@@ -103,7 +103,7 @@
         </a>
       </li>
       <li>
-        <a mat-button (click)="logoutClick()" i18n-title title="Logout">
+        <a mat-button (click)="confirmLogout()" i18n-title title="Logout">
           <mat-icon svgIcon="logout"></mat-icon>
           <label i18n>Logout</label>
         </a>
