@@ -101,7 +101,10 @@ export class CouchService {
   bulkGet(db: string, ids: string[], opts?: any) {
     const docs = ids.map(id => ({ id }));
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
-      map((response: any) => response.results.map((result: any) => result.docs[0].ok))
+      map((response: any) => response.results
+        .map((result: any) => result.docs[0].ok)
+        .filter((doc: any) => doc._deleted !== true)
+      )
     );
   }
 
