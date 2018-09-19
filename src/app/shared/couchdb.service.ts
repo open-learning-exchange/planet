@@ -101,7 +101,10 @@ export class CouchService {
   bulkGet(db: string, ids: string[], opts?: any) {
     const docs = ids.map(id => ({ id }));
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
-      map((response: any) => response.results.map((result: any) => result.docs[0].ok))
+      map((response: any) => response.results
+        .map((result: any) => result.docs[0].ok)
+        .filter((doc: any) => doc._deleted !== true)
+      )
     );
   }
 
@@ -133,6 +136,20 @@ export class CouchService {
     local = parseInt(local.split('-')[0], 10);
     parent = parseInt(parent.split('-')[0], 10);
     return (local < parent) ? 'newerAvailable' : (local > parent) ? 'parentOlder' : 'mismatch';
+  }
+
+  combineChanges(docs: any[], changesDocs: any[]) {
+    return docs.reduce((newDocs: any[], doc: any) => {
+      const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
+      if (changesDoc && changesDoc._deleted === true) {
+        return newDocs;
+      }
+      newDocs.push(changesDoc !== undefined ? changesDoc : doc);
+      return newDocs;
+    }, []).concat(
+      changesDocs.filter((cDoc: any) =>
+        cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
+    );
   }
 
 }

@@ -115,7 +115,7 @@ export class PlanetRatingComponent implements OnChanges {
       newRating._rev = res.rev;
       newRating._id = res.id;
       this.rating.userRating = newRating;
-      this.ratingService.updateRatings();
+      this.ratingService.updateRatings(false);
       return res;
     }));
   }
