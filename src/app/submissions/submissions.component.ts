@@ -39,7 +39,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private submissionsService: SubmissionsService,
     private userService: UserService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
@@ -63,7 +63,6 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissions.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'name': return item.parent.name;
-        case 'user': return item.submittedBy;
         default: return item[property].toLowerCase();
       }
     };
@@ -121,5 +120,6 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       return 'view';
     }
     return listMode;
+
   }
 }
