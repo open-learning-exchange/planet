@@ -62,7 +62,8 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissions.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ]) ]);
     this.submissions.sortingDataAccessor = (item, property) => {
       switch (property) {
-        case 'name': return item.parent.name;
+        case 'name': return item[ 'parent' ].name.toLowerCase();
+        case 'user': return item[ 'submittedBy' ].toLowerCase();
         default: return item[property].toLowerCase();
       }
     };
@@ -121,5 +122,5 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return listMode;
   }
-  
+
 }

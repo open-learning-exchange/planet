@@ -34,7 +34,7 @@
         <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
-        <mat-header-cell *matHeaderCellDef i18n>Submitted by</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <span *ngIf="element.submittedBy !== ''; else unknownLabel">{{element.submittedBy}}</span>
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
