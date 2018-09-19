@@ -1,72 +1,80 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { Subject, forkJoin } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce } from '../shared/utils';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Injectable()
 export class ResourcesService {
   private dbName = 'resources';
-  private resourcesUpdated = new Subject<any[]>();
-  resourcesUpdated$ = this.resourcesUpdated.asObservable();
-  private currentResources = [];
-  currentParams: any;
+  private resourcesUpdated = new Subject<any>();
+  resources = { local: [], parent: [] };
+  ratings = { local: [], parent: [] };
+  lastSeq = '';
+  isActiveResourceFetch = false;
 
   constructor(
     private couchService: CouchService,
     private ratingService: RatingService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private configurationService: ConfigurationService
   ) {
-    this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
-      const { resourceIds, opts } = this.currentParams;
-      return this.getRatings(resourceIds, opts);
-    })).subscribe((ratings) => {
-      this.setResources(this.currentResources, ratings.docs, this.currentParams.updateCurrentResources);
+    this.ratingService.ratingsUpdated$.subscribe((res: any) => {
+      const planetField = res.parent ? 'parent' : 'local';
+      this.ratings[planetField] = res.ratings.filter((rating: any) => rating.type === 'resource');
+      if (!this.isActiveResourceFetch) {
+        this.setResources(this.resources[planetField], [], res.ratings, planetField);
+      }
     });
   }
 
-  updateResources({ resourceIds = [], opts = {}, updateCurrentResources = false }:
-    { resourceIds?: string[], opts?: any, updateCurrentResources?: boolean} = {}) {
-    this.currentParams = { resourceIds, opts, updateCurrentResources };
-    const resourceQuery = resourceIds.length > 0 ?
-      this.getResources(resourceIds, opts) : this.getAllResources(opts);
-    forkJoin(resourceQuery, this.getRatings(resourceIds, opts)).subscribe((results: any) => {
-      this.setResources(results[0].docs || results[0], results[1].docs, updateCurrentResources);
-    }, (err) => console.log(err));
+  resourcesListener(parent: boolean) {
+    return this.resourcesUpdated.pipe(
+      map((resources: any) => parent ? resources.parent : resources.local)
+    );
   }
 
-  setResources(resourcesRes, ratings, updateCurrentResources) {
-    const resources = this.createResourceList(resourcesRes, ratings);
-    if (updateCurrentResources && this.currentResources.length) {
-      this.currentResources.map((currentResource, cIndex) => {
-        resources.map(newResource => {
-          if (currentResource._id === newResource._id) {
-            this.currentResources[cIndex] = newResource;
-          }
-        });
-      });
-      this.resourcesUpdated.next(this.currentResources);
-      return;
-    }
-    this.currentResources = resources;
-    this.resourcesUpdated.next(resources);
+  requestResourcesUpdate(parent: boolean) {
+    const opts = parent ? { domain: this.configurationService.configuration.parentDomain } : {};
+    const currentResources = parent ?
+      this.resources.parent : this.resources.local;
+    const planetField = parent ? 'parent' : 'local';
+    const getCurrentResources = currentResources.length === 0 ?
+      this.getAllResources(opts) : of(currentResources);
+    this.isActiveResourceFetch = true;
+    forkJoin([ getCurrentResources, this.updateResourcesChanges(opts, parent) ])
+    .subscribe(([ resources, newResources ]) => {
+      this.isActiveResourceFetch = false;
+      this.setResources(resources, newResources, this.ratings[planetField], planetField);
+    });
+    this.ratingService.newRatings(parent);
+  }
+
+  setResources(currentResources, newResources, ratings, planetField) {
+    const resources = newResources.length > 0 ?
+      this.couchService.combineChanges(currentResources, newResources) : currentResources;
+    this.resources[planetField] = this.createResourceList(resources, ratings);
+    this.resourcesUpdated.next(this.resources);
   }
 
   getAllResources(opts: any) {
     return this.couchService.findAll(this.dbName, findDocuments({
       '_id': { '$gt': null }
-    }, [ '_id', '_rev', 'title', 'description', 'createdDate', 'tags', 'isDownloadable', 'filename' ], [], 1000), opts);
+    }, [], [], 1000), opts);
   }
 
-  getResources(resourceIds: string[], opts: any) {
-    return this.couchService.post(this.dbName + '/_find', findDocuments({
-      '_id': { '$in': resourceIds }
-    }, 0, [], 1000), opts);
+  updateResourcesChanges(opts: any, parent: boolean) {
+    return this.couchService
+    .get(this.dbName + '/_changes?include_docs=true&since=' + (this.lastSeq || 'now'), opts)
+    .pipe(map((res: any) => {
+      this.lastSeq = res.last_seq;
+      return res.results.map((r: any) => r.doc);
+    }));
   }
 
   getRatings(resourceIds: string[], opts: any) {

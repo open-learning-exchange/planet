@@ -4,17 +4,15 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { takeUntil, map, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields, composeFilterFunctions, filterArrayField, filterTags } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterTags } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
-import { dedupeShelfReduce } from '../shared/utils';
 import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 
@@ -72,7 +70,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
-    private httpclient: HttpClient,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private resourcesService: ResourcesService,
@@ -80,7 +77,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesUpdated$.pipe(takeUntil(this.onDestroy$)).pipe(
+    this.resourcesService.resourcesListener(this.parent).pipe(
+      takeUntil(this.onDestroy$),
       map((resources) => {
         // Sort in descending createdDate order, so the new resource can be shown on the top
         resources.sort((a, b) => b.createdDate - a.createdDate);
@@ -91,7 +89,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.data = resources;
       this.emptyData = !this.resources.data.length;
     });
-    this.resourcesService.updateResources({ opts: this.getOpts });
+    this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = composeFilterFunctions(
       [ filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
     );
@@ -156,27 +154,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.data.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
-  // Keeping for reference.  Need to refactor for service.
-  /*
-  getExternalResources() {
-    return this.couchService.post('nations/_find',
-    { 'selector': { 'name': this.nationName },
-    'fields': [ 'name', 'nationurl' ] })
-      .pipe(switchMap(data => {
-        this.nationName = data.docs[0].name;
-        const nationUrl = data.docs[0].nationurl;
-        if (nationUrl) {
-          return this.httpclient.jsonp('http://' + nationUrl +
-            '/resources/_all_docs?include_docs=true&callback=JSONP_CALLBACK',
-            'callback'
-          );
-        }
-        // If there is no url, return an observable of an empty array
-        return of([]);
-    }));
-  }
-  */
-
   updateResource(resource) {
     const { _id: resourceId } = resource;
     this.router.navigate([ '/resources/update/' + resource._id ]);
@@ -236,7 +213,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
         .subscribe((data) => {
-          this.resourcesService.updateResources({ opts: this.getOpts });
+          this.resourcesService.requestResourcesUpdate(this.parent);
           this.selection.clear();
           this.deleteDialog.close();
           this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
