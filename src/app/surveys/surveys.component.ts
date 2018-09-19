@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } from '@angular/material';
 import { forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -36,22 +37,20 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-    this.getSurveys()
-    .subscribe((surveys) => {
-      this.getSubmission().subscribe((submissions) => {
-        this.surveys.data = surveys;
-        this.allSubmisson = submissions;
+    this.getSurveys().pipe(switchMap(data => {
+        this.surveys.data = data;
+        return this.getSubmission();
+      }))
+      .subscribe((submissions) => {
+        for (const element of this.surveys.data) {
+          element['taken'] = submissions.filter(data => data.parentId === element._id).length;
+        }
       });
-    });
   }
 
   ngAfterViewInit() {
     this.surveys.sort = this.sort;
     this.surveys.paginator = this.paginator;
-  }
-
-  getTaken(testId: String) {
-    return this.allSubmisson.filter(data => data.parentId === testId).length;
   }
 
   getSurveys() {

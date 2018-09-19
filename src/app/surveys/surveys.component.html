@@ -24,7 +24,7 @@
     </ng-container>
     <ng-container matColumnDef="taken">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No of taken</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ getTaken(element._id) }}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
