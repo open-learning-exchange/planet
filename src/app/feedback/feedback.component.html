@@ -44,7 +44,7 @@
       <!-- Priorty Column -->
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
+        <mat-cell *matCellDef="let element" [ngStyle]="{'color':element.priority === 'No'? '#7F7F7F' : '#ED5142'}">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
       </ng-container>
       <!-- Owner Column -->
       <ng-container matColumnDef="owner">
@@ -54,7 +54,7 @@
       <!-- Status Column -->
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+        <mat-cell *matCellDef="let element" [ngStyle]="{'color':element.status === 'Closed'? '#7F7F7F' : '#ED5142'}">{{element.status}}</mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
