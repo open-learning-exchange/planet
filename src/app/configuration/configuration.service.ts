@@ -23,6 +23,11 @@ export class ConfigurationService {
     private userService: UserService,
     private syncService: SyncService
   ) {
+    this.getConfiguration();
+    this.setCouchListener();
+  }
+
+  private getConfiguration() {
     this.couchService.findAll('configurations').subscribe((res) => {
       this.configuration = res[0];
     });
@@ -168,6 +173,15 @@ export class ConfigurationService {
 
   createUser(name, details, opts?) {
     return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
+  }
+
+  setCouchListener() {
+    this.couchService.stream('GET', 'configurations/_changes?feed=continuous&since=now')
+      .subscribe(() => {
+        this.getConfiguration();
+      }, error => console.log(error), () => {
+        this.setCouchListener();
+      });
   }
 
 }
