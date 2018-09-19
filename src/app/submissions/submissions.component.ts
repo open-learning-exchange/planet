@@ -120,6 +120,6 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       return 'view';
     }
     return listMode;
-
   }
+  
 }
