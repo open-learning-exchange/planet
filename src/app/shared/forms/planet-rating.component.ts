@@ -104,7 +104,7 @@ export class PlanetRatingComponent implements OnChanges {
       time: Date.now(),
       user: this.userService.get(),
       createdOn: this.userService.getConfig().code,
-      parentDomain: this.userService.getConfig().parentDomain
+      parentCode: this.userService.getConfig().parentCode
     });
     let couchRequest = this.couchService.post,
       couchUrl = this.dbName;

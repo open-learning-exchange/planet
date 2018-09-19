@@ -124,7 +124,7 @@ export class UserService {
       loginTime: this.sessionStart,
       logoutTime: logoutTime,
       createdOn: this.configuration.code,
-      parentDomain: this.configuration.parentDomain
+      parentCode: this.configuration.parentCode
     }, this.sessionRev ? {
       _rev: this.sessionRev
     } : {});

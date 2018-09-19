@@ -97,6 +97,7 @@ export class ConfigurationComponent implements OnInit {
         this.parentUniqueValidator('name')
       ],
       parentDomain: [ '', Validators.required ],
+      parentCode: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [
         '',
@@ -176,6 +177,8 @@ export class ConfigurationComponent implements OnInit {
       // skip special character if comes as last character
       code = code.replace(/\W+$/, '').toLowerCase();
       this.configurationFormGroup.get('code').setValue(code);
+      const parentCode = this.nations.find(n => n.localDomain === this.configurationFormGroup.get('parentCode').value);
+      this.configurationFormGroup.get('parentCode').setValue(parentCode.code);
     }
   }
 
@@ -193,12 +196,14 @@ export class ConfigurationComponent implements OnInit {
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
         planetType: selectedValue,
-        parentDomain: environment.centerAddress
+        parentDomain: environment.centerAddress,
+        parentCode: 'earth'
       });
     } else {
       this.configurationFormGroup.patchValue({
         planetType: selectedValue,
-        parentDomain: ''
+        parentDomain: '',
+        parentCode: ''
       });
     }
   }

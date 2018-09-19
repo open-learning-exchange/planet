@@ -2,7 +2,7 @@ module.exports = {
     "views": {
       "count_ratings": {
         "map": function (doc) {
-          emit([doc.createdOn, doc.parentDomain, doc.type, doc.item], 1);
+          emit([doc.createdOn, doc.parentCode, doc.type, doc.item], 1);
         },
         "reduce": "_count"
       },

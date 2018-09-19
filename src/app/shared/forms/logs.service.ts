@@ -13,7 +13,7 @@ export class LogsService {
   addLogs(data) {
     const log = {
       createdOn: this.userService.getConfig().code,
-      parentDomain: this.userService.getConfig().parentDomain,
+      parentCode: this.userService.getConfig().parentCode,
       createdTime: Date.now()
     };
     return this.couchService.post('activity_logs', { ...log, ...data });

@@ -34,9 +34,9 @@ export class ActivityLogsComponent implements OnInit {
       }))
       .subscribe((logs) => {
         this.logs.data = this.logs.data.map(c => {
-          c['resource_activities'] = logs[0].rows.find(l => l.key[0] == c.code && l.key[1] == c.parentDomain);
-          c['ratings'] = logs[1].rows.find(l => l.key[0] == c.code && l.key[1] == c.parentDomain);
-          c['activity_logs'] = logs[2].rows.find(l => l.key[1] == c.code && l.key[2] == c.parentDomain);
+          c['resource_activities'] = logs[0].rows.find(l => l.key[0] == c.code && l.key[1] == c.parentCode);
+          c['ratings'] = logs[1].rows.find(l => l.key[0] == c.code && l.key[1] == c.parentCode);
+          c['activity_logs'] = logs[2].rows.find(l => l.key[1] == c.code && l.key[2] == c.parentCode);
           return c;
         })
       }, (error) => this.message = 'There was a problem getting Activity Logs');

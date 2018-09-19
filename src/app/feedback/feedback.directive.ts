@@ -85,7 +85,7 @@ export class FeedbackDirective {
         messages: [ startingMessage ],
         url: this.router.url,
         source: this.userService.getConfig().code,
-        parentDomain: this.userService.getConfig().parentDomain,
+        parentCode: this.userService.getConfig().parentCode,
         ...this.feedbackOf
       };
     this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
