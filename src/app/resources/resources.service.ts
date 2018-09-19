@@ -14,7 +14,7 @@ export class ResourcesService {
   private resourcesUpdated = new Subject<any>();
   resources = { local: [], parent: [] };
   ratings = { local: [], parent: [] };
-  lastSeq = '';
+  lastSeq = { local: '', parent: '' };
   isActiveResourceFetch = false;
 
   constructor(
@@ -47,7 +47,7 @@ export class ResourcesService {
     const getCurrentResources = currentResources.length === 0 ?
       this.getAllResources(opts) : of(currentResources);
     this.isActiveResourceFetch = true;
-    forkJoin([ getCurrentResources, this.updateResourcesChanges(opts, parent) ])
+    forkJoin([ getCurrentResources, this.updateResourcesChanges(opts, planetField) ])
     .subscribe(([ resources, newResources ]) => {
       this.isActiveResourceFetch = false;
       this.setResources(resources, newResources, this.ratings[planetField], planetField);
@@ -68,11 +68,11 @@ export class ResourcesService {
     }, [], [], 1000), opts);
   }
 
-  updateResourcesChanges(opts: any, parent: boolean) {
+  updateResourcesChanges(opts: any, planetField: string) {
     return this.couchService
-    .get(this.dbName + '/_changes?include_docs=true&since=' + (this.lastSeq || 'now'), opts)
+    .get(this.dbName + '/_changes?include_docs=true&since=' + (this.lastSeq[planetField] || 'now'), opts)
     .pipe(map((res: any) => {
-      this.lastSeq = res.last_seq;
+      this.lastSeq[planetField] = res.last_seq;
       return res.results.map((r: any) => r.doc);
     }));
   }
