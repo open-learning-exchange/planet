@@ -196,7 +196,7 @@ export class ManagerDashboardComponent implements OnInit {
 
   getPushedList() {
     this.couchService.post(`send_items/_find`,
-      findDocuments({ 'sendTo': this.userService.getConfig().name }),
+      findDocuments({ 'sendTo': this.userService.getConfig().code }),
         { domain: this.userService.getConfig().parentDomain })
     .subscribe(data => {
       this.pushedItems = data.docs.reduce((items, item) => {
