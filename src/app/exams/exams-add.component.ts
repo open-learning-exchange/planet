@@ -131,7 +131,7 @@ export class ExamsAddComponent implements OnInit {
   addQuestion(question: any = { choices: [] }) {
     const choices = question.choices.map((choice) => {
       return new FormGroup({
-        'text': new FormControl(choice.text),
+        'text': new FormControl(choice.text, Validators.required),
         'id': new FormControl(choice.id)
       });
     });
@@ -140,7 +140,7 @@ export class ExamsAddComponent implements OnInit {
         header: '',
         body: [ '', Validators.required ],
         type: 'input',
-        correctChoice: ''
+        correctChoice: [ '', CustomValidators.choiceSelected ]
       },
       question,
       {
