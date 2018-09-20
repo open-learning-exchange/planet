@@ -5,7 +5,7 @@
   </button>
   <span i18n>{mode, select, survey {Surveys} grade {Submissions}}</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group
+  <mat-button-toggle-group *ngIf="this.mode !== 'survey'"
     class="margin-lr-5 font-size-1"
     (change)="onFilterChange($event.value, 'type')"
     #filterGroup="matButtonToggleGroup">
