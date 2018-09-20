@@ -71,7 +71,7 @@
       </ng-container>
       <ng-container matColumnDef="visits">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No. of Visits</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ loginCountByuser[element.doc.name] }}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.visitCount}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="roles">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>

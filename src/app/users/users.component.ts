@@ -50,7 +50,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
-  loginCountByuser = <any>{};
 
   constructor(
     private dialog: MatDialog,
@@ -128,19 +127,22 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getUsers() {
-    return this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 3 });
+    return forkJoin([
+      this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
+      this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 })
+    ]);
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
+    this.getUsers().pipe(debug('Getting user list')).subscribe(([ users, loginActivities ]) => {
       this.allUsers.data = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         return currentLoginUser !== user.name && user.name !== 'satellite';
       }).map((user: any) => {
-        const userInfo = { doc: user, imageSrc: '' };
+        const userInfo = { doc: user, imageSrc: '', visitCount: this.userLoginCount(user, loginActivities) };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
@@ -280,14 +282,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedRoles = newSelection;
   }
 
-  getAllLoginActivities() {
-    return this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 3 })
-    .pipe(debug('get loggedin users'))
-    .subscribe((response) => {
-      this.allUsers.data.map((user: any) => {
-        this.loginCountByuser[user.doc.name] = response.filter((res: any) => res.user === user.doc.name).length;
-      });
-    });
+  userLoginCount(user: any, loginActivities: any[]) {
+    return loginActivities.filter((logItem: any) => logItem.user === user.name).length;
   }
 
 }
