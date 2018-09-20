@@ -21,10 +21,10 @@
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu">       
-          <h3 class="header">
+        <mat-cell *matCellDef="let element">
+          <h3>
             <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}</a>
-          </h3>       
+          </h3>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
