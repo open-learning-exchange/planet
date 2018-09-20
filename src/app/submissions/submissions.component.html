@@ -40,8 +40,8 @@
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="time">
-        <mat-header-cell *matHeaderCellDef i18n>Updated On</mat-header-cell>
+      <ng-container matColumnDef="lastUpdateTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Updated On</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <span>{{(element.lastUpdateTime | date: 'medium') || '--'}}</span>
         </mat-cell>
