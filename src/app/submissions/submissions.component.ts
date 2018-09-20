@@ -59,14 +59,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.applyFilter('');
     });
     this.submissionsService.updateSubmissions({ query });
-    this.submissions.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ]) ]);
-    this.submissions.sortingDataAccessor = (item: any, property) => {
-      switch (property) {
-        case 'name': return item.parent.name.toLowerCase();
-        case 'user': return item.submittedBy.toLowerCase();
-        default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
-      }
-    };
+    this.setupTable();
   }
 
   ngAfterViewInit() {
@@ -77,6 +70,17 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setupTable() {
+    this.submissions.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ]) ]);
+    this.submissions.sortingDataAccessor = (item: any, property) => {
+      switch (property) {
+        case 'name': return item.parent.name.toLowerCase();
+        case 'user': return item.submittedBy.toLowerCase();
+        default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string) {
