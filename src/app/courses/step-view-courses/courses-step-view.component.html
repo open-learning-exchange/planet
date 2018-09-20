@@ -36,12 +36,15 @@
     <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="stepNum === maxStep || (stepDetail?.exam?.questions.length && !examPassed)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
-  <div class="view-container view-full-height">
-    <td-markdown class="description" [content]="stepDetail.description"></td-markdown>
+  <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+    <td-markdown *ngIf="stepDetail?.description" class="description" [content]="stepDetail.description"></td-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
       [resourceId]="resource._id"
       (resourceUrl)="setResourceUrl($event)">
     </planet-resources-viewer>
   </div>
+  <ng-template #emptyRecord>
+    <div class="view-container view-full-height" i18n>No description provided.</div>
+  </ng-template>
 </div>
