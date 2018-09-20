@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap } from 'rxjs/operators';
@@ -15,6 +15,9 @@ import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { findByIdInArray } from '../shared/utils';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -40,12 +43,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  dialogRef: MatDialogRef<DialogsListComponent>;
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
+  planetType = this.userService.getConfig().planetType;
   displayedColumns = [ 'select', 'title', 'rating' ];
   getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
   currentUser = this.userService.get();
@@ -73,7 +78,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private resourcesService: ResourcesService,
-    private syncService: SyncService
+    private syncService: SyncService,
+    private dialogsListService: DialogsListService,
   ) {}
 
   ngOnInit() {
@@ -258,4 +264,25 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagInputComponent.addTag(tag);
   }
 
+  openSendResourceDialog() {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+    .subscribe((planet) => {
+      const data = { okClick: this.sendResource().bind(this),
+        filterPredicate: filterSpecificFields([ 'name' ]),
+        allowMulti: false,
+        ...planet };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data, height: '500px', width: '600px', autoFocus: false
+      });
+    });
+  }
+
+  sendResource() {
+    return (selectedPlanet: any) => {
+      const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code).subscribe(() => {
+        this.dialogRef.close();
+      }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
+    };
+  }
 }
