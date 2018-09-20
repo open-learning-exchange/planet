@@ -267,7 +267,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
     .subscribe((planet) => {
-      const data = { okClick: this.sendResource('resources').bind(this),
+      const data = { okClick: this.sendResource().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: false,
         ...planet };
@@ -277,12 +277,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  sendResource(db: string) {
-    return (selected: any) => {
-      const resourcesToSend = this.selection.selected.map(resourceId => ({
-        db, sendTo: selected[0].code, item: findByIdInArray(this.resources.data, resourceId)
-      }));
-      this.couchService.post('send_items/_bulk_docs', { 'docs': resourcesToSend }).subscribe(() => {
+  sendResource() {
+    return (selectedPlanet: any) => {
+      const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code).subscribe(() => {
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
     };
