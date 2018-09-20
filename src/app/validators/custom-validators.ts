@@ -23,7 +23,7 @@ export class CustomValidators {
 
     const inputtype = ac.parent.get('type');
     if (inputtype.value !== 'input' && !ac.value) {
-      return { required : true };
+      return { required: true };
     } else {
       return null;
     }
