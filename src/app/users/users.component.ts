@@ -83,7 +83,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterAssociated = true;
         break;
       default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
+        this.displayedColumns = [ 'select', 'profile', 'name', 'visits', 'roles', 'action' ];
         this.filterAssociated = false;
         break;
     }
@@ -125,20 +125,23 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.allUsers.data.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
   }
 
-  getUsers() {
-    return this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 3 });
+  getUsersAndLoginActivities() {
+    return forkJoin([
+      this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
+      this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 })
+    ]);
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsers().pipe(debug('Getting user list')).subscribe((users: any) => {
+    this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities ]) => {
       this.allUsers.data = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         return currentLoginUser !== user.name && user.name !== 'satellite';
       }).map((user: any) => {
-        const userInfo = { doc: user, imageSrc: '' };
+        const userInfo = { doc: user, imageSrc: '', visitCount: this.userLoginCount(user, loginActivities) };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
@@ -276,6 +279,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateSelectedRoles(newSelection: string[]) {
     this.selectedRoles = newSelection;
+  }
+
+  userLoginCount(user: any, loginActivities: any[]) {
+    return loginActivities.filter((logItem: any) => logItem.user === user.name).length;
   }
 
 }
