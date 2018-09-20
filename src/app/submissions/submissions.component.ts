@@ -27,7 +27,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns = [ 'name', 'status', 'user', 'time' ];
+  displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
   mode = 'grade';
   emptyData = false;
   filter = {
@@ -60,8 +60,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.applyFilter('');
     });
     this.submissionsService.updateSubmissions({ query });
-    this.submissions.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ]) ]);
-    this.submissions.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.setupTable();
   }
 
   ngAfterViewInit() {
@@ -72,6 +71,17 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setupTable() {
+    this.submissions.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ]) ]);
+    this.submissions.sortingDataAccessor = (item: any, property) => {
+      switch (property) {
+        case 'name': return item.parent.name.toLowerCase();
+        case 'user': return item.submittedBy.toLowerCase();
+        default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string) {

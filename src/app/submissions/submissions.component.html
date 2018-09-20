@@ -26,22 +26,22 @@
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="submissions" matSort>
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef i18n>Status</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
-        <mat-header-cell *matHeaderCellDef i18n>Submitted by</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <span *ngIf="element.submittedBy !== ''; else unknownLabel">{{element.submittedBy}}</span>
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="time">
-        <mat-header-cell *matHeaderCellDef i18n>Updated On</mat-header-cell>
+      <ng-container matColumnDef="lastUpdateTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Updated On</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <span>{{(element.lastUpdateTime | date: 'medium') || '--'}}</span>
         </mat-cell>
