@@ -2,13 +2,13 @@ module.exports = {
   "views": {
     "count_activity": {
       "map": function (doc) {
-        emit([doc.createdOn, doc.parentCode, doc.activity, doc.item], 1);
+        emit([doc.createdOn, doc.parentCode, doc.type, doc.user], 1);
       },
       "reduce": "_count"
     },
-    "total_item_activity": {
+    "total_user_activity": {
       "map": function (doc) {
-        emit(doc.activity, doc.item, 1);
+        emit(doc.type, doc.user, 1);
       },
       "reduce": "_count"
     }

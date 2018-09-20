@@ -4,7 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { ActivityLogsComponent } from './activity-logs.component';
 
 const routes: Routes = [
-  { path: '', component: ActivityLogsComponent }
+  { path: '', component: ActivityLogsComponent },
+  { path: 'logs', component: ActivityLogsComponent }
 ];
 
 @NgModule({

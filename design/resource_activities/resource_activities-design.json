@@ -1,1 +1,1 @@
-{"views":{"count_activity":{"map":"function (doc) {\n          emit([doc.createdOn, doc.parentDomain, doc.activity, doc.item], 1);\n        }","reduce":"_count"},"total_item_activity":{"map":"function (doc) {\n          emit(doc.activity, doc.item, 1);\n        }","reduce":"_count"}}}
+{"views":{"count_activity":{"map":"function (doc) {\n        emit([doc.createdOn, doc.parentCode, doc.activity, doc.item], 1);\n      }","reduce":"_count"},"total_item_activity":{"map":"function (doc) {\n        emit(doc.activity, doc.item, 1);\n      }","reduce":"_count"}}}

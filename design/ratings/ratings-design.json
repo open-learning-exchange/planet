@@ -1,1 +1,1 @@
-{"views":{"count_ratings":{"map":"function (doc) {\n          emit([doc.createdOn, doc.parentDomain, doc.type, doc.item], 1);\n        }","reduce":"_count"},"total_item_ratings":{"map":"function (doc) {\n          emit(doc.item, 1);\n        }","reduce":"_count"}}}
+{"views":{"count_ratings":{"map":"function (doc) {\n          emit([doc.createdOn, doc.parentCode, doc.type, doc.item], 1);\n        }","reduce":"_count"},"total_item_ratings":{"map":"function (doc) {\n          emit(doc.item, 1);\n        }","reduce":"_count"}}}

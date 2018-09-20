@@ -126,6 +126,7 @@ curl -X PUT $COUCHURL/activity_logs
 node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc activity_logs _design/activity_logs @./design/activity_logs/activity_logs-design.json
+upsert_doc login_activities _design/login_activities @./design/login_activities/login_activities-design.json
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 upsert_doc resources _design/resources @./design/resources/resources-design.json
 upsert_doc ratings _design/ratings @./design/ratings/ratings-design.json

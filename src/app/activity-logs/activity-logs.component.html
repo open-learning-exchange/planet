@@ -8,24 +8,39 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-    <span i18n>Activity Logs of Requests</span>
+    <span i18n>Activity Summary</span>
     </mat-toolbar-row>
   </mat-toolbar>
-  {{logs.data | json}}
   <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="logs" matSort>
-    <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="ratings">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Ratings</mat-header-cell>
-        <mat-cell *matCellDef="let element"></mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="activity">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Activities</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.activity_logs.value}}</mat-cell>
-    </ng-container>
+      </ng-container>
+      <ng-container matColumnDef="downloads">
+        <mat-header-cell *matHeaderCellDef i18n>Resource Downloads</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.resource_downloads?.value}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="views">
+        <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.resource_views?.value}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="logins">
+        <mat-header-cell *matHeaderCellDef i18n>User Login</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.user_logins?.value}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="last_login">
+        <mat-header-cell *matHeaderCellDef i18n>Last Login</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.last_login?.value | date}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="last_upgrade">
+        <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.last_upgrade?.value | date}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="last_sync">
+        <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.last_sync?.value | date}}</mat-cell>
+      </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
