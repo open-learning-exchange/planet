@@ -69,7 +69,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applyFilter(params.get('search'));
     });
     this.initializeData();
-    this.getAllLoginActivities();
   }
 
   ngOnDestroy() {
@@ -126,7 +125,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.allUsers.data.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
   }
 
-  getUsers() {
+  getUsersAndLoginActivities() {
     return forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 })
@@ -136,7 +135,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsers().pipe(debug('Getting user list')).subscribe(([ users, loginActivities ]) => {
+    this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities ]) => {
       this.allUsers.data = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
