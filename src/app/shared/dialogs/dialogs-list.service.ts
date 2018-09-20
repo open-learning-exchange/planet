@@ -41,8 +41,8 @@ export class DialogsListService {
   getListAndColumns(db: string, selector?: any, opts: any = {}) {
     selector = selector || this.defaultSelectors()[db] || {};
     const fields = db === '_users' || db === 'child_users' ? this.userService.userProperties : [];
-    return this.couchService.post(db + '/_find', findDocuments(selector, fields), opts).pipe(map((res) => {
-      return { tableData: res.docs, columns: listColumns[db] };
+    return this.couchService.findAll(db, findDocuments(selector, fields), opts).pipe(map((res) => {
+      return { tableData: res, columns: listColumns[db] };
     }));
   }
 
