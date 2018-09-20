@@ -73,7 +73,7 @@ export class ResourcesService {
     .get(this.dbName + '/_changes?include_docs=true&since=' + (this.lastSeq[planetField] || 'now'), opts)
     .pipe(map((res: any) => {
       this.lastSeq[planetField] = res.last_seq;
-      return res.results.filter((r: any) => r._id.indexOf('_design') === -1).map((r: any) => r.doc);
+      return res.results.filter((r: any) => r.doc._id.indexOf('_design') === -1).map((r: any) => r.doc);
     }));
   }
 
