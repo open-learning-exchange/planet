@@ -34,6 +34,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.surveys.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.getSurveys().subscribe((surveys) => {
       this.surveys.data = surveys;
     });
