@@ -41,10 +41,10 @@ export class SurveysComponent implements OnInit, AfterViewInit {
         this.surveys.data = data;
         return this.getSubmission();
       }))
-      .subscribe((submissions) => {
-        for (const element of this.surveys.data) {
+      .subscribe((submissions: any) => {
+        this.surveys.data.forEach(element => {
           element['taken'] = submissions.filter(data => data.parentId === element._id).length;
-        }
+        });
       });
   }
 
