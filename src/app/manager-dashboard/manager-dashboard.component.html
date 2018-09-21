@@ -7,8 +7,10 @@
 <div class="space-container">
   <div *ngIf="displayDashboard">
     <span *ngIf="planetType !== 'community'">
+      <a [routerLink]="['activity']" i18n mat-raised-button>Activity Logs</a>
       <a routerLink="/requests" i18n mat-raised-button>Requests</a>
     </span>
+    <a *ngIf="planetType !== 'center'" [routerLink]="['activity', 'logs']" i18n mat-raised-button>Activity Reports</a>
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
     <button *ngIf="devMode"
@@ -27,7 +29,6 @@
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
     <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
-    <a routerLink="/manager/activity" i18n mat-raised-button>Activity Logs</a>
   </div>
   <div class="view-container" *ngIf="planetType !== 'community'">
     <h3 i18n>Send On Accept</h3><br />
@@ -53,11 +54,8 @@
     <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
   </div>
   <div>{{message}}</div>
-  <div>
-    <span i18n>Last Admin Login:</span> {{activityLogs?.last_admin_login?.createdTime | date: 'medium'}}<br/>
-    <span i18n>Last Upgrade:</span> {{activityLogs?.last_upgrade?.createdTime | date: 'medium'}}<br/>
-    <span i18n>Last Sync:</span> {{activityLogs?.last_sync?.createdTime | date: 'medium'}}<br/>
-    <span i18n>Total Visits:</span> {{activityLogs?.resource_visits?.value}}<br/>
-    <span i18n>Total Ratings:</span> {{activityLogs?.ratings?.value}}
-  </div>
+  <table>
+    <tr><th>Last Login</th><th>Last Upgrade</th><th>Last Sync</th><th>Total Visits</th><th>Total Ratings</th></tr>
+    <tr><td>{{activityLogs?.last_admin_login?.createdTime | date: 'medium'}}</td><td>{{activityLogs?.last_upgrade?.createdTime | date: 'medium'}}</td><td>{{activityLogs?.last_sync?.createdTime | date: 'medium'}}</td><td>{{activityLogs?.resource_visits?.value}}</td><td>{{activityLogs?.ratings?.value}}</td></tr>
+  </table>
 </div>
