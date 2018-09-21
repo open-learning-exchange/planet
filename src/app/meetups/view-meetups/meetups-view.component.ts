@@ -92,7 +92,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users').subscribe((res) => {
-      res.tableData = res.tableData.filter(tableValue => this.members.indexOf(tableValue.name) === -1);
+      res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
       const data = {
         okClick: this.sendInvitations.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
