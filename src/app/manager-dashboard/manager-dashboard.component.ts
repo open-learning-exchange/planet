@@ -153,8 +153,8 @@ export class ManagerDashboardComponent implements OnInit {
 
   sendOnAccept(db: string) {
     this.dialogsListService.getListAndColumns(db).subscribe(res => {
-      const previousList = res.tableData.filter(doc => doc.sendOnAccept === true),
-        initialSelection = previousList.map(doc => doc._id);
+      const previousList = res.tableData.filter((doc: any) => doc.sendOnAccept === true),
+        initialSelection = previousList.map((doc: any) => doc._id);
       const data = {
         okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
         filterPredicate: this.setFilterPredicate(db),

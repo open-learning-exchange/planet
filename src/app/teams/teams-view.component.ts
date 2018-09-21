@@ -115,7 +115,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users').subscribe((res) => {
-      res.tableData = res.tableData.filter(user => this.members.findIndex((member) => member.name === user.name) === -1);
+      res.tableData = res.tableData.filter((user: any) => this.members.findIndex((member) => member.name === user.name) === -1);
       const data = {
         okClick: this.addMembers.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
