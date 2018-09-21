@@ -266,6 +266,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+    .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
       const data = { okClick: this.sendResource().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
