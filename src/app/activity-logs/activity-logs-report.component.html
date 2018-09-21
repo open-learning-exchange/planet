@@ -14,15 +14,11 @@
   <div class="view-container view-full-height view-table">
     <table>
       <tr><th></th><th>Male</th><th>Female</th><th>Other</th></tr>
-      <tr><td>Registered Members</td><td>{{reports?.users?.male}}</td><td>{{reports?.users?.female}}</td><td>{{reports?.users?.other}}</td></tr>
-    </table>
-    Total Visits: {{reports?.visits?.value}}
-    <table>
-      <tr><td>Most Visited Resource</td><td>Rating</td></tr>
+      <tr><td>Registered Members</td><td>{{reports?.users?.male || 0}}</td><td>{{reports?.users?.female || 0}}</td><td>{{reports?.users?.other || 0}}</td></tr>
+      <tr><td>Total Member Visits</td><td>{{reports?.visits?.value}}</td><td></td><td></td></tr>
+      <tr><th>Most Visited Resource</th><th>Rating</th></tr>
       <tr *ngFor="let resource of reports.resources"><td><a [routerLink]="['/resources/view', resource.key[3]]">{{resource.key[3]}}</a></td><td>{{resource.value}}</td></tr>
-    </table>
-    <table>
-      <tr><td>Most Rated Resource</td><td>Rating</td></tr>
+      <tr><th>Most Rated Resource</th><th>Rating</th></tr>
       <tr *ngFor="let rate of reports.ratings"><td><a [routerLink]="['/resources/view', rate.key[3]]">{{rate.key[3]}}</a></td><td>{{rate.value}}</td></tr>
     </table>
   </div>

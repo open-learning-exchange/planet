@@ -10,11 +10,10 @@ import { UserService } from '../shared/user.service';
 })
 export class ActivityLogsReportComponent implements OnInit {
 
-  //logs = new MatTableDataSource();
   message = '';
   parentCode = '';
   planetCode = '';
-  reports: any = { users: {}};
+  reports: any = { users: { } };
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -29,11 +28,11 @@ export class ActivityLogsReportComponent implements OnInit {
     forkJoin([
       this.couchService.get('_users/_design/users/_view/count_by_gender?group_level=3'),
       this.couchService.get('login_activities/_design/login_activities/_view/count_activity?group_level=3'
-        +'&Key=["' + this.parentCode + '", "' + this.planetCode + '", "login"]'),
+         + '&Key=["' + this.parentCode + '", "' + this.planetCode + '", "login"]'),
       this.couchService.get('ratings/_design/ratings/_view/avg_ratings?group_level=4'
-        +'&Key=["' + this.parentCode + '", "' + this.planetCode + '", "resource"]'),
+         + '&Key=["' + this.parentCode + '", "' + this.planetCode + '", "resource"]'),
       this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?group_level=4'
-        +'&Key=["' + this.parentCode + '", "' + this.planetCode + '", "visit"]')
+         + '&Key=["' + this.parentCode + '", "' + this.planetCode + '", "visit"]')
     ]).pipe(switchMap(logs  => {
       logs[0].rows.map(l => {
         this.reports.users[l.key[2] || 'other'] = l.value;
@@ -46,8 +45,7 @@ export class ActivityLogsReportComponent implements OnInit {
         return b.value - a.value;
       }).slice(0, 5);
     }))
-    .subscribe((logs) => {
-      //console.log(this.reports);
+    .subscribe(() => {
     }, (error) => this.message = 'There was a problem getting Activity Logs');
   }
 
