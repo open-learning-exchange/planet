@@ -10,8 +10,7 @@ import { ConfigurationService } from '../configuration/configuration.service';
 })
 export class StateService {
 
-  local: any = {};
-  parent: any = {};
+  state: any = { local: {}, parent: {} };
   private stateUpdated = new Subject<any>();
 
   constructor(
@@ -19,19 +18,36 @@ export class StateService {
     private configurationService: ConfigurationService
   ) {}
 
-  requestData(db: string, parent: boolean) {
-    const opts = parent ? { domain: this.configurationService.configuration.parentDomain } : {};
-    const planetField = parent ? 'parent' : 'local';
-    this[planetField][db] = this[planetField][db] || { docs: [], lastSeq: 'now'};
-    const currentData = this[planetField][db].docs;
+  requestData(db: string, planetField: string) {
+    this.getCouchState(db, planetField).subscribe(() => {});
+  }
+
+  getCouchState(db: string, planetField: string) {
+    const opts = this.optsFromPlanetField(planetField);
+    this.state[planetField] = this.state[planetField] || {};
+    this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
+    const currentData = this.state[planetField][db].docs;
     const getCurrentData = currentData.length === 0 ?
       this.getAll(db, opts) : of(currentData);
-    forkJoin([ getCurrentData, this.getChanges(db, opts, planetField) ])
-    .subscribe(([ data, changes ]) => {
-      const newData = this.couchService.combineChanges(data, changes);
-      this[planetField][db].docs = newData;
-      this.stateUpdated.next({ newData, db, parent });
-    });
+    return forkJoin([ getCurrentData, this.getChanges(db, opts, planetField) ]).pipe(
+      map(([ data, changes ]) => {
+        const newData = this.couchService.combineChanges(data, changes);
+        this.state[planetField][db].docs = newData;
+        this.stateUpdated.next({ newData, db, planetField });
+        return newData;
+      })
+    );
+  }
+
+  optsFromPlanetField(planetField: string) {
+    switch (planetField) {
+      case 'parent':
+        return { domain: this.configurationService.configuration.parentDomain };
+      case 'local':
+        return {};
+      default:
+        return { domain: planetField };
+    }
   }
 
   getAll(db: string, opts: any) {
@@ -42,15 +58,15 @@ export class StateService {
 
   getChanges(db: string, opts: any, planetField: string) {
     return this.couchService
-    .get(db + '/_changes?include_docs=true&since=' + (this[planetField][db].lastSeq || 'now'), opts)
+    .get(db + '/_changes?include_docs=true&since=' + (this.state[planetField][db].lastSeq || 'now'), opts)
     .pipe(map((res: any) => {
-      this[planetField][db].lastSeq = res.last_seq;
+      this.state[planetField][db].lastSeq = res.last_seq;
       return res.results.filter((r: any) => r.doc._id.indexOf('_design') === -1).map((r: any) => r.doc);
     }));
   }
 
   couchStateListener(db: string) {
-    return this.stateUpdated.pipe(map((stateObj: { newData, db, parent }) => db === stateObj.db ? stateObj : null));
+    return this.stateUpdated.pipe(map((stateObj: { newData, db, planetField }) => db === stateObj.db ? stateObj : undefined));
   }
 
 }

@@ -28,10 +28,9 @@ export class ResourcesService {
       }
     });
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
-      if(response !== null) {
+      if (response !== null) {
         this.isActiveResourceFetch = false;
-        const planetField = response.parent ? 'parent' : 'local';
-        this.setResources(response.newData, this.ratings[planetField], planetField);
+        this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
       }
     });
   }
@@ -44,7 +43,7 @@ export class ResourcesService {
 
   requestResourcesUpdate(parent: boolean) {
     this.isActiveResourceFetch = true;
-    this.stateService.requestData(this.dbName, parent);
+    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local');
     this.ratingService.newRatings(parent);
   }
 
