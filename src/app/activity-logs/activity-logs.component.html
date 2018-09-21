@@ -15,12 +15,12 @@
     <mat-table #table [dataSource]="logs" matSort>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-cell *matCellDef="let element"><a [routerLink]="['logs', { parentCode: element.parentCode, code: element.code }]">{{element.name}}</a></mat-cell>
       </ng-container>
-      <ng-container matColumnDef="downloads">
+      <!-- <ng-container matColumnDef="downloads">
         <mat-header-cell *matHeaderCellDef i18n>Resource Downloads</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element?.resource_downloads?.value}}</mat-cell>
-      </ng-container>
+      </ng-container> -->
       <ng-container matColumnDef="views">
         <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element?.resource_views?.value}}</mat-cell>

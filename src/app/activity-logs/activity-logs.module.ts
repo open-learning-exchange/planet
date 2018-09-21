@@ -4,6 +4,7 @@ import { ActivityLogsRouterModule } from './activity-logs-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ActivityLogsComponent } from './activity-logs.component';
+import { ActivityLogsReportComponent } from './activity-logs-report.component';
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import { ActivityLogsComponent } from './activity-logs.component';
     SharedComponentsModule
   ],
   declarations: [
-    ActivityLogsComponent
+    ActivityLogsComponent,
+    ActivityLogsReportComponent
   ]
 })
 export class ActivityLogsModule {}

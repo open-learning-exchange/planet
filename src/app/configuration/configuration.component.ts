@@ -177,8 +177,6 @@ export class ConfigurationComponent implements OnInit {
       // skip special character if comes as last character
       code = code.replace(/\W+$/, '').toLowerCase();
       this.configurationFormGroup.get('code').setValue(code);
-      const parentCode = this.nations.find(n => n.localDomain === this.configurationFormGroup.get('parentCode').value);
-      this.configurationFormGroup.get('parentCode').setValue(parentCode.code);
     }
   }
 
@@ -209,6 +207,8 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onChangeNation() {
+    const parentCode = this.nations.find(n => n.localDomain === this.configurationFormGroup.get('parentDomain').value);
+    this.configurationFormGroup.get('parentCode').setValue(parentCode.code);
     if (this.configurationFormGroup.get('name').value !== '') {
       this.configurationFormGroup.controls.name.updateValueAndValidity();
       this.configurationFormGroup.controls.code.updateValueAndValidity();

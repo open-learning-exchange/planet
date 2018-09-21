@@ -125,7 +125,7 @@ export class ConfigurationService {
       'type': 'user',
       'isUserAdmin': true,
       'joinDate': Date.now(),
-      'parentCode': configuration.code
+      'planetCode': configuration.code
     };
     const pin = this.userService.createPin();
     return forkJoin([

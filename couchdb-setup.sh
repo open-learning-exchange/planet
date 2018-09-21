@@ -131,6 +131,7 @@ upsert_doc nations _design/nation-validators @./design/nations/nation-validators
 upsert_doc resources _design/resources @./design/resources/resources-design.json
 upsert_doc ratings _design/ratings @./design/ratings/ratings-design.json
 upsert_doc resource_activities _design/resource_activities @./design/resource_activities/resource_activities-design.json
+upsert_doc _users _design/users @./design/users/users-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
 
 # Insert indexes

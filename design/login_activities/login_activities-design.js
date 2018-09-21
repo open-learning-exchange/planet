@@ -2,7 +2,7 @@ module.exports = {
   "views": {
     "count_activity": {
       "map": function (doc) {
-        emit([doc.createdOn, doc.parentCode, doc.type, doc.user], 1);
+        emit([doc.parentCode, doc.createdOn, doc.type, doc.user], 1);
       },
       "reduce": "_count"
     },

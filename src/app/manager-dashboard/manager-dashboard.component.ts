@@ -251,12 +251,12 @@ export class ManagerDashboardComponent implements OnInit {
       this.couchService.post('activity_logs/_find',
         findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'sync' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
       this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?'
-        + 'startkey=["' + this.planetConfig.code + '", "' + this.planetConfig.parentCode + '", "visit"]'
-        + '&endkey=["' + this.planetConfig.code + '0", "' + this.planetConfig.parentCode + '", "visit"]'
+        + 'startkey=["' + this.planetConfig.parentCode + '", "' + this.planetConfig.code + '", "visit"]'
+        + '&endkey=["' + this.planetConfig.parentCode + '0", "' + this.planetConfig.code + '", "visit"]'
         + '&group_level=3'),
       this.couchService.get('ratings/_design/ratings/_view/count_ratings?'
-        + 'startkey=["' + this.planetConfig.code + '", "' + this.planetConfig.parentCode + '"]'
-        + '&endkey=["' + this.planetConfig.code + '0", "' + this.planetConfig.parentCode + '"]'
+        + 'startkey=["' + this.planetConfig.parentCode + '", "' + this.planetConfig.code + '"]'
+        + '&endkey=["' + this.planetConfig.parentCode + '0", "' + this.planetConfig.code + '"]'
         + '&group_level=2')
     ]).subscribe(data => {
       this.activityLogs['last_admin_login'] = data[0].docs[0] || {};

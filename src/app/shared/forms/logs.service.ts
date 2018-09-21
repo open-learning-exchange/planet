@@ -14,6 +14,7 @@ export class LogsService {
     const log = {
       createdOn: this.userService.getConfig().code,
       parentCode: this.userService.getConfig().parentCode,
+      user: this.userService.get().name,
       createdTime: Date.now()
     };
     return this.couchService.post('activity_logs', { ...log, ...data });

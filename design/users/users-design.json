@@ -1,0 +1,1 @@
+{"views":{"count_by_gender":{"map":"function (doc) {\n        if (doc.name !== 'satellite') {\n          emit([doc.parentCode, doc.planetCode, doc.gender], 1);\n        }\n      }","reduce":"_count"}}}
