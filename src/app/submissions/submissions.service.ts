@@ -48,20 +48,27 @@ export class SubmissionsService {
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
-    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name };
-    this.couchService.post('submissions/_find', { selector })
-      .subscribe((res) => {
-        let attempts = res.docs.length - 1;
-        const bestAttempt = res.docs.reduce((best: any, submission: any) =>
-          submission.grade > best.grade ? submission : best, res.docs[0]);
-        this.submission = res.docs.find(submission => submission.status === status);
-        if (this.submission === undefined) {
-          attempts += 1;
-          this.newSubmission({ parentId, parent, user, type });
-        }
-        this.submissionAttempts = attempts;
-        this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
-      });
+    if (user.name) {
+      const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name };
+      this.couchService.post('submissions/_find', { selector })
+        .subscribe((res) => {
+          let attempts = res.docs.length - 1;
+          const bestAttempt = res.docs.reduce((best: any, submission: any) =>
+            submission.grade > best.grade ? submission : best, res.docs[0]);
+          this.submission = res.docs.find(submission => submission.status === status);
+          if (this.submission === undefined) {
+            attempts += 1;
+            this.newSubmission({ parentId, parent, user, type });
+          }
+          this.submissionAttempts = attempts;
+          this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
+        });
+    } else {
+      const attempts = 1;
+      this.newSubmission({ parentId, parent, user, type });
+      this.submissionAttempts = attempts;
+      this.submissionUpdated.next({ submission: this.submission, attempts });
+    }
   }
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
