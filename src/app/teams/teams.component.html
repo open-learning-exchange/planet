@@ -20,7 +20,7 @@
   <div class="view-container view-full-height view-table primary-link-hover" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="teams" matSort>
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3>
             <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}</a>
