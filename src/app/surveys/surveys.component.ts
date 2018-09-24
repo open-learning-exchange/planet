@@ -98,7 +98,12 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   }
 
   recordSurvey(survey: any) {
-    this.router.navigate([ 'dispense', { questionNum: 1, surveyId: survey._id } ], { relativeTo: this.route });
+    this.submissionsService.createSubmission(survey, 'survey').subscribe((res: any) => {
+      this.router.navigate([
+        'dispense',
+        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
+      ], { relativeTo: this.route });
+    });
   }
 
 }

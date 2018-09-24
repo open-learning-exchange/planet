@@ -53,9 +53,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.coursesService.requestCourse({ courseId });
         this.incorrectAnswer = false;
         this.grade = 0;
-      } else if (surveyId) {
-        this.getSurvey(surveyId);
-        this.grade = 0;
       } else if (submissionId) {
         this.fromSubmission = true;
         this.mode = mode || 'grade';
