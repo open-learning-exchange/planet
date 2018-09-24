@@ -122,7 +122,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.allUsers.data.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
+    this.allUsers.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
   }
 
   getUsersAndLoginActivities() {

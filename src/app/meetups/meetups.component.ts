@@ -83,7 +83,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.meetups.data.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {
