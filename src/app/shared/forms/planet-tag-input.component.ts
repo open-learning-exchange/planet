@@ -1,10 +1,12 @@
-import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef, OnInit
+} from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material';
+import { MatFormFieldControl, MatAutocomplete } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Subject, Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { startWith, map, takeUntil, auditTime } from 'rxjs/operators';
 import { TagsService } from './tags.service';
 
 @Component({
@@ -14,7 +16,7 @@ import { TagsService } from './tags.service';
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ]
 })
-export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy {
+export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnDestroy {
 
   static nextId = 0;
 
@@ -50,9 +52,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
   }
 
   @ViewChild('tagInput') tagInput: ElementRef;
+  @ViewChild('tagAuto') tagAutocomplete: MatAutocomplete;
 
   onTouched;
   stateChanges = new Subject<void>();
+  tagChanges$ = new Subject<string>();
+  private onDestroy$ = new Subject<void>();
   tags: string[] = [];
   filteredTags: Observable<string[]>;
   inputControl = new FormControl();
@@ -82,19 +87,27 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     });
   }
 
+  ngOnInit() {
+    this.tagChanges$.pipe(takeUntil(this.onDestroy$), auditTime(200)).subscribe((newTag) => {
+      this.addTag(newTag);
+    });
+  }
+
   ngOnDestroy() {
     this.stateChanges.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
   }
 
   onChange(_: any) {}
 
   inputAddTag(event: any) {
-    this.addTag(event.value);
+    this.tagChanges$.next(event.value);
   }
 
   autocompleteAddTag(event: any) {
-    this.addTag(event.option.viewValue);
+    this.tagChanges$.next(event.option.viewValue);
   }
 
   addTag(newTag: string) {
