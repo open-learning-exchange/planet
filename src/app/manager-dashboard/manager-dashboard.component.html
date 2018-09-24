@@ -10,7 +10,7 @@
       <a [routerLink]="['activity']" i18n mat-raised-button>Activity Logs</a>
       <a routerLink="/requests" i18n mat-raised-button>Requests</a>
     </span>
-    <a *ngIf="planetType !== 'center'" [routerLink]="['activity', 'logs']" i18n mat-raised-button>Activity Reports</a>
+    <a [routerLink]="['activity', 'logs']" i18n mat-raised-button>Activity Reports</a>
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
     <button *ngIf="devMode"

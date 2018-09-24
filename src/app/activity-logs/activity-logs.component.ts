@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './activity-logs.component.html',
 })
-export class ActivityLogsComponent implements OnInit {
+export class ActivityLogsComponent {
 
   message = '';
   logs = new MatTableDataSource();
@@ -22,14 +23,17 @@ export class ActivityLogsComponent implements OnInit {
     'last_sync'
   ];
   constructor(
-    private couchService: CouchService
-  ) { }
+    private couchService: CouchService,
+    private userService: UserService
+  ) {
+    this.getLogs();
+  }
 
-  ngOnInit() {
+  getLogs() {
     this.couchService.findAll('communityregistrationrequests',
-      findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
-      .pipe(switchMap(data => {
-        this.logs.data = data;
+      findDocuments({ 'parentCode': this.userService.getConfig().parentCode }, 0, [ { 'createdDate': 'desc' } ] ))
+      .pipe(switchMap(com => {
+        this.logs.data = com;
         return forkJoin([
           this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?group_level=3'),
           this.couchService.get('login_activities/_design/login_activities/_view/count_activity?group_level=3'),

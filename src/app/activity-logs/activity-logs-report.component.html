@@ -15,10 +15,13 @@
     <table>
       <tr><th></th><th>Male</th><th>Female</th><th>Other</th></tr>
       <tr><td>Registered Members</td><td>{{reports?.users?.male || 0}}</td><td>{{reports?.users?.female || 0}}</td><td>{{reports?.users?.other || 0}}</td></tr>
-      <tr><td>Total Member Visits</td><td>{{reports?.visits?.value}}</td><td></td><td></td></tr>
-      <tr><th>Most Visited Resource</th><th>Rating</th></tr>
+      <tr><th>Total Users</th><th>Total Resources</th><th>Total Courses</th><th>Total Surveys</th></tr>
+      <tr><td>{{reports?.total_users}}</td><td></td><td></td><td></td></tr>
+      <tr><th>Most Logged Members</th><th>Total Login</th></tr>
+      <tr *ngFor="let visit of reports.visits"><td><a [routerLink]="['/users/profile', visit.key[3]]">{{visit.key[3]}}</a></td><td>{{visit.value}}</td></tr>
+      <tr><th>Most Visited Resource</th><th>Total Visits</th></tr>
       <tr *ngFor="let resource of reports.resources"><td><a [routerLink]="['/resources/view', resource.key[3]]">{{resource.key[3]}}</a></td><td>{{resource.value}}</td></tr>
-      <tr><th>Most Rated Resource</th><th>Rating</th></tr>
+      <tr><th>Most Rated Resource</th><th>Average Rating</th></tr>
       <tr *ngFor="let rate of reports.ratings"><td><a [routerLink]="['/resources/view', rate.key[3]]">{{rate.key[3]}}</a></td><td>{{rate.value}}</td></tr>
     </table>
   </div>
