@@ -41,7 +41,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getTeams();
     this.teams.filterPredicate = filterSpecificFields([ 'doc.name' ]);
-    this.teams.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.teams.sortingDataAccessor = (item: any, property) => item.doc[property].toLowerCase();
   }
 
   getTeams() {
