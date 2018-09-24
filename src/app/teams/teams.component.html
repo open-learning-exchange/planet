@@ -45,7 +45,7 @@
             </button>
           </ng-container>
           <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>View Team</button>
-          <a mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n-title title="Feedback">Feedback</a>
+          <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n>Feedback</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
