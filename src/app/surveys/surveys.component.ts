@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } from '@angular/material';
 import { forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -18,7 +19,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
 
   constructor(
@@ -35,9 +36,15 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-    this.getSurveys().subscribe((surveys) => {
-      this.surveys.data = surveys;
-    });
+    this.getSurveys().pipe(switchMap(data => {
+        this.surveys.data = data;
+        return this.getSubmissions();
+      }))
+      .subscribe((submissions: any) => {
+        this.surveys.data = this.surveys.data.map(
+          (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
+        );
+      });
   }
 
   ngAfterViewInit() {
@@ -47,6 +54,11 @@ export class SurveysComponent implements OnInit, AfterViewInit {
 
   getSurveys() {
     return this.couchService.findAll('exams', { 'selector': { 'type': 'surveys' } });
+  }
+
+  getSubmissions() {
+    // get the no of submisson for each test from submisson table
+    return this.couchService.findAll('submissions', { 'selector': { 'type': 'survey' } });
   }
 
   goBack() {
