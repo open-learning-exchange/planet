@@ -12,7 +12,7 @@
   <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(questionNum)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container">
-   <div class="question-header"> <b>{{question.header}}</b></div>
+    <div class="question-header"><b>{{question.header}}</b></div>
     <td-markdown [content]="question.body"></td-markdown>
     <ng-container [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
@@ -33,14 +33,14 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
-        <p i18n><b>Submitted answer:</b><span> {{answer?.text || answer}}</span></p>
+        <p><b i18n>Submitted answer:</b><span>{{answer?.text || answer}}</span></p>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
         </mat-radio-group>
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
-        <p i18n><b>Response:</b></p>
+        <p><b i18n>Response:</b></p>
         <ng-container *ngIf="question.type === 'selectMultiple'; else singleAnswer">
           <p *ngFor="let a of answer">{{a?.text || a}}</p>
         </ng-container>
