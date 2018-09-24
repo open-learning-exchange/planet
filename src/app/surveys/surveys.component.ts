@@ -21,7 +21,6 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'name', 'taken', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
-  allSubmisson: any;
 
   constructor(
     private couchService: CouchService,
@@ -39,7 +38,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     this.surveys.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.getSurveys().pipe(switchMap(data => {
         this.surveys.data = data;
-        return this.getSubmission();
+        return this.getSubmissions();
       }))
       .subscribe((submissions: any) => {
         this.surveys.data.forEach((element: any) => {
@@ -57,11 +56,10 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     return this.couchService.findAll('exams', { 'selector': { 'type': 'surveys' } });
   }
 
-  getSubmission() {
+  getSubmissions() {
     // get the no of submisson for each test from submisson table
     return this.couchService.findAll('submissions', { 'selector': { 'type': 'survey' } });
   }
-
 
   goBack() {
     this.router.navigate([ '/manager' ]);
