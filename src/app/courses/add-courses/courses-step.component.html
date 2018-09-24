@@ -15,7 +15,14 @@
       </mat-form-field>
       <td-text-editor formControlName="description"></td-text-editor>
     </form>
-    <div *ngIf="activeStep?.resources?.length"><span i18n>Attached resources: </span><span *ngFor="let resource of activeStep.resources; let isLast= last">{{resource.title}}{{isLast ? '' : ', '}}</span></div>
+    <div *ngIf="activeStep?.resources?.length">
+      <mat-chip-list #tagsList class="tags-list">
+        <mat-chip *ngFor="let resource of activeStep.resources; let i = index; let isLast= last">
+          {{resource.title}}{{isLast ? '' : ', '}} 
+          <mat-icon matChipRemove (click)="removeResource(i)">clear</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+    </div>
     <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>
     <button mat-raised-button color="primary" (click)="attachItem('resources')">Add Resource</button>
   </div>

@@ -79,6 +79,11 @@ export class CoursesStepComponent implements OnDestroy {
     };
   }
 
+  removeResource(position: number) {
+    console.log(position);
+    this.steps.slice(position, 1);
+  }
+
   addExam() {
     this.coursesService.stepIndex = this.activeStepIndex;
     if (this.activeStep.exam) {
