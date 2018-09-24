@@ -87,7 +87,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName , findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
       .subscribe((data) => {
         this.feedback.data = data;
         this.emptyData = !this.feedback.data.length;
