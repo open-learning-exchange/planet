@@ -41,9 +41,9 @@ export class SurveysComponent implements OnInit, AfterViewInit {
         return this.getSubmissions();
       }))
       .subscribe((submissions: any) => {
-        this.surveys.data.forEach((element: any) => {
-          element['taken'] = submissions.filter(data => data.parentId === element._id).length;
-        });
+        this.surveys.data = this.surveys.data.map(
+          (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
+        );
       });
   }
 
