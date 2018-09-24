@@ -86,7 +86,7 @@
         <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span i18n>at</span>{{ ' ' + element.startTime }} {{ element.endTime ? '-' : '' }} {{ element.endTime }}</p>
+            <p><span i18n>Date:</span>{{ ' ' + (element.startDate | date: 'fullDate') + ' - ' + (element.endDate | date: 'fullDate') + ' ' }}<span *ngIf="element.startTime || element.endTime" i18n>at</span>{{ ' ' + element.startTime }} {{ element.endTime ? '-' : '' }} {{ element.endTime }}</p>
             <p><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
             <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
             <p><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
