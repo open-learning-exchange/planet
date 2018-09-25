@@ -42,9 +42,12 @@
         </mat-cell>
       </ng-container>
       <!-- Priorty Column -->
-      <ng-container matColumnDef="priority">
+      <ng-container matColumnDef="priority" [ngSwitch]="true">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
-        <mat-cell *matCellDef="let element" [ngStyle]="{'color':element.priority === 'No'? '#7F7F7F' : '#ED5142'}">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <mat-chip-list *ngSwitchCase="element.priority==='Yes'"><mat-chip selected color='accent'>{{element.priority === "Yes" ? "Yes" : "No"}}</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="element.priority==='No'"><mat-chip>{{element.priority === "Yes" ? "Yes" : "No"}}</mat-chip></mat-chip-list>
+        </mat-cell>
       </ng-container>
       <!-- Owner Column -->
       <ng-container matColumnDef="owner">
@@ -52,14 +55,12 @@
         <mat-cell *matCellDef="let element">{{element.owner}}</mat-cell>
       </ng-container>
       <!-- Status Column -->
-      <ng-container matColumnDef="status">
+      <ng-container matColumnDef="status" [ngSwitch]="true">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-        <ng-container [ngSwitch]="true">
-          <mat-chip-list *ngSwitchCase="element.status==='Open' || element.status==='Reopened'"><mat-chip selected>{{element.status}}</mat-chip></mat-chip-list>
-          <mat-chip-list *ngSwitchCase="element.status==='Closed'"><mat-chip>{{element.status}}</mat-chip></mat-chip-list>
-        </ng-container>
-      </mat-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-chip-list *ngSwitchCase="element.status==='Open' || element.status==='Reopened'"><mat-chip selected>{{element.status}}</mat-chip></mat-chip-list>
+            <mat-chip-list *ngSwitchCase="element.status==='Closed'"><mat-chip>{{element.status}}</mat-chip></mat-chip-list>
+          </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
