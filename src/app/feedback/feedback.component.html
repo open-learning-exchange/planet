@@ -54,7 +54,12 @@
       <!-- Status Column -->
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element" [ngStyle]="{'color':element.status === 'Closed'? '#7F7F7F' : '#ED5142'}">{{element.status}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+        <ng-container [ngSwitch]="true">
+          <mat-chip-list *ngSwitchCase="element.status==='Open' || element.status==='Reopened'"><mat-chip selected>{{element.status}}</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="element.status==='Closed'"><mat-chip>{{element.status}}</mat-chip></mat-chip-list>
+        </ng-container>
+      </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
