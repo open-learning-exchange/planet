@@ -133,7 +133,6 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
       switch (change) {
         case 'delete':
         case 'reject':
-        case 'unlink':
           this.deleteCommunity(community);
           break;
         case 'accept':
