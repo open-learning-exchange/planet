@@ -80,8 +80,7 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   removeResource(position: number) {
-    console.log(position);
-    this.steps.slice(position, 1);
+    this.steps[this.activeStepIndex].resources.slice(position, 1);
   }
 
   addExam() {
