@@ -45,10 +45,15 @@
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
             <mat-action-row>
-              <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
-              <mat-menu #resourceList="matMenu">
-                <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
-              </mat-menu>
+              <ng-container *ngIf="step?.resources?.length === 1">
+                  <a mat-raised-button color="accent" class="margin-lr-10" *ngFor="let resource of step.resources;" [href]="resourceUrl(resource)" target="_blank" i18n>View Resource</a>
+              </ng-container>
+              <ng-container *ngIf="step?.resources?.length > 1">
+                <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
+                <mat-menu #resourceList="matMenu">
+                  <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
+                </mat-menu>
+             </ng-container>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
             </mat-action-row>
           </mat-expansion-panel>
