@@ -35,7 +35,6 @@ export class SurveysComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
-    this.surveys.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.getSurveys().pipe(switchMap(data => {
         this.surveys.data = data;
         return this.getSubmissions();
@@ -45,6 +44,13 @@ export class SurveysComponent implements OnInit, AfterViewInit {
           (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
         );
       });
+
+    this.surveys.sortingDataAccessor = (item: any , property) => {
+        switch (property) {
+          case 'taken': return item['taken'];
+          default: return item[property].toLowerCase();
+        }
+      };
   }
 
   ngAfterViewInit() {
