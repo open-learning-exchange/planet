@@ -17,8 +17,9 @@
     </form>
     <div *ngIf="activeStep?.resources?.length">
       <mat-chip-list #tagsList class="tags-list">
-        <mat-chip *ngFor="let resource of activeStep.resources; let i = index; let isLast= last">
-          {{resource.title}}{{isLast ? '' : ', '}} 
+        <span i18n class="margin-lr-4">Attached Resources : </span>
+        <mat-chip *ngFor="let resource of activeStep.resources; let i = index ">
+          {{resource.title}} 
           <mat-icon matChipRemove (click)="removeResource(i)">clear</mat-icon>
         </mat-chip>
       </mat-chip-list>
