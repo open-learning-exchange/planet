@@ -40,7 +40,7 @@
           <ul>
             <li *ngFor="let user of team?.requests">
               {{user.replace('org.couchdb.user:','')}}
-              <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
+              <button mat-raised-button color="primary" class="margin-lr-3 top-button" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
             </li>
           </ul>
         </ng-template>
