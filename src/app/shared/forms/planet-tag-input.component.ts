@@ -20,7 +20,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   static nextId = 0;
 
-  @HostBinding() id = `planet-rating-stars-${PlanetTagInputComponent.nextId++}`;
+  @HostBinding() id = `planet-tag-input-${PlanetTagInputComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @Input() _value: string[] = [];
   get value() {
