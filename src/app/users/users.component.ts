@@ -274,7 +274,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   back() {
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    // relative path for /users and /team/users based on depth
+    const userUrl = this.router.url.split('/');
+    const path = userUrl[1] === 'users' ? '../' : '../../';
+    this.router.navigate([ path ], { relativeTo: this.route });
   }
 
   updateSelectedRoles(newSelection: string[]) {
