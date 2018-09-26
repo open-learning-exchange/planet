@@ -1,0 +1,25 @@
+@import '../../variables';
+
+@mixin editor-border-color($color) {
+  border-top-color: $color;
+  border-left-color: $color;
+  border-right-color: $color;
+  border-bottom-color: $color;
+}
+
+.mat-form-field-invalid planet-markdown-textbox {
+  .editor-toolbar, .CodeMirror {
+    @include editor-border-color($warn);
+  }
+}
+
+.mat-focused.ng-valid planet-markdown-textbox, .mat-focused.ng-untouched planet-markdown-textbox {
+  .editor-toolbar, .CodeMirror {
+    @include editor-border-color($primary);
+  }
+}
+
+planet-markdown-textbox .CodeMirror {
+  height: 15vh;
+  min-height: 15vh;
+}
