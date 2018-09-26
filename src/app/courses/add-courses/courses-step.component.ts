@@ -11,7 +11,12 @@ import { CoursesService } from '../courses.service';
 
 @Component({
   selector: 'planet-courses-step',
-  templateUrl: 'courses-step.component.html'
+  templateUrl: 'courses-step.component.html',
+  styles: [ `
+    .mat-raised-button {
+      margin: 4px 2px 2px 0px;
+    }
+  ` ]
 })
 export class CoursesStepComponent implements OnDestroy {
 
@@ -80,7 +85,7 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   removeResource(position: number) {
-    this.steps[this.activeStepIndex].resources.slice(position, 1);
+    this.steps[this.activeStepIndex].resources.splice(position, 1);
   }
 
   addExam() {
