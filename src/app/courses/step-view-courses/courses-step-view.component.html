@@ -3,13 +3,8 @@
   <span i18n>Course</span>
 </mat-toolbar>
 <div class="space-container">
-<<<<<<< HEAD
   <mat-toolbar class="primary-color font-size-1 step-title-header">
-      <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3></span>
-=======
-  <mat-toolbar class="primary-color font-size-1">
-      <span class="margin-lr-3 step-title-header" ><h3><ng-container i18n>Step</ng-container> {{stepNum}}: {{stepDetail.stepTitle}}</h3></span>
->>>>>>> 33f700c3... move step-header title class to header span (fixes #1868)
+      <span class="margin-lr-3 step-title-header"><h3><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
     <span *ngIf="attempts" i18n>Past attempts: {{attempts}}</span>
     <a
