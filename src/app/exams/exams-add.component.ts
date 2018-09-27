@@ -139,13 +139,16 @@ export class ExamsAddComponent implements OnInit {
       {
         header: '',
         body: [ '', Validators.required ],
-        type: 'input',
-        correctChoice: [ '', CustomValidators.choiceSelected ]
+        type: 'input'
       },
       question,
       {
         marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array(choices || [])
+        choices: this.fb.array(choices || []),
+        correctChoice: [
+          typeof question.correctChoice === 'string' ? [ question.correctChoice ] : question.correctChoice || [],
+          CustomValidators.choiceSelected
+        ]
       }
     )));
   }

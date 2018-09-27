@@ -28,6 +28,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   submissionId: string;
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
+  checkboxState: any = {};
 
   constructor(
     private router: Router,
@@ -69,21 +70,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
-    let correctAnswer;
-    let obs: any;
-    switch (this.mode) {
-      case 'take':
-        correctAnswer = this.question.correctChoice ? this.answer.id === this.question.correctChoice : correctAnswer;
-        obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close);
-        this.answer = undefined;
-        break;
-      case 'grade':
-        obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
-        break;
-      default:
-        obs = of({});
-        break;
-    }
+    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable(close);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
       if (correctAnswer === false) {
@@ -106,6 +93,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   moveQuestion(direction: number) {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.spinnerOn = false;
+  }
+
+  isMultiCorrect(correctChoice, answers) {
+    return correctChoice.every(choice => answers.find((a: any) => a.id === choice)) &&
+      answers.every((a: any) => correctChoice.find(choice => a.id === choice));
+  }
+
+  resetCheckboxes() {
+    this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
   }
 
   examComplete() {
@@ -172,6 +168,31 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.answer.push(option);
     } else if (event.checked === false) {
       this.answer.splice(this.answer.indexOf(option), 1);
+    }
+    this.checkboxState[option.id] = event.checked;
+  }
+
+  calculateCorrect() {
+    const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
+    return this.question.correctChoice instanceof Array ?
+      this.isMultiCorrect(this.question.correctChoice, answers) :
+      answers[0].id === this.question.correctChoice;
+  }
+
+  createAnswerObservable(close) {
+    switch (this.mode) {
+      case 'take':
+        const correctAnswer = this.question.correctChoice.length > 0 && this.calculateCorrect();
+        this.answer = undefined;
+        this.resetCheckboxes();
+        return {
+          obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close),
+          correctAnswer
+        };
+      case 'grade':
+        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close), correctAnswer };
+      default:
+        return { obs: of({}), correctAnswer };
     }
   }
 

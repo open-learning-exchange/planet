@@ -26,7 +26,7 @@
             </mat-radio-button>
           </mat-radio-group>
           <div *ngSwitchCase="'selectMultiple'" class="question-list">
-            <mat-checkbox *ngFor="let option of question.choices" [value]="option" (change)="setAnswer($event, option)">
+            <mat-checkbox *ngFor="let option of question.choices" [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
               {{option.text}}
             </mat-checkbox>
           </div>
