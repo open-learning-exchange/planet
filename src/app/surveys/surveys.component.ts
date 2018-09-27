@@ -4,7 +4,7 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } fr
 import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -35,6 +35,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
+    this.surveys.sortingDataAccessor = sortNumberOrString;
     this.getSurveys().pipe(switchMap(data => {
         this.surveys.data = data;
         return this.getSubmissions();
@@ -44,13 +45,6 @@ export class SurveysComponent implements OnInit, AfterViewInit {
           (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
         );
       });
-
-    this.surveys.sortingDataAccessor = (item: any , property) => {
-        switch (property) {
-          case 'taken': return item['taken'];
-          default: return item[property].toLowerCase();
-        }
-      };
   }
 
   ngAfterViewInit() {

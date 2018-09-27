@@ -71,3 +71,12 @@ export const composeFilterFunctions = (filterFunctions: any[]) => {
     }, true);
   };
 };
+
+export const sortNumberOrString = (item, property) => {
+  switch (typeof item[property]) {
+    case 'number':
+      return item[property];
+    case 'string':
+      return item[property].toLowerCase();
+  }
+};
