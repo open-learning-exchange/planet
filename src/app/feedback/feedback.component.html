@@ -58,12 +58,12 @@
       </ng-container>
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Open Time</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Open Date</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.openTime | date: mediumDate}}</mat-cell>
       </ng-container>
       <!-- CloseTime Column -->
       <ng-container matColumnDef="closeTime">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Close Time</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Close Date</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.closeTime | date: mediumDate}}</mat-cell>
       </ng-container>
       <!-- Source Column -->
