@@ -36,7 +36,7 @@ export class ExamsQuestionComponent implements OnInit {
     this.choices = <FormArray>this.questionForm.controls.choices;
     const correctChoice = this.questionForm.controls.correctChoice.value;
     this.choices.controls.forEach((choice: any) =>
-      this.correctCheckboxes[choice.controls.id.value] = correctChoice === choice.controls.id.value);
+      this.correctCheckboxes[choice.controls.id.value] = correctChoice.indexOf(choice.controls.id.value) > -1);
   }
 
   addChoice() {
@@ -57,12 +57,18 @@ export class ExamsQuestionComponent implements OnInit {
   }
 
   setCorrect(event: any, choice: any) {
+    const formControls = this.questionForm.controls;
+    const newChoiceId = choice.controls.id.value;
+    let correctChoices = formControls.correctChoice.value;
     if (event.checked) {
-      Object.keys(this.correctCheckboxes).forEach((key) => {
-        this.correctCheckboxes[key] = key === choice.controls.id.value;
-      });
+      correctChoices = formControls.type.value === 'selectMultiple' ? correctChoices.push(newChoiceId) : [ newChoiceId ];
+    } else {
+      correctChoices.removeAt(correctChoices.indexOf(newChoiceId));
     }
-    this.questionForm.controls.correctChoice.setValue(event.checked ? choice.controls.id.value : '');
+    this.questionForm.controls.correctChoice.setValue(correctChoices);
+    Object.keys(this.correctCheckboxes).forEach((key) => {
+      this.correctCheckboxes[key] = correctChoices.indexOf(key) > -1;
+    });
   }
 
   choiceTrackByFn(index, item) {
