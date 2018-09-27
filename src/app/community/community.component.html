@@ -51,9 +51,6 @@
         <mat-cell *matCellDef="let element">
           <button mat-raised-button color="primary" (click)="view(element)" i18n>View</button>
           <ng-container *ngIf="element.registrationRequest === 'accepted'">
-            <button mat-raised-button color="primary" (click)="updateClick(element, 'unlink')" i18n>
-              <mat-icon>link_off</mat-icon>Unlink
-            </button>
             <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
               Communities
             </button>
