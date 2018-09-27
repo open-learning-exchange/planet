@@ -22,7 +22,7 @@ export class CustomValidators {
     }
 
     const inputtype = ac.parent.get('type');
-    if (inputtype.value !== 'input' && !ac.value) {
+    if ((inputtype.value === 'select' || inputtype.value === 'selectMultiple') && ac.value.length === 0) {
       return { required: true };
     } else {
       return null;

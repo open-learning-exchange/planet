@@ -145,10 +145,10 @@ export class ExamsAddComponent implements OnInit {
       {
         marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(choices || []),
-        correctChoice: this.fb.array(
+        correctChoice: [
           typeof question.correctChoice === 'string' ? [ question.correctChoice ] : question.correctChoice || [],
           CustomValidators.choiceSelected
-        )
+        ]
       }
     )));
   }

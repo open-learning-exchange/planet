@@ -63,7 +63,7 @@ export class ExamsQuestionComponent implements OnInit {
     if (event.checked) {
       correctChoices = formControls.type.value === 'selectMultiple' ? correctChoices.push(newChoiceId) : [ newChoiceId ];
     } else {
-      correctChoices.removeAt(correctChoices.indexOf(newChoiceId));
+      correctChoices.splice(correctChoices.indexOf(newChoiceId));
     }
     this.questionForm.controls.correctChoice.setValue(correctChoices);
     Object.keys(this.correctCheckboxes).forEach((key) => {
