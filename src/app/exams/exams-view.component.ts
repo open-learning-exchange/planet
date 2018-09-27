@@ -169,18 +169,20 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     } else if (event.checked === false) {
       this.answer.splice(this.answer.indexOf(option), 1);
     }
+    this.checkboxState[option.id] = event.checked;
+  }
+
+  calculateCorrect() {
+    const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
+    return this.question.correctChoice instanceof Array ?
+      this.isMultiCorrect(this.question.correctChoice, answers) :
+      answers[0].id === this.question.correctChoice;
   }
 
   createAnswerObservable(close) {
-    let correctAnswer;
     switch (this.mode) {
       case 'take':
-        if (this.question.correctChoice.length > 0) {
-          const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
-          correctAnswer = this.question.correctChoice instanceof Array ?
-            this.isMultiCorrect(this.question.correctChoice, answers) :
-            answers[0].id === this.question.correctChoice;
-        }
+        const correctAnswer = this.question.correctChoice.length > 0 && this.calculateCorrect();
         this.answer = undefined;
         this.resetCheckboxes();
         return {
