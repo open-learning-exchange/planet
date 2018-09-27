@@ -32,16 +32,20 @@
         <button *ngIf="planetType !== 'center' && this.userService.getConfig().registrationRequest === 'accepted'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
           <span i18n>Send Courses</span>
-          <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+        </button>
+        <button mat-button [disabled]="!selection.selected.length" (click)="enrollInSelected(selection.selected, 'add')">
+          <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Enroll in Selected</span>
+          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
           <span i18n>Push To Child</span>
-          <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-          <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
       </ng-container>
       <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>

@@ -158,4 +158,11 @@ export class CoursesService {
     }));
   }
 
+  courseAdmissionMany(courseIds, type) {
+    return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
+      const admissionMessage = type === 'remove' ? 'Courses successfully removed from myCourses' : 'Courses added to your dashboard';
+      this.planetMessageService.showMessage(admissionMessage);
+      return res;
+    }));
+  }
 }

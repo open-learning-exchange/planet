@@ -207,6 +207,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
+  enrollInSelected(courseIds, type) {
+    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {}, (error) => ((error)));
+  }
+
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
