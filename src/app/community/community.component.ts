@@ -6,7 +6,7 @@ import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } fr
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
-import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterDropdowns, sortNumberOrString } from '../shared/table-helpers';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -53,14 +53,7 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getCommunityList(searchValue);
     });
 
-    this.communities.sortingDataAccessor = (item, property) => {
-      switch (typeof item[property]) {
-        case 'number':
-          return item[property];
-        case 'string':
-          return item[property].toLowerCase();
-      }
-    };
+    this.communities.sortingDataAccessor = sortNumberOrString;
     this.communities.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'code', 'name' ]) ]);
   }
 
