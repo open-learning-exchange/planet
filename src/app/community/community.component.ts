@@ -132,7 +132,6 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
       const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
       switch (change) {
         case 'delete':
-        case 'reject':
           this.deleteCommunity(community);
           break;
         case 'accept':
