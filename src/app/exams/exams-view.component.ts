@@ -28,6 +28,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   submissionId: string;
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
+  checkboxState: any = {};
 
   constructor(
     private router: Router,
@@ -73,21 +74,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     let obs: any;
     switch (this.mode) {
       case 'take':
-        if (this.question.correctChoice) {
-          if (this.answer instanceof Array) {
-            correctAnswer = this.answer.reduce((correct, ans) => {
-              // Right now only one correct choice is available
-              return correct && ans.id === this.question.correctChoice;
-              // Check with all correctChoice
-              // return correct && this.question.correctChoice.indexOf(ans.id) > -1
-            // }, this.answer.length === this.question.correctChoice.length);
-            }, true);
-          } else {
-            correctAnswer = this.answer.id === this.question.correctChoice;
-          }
+        if (this.question.correctChoice.length > 0) {
+          const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
+          correctAnswer = this.question.correctChoice instanceof Array ?
+            this.isMultiCorrect(this.question.correctChoice, answers) :
+            answers[0].id === this.question.correctChoice;
         }
         obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close);
         this.answer = undefined;
+        this.resetCheckboxes()
         break;
       case 'grade':
         obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
@@ -118,6 +113,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   moveQuestion(direction: number) {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.spinnerOn = false;
+  }
+
+  isMultiCorrect(correctChoice, answers) {
+    return correctChoice.every(choice => answers.find((a: any) => a.id === choice)) &&
+      answers.every((a: any) => correctChoice.find(choice => a.id === choice));
+  }
+
+  resetCheckboxes() {
+    this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
   }
 
   examComplete() {
