@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -13,10 +13,11 @@ import { CoursesService } from '../courses.service';
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html',
   styles: [ `
-    .mat-raised-button {
-      margin: 4px 2px 2px 0px;
+    planet-courses-step .mat-chip-list-wrapper {
+      margin: 0;
     }
-  ` ]
+  ` ],
+  encapsulation: ViewEncapsulation.None
 })
 export class CoursesStepComponent implements OnDestroy {
 
@@ -79,6 +80,7 @@ export class CoursesStepComponent implements OnDestroy {
   dialogOkClick(db: string) {
     return (selected: any) => {
       this.steps[this.activeStepIndex].resources = selected;
+      this.activeStep = this.steps[this.activeStepIndex];
       this.stepsChange.emit(this.steps);
       this.dialogRef.close();
     };
