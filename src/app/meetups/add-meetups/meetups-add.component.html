@@ -16,9 +16,10 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <div>
-        <td-text-editor class="full-width" formControlName="description" required></td-text-editor>
-      </div>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
+      </mat-form-field>
       <div>
         <mat-form-field>
           <input matInput [matDatepicker]="datepickerStart" i18n-placeholder placeholder="Start Date" formControlName="startDate">

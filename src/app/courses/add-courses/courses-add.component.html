@@ -15,10 +15,10 @@
           <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
           <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <div class="full-width">
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="courseForm.controls.description"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
-          <td-text-editor class="full-width" formControlName="description"></td-text-editor>
-        </div>
+        </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Member Limit" type="number" formControlName="memberLimit">
           <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>

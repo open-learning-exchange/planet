@@ -13,7 +13,10 @@
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
       </mat-form-field>
-      <td-text-editor formControlName="description"></td-text-editor>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="stepForm.controls.description"></planet-markdown-textbox>
+        <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
+      </mat-form-field>
     </form>
     <ng-container *ngIf="activeStep?.resources?.length">
       <span i18n class="margin-lr-4">Attached Resources: </span>
