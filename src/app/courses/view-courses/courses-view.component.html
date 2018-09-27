@@ -45,7 +45,8 @@
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
             <mat-action-row>
-              <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.resources?.length" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
+              <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
+              <button *ngIf="step?.resources?.length > 1 && step?.resources?.length" mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
               <mat-menu #resourceList="matMenu">
                 <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
               </mat-menu>
