@@ -70,27 +70,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion(questionNum: number) {
     const close = questionNum === this.maxQuestions;
-    let correctAnswer;
-    let obs: any;
-    switch (this.mode) {
-      case 'take':
-        if (this.question.correctChoice.length > 0) {
-          const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
-          correctAnswer = this.question.correctChoice instanceof Array ?
-            this.isMultiCorrect(this.question.correctChoice, answers) :
-            answers[0].id === this.question.correctChoice;
-        }
-        obs = this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close);
-        this.answer = undefined;
-        this.resetCheckboxes()
-        break;
-      case 'grade':
-        obs = this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close);
-        break;
-      default:
-        obs = of({});
-        break;
-    }
+    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable(close);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(() => {
       if (correctAnswer === false) {
@@ -188,6 +168,29 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.answer.push(option);
     } else if (event.checked === false) {
       this.answer.splice(this.answer.indexOf(option), 1);
+    }
+  }
+
+  createAnswerObservable(close) {
+    let correctAnswer;
+    switch (this.mode) {
+      case 'take':
+        if (this.question.correctChoice.length > 0) {
+          const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
+          correctAnswer = this.question.correctChoice instanceof Array ?
+            this.isMultiCorrect(this.question.correctChoice, answers) :
+            answers[0].id === this.question.correctChoice;
+        }
+        this.answer = undefined;
+        this.resetCheckboxes();
+        return {
+          obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close),
+          correctAnswer
+        };
+      case 'grade':
+        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close), correctAnswer };
+      default:
+        return { obs: of({}), correctAnswer };
     }
   }
 
