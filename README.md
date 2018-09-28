@@ -1,84 +1,49 @@
+# Welcome to Planet
 [![Maintainability](https://api.codeclimate.com/v1/badges/028682cc4cd969b05280/maintainability)](https://codeclimate.com/github/open-learning-exchange/planet/maintainability)
 [![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
 
-# BeLL apps Angular reboot prototype **Planet**
+## What's Planet
 
-Project to create a prototype for a reboot of the BeLL apps using Angular5 & CouchDB2.
+Planet is a web-application that includes everything needed to create a platform for ~~organization~~ community to manage their learning content and learner collaboration which has 3 main components, community, nation, and earth.
 
-Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://material.angular.io/).
+Understanding the 3 main components is key to understanding Planet. Planet divides it installed instance as community, nation, or earth. Organization can install Planet as community, nation, or earth.
 
-## To work on this
+## Community
 
-The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
+Community is the smallest entity of Planet member, at it root, every installation of Planet is a community, but we call the installation (or node) as community if it doesn't have another community report to it. A community belong to nation and can exchange contents. Think of it as a subscriber in publisher-subscriber model.
 
-## Project guidelines
+## Nation
 
-* Please check out [the project page](https://waffle.io/ole-vi/planet) for available tasks to work on.
-* Before contributing also be sure to read our [style guide](Style-Guide.md)
-* Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
-* After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
-* If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
-* To work on an issue, create a new branch with a descriptive title.
-* Please wait for at least two positive reviews before merging a PR into the master branch
+Nation is a an entity which has at least one community belongs to it and as a nation it can publish content which can be consumed by the communities. In its relationship with communities, think of it as a publisher in pub-sub model. The recommended setup is one country has one nation which all the communities in that country consumes its content.
 
+In Planet, nation has a unique role where it not only act as a publisher for community, but it is a subscribe of Earth where in our framework there is one Earth which managed by [Open Learning Exchange][OLE] where it backed the initiative (But you can be your own Earth too, it is an open source project anyway).
 
-## Unit & end-to-end tests
+## Earth
 
-There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh` and `cd /vagrant`:
+Similar as a nation to community, earth act as a publisher - perhaps the upstream publisher for all the content the community might consumes. It is exist as a way to exchange contents between nation.
 
-`npm run v-test` (from host) or `ng test` (from vagrant) - Unit tests
-Open `localhost:9876` once this is done compiling
+## Technologies
 
-`npm run v-e2e` (from host) or `ng e2e` (from vagrant) - End-to-end tests
-Results will appear in the console
+We use Angular for our front-end and CouchDB as our back-end and database. And for the deployment we highly support Docker, but an old-school deployment in bare-metal or VM is also supported. We also support Raspberry-Pi deployment and in fact we have a lot of communities running in this little machine.
 
-### Additional commands
+## Getting Started
 
-Similarly, we have a few other npm commands that work from the host machine to run the `ng` commands from the [Angular CLI](https://cli.angular.io/)
+1. Install CouchDB
+2. Populate database schema and dummy data (optional)
+3. Run the app!
+4. Go to `localhost:4000` and you'll see 'Welcome to Planet'
+5. Follow this guidelines to start using Planet in your community!
 
-`npm run v-serve` = `ng serve`
+## Contributing
 
-`npm run v-build` = `ng build`
+[![Open Source Helpers](https://www.codetriage.com/open-learning-exchange/planet/badges/users.svg)](https://www.codetriage.com/open-learning-exchange/planet)
 
-`npm run v-lint` = `ng lint`
+We encourage you to contribute to Planet! Please check out the [Contributing to Planet](CONTRIBUTING.md) guide for guidelines about how to proceed. Join us!
 
-`npm run v-lint-fix` = `ng lint --fix` This will fix any lint errors that TSLint can automatically fix
+Everyone interacting in Planet and its sub-projects' codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [Planet code of conduct](CODE_OF_CONDUCT.md).
 
-Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh` and `cd /vagrant`) and runs in the format:
+## License
 
-`LNG=es npm start`
+Planet is released under the [AGPL-3.0](LICENSE)
 
-This would serve the app from the Spanish language files.
-
-## Troubleshooting
-
-### I switched branches and now I'm missing a dependency...
-
-The ideal solution would be to ssh into your vagrant and run npm install:
-
-```
-vagrant ssh
-cd /vagrant
-npm install
-```
-
-This doesn't always work.  If you're having trouble or need to revert to the exact dependencies listed on the package.json, you need to remove all packages then install (after cd /vagrant above, run the commands):
-
-```
-rm -rf node_modules/*
-npm install
-```
-
-The trailing `/*` will remove all files & sub-directories of node_modules.  You won't be able to remove node_modules because of the link between the vagrant VM and your host.
-
-### Cannot GET /
-
-There are two things you can try for this.  First involves the node-sass module which can be problematic.  You will need to rebuild it from the VM:
-
-```
-vagrant ssh
-cd /vagrant
-npm rebuild node-sass
-```
-
-The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `screen -dmS build bash -c 'cd /vagrant; ng serve'`.
+[OLE]: https://www.ole.org/
