@@ -13,7 +13,7 @@ import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
 
 @Component({
-  templateUrl: './home.component.html',
+  templateUrl: './home-classic.component.html',
   styleUrls: [ './home.scss' ],
   animations: [
     trigger('sidenavState', [

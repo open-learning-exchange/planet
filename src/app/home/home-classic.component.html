@@ -1,0 +1,73 @@
+<div class="background"></div>
+<mat-toolbar color="primary" class="classic-header-nav header-nav nav-shadow">
+  <span class="classic-navbar-left">
+    <a routerLink="/">
+      <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo classic-ole-logo"/>
+      <h1 i18n>Planet Learning</h1>
+    </a>
+  </span>
+  <span class="classic-navbar-center">
+    <a mat-button routerLink="/resources"
+      routerLinkActive="active"
+      i18n-title title="Library" i18n>
+      Library
+    </a>
+    <a mat-button routerLink="/courses"
+      routerLinkActive="active"
+      i18n-title title="Courses" i18n>
+      Courses
+    </a>
+    <a mat-button routerLink="/teams"
+      routerLinkActive="active"
+      i18n-title title="Teams" i18n>
+      Teams
+    </a>
+    <a mat-button routerLink="/meetups"
+      routerLinkActive="active"
+      i18n-title title="Meetups" i18n>
+      Meetups
+    </a>
+    <a mat-button routerLink="/surveys" i18n-title title="Surveys" i18n>
+      Surveys
+    </a>
+  </span>
+  <span class="classic-navbar-right">
+    <button mat-icon-button planetFeedback i18n-title title="Feedback"><mat-icon svgIcon="feedback"></mat-icon></button>
+    <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
+    <button mat-icon-button *ngIf="user.isUserAdmin" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
+    <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
+      <mat-icon matBadge={{notifications.length}} matBadgeColor="warn" MatBadgeSize="small">notifications</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="notifications.length === 0" routerLink="/notifications" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
+    <planet-language></planet-language>
+    <button mat-icon-button [matMenuTriggerFor]="userProfile">
+      <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
+      <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
+    </button>
+    <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
+      <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
+      <button mat-menu-item i18n planetChangePassword>Change Password</button>
+      <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+    </mat-menu>
+  </span>
+</mat-toolbar>
+<!--Notification dropdown menu-->
+<mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
+  <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
+    class="menu-item-notification"
+    [ngClass]="{'primary-text-color':notification.status==='unread'}"
+    mat-menu-item
+    *ngFor="let notification of notifications"
+    (click)="readNotification(notification)">
+    <p><b>{{notification.message}}</b><p>
+    <p class="small">{{notification.time | date: 'mediumDate'}}</p>
+    <mat-divider></mat-divider>
+  </a>
+  <a routerLink="/notifications" mat-menu-item>See All</a>
+</mat-menu>
+<!--Left sidebar-->
+<div [ngClass]="{'gradient-background': backgroundRoute()}">
+  <router-outlet></router-outlet>
+</div>
+
