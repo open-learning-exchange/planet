@@ -13,23 +13,23 @@
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
     <table>
-      <tr><th></th><th>Male</th><th>Female</th><th>Other</th></tr>
-      <tr><td>Registered Members</td><td>{{reports?.users?.male || 0}}</td><td>{{reports?.users?.female || 0}}</td><td>{{reports?.users?.other || 0}}</td></tr>
+      <tr><th></th><th>Male</th><th>Female</th><th>Undeclared</th></tr>
+      <tr><td>Registered Members</td><td>{{reports?.usersByGender?.male || 0}}</td><td>{{reports?.usersByGender?.female || 0}}</td><td>{{reports?.usersByGender?.undeclared || 0}}</td></tr>
       <tr><th>Total Users</th><th>Total Resources</th><th>Total Courses</th></tr>
       <tr><td>{{reports?.totalUsers}}</td><td>{{reports?.totalResources}}</td><td>{{reports?.totalCourses}}</td></tr>
       <tr><th>Most Logged Members</th><th>Total Login</th></tr>
-      <tr *ngFor="let visit of reports?.visits"><td><a [routerLink]="['/users/profile', visit.key[3]]">{{visit.key[3]}}</a></td><td>{{visit.value}}</td></tr>
+      <tr *ngFor="let visit of reports?.visits"><td><a [routerLink]="['/users/profile', visit.key]">{{visit.key}}</a></td><td>{{visit.count}}</td></tr>
       <tr><th>Most Visited Resource</th><th>Total Visits</th></tr>
       <ng-container *ngFor="let resource of reports?.resources">
-        <tr *ngIf="resource?.item"><td><a [routerLink]="['/resources/view', resource.item._id]">{{resource?.item?.title}}</a></td><td>{{resource.value}}</td></tr>
+        <tr><td><a [routerLink]="['/resources/view', resource.key]">{{resource?.key}}</a></td><td>{{resource.count}}</td></tr>
       </ng-container>
       <tr><th>Most Rated Resource</th><th>Average Rating</th></tr>
       <ng-container *ngFor="let rate of reports?.resourceRatings">
-        <tr *ngIf="rate?.item"><td><a [routerLink]="['/resources/view', rate.item._id]">{{rate?.item?.title}}</a></td><td>{{rate?.value}}</td></tr>
+        <tr><td><a [routerLink]="['/resources/view', rate.key]">{{rate?.key}}</a></td><td>{{rate?.value}}</td></tr>
       </ng-container>
       <tr><th>Most Rated Course</th><th>Average Rating</th></tr>
       <ng-container *ngFor="let rate of reports?.courseRatings">
-        <tr *ngIf="rate?.item"><td><a [routerLink]="['/course/view', rate.item._id]">{{rate?.item?.courseTitle}}</a></td><td>{{rate?.value}}</td></tr>
+        <tr><td><a [routerLink]="['/course/view', rate.key]">{{rate?.key}}</a></td><td>{{rate?.value}}</td></tr>
       </ng-container>
     </table>
   </div>
