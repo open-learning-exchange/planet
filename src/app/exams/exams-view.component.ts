@@ -182,7 +182,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   createAnswerObservable(close) {
     switch (this.mode) {
       case 'take':
-        const correctAnswer = this.question.correctChoice.length > 0 && this.calculateCorrect();
+        const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         this.answer = undefined;
         this.resetCheckboxes();
         return {
