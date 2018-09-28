@@ -147,7 +147,7 @@ export class ExamsAddComponent implements OnInit {
         choices: this.fb.array(choices || []),
         correctChoice: [
           typeof question.correctChoice === 'string' ? [ question.correctChoice ] : question.correctChoice || [],
-          CustomValidators.choiceSelected
+          CustomValidators.choiceSelected(this.examType === 'courses')
         ]
       }
     )));
