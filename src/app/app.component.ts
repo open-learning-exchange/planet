@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 import { Router, NavigationEnd } from '@angular/router';
+import { UserService } from './shared/user.service';
 declare let gtag: Function;
 
 @Component({
@@ -9,7 +10,7 @@ declare let gtag: Function;
   template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>'
 })
 export class AppComponent {
-  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router) {
+  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, public router: Router, private userService: UserService) {
     iconRegistry.addSvgIcon(
       'myLibrary',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/library.svg'));
@@ -46,7 +47,14 @@ export class AppComponent {
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        gtag('config', 'UA-118745384-1', { 'page_path': event.urlAfterRedirects });
+        gtag('config', 'UA-118745384-1', {
+          'dimension1': 'planetType',
+          'dimension2': 'planetName'
+        });
+        gtag('event', 'planet_dimension', {
+          'planetType': this.userService.getConfig().planetType,
+          'planetName': this.userService.getConfig().name
+        });
       }
     });
   }
