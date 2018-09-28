@@ -21,10 +21,6 @@ export class RatingService {
     private configurationService: ConfigurationService
   ) {}
 
-  updateRatings(parent: boolean) {
-    this.ratingsUpdated.next({ ratings: this.ratings, parent });
-  }
-
   newRatings(parent: boolean) {
     const opts = parent ? { domain: this.configurationService.configuration.parentDomain } : {};
     this.couchService.findAll(this.dbName, undefined, opts).pipe(catchError(err => {
