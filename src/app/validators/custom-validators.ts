@@ -28,7 +28,7 @@ export class CustomValidators {
       } else {
         return null;
       }
-    }
+    };
   }
 
   static hexValidator(ac: AbstractControl): ValidationErrors {
