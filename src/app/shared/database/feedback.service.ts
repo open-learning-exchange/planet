@@ -57,4 +57,8 @@ export class FeedbackService {
       })
     ).pipe(map((data: { docs: Feedback[] }) => data.docs));
   }
+
+  getFeedback(id: string): Observable<Feedback> {
+    return from(this.feedbackDB.get(id));
+  }
 }
