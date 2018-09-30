@@ -9,7 +9,7 @@ import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
-
+import { FeedbackService as PouchFeedbackService } from '../shared/database';
 @Component({
   templateUrl: './feedback-view.component.html',
   styleUrls: [ './feedback-view.scss' ]
@@ -29,15 +29,18 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private route: ActivatedRoute,
     private dialogsFormService: DialogsFormService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private pouchFeedbackService: PouchFeedbackService,
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getFeedback(params.get('id'))))
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => this.pouchFeedbackService.getFeedback(params.get('id'))))
       .pipe(debug('Getting feedback'), takeUntil(this.onDestroy$))
       .subscribe((result) => {
-        this.setFeedback(result);
-        this.setCouchListener(result.docs[0]._id);
+        this.feedback = result;
+        this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
+        this.scrollToBottom();
+        this.setCouchListener(result._id);
       }, error => console.log(error));
     this.user = this.userService.get();
   }
