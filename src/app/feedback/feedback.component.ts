@@ -13,6 +13,7 @@ import { debug } from '../debug-operator';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { FeedbackService as PouchFeedbackService } from '../shared/database';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -53,7 +54,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService,
-    private router: Router
+    private router: Router,
+    private pouchFeedbackService: PouchFeedbackService,
   ) {
     if (this.userService.getConfig().planetType === 'community') {
       // Remove source from displayed columns for communities
@@ -62,7 +64,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getFeedback();
     });
-   }
+  }
 
   ngOnInit() {
     this.user = this.userService.get();
@@ -86,12 +88,15 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getFeedback() {
-    const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
-      .subscribe((data) => {
-        this.feedback.data = data;
+    this.pouchFeedbackService.getFeedbacks(this.user.isUserAdmin, this.user.name).subscribe(
+      feedbacks => {
+        this.feedback.data = feedbacks;
         this.emptyData = !this.feedback.data.length;
-      }, (error) => this.message = 'There is a problem of getting data.');
+      },
+      error => {
+        this.message = 'There is a problem of getting data.';
+      }
+    );
   }
 
   deleteClick(feedback) {
