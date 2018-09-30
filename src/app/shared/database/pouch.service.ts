@@ -9,12 +9,14 @@ import { environment } from '../../../environments/environment';
 PouchDB.plugin(PouchDBAuth);
 PouchDB.plugin(PouchDBFind);
 
+type RemoteDatabases = 'feedback';
+
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
-  private localDBs = new Map<string, any>([ [ 'feedback', null ] ]);
+  private localDBs = new Map<RemoteDatabases, any>([ [ 'feedback', null ] ]);
   private authDB;
-  private databases = new Set([ 'feedback' ]);
+  private databases = new Set<RemoteDatabases>([ 'feedback' ]);
 
   constructor() {
     for (const db of this.databases.values()) {
@@ -61,11 +63,11 @@ export class PouchService {
     }
   }
 
-  replicateFromRemoteDB(db) {
+  replicateFromRemoteDB(db: RemoteDatabases) {
     return this.replicate(this.localDBs.get(db).replicate.from(this.baseUrl + db));
   }
 
-  replicateToRemoteDB(db) {
+  replicateToRemoteDB(db: RemoteDatabases) {
     return this.replicate(this.localDBs.get(db).replicate.to(this.baseUrl + db));
   }
 
@@ -73,7 +75,7 @@ export class PouchService {
     return from(replicateFn).pipe(catchError(this.handleError));
   }
 
-  getLocalPouchDB(db) {
+  getLocalPouchDB(db: RemoteDatabases) {
     return this.localDBs.get(db);
   }
 
