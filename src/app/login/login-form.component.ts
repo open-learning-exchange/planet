@@ -10,7 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
-import { PouchAuthService } from '../shared/database';
+import { PouchAuthService, PouchService } from '../shared/database';
 import { StateService } from '../shared/state.service';
 
 const registerForm = {
@@ -49,7 +49,8 @@ export class LoginFormComponent {
     private validatorService: ValidatorService,
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
-    private stateService: StateService
+    private stateService: StateService,
+    private pouchService: PouchService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -135,7 +136,7 @@ export class LoginFormComponent {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
-    ).subscribe(() => {}, this.loginError.bind(this));
+    ).subscribe(() => this.pouchService.replicateFromRemoteDBs(), this.loginError.bind(this));
   }
 
   loginError() {
