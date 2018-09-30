@@ -10,8 +10,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
-import { PouchAuthService } from '../shared/database';
 import { ConfigurationService } from '../configuration/configuration.service';
+import { PouchAuthService, PouchService } from '../shared/database';
 
 const registerForm = {
   name: [],
@@ -46,7 +46,8 @@ export class LoginFormComponent {
     private validatorService: ValidatorService,
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private pouchService: PouchService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -130,7 +131,9 @@ export class LoginFormComponent {
         const adminName = this.userService.getConfig().adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
-    ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
+    ).subscribe(() => {
+      this.pouchService.replicateFromRemoteDBs();
+    }, this.loginError('Username and/or password do not match'));
   }
 
   loginError(message: string) {
