@@ -30,34 +30,34 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
 1. Install CouchDB 2.0
 
-1.1. OSX
+    1.1. OSX
 
-    $ brew install couchdb
+        $ brew install couchdb
 
-1.2. Ubuntu
+    1.2. Ubuntu
 
-    $ apt-get install couchdb
+        $ apt-get install couchdb
 
-1.3. Docker
+    1.3. Docker
 
-    $ docker run -p 5984:5984 -d --name my-couchdb treehouses/couchdb:2.2.0
+        $ docker run -p 5984:5984 -d --name my-couchdb treehouses/couchdb:2.2.0
  
 2. Populate database schema and dummy data (optional)
 
-2.1. Setup CORS in the CouchDB
+    2.1. Setup CORS in the CouchDB
 
-    $ npm install -g add-cors-to-couchdb
-    $ add-cors-to-couchdb $COUCHDB_HOST
+        $ npm install -g add-cors-to-couchdb
+        $ add-cors-to-couchdb $COUCHDB_HOST
 
-2.2. Migrate schema and dummy data
+    2.2. Migrate schema and dummy data
 
-2.2.1. First time installation
+    2.2.1. First time installation
 
-    $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -i
+        $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -i
 
-2.2.2 
+    2.2.2 
 
-    $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS
+        $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS
 
 3. Run the app!
 
