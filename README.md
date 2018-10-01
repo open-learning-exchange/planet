@@ -29,7 +29,23 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 ## Getting Started
 
 1. Install CouchDB
+
+1.1. OSX
+
+    $ brew install couchdb
+
+1.2. Ubuntu
+
+    $ apt-get install couchdb
+
+1.3. Docker
+
+    $ docker run -p 5984:5984 -d --name my-couchdb treehouses/couchdb:2.2.0
+ 
 2. Populate database schema and dummy data (optional)
+
+    $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS $INSTALLFLAG
+
 3. Run the app!
 4. Go to `localhost:4000` and you'll see 'Welcome to Planet'
 5. Follow this guidelines to start using Planet in your community!
@@ -37,6 +53,7 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 ## Contributing
 
 [![Open Source Helpers](https://www.codetriage.com/open-learning-exchange/planet/badges/users.svg)](https://www.codetriage.com/open-learning-exchange/planet)
+[![OLE's Gitter](https://badges.gitter.im/open-learning-exchange/gitter.png)][OLE_CHATROOM]
 
 We encourage you to contribute to Planet! Please check out the [Contributing to Planet](CONTRIBUTING.md) guide for guidelines about how to proceed. Join us!
 
@@ -45,3 +62,4 @@ We encourage you to contribute to Planet! Please check out the [Contributing to 
 Planet is released under the [AGPL-3.0](LICENSE)
 
 [OLE]: https://www.ole.org/
+[OLE_CHATROOM]: https://gitter.im/open-learning-exchange/chat
