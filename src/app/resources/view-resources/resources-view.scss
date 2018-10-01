@@ -30,4 +30,9 @@
       max-height: 60vh;
     }
   }
+
+  .resource-grid {
+    display: grid; 
+    grid-column-gap: 20px;
+  }
 }
