@@ -71,20 +71,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.initializeData();
     this.allUsers.sortingDataAccessor = (item, property) => item.doc[property].toLowerCase();
-    // {
-    //   switch( typeof property) {
-    //     case "string": { 
-    //       console.log("string");
-    //       item.doc[property].toLowerCase();
-    //       break;
-    //     }
-    //     case "number": {
-    //       console.log("number");
-    //       item.doc[property];
-    //       break;
-    //     } 
-    //   }
-    // }
   }
 
   ngOnDestroy() {
@@ -99,7 +85,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterAssociated = true;
         break;
       default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'visits', 'roles', 'action' ];
+        this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'roles', 'action' ];
         this.filterAssociated = false;
         break;
     }
