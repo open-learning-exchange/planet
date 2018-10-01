@@ -38,9 +38,11 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
         $ apt-get install couchdb
 
-    1.3. Docker
+    1.3. Docker (**Suggested!**)
 
         $ docker run -p 5984:5984 -d --name my-couchdb treehouses/couchdb:2.2.0
+    
+    More information on installing CouchDB 2.0 is [here][COUCHDB_INSTALL].
  
 2. Populate database schema and dummy data (optional)
 
@@ -55,7 +57,7 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
         $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -i
 
-    2.2.2 
+    2.2.2 Next time (need to use the created credentials)
 
         $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS
 
@@ -80,3 +82,4 @@ Planet is released under the [AGPL-3.0](LICENSE)
 [OLE]: https://www.ole.org/
 [OLE_CHATROOM]: https://gitter.im/open-learning-exchange/chat
 [MORE_GUIDELINE]: http://open-learning-exchange.github.io/#!./pages/vi/vi-planet-installation-and-configuration.md
+[COUCHDB_INSTALL]: http://docs.couchdb.org/en/latest/install/unix.html#installation-using-the-apache-couchdb-convenience-binary-packages
