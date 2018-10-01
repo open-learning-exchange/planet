@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 
@@ -19,6 +20,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
+    private planetMessageService: PlanetMessageService,
     private userService: UserService
     ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
@@ -52,6 +54,13 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
        this.notifications.data = notification;
        this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
+  }
+
+  markRead(notification) {
+    this.couchService.put('notifications/' + notification._id, { ...notification, 'status': 'read' })
+    .subscribe((data) => {
+        this.planetMessageService.showMessage('This notification has marked as read');
+    });
   }
 
   readNotification(notification) {
