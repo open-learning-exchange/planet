@@ -61,7 +61,6 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
 3. Run the app!
 
-
     $ ng serve
 
 4. Go to `localhost:4000` and you'll see 'Welcome to Planet'
