@@ -22,7 +22,7 @@
       <mat-icon>file_download</mat-icon>
     </a>
   </mat-toolbar>
-  <div class="view-container resource-grid" [ngClass]="{'full-view-container':fullView==='on'}">
+  <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-rating [rating]="resource?.rating" [itemId]="resource?._id" [parent]="parent" [ratingType]="'resource'"></planet-rating>
       <p><b>Author:</b> <i>{{resource?.author}}</i></p>
