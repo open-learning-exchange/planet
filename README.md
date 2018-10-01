@@ -28,7 +28,7 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
 ## Getting Started
 
-1. Install CouchDB
+1. Install CouchDB 2.0
 
 1.1. OSX
 
@@ -44,9 +44,26 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
  
 2. Populate database schema and dummy data (optional)
 
-    $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS $INSTALLFLAG
+2.1. Setup CORS in the CouchDB
+
+    $ npm install -g add-cors-to-couchdb
+    $ add-cors-to-couchdb $COUCHDB_HOST
+
+2.2. Migrate schema and dummy data
+
+2.2.1. First time installation
+
+    $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -i
+
+2.2.2 
+
+    $ ./couchdb-setup.sh -p $COUCHDB_PORT -h $COUCHDB_DOMAIN -u $COUCHDB_USER -w $COUCHDB_PASS
 
 3. Run the app!
+
+
+    $ ng serve
+
 4. Go to `localhost:4000` and you'll see 'Welcome to Planet'
 5. Follow this guidelines to start using Planet in your community!
 
