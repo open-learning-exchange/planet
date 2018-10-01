@@ -9,7 +9,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import { filterSpecificFields, composeFilterFunctions, filterFieldExists } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString } from '../shared/table-helpers';
+
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
 import { dedupeShelfReduce } from '../shared/utils';
@@ -69,6 +70,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applyFilter(params.get('search'));
     });
     this.initializeData();
+    this.allUsers.sortingDataAccessor = sortNumberOrString;
   }
 
   ngOnDestroy() {
@@ -79,11 +81,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   changeFilter(type) {
     switch (type) {
       case 'associated':
-        this.displayedColumns = [ 'profile', 'name', 'action' ];
+        this.displayedColumns = [ 'profile', 'firstName', 'action' ];
         this.filterAssociated = true;
         break;
       default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'visits', 'roles', 'action' ];
+        this.displayedColumns = [ 'select', 'profile', 'firstName', 'visits', 'roles', 'action' ];
         this.filterAssociated = false;
         break;
     }
