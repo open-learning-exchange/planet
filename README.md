@@ -64,7 +64,7 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
         $ ng serve
 
 4. Go to `localhost:4000` and you'll see 'Welcome to Planet'
-5. Follow this guidelines to start using Planet in your community!
+5. Follow this [guidelines][MORE_GUIDELINE] to start using Planet in your community!
 
 ## Contributing
 
@@ -79,3 +79,4 @@ Planet is released under the [AGPL-3.0](LICENSE)
 
 [OLE]: https://www.ole.org/
 [OLE_CHATROOM]: https://gitter.im/open-learning-exchange/chat
+[MORE_GUIDELINE]: http://open-learning-exchange.github.io/#!./pages/vi/vi-planet-installation-and-configuration.md
