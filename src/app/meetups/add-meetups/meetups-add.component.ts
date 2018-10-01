@@ -50,7 +50,7 @@ export class MeetupsAddComponent implements OnInit {
         this.id = data._id;
         this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
         data.startDate = new Date(data.startDate);
-        data.endDate = new Date(data.endDate);
+        data.endDate = data.endDate ? new Date(data.endDate) : '';
         this.meetupForm.patchValue(data);
       }, (error) => {
         console.log(error);
