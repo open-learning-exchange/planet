@@ -14,7 +14,7 @@ import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource();
-  displayedColumns = [ 'message' ];
+  displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
   emptyData = false;
 
@@ -54,13 +54,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
        this.notifications.data = notification;
        this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
-  }
-
-  markRead(notification) {
-    this.couchService.put('notifications/' + notification._id, { ...notification, 'status': 'read' })
-    .subscribe((data) => {
-        this.planetMessageService.showMessage('This notification has marked as read');
-    });
   }
 
   readNotification(notification) {

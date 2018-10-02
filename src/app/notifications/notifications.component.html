@@ -12,8 +12,12 @@
             <a [routerLink]="element.link ? [ element.link, element.linkParams || {} ] : '/notifications'">
               {{element.message}} {{element.time | date: 'MMM d, yyyy'}}
             </a>
-            <button mat-raised-button color="primary" i18n (click)="markRead(element)">Mark as read</button>
           </p>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="read">
+        <mat-cell *matCellDef="let element" (click)="readNotification(element)">
+          <mat-icon [ngClass]="{'primary-text-color':element.status==='unread'}">visibility</mat-icon>  
         </mat-cell>
       </ng-container>
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
