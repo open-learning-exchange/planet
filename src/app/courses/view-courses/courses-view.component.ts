@@ -20,6 +20,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
+  planetType = this.userService.getConfig().planetType;
   progress = { stepNum: 1 };
 
   constructor(
