@@ -18,18 +18,18 @@
       <tr><th>Total Users</th><th>Total Resources</th><th>Total Courses</th></tr>
       <tr><td>{{reports?.totalUsers}}</td><td>{{reports?.totalResources}}</td><td>{{reports?.totalCourses}}</td></tr>
       <tr><th>Most Logged Members</th><th>Total Login</th></tr>
-      <tr *ngFor="let visit of reports?.visits"><td><a [routerLink]="['/users/profile', visit.key]">{{visit.key}}</a></td><td>{{visit.count}}</td></tr>
+      <tr *ngFor="let visit of reports?.visits"><td><a [routerLink]="['/users/profile', visit.user]">{{visit.user}}</a></td><td>{{visit.count}}</td></tr>
       <tr><th>Most Visited Resource</th><th>Total Visits</th></tr>
       <ng-container *ngFor="let resource of reports?.resources">
-        <tr><td><a [routerLink]="['/resources/view', resource.key]">{{resource?.key}}</a></td><td>{{resource.count}}</td></tr>
+        <tr><td><a [routerLink]="['/resources/view', resource.resource]">{{resource?.resource}}</a></td><td>{{resource.count}}</td></tr>
       </ng-container>
       <tr><th>Most Rated Resource</th><th>Average Rating</th></tr>
       <ng-container *ngFor="let rate of reports?.resourceRatings">
-        <tr><td><a [routerLink]="['/resources/view', rate.key]">{{rate?.key}}</a></td><td>{{rate?.value}}</td></tr>
+        <tr><td><a [routerLink]="['/resources/view', rate.item]">{{rate?.item}}</a></td><td>{{rate?.value}}</td></tr>
       </ng-container>
       <tr><th>Most Rated Course</th><th>Average Rating</th></tr>
       <ng-container *ngFor="let rate of reports?.courseRatings">
-        <tr><td><a [routerLink]="['/course/view', rate.key]">{{rate?.key}}</a></td><td>{{rate?.value}}</td></tr>
+        <tr><td><a [routerLink]="['/course/view', rate.item]">{{rate?.item}}</a></td><td>{{rate?.value}}</td></tr>
       </ng-container>
     </table>
   </div>

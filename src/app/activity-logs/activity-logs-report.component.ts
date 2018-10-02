@@ -4,6 +4,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
+import { ActivityService } from './activity.service';
 
 @Component({
   templateUrl: './activity-logs-report.component.html',
@@ -18,7 +19,7 @@ export class ActivityLogsReportComponent {
   courses = [];
 
   constructor(
-    private couchService: CouchService,
+    private activityService: ActivityService,
     private userService: UserService,
     private route: ActivatedRoute
   ) {
@@ -33,60 +34,35 @@ export class ActivityLogsReportComponent {
     this.getPlanetCounts();
   }
 
-  groupBy(array, field, sumField?) {
-    return array.reduce((group, item) => {
-      const key = item[field];
-      const currentValue = group.find((groupItem) => groupItem.key === key);
-      if (currentValue) {
-        currentValue.count = currentValue.count + 1;
-        currentValue.sum = sumField ? currentValue[sumField] + item[sumField] : 0;
-      } else {
-        group.push({ key, count: 1, sum: sumField ? item[sumField] : 0 });
-      }
-      return group;
-    }, []);
-  }
-
   getTotalUsers() {
-    this.couchService.findAll('_users').subscribe((users: any) => {
-      this.reports.totalUsers = users.length;
-      this.reports.usersByGender = users.reduce((usersByGender: any, user: any) => {
-        usersByGender[user.gender || 'undeclared'] += 1;
-        return usersByGender;
-      }, { 'male': 0, 'female': 0, 'undeclared': 0 });
+    this.activityService.getTotalUsers().subscribe(({ count, byGender }) => {
+      this.reports.totalUsers = count;
+      this.reports.usersByGender = byGender;
     });
   }
 
   getLoginActivities() {
-    this.couchService.findAll('login_activities').subscribe((loginActivities: any) => {
-      this.reports.visits = this.groupBy(loginActivities, 'user').sort((a, b) => b.count - a.count).slice(0, 5);
+    this.activityService.getLoginActivities().subscribe(visits => {
+      this.reports.visits = visits;
     });
   }
 
   getRatingInfo() {
-    this.couchService.findAll('ratings').subscribe((ratings: any) => {
-      const groupedRatings = this.groupBy(ratings, 'item', 'rate').sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count));
-      this.reports.resourceRatings = this.groupBy(ratings.filter((rating: any) => rating.type === 'resource'), 'item', 'rate')
-        .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).slice(0, 5).map((r: any) => ({ ...r, value: r.sum / r.count }));
-      this.reports.courseRatings = this.groupBy(ratings.filter((rating: any) => rating.type === 'course'), 'item', 'rate')
-        .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).slice(0, 5).map((r: any) => ({ ...r, value: r.sum / r.count }));
+    this.activityService.getRatingInfo().subscribe((averageRatings) => {
+      this.reports.resourceRatings = averageRatings.filter(item => item.type === 'resource').slice(0, 5);
+      this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
     });
   }
 
   getResourceVisits() {
-    this.couchService.findAll('resource_activities').subscribe((resourceActivites) => {
-      this.reports.resources = this.groupBy(resourceActivites, 'resource').sort((a, b) => b.count - a.count).slice(0, 5);
+    this.activityService.getResourceVisits().subscribe(resourceVisits => {
+      this.reports.resources = resourceVisits.sort((a, b) => b.count - a.count).slice(0, 5);
     });
   }
 
   getPlanetCounts() {
-    const totalDocs = (response: any) => response.total_rows - response.rows.length;
-    this.couchService.get('resources/_design_docs').subscribe((res) => {
-      this.reports.totalResources = totalDocs(res);
-    });
-    this.couchService.get('courses/_design_docs').subscribe((res) => {
-      this.reports.totalCourses = totalDocs(res);
-    });
+    this.activityService.getDatabaseCount('resources').subscribe(count => this.reports.totalResources = count);
+    this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
   }
 
   // getLogs() {
