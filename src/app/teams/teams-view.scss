@@ -14,9 +14,11 @@
   .left-tile, .right-tile {
     overflow: auto;
   }
-  
-  .top-button{
-    margin-top: 8px;
+
+  .request-list {
+    li {
+      margin-top: 0.5rem;
+    }
   }
 
 }
