@@ -29,6 +29,7 @@ export class ExamsQuestionComponent implements OnInit {
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
   correctCheckboxes: any = {};
+  @Output() noCorrectSelection = new EventEmitter<boolean>();
 
   constructor() {}
 
@@ -69,6 +70,7 @@ export class ExamsQuestionComponent implements OnInit {
     Object.keys(this.correctCheckboxes).forEach((key) => {
       this.correctCheckboxes[key] = correctChoices.indexOf(key) > -1;
     });
+    this.checkExamCorrectChoice(event, choice);
   }
 
   choiceTrackByFn(index, item) {
@@ -82,4 +84,66 @@ export class ExamsQuestionComponent implements OnInit {
     }
   }
 
+  checkChoiceType(event) {
+    return event !== 'input'  ?  this.noCorrectSelection.emit(true)  :  this.noCorrectSelection.emit(false);
+  }
+
+  checkChoiceInput(correctChoice) {
+    if (this.examType === 'surveys') {
+      if (this.questionForm.controls.type.value !== 'input') {
+        for (const choice of this.choices.controls) {
+           if (choice['controls'].text.value) {
+            return this.noCorrectSelection.emit(false);
+          }
+        }
+        return this.noCorrectSelection.emit(true);
+      }
+    } else {
+       if (this.questionForm.controls.type.value === 'select') {
+         if (! correctChoice.controls.text.value && this.correctCheckboxes[correctChoice.controls.id.value]) {
+          return this.noCorrectSelection.emit(true);
+        } else  if (correctChoice.controls.text.value && this.correctCheckboxes[correctChoice.controls.id.value]) {
+          return this.noCorrectSelection.emit(false);
+        }
+      } else  if (this.questionForm.controls.type.value === 'selectMultiple') {
+         if (! correctChoice.controls.text.value && this.correctCheckboxes[correctChoice.controls.id.value]) {
+          return this.noCorrectSelection.emit(true);
+        } else  if (correctChoice.controls.text.value && this.correctCheckboxes[correctChoice.controls.id.value]) {
+          for (const choice of this.choices.controls) {
+             if (choice !== correctChoice) {
+               if (!choice['controls'].text.value && this.correctCheckboxes[choice['controls'].id.value]) {
+                return this.noCorrectSelection.emit(true);
+               }
+            }
+          }
+          return this.noCorrectSelection.emit(false);
+        }
+      }
+    }
+  }
+
+  checkExamCorrectChoice(event: any, correctChoice: any) {
+     if (event.checked) {
+      const index = this.choices.controls.indexOf(correctChoice);
+      let j = 0;
+      for (const choice of this.choices.controls) {
+          if (j === index  && index  >  - 1 && choice['controls'].text.value) {
+          return this.noCorrectSelection.emit(false);
+        }
+          j = j + 1 ;
+      }
+      return this.noCorrectSelection.emit(true);
+    } else {
+       if (this.questionForm.controls.type.value === 'select') {
+        return this.noCorrectSelection.emit(true);
+      } else if (this.questionForm.controls.type.value === 'selectMultiple') {
+         for ( const key of this.questionForm.controls.correctChoice.value) {
+           if (key) {
+             return  this.noCorrectSelection.emit(false);
+           }
+        }
+         return this.noCorrectSelection.emit(true);
+      }
+    }
+  }
 }
