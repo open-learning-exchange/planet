@@ -43,7 +43,7 @@ export class ActivityLogsReportComponent {
 
   getLoginActivities() {
     this.activityService.getLoginActivities().subscribe(visits => {
-      this.reports.visits = visits;
+      this.reports.visits = visits.slice(0, 5);
     });
   }
 
