@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { ActivityService } from './activity.service';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Component({
   templateUrl: './activity-logs-report.component.html',
@@ -20,12 +21,12 @@ export class ActivityLogsReportComponent {
 
   constructor(
     private activityService: ActivityService,
-    private userService: UserService,
+    private configurationService: ConfigurationService,
     private route: ActivatedRoute
   ) {
-    this.route.data.subscribe((data: any) => {
-      this.planetCode =  data.code || this.userService.getConfig().code;
-      this.parentCode =  data.parentCode || this.userService.getConfig().parentCode;
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.planetCode = params.get('code') || this.configurationService.configuration.code;
+      this.parentCode = params.get('parentCode') || this.configurationService.configuration.parentCode;
     });
     this.getTotalUsers();
     this.getLoginActivities();
@@ -35,14 +36,14 @@ export class ActivityLogsReportComponent {
   }
 
   getTotalUsers() {
-    this.activityService.getTotalUsers().subscribe(({ count, byGender }) => {
+    this.activityService.getTotalUsers(this.planetCode).subscribe(({ count, byGender }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
     });
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities().subscribe(visits => {
+    this.activityService.getLoginActivities(this.planetCode).subscribe(visits => {
       this.reports.visits = visits.slice(0, 5);
     });
   }
@@ -55,7 +56,7 @@ export class ActivityLogsReportComponent {
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits().subscribe(resourceVisits => {
+    this.activityService.getResourceVisits(this.planetCode).subscribe(resourceVisits => {
       this.reports.resources = resourceVisits.sort((a, b) => b.count - a.count).slice(0, 5);
     });
   }

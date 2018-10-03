@@ -60,7 +60,7 @@ export class ActivityLogsComponent {
       this.activityService.getAdminActivities()
     ]).subscribe(([ planets, resourceVisits, loginActivities, adminActivities ]) => {
         this.logs.data = planets.map((planet: any) => ({
-          name: planet.name,
+          ...planet,
           resourceViews: this.countByPlanet(planet, resourceVisits),
           userLogins: this.countByPlanet(planet, loginActivities),
           ...this.mostRecentAdminActivities(planet, loginActivities, adminActivities)
