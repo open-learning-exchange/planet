@@ -22,9 +22,9 @@ export class ActivityService {
           {};
       } else {
         const newEntry = fields.reduce((newObj, field) => {
-          newObj[field] = item[field]
+          newObj[field] = item[field];
           return newObj;
-        }, {})
+        }, {});
         group.push({ ...newEntry, count: 1, sum: sumField ? item[sumField] : 0, max: item });
       }
       return group;
@@ -45,7 +45,8 @@ export class ActivityService {
 
   getLoginActivities() {
     return this.couchService.findAll('login_activities').pipe(map((loginActivities: any) => {
-      return this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' }).sort((a, b) => b.count - a.count).slice(0, 5);
+      return this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
+        .sort((a, b) => b.count - a.count);
     }));
   }
 
@@ -58,13 +59,19 @@ export class ActivityService {
 
   getResourceVisits() {
     return this.couchService.findAll('resource_activities').pipe(map((resourceActivites) => {
-      return this.groupBy(resourceActivites, [ 'resource' ]);
+      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resource' ]);
     }));
   }
 
   getDatabaseCount(db: string) {
     return this.couchService.get(db + '/_design_docs').pipe(map((res: any) => {
       return res.total_rows - res.rows.length;
+    }));
+  }
+
+  getAdminActivities() {
+    return this.couchService.findAll('activity_logs').pipe(map(adminActivities => {
+      return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'createdTime' });
     }));
   }
 
