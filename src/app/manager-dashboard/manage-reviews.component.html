@@ -1,0 +1,104 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Reviews</span>
+  <span class="toolbar-fill margin-lr-10"></span>
+</mat-toolbar>
+
+<div class="space-container primary-link-hover">
+  <mat-toolbar class="primary-color font-size-1">
+    <span class="toolbar-fill"></span>
+    <span *ngIf="!parent">
+      <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+      </button>
+    </span>
+  </mat-toolbar>
+
+  <mat-table #table [dataSource]="ratings" matSort>
+
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="item">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Item</mat-header-cell>
+      <mat-cell *matCellDef="let element" class="list-content-menu">
+
+        <h3 class="header">
+          <a [routerLink]="['view', element._id]">{{element.itemName}}</a>
+        </h3>
+        
+        <div class="content"><p>{{ element.description }}</p></div>
+
+        <mat-chip-list #tagsList class="tags-list">
+          <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag)">
+            {{tag}}
+          </mat-chip>
+        </mat-chip-list> 
+
+        <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #resourceMenu="matMenu">
+          <button mat-menu-item (click)="deleteClick(element)">
+            <mat-icon>delete_forever</mat-icon>
+            <span i18n>Delete</span>
+          </button>
+        </mat-menu>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.type}}
+          </mat-cell>
+        </ng-container>
+
+    <ng-container matColumnDef="rate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{element.rate}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="comment">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Comment</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.comment}}
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>User</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.user.name}}
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row)}"></mat-row>
+
+  </mat-table>
+
+
+  <mat-paginator #paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPaginateChange($event)">
+  </mat-paginator>
+
+</div>
