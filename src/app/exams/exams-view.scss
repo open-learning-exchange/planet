@@ -2,14 +2,14 @@
   .question-list {
     display: flex;
     flex-direction: column;
-  }
 
-  .question-list mat-radio-button {
-    margin: 5px;
-  }
+    mat-radio-button, mat-checkbox {
+      margin: 5px;
+    }
 
-  .question-list mat-radio-button:last-child {
-    margin-bottom: 15px;
+    mat-radio-button:last-child, mat-checkbox:last-child {
+      margin-bottom: 15px;
+    }
   }
 
   .v-align-center {
