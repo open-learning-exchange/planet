@@ -1,1 +1,0 @@
-{"views":{"count_activity":{"map":"function (doc) {\n        emit([doc.parentCode, doc.createdOn, doc.activity, doc.resource], 1);\n      }","reduce":"_count"},"total_item_activity":{"map":"function (doc) {\n        emit(doc.activity, doc.item, 1);\n      }","reduce":"_count"}}}
