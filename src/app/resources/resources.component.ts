@@ -166,31 +166,34 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(resource) {
-    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
+    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title, 1);
   }
 
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
     let amount = 'many',
       okClick = this.deleteResources(resources),
-      displayName = '';
+      displayName = '',
+      count = resources.length;
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
-      displayName = resource.title;
+      displayName = resource.title,
+        count = 1;
     }
-    this.openDeleteDialog(okClick, amount, displayName);
+    this.openDeleteDialog(okClick, amount, displayName, count);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '') {
+  openDeleteDialog(okClick, amount, displayName = '', count) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
         amount,
         changeType: 'delete',
         type: 'resource',
-        displayName
+        displayName,
+        count
       }
     });
     // Reset the message when the dialog closes
