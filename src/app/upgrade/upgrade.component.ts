@@ -26,7 +26,7 @@ export class UpgradeComponent {
     private http: HttpClient,
     private couchService: CouchService,
     private userService: UserService,
-    private managerService: ManagerService,
+    private managerService: ManagerService
   ) {
     this.addLine('Not started');
   }
