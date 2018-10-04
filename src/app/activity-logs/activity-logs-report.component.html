@@ -33,7 +33,7 @@
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile>Most Visited Resources</mat-grid-tile><mat-grid-tile>Total Visits</mat-grid-tile>
       <ng-container *ngFor="let resource of reports?.resources">
-        <mat-grid-tile><a [routerLink]="['/resources/view', resource.resource]">{{resource?.resource}}</a></mat-grid-tile><mat-grid-tile>{{resource.count}}</mat-grid-tile>
+        <mat-grid-tile><a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.title}}</a></mat-grid-tile><mat-grid-tile>{{resource.count}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">

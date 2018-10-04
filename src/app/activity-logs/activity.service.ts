@@ -66,7 +66,7 @@ export class ActivityService {
 
   getResourceVisits(planetCode?: string) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode)).pipe(map((resourceActivites) => {
-      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resource' ]);
+      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ]);
     }));
   }
 
