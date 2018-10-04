@@ -17,7 +17,7 @@
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="course-progress" *ngIf="isUserEnrolled">
+    <div class="course-progress" *ngIf="isUserEnrolled && !parent">
       <span i18n>Your progress:</span>
       <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>

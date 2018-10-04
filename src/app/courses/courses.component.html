@@ -77,7 +77,7 @@
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
-          <div class="course-progress" *ngIf="element.admission">
+          <div class="course-progress" *ngIf="element.admission && !parent">
             <span i18n>Your progress:</span>
             <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
