@@ -37,7 +37,7 @@
         <p i18n><b>Requested Members: ({{team?.requests.length}})</b></p>
         <p *ngIf="team?.requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
         <ng-template #requestedList>
-          <ul>
+          <ul class="request-list">
             <li *ngFor="let user of team?.requests">
               {{user.replace('org.couchdb.user:','')}}
               <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
