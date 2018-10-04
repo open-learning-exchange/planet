@@ -15,6 +15,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
+import { ActivityService } from '../activity-logs/activity.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -46,7 +47,8 @@ export class ManagerDashboardComponent implements OnInit {
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
     private syncService: SyncService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private activityService: ActivityService
   ) {}
 
   ngOnInit() {
@@ -243,27 +245,18 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   getLogs() {
+    const configuration = this.configurationService.configuration;
     forkJoin([
-      this.couchService.post('activity_logs/_find',
-        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'login' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
-      this.couchService.post('activity_logs/_find',
-        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'upgrade' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
-      this.couchService.post('activity_logs/_find',
-        findDocuments({ 'createdOn': this.planetConfig.code, 'type': 'sync' }, 0, [ { 'createdTime' : 'desc' } ], 1)),
-      this.couchService.get('resource_activities/_design/resource_activities/_view/count_activity?'
-        + 'startkey=["' + this.planetConfig.parentCode + '", "' + this.planetConfig.code + '", "visit"]'
-        + '&endkey=["' + this.planetConfig.parentCode + '0", "' + this.planetConfig.code + '", "visit"]'
-        + '&group_level=3'),
-      this.couchService.get('ratings/_design/ratings/_view/count_ratings?'
-        + 'startkey=["' + this.planetConfig.parentCode + '", "' + this.planetConfig.code + '"]'
-        + '&endkey=["' + this.planetConfig.parentCode + '0", "' + this.planetConfig.code + '"]'
-        + '&group_level=2')
-    ]).subscribe(data => {
-      this.activityLogs['last_admin_login'] = data[0].docs[0] || {};
-      this.activityLogs['last_upgrade'] = data[1].docs[0] || {};
-      this.activityLogs['last_sync'] = data[2].docs[0] || {};
-      this.activityLogs['resource_visits'] = data[3].rows[0] || {};
-      this.activityLogs['ratings'] = data[4].rows[0] || {};
+      this.activityService.getLoginActivities(configuration.code),
+      this.activityService.getAdminActivities(configuration.code),
+      this.activityService.getResourceVisits(configuration.code),
+      this.activityService.getRatingInfo(configuration.code)
+    ]).subscribe(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
+      this.activityLogs = {
+        resourceVisits: resourceVisits[0].count,
+        ratings: ratings.reduce((total, rating) => total + rating.count, 0),
+        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities, adminActivities)
+      };
     });
   }
 

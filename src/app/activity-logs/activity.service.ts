@@ -59,7 +59,7 @@ export class ActivityService {
 
   getRatingInfo(planetCode?: string) {
     return this.couchService.findAll('ratings', this.selector(planetCode)).pipe(map((ratings: any) => {
-      return this.groupBy(ratings, [ 'type', 'item' ], { sumField: 'rate' })
+      return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item' ], { sumField: 'rate' })
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) => ({ ...r, value: r.sum / r.count }));
     }));
   }
@@ -80,6 +80,17 @@ export class ActivityService {
     return this.couchService.findAll('activity_logs', this.selector(planetCode)).pipe(map(adminActivities => {
       return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'createdTime' });
     }));
+  }
+
+  mostRecentAdminActivities(planet, logins, adminActivities) {
+    const adminName = planet.adminName.split('@')[0];
+    const findPlanetLog = (item: any) => item.createdOn === planet.code;
+    const findAdminActivity = (type: any) => (activity: any) => activity.type === type && findPlanetLog(activity);
+    return ({
+      lastLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
+      lastUpgrade: adminActivities.find(findAdminActivity('upgrade')),
+      lastSync: adminActivities.find(findAdminActivity('sync'))
+    });
   }
 
 }

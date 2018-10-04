@@ -40,17 +40,6 @@ export class ActivityLogsComponent {
     }, 0);
   }
 
-  mostRecentAdminActivities(planet, logins, adminActivities) {
-    const adminName = planet.adminName.split('@')[0];
-    const findPlanetLog = (item: any) => item.createdOn === planet.code;
-    const findAdminActivity = (type: any) => (activity: any) => activity.type === type && findPlanetLog(activity);
-    return ({
-      lastLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
-      lastUpgrade: adminActivities.find(findAdminActivity('upgrade')),
-      lastSync: adminActivities.find(findAdminActivity('sync'))
-    });
-  }
-
   getLogs() {
     forkJoin([
       this.couchService.findAll('communityregistrationrequests',
@@ -63,7 +52,7 @@ export class ActivityLogsComponent {
           ...planet,
           resourceViews: this.countByPlanet(planet, resourceVisits),
           userLogins: this.countByPlanet(planet, loginActivities),
-          ...this.mostRecentAdminActivities(planet, loginActivities, adminActivities)
+          ...this.activityService.mostRecentAdminActivities(planet, loginActivities, adminActivities)
         }));
     }, (error) => this.message = 'There was a problem getting Activity Logs');
   }

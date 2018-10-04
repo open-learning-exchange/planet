@@ -56,6 +56,6 @@
   <div>{{message}}</div>
   <table>
     <tr><th>Last Login</th><th>Last Upgrade</th><th>Last Sync</th><th>Total Visits</th><th>Total Ratings</th></tr>
-    <tr><td>{{activityLogs?.last_admin_login?.createdTime | date: 'medium'}}</td><td>{{activityLogs?.last_upgrade?.createdTime | date: 'medium'}}</td><td>{{activityLogs?.last_sync?.createdTime | date: 'medium'}}</td><td>{{activityLogs?.resource_visits?.value}}</td><td>{{activityLogs?.ratings?.value}}</td></tr>
+    <tr><td>{{activityLogs?.lastLogin?.max.loginTime | date: 'medium'}}</td><td>{{activityLogs?.lastUpgrade?.max.createdTime | date: 'medium'}}</td><td>{{activityLogs?.lastSync?.max.createdTime | date: 'medium'}}</td><td>{{activityLogs?.resourceVisits}}</td><td>{{activityLogs?.ratings}}</td></tr>
   </table>
 </div>
