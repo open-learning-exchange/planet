@@ -108,7 +108,7 @@ export class LoginFormComponent {
       switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
     ).subscribe(
       res => {
-        this.planetMessageService.showMessage('User created: ' + res.id.replace('org.couchdb.user:', ''));
+        this.planetMessageService.showMessage('Welcome to Planet Learning, ' + res.id.replace('org.couchdb.user:', '') + '!');
         this.welcomeNotification(res.id);
         this.login(this.userForm.value, true);
       },
