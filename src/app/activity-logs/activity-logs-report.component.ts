@@ -49,7 +49,7 @@ export class ActivityLogsReportComponent {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo().subscribe((averageRatings) => {
+    this.activityService.getRatingInfo(this.planetCode).subscribe((averageRatings) => {
       this.reports.resourceRatings = averageRatings.filter(item => item.type === 'resource').slice(0, 5);
       this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
     });
