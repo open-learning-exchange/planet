@@ -16,8 +16,8 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="read">
-        <mat-cell *matCellDef="let element" (click)="readNotification(element)">
-          <mat-icon *ngIf="element.status==='unread'">visibility</mat-icon>  
+        <mat-cell *matCellDef="let element" >
+          <button mat-stroked-button *ngIf="element.status==='unread'" (click)="readNotification(element)" i18n>Mark as Read</button>
         </mat-cell>
       </ng-container>
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
