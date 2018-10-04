@@ -3,8 +3,8 @@ import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { Routes, RouterModule } from '@angular/router';
 import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
-import { ActivityLogsComponent } from './reports/activity-logs.component';
-import { ActivityLogsReportComponent } from './reports/activity-logs-report.component';
+import { ReportsComponent } from './reports/reports.component';
+import { ReportsDetailComponent } from './reports/reports-detail.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
@@ -14,8 +14,8 @@ const routes: Routes = [
   { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },
   { path: 'configuration', component: ManagerDashboardConfigurationComponent, data: { update: true } },
   { path: 'users', loadChildren: '../users/users.module#UsersModule' },
-  { path: 'reports', component: ActivityLogsComponent },
-  { path: 'reports/detail', component: ActivityLogsReportComponent }
+  { path: 'reports', component: ReportsComponent },
+  { path: 'reports/detail', component: ReportsDetailComponent }
 ];
 
 @NgModule({

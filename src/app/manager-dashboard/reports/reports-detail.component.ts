@@ -4,13 +4,13 @@ import { switchMap, map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { UserService } from '../../shared/user.service';
-import { ActivityService } from './activity.service';
+import { ReportsService } from './reports.service';
 import { ConfigurationService } from '../../configuration/configuration.service';
 
 @Component({
-  templateUrl: './activity-logs-report.component.html',
+  templateUrl: './reports-detail.component.html',
 })
-export class ActivityLogsReportComponent {
+export class ReportsDetailComponent {
 
   parentCode = '';
   planetCode = '';
@@ -19,7 +19,7 @@ export class ActivityLogsReportComponent {
   courses = [];
 
   constructor(
-    private activityService: ActivityService,
+    private activityService: ReportsService,
     private configurationService: ConfigurationService,
     private route: ActivatedRoute
   ) {

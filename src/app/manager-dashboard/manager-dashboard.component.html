@@ -7,10 +7,9 @@
 <div class="space-container">
   <div *ngIf="displayDashboard">
     <span *ngIf="planetType !== 'community'">
-      <a [routerLink]="['reports']" i18n mat-raised-button>Activity Logs</a>
       <a routerLink="/requests" i18n mat-raised-button>Requests</a>
+      <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
     </span>
-    <a [routerLink]="['reports', 'detail']" i18n mat-raised-button>Activity Reports</a>
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
     <button *ngIf="devMode"
@@ -53,7 +52,13 @@
   <div *ngIf="pin" i18n>Your tablet pin number is: {{pin}}
     <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
   </div>
-  <div>{{message}}</div>
+  <div>
+    <p>
+      <b i18n>Activity on</b>
+      <i>{{ ' ' + planetConfig.name }}</i>
+      <a class="margin-lr-8" [routerLink]="['reports', 'detail']" i18n mat-raised-button>Report Detail</a>
+    </p>
+  </div>
   <mat-grid-list cols="5" rowHeight="2rem">
     <mat-grid-tile>Last Login</mat-grid-tile><mat-grid-tile>Last Upgrade</mat-grid-tile><mat-grid-tile>Last Sync</mat-grid-tile>
     <mat-grid-tile>Total Visits</mat-grid-tile><mat-grid-tile>Total Ratings</mat-grid-tile>

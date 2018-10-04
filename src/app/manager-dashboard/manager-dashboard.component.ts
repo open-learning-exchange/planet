@@ -15,7 +15,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { ActivityService } from './reports/activity.service';
+import { ReportsService } from './reports/reports.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -48,7 +48,7 @@ export class ManagerDashboardComponent implements OnInit {
     private dialog: MatDialog,
     private syncService: SyncService,
     private configurationService: ConfigurationService,
-    private activityService: ActivityService
+    private activityService: ReportsService
   ) {}
 
   ngOnInit() {

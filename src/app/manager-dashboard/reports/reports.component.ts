@@ -5,12 +5,12 @@ import { forkJoin } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserService } from '../../shared/user.service';
-import { ActivityService } from './activity.service';
+import { ReportsService } from './reports.service';
 
 @Component({
-  templateUrl: './activity-logs.component.html',
+  templateUrl: './reports.component.html',
 })
-export class ActivityLogsComponent {
+export class ReportsComponent {
 
   message = '';
   logs = new MatTableDataSource();
@@ -25,7 +25,7 @@ export class ActivityLogsComponent {
   ];
   constructor(
     private couchService: CouchService,
-    private activityService: ActivityService,
+    private activityService: ReportsService,
     private userService: UserService
   ) {
     this.getLogs();

@@ -10,8 +10,8 @@ import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ConfigurationModule } from '../configuration/configuration.module';
-import { ActivityLogsComponent } from './reports/activity-logs.component';
-import { ActivityLogsReportComponent } from './reports/activity-logs-report.component';
+import { ReportsComponent } from './reports/reports.component';
+import { ReportsDetailComponent } from './reports/reports-detail.component';
 
 @NgModule({
   imports: [
@@ -30,8 +30,8 @@ import { ActivityLogsReportComponent } from './reports/activity-logs-report.comp
     ManagerDashboardComponent,
     ManagerSyncComponent,
     ManagerDashboardConfigurationComponent,
-    ActivityLogsComponent,
-    ActivityLogsReportComponent
+    ReportsComponent,
+    ReportsDetailComponent
   ]
 })
 export class ManagerDashboardModule {}

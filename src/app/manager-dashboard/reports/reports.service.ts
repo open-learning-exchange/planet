@@ -6,7 +6,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 @Injectable({
   providedIn: 'root'
 })
-export class ActivityService {
+export class ReportsService {
 
   constructor(
     private couchService: CouchService
