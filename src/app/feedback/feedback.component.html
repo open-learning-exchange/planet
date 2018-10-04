@@ -44,7 +44,10 @@
       <!-- Priorty Column -->
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.priority === "Yes" ? "Yes" : "No"}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <mat-chip-list *ngIf="element.priority==='Yes'"><mat-chip selected color="accent" i18n>Yes</mat-chip></mat-chip-list>
+          <mat-chip-list *ngIf="element.priority==='No'"><mat-chip i18n>No</mat-chip></mat-chip-list>
+        </mat-cell>
       </ng-container>
       <!-- Owner Column -->
       <ng-container matColumnDef="owner">
@@ -54,7 +57,10 @@
       <!-- Status Column -->
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-chip-list *ngIf="element.status==='Open' || element.status==='Reopened'"><mat-chip selected>{{element.status}}</mat-chip></mat-chip-list>
+            <mat-chip-list *ngIf="element.status==='Closed'"><mat-chip>{{element.status}}</mat-chip></mat-chip-list>
+          </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
