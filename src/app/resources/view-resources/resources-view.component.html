@@ -11,7 +11,7 @@
     </button>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
-      <a mat-raised-button [href]="resourceSrc" target="_blank" color="accent">Open in new tab</a>
+      <a mat-raised-button [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
       <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
         Add to myLibrary
       </button>
