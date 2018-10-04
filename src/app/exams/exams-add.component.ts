@@ -29,6 +29,7 @@ export class ExamsAddComponent implements OnInit {
   steps = [];
   showFormError = false;
   returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
+  noCorrectChoice = false;
 
   constructor(
     private router: Router,
@@ -161,4 +162,7 @@ export class ExamsAddComponent implements OnInit {
     this.router.navigateByUrl(this.returnUrl);
   }
 
+  checkChoice(event: boolean) {
+    event === false  ? this.noCorrectChoice = false : this.noCorrectChoice = true;
+  }
 }

@@ -11,7 +11,7 @@
   <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="exam-buttons">
-        <button mat-raised-button color="primary" type="submit" [planetSubmit]="examForm.valid" i18n>{{pageType}} {examType, select, courses {Exam} surveys {Survey}}</button>
+        <button mat-raised-button color="primary" type="submit" [planetSubmit]="examForm.valid" [disabled]="noCorrectChoice !== false" i18n>{{pageType}} {examType, select, courses {Exam} surveys {Survey}}</button>
         <button mat-raised-button color="accent" type="button" (click)="addQuestion()" i18n class="margin-lr-5">Add Question</button>
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
       </div>
@@ -22,7 +22,7 @@
         </mat-form-field>
       </div>
       <div class="exam-questions">
-        <planet-exam-question
+        <planet-exam-question (noCorrectSelection)="checkChoice($event)"
           *ngFor="let question of questionsFormArray.controls; let i = index"
           [questionForm]="question"
           (questionRemove)="removeQuestion(i)"

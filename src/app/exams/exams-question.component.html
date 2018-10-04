@@ -17,7 +17,7 @@
     </mat-form-field>
     <div>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
+        <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()" (selectionChange)="checkChoiceType(questionForm.controls.type.value)">
           <mat-option value="input" i18n>Input</mat-option>
           <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
           <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
@@ -29,7 +29,7 @@
       [ngClass]="{'survey-question': examType === 'surveys'}">
       <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
+          <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text" (keyup)="checkChoiceInput(choice)">
           <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
         </mat-form-field>
         <mat-checkbox
