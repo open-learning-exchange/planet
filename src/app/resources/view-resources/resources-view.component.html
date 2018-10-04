@@ -24,7 +24,7 @@
   </mat-toolbar>
   <div class="view-container" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-      <planet-rating [rating]="resource?.rating" [itemId]="resource?._id" [parent]="parent" [ratingType]="'resource'"></planet-rating>
+      <planet-rating [rating]="resource?.rating" [item]="resource" [parent]="parent" [ratingType]="'resource'"></planet-rating>
       <p><b>Author:</b> <i>{{resource?.author}}</i></p>
       <p><b>Published by:</b> {{resource?.Publisher}} on {{resource?.year}}</p>
       <p><b>Media:</b> {{ resource?.medium }}</p>

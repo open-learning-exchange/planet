@@ -59,7 +59,7 @@ export class ActivityService {
 
   getRatingInfo(planetCode?: string) {
     return this.couchService.findAll('ratings', this.selector(planetCode)).pipe(map((ratings: any) => {
-      return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item' ], { sumField: 'rate' })
+      return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) => ({ ...r, value: r.sum / r.count }));
     }));
   }

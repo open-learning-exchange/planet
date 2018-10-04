@@ -23,7 +23,7 @@
     </div>
     <div class="course-container">
       <div class="course-detail bg-light-grey">
-        <planet-rating [rating]="courseDetail?.rating" [itemId]="courseDetail?._id" [parent]="parent" [ratingType]="'course'"></planet-rating>
+        <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="parent" [ratingType]="'course'"></planet-rating>
         <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
         <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
         <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>

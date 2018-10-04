@@ -39,13 +39,13 @@
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile>Highest Rated Resources</mat-grid-tile><mat-grid-tile>Average Rating</mat-grid-tile>
       <ng-container *ngFor="let rate of reports?.resourceRatings">
-        <mat-grid-tile><a [routerLink]="['/resources/view', rate.item]">{{rate?.item}}</a></mat-grid-tile><mat-grid-tile>{{rate?.value}}</mat-grid-tile>
+        <mat-grid-tile><a [routerLink]="['/resources/view', rate.item]">{{rate?.title}}</a></mat-grid-tile><mat-grid-tile>{{rate?.value}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile>Highest Rated Courses</mat-grid-tile><mat-grid-tile>Average Rating</mat-grid-tile>
       <ng-container *ngFor="let rate of reports?.courseRatings">
-        <mat-grid-tile><a [routerLink]="['/course/view', rate.item]">{{rate?.item}}</a></mat-grid-tile><mat-grid-tile>{{rate?.value}}</mat-grid-tile>
+        <mat-grid-tile><a [routerLink]="['/course/view', rate.item]">{{rate?.title}}</a></mat-grid-tile><mat-grid-tile>{{rate?.value}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
   </div>
