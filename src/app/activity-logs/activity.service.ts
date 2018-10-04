@@ -43,9 +43,9 @@ export class ActivityService {
       return ({
         count: users.length,
         byGender: users.reduce((usersByGender: any, user: any) => {
-          usersByGender[user.gender || 'undeclared'] += 1;
+          usersByGender[user.gender || 'didNotSpecify'] += 1;
           return usersByGender;
-        }, { 'male': 0, 'female': 0, 'undeclared': 0 })
+        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 })
       });
     }));
   }
@@ -87,7 +87,7 @@ export class ActivityService {
     const findPlanetLog = (item: any) => item.createdOn === planet.code;
     const findAdminActivity = (type: any) => (activity: any) => activity.type === type && findPlanetLog(activity);
     return ({
-      lastLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
+      lastAdminLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
       lastUpgrade: adminActivities.find(findAdminActivity('upgrade')),
       lastSync: adminActivities.find(findAdminActivity('sync'))
     });

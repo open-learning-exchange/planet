@@ -19,7 +19,7 @@ export class ActivityLogsComponent {
     // 'downloads',
     'views',
     'logins',
-    'lastLogin',
+    'lastAdminLogin',
     'lastUpgrade',
     'lastSync'
   ];
@@ -51,7 +51,7 @@ export class ActivityLogsComponent {
         this.logs.data = planets.map((planet: any) => ({
           ...planet,
           resourceViews: this.countByPlanet(planet, resourceVisits),
-          userLogins: this.countByPlanet(planet, loginActivities),
+          userVisits: this.countByPlanet(planet, loginActivities),
           ...this.activityService.mostRecentAdminActivities(planet, loginActivities, adminActivities)
         }));
     }, (error) => this.message = 'There was a problem getting Activity Logs');

@@ -12,10 +12,9 @@ import { ConfigurationService } from '../configuration/configuration.service';
 })
 export class ActivityLogsReportComponent {
 
-  message = '';
   parentCode = '';
   planetCode = '';
-  reports: any = { users: { } };
+  reports: any = {};
   resources = [];
   courses = [];
 

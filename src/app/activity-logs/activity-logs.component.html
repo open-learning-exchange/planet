@@ -26,12 +26,12 @@
         <mat-cell *matCellDef="let element">{{element?.resourceViews}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="logins">
-        <mat-header-cell *matHeaderCellDef i18n>User Login</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.userLogins}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef i18n>User Visits</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.userVisits}}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="lastLogin">
-        <mat-header-cell *matHeaderCellDef i18n>Last Login</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.lastLogin?.max?.loginTime | date}}</mat-cell>
+      <ng-container matColumnDef="lastAdminLogin">
+        <mat-header-cell *matHeaderCellDef i18n>Last Admin Login</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element?.lastAdminLogin?.max?.loginTime | date}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="lastUpgrade">
         <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
