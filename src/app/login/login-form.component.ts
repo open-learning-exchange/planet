@@ -143,7 +143,7 @@ export class LoginFormComponent {
   sendNotifications(userName, addedMember) {
     const data = {
       'user': 'org.couchdb.user:' + userName,
-      'message': 'New User ' + addedMember + ' has joined.',
+      'message': 'New member ' + addedMember + ' has joined.',
       'link': '/manager/users/',
       'linkParams': { 'search': addedMember },
       'type': 'new user',
