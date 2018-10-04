@@ -5,15 +5,12 @@ import { debug } from '../debug-operator';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { map, switchMap, groupBy, mergeMap, toArray, flatMap, combineAll } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { environment } from '../../environments/environment';
-import { SyncService } from '../shared/sync.service';
 import { FormControl } from '../../../node_modules/@angular/forms';
-import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
@@ -71,44 +68,47 @@ export class ManageReviewsComponent implements OnInit, AfterViewInit, OnDestroy 
 
 
   ngOnInit() {
+    this.getRatings();
+  }
 
+  getRatings(){
     this.couchService.allDocs('ratings')
-      .pipe(
-        switchMap(rating => rating),
-        // group the ratings based on type
-        groupBy(rating => rating['type']),
-        mergeMap(group => group.pipe(toArray())),
-        map((ratings) => {
-          ratings.forEach((currentRating) => {
-            // Currently we only have ratings for courses and resources
-            if (currentRating['type'] === 'course') { this.courses.push(currentRating['item']); }
-            else { this.resources.push(currentRating['item']); }
-          });
-          return ratings;
-        }),
-        flatMap((ratings) => {
-          return this.getItemNames(ratings).pipe(
-            map((items) => {
-              // loop through ratings and add a name property for each one
-              ratings.forEach((currentRating) => {
-                items.forEach((currentItem) => {
-                  if (currentRating['item'] === currentItem['_id']) {
-                    // Items either have a title or courseTitle depending on their type resource or course
-                    if (currentItem['title']) { currentRating['itemName'] = currentItem['title']; }
-                    else { currentRating['itemName'] = currentItem['courseTitle']; }
-                  }
-                });
+    .pipe(
+      switchMap(rating => rating),
+      // group the ratings based on type
+      groupBy(rating => rating['type']),
+      mergeMap(group => group.pipe(toArray())),
+      map((ratings) => {
+        ratings.forEach((currentRating) => {
+          // Currently we only have ratings for courses and resources
+          if (currentRating['type'] === 'course') { this.courses.push(currentRating['item']); }
+          else { this.resources.push(currentRating['item']); }
+        });
+        return ratings;
+      }),
+      flatMap((ratings) => {
+        return this.getItemNames(ratings).pipe(
+          map((items) => {
+            // loop through ratings and add a name property for each one
+            ratings.forEach((currentRating) => {
+              items.forEach((currentItem) => {
+                if (currentRating['item'] === currentItem['_id']) {
+                  // Items either have a title or courseTitle depending on their type resource or course
+                  if (currentItem['title']) { currentRating['itemName'] = currentItem['title']; }
+                  else { currentRating['itemName'] = currentItem['courseTitle']; }
+                }
               });
-              return ratings;
-            }),
-            combineAll()
-          );
-        }),
-        combineAll()
-      )
-      .subscribe((ratings) => {
-        this.ratings.data = ratings;
-      });
+            });
+            return ratings;
+          }),
+          combineAll()
+        );
+      }),
+      combineAll()
+    )
+    .subscribe((ratings) => {
+      this.ratings.data = ratings;
+    });
   }
 
 
