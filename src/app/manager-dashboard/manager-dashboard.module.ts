@@ -10,6 +10,8 @@ import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ConfigurationModule } from '../configuration/configuration.module';
+import { ActivityLogsComponent } from './reports/activity-logs.component';
+import { ActivityLogsReportComponent } from './reports/activity-logs-report.component';
 
 @NgModule({
   imports: [
@@ -27,7 +29,9 @@ import { ConfigurationModule } from '../configuration/configuration.module';
   declarations: [
     ManagerDashboardComponent,
     ManagerSyncComponent,
-    ManagerDashboardConfigurationComponent
+    ManagerDashboardConfigurationComponent,
+    ActivityLogsComponent,
+    ActivityLogsReportComponent
   ]
 })
 export class ManagerDashboardModule {}

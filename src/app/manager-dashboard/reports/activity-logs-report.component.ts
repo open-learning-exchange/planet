@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { UserService } from '../shared/user.service';
+import { UserService } from '../../shared/user.service';
 import { ActivityService } from './activity.service';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { ConfigurationService } from '../../configuration/configuration.service';
 
 @Component({
   templateUrl: './activity-logs-report.component.html',

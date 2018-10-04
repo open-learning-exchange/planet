@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { switchMap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { UserService } from '../shared/user.service';
+import { CouchService } from '../../shared/couchdb.service';
+import { findDocuments } from '../../shared/mangoQueries';
+import { UserService } from '../../shared/user.service';
 import { ActivityService } from './activity.service';
 
 @Component({

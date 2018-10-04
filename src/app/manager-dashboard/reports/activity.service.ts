@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { CouchService } from '../../shared/couchdb.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'

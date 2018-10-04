@@ -15,7 +15,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { ActivityService } from '../activity-logs/activity.service';
+import { ActivityService } from './reports/activity.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
