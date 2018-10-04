@@ -29,7 +29,6 @@ import { TeamsService } from './teams/teams.service';
 import { RatingService } from './shared/forms/rating.service';
 import { TagsService } from './shared/forms/tags.service';
 import { ManagerService } from './manager-dashboard/manager.service';
-import { LogsService } from './shared/forms/logs.service';
 
 @NgModule({
   imports: [
@@ -63,8 +62,7 @@ import { LogsService } from './shared/forms/logs.service';
     TeamsService,
     RatingService,
     TagsService,
-    ManagerService,
-    LogsService
+    ManagerService
   ],
   bootstrap: [ AppComponent ]
 })

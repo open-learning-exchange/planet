@@ -35,11 +35,11 @@
       </ng-container>
       <ng-container matColumnDef="lastUpgrade">
         <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.lastUpgrade?.max?.createdTime | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.lastUpgrade?.max?.time | date}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="lastSync">
         <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.lastSync?.max?.createdTime | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.lastSync?.max?.time | date}}</mat-cell>
       </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

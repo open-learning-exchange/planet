@@ -6,7 +6,6 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { LogsService } from '../shared/forms/logs.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
@@ -28,7 +27,6 @@ export class UpgradeComponent {
     private couchService: CouchService,
     private userService: UserService,
     private managerService: ManagerService,
-    private logService: LogsService
   ) {
     this.addLine('Not started');
   }
@@ -51,7 +49,7 @@ export class UpgradeComponent {
         return this.managerService.openPasswordConfirmation();
       }),
       switchMap(credentials => this.postAdminCredentials(credentials)),
-      switchMap(() => this.logService.addLogs({ type: 'upgrade' })),
+      switchMap(() => this.managerService.addAdminLog('upgrade')),
       switchMap(() => {
         const requestParams = new HttpParams().set('v', parentVersion.trim());
         return this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams });

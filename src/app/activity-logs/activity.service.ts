@@ -77,8 +77,8 @@ export class ActivityService {
   }
 
   getAdminActivities(planetCode?: string) {
-    return this.couchService.findAll('activity_logs', this.selector(planetCode)).pipe(map(adminActivities => {
-      return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'createdTime' });
+    return this.couchService.findAll('admin_activities', this.selector(planetCode)).pipe(map(adminActivities => {
+      return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
     }));
   }
 

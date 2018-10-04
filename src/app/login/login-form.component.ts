@@ -12,7 +12,6 @@ import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { LogsService } from '../shared/forms/logs.service';
 
 const registerForm = {
   name: [],
@@ -48,7 +47,6 @@ export class LoginFormComponent {
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
     private configurationService: ConfigurationService,
-    private logService: LogsService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -183,9 +181,6 @@ export class LoginFormComponent {
     obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
     if (localConfig.registrationRequest === 'pending') {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
-    }
-    if (this.userService.get().isUserAdmin) {
-      obsArr.push(this.logService.addLogs({ type: 'login' }));
     }
     return obsArr;
   }
