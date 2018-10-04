@@ -54,8 +54,13 @@
     <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
   </div>
   <div>{{message}}</div>
-  <table>
-    <tr><th>Last Login</th><th>Last Upgrade</th><th>Last Sync</th><th>Total Visits</th><th>Total Ratings</th></tr>
-    <tr><td>{{activityLogs?.lastLogin?.max.loginTime | date: 'medium'}}</td><td>{{activityLogs?.lastUpgrade?.max.createdTime | date: 'medium'}}</td><td>{{activityLogs?.lastSync?.max.createdTime | date: 'medium'}}</td><td>{{activityLogs?.resourceVisits}}</td><td>{{activityLogs?.ratings}}</td></tr>
-  </table>
+  <mat-grid-list cols="5" rowHeight="2rem">
+    <mat-grid-tile>Last Login</mat-grid-tile><mat-grid-tile>Last Upgrade</mat-grid-tile><mat-grid-tile>Last Sync</mat-grid-tile>
+    <mat-grid-tile>Total Visits</mat-grid-tile><mat-grid-tile>Total Ratings</mat-grid-tile>
+    <mat-grid-tile>{{activityLogs?.lastLogin?.max.loginTime | date: 'medium'}}</mat-grid-tile>
+    <mat-grid-tile>{{activityLogs?.lastUpgrade?.max.createdTime | date: 'medium'}}</mat-grid-tile>
+    <mat-grid-tile>{{activityLogs?.lastSync?.max.createdTime | date: 'medium'}}</mat-grid-tile>
+    <mat-grid-tile>{{activityLogs?.resourceVisits}}</mat-grid-tile>
+    <mat-grid-tile>{{activityLogs?.ratings}}</mat-grid-tile>
+  </mat-grid-list>
 </div>
