@@ -13,7 +13,7 @@ import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource();
-  displayedColumns = [ 'message' ];
+  displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
   emptyData = false;
 

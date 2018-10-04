@@ -15,6 +15,11 @@
           </p>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="read">
+        <mat-cell *matCellDef="let element" >
+          <button mat-stroked-button *ngIf="element.status==='unread'" (click)="readNotification(element)" i18n>Mark as Read</button>
+        </mat-cell>
+      </ng-container>
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
     </mat-table>
     <mat-paginator #paginator
