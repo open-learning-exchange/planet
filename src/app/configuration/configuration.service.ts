@@ -8,6 +8,7 @@ import { forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,10 @@ export class ConfigurationService {
     private syncService: SyncService
   ) {
     this.getConfiguration();
-    this.setCouchListener();
+    // Short term solution because continuous feed causes e2e test timeout
+    if (!environment.test) {
+      this.setCouchListener();
+    }
   }
 
   private getConfiguration() {
