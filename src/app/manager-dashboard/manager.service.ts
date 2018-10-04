@@ -60,4 +60,14 @@ export class ManagerService {
     }));
   }
 
+  addAdminLog(type) {
+    const log = {
+      createdOn: this.userService.getConfig().code,
+      parentCode: this.userService.getConfig().parentCode,
+      user: this.userService.get().name,
+      time: Date.now()
+    };
+    return this.couchService.post('admin_activities', { ...log, type });
+  }
+
 }

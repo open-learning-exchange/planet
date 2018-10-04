@@ -97,6 +97,7 @@ export class ConfigurationComponent implements OnInit {
         this.parentUniqueValidator('name')
       ],
       parentDomain: [ '', Validators.required ],
+      parentCode: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [
         '',
@@ -193,17 +194,21 @@ export class ConfigurationComponent implements OnInit {
     if (selectedValue === 'nation') {
       this.configurationFormGroup.patchValue({
         planetType: selectedValue,
-        parentDomain: environment.centerAddress
+        parentDomain: environment.centerAddress,
+        parentCode: 'earth'
       });
     } else {
       this.configurationFormGroup.patchValue({
         planetType: selectedValue,
-        parentDomain: ''
+        parentDomain: '',
+        parentCode: ''
       });
     }
   }
 
   onChangeNation() {
+    const parentCode = this.nations.find(n => n.localDomain === this.configurationFormGroup.get('parentDomain').value);
+    this.configurationFormGroup.get('parentCode').setValue(parentCode.code);
     if (this.configurationFormGroup.get('name').value !== '') {
       this.configurationFormGroup.controls.name.updateValueAndValidity();
       this.configurationFormGroup.controls.code.updateValueAndValidity();

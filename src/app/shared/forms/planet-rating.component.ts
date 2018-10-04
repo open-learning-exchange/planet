@@ -35,7 +35,7 @@ const popupFormFields = [
 export class PlanetRatingComponent implements OnChanges {
 
   @Input() rating: any = { userRating: {} };
-  @Input() itemId: string;
+  @Input() item: any;
   @Input() parent;
   @Input() ratingType = '';
 
@@ -99,10 +99,13 @@ export class PlanetRatingComponent implements OnChanges {
     // Later parameters of Object.assign will overwrite values from previous objects
     const newRating = Object.assign({
       type: this.ratingType,
-      item: this.itemId
+      item: this.item._id,
+      title: this.item.title || this.item.courseTitle
     }, this.rating.userRating, form.value, {
       time: Date.now(),
-      user: this.userService.get()
+      user: this.userService.get(),
+      createdOn: this.userService.getConfig().code,
+      parentCode: this.userService.getConfig().parentCode
     });
     let couchRequest = this.couchService.post,
       couchUrl = this.dbName;

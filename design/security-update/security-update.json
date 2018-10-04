@@ -193,5 +193,18 @@
 				"roles": ["manager"]
 			}
 		}
+  },
+  {
+	"dbName": "activity_logs",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": []
+		}
+	}
   }
 ]

@@ -46,7 +46,7 @@ export class LoginFormComponent {
     private validatorService: ValidatorService,
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -99,6 +99,7 @@ export class LoginFormComponent {
       metadata: {
         isUserAdmin: false,
         planetCode: configuration.code,
+        parentCode: configuration.parentCode,
         joinDate: Date.now(),
       },
       roles: configuration.autoAccept ? [ 'learner' ] : []

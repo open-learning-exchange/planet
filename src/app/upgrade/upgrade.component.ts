@@ -48,7 +48,8 @@ export class UpgradeComponent {
         parentVersion = pVersion;
         return this.managerService.openPasswordConfirmation();
       }),
-      switchMap((credentials) => this.postAdminCredentials(credentials)),
+      switchMap(credentials => this.postAdminCredentials(credentials)),
+      switchMap(() => this.managerService.addAdminLog('upgrade')),
       switchMap(() => {
         const requestParams = new HttpParams().set('v', parentVersion.trim());
         return this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams });

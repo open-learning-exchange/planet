@@ -15,6 +15,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
+import { ReportsService } from './reports/reports.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -25,6 +26,7 @@ export class ManagerDashboardComponent implements OnInit {
   displayDashboard = true;
   message = '';
   planetType = this.userService.getConfig().planetType;
+  planetConfig = this.userService.getConfig();
   showResendConfiguration = false;
   requestStatus = 'loading';
   devMode = isDevMode();
@@ -34,6 +36,7 @@ export class ManagerDashboardComponent implements OnInit {
   dialogRef: MatDialogRef<DialogsListComponent>;
   pushedItems = { course: [], resource: [] };
   pin: string;
+  activityLogs: any = {};
 
   constructor(
     private userService: UserService,
@@ -44,7 +47,8 @@ export class ManagerDashboardComponent implements OnInit {
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
     private syncService: SyncService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private activityService: ReportsService
   ) {}
 
   ngOnInit() {
@@ -57,13 +61,14 @@ export class ManagerDashboardComponent implements OnInit {
       // A non-admin user cannot receive all user docs
       this.displayDashboard = false;
       this.message = 'Access restricted to admins';
-    } else if (this.userService.getConfig().planetType !== 'center') {
+    } else if (this.planetType !== 'center') {
       const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
       this.getVersion({ domain: this.userService.getConfig().parentDomain, ...opts })
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
+    this.getLogs();
   }
 
   getSatellitePin() {
@@ -237,6 +242,22 @@ export class ManagerDashboardComponent implements OnInit {
 
   getVersion(opts: any = {}) {
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
+  }
+
+  getLogs() {
+    const configuration = this.configurationService.configuration;
+    forkJoin([
+      this.activityService.getLoginActivities(configuration.code),
+      this.activityService.getAdminActivities(configuration.code),
+      this.activityService.getResourceVisits(configuration.code),
+      this.activityService.getRatingInfo(configuration.code)
+    ]).subscribe(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
+      this.activityLogs = {
+        resourceVisits: resourceVisits[0].count,
+        ratings: ratings.reduce((total, rating) => total + rating.count, 0),
+        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities, adminActivities)
+      };
+    });
   }
 
 }

@@ -49,12 +49,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
-        this.resourceActivity(this.resourceId, 'visit');
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
+        this.resourceActivity(this.resource, 'visit');
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
       });
   }
@@ -68,12 +68,15 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourceSrc = resourceUrl;
   }
 
-  resourceActivity(resourceId, activity) {
+  resourceActivity(resource: any, activity) {
     const data = {
-      'resource': resourceId,
+      'resourceId': resource._id,
+      'title': resource.title,
       'user': this.userService.get().name,
-      'activity': activity,
-      'time': Date.now()
+      'type': activity,
+      'time': Date.now(),
+      'createdOn': this.userService.getConfig().code,
+      'parentCode': this.userService.getConfig().parentCode
     };
     this.couchService.post('resource_activities', data)
       .subscribe((response) => {
