@@ -125,15 +125,9 @@ curl -X PUT $COUCHURL/activity_logs
 # Create design documents
 node ./design/create-design-docs.js
 # Add or update design docs
-upsert_doc activity_logs _design/activity_logs @./design/activity_logs/activity_logs-design.json
-upsert_doc login_activities _design/login_activities @./design/login_activities/login_activities-design.json
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 upsert_doc resources _design/resources @./design/resources/resources-design.json
-upsert_doc ratings _design/ratings @./design/ratings/ratings-design.json
-upsert_doc resource_activities _design/resource_activities @./design/resource_activities/resource_activities-design.json
-upsert_doc _users _design/users @./design/users/users-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
-
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST

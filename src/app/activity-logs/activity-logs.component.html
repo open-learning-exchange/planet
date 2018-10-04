@@ -23,23 +23,23 @@
       </ng-container> -->
       <ng-container matColumnDef="views">
         <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.resource_views?.value}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.resourceViews}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="logins">
         <mat-header-cell *matHeaderCellDef i18n>User Login</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.user_logins?.value}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.userLogins}}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="last_login">
+      <ng-container matColumnDef="lastLogin">
         <mat-header-cell *matHeaderCellDef i18n>Last Login</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.last_login?.value | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.lastLogin?.max?.loginTime | date}}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="last_upgrade">
+      <ng-container matColumnDef="lastUpgrade">
         <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.last_upgrade?.value | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.lastUpgrade?.max?.createdTime | date}}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="last_sync">
+      <ng-container matColumnDef="lastSync">
         <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element?.last_sync?.value | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element?.lastSync?.max?.createdTime | date}}</mat-cell>
       </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
