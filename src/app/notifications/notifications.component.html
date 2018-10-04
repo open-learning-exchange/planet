@@ -17,7 +17,7 @@
       </ng-container>
       <ng-container matColumnDef="read">
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
-          <mat-icon [ngClass]="{'primary-text-color':element.status==='unread'}">visibility</mat-icon>  
+          <mat-icon *ngIf="element.status==='unread'">visibility</mat-icon>  
         </mat-cell>
       </ng-container>
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>

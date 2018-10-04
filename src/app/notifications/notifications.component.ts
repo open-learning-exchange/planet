@@ -4,7 +4,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { PlanetMessageService } from '../shared/planet-message.service';
 
 import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 
@@ -20,7 +19,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService,
     private userService: UserService
     ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
