@@ -45,8 +45,8 @@
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Priority</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-chip-list *ngIf="element.priority==='Yes'"><mat-chip selected color='accent'>{{element.priority === "Yes" ? "Yes" : "No"}}</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="element.priority==='No'"><mat-chip>{{element.priority === "Yes" ? "Yes" : "No"}}</mat-chip></mat-chip-list>
+          <mat-chip-list *ngIf="element.priority==='Yes'"><mat-chip selected color="accent" i18n>Yes</mat-chip></mat-chip-list>
+          <mat-chip-list *ngIf="element.priority==='No'"><mat-chip i18n>No</mat-chip></mat-chip-list>
         </mat-cell>
       </ng-container>
       <!-- Owner Column -->
