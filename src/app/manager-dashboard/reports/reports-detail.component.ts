@@ -1,9 +1,5 @@
 import { Component } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { UserService } from '../../shared/user.service';
 import { ReportsService } from './reports.service';
 import { ConfigurationService } from '../../configuration/configuration.service';
 
@@ -15,8 +11,6 @@ export class ReportsDetailComponent {
   parentCode = '';
   planetCode = '';
   reports: any = {};
-  resources = [];
-  courses = [];
 
   constructor(
     private activityService: ReportsService,
