@@ -3,7 +3,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ConfigurationService } from '../configuration/configuration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +12,12 @@ export class StateService {
   state: any = { local: {}, parent: {} };
   private stateUpdated = new Subject<any>();
 
+  get configuration(): any {
+    return this.state.local.configurations.docs[0];
+  }
+
   constructor(
-    private couchService: CouchService,
-    private configurationService: ConfigurationService
+    private couchService: CouchService
   ) {}
 
   requestData(db: string, planetField: string) {
@@ -42,7 +44,7 @@ export class StateService {
   optsFromPlanetField(planetField: string) {
     switch (planetField) {
       case 'parent':
-        return { domain: this.configurationService.configuration.parentDomain };
+        return { domain: this.state.local.configuration.parentDomain };
       case 'local':
         return {};
       default:
