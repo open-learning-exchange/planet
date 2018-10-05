@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
+import { switchMap, mergeMap, takeWhile, tap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,25 +13,20 @@ import { environment } from '../../environments/environment';
 export class ConfigurationService {
 
   configuration: any;
+  lastSeq: string;
 
   constructor(
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService,
-    private router: Router,
     private userService: UserService,
     private syncService: SyncService
-  ) {
-    this.getConfiguration();
-    // Short term solution because continuous feed causes e2e test timeout
-    if (!environment.test) {
-      this.setCouchListener();
-    }
-  }
+  ) {}
 
-  private getConfiguration() {
-    this.couchService.findAll('configurations').subscribe((res) => {
-      this.configuration = res[0];
-    });
+  getConfiguration() {
+    return this.couchService.get('configurations/_changes?include_docs=true&since=' + (this.lastSeq || 'now')).pipe(tap((res: any) => {
+      this.lastSeq = res.last_seq;
+      this.configuration = res.results
+        .map((r: any) => r.doc).find((conf: any) => !this.configuration || this.configuration._id === conf._id);
+    }));
   }
 
   createRequestNotification(configuration) {
@@ -177,15 +169,6 @@ export class ConfigurationService {
 
   createUser(name, details, opts?) {
     return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
-  }
-
-  setCouchListener() {
-    this.couchService.stream('GET', 'configurations/_changes?feed=continuous&since=now')
-      .subscribe(() => {
-        this.getConfiguration();
-      }, error => console.log(error), () => {
-        this.setCouchListener();
-      });
   }
 
 }

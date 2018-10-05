@@ -1,25 +1,33 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { PouchAuthService } from './database';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Injectable()
 export class AuthService {
 
-  constructor(private userService: UserService, private router: Router,
-              private pouchAuthService: PouchAuthService) { }
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private pouchAuthService: PouchAuthService,
+    private configurationService: ConfigurationService
+  ) { }
 
   private checkUser(url: any): Observable<boolean> {
-    return this.pouchAuthService.getSessionInfo().pipe(
-      switchMap(res => {
-        if (res.userCtx.name) {
+    return forkJoin([
+      this.pouchAuthService.getSessionInfo(),
+      this.configurationService.getConfiguration()
+    ]).pipe(
+      switchMap(([ sessionInfo, configRes ]) => {
+        if (sessionInfo.userCtx.name) {
           // If user already matches one on the user service, do not make additional call to CouchDB
-          if (res.userCtx.name === this.userService.get().name) {
+          if (sessionInfo.userCtx.name === this.userService.get().name) {
             return of(true);
           }
-          return this.userService.setUserConfigAndShelf(res.userCtx);
+          return this.userService.setUserConfigAndShelf(sessionInfo.userCtx);
         }
         this.userService.unset();
         this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
