@@ -17,24 +17,29 @@
       <mat-icon>add</mat-icon>
     </button>
   </mat-toolbar>
-  <mat-table #table [dataSource]="surveys" matSort>
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Survey</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="taken">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Number of Times Taken</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)">Edit Survey</button>
-          <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)">Send Survey</button>
-          <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)">Record Survey</button>
-        </mat-cell>
+  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="surveys" matSort>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Survey</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
       </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+      <ng-container matColumnDef="taken">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Number of Times Taken</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)">Edit Survey</button>
+            <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)">Send Survey</button>
+            <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)">Record Survey</button>
+          </mat-cell>
+        </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    </div>
+    <ng-template #notFoundMessage>
+      <div class="view-container">No Survey Found</div>
+    </ng-template>
 </div>

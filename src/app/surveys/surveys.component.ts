@@ -21,6 +21,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'name', 'taken', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -44,6 +45,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
         this.surveys.data = this.surveys.data.map(
           (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
         );
+        this.emptyData = !this.surveys.data.length;
       });
   }
 
