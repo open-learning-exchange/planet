@@ -6,6 +6,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { debug } from '../debug-operator';
+import { StateService } from '../shared/state.service';
 
 const passwordFormFields = [
   {
@@ -21,10 +22,13 @@ const passwordFormFields = [
 @Injectable()
 export class ManagerService {
 
+  private configuration = this.stateService.configuration;
+
   constructor(
     private dialogsFormService: DialogsFormService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private stateService: StateService
   ) {}
 
   openPasswordConfirmation() {
@@ -62,8 +66,8 @@ export class ManagerService {
 
   addAdminLog(type) {
     const log = {
-      createdOn: this.userService.getConfig().code,
-      parentCode: this.userService.getConfig().parentCode,
+      createdOn: this.configuration.code,
+      parentCode: this.configuration.parentCode,
       user: this.userService.get().name,
       time: Date.now()
     };

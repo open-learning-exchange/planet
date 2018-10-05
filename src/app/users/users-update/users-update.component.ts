@@ -167,7 +167,7 @@ export class UsersUpdateComponent implements OnInit {
     const newConfig = { ...this.planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
     return this.couchService.put('configurations/' + this.planetConfiguration._id, newConfig)
     .pipe(map((res) => {
-      this.userService.setConfig(newConfig);
+      this.stateService.requestData('configurations', 'local');
       return res;
     }));
   }

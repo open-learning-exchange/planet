@@ -31,7 +31,7 @@ export class AuthService {
           if (sessionInfo.userCtx.name === this.userService.get().name) {
             return of(true);
           }
-          return this.userService.setUserConfigAndShelf(sessionInfo.userCtx);
+          return this.userService.setUserAndShelf(sessionInfo.userCtx);
         }
         this.userService.unset();
         this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
