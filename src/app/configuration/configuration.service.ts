@@ -21,14 +21,6 @@ export class ConfigurationService {
     private syncService: SyncService
   ) {}
 
-  getConfiguration() {
-    return this.couchService.get('configurations/_changes?include_docs=true&since=' + (this.lastSeq || 'now')).pipe(tap((res: any) => {
-      this.lastSeq = res.last_seq;
-      this.configuration = res.results
-        .map((r: any) => r.doc).find((conf: any) => !this.configuration || this.configuration._id === conf._id);
-    }));
-  }
-
   createRequestNotification(configuration) {
     return mergeMap(data => {
       const requestNotification = {
