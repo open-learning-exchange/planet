@@ -4,7 +4,7 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { PouchAuthService } from './database';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from './state.service';
 
 @Injectable()
 export class AuthService {
@@ -13,14 +13,18 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private pouchAuthService: PouchAuthService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) { }
 
-  private checkUser(url: any): Observable<boolean> {
+  private getSession$() {
     return forkJoin([
       this.pouchAuthService.getSessionInfo(),
-      this.configurationService.getConfiguration()
-    ]).pipe(
+      this.stateService.getCouchState('configurations', 'local')
+    ]);
+  }
+
+  private checkUser(url: any): Observable<boolean> {
+    return this.getSession$().pipe(
       switchMap(([ sessionInfo, configRes ]) => {
         if (sessionInfo.userCtx.name) {
           // If user already matches one on the user service, do not make additional call to CouchDB
@@ -45,9 +49,9 @@ export class AuthService {
 
   // For login route will redirect to main app if there is an active session
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.pouchAuthService.getSessionInfo().pipe(
-      map(res => {
-        if (res.userCtx.name) {
+    return this.getSession$().pipe(
+      map(([ sessionInfo, configRes ]) => {
+        if (sessionInfo.userCtx.name) {
           this.router.navigate([ '' ]);
           return false;
         }
