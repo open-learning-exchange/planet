@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
 import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Injectable()
 export class SyncService {
@@ -14,7 +14,7 @@ export class SyncService {
 
   constructor(
     private couchService: CouchService,
-    private userService: UserService,
+    private configurationService: ConfigurationService,
     private managerService: ManagerService
   ) {}
 
@@ -30,8 +30,8 @@ export class SyncService {
   }
 
   sync(replicator, credentials) {
-    this.parentDomain = this.userService.getConfig().parentDomain || replicator.parentDomain;
-    this.code = this.userService.getConfig().code || replicator.code;
+    this.parentDomain = this.configurationService.configuration.parentDomain || replicator.parentDomain;
+    this.code = this.configurationService.configuration.code || replicator.code;
     return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 

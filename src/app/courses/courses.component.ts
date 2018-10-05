@@ -17,6 +17,7 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -44,7 +45,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   displayedColumns = [ 'select', 'courseTitle', 'info', 'rating' ];
-  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
+  getOpts = this.parent ? { domain: this.configurationService.configuration.parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -61,7 +62,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
-  planetType = this.userService.getConfig().planetType;
+  planetType = this.configurationService.configuration.planetType;
   emptyData = false;
 
   constructor(
@@ -73,7 +74,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private syncService: SyncService
+    private syncService: SyncService,
+    private configurationService: ConfigurationService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -111,7 +113,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.user.isUserAdmin ||
-        (course.creator === this.user.name + '@' + this.userService.getConfig().code);
+        (course.creator === this.user.name + '@' + this.configurationService.configuration.code);
       course.admission = myCourseIndex > -1;
       return course;
     });

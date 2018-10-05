@@ -13,6 +13,7 @@ import { debug } from '../debug-operator';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -53,9 +54,10 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService,
-    private router: Router
+    private router: Router,
+    private configurationService: ConfigurationService
   ) {
-    if (this.userService.getConfig().planetType === 'community') {
+    if (this.configurationService.configuration.planetType === 'community') {
       // Remove source from displayed columns for communities
       this.displayedColumns.splice(this.displayedColumns.indexOf('source'), 1);
     }

@@ -120,7 +120,7 @@ export class LoginFormComponent {
   createParentSession({ name, password }) {
     return this.couchService.post('_session',
       { 'name': name, 'password': password },
-      { withCredentials: true, domain: this.userService.getConfig().parentDomain });
+      { withCredentials: true, domain: this.configurationService.configuration.parentDomain });
   }
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
@@ -128,7 +128,7 @@ export class LoginFormComponent {
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
-        const adminName = this.userService.getConfig().adminName.split('@')[0];
+        const adminName = this.configurationService.configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
     ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
@@ -173,12 +173,12 @@ export class LoginFormComponent {
 
   loginObservables(name, password) {
     const obsArr = [ this.userService.newSessionLog() ];
-    const localConfig = this.userService.getConfig();
+    const localConfig = this.configurationService.configuration;
     const localAdminName = localConfig.adminName.split('@')[0];
     if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
       return obsArr;
     }
-    obsArr.push(this.createParentSession({ 'name': this.userService.getConfig().adminName, 'password': password }));
+    obsArr.push(this.createParentSession({ 'name': this.configurationService.configuration.adminName, 'password': password }));
     if (localConfig.registrationRequest === 'pending') {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
     }

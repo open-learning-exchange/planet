@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';
+import { ConfigurationService } from '../../configuration/configuration.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -20,7 +21,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private configurationService: ConfigurationService
   ) { }
 
   private dbName = 'resources';
@@ -36,7 +38,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   get urlPrefix()  {
     let domain = environment.couchAddress + '/';
     if (this.parent) {
-      domain = 'http://' + this.userService.getConfig().parentDomain + '/';
+      domain = 'http://' + this.configurationService.configuration.parentDomain + '/';
     }
     return domain + this.dbName + '/';
   }
@@ -75,8 +77,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       'user': this.userService.get().name,
       'type': activity,
       'time': Date.now(),
-      'createdOn': this.userService.getConfig().code,
-      'parentCode': this.userService.getConfig().parentCode
+      'createdOn': this.configurationService.configuration.code,
+      'parentCode': this.configurationService.configuration.parentCode
     };
     this.couchService.post('resource_activities', data)
       .subscribe((response) => {

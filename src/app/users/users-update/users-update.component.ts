@@ -12,6 +12,7 @@ import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
+import { ConfigurationService } from '../../configuration/configuration.service';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -48,7 +49,8 @@ export class UsersUpdateComponent implements OnInit {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private configurationService: ConfigurationService
   ) {
     this.userData();
   }
@@ -146,7 +148,7 @@ export class UsersUpdateComponent implements OnInit {
         if (this.user.name === this.userService.get().name) {
           this.userService.set(userInfo);
         }
-        if (this.userService.getConfig().adminName === this.user.name + '@' + this.userService.getConfig().code) {
+        if (this.configurationService.configuration.adminName === this.user.name + '@' + this.configurationService.configuration.code) {
           return this.updateConfigurationContact(userInfo);
         }
         return of({ ok: true });
@@ -161,8 +163,8 @@ export class UsersUpdateComponent implements OnInit {
 
   updateConfigurationContact(userInfo) {
     const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
-    const newConfig = { ...this.userService.getConfig(), firstName, lastName, middleName, email, phoneNumber };
-    return this.couchService.put('configurations/' + this.userService.getConfig()._id, newConfig)
+    const newConfig = { ...this.configurationService.configuration, firstName, lastName, middleName, email, phoneNumber };
+    return this.couchService.put('configurations/' + this.configurationService.configuration._id, newConfig)
     .pipe(map((res) => {
       this.userService.setConfig(newConfig);
       return res;

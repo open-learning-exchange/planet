@@ -12,6 +12,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
 import { uniqueId } from '../../shared/utils';
+import { ConfigurationService } from '../../configuration/configuration.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -48,7 +49,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
     private coursesService: CoursesService,
-    private userService: UserService
+    private userService: UserService,
+    private configurationService: ConfigurationService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -77,9 +79,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: Date.now(),
-      creator: this.userService.get().name + '@' + this.userService.getConfig().code,
-      sourcePlanet: this.userService.getConfig().code,
-      resideOn: this.userService.getConfig().code,
+      creator: this.userService.get().name + '@' + this.configurationService.configuration.code,
+      sourcePlanet: this.configurationService.configuration.code,
+      resideOn: this.configurationService.configuration.code,
       updatedDate: Date.now()
     });
   }

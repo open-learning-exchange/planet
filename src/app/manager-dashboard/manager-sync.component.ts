@@ -7,6 +7,7 @@ import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ManagerService } from './manager.service';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Component({
   templateUrl: './manager-sync.component.html'
@@ -21,7 +22,8 @@ export class ManagerSyncComponent implements OnInit {
     private userService: UserService,
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private configurationService: ConfigurationService
   ) {}
 
   ngOnInit() {
@@ -67,12 +69,12 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'resource_activities' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
       { db: 'admin_activities' },
-      { db: 'submissions', selector: { source: this.userService.getConfig().code } }
+      { db: 'submissions', selector: { source: this.configurationService.configuration.code } }
     ];
     const pullList = [
-      { db: 'feedback', selector: { source: this.userService.getConfig().code } },
-      { db: 'notifications', selector: { target: this.userService.getConfig().code } },
-      { db: 'submissions', selector: { source: this.userService.getConfig().code } }
+      { db: 'feedback', selector: { source: this.configurationService.configuration.code } },
+      { db: 'notifications', selector: { target: this.configurationService.configuration.code } },
+      { db: 'submissions', selector: { source: this.configurationService.configuration.code } }
     ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
@@ -99,7 +101,7 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   createReplicatorUserDoc(users: any[], repUsers: any[]) {
-    const planetCode = this.userService.getConfig().code;
+    const planetCode = this.configurationService.configuration.code;
     return users.map((user: any) => {
       const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
         { _id, _rev, ...userProps } = user;

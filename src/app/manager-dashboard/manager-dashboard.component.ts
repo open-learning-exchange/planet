@@ -25,8 +25,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isUserAdmin = false;
   displayDashboard = true;
   message = '';
-  planetType = this.userService.getConfig().planetType;
-  planetConfig = this.userService.getConfig();
+  planetType = this.configurationService.configuration.planetType;
+  planetConfig = this.configurationService.configuration;
   showResendConfiguration = false;
   requestStatus = 'loading';
   devMode = isDevMode();
@@ -65,7 +65,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     } else if (this.planetType !== 'center') {
       const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
-      this.getVersion({ domain: this.userService.getConfig().parentDomain, ...opts })
+      this.getVersion({ domain: this.configurationService.configuration.parentDomain, ...opts })
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
@@ -82,7 +82,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resendConfig() {
-    const configuration = this.userService.getConfig();
+    const configuration = this.configurationService.configuration;
     const userDetail = { ...this.userService.get(), ...this.userService.credentials };
     this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
       error => this.planetMessageService.showAlert('An error occurred please try again.'),
@@ -95,8 +95,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   checkRequestStatus() {
     this.couchService.post(`communityregistrationrequests/_find`,
-      findDocuments({ 'code': this.userService.getConfig().code }, [ 'registrationRequest' ]),
-      { domain: this.userService.getConfig().parentDomain }).subscribe(data => {
+      findDocuments({ 'code': this.configurationService.configuration.code }, [ 'registrationRequest' ]),
+      { domain: this.configurationService.configuration.parentDomain }).subscribe(data => {
         if (data.docs.length === 0) {
           this.showResendConfiguration = true;
           this.requestStatus = 'deleted';
@@ -110,7 +110,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   findOnParent(db: string, user: any) {
     return this.couchService.post(`${db}/_find`,
       { 'selector': { '_id': user._id }, 'fields': [ '_id', '_rev' ] },
-      { domain: this.userService.getConfig().parentDomain });
+      { domain: this.configurationService.configuration.parentDomain });
   }
 
   deleteCommunity() {
@@ -126,9 +126,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         const replicators = docs.map(doc => {
           return { _id: doc._id, _rev: doc._rev, _deleted: true };
         });
+        const configuration = this.configurationService.configuration;
         return forkJoin([
           this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
-          this.couchService.delete('configurations/' + this.userService.getConfig()._id + '?rev=' + this.userService.getConfig()._rev ),
+          this.couchService.delete('configurations/' + configuration._id + '?rev=' + configuration._rev ),
           this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
           this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
           this.couchService.post('_replicator/_bulk_docs', { 'docs': replicators })
@@ -207,8 +208,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   getPushedList() {
     this.couchService.post(`send_items/_find`,
-      findDocuments({ 'sendTo': this.userService.getConfig().code }),
-        { domain: this.userService.getConfig().parentDomain })
+      findDocuments({ 'sendTo': this.configurationService.configuration.code }),
+        { domain: this.configurationService.configuration.parentDomain })
     .subscribe(data => {
       this.pushedItems = data.docs.reduce((items, item) => {
         items[item.db] = items[item.db] ? items[item.db] : [];
@@ -225,7 +226,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(data => {
         return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
-        { domain: this.userService.getConfig().parentDomain });
+        { domain: this.configurationService.configuration.parentDomain });
       })
     ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
   }
