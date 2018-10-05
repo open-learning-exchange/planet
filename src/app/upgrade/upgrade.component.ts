@@ -5,7 +5,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
@@ -25,7 +25,7 @@ export class UpgradeComponent {
   constructor(
     private http: HttpClient,
     private couchService: CouchService,
-    private configurationService: ConfigurationService,
+    private stateService: StateService,
     private managerService: ManagerService
   ) {
     this.addLine('Not started');
@@ -133,7 +133,7 @@ export class UpgradeComponent {
 
   getParentVersion() {
     const opts = {
-      domain: this.configurationService.configuration.parentDomain,
+      domain: this.stateService.configuration.parentDomain,
       responseType: 'text',
       withCredentials: false,
       headers: { 'Content-Type': 'text/plain' }

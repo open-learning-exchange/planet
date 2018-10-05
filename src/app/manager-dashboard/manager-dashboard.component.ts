@@ -16,6 +16,7 @@ import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ReportsService } from './reports/reports.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html'
@@ -25,8 +26,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isUserAdmin = false;
   displayDashboard = true;
   message = '';
-  planetType = this.configurationService.configuration.planetType;
-  planetConfig = this.configurationService.configuration;
+  planetConfiguration = this.stateService.configuration;
+  planetType = this.planetConfiguration.planetType;
   showResendConfiguration = false;
   requestStatus = 'loading';
   devMode = isDevMode();
@@ -49,6 +50,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private syncService: SyncService,
     private configurationService: ConfigurationService,
+    private stateService: StateService,
     private activityService: ReportsService
   ) {}
 
@@ -65,7 +67,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     } else if (this.planetType !== 'center') {
       const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
-      this.getVersion({ domain: this.configurationService.configuration.parentDomain, ...opts })
+      this.getVersion({ domain: this.planetConfiguration.parentDomain, ...opts })
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
@@ -82,7 +84,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resendConfig() {
-    const configuration = this.configurationService.configuration;
+    const configuration = this.planetConfiguration;
     const userDetail = { ...this.userService.get(), ...this.userService.credentials };
     this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
       error => this.planetMessageService.showAlert('An error occurred please try again.'),
@@ -95,8 +97,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   checkRequestStatus() {
     this.couchService.post(`communityregistrationrequests/_find`,
-      findDocuments({ 'code': this.configurationService.configuration.code }, [ 'registrationRequest' ]),
-      { domain: this.configurationService.configuration.parentDomain }).subscribe(data => {
+      findDocuments({ 'code': this.planetConfiguration.code }, [ 'registrationRequest' ]),
+      { domain: this.planetConfiguration.parentDomain }).subscribe(data => {
         if (data.docs.length === 0) {
           this.showResendConfiguration = true;
           this.requestStatus = 'deleted';
@@ -110,7 +112,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   findOnParent(db: string, user: any) {
     return this.couchService.post(`${db}/_find`,
       { 'selector': { '_id': user._id }, 'fields': [ '_id', '_rev' ] },
-      { domain: this.configurationService.configuration.parentDomain });
+      { domain: this.planetConfiguration.parentDomain });
   }
 
   deleteCommunity() {
@@ -126,7 +128,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         const replicators = docs.map(doc => {
           return { _id: doc._id, _rev: doc._rev, _deleted: true };
         });
-        const configuration = this.configurationService.configuration;
+        const configuration = this.planetConfiguration;
         return forkJoin([
           this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
           this.couchService.delete('configurations/' + configuration._id + '?rev=' + configuration._rev ),
@@ -208,8 +210,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   getPushedList() {
     this.couchService.post(`send_items/_find`,
-      findDocuments({ 'sendTo': this.configurationService.configuration.code }),
-        { domain: this.configurationService.configuration.parentDomain })
+      findDocuments({ 'sendTo': this.planetConfiguration.code }),
+        { domain: this.planetConfiguration.parentDomain })
     .subscribe(data => {
       this.pushedItems = data.docs.reduce((items, item) => {
         items[item.db] = items[item.db] ? items[item.db] : [];
@@ -226,7 +228,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(data => {
         return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
-        { domain: this.configurationService.configuration.parentDomain });
+        { domain: this.planetConfiguration.parentDomain });
       })
     ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
   }
@@ -252,7 +254,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   getLogs() {
-    const configuration = this.configurationService.configuration;
+    const configuration = this.planetConfiguration;
     forkJoin([
       this.activityService.getLoginActivities(configuration.code),
       this.activityService.getAdminActivities(configuration.code),

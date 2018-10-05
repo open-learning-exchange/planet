@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 const registerForm = {
   name: [],
@@ -36,6 +36,8 @@ const loginForm = {
 })
 export class LoginFormComponent {
   public userForm: FormGroup;
+  private planetConfiguration: any = this.stateService.configuration;
+
   constructor(
     private couchService: CouchService,
     private router: Router,
@@ -46,7 +48,7 @@ export class LoginFormComponent {
     private validatorService: ValidatorService,
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
-    private configurationService: ConfigurationService,
+    private stateService: StateService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -94,7 +96,7 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: { name: string, password: string }) {
-    const configuration = this.configurationService.configuration;
+    const configuration = this.planetConfiguration;
     const opts = {
       metadata: {
         isUserAdmin: false,
@@ -120,7 +122,7 @@ export class LoginFormComponent {
   createParentSession({ name, password }) {
     return this.couchService.post('_session',
       { 'name': name, 'password': password },
-      { withCredentials: true, domain: this.configurationService.configuration.parentDomain });
+      { withCredentials: true, domain: this.planetConfiguration.parentDomain });
   }
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
@@ -128,7 +130,7 @@ export class LoginFormComponent {
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
-        const adminName = this.configurationService.configuration.adminName.split('@')[0];
+        const adminName = this.planetConfiguration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
     ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
@@ -173,12 +175,12 @@ export class LoginFormComponent {
 
   loginObservables(name, password) {
     const obsArr = [ this.userService.newSessionLog() ];
-    const localConfig = this.configurationService.configuration;
+    const localConfig = this.planetConfiguration;
     const localAdminName = localConfig.adminName.split('@')[0];
     if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
       return obsArr;
     }
-    obsArr.push(this.createParentSession({ 'name': this.configurationService.configuration.adminName, 'password': password }));
+    obsArr.push(this.createParentSession({ 'name': this.planetConfiguration.adminName, 'password': password }));
     if (localConfig.registrationRequest === 'pending') {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
     }

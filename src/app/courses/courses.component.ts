@@ -17,7 +17,7 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -45,7 +45,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   displayedColumns = [ 'select', 'courseTitle', 'info', 'rating' ];
-  getOpts = this.parent ? { domain: this.configurationService.configuration.parentDomain } : {};
+  planetConfiguration = this.stateService.configuration;
+  getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -62,7 +63,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
-  planetType = this.configurationService.configuration.planetType;
+  planetType = this.planetConfiguration.planetType;
   emptyData = false;
 
   constructor(
@@ -75,7 +76,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private syncService: SyncService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -113,7 +114,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.user.isUserAdmin ||
-        (course.creator === this.user.name + '@' + this.configurationService.configuration.code);
+        (course.creator === this.user.name + '@' + this.planetConfiguration.code);
       course.admission = myCourseIndex > -1;
       return course;
     });

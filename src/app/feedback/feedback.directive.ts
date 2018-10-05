@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 export class Message {
   message: string;
@@ -72,7 +72,7 @@ export class FeedbackDirective {
     private router: Router,
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {}
 
   addFeedback(post: any) {
@@ -86,8 +86,8 @@ export class FeedbackDirective {
         status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
-        source: this.configurationService.configuration.code,
-        parentCode: this.configurationService.configuration.parentCode,
+        source: this.stateService.configuration.code,
+        parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
       };
     this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })

@@ -18,7 +18,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { findByIdInArray } from '../shared/utils';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -51,9 +51,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
-  planetType = this.configurationService.configuration.planetType;
+  planetType = this.stateService.configuration.planetType;
   displayedColumns = [ 'select', 'title', 'rating' ];
-  getOpts = this.parent ? { domain: this.configurationService.configuration.parentDomain } : {};
+  getOpts = this.parent ? { domain: this.stateService.configuration.parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
   tagFilterValue = [];
@@ -81,7 +81,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private resourcesService: ResourcesService,
     private syncService: SyncService,
     private dialogsListService: DialogsListService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {}
 
   ngOnInit() {

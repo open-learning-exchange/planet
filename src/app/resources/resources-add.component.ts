@@ -16,7 +16,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
 import Mime from 'mime/Mime';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 const mime = new Mime(require('mime/types/standard.json'));
 
 @Component({
@@ -44,7 +44,7 @@ export class ResourcesAddComponent implements OnInit {
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private route: ActivatedRoute,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -102,8 +102,8 @@ export class ResourcesAddComponent implements OnInit {
       openUrl: [],
       openWhichFile: '',
       isDownloadable: '',
-      sourcePlanet: this.configurationService.configuration.code,
-      resideOn: this.configurationService.configuration.code,
+      sourcePlanet: this.stateService.configuration.code,
+      resideOn: this.stateService.configuration.code,
       createdDate: Date.now(),
       updatedDate: Date.now()
     });

@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ResourcesService } from '../resources.service';
 import { ActivatedRoute } from '@angular/router';
-import { ConfigurationService } from '../../configuration/configuration.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   selector: 'planet-resources-viewer',
@@ -29,13 +29,13 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private sanitizer: DomSanitizer,
     private resourcesService: ResourcesService,
     private route: ActivatedRoute,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) { }
 
   get urlPrefix() {
     let domain = environment.couchAddress + '/resources/';
     if (this.parent) {
-      domain = 'http://' + this.configurationService.configuration.parentDomain + '/resources/';
+      domain = 'http://' + this.stateService.configuration.parentDomain + '/resources/';
     }
     return domain;
   }

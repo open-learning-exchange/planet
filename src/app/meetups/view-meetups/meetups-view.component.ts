@@ -13,7 +13,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { debug } from '../../debug-operator';
-import { ConfigurationService } from '../../configuration/configuration.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './meetups-view.component.html',
@@ -38,7 +38,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     public planetMessageService: PlanetMessageService,
     private userService: UserService,
     private dialogsListService: DialogsListService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) { }
 
   ngOnInit() {
@@ -49,7 +49,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         const meetupId = params.get('id');
         const getOpts: any = { meetupIds: [ meetupId ] };
         if (this.parent) {
-          getOpts.opts = { domain: this.configurationService.configuration.parentDomain };
+          getOpts.opts = { domain: this.stateService.configuration.parentDomain };
         }
         this.meetupService.updateMeetups(getOpts);
       }, error => console.log(error), () => console.log('complete getting meetup id'));

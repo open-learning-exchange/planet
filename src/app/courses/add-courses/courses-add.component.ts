@@ -13,6 +13,7 @@ import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
 import { uniqueId } from '../../shared/utils';
 import { ConfigurationService } from '../../configuration/configuration.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -50,13 +51,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private coursesService: CoursesService,
     private userService: UserService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {
     this.createForm();
     this.onFormChanges();
   }
 
   createForm() {
+    const configuration = this.stateService.configuration;
     this.courseForm = this.fb.group({
       courseTitle: [
         '',
@@ -79,9 +81,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: Date.now(),
-      creator: this.userService.get().name + '@' + this.configurationService.configuration.code,
-      sourcePlanet: this.configurationService.configuration.code,
-      resideOn: this.configurationService.configuration.code,
+      creator: this.userService.get().name + '@' + configuration.code,
+      sourcePlanet: configuration.code,
+      resideOn: configuration.code,
       updatedDate: Date.now()
     });
   }

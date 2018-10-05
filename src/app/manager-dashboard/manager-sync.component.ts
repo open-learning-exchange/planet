@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ManagerService } from './manager.service';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-sync.component.html'
@@ -16,6 +16,7 @@ import { ConfigurationService } from '../configuration/configuration.service';
 export class ManagerSyncComponent implements OnInit {
 
   replicators = [];
+  planetConfiguration = this.stateService.configuration;
 
   constructor(
     private couchService: CouchService,
@@ -23,7 +24,7 @@ export class ManagerSyncComponent implements OnInit {
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
@@ -69,12 +70,12 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'resource_activities' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
       { db: 'admin_activities' },
-      { db: 'submissions', selector: { source: this.configurationService.configuration.code } }
+      { db: 'submissions', selector: { source: this.planetConfiguration.code } }
     ];
     const pullList = [
-      { db: 'feedback', selector: { source: this.configurationService.configuration.code } },
-      { db: 'notifications', selector: { target: this.configurationService.configuration.code } },
-      { db: 'submissions', selector: { source: this.configurationService.configuration.code } }
+      { db: 'feedback', selector: { source: this.planetConfiguration.code } },
+      { db: 'notifications', selector: { target: this.planetConfiguration.code } },
+      { db: 'submissions', selector: { source: this.planetConfiguration.code } }
     ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
@@ -101,7 +102,7 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   createReplicatorUserDoc(users: any[], repUsers: any[]) {
-    const planetCode = this.configurationService.configuration.code;
+    const planetCode = this.planetConfiguration.code;
     return users.map((user: any) => {
       const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
         { _id, _rev, ...userProps } = user;

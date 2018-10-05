@@ -4,7 +4,7 @@ import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from './state.service';
 
 @Injectable()
 export class SyncService {
@@ -14,7 +14,7 @@ export class SyncService {
 
   constructor(
     private couchService: CouchService,
-    private configurationService: ConfigurationService,
+    private stateService: StateService,
     private managerService: ManagerService
   ) {}
 
@@ -30,8 +30,8 @@ export class SyncService {
   }
 
   sync(replicator, credentials) {
-    this.parentDomain = this.configurationService.configuration.parentDomain || replicator.parentDomain;
-    this.code = this.configurationService.configuration.code || replicator.code;
+    this.parentDomain = this.stateService.configuration.parentDomain || replicator.parentDomain;
+    this.code = this.stateService.configuration.code || replicator.code;
     return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 
