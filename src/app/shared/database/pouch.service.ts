@@ -33,9 +33,9 @@ export class PouchService {
   }
 
   configureDBs() {
-    for (const db of this.databases.values()) {
+    this.databases.forEach(db => {
       this.localDBs.set(db, new PouchDB(`local-${db}`));
-    }
+    });
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
