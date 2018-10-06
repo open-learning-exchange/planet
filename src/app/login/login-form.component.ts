@@ -130,10 +130,12 @@ export class LoginFormComponent {
       switchMap((sessionData) => {
         const adminName = this.userService.getConfig().adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-      })
-    ).subscribe(() => {
-      this.pouchService.replicateFromRemoteDBs();
-    }, this.loginError('Username and/or password do not match'));
+      }),
+      switchMap(() => {
+        this.pouchService.configureDBs();
+        return forkJoin(this.pouchService.replicateFromRemoteDBs());
+      }),
+    ).subscribe(() => { }, this.loginError('Username and/or password do not match'));
   }
 
   loginError(message: string) {
