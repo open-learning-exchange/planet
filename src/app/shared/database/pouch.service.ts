@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchDBAuth from 'pouchdb-authentication';
 import PouchDBFind from 'pouchdb-find';
-import { throwError, from, Observable } from 'rxjs';
+import { throwError, from } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
