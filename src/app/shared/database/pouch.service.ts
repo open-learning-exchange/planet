@@ -38,6 +38,10 @@ export class PouchService {
     });
   }
 
+  deconfigureDBs() {
+    return Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
+  }
+
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
