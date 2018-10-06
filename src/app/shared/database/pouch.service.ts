@@ -20,16 +20,7 @@ export class PouchService {
 
   constructor() {
     for (const db of this.databases.values()) {
-      const pouchDB = new PouchDB(`local-${db}`);
-
-      // indexes the field for faster lookup
-      pouchDB.createIndex({
-        index: {
-          fields: [ 'kind', 'createdAt' ]
-        }
-      });
-
-      this.localDBs.set(db, pouchDB);
+      this.localDBs.set(db, new PouchDB(`local-${db}`));
     }
 
     // test is a placeholder temp database
@@ -55,11 +46,7 @@ export class PouchService {
 
   replicateToRemoteDBs() {
     for (const db of this.databases.values()) {
-        this.localDBs.get(db).replicate.to(this.baseUrl + db, {
-          filter(doc) {
-            return doc.pouchIndex === db;
-          }
-        });
+        this.localDBs.get(db).replicate.to(this.baseUrl + db);
     }
   }
 
