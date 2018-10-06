@@ -15,7 +15,7 @@ type RemoteDatabases = 'feedback';
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
   private localDBs = new Map<RemoteDatabases, PouchDB.Database>();
-  private authDB;
+  private authDB: PouchDB.Database;
   private databases = new Set<RemoteDatabases>([ 'feedback' ]);
 
   constructor() {
@@ -60,11 +60,11 @@ export class PouchService {
     return from(replicateFn).pipe(catchError(this.handleError));
   }
 
-  getLocalPouchDB(db: RemoteDatabases) {
+  getLocalPouchDB(db: RemoteDatabases): PouchDB.Database {
     return this.localDBs.get(db);
   }
 
-  getAuthDB() {
+  getAuthDB(): PouchDB.Database {
     return this.authDB;
   }
 
