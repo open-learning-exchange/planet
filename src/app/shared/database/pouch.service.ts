@@ -19,13 +19,9 @@ export class PouchService {
   private databases = new Set<RemoteDatabases>([ 'feedback' ]);
 
   constructor() {
-    for (const db of this.databases.values()) {
-      this.localDBs.set(db, new PouchDB(`local-${db}`));
-    }
-
     // test is a placeholder temp database
     // we need a central remote database
-    // since we will have different levels of authentication (manager, intern)
+    // since we will have different levels of authentication (manager, intersn)
     // we will have to create corresponding documents in couchdb and we can sync
     // we can decide that when the user is being created for the first time?
     this.authDB = new PouchDB(this.baseUrl + 'test', {
@@ -34,6 +30,12 @@ export class PouchService {
         return (PouchDB as any).fetch(url, opts);
       }
     } as PouchDB.Configuration.RemoteDatabaseConfiguration);
+  }
+
+  configureDBs() {
+    for (const db of this.databases.values()) {
+      this.localDBs.set(db, new PouchDB(`local-${db}`));
+    }
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
