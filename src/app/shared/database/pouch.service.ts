@@ -14,12 +14,12 @@ type RemoteDatabases = 'feedback';
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
-  private localDBs = new Map<RemoteDatabases, any>([ [ 'feedback', null ] ]);
+  private localDBs = new Map<RemoteDatabases, PouchDB.Database>();
   private authDB;
   private databases = new Set<RemoteDatabases>([ 'feedback' ]);
 
   constructor() {
-    // test is a placeholder temp database
+    // test is a placeholder temp databases
     // we need a central remote database
     // since we will have different levels of authentication (manager, intersn)
     // we will have to create corresponding documents in couchdb and we can sync
