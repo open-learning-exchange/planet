@@ -125,15 +125,15 @@ export class LoginFormComponent {
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
     this.pouchAuthService.login(name, password).pipe(
+      switchMap(() => {
+        this.pouchService.configureDBs();
+        return forkJoin(this.pouchService.replicateFromRemoteDBs());
+      }),
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
         const adminName = this.userService.getConfig().adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-      }),
-      switchMap(() => {
-        this.pouchService.configureDBs();
-        return forkJoin(this.pouchService.replicateFromRemoteDBs());
       }),
     ).subscribe(() => { }, this.loginError('Username and/or password do not match'));
   }
