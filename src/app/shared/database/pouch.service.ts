@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchDBAuth from 'pouchdb-authentication';
 import PouchDBFind from 'pouchdb-find';
-import { throwError, from } from 'rxjs';
+import { throwError, from, forkJoin } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
@@ -39,15 +39,15 @@ export class PouchService {
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    for (const db of this.databases.values()) {
-        this.localDBs.get(db).replicate.from(this.baseUrl + db);
-    }
+    return forkJoin(Array.from(this.localDBs.keys(), db => this.replicateFromRemoteDB(db))).pipe(
+      this.handleError
+    );
   }
 
   replicateToRemoteDBs() {
-    for (const db of this.databases.values()) {
-        this.localDBs.get(db).replicate.to(this.baseUrl + db);
-    }
+    return forkJoin(Array.from(this.localDBs.keys(), db => this.replicateToRemoteDB(db))).pipe(
+      this.handleError
+    );
   }
 
   replicateFromRemoteDB(db: RemoteDatabases) {
