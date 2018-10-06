@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchDBAuth from 'pouchdb-authentication';
 import PouchDBFind from 'pouchdb-find';
-import { throwError, from, forkJoin } from 'rxjs';
+import { throwError, from } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
@@ -41,23 +41,19 @@ export class PouchService {
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    return forkJoin(Array.from(this.localDBs.keys(), db => this.replicateFromRemoteDB(db))).pipe(
-      this.handleError
-    );
+    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicateFromRemoteDB(dbName, pouchDB));
   }
 
   replicateToRemoteDBs() {
-    return forkJoin(Array.from(this.localDBs.keys(), db => this.replicateToRemoteDB(db))).pipe(
-      this.handleError
-    );
+    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicateToRemoteDB(dbName, pouchDB));
   }
 
-  replicateFromRemoteDB(db: RemoteDatabases) {
-    return this.replicate(this.localDBs.get(db).replicate.from(this.baseUrl + db));
+  replicateFromRemoteDB(dbName: RemoteDatabases, pouchDB: PouchDB.Database) {
+    return this.replicate(pouchDB.replicate.from(this.baseUrl + dbName));
   }
 
-  replicateToRemoteDB(db: RemoteDatabases) {
-    return this.replicate(this.localDBs.get(db).replicate.to(this.baseUrl + db));
+  replicateToRemoteDB(dbName: RemoteDatabases, pouchDB: PouchDB.Database) {
+    return this.replicate(pouchDB.replicate.to(this.baseUrl + dbName));
   }
 
   replicate(replicateFn) {
