@@ -30,6 +30,8 @@ export class PouchService {
         return (PouchDB as any).fetch(url, opts);
       }
     } as PouchDB.Configuration.RemoteDatabaseConfiguration);
+
+    this.configureDBs();
   }
 
   configureDBs() {

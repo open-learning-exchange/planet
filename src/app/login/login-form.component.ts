@@ -130,10 +130,7 @@ export class LoginFormComponent {
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
     const configuration = this.stateService.configuration;
     this.pouchAuthService.login(name, password).pipe(
-      switchMap(() => {
-        this.pouchService.configureDBs();
-        return forkJoin(this.pouchService.replicateFromRemoteDBs());
-      }),
+      switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
