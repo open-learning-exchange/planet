@@ -135,8 +135,12 @@ export class LoginFormComponent {
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
+      }),
+      switchMap(() => {
+        this.pouchService.configureDBs();
+        return forkJoin(this.pouchService.replicateFromRemoteDBs());
       })
-    ).subscribe(() => this.pouchService.replicateFromRemoteDBs(), this.loginError.bind(this));
+    ).subscribe(() => {}, this.loginError.bind(this));
   }
 
   loginError() {
