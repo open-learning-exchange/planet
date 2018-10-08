@@ -182,10 +182,4 @@ export class MeetupsAddComponent implements OnInit {
       'time': Date.now()
     })) };
   }
-
-  setnoDescription(event) {
-    if (event === true) {
-      this.noDescription = undefined;
-    }
-  }
 }
