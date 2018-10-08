@@ -1,9 +1,9 @@
-import { Component, OnInit, isDevMode } from '@angular/core';
+import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap, catchError } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { switchMap, catchError, takeUntil } from 'rxjs/operators';
+import { forkJoin, of, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -21,7 +21,7 @@ import { ReportsService } from './reports/reports.service';
   templateUrl: './manager-dashboard.component.html'
 })
 
-export class ManagerDashboardComponent implements OnInit {
+export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isUserAdmin = false;
   displayDashboard = true;
   message = '';
@@ -37,6 +37,7 @@ export class ManagerDashboardComponent implements OnInit {
   pushedItems = { course: [], resource: [] };
   pin: string;
   activityLogs: any = {};
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private userService: UserService,
@@ -69,6 +70,11 @@ export class ManagerDashboardComponent implements OnInit {
     }
     this.getSatellitePin();
     this.getLogs();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getSatellitePin() {
@@ -157,7 +163,7 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   sendOnAccept(db: string) {
-    this.dialogsListService.getListAndColumns(db).subscribe(res => {
+    this.dialogsListService.getListAndColumns(db).pipe(takeUntil(this.onDestroy$)).subscribe(res => {
       const previousList = res.tableData.filter((doc: any) => doc.sendOnAccept === true),
         initialSelection = previousList.map((doc: any) => doc._id);
       const data = {

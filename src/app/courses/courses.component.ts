@@ -288,6 +288,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendCourseDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+    .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
       const data = { okClick: this.sendCourse('courses').bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
