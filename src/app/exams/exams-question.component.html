@@ -12,7 +12,7 @@
       <input matInput i18n-placeholder placeholder="Question Title" formControlName="header">
     </mat-form-field>
     <mat-form-field class="full-width mat-form-field-type-no-underline">
-      <planet-markdown-textbox class="full-width" placeholder="Question Detail" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
+      <planet-markdown-textbox class="full-width" placeholder="Question Detail" [formControl]="questionForm.controls.body" [noDesc]="noDescription"></planet-markdown-textbox>
       <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
     </mat-form-field>
     <div>

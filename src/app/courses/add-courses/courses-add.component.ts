@@ -39,6 +39,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   subjectLevels = constants.subjectLevels;
 
   mockStep = { stepTitle: 'Add title', description: '!!!' };
+  noDescription: boolean;
 
   constructor(
     private router: Router,
@@ -142,6 +143,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    const descriptionValue = String(this.courseForm.get('description').value);
+    // when description is empty or only contains empty spaces, noDescription is true
+    const onlySpace = /^\s*$/.test(descriptionValue) === true;
+    const emptyDesc = this.courseForm.get('description').valid !== true;
+    (onlySpace) || (emptyDesc) ? this.noDescription = true :  this.noDescription = false;
     if (this.courseForm.valid) {
       if (this.route.snapshot.url[0].path === 'update') {
         this.updateCourse(this.courseForm.value);

@@ -34,6 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   pageType = 'Add new';
   disableDownload = true;
   resourceFilename = '';
+  noDescription: boolean;
 
   constructor(
     private router: Router,
@@ -124,6 +125,11 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
+    const descriptionValue = String(this.resourceForm.get('description').value);
+    // when description is empty or only contains empty spaces, noDescription is true
+    const onlySpace = /^\s*$/.test(descriptionValue) === true;
+    const emptySpec = this.resourceForm.get('description').valid !== true;
+    (onlySpace) || (emptySpec) ? this.noDescription = true :  this.noDescription = false;
     if (this.resourceForm.valid) {
       const fileObs: Observable<any> = this.createFileObs();
       fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {

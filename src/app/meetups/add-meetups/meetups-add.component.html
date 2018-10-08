@@ -17,7 +17,7 @@
         </mat-form-field>
       </div>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="meetupForm.controls.description" [noDesc]="noDescription"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div>

@@ -1,5 +1,5 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, OnChanges
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material';
@@ -15,13 +15,14 @@ import { FocusMonitor } from '@angular/cdk/a11y';
   ],
   'encapsulation': ViewEncapsulation.None
 })
-export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, OnInit, OnDestroy {
+export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, OnChanges, OnInit, OnDestroy {
 
   static nextId = 0;
 
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @Input() _value = '';
+  @Input() noDesc: boolean;
   get value() {
     return this._value;
   }
@@ -70,6 +71,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, OnI
     });
   }
 
+  ngOnChanges() {
+    this.checkHighlight(this.noDesc);
+  }
+
   ngOnInit() {}
 
   ngOnDestroy() {
@@ -102,6 +107,15 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, OnI
   onFocusOut() {
     this.ngControl.control.markAsTouched({ onlySelf: true });
     this.setErrorState();
+  }
+
+  checkHighlight(event) {
+    if (event === true) {
+      this.errorState = true;
+      this.value = '';
+    } else {
+      this.errorState = false;
+    }
   }
 
 }

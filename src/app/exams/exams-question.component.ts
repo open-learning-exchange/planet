@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, OnChanges } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -22,15 +22,21 @@ import { uniqueId } from '../shared/utils';
     }
   ` ]
 })
-export class ExamsQuestionComponent implements OnInit {
+export class ExamsQuestionComponent implements OnInit, OnChanges {
 
   @Input() questionForm: FormGroup;
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   choices: FormArray;
   correctCheckboxes: any = {};
+  @Input() clickSubmit: boolean;
+  noDescription: boolean;
 
   constructor() {}
+
+  ngOnChanges() {
+    this.checkDesc(this.clickSubmit);
+  }
 
   ngOnInit() {
     this.choices = <FormArray>this.questionForm.controls.choices;
@@ -79,6 +85,16 @@ export class ExamsQuestionComponent implements OnInit {
     this.questionForm.patchValue({ 'correctChoice': '' });
     while (this.choices.length !== 0) {
       this.removeChoice(0);
+    }
+  }
+
+  checkDesc(event) {
+    if ( event === true) {
+      const descriptionValue = String(this.questionForm.get('body').value);
+      // when description is empty or only contains empty spaces, noDescription is true
+      const onlySpace = /^\s*$/.test(descriptionValue) === true;
+      const emptyDesc = this.questionForm.get('body').valid !== true;
+      (onlySpace) || (emptyDesc) ? this.noDescription = true :  this.noDescription = false;
     }
   }
 
