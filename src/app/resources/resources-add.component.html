@@ -17,7 +17,7 @@
         <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" required="true" placeholder="Description" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field class="full-width">
