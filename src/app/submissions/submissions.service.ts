@@ -3,6 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
+import { StateService } from '../shared/state.service';
 
 @Injectable()
 export class SubmissionsService {
@@ -19,6 +20,7 @@ export class SubmissionsService {
 
   constructor(
     private couchService: CouchService,
+    private stateService: StateService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -44,7 +46,9 @@ export class SubmissionsService {
 
   private createNewSubmission({ parentId, parent, user, type }) {
     const times = { startTime: Date.now(), lastUpdateTime: Date.now() };
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', source: user.planetCode, ...times };
+    const configuration = this.stateService.configuration;
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
+      source: configuration.code, parentCode: configuration.parentCode, ...times };
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
