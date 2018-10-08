@@ -49,6 +49,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       const surveyId = params.get('surveyId');
       const mode = params.get('mode');
+      this.answer = undefined;
       this.spinnerOn = true;
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
@@ -149,8 +150,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.examType = submission.parent.type;
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
-        const ans = submission.answers[this.questionNum - 1];
-        this.answer = ans ? ans.value : undefined;
+        const ans = submission.answers[this.questionNum - 1] || {};
+        this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
         this.grade = ans ? ans.grade || this.grade : this.grade;
       }
     });
@@ -183,7 +184,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
-        this.answer = undefined;
         this.resetCheckboxes();
         return {
           obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close),
