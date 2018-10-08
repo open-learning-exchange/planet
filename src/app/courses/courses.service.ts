@@ -6,6 +6,7 @@ import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { switchMap, map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { StateService } from '../shared/state.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
@@ -28,7 +29,8 @@ export class CoursesService {
     private couchService: CouchService,
     private userService: UserService,
     private ratingService: RatingService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private stateService: StateService
   ) {
     this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
       const { ids, opts } = this.currentParams;
@@ -80,7 +82,9 @@ export class CoursesService {
   }
 
   updateProgress({ courseId, stepNum, passed = true, progress = {} }) {
-    const newProgress = { ...progress, stepNum, courseId, passed, userId: this.userService.get()._id };
+    const configuration = this.stateService.configuration;
+    const newProgress = { ...progress, stepNum, courseId, passed,
+      userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode };
     this.couchService.post(this.progressDb, newProgress).subscribe(() => {
       this.requestCourse({ courseId });
     });
