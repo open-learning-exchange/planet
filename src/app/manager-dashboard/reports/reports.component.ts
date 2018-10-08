@@ -3,9 +3,9 @@ import { MatTableDataSource } from '@angular/material';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
-import { UserService } from '../../shared/user.service';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -26,8 +26,8 @@ export class ReportsComponent {
   constructor(
     private couchService: CouchService,
     private activityService: ReportsService,
-    private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private stateService: StateService
   ) {
     this.getLogs();
   }
@@ -44,7 +44,7 @@ export class ReportsComponent {
   getLogs() {
     forkJoin([
       this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ 'parentCode': this.userService.getConfig().code }, 0, [ { 'createdDate': 'desc' } ] )),
+        findDocuments({ 'parentCode': this.stateService.configuration.code }, 0, [ { 'createdDate': 'desc' } ] )),
       this.activityService.getResourceVisits(),
       this.activityService.getLoginActivities(),
       this.activityService.getAdminActivities()

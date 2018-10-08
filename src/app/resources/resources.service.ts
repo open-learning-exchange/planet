@@ -28,7 +28,7 @@ export class ResourcesService {
       }
     });
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
-      if (response !== null) {
+      if (response !== undefined) {
         this.isActiveResourceFetch = false;
         this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
       }

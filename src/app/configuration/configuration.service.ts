@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
-import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
+import { switchMap, mergeMap, takeWhile, tap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
@@ -15,18 +13,13 @@ import { dedupeShelfReduce } from '../shared/utils';
 export class ConfigurationService {
 
   configuration: any;
+  lastSeq: string;
 
   constructor(
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService,
-    private router: Router,
     private userService: UserService,
     private syncService: SyncService
-  ) {
-    this.couchService.findAll('configurations').subscribe((res) => {
-      this.configuration = res[0];
-    });
-  }
+  ) {}
 
   createRequestNotification(configuration) {
     return mergeMap(data => {

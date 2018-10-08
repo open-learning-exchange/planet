@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ReportsService } from './reports.service';
-import { ConfigurationService } from '../../configuration/configuration.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -14,12 +14,12 @@ export class ReportsDetailComponent {
 
   constructor(
     private activityService: ReportsService,
-    private configurationService: ConfigurationService,
+    private stateService: StateService,
     private route: ActivatedRoute
   ) {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.planetCode = params.get('code') || this.configurationService.configuration.code;
-      this.parentCode = params.get('parentCode') || this.configurationService.configuration.parentCode;
+      this.planetCode = params.get('code') || this.stateService.configuration.code;
+      this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
     });
     this.getTotalUsers();
     this.getLoginActivities();

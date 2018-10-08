@@ -5,6 +5,7 @@ import { of, Observable, Subject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray } from './utils';
+import { StateService } from './state.service';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -16,7 +17,6 @@ import { addToArray, removeFromArray } from './utils';
 export class UserService {
   private user: any = { name: '' };
   private logsDb = 'login_activities';
-  private configuration: any = { };
   private _shelf: any = { };
   get shelf(): any {
     return this._shelf;
@@ -41,7 +41,10 @@ export class UserService {
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
 
-  constructor(private couchService: CouchService) {}
+  constructor(
+    private couchService: CouchService,
+    private stateService: StateService
+  ) {}
 
   set(user: any): any {
     this.user = user;
@@ -56,15 +59,7 @@ export class UserService {
     return this.user;
   }
 
-  getConfig(): any {
-    return this.configuration;
-  }
-
-  setConfig(config) {
-    this.configuration = config;
-  }
-
-  setUserConfigAndShelf(user: any) {
+  setUserAndShelf(user: any) {
     return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
         // If not found in users database, just use userCtx object
         this.user = user;
@@ -80,18 +75,12 @@ export class UserService {
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
-          return forkJoin([
-            this.couchService.allDocs('configurations'),
-            this.getShelf()
-          ]);
+          return this.getShelf();
         }
-        return of([ [], {} ]);
+        return of({});
       }),
-      switchMap(([ configuration, shelf ]: [ any, any ]) => {
-        if (configuration.length > 0) {
-          this.configuration = configuration[0];
-          this.shelf = shelf;
-        }
+      switchMap((shelf: any) => {
+        this.shelf = shelf;
         return of(true);
       }));
   }
@@ -123,8 +112,8 @@ export class UserService {
       type: 'login',
       loginTime: this.sessionStart,
       logoutTime: logoutTime,
-      createdOn: this.configuration.code,
-      parentCode: this.configuration.parentCode
+      createdOn: this.stateService.configuration.code,
+      parentCode: this.stateService.configuration.parentCode
     }, this.sessionRev ? {
       _rev: this.sessionRev
     } : {});

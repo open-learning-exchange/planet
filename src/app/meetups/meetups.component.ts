@@ -11,6 +11,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -36,7 +37,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
-  getOpts = this.parent ? { domain: this.userService.getConfig().parentDomain } : {};
+  getOpts = this.parent ? { domain: this.stateService.configuration.parentDomain } : {};
   pageEvent: PageEvent;
   currentUser = this.userService.get();
   emptyData = false;
@@ -48,7 +49,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private meetupService: MeetupService
+    private meetupService: MeetupService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {

@@ -109,7 +109,7 @@ export class CouchService {
   }
 
   stream(method: string, db: string) {
-    const url = this.baseUrl + db;
+    const url = this.baseUrl + '/' + db;
     const req = new HttpRequest(method, url, {
       reportProgress: true
     });
