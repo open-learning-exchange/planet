@@ -173,16 +173,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
     let amount = 'many',
       okClick = this.deleteResources(resources),
-      displayName = '',
-      count = resources.length;
+      displayName = '';
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
       okClick = this.deleteResource(resource);
-      displayName = resource.title,
-        count = 1;
+      displayName = resource.title;
     }
-    this.openDeleteDialog(okClick, amount, displayName, count);
+    this.openDeleteDialog(okClick, amount, displayName, resources.length);
   }
 
   openDeleteDialog(okClick, amount, displayName = '', count) {
