@@ -62,7 +62,7 @@ export class MeetupService {
   attendMeetup(meetupId, participate) {
     const newMeetupIds = [ ...this.userShelf.meetupIds ];
     if (participate) {
-      newMeetupIds.splice(meetupId, 1);
+      newMeetupIds.splice(newMeetupIds.indexOf(meetupId), 1);
     } else {
       newMeetupIds.push(meetupId);
     }
