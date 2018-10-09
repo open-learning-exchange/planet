@@ -29,7 +29,6 @@ export class MeetupsAddComponent implements OnInit {
   id = null;
   days = constants.days;
   meetupFrequency = [];
-  noDescription: boolean;
 
   constructor(
     private couchService: CouchService,
@@ -83,11 +82,6 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   onSubmit() {
-    const descriptionValue = String(this.meetupForm.get('description').value);
-    // when description is empty or only contains empty spaces, noDescription is true
-    const onlySpace = /^\s*$/.test(descriptionValue) === true;
-    const emptyDesc = this.meetupForm.get('description').valid !== true;
-    (onlySpace) || (emptyDesc) ? this.noDescription = true :  this.noDescription = false;
     if (this.meetupForm.valid) {
       if (this.route.snapshot.url[0].path === 'update') {
         this.updateMeetup(this.meetupForm.value);

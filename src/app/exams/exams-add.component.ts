@@ -29,7 +29,6 @@ export class ExamsAddComponent implements OnInit {
   steps = [];
   showFormError = false;
   returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
-  submit = false;
 
   constructor(
     private router: Router,
@@ -80,7 +79,6 @@ export class ExamsAddComponent implements OnInit {
   }
 
   onSubmit() {
-    this.submit = true;
     if (this.examForm.valid) {
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
     } else {
