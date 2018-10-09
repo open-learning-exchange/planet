@@ -169,7 +169,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(resource) {
-    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title);
+    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title, 1);
   }
 
   deleteSelected() {
@@ -183,17 +183,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       okClick = this.deleteResource(resource);
       displayName = resource.title;
     }
-    this.openDeleteDialog(okClick, amount, displayName);
+    this.openDeleteDialog(okClick, amount, displayName, resources.length);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '') {
+  openDeleteDialog(okClick, amount, displayName = '', count) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
         amount,
         changeType: 'delete',
         type: 'resource',
-        displayName
+        displayName,
+        count
       }
     });
     // Reset the message when the dialog closes
