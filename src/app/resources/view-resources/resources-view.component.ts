@@ -57,7 +57,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
-        this.resourceActivity(this.resource, 'visit');
+        // this.resourceActivity(this.resource, 'visit');
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
       });
   }
@@ -69,22 +69,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   setResourceUrl(resourceUrl: string) {
     this.resourceSrc = resourceUrl;
-  }
-
-  resourceActivity(resource: any, activity) {
-    const data = {
-      'resourceId': resource._id,
-      'title': resource.title,
-      'user': this.userService.get().name,
-      'type': activity,
-      'time': Date.now(),
-      'createdOn': this.planetConfiguration.code,
-      'parentCode': this.planetConfiguration.parentCode
-    };
-    this.couchService.post('resource_activities', data)
-      .subscribe((response) => {
-        console.log(response);
-      }, (error) => console.log('Error'));
   }
 
   toggleFullView() {
