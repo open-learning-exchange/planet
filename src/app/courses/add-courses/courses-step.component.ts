@@ -28,6 +28,7 @@ export class CoursesStepComponent implements OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   activeStep: any;
   activeStepIndex = -1;
+  spinnerOn = true;
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -46,6 +47,7 @@ export class CoursesStepComponent implements OnDestroy {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
       this.stepsChange.emit(this.steps);
     });
+    this.spinnerOn = true;
   }
 
   ngOnDestroy() {
@@ -68,6 +70,7 @@ export class CoursesStepComponent implements OnDestroy {
         allowMulti: true,
         initialSelection,
         ...res };
+      this.spinnerOn = false;
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
         height: '500px',
