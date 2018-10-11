@@ -38,7 +38,7 @@ export class ExamsAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
-    private coursesService: CoursesService,
+    private coursesService: CoursesService
   ) {
     this.createForm();
   }
