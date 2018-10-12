@@ -40,8 +40,9 @@ export class ReportsService {
     const obs = planetCode ? this.couchService.findAll('_users') :
       this.couchService.findAll('child_users').pipe(map((users: any) => users.filter(user => user.planetCode === planetCode)));
     return obs.pipe(map((users: any) => {
+      users = users.filter(user => user.name !== 'satellite')
       return ({
-        count: users.filter(user => user.name !== 'satellite').length,
+        count: users.length,
         byGender: users.reduce((usersByGender: any, user: any) => {
           usersByGender[user.gender || 'didNotSpecify'] += 1;
           return usersByGender;
