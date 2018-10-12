@@ -44,7 +44,7 @@ export class StateService {
   optsFromPlanetField(planetField: string) {
     switch (planetField) {
       case 'parent':
-        return { domain: this.state.local.configuration.parentDomain };
+        return { domain: this.configuration.parentDomain };
       case 'local':
         return {};
       default:
