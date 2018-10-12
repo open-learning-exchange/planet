@@ -23,7 +23,9 @@ export class RatingService {
 
   newRatings(parent: boolean) {
     const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
-    this.couchService.findAll(this.dbName, undefined, opts).pipe(catchError(err => {
+    this.couchService.findAll(
+      this.dbName, findDocuments({ '_id': { '$gt': null } }, [], [ { 'item': 'desc' } ]), opts
+    ).pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
       return of([]);
