@@ -77,9 +77,7 @@ export class ExamsAddComponent implements OnInit {
         console.log(error);
       });
     }
-
     this.courseName = this.coursesService.course.form.courseTitle;
-
   }
 
   onSubmit() {
