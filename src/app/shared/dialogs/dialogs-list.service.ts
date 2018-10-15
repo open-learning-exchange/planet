@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../couchdb.service';
-import { map } from 'rxjs/operators';
+import { map, takeWhile, multicast } from 'rxjs/operators';
 import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
+import { StateService } from '../state.service';
+import { ReplaySubject } from 'rxjs';
 
 const listColumns = {
   'resources': [ 'title' ],
@@ -16,21 +17,18 @@ const listColumns = {
 export class DialogsListService {
 
   constructor(
-    private couchService: CouchService,
+    private stateService: StateService,
     private userService: UserService
   ) {}
 
-  defaultSelectors() {
-    const users = {
-      '$nor': [
-        { '_id': this.userService.get()._id },
-        { '_id': 'org.couchdb.user:satellite' }
-      ],
-      '$or': [
-        { 'roles': { '$in': [ 'learner', 'leader' ] } },
-        { 'isUserAdmin': true }
-      ],
-      'requestId': { '$exists': false }
+  defaultSelectorFunctions() {
+    const users = (user) => {
+      const { _id, roles, isUserAdmin, requestId } = user;
+      return (
+        _id !== this.userService.get()._id && _id !== 'org.couchdb.user:satellite' &&
+        (roles.indexOf('learner') > -1 ||  roles.indexOf('leader') > -1 || isUserAdmin === true) &&
+        requestId === undefined
+      );
     };
     return {
       '_users': users,
@@ -38,12 +36,25 @@ export class DialogsListService {
     };
   }
 
-  getListAndColumns(db: string, selector?: any, opts: any = {}) {
-    selector = selector || this.defaultSelectors()[db] || {};
+  filterResults(data, selector) {
+    return data.filter(item => {
+      if (selector instanceof Function) {
+        return selector(item);
+      }
+      return Object.entries(selector).reduce((match, [ field, value ]) => item[field] === value, false);
+    });
+  }
+
+  getListAndColumns(db: string, selector?: any, planetField: string = 'local') {
+    selector = selector || this.defaultSelectorFunctions()[db];
     const fields = db === '_users' || db === 'child_users' ? this.userService.userProperties : [];
-    return this.couchService.findAll(db, findDocuments(selector, fields), opts).pipe(map((res) => {
-      return { tableData: res, columns: listColumns[db] };
-    }));
+
+    return this.stateService.getCouchState(db, planetField).pipe(
+      map((newData: any) => {
+        const tableData = selector ? this.filterResults(newData, selector) : newData;
+        return { tableData, columns: listColumns[db] };
+      })
+    );
   }
 
 }

@@ -12,6 +12,7 @@ import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -42,13 +43,15 @@ export class UsersUpdateComponent implements OnInit {
   languages = languages;
   maxDate = new Date();
   submissionMode = false;
+  planetConfiguration = this.stateService.configuration;
 
   constructor(
     private fb: FormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private stateService: StateService
   ) {
     this.userData();
   }
@@ -146,7 +149,7 @@ export class UsersUpdateComponent implements OnInit {
         if (this.user.name === this.userService.get().name) {
           this.userService.set(userInfo);
         }
-        if (this.userService.getConfig().adminName === this.user.name + '@' + this.userService.getConfig().code) {
+        if (this.planetConfiguration.adminName === this.user.name + '@' + this.planetConfiguration.code) {
           return this.updateConfigurationContact(userInfo);
         }
         return of({ ok: true });
@@ -161,10 +164,10 @@ export class UsersUpdateComponent implements OnInit {
 
   updateConfigurationContact(userInfo) {
     const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
-    const newConfig = { ...this.userService.getConfig(), firstName, lastName, middleName, email, phoneNumber };
-    return this.couchService.put('configurations/' + this.userService.getConfig()._id, newConfig)
+    const newConfig = { ...this.planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
+    return this.couchService.put('configurations/' + this.planetConfiguration._id, newConfig)
     .pipe(map((res) => {
-      this.userService.setConfig(newConfig);
+      this.stateService.requestData('configurations', 'local');
       return res;
     }));
   }

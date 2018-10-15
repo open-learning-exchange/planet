@@ -13,6 +13,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { debug } from '../../debug-operator';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './meetups-view.component.html',
@@ -36,7 +37,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     public meetupService: MeetupService,
     public planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {
@@ -47,7 +49,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         const meetupId = params.get('id');
         const getOpts: any = { meetupIds: [ meetupId ] };
         if (this.parent) {
-          getOpts.opts = { domain: this.userService.getConfig().parentDomain };
+          getOpts.opts = { domain: this.stateService.configuration.parentDomain };
         }
         this.meetupService.updateMeetups(getOpts);
       }, error => console.log(error), () => console.log('complete getting meetup id'));
@@ -91,7 +93,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users').subscribe((res) => {
+    this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
       res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
       const data = {
         okClick: this.sendInvitations.bind(this),

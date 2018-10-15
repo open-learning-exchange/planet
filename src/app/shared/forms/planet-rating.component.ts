@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { debug } from '../../debug-operator';
 import { RatingService } from './rating.service';
+import { StateService } from '../state.service';
 
 const popupFormFields = [
   {
@@ -58,7 +59,8 @@ export class PlanetRatingComponent implements OnChanges {
     private planetMessage: PlanetMessageService,
     private userService: UserService,
     private dialogsForm: DialogsFormService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private stateService: StateService
   ) {
     this.rateForm = this.fb.group(this.rateFormField);
     this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
@@ -97,6 +99,7 @@ export class PlanetRatingComponent implements OnChanges {
 
   updateRating(form) {
     // Later parameters of Object.assign will overwrite values from previous objects
+    const configuration = this.stateService.configuration;
     const newRating = Object.assign({
       type: this.ratingType,
       item: this.item._id,
@@ -104,8 +107,8 @@ export class PlanetRatingComponent implements OnChanges {
     }, this.rating.userRating, form.value, {
       time: Date.now(),
       user: this.userService.get(),
-      createdOn: this.userService.getConfig().code,
-      parentCode: this.userService.getConfig().parentCode
+      createdOn: configuration.code,
+      parentCode: configuration.parentCode
     });
     let couchRequest = this.couchService.post,
       couchUrl = this.dbName;

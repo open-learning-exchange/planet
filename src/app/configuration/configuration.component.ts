@@ -11,8 +11,8 @@ import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
-import { UserService } from '../shared/user.service';
 import { ConfigurationService } from './configuration.service';
+import { StateService } from '../shared/state.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and last character
@@ -58,8 +58,8 @@ export class ConfigurationComponent implements OnInit {
     private validatorService: ValidatorService,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {
@@ -125,7 +125,7 @@ export class ConfigurationComponent implements OnInit {
 
   initUpdate() {
     this.configurationType = 'update';
-    const configurationId = this.userService.getConfig()._id;
+    const configurationId = this.stateService.configuration._id;
     this.couchService.get('configurations/' + configurationId)
     .subscribe((data: any) => {
       this.configuration = data;

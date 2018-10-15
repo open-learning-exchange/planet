@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { Subject, forkJoin, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { ConfigurationService } from '../configuration/configuration.service';
+import { StateService } from '../shared/state.service';
 
 @Injectable()
 export class ResourcesService {
@@ -14,21 +12,25 @@ export class ResourcesService {
   private resourcesUpdated = new Subject<any>();
   resources = { local: [], parent: [] };
   ratings = { local: [], parent: [] };
-  lastSeq = { local: '', parent: '' };
   isActiveResourceFetch = false;
 
   constructor(
-    private couchService: CouchService,
     private ratingService: RatingService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       const planetField = res.parent ? 'parent' : 'local';
       this.ratings[planetField] = res.ratings.filter((rating: any) => rating.type === 'resource');
       if (!this.isActiveResourceFetch) {
-        this.setResources(this.resources[planetField], [], res.ratings, planetField);
+        this.setResources(this.resources[planetField], res.ratings, planetField);
+      }
+    });
+    this.stateService.couchStateListener(this.dbName).subscribe(response => {
+      if (response !== undefined) {
+        this.isActiveResourceFetch = false;
+        this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
       }
     });
   }
@@ -40,49 +42,18 @@ export class ResourcesService {
   }
 
   requestResourcesUpdate(parent: boolean) {
-    const opts = parent ? { domain: this.configurationService.configuration.parentDomain } : {};
-    const currentResources = parent ?
-      this.resources.parent : this.resources.local;
-    const planetField = parent ? 'parent' : 'local';
-    const getCurrentResources = currentResources.length === 0 ?
-      this.getAllResources(opts) : of(currentResources);
     this.isActiveResourceFetch = true;
-    forkJoin([ getCurrentResources, this.updateResourcesChanges(opts, planetField) ])
-    .subscribe(([ resources, newResources ]) => {
-      this.isActiveResourceFetch = false;
-      this.setResources(resources, newResources, this.ratings[planetField], planetField);
-    });
+    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local');
     this.ratingService.newRatings(parent);
   }
 
-  setResources(currentResources, newResources, ratings, planetField) {
-    const resources = newResources.length > 0 ?
-      this.couchService.combineChanges(currentResources, newResources) : currentResources;
-    this.resources[planetField] = this.createResourceList(resources, ratings);
+  setResources(resources, ratings, planetField) {
+    this.resources[planetField] = this.ratingService.createItemList(resources, ratings);
     this.resourcesUpdated.next(this.resources);
-  }
-
-  getAllResources(opts: any) {
-    return this.couchService.findAll(this.dbName, findDocuments({
-      '_id': { '$gt': null }
-    }, [], [], 1000), opts);
-  }
-
-  updateResourcesChanges(opts: any, planetField: string) {
-    return this.couchService
-    .get(this.dbName + '/_changes?include_docs=true&since=' + (this.lastSeq[planetField] || 'now'), opts)
-    .pipe(map((res: any) => {
-      this.lastSeq[planetField] = res.last_seq;
-      return res.results.filter((r: any) => r.doc._id.indexOf('_design') === -1).map((r: any) => r.doc);
-    }));
   }
 
   getRatings(resourceIds: string[], opts: any) {
     return this.ratingService.getRatings({ itemIds: resourceIds, type: 'resource' }, opts);
-  }
-
-  createResourceList(resourcesRes, ratings) {
-    return this.ratingService.createItemList(resourcesRes, ratings);
   }
 
   libraryAddRemove(resourceIds, type) {

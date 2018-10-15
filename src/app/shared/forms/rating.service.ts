@@ -4,7 +4,7 @@ import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
 import { of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ConfigurationService } from '../../configuration/configuration.service';
+import { StateService } from '../state.service';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
 
@@ -18,12 +18,14 @@ export class RatingService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private configurationService: ConfigurationService
+    private stateService: StateService
   ) {}
 
   newRatings(parent: boolean) {
-    const opts = parent ? { domain: this.configurationService.configuration.parentDomain } : {};
-    this.couchService.findAll(this.dbName, undefined, opts).pipe(catchError(err => {
+    const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
+    this.couchService.findAll(
+      this.dbName, findDocuments({ '_id': { '$gt': null } }, [], [ { 'item': 'desc' } ]), opts
+    ).pipe(catchError(err => {
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
       return of([]);

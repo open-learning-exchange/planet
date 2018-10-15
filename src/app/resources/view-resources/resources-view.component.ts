@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -20,7 +21,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private stateService: StateService
   ) { }
 
   private dbName = 'resources';
@@ -33,10 +35,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   isUserEnrolled = false;
   // If parent route, url will use parent domain.  If not uses this domain.
   parent = this.route.snapshot.data.parent;
+  planetConfiguration = this.stateService.configuration;
   get urlPrefix()  {
     let domain = environment.couchAddress + '/';
     if (this.parent) {
-      domain = 'http://' + this.userService.getConfig().parentDomain + '/';
+      domain = 'http://' + this.planetConfiguration.parentDomain + '/';
     }
     return domain + this.dbName + '/';
   }
@@ -75,8 +78,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       'user': this.userService.get().name,
       'type': activity,
       'time': Date.now(),
-      'createdOn': this.userService.getConfig().code,
-      'parentCode': this.userService.getConfig().parentCode
+      'createdOn': this.planetConfiguration.code,
+      'parentCode': this.planetConfiguration.parentCode
     };
     this.couchService.post('resource_activities', data)
       .subscribe((response) => {

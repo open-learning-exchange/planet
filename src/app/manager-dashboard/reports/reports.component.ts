@@ -1,18 +1,17 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
-import { switchMap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
-import { UserService } from '../../shared/user.service';
 import { ReportsService } from './reports.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './reports.component.html',
 })
 export class ReportsComponent {
 
-  message = '';
   logs = new MatTableDataSource();
   displayedColumns = [
     'name',
@@ -23,10 +22,12 @@ export class ReportsComponent {
     'lastUpgrade',
     'lastSync'
   ];
+
   constructor(
     private couchService: CouchService,
     private activityService: ReportsService,
-    private userService: UserService
+    private planetMessageService: PlanetMessageService,
+    private stateService: StateService
   ) {
     this.getLogs();
   }
@@ -43,7 +44,7 @@ export class ReportsComponent {
   getLogs() {
     forkJoin([
       this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ 'parentCode': this.userService.getConfig().code }, 0, [ { 'createdDate': 'desc' } ] )),
+        findDocuments({ 'parentCode': this.stateService.configuration.code }, 0, [ { 'createdDate': 'desc' } ] )),
       this.activityService.getResourceVisits(),
       this.activityService.getLoginActivities(),
       this.activityService.getAdminActivities()
@@ -54,7 +55,7 @@ export class ReportsComponent {
           userVisits: this.countByPlanet(planet, loginActivities),
           ...this.activityService.mostRecentAdminActivities(planet, loginActivities, adminActivities)
         }));
-    }, (error) => this.message = 'There was a problem getting Activity Logs');
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting Activity Logs'));
   }
 
 }

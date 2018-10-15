@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } from '@angular/material';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
@@ -9,18 +9,20 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserService } from '../shared/user.service';
+import { takeUntil } from 'rxjs/operators';
+import { StateService } from '../shared/state.service';
 
 @Component({
   'templateUrl': './surveys.component.html'
 })
-export class SurveysComponent implements OnInit, AfterViewInit {
+export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = [ 'name', 'taken', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
+  private onDestroy$ = new Subject<void>();
   emptyData = false;
 
   constructor(
@@ -31,7 +33,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
@@ -52,6 +54,11 @@ export class SurveysComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.surveys.sort = this.sort;
     this.surveys.paginator = this.paginator;
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getSurveys() {
@@ -79,7 +86,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
     forkJoin([
       this.dialogsListService.getListAndColumns('_users'),
       this.dialogsListService.getListAndColumns('child_users')
-    ]).subscribe(responses => {
+    ]).pipe(takeUntil(this.onDestroy$)).subscribe(responses => {
       const response = responses.reduce((fullArray, array) => ({
         tableData: [ ...fullArray.tableData, ...array.tableData ],
         columns: [ ...array.columns ]
@@ -90,7 +97,7 @@ export class SurveysComponent implements OnInit, AfterViewInit {
           allowMulti: true,
           okClick: this.sendSurvey(survey).bind(this),
           dropdownSettings: {
-            field: 'planetCode', startingValue: { value: this.userService.getConfig().code, text: 'Local' },
+            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' },
           },
           filterPredicate: filterSpecificFields([ 'name' ])
         },

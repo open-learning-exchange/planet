@@ -13,6 +13,7 @@ import { filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNu
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
 import { dedupeShelfReduce } from '../shared/utils';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -57,11 +58,12 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {
-    this.planetType = this.userService.getConfig().planetType;
+    this.planetType = this.stateService.configuration.planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.route.paramMap.pipe(
       takeUntil(this.onDestroy$)

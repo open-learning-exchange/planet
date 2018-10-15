@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { debug } from '../../debug-operator';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
+import { StateService } from '../state.service';
 
 const changePasswordFields = [
   {
@@ -61,13 +62,15 @@ export class ChangePasswordDirective {
       ])
     ]
   };
+  planetConfiguration = this.stateService.configuration;
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private stateService: StateService
   ) {}
 
   @HostListener('click')
@@ -117,8 +120,8 @@ export class ChangePasswordDirective {
   reinitSession(username, password) {
     return forkJoin([
       this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
-      this.couchService.post('_session', { 'name': this.userService.getConfig().adminName, 'password': password },
-        { withCredentials: true, domain: this.userService.getConfig().parentDomain })
+      this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, 'password': password },
+        { withCredentials: true, domain: this.planetConfiguration.parentDomain })
     ]).pipe(catchError(() => {
       // Silent error for now so other specific messages are shown
       return of({ ok: true });
@@ -126,8 +129,8 @@ export class ChangePasswordDirective {
   }
 
   updatePasswordOnParent(userData) {
-    const adminName = 'org.couchdb.user:' + this.userService.getConfig().adminName;
-    return this.couchService.get('_users/' + adminName , { domain: this.userService.getConfig().parentDomain })
+    const adminName = 'org.couchdb.user:' + this.planetConfiguration.adminName;
+    return this.couchService.get('_users/' + adminName , { domain: this.planetConfiguration.parentDomain })
       .pipe(catchError(this.passwordError('Error changing password in parent planet')),
       switchMap((data) => {
         if (data.ok === false) {
@@ -136,7 +139,7 @@ export class ChangePasswordDirective {
         const { derived_key, iterations, password_scheme, salt, ...profile } = data;
         profile.password = userData.password;
         return this.couchService.put(this.dbName + '/' + profile._id, profile,
-          { domain: this.userService.getConfig().parentDomain });
+          { domain: this.planetConfiguration.parentDomain });
       }));
   }
 

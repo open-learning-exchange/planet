@@ -47,6 +47,14 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, OnI
     this.stateChanges.next();
   }
 
+  @Input()
+  get required(): boolean { return this._required; }
+  set required(value: boolean) {
+    this._required = value;
+    this.stateChanges.next();
+  }
+  private _required = false;
+
   get shouldLabelFloat() {
     return true;
   }

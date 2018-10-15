@@ -10,6 +10,7 @@ import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { PouchAuthService } from '../shared/database';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -50,7 +51,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private couchService: CouchService,
     private router: Router,
     private userService: UserService,
-    private pouchAuthService: PouchAuthService
+    private pouchAuthService: PouchAuthService,
+    private stateService: StateService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -117,12 +119,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   logoutClick() {
+    const configuration = this.stateService.configuration;
     this.userService.endSessionLog().pipe(switchMap(() => {
       const obsArr = [ this.pouchAuthService.logout() ];
-      const localAdminName = this.userService.getConfig().adminName.split('@')[0];
+      const localAdminName = configuration.adminName.split('@')[0];
       if (localAdminName === this.userService.get().name) {
         obsArr.push(
-          this.couchService.delete('_session', { withCredentials: true, domain: this.userService.getConfig().parentDomain }),
+          this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
         );
       }
       return forkJoin(obsArr);
