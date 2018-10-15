@@ -28,6 +28,7 @@ export class CoursesStepComponent implements OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   activeStep: any;
   activeStepIndex = -1;
+  spinnerOn = true;
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -68,12 +69,8 @@ export class CoursesStepComponent implements OnDestroy {
         allowMulti: true,
         initialSelection,
         ...res };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        height: '500px',
-        width: '600px',
-        autoFocus: false
-      });
+      this.openDialog(data);
+      this.spinnerOn = false;
     });
   }
 
@@ -84,6 +81,16 @@ export class CoursesStepComponent implements OnDestroy {
       this.stepsChange.emit(this.steps);
       this.dialogRef.close();
     };
+  }
+
+  openDialog(data) {
+    this.dialogRef = this.dialog.open(DialogsListComponent, {
+      data: data,
+      height: '500px',
+      width: '600px',
+      autoFocus: false
+    });
+    this.dialogRef.afterClosed().subscribe(() => this.spinnerOn = true);
   }
 
   removeResource(position: number) {
