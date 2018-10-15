@@ -70,7 +70,7 @@ export class ReportsService {
     return this.couchService.findAll('resource_activities', this.selector(planetCode)).pipe(map((resourceActivites) => {
       return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
         .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined);
-    }))
+    }));
   }
 
   getDatabaseCount(db: string) {
