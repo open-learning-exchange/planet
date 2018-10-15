@@ -23,6 +23,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = [ 'name', 'taken', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -46,6 +47,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = this.surveys.data.map(
           (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
         );
+        this.emptyData = !this.surveys.data.length;
       });
   }
 
