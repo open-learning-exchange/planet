@@ -47,7 +47,6 @@ export class CoursesStepComponent implements OnDestroy {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
       this.stepsChange.emit(this.steps);
     });
-    this.spinnerOn = true;
   }
 
   ngOnDestroy() {
@@ -70,13 +69,8 @@ export class CoursesStepComponent implements OnDestroy {
         allowMulti: true,
         initialSelection,
         ...res };
+      this.openDialog(data);
       this.spinnerOn = false;
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        height: '500px',
-        width: '600px',
-        autoFocus: false
-      });
     });
   }
 
@@ -87,6 +81,16 @@ export class CoursesStepComponent implements OnDestroy {
       this.stepsChange.emit(this.steps);
       this.dialogRef.close();
     };
+  }
+
+  openDialog(data) {
+    this.dialogRef = this.dialog.open(DialogsListComponent, {
+      data: data,
+      height: '500px',
+      width: '600px',
+      autoFocus: false
+    });
+    this.dialogRef.afterClosed().subscribe(() => this.spinnerOn = true);
   }
 
   removeResource(position: number) {
