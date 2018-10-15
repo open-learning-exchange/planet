@@ -54,20 +54,22 @@ export class ReportsService {
   getLoginActivities(planetCode?: string) {
     return this.couchService.findAll('login_activities', this.selector(planetCode)).pipe(map((loginActivities: any) => {
       return this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
-        .sort((a, b) => b.count - a.count);
+        .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count);
     }));
   }
 
   getRatingInfo(planetCode?: string) {
     return this.couchService.findAll('ratings', this.selector(planetCode)).pipe(map((ratings: any) => {
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
+        .filter(rating => rating.title !== '' && rating.title !== undefined)
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) => ({ ...r, value: r.sum / r.count }));
     }));
   }
 
   getResourceVisits(planetCode?: string) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode)).pipe(map((resourceActivites) => {
-      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ]);
+      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
+        .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined);
     }));
   }
 
