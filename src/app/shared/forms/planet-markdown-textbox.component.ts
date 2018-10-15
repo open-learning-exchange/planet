@@ -26,7 +26,6 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     return this._value;
   }
   set value(text: string) {
-    console.log(text);
     this._value = text;
     this.onChange(text);
     this.stateChanges.next();
