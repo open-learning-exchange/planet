@@ -29,3 +29,10 @@ $accent-map: (
     }
   }
 }
+
+// Custom themed material styles below
+
+.mat-button-toggle-checked {
+  background-color: mat-color($planet-app-primary, $light-hue);
+  color: mat-contrast($planet-app-primary, $light-hue);
+}
