@@ -50,7 +50,7 @@ export class ReportsDetailComponent {
 
   getResourceVisits() {
     this.activityService.getResourceVisits(this.planetCode).subscribe(resourceVisits => {
-      this.reports.resources = resourceVisits.sort((a, b) => b.count - a.count).slice(0, 5);	
+        this.reports.resources = resourceVisits.sort((a, b) => b.count - a.count).slice(0, 5);
     });
   }
 
