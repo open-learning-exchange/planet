@@ -17,7 +17,7 @@ export class ReportsService {
       const currentValue = group.find((groupItem) => fields.every(field => groupItem[field] === item[field]));
       if (currentValue) {
         currentValue.count = currentValue.count + 1;
-        currentValue.sum = sumField ? currentValue[sumField] + item[sumField] : 0;
+        currentValue.sum = sumField ? currentValue.sum + item[sumField] : 0;
         currentValue.max = maxField ?
           (currentValue.max[maxField] < item[maxField] ? item : currentValue.max) :
           {};
