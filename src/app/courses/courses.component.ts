@@ -7,7 +7,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { Subject, of } from 'rxjs';
+import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
 import * as constants from './constants';
@@ -306,7 +306,13 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendCourse(db: string) {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
+      const resourcesToSend = [].concat.apply([], coursesToSend.map(course => [].concat.apply([], course.steps.map(step => step.resources))));
+      const examsToSend = [].concat.apply([], coursesToSend.map(course => course.steps.map(step => step.exam)));
+      forkJoin([
+        this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code),
+        this.syncService.createChildPullDoc(resourcesToSend, 'resources', selected[0].code),
+        this.syncService.createChildPullDoc(examsToSend, 'exams', selected[0].code),
+      ]).subscribe(() => {
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
     };
