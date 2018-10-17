@@ -1,4 +1,3 @@
-<div class="background"></div>
 <mat-toolbar color="primary" class="classic-header-nav header-nav nav-shadow">
   <span class="classic-navbar-left">
     <a routerLink="/">
@@ -50,22 +49,22 @@
       <button mat-menu-item i18n planetChangePassword>Change Password</button>
       <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
     </mat-menu>
+    <!--Notification dropdown menu-->
+    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
+      <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
+        class="menu-item-notification"
+        [ngClass]="{'primary-text-color':notification.status==='unread'}"
+        mat-menu-item
+        *ngFor="let notification of notifications"
+        (click)="readNotification(notification)">
+        <p><b>{{notification.message}}</b><p>
+        <p class="small">{{notification.time | date: 'mediumDate'}}</p>
+        <mat-divider></mat-divider>
+      </a>
+      <a routerLink="/notifications" mat-menu-item>See All</a>
+    </mat-menu>
   </span>
 </mat-toolbar>
-<!--Notification dropdown menu-->
-<mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-  <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
-    class="menu-item-notification"
-    [ngClass]="{'primary-text-color':notification.status==='unread'}"
-    mat-menu-item
-    *ngFor="let notification of notifications"
-    (click)="readNotification(notification)">
-    <p><b>{{notification.message}}</b><p>
-    <p class="small">{{notification.time | date: 'mediumDate'}}</p>
-    <mat-divider></mat-divider>
-  </a>
-  <a routerLink="/notifications" mat-menu-item>See All</a>
-</mat-menu>
 <!--Left sidebar-->
 <div [ngClass]="{'gradient-background': backgroundRoute()}">
   <router-outlet></router-outlet>
