@@ -32,13 +32,13 @@ export class ReportsService {
     }, []);
   }
 
-  selector(planetCode?: string) {
-    return planetCode ? findDocuments({ 'createdOn': planetCode }) : undefined;
+  selector(planetCode?: string, field: string = 'createdOn') {
+    return planetCode ? findDocuments({ [field]: planetCode }) : undefined;
   }
 
-  getTotalUsers(planetCode?: string) {
-    const obs = planetCode ?
-      this.couchService.findAll('child_users').pipe(map((users: any) => users.filter(user => user.planetCode === planetCode))) :
+  getTotalUsers(planetCode: string, local: boolean) {
+    const obs = local ?
+      this.couchService.findAll('child_users', this.selector(planetCode, 'planetCode')) :
       this.couchService.findAll('_users');
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite');
