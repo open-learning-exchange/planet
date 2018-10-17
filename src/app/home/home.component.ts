@@ -69,8 +69,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.mainContent._updateContentMargins();
-    this.mainContent._changeDetectorRef.markForCheck();
+    if (this.mainContent) {
+      this.mainContent._updateContentMargins();
+      this.mainContent._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy() {
