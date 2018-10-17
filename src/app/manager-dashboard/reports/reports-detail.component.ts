@@ -21,20 +21,20 @@ export class ReportsDetailComponent {
       const codeParam = params.get('code');
       this.planetCode = codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.initializeData(codeParam || false);
+      this.initializeData(!codeParam);
     });
   }
 
-  initializeData(child: boolean) {
-    this.getTotalUsers(child);
+  initializeData(local: boolean) {
+    this.getTotalUsers(local);
     this.getLoginActivities();
     this.getRatingInfo();
     this.getResourceVisits();
     this.getPlanetCounts();
   }
 
-  getTotalUsers(child: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, child).subscribe(({ count, byGender }) => {
+  getTotalUsers(local: boolean) {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe(({ count, byGender }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
     });
