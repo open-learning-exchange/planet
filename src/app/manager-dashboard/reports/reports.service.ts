@@ -37,8 +37,9 @@ export class ReportsService {
   }
 
   getTotalUsers(planetCode?: string) {
-    const obs = planetCode ? this.couchService.findAll('_users') :
-      this.couchService.findAll('child_users').pipe(map((users: any) => users.filter(user => user.planetCode === planetCode)));
+    const obs = planetCode ?
+      this.couchService.findAll('child_users').pipe(map((users: any) => users.filter(user => user.planetCode === planetCode))) :
+      this.couchService.findAll('_users');
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite');
       return ({
