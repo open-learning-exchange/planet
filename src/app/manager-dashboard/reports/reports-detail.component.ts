@@ -20,16 +20,20 @@ export class ReportsDetailComponent {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.planetCode = params.get('code') || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.getTotalUsers(params.get('code'));
+      this.initializeData();
     });
+  }
+
+  initializeData() {
+    this.getTotalUsers();
     this.getLoginActivities();
     this.getRatingInfo();
     this.getResourceVisits();
     this.getPlanetCounts();
   }
 
-  getTotalUsers(planetCode?: string) {
-    this.activityService.getTotalUsers(planetCode).subscribe(({ count, byGender }) => {
+  getTotalUsers() {
+    this.activityService.getTotalUsers(this.planetCode).subscribe(({ count, byGender }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
     });
