@@ -36,8 +36,8 @@ export class ReportsService {
     return planetCode ? findDocuments({ [field]: planetCode }) : undefined;
   }
 
-  getTotalUsers(planetCode: string, local: boolean) {
-    const obs = local ?
+  getTotalUsers(planetCode: string, child: boolean) {
+    const obs = child ?
       this.couchService.findAll('child_users', this.selector(planetCode, 'planetCode')) :
       this.couchService.findAll('_users');
     return obs.pipe(map((users: any) => {
