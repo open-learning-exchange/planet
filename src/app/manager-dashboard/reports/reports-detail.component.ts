@@ -18,18 +18,23 @@ export class ReportsDetailComponent {
     private route: ActivatedRoute
   ) {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.planetCode = params.get('code') || this.stateService.configuration.code;
+      const codeParam = params.get('code');
+      this.planetCode = codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.getTotalUsers(params.get('code'));
+      this.initializeData(!codeParam);
     });
+  }
+
+  initializeData(local: boolean) {
+    this.getTotalUsers(local);
     this.getLoginActivities();
     this.getRatingInfo();
     this.getResourceVisits();
     this.getPlanetCounts();
   }
 
-  getTotalUsers(planetCode?: string) {
-    this.activityService.getTotalUsers(planetCode).subscribe(({ count, byGender }) => {
+  getTotalUsers(local: boolean) {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe(({ count, byGender }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
     });
