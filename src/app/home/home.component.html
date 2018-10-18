@@ -6,7 +6,7 @@
     [userImgSrc]="userImgSrc"
     [logoutClick]="logoutClick"
     [readNotification]="readNotification"
-    [backgroundRoute]="backgroundRoute(router)">
+    [backgroundRoute]="backgroundRoute()">
   </planet-home-modern>
   <planet-home-classic
     *ngSwitchCase="'classic'"
@@ -15,6 +15,6 @@
     [userImgSrc]="userImgSrc"
     [logoutClick]="logoutClick"
     [readNotification]="readNotification"
-    [backgroundRoute]="backgroundRoute(router)">
+    [backgroundRoute]="backgroundRoute()">
   </planet-home-classic>
 </ng-container>

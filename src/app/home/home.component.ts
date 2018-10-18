@@ -1,50 +1,24 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { trigger, state, style, animate, transition } from '@angular/animations';
-import { languages } from '../shared/languages';
-import { interval, Subject, forkJoin } from 'rxjs';
-import { tap, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
-import { debug } from '../debug-operator';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ],
-  animations: [
-    trigger('sidenavState', [
-      state('closed', style({
-        width: '72px'
-      })),
-      state('open', style({
-        width: '150px'
-      })),
-      transition('closed <=> open', animate('500ms ease'))
-    ])
-  ]
 })
-export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
-  sidenavState = 'closed';
+export class HomeComponent implements OnInit {
+
   notifications = [];
-  @ViewChild('content') private mainContent;
   user: any = {};
   userImgSrc = '';
   layout: string;
-
-  // Sets the margin for the main content to match the sidenav width
-  animObs = interval(15).pipe(
-    debug('Menu animation'),
-    tap(() => {
-      this.mainContent._updateContentMargins();
-      this.mainContent._changeDetectorRef.markForCheck();
-    }
-  ));
-  // For disposable returned by observer to unsubscribe
-  animDisp: any;
 
   private onDestroy$ = new Subject<void>();
 
@@ -70,21 +44,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    if (this.mainContent) {
-      this.mainContent._updateContentMargins();
-      this.mainContent._changeDetectorRef.markForCheck();
-    }
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
   // Used to swap in different background.
   // Should remove when background is finalized.
-  backgroundRoute(router: Router) {
+  backgroundRoute() {
+    const router = this.router;
     return () => {
       const routesWithBackground = [
         'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams'
@@ -99,11 +62,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  toggleNav() {
-    this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
-    this.animDisp = this.animObs.subscribe();
-  }
-
   onUserUpdate() {
     this.user = this.userService.get();
     if (this.user._attachments) {
@@ -112,16 +70,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.userImgSrc = '';
     }
-  }
-
-  endAnimation() {
-    if (this.animDisp) {
-      this.animDisp.unsubscribe();
-    }
-  }
-
-  switchLanguage(servedUrl) {
-    alert('You are going to switch in ' + servedUrl + ' environment');
   }
 
   logoutClick() {
