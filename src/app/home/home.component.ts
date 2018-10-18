@@ -13,7 +13,7 @@ import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
 
 @Component({
-  templateUrl: './home-classic.component.html',
+  templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ],
   animations: [
     trigger('sidenavState', [
@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('content') private mainContent;
   user: any = {};
   userImgSrc = '';
+  layout: string;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -82,17 +83,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Used to swap in different background.
   // Should remove when background is finalized.
-  backgroundRoute() {
-    const routesWithBackground = [
-      'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams'
-    ];
-    // Leaving the exception variable in so we can easily use this while still testing backgrounds
-    const routesWithoutBackground = [];
-    const isException = routesWithoutBackground
-      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
-    const isRoute = routesWithBackground
-      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
-    return isRoute && !isException;
+  backgroundRoute(router: Router) {
+    return () => {
+      const routesWithBackground = [
+        'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams'
+      ];
+      // Leaving the exception variable in so we can easily use this while still testing backgrounds
+      const routesWithoutBackground = [];
+      const isException = routesWithoutBackground
+        .findIndex((route) => router.url.indexOf(route) > -1) > -1;
+      const isRoute = routesWithBackground
+        .findIndex((route) => router.url.indexOf(route) > -1) > -1;
+      return isRoute && !isException;
+    };
   }
 
   toggleNav() {

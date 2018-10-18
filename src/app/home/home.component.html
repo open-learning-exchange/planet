@@ -1,0 +1,20 @@
+<ng-container [ngSwitch]="layout">
+  <planet-home-modern
+    *ngSwitchCase="'modern'"
+    [notifications]="notifications"
+    [user]="user"
+    [userImgSrc]="userImgSrc"
+    [logoutClick]="logoutClick"
+    [readNotification]="readNotification"
+    [backgroundRoute]="backgroundRoute(router)">
+  </planet-home-modern>
+  <planet-home-classic
+    *ngSwitchCase="'classic'"
+    [notifications]="notifications"
+    [user]="user"
+    [userImgSrc]="userImgSrc"
+    [logoutClick]="logoutClick"
+    [readNotification]="readNotification"
+    [backgroundRoute]="backgroundRoute(router)">
+  </planet-home-classic>
+</ng-container>

@@ -16,6 +16,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { HomeModernComponent } from './home-modern.component';
+import { HomeClassicComponent } from './home-classic.component';
 
 @NgModule({
   imports: [
@@ -32,6 +34,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
   ],
   declarations: [
     HomeComponent,
+    HomeModernComponent,
+    HomeClassicComponent,
     DashboardComponent,
     CommunityComponent,
     DashboardTileComponent,
