@@ -67,7 +67,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   resourceUrl(resource) {
-    if (resource._attachments && Object.keys(resource._attachments)[0]) {
+      // redirect to the same page if resource doesn't have file in it
+      if (resource._attachments === undefined) return 'courses/view/' + this.route.snapshot.url[1];
+      //redirect to the homepage; also can create a variable in environment for window.location.origin
+      // if (resource._attachments === undefined) return '/';
+      if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
       return environment.couchAddress + '/resources/' + resource._id + '/' + filename;
     }
