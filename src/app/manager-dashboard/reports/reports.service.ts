@@ -17,7 +17,7 @@ export class ReportsService {
       const currentValue = group.find((groupItem) => fields.every(field => groupItem[field] === item[field]));
       if (currentValue) {
         currentValue.count = currentValue.count + 1;
-        currentValue.sum = sumField ? currentValue[sumField] + item[sumField] : 0;
+        currentValue.sum = sumField ? currentValue.sum + item[sumField] : 0;
         currentValue.max = maxField ?
           (currentValue.max[maxField] < item[maxField] ? item : currentValue.max) :
           {};
@@ -63,7 +63,8 @@ export class ReportsService {
     return this.couchService.findAll('ratings', this.selector(planetCode)).pipe(map((ratings: any) => {
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .filter(rating => rating.title !== '' && rating.title !== undefined)
-        .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) => ({ ...r, value: r.sum / r.count }));
+        .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
+          ({ ...r, value: Math.round(10 * r.sum / r.count) / 10 }));
     }));
   }
 
