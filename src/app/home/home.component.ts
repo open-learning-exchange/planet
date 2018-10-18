@@ -73,20 +73,22 @@ export class HomeComponent implements OnInit {
   }
 
   logoutClick() {
-    const configuration = this.stateService.configuration;
-    this.userService.endSessionLog().pipe(switchMap(() => {
-      const obsArr = [ this.pouchAuthService.logout() ];
-      const localAdminName = configuration.adminName.split('@')[0];
-      if (localAdminName === this.userService.get().name) {
-        obsArr.push(
-          this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
-        );
-      }
-      return forkJoin(obsArr);
-    })).subscribe((response: any) => {
-        this.userService.unset();
-        this.router.navigate([ '/login' ], {});
-    }, err => console.log(err));
+    return () => {
+      const configuration = this.stateService.configuration;
+      this.userService.endSessionLog().pipe(switchMap(() => {
+        const obsArr = [ this.pouchAuthService.logout() ];
+        const localAdminName = configuration.adminName.split('@')[0];
+        if (localAdminName === this.userService.get().name) {
+          obsArr.push(
+            this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
+          );
+        }
+        return forkJoin(obsArr);
+      })).subscribe((response: any) => {
+          this.userService.unset();
+          this.router.navigate([ '/login' ], {});
+      }, err => console.log(err));
+    };
   }
 
   getNotification() {
@@ -109,11 +111,13 @@ export class HomeComponent implements OnInit {
     }, (error) => console.log(error));
   }
 
-  readNotification(notification) {
-    const updateNotificaton =  { ...notification, 'status': 'read' };
-    this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
-      this.userService.setNotificationStateChange();
-    },  (err) => console.log(err));
+  readNotification() {
+    return (notification) => {
+      const updateNotificaton =  { ...notification, 'status': 'read' };
+      this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
+        this.userService.setNotificationStateChange();
+      },  (err) => console.log(err));
+    };
   }
 
 }
