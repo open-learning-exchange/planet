@@ -24,8 +24,6 @@ export class CoursesService {
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
-  isActiveCourseFetch = false;
-  ratings = { local: [], parent: [] };
 
   constructor(
     private couchService: CouchService,
@@ -40,12 +38,6 @@ export class CoursesService {
     })).subscribe((ratings) => {
       this.updateCourses(this.createCourseList(this.courses, ratings.docs));
       this.updateCourse({ course: this.createCourseList([ this.course ], ratings.docs)[0], progress: this.progress });
-    });
-    this.stateService.couchStateListener(this.dbName).subscribe(response => {
-      if (response !== undefined) {
-        this.isActiveCourseFetch = false;
-        this.updateCourses(this.createCourseList(response.newData, this.ratings[response.planetField]));
-      }
     });
   }
   updateCourses(courses) {
