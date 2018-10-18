@@ -40,6 +40,7 @@ export class CoursesService {
       this.updateCourse({ course: this.createCourseList([ this.course ], ratings.docs)[0], progress: this.progress });
     });
   }
+
   updateCourses(courses) {
     this.courses = courses;
     this.coursesUpdated.next(courses);
