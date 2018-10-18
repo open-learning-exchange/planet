@@ -64,7 +64,7 @@ export class ReportsService {
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .filter(rating => rating.title !== '' && rating.title !== undefined)
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
-          ({ ...r, value: Math.round(10 * r.sum / r.count ) / 10 }));
+          ({ ...r, value: Math.round(10 * r.sum / r.count) / 10 }));
     }));
   }
 
