@@ -4,7 +4,7 @@ import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 
 @Component({
-  templateUrl: './reports-detail.component.html',
+  templateUrl: './reports-detail.component.html'
 })
 export class ReportsDetailComponent {
 

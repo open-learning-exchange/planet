@@ -312,6 +312,8 @@ body {
   // Overflow must be set on children
   .view-container.view-full-height {
     height: $view-container-height;
+    overflow-y: auto;
+    box-sizing: border-box;
   }
 
   .view-container.view-full-height.view-table {
