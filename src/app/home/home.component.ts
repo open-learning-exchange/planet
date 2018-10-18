@@ -59,6 +59,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(() => {
         this.onUserUpdate();
       });
+    this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
   }
 
   ngOnInit() {
