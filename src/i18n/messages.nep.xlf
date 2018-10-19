@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target xml:lang="ne-NP">ltr</target>
+        <target xml:lang="ne-NP" state="translated">ltr</target>
       </trans-unit>
       <trans-unit id="f52df91ad79481987baa252e69202d15e60ae9e4" datatype="html">
         <source>
@@ -27,7 +27,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP">
+        <target xml:lang="ne-NP" state="translated">
     ४०४ फेला परेन</target>
         <alt-trans>
           <target xml:lang="ne-NP">
@@ -42,7 +42,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP">
+        <target xml:lang="ne-NP" state="translated">
     क्षमा गर्नुहोस्, अनुरोध गरिएको पृष्ठ फेला परेन!
   </target>
         <alt-trans>
@@ -57,7 +57,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP">पछाडी एपमा जान यहाँ थिच्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">पछाडी एपमा जान यहाँ थिच्नुहोस्</target>
       </trans-unit>
       <trans-unit id="c99e1cd58a71ebed52a27ff4103657b363c6dfd8" datatype="html">
         <source>Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/>
@@ -102,7 +102,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP">ठीक छ</target>
+        <target xml:lang="ne-NP" state="translated">ठीक छ</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
@@ -134,7 +134,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="ne-NP">रद्द गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">रद्द गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -142,7 +142,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP">नाम: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target xml:lang="ne-NP" state="translated">नाम: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html" approved="yes">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -150,7 +150,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP">काेड: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target xml:lang="ne-NP" state="translated">काेड: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -174,7 +174,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP">प्लानेट प्रकारः <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target xml:lang="ne-NP" state="translated">प्लानेट प्रकारः <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html" approved="yes">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
@@ -182,7 +182,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="ne-NP">बनेको मिती: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target xml:lang="ne-NP" state="translated">बनेको मिती: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html" approved="yes">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -190,7 +190,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP">भाषा: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target xml:lang="ne-NP" state="translated">भाषा: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html" approved="yes">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -198,7 +198,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="ne-NP">स्थिति: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target xml:lang="ne-NP" state="translated">स्थिति: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html" approved="yes">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -206,7 +206,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP">ई-मेल: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target xml:lang="ne-NP" state="translated">ई-मेल: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html" approved="yes">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -214,7 +214,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP">फाेन नम्बरः <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target xml:lang="ne-NP" state="translated">फाेन नम्बरः <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="7c2fe53d437c5c9915174de6a0ed5aea0f83467a" datatype="html" approved="yes">
         <source>Requests List</source>
@@ -222,7 +222,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP">अनुरोध सूची</target>
+        <target xml:lang="ne-NP" state="translated">अनुरोध सूची</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html" approved="yes">
         <source>Search</source>
@@ -242,7 +242,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP">खाेज्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">खाेज्नुहाेस्</target>
       </trans-unit>
       <trans-unit id="2d78f8c2108598d4f1f05bce677f97d0c7a64d98" datatype="html" approved="yes">
         <source>Your Current List of Requests</source>
@@ -250,7 +250,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ne-NP">तपाईंको हालको अनुरोध सूची</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको हालको अनुरोध सूची</target>
       </trans-unit>
       <trans-unit id="68572de01b84c678be4bf8a27b990ecac2f41ce9" datatype="html" approved="yes">
         <source>Code</source>
@@ -266,7 +266,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ne-NP">काेड</target>
+        <target xml:lang="ne-NP" state="translated">काेड</target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
         <source>URL</source>
@@ -290,7 +290,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ne-NP">बनेको मिती</target>
+        <target xml:lang="ne-NP" state="translated">बनेको मिती</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
         <source>Actions</source>
@@ -318,7 +318,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ne-NP">हेर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="06ab37164fa01d9d68cee6d59bcf4b02172d01f0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
@@ -378,7 +378,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP">व्यवस्थापक बनाउनु होस्</target>
+        <target xml:lang="ne-NP" state="translated">व्यवस्थापक बनाउनु होस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">एड्मिन बनाउनु होस्</target>
         </alt-trans>
@@ -393,7 +393,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रयाेगकर्ताकाे नाम</target>
+        <target xml:lang="ne-NP" state="translated">प्रयाेगकर्ताकाे नाम</target>
         <alt-trans>
           <target xml:lang="ne-NP">यूजर नेम</target>
         </alt-trans>
@@ -408,7 +408,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP">पासवर्ड</target>
+        <target xml:lang="ne-NP" state="translated">पासवर्ड</target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html" approved="yes">
         <source>Confirm Password</source>
@@ -416,7 +416,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP">पासवर्ड सुनिश्चित गर्नुहोस</target>
+        <target xml:lang="ne-NP" state="translated">पासवर्ड सुनिश्चित गर्नुहोस</target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html" approved="yes">
         <source>Next</source>
@@ -428,7 +428,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="ne-NP">अर्को</target>
+        <target xml:lang="ne-NP" state="translated">अर्को</target>
       </trans-unit>
       <trans-unit id="e10987c002a684f07c8747979b7fde44d2c7cef8" datatype="html" approved="yes">
         <source>Set Up Configuration</source>
@@ -436,7 +436,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="ne-NP">कन्फिगर गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">कन्फिगर गर्नुहोस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">उच्च विकल्प देखाउनुहोस्</target>
         </alt-trans>
@@ -447,7 +447,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP">राष्ट्र</target>
+        <target xml:lang="ne-NP" state="translated">राष्ट्र</target>
       </trans-unit>
       <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html" approved="yes">
         <source>Community</source>
@@ -455,7 +455,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP">समुदाय</target>
+        <target xml:lang="ne-NP" state="translated">समुदाय</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html" approved="yes">
         <source>Select Nation/Community</source>
@@ -463,7 +463,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="ne-NP">राष्ट्र / समुदाय चयन गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">राष्ट्र / समुदाय चयन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4c5801cfafb0bf7b68021fe73093f522544fed30" datatype="html" approved="yes">
         <source>Nation(s)</source>
@@ -471,7 +471,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP">राष्ट्र (हरू)</target>
+        <target xml:lang="ne-NP" state="translated">राष्ट्र (हरू)</target>
       </trans-unit>
       <trans-unit id="fc60c6126b9d7048411532b9bd15a83228a27f77" datatype="html" approved="yes">
         <source>Center</source>
@@ -479,7 +479,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="ne-NP">केन्द्र</target>
+        <target xml:lang="ne-NP" state="translated">केन्द्र</target>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html" approved="yes">
         <source>Name</source>
@@ -495,7 +495,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="ne-NP">नाम</target>
+        <target xml:lang="ne-NP" state="translated">नाम</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html" approved="yes">
         <source>Language</source>
@@ -515,7 +515,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ne-NP">भाषा</target>
+        <target xml:lang="ne-NP" state="translated">भाषा</target>
       </trans-unit>
       <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html">
         <source>Local URL</source>
@@ -531,7 +531,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ne-NP">जटिल विकल्पहरू देखाउनुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">जटिल विकल्पहरू देखाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="5625ca84c68ea5de3d37a188acc4a555b2263164" datatype="html">
         <source>You have changed the advanced option. Please confirm that you wanted to change it.</source>
@@ -547,7 +547,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="ne-NP">म परिवर्तनहरूको पुष्टि गर्दछु।</target>
+        <target xml:lang="ne-NP" state="translated">म परिवर्तनहरूको पुष्टि गर्दछु।</target>
         <alt-trans>
           <target xml:lang="ne-NP">मैले परिवर्तनहरूको पुष्टि गर्दछु।</target>
         </alt-trans>
@@ -562,7 +562,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target xml:lang="ne-NP">फर्कनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">फर्कनुहाेस्</target>
       </trans-unit>
       <trans-unit id="43161dab615da78790ff6e28f5730e88b96e21e0" datatype="html" approved="yes">
         <source>Contact Details</source>
@@ -570,7 +570,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target xml:lang="ne-NP">सम्पर्क विवरण</target>
+        <target xml:lang="ne-NP" state="translated">सम्पर्क विवरण</target>
       </trans-unit>
       <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html" approved="yes">
         <source>First Name</source>
@@ -582,7 +582,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP">नाम</target>
+        <target xml:lang="ne-NP" state="translated">नाम</target>
       </trans-unit>
       <trans-unit id="e82f6e4c34cdbb18b0d9a753ebcfe8b3e9f43e4c" datatype="html" approved="yes">
         <source>Middle Name</source>
@@ -594,7 +594,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP">बीचको नाम</target>
+        <target xml:lang="ne-NP" state="translated">बीचको नाम</target>
       </trans-unit>
       <trans-unit id="166b2cc65003221ff5f3ec05d5baca41e6821396" datatype="html" approved="yes">
         <source>Last Name</source>
@@ -606,7 +606,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ne-NP">थर</target>
+        <target xml:lang="ne-NP" state="translated">थर</target>
       </trans-unit>
       <trans-unit id="244aae9346da82b0922506c2d2581373a15641cc" datatype="html" approved="yes">
         <source>Email</source>
@@ -622,7 +622,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP">ई-मेल</target>
+        <target xml:lang="ne-NP" state="translated">ई-मेल</target>
       </trans-unit>
       <trans-unit id="db654f91d847f34e71ffb99268ff3a1807913421" datatype="html" approved="yes">
         <source>Phone Number</source>
@@ -634,7 +634,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="ne-NP">फाेन नम्बर</target>
+        <target xml:lang="ne-NP" state="translated">फाेन नम्बर</target>
       </trans-unit>
       <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
@@ -654,7 +654,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="ne-NP">बुझाउनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">बुझाउनुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">बुझाउने</target>
         </alt-trans>
@@ -665,7 +665,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> पाठ्यक्रम</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> पाठ्यक्रम</target>
       </trans-unit>
       <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html" approved="yes">
         <source>Add Step</source>
@@ -677,7 +677,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target xml:lang="ne-NP">चरण थप्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">चरण थप्नुहोस्</target>
       </trans-unit>
       <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html" approved="yes">
         <source>Course Title</source>
@@ -685,7 +685,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP">पाठ्यक्रम शिर्षक</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रम शिर्षक</target>
       </trans-unit>
       <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html" approved="yes">
         <source>Description</source>
@@ -705,7 +705,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ne-NP">विवरण</target>
+        <target xml:lang="ne-NP" state="translated">विवरण</target>
       </trans-unit>
       <trans-unit id="c420749a4d671195164749dc99bb89d9fc40c718" datatype="html" approved="yes">
         <source>Member Limit</source>
@@ -713,7 +713,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ne-NP">सदस्य सीमा</target>
+        <target xml:lang="ne-NP" state="translated">सदस्य सीमा</target>
       </trans-unit>
       <trans-unit id="162a0cdc541668672140bc2905c4ecd1e51f4019" datatype="html" approved="yes">
         <source>Language of Instruction</source>
@@ -721,7 +721,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ne-NP">निर्देशनको भाषा</target>
+        <target xml:lang="ne-NP" state="translated">निर्देशनको भाषा</target>
       </trans-unit>
       <trans-unit id="e2ec6c55b25c3243cda9a5e14ca9cf5cb6457433" datatype="html" approved="yes">
         <source>Grade Level</source>
@@ -729,7 +729,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ne-NP">कक्षा तह</target>
+        <target xml:lang="ne-NP" state="translated">कक्षा तह</target>
       </trans-unit>
       <trans-unit id="85f929f5065179d0605ed68115b8915deaf7e710" datatype="html" approved="yes">
         <source>Subject Level</source>
@@ -737,7 +737,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="ne-NP">विषय तह</target>
+        <target xml:lang="ne-NP" state="translated">विषय तह</target>
       </trans-unit>
       <trans-unit id="a0c7e8516852d2b5888c8a00894acd60aad61317" datatype="html" approved="yes">
         <source>Method</source>
@@ -745,7 +745,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target xml:lang="ne-NP">विधि</target>
+        <target xml:lang="ne-NP" state="translated">विधि</target>
       </trans-unit>
       <trans-unit id="7eec194fdb5177fb2a2b67ddfd1a5c71a943eb9d" datatype="html" approved="yes">
         <source>Courses</source>
@@ -761,7 +761,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="ne-NP">पाठ्यक्रमहरू</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रमहरू</target>
       </trans-unit>
       <trans-unit id="dfc3c34e182ea73c5d784ff7c8135f087992dac1" datatype="html" approved="yes">
         <source>All</source>
@@ -789,7 +789,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP">सबै</target>
+        <target xml:lang="ne-NP" state="translated">सबै</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html" approved="yes">
         <source>Title</source>
@@ -817,7 +817,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="ne-NP">शीर्षक</target>
+        <target xml:lang="ne-NP" state="translated">शीर्षक</target>
       </trans-unit>
       <trans-unit id="5aacbee9239d7422e3c92fd18293df496818c4b6" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Reset<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -837,7 +837,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP">पाठ्यक्रम माग्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रम माग्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">पाठ्यक्रम माग्नु</target>
         </alt-trans>
@@ -872,7 +872,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="ne-NP">हटाउनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">हटाउनुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">हटाउनु</target>
         </alt-trans>
@@ -887,7 +887,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ne-NP"> शीर्षक </target>
+        <target xml:lang="ne-NP" state="translated"> शीर्षक </target>
       </trans-unit>
       <trans-unit id="0959cf719affa339c7223bcb273d12260028c47d" datatype="html" approved="yes">
         <source>Admission</source>
@@ -895,7 +895,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ne-NP">भर्ना हुनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">भर्ना हुनुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">भर्ना हुनु</target>
         </alt-trans>
@@ -906,7 +906,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="ne-NP">छाेड्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">छाेड्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">छाेड्नु</target>
         </alt-trans>
@@ -925,7 +925,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target xml:lang="ne-NP">व्यवस्थित गर्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">व्यवस्थित गर्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">व्यवस्थित गर्नु</target>
         </alt-trans>
@@ -936,7 +936,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="ne-NP">पाठ्यक्रम हेर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रम हेर्नुहोस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">पाठ्यक्रमहरू हेर्नुहोस्</target>
         </alt-trans>
@@ -947,7 +947,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="ne-NP">क्रेडिटहरू</target>
+        <target xml:lang="ne-NP" state="translated">क्रेडिटहरू</target>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html" approved="yes">
         <source>Progress</source>
@@ -955,7 +955,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रगति</target>
+        <target xml:lang="ne-NP" state="translated">प्रगति</target>
       </trans-unit>
       <trans-unit id="30c21093bd539da428afa90407b8f780c147e64d" datatype="html" approved="yes">
         <source> Information </source>
@@ -963,7 +963,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target xml:lang="ne-NP"> जानकारी </target>
+        <target xml:lang="ne-NP" state="translated"> जानकारी </target>
       </trans-unit>
       <trans-unit id="b7a285515e41f0c8038d8b8e65b5199cb9928681" datatype="html" approved="yes">
         <source>Course</source>
@@ -975,7 +975,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP">पाठ्यक्रम</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रम</target>
       </trans-unit>
       <trans-unit id="d282ccaf17e3d27860505b3068eaab460fc64d81" datatype="html" approved="yes">
         <source>View Step</source>
@@ -983,7 +983,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP">चरण हेर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">चरण हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
@@ -991,7 +991,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विषय तह:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विषय तह:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></target>
       </trans-unit>
       <trans-unit id="ef9ea2b8e0e20c3500a390e081cdfc53882cf55d" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Grade Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></source>
@@ -999,7 +999,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>कक्षा तह:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>कक्षा तह:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></target>
       </trans-unit>
       <trans-unit id="c27c01ac14e3a79760322122760cff26db09077d" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Language of Instruction:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></source>
@@ -1007,7 +1007,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>निर्देशनको भाषा:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>निर्देशनको भाषा:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></target>
       </trans-unit>
       <trans-unit id="b576358946632f81322424330e303c059ae87ad4" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Method:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></source>
@@ -1015,7 +1015,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विधिः<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विधिः<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></target>
       </trans-unit>
       <trans-unit id="115a3b6b95cfd78c2ef52edb47dfe6b8a57128c3" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.description}}"/></source>
@@ -1023,7 +1023,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.description}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.description}}"/></target>
       </trans-unit>
       <trans-unit id="5339e40170ef503b40f6dbd63d2ba88bcdbd95b8" datatype="html" approved="yes">
         <source>View Resource</source>
@@ -1031,7 +1031,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target xml:lang="ne-NP">स्रोत हेर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">स्रोत हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="01df8eb930f83e59444f915bad8b8e5197fb8af3" datatype="html" approved="yes">
         <source>Take exam</source>
@@ -1039,7 +1039,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ne-NP">परीक्षा लिनुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">परीक्षा लिनुहोस्</target>
       </trans-unit>
       <trans-unit id="ae235e4db384241bdf4bf293264ffe8968e60248" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Exam</source>
@@ -1051,7 +1051,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> परीक्षा</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> परीक्षा</target>
       </trans-unit>
       <trans-unit id="4188ef67a196ca21d68f20405b99fb6b2f6476c7" datatype="html" approved="yes">
         <source>Add Question</source>
@@ -1063,7 +1063,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रश्न थप्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न थप्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">प्रश्न थप्न</target>
         </alt-trans>
@@ -1074,7 +1074,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="ne-NP">परीक्षा शीर्षक</target>
+        <target xml:lang="ne-NP" state="translated">परीक्षा शीर्षक</target>
       </trans-unit>
       <trans-unit id="041620337eaebda87971d345d05697639dfe78e4" datatype="html" approved="yes">
         <source>Step</source>
@@ -1082,7 +1082,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP">चरण</target>
+        <target xml:lang="ne-NP" state="translated">चरण</target>
       </trans-unit>
       <trans-unit id="86a03cba21504143b18dea634f76513c1b18685a" datatype="html" approved="yes">
         <source>Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></source>
@@ -1090,7 +1090,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP">पूर्व प्रयासहरूः <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
+        <target xml:lang="ne-NP" state="translated">पूर्व प्रयासहरूः <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html" approved="yes">
         <source>
@@ -1100,7 +1100,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target xml:lang="ne-NP">
+        <target xml:lang="ne-NP" state="translated">
       स्रोत नयाँ ट्याबमा खाेल्नुहाेस्
     </target>
         <alt-trans>
@@ -1115,7 +1115,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP">स्रोतहरूको सूची</target>
+        <target xml:lang="ne-NP" state="translated">स्रोतहरूको सूची</target>
       </trans-unit>
       <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
@@ -1123,7 +1123,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="c87fc952938382700c1d2c56bdb02b8a55b4941d" datatype="html" approved="yes">
         <source>Question <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> of <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></source>
@@ -1131,7 +1131,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रश्न <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> काे <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न <x id="INTERPOLATION" equiv-text="{{questionNum}}"/> काे <x id="INTERPOLATION_1" equiv-text="{{maxQuestions}}"/></target>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html" approved="yes">
         <source>Enter answer here</source>
@@ -1139,7 +1139,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="ne-NP">यहाँ उत्तर दिनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">यहाँ उत्तर दिनुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">उत्तर दिनु</target>
         </alt-trans>
@@ -1150,7 +1150,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP">पेश गरिएको जवाफ:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="ne-NP" state="translated">पेश गरिएको जवाफ:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="3db39135c783da4bb320d5826f4de893f62c7e1b" datatype="html" approved="yes">
         <source>Correct</source>
@@ -1158,7 +1158,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP">सहि</target>
+        <target xml:lang="ne-NP" state="translated">सहि</target>
         <alt-trans>
           <target xml:lang="ne-NP">सहि छ</target>
         </alt-trans>
@@ -1169,7 +1169,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="ne-NP">गलत</target>
+        <target xml:lang="ne-NP" state="translated">गलत</target>
       </trans-unit>
       <trans-unit id="12530729254d51dd0c7513ca846cdd5e417ea3a6" datatype="html" approved="yes">
         <source>
@@ -1179,7 +1179,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ne-NP">
+        <target xml:lang="ne-NP" state="translated">
         जवाफ पेश गर्नुहाेस्
       </target>
         <alt-trans>
@@ -1194,7 +1194,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="ne-NP">गलत जवाफ, कृपया फेरि प्रयास गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">गलत जवाफ, कृपया फेरि प्रयास गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="52c61ad3237bb31120f504b3c3a5e70ca6988539" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</source>
@@ -1211,7 +1211,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ne-NP">
+        <target xml:lang="ne-NP" state="translated">
     <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> सबै
   </target>
       </trans-unit>
@@ -1229,7 +1229,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP">चरण शीर्षक</target>
+        <target xml:lang="ne-NP" state="translated">चरण शीर्षक</target>
       </trans-unit>
       <trans-unit id="9c00b704f800f910a8cc54de6074d9ff643586da" datatype="html" approved="yes">
         <source>Attached resources: </source>
@@ -1237,7 +1237,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="ne-NP">संलग्न स्रोतहरू: </target>
+        <target xml:lang="ne-NP" state="translated">संलग्न स्रोतहरू: </target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html" approved="yes">
         <source>Library</source>
@@ -1253,7 +1253,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ne-NP">पुस्तकालय</target>
+        <target xml:lang="ne-NP" state="translated">पुस्तकालय</target>
       </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html" approved="yes">
         <source>Subject(s)</source>
@@ -1265,7 +1265,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="ne-NP">विषय(हरू)</target>
+        <target xml:lang="ne-NP" state="translated">विषय(हरू)</target>
       </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html" approved="yes">
         <source>Level(s)</source>
@@ -1277,7 +1277,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="ne-NP">तह(हरू)</target>
+        <target xml:lang="ne-NP" state="translated">तह(हरू)</target>
       </trans-unit>
       <trans-unit id="8292faed3a05482dd8f2a9368bbe5bfcbe9a9a50" datatype="html" approved="yes">
         <source>Add to myLibrary</source>
@@ -1289,7 +1289,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="ne-NP">पुस्तकालयमा थप्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">पुस्तकालयमा थप्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">पुस्तकालयमा थप गर्नुहोस्</target>
         </alt-trans>
@@ -1300,7 +1300,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="ne-NP">पुस्तकालयबाट हटाउनुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">पुस्तकालयबाट हटाउनुहोस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">पुस्तकालय बाट हटाउनुहोस्</target>
         </alt-trans>
@@ -1331,7 +1331,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रतिकृया</target>
+        <target xml:lang="ne-NP" state="translated">प्रतिकृया</target>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html" approved="yes">
         <source>Download file</source>
@@ -1339,7 +1339,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <target xml:lang="ne-NP">डाउनलोड फाइल</target>
+        <target xml:lang="ne-NP" state="translated">डाउनलोड फाइल</target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html" approved="yes">
         <source>Rating</source>
@@ -1347,7 +1347,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP">मूल्याङ्कन</target>
+        <target xml:lang="ne-NP" state="translated">मूल्याङ्कन</target>
       </trans-unit>
       <trans-unit id="a35562563b046bb09e22a6599f2da51fa8111a83" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
@@ -1356,7 +1356,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP">
+        <target xml:lang="ne-NP" state="translated">
       <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> विवरण
     </target>
       </trans-unit>
@@ -1374,7 +1374,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> स्रोत</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> स्रोत</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html" approved="yes">
         <source>Author</source>
@@ -1382,7 +1382,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP">लेखक</target>
+        <target xml:lang="ne-NP" state="translated">लेखक</target>
       </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html" approved="yes">
         <source>Year</source>
@@ -1390,7 +1390,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP">वर्ष</target>
+        <target xml:lang="ne-NP" state="translated">वर्ष</target>
       </trans-unit>
       <trans-unit id="a0843de0a64adcc7ee6a946408b6876cd8abdcae" datatype="html" approved="yes">
         <source>English</source>
@@ -1398,7 +1398,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="ne-NP">अंग्रेजी</target>
+        <target xml:lang="ne-NP" state="translated">अंग्रेजी</target>
       </trans-unit>
       <trans-unit id="e00fde81f1d8d3a8585bc2e03445dd63ceeb3b55" datatype="html" approved="yes">
         <source>Español</source>
@@ -1406,7 +1406,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ne-NP">स्पेनिश</target>
+        <target xml:lang="ne-NP" state="translated">स्पेनिश</target>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html" approved="yes">
         <source>Publisher/Attribution</source>
@@ -1414,7 +1414,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रकाशक / विशेषण</target>
+        <target xml:lang="ne-NP" state="translated">प्रकाशक / विशेषण</target>
       </trans-unit>
       <trans-unit id="d891222d75499aa82e5f979ffb001e642384d175" datatype="html" approved="yes">
         <source>Link to License</source>
@@ -1422,7 +1422,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target xml:lang="ne-NP">लाइसेन्सकाे लिंक</target>
+        <target xml:lang="ne-NP" state="translated">लाइसेन्सकाे लिंक</target>
         <alt-trans>
           <target xml:lang="ne-NP">लाइसेन्स लिंक</target>
         </alt-trans>
@@ -1433,7 +1433,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ne-NP">खोल्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html" approved="yes">
         <source>Default</source>
@@ -1441,7 +1441,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="ne-NP">पूर्वनिर्धारित</target>
+        <target xml:lang="ne-NP" state="translated">पूर्वनिर्धारित</target>
       </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html" approved="yes">
         <source>Leader</source>
@@ -1449,7 +1449,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target xml:lang="ne-NP">अगुवा</target>
+        <target xml:lang="ne-NP" state="translated">अगुवा</target>
         <alt-trans>
           <target xml:lang="ne-NP">प्रबन्धक</target>
         </alt-trans>
@@ -1460,7 +1460,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target xml:lang="ne-NP">विद्यार्थी</target>
+        <target xml:lang="ne-NP" state="translated">विद्यार्थी</target>
         <alt-trans>
           <target xml:lang="ne-NP">सिक्न</target>
         </alt-trans>
@@ -1479,7 +1479,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target xml:lang="ne-NP">मिडिया</target>
+        <target xml:lang="ne-NP" state="translated">मिडिया</target>
       </trans-unit>
       <trans-unit id="6dffc29e9f023bc83a3d5ac080c870c6af20bd46" datatype="html" approved="yes">
         <source>Article Date</source>
@@ -1487,7 +1487,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target xml:lang="ne-NP">लेख मिति</target>
+        <target xml:lang="ne-NP" state="translated">लेख मिति</target>
       </trans-unit>
       <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html" approved="yes">
         <source>Resource Type</source>
@@ -1495,7 +1495,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target xml:lang="ne-NP">स्रोत प्रकार</target>
+        <target xml:lang="ne-NP" state="translated">स्रोत प्रकार</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
@@ -1511,7 +1511,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target xml:lang="ne-NP">URL खोल्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">URL खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="b8b0ff24acc2df6a8482367d06e3801ae977b370" datatype="html" approved="yes">
         <source>Open Which File</source>
@@ -1519,8 +1519,11 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target xml:lang="ne-NP">कुन फाइल खोल्ने
+        <target xml:lang="ne-NP" state="translated">कुन फाइल खोल्ने</target>
+        <alt-trans>
+          <target xml:lang="ne-NP">कुन फाइल खोल्ने
 </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="9ce1a0f44239a960521f629e8894684e429950c8" datatype="html" approved="yes">
         <source>Delete File</source>
@@ -1528,7 +1531,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target xml:lang="ne-NP">फाइल मेटाउनुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">फाइल मेटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html" approved="yes">
         <source>Average</source>
@@ -1536,7 +1539,7 @@
           <context context-type="sourcefile">app/resources/rating-resources/resources-rating.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP">औसत</target>
+        <target xml:lang="ne-NP" state="translated">औसत</target>
       </trans-unit>
       <trans-unit id="26bff472b6d1cdf6b0479ef9cb93cc0181fcab31" datatype="html" approved="yes">
         <source>Question Title</source>
@@ -1544,7 +1547,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रश्न शीर्षक</target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न शीर्षक</target>
       </trans-unit>
       <trans-unit id="0e397f4323ef7fdf3ede2ad587b5d01e77077717" datatype="html" approved="yes">
         <source>Question Description</source>
@@ -1552,7 +1555,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रश्न विवरण</target>
+        <target xml:lang="ne-NP" state="translated">प्रश्न विवरण</target>
       </trans-unit>
       <trans-unit id="3e242f213dd1a0754aad9164aa80887d67708500" datatype="html">
         <source>Input</source>
@@ -1568,7 +1571,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP">बहु विकल्पहरू</target>
+        <target xml:lang="ne-NP" state="translated">बहु विकल्पहरू</target>
       </trans-unit>
       <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html" approved="yes">
         <source>Type</source>
@@ -1580,7 +1583,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रकार</target>
+        <target xml:lang="ne-NP" state="translated">प्रकार</target>
       </trans-unit>
       <trans-unit id="1fc2618c7ca4b3722929d8739dbf6d9ab4f7dacf" datatype="html" approved="yes">
         <source>Add Choice</source>
@@ -1588,7 +1591,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target xml:lang="ne-NP">विकल्प थप्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">विकल्प थप्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">विकल्प जोड्नु</target>
         </alt-trans>
@@ -1619,7 +1622,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रतिक्रिया सूची</target>
+        <target xml:lang="ne-NP" state="translated">प्रतिक्रिया सूची</target>
       </trans-unit>
       <trans-unit id="2b4943909f1e88357c5874b29637a57006c77a2f" datatype="html" approved="yes">
         <source>Type text to search...</source>
@@ -1631,7 +1634,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="ne-NP">खोजी गर्न टाइप गर्नुहोस्...</target>
+        <target xml:lang="ne-NP" state="translated">खोजी गर्न टाइप गर्नुहोस्...</target>
       </trans-unit>
       <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html" approved="yes">
         <source>Your Current Lists of Feedback</source>
@@ -1639,7 +1642,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP">तपाईंको हालको अनुरोध सूची</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको हालको अनुरोध सूची</target>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
         <source>Priority</source>
@@ -1647,7 +1650,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ne-NP">प्राथमिकता</target>
+        <target xml:lang="ne-NP" state="translated">प्राथमिकता</target>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html" approved="yes">
         <source>Owner</source>
@@ -1655,7 +1658,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="ne-NP">मालिक</target>
+        <target xml:lang="ne-NP" state="translated">मालिक</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html" approved="yes">
         <source>Status</source>
@@ -1671,7 +1674,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target xml:lang="ne-NP">स्थिति</target>
+        <target xml:lang="ne-NP" state="translated">स्थिति</target>
       </trans-unit>
       <trans-unit id="3ace7fac0ba373a88ada1663966bb78b5723478d" datatype="html" approved="yes">
         <source>Open Time</source>
@@ -1679,7 +1682,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ne-NP">खोल्ने समय</target>
+        <target xml:lang="ne-NP" state="translated">खोल्ने समय</target>
       </trans-unit>
       <trans-unit id="2cab4f31f1acc2bfb5e4841afc24fc60a5a87e13" datatype="html" approved="yes">
         <source>Close Time</source>
@@ -1687,7 +1690,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target xml:lang="ne-NP">बन्द हुने समय</target>
+        <target xml:lang="ne-NP" state="translated">बन्द हुने समय</target>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html" approved="yes">
         <source>Source</source>
@@ -1695,8 +1698,11 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target xml:lang="ne-NP">श्रोत
+        <target xml:lang="ne-NP" state="translated">श्रोत</target>
+        <alt-trans>
+          <target xml:lang="ne-NP">श्रोत
 </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
@@ -1716,7 +1722,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target xml:lang="ne-NP">बन्द गर्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">बन्द गर्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">बन्द गर्नु</target>
         </alt-trans>
@@ -1727,7 +1733,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP">पुन: खोल्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">पुन: खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html" approved="yes">
         <source>Feedback title</source>
@@ -1735,7 +1741,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रतिक्रिया शीर्षक</target>
+        <target xml:lang="ne-NP" state="translated">प्रतिक्रिया शीर्षक</target>
         <alt-trans>
           <target xml:lang="ne-NP">प्रतिक्रिया सूची</target>
         </alt-trans>
@@ -1746,7 +1752,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="ne-NP">तपाईंको उत्तर यहाँ टाइप गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको उत्तर यहाँ टाइप गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html">
         <source>Menu</source>
@@ -1766,7 +1772,7 @@
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP">प्लानेट लर्निंग</target>
+        <target xml:lang="ne-NP" state="translated">प्लानेट लर्निंग</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html" approved="yes">
         <source>Messages</source>
@@ -1774,7 +1780,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP">सन्देशहरू</target>
+        <target xml:lang="ne-NP" state="translated">सन्देशहरू</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html" approved="yes">
         <source>Manager Settings</source>
@@ -1782,7 +1788,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रबन्धक सेटिंग्स</target>
+        <target xml:lang="ne-NP" state="translated">प्रबन्धक सेटिंग्स</target>
       </trans-unit>
       <trans-unit id="8bcabdf6b16cad0313a86c7e940c5e3ad7f9f8ab" datatype="html" approved="yes">
         <source>Notifications</source>
@@ -1790,7 +1796,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP">सुचनाहरु</target>
+        <target xml:lang="ne-NP" state="translated">सुचनाहरु</target>
       </trans-unit>
       <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html" approved="yes">
         <source>No Notification</source>
@@ -1798,7 +1804,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ne-NP">सूचनाहरू छैनन्</target>
+        <target xml:lang="ne-NP" state="translated">सूचनाहरू छैनन्</target>
         <alt-trans>
           <target xml:lang="ne-NP">सूचनाहरू छैनन्।</target>
         </alt-trans>
@@ -1813,7 +1819,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="ne-NP">गृहपृष्ठ</target>
+        <target xml:lang="ne-NP" state="translated">गृहपृष्ठ</target>
         <alt-trans>
           <target xml:lang="ne-NP">गृह</target>
         </alt-trans>
@@ -1824,7 +1830,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="ne-NP">स्रोतहरू</target>
+        <target xml:lang="ne-NP" state="translated">स्रोतहरू</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html" approved="yes">
         <source>Meetups</source>
@@ -1840,7 +1846,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ne-NP">भेलाहरू</target>
+        <target xml:lang="ne-NP" state="translated">भेलाहरू</target>
       </trans-unit>
       <trans-unit id="80fa90ce67552f3f8a824f756a94327e41d3fc49" datatype="html" approved="yes">
         <source>Members</source>
@@ -1848,7 +1854,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target xml:lang="ne-NP">सदस्यहरू</target>
+        <target xml:lang="ne-NP" state="translated">सदस्यहरू</target>
         <alt-trans>
           <target xml:lang="ne-NP">सदस्य</target>
         </alt-trans>
@@ -1867,7 +1873,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रयोगकर्ताहरू</target>
+        <target xml:lang="ne-NP" state="translated">प्रयोगकर्ताहरू</target>
       </trans-unit>
       <trans-unit id="43a51f6aa1c907dfef5d2e40423995e30f56f236" datatype="html" approved="yes">
         <source>Surveys</source>
@@ -1879,7 +1885,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
-        <target xml:lang="ne-NP">सर्वेक्षणहरू</target>
+        <target xml:lang="ne-NP" state="translated">सर्वेक्षणहरू</target>
         <alt-trans>
           <target xml:lang="ne-NP">सर्वेक्षण</target>
         </alt-trans>
@@ -1894,7 +1900,7 @@
           <context context-type="sourcefile">app/home/home.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target xml:lang="ne-NP">बाहिरिनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">बाहिरिनुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">लग अाउट</target>
         </alt-trans>
@@ -1905,7 +1911,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> सूची</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/> सूची</target>
       </trans-unit>
       <trans-unit id="3590f5c3ef2810f637316edb8aaa86b8e907f152" datatype="html">
         <source>pending</source>
@@ -1921,7 +1927,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="ne-NP">स्वीकृत</target>
+        <target xml:lang="ne-NP" state="translated">स्वीकृत</target>
         <alt-trans>
           <target xml:lang="ne-NP">स्वीकार गरियो</target>
         </alt-trans>
@@ -1932,7 +1938,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP">अस्वीकृत</target>
+        <target xml:lang="ne-NP" state="translated">अस्वीकृत</target>
       </trans-unit>
       <trans-unit id="7bf707ce2496032835753c747a41b9fb52bfdcc9" datatype="html">
         <source>Your Current Lists of <x id="INTERPOLATION" equiv-text="{{ parentType === 'nation' ? 'Nation' : 'Community' }}"/></source>
@@ -1948,7 +1954,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ne-NP"> समुदायहरू </target>
+        <target xml:lang="ne-NP" state="translated"> समुदायहरू </target>
         <alt-trans>
           <target xml:lang="ne-NP"> समुदाय </target>
         </alt-trans>
@@ -1967,7 +1973,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ne-NP">तपाईंको सूचनाहरू</target>
+        <target xml:lang="ne-NP" state="translated">तपाईंको सूचनाहरू</target>
       </trans-unit>
       <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html">
         <source>Repeat Password</source>
@@ -1983,7 +1989,7 @@
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ne-NP">संस्करण <x id="INTERPOLATION" equiv-text="{{ version }}"/></target>
+        <target xml:lang="ne-NP" state="translated">संस्करण <x id="INTERPOLATION" equiv-text="{{ version }}"/></target>
       </trans-unit>
       <trans-unit id="9db95d10dedf6f319ffec17a38e50157b7e336bb" datatype="html">
         <source>{VAR_SELECT, select, on {Connected} off {Offline} }</source>
@@ -1999,7 +2005,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ne-NP">अनुरोधहरू</target>
+        <target xml:lang="ne-NP" state="translated">अनुरोधहरू</target>
       </trans-unit>
       <trans-unit id="ff83038b9d1b00416aa6a76ebaa2d9b7b8c5cdb1" datatype="html" approved="yes">
         <source>Resend Registration Request</source>
@@ -2007,7 +2013,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ne-NP">दर्ता अनुरोध पुन: पठाउनुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">दर्ता अनुरोध पुन: पठाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="49599fd0b55ca84378584328e2d3644786bf6708" datatype="html" approved="yes">
         <source>Delete Community</source>
@@ -2015,7 +2021,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="ne-NP">समुदाय मेटाउनुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">समुदाय मेटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
@@ -2023,7 +2029,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> सूची</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> सूची</target>
       </trans-unit>
       <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html" approved="yes">
         <source>List Resources</source>
@@ -2031,7 +2037,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target xml:lang="ne-NP">स्रोतहरू सूचीकृत गर्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">स्रोतहरू सूचीकृत गर्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">सूची स्रोतहरू</target>
         </alt-trans>
@@ -2042,7 +2048,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="ne-NP">पाठ्यक्रमहरू सूचीकृत गर्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">पाठ्यक्रमहरू सूचीकृत गर्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">सूची पाठ्यक्रमहरू</target>
         </alt-trans>
@@ -2053,7 +2059,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target xml:lang="ne-NP">भेलाहरू सूचीकृत गर्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">भेलाहरू सूचीकृत गर्नुहाेस्</target>
       </trans-unit>
       <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html">
         <source>Checking request status...</source>
@@ -2097,7 +2103,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target xml:lang="ne-NP">जानकारी</target>
+        <target xml:lang="ne-NP" state="translated">जानकारी</target>
       </trans-unit>
       <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html" approved="yes">
         <source>Date:</source>
@@ -2105,7 +2111,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="ne-NP">मिति:</target>
+        <target xml:lang="ne-NP" state="translated">मिति:</target>
       </trans-unit>
       <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html">
         <source>at</source>
@@ -2137,7 +2143,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target xml:lang="ne-NP">स्थान:</target>
+        <target xml:lang="ne-NP" state="translated">स्थान:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2145,7 +2151,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> भेला</target>
+        <target xml:lang="ne-NP" state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> भेला</target>
         <alt-trans>
           <target xml:lang="ne-NP"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> भेलाहरू</target>
         </alt-trans>
@@ -2156,7 +2162,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ne-NP">सुरू मिति</target>
+        <target xml:lang="ne-NP" state="translated">सुरू मिति</target>
       </trans-unit>
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html" approved="yes">
         <source>End Date</source>
@@ -2164,7 +2170,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP">अन्त्य मिति</target>
+        <target xml:lang="ne-NP" state="translated">अन्त्य मिति</target>
       </trans-unit>
       <trans-unit id="67aed6c588eb854f2f30ef642e85147da0027a61" datatype="html">
         <source>Recurring</source>
@@ -2188,7 +2194,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="ne-NP">दैनिक</target>
+        <target xml:lang="ne-NP" state="translated">दैनिक</target>
       </trans-unit>
       <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html" approved="yes">
         <source>Weekly</source>
@@ -2196,7 +2202,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target xml:lang="ne-NP">साप्ताहिक</target>
+        <target xml:lang="ne-NP" state="translated">साप्ताहिक</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html" approved="yes">
         <source>None</source>
@@ -2204,7 +2210,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target xml:lang="ne-NP">कुनै पनि होइन</target>
+        <target xml:lang="ne-NP" state="translated">कुनै पनि होइन</target>
       </trans-unit>
       <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html" approved="yes">
         <source>Start Time</source>
@@ -2212,7 +2218,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target xml:lang="ne-NP">सुरूवात समय</target>
+        <target xml:lang="ne-NP" state="translated">सुरूवात समय</target>
         <alt-trans>
           <target xml:lang="ne-NP">सुरुहुने समय</target>
         </alt-trans>
@@ -2223,7 +2229,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target xml:lang="ne-NP">समापन समय</target>
+        <target xml:lang="ne-NP" state="translated">समापन समय</target>
       </trans-unit>
       <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html">
         <source>Category</source>
@@ -2231,9 +2237,12 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated">	
+        <target xml:lang="ne-NP" state="translated">श्रेणी</target>
+        <alt-trans>
+          <target xml:lang="ne-NP">	
 श्रेणी
 </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html" approved="yes">
         <source>Location</source>
@@ -2241,7 +2250,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target xml:lang="ne-NP">स्थान</target>
+        <target xml:lang="ne-NP" state="translated">स्थान</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html" approved="yes">
         <source>Save</source>
@@ -2249,7 +2258,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target xml:lang="ne-NP">सुरक्षित गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">सुरक्षित गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html" approved="yes">
         <source>Meetup</source>
@@ -2257,7 +2266,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP">भेला</target>
+        <target xml:lang="ne-NP" state="translated">भेला</target>
         <alt-trans>
           <target xml:lang="ne-NP">भेलाहरू</target>
         </alt-trans>
@@ -2268,7 +2277,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ne-NP">सदस्यलार्इ निम्ताे दिनुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">सदस्यलार्इ निम्ताे दिनुहाेस्</target>
       </trans-unit>
       <trans-unit id="3eed3c0167ac14df9b8fcf72108d32ea25436c5d" datatype="html" approved="yes">
         <source>Leave</source>
@@ -2276,7 +2285,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ne-NP">छोड्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">छोड्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">छोड्नु</target>
         </alt-trans>
@@ -2303,9 +2312,12 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>	
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>श्रेणी:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
+        <alt-trans>
+          <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>	
 श्रेणी:
 <x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/> </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></source>
@@ -2337,7 +2349,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>स्थान:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>स्थान:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
       </trans-unit>
       <trans-unit id="2c374aabbced2e73f8f2d01fca69fc0274f76028" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Description:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></source>
@@ -2345,7 +2357,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>विवरण:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.description}}"/></target>
       </trans-unit>
       <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html">
         <source>Recurring Days:</source>
@@ -2369,7 +2381,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP"> - कुनै पनि सदस्य यस बैठकमा सामेल हुनुहुन्न</target>
+        <target xml:lang="ne-NP" state="translated"> - कुनै पनि सदस्य यस बैठकमा सामेल हुनुहुन्न</target>
       </trans-unit>
       <trans-unit id="79a88476e6bce275e0b48d39beb09209ae26ced6" datatype="html" approved="yes">
         <source>All Users</source>
@@ -2377,7 +2389,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target xml:lang="ne-NP">सम्पूर्ण प्रयोगकर्ताहरु</target>
+        <target xml:lang="ne-NP" state="translated">सम्पूर्ण प्रयोगकर्ताहरु</target>
       </trans-unit>
       <trans-unit id="f8b403888712c826f65a73a5e2c8204fa95da187" datatype="html" approved="yes">
         <source>Select All</source>
@@ -2385,7 +2397,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target xml:lang="ne-NP">सबै छनोट गर्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">सबै छनोट गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="fdd8c0ec42148f76f93fa98129edf03bb03ac990" datatype="html">
         <source>Deselect All</source>
@@ -2401,7 +2413,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="ne-NP">भूमिकाहरू थप्नुहाेस्</target>
+        <target xml:lang="ne-NP" state="translated">भूमिकाहरू थप्नुहाेस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">भूमिकाहरू थप गर्नुहोस्</target>
         </alt-trans>
@@ -2412,7 +2424,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target xml:lang="ne-NP">समूहहरू थप्नुहोस्</target>
+        <target xml:lang="ne-NP" state="translated">समूहहरू थप्नुहोस्</target>
         <alt-trans>
           <target xml:lang="ne-NP">टोलीहरू थप्नुहोस्</target>
         </alt-trans>
@@ -2423,7 +2435,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रोफाइल तस्बिर</target>
+        <target xml:lang="ne-NP" state="translated">प्रोफाइल तस्बिर</target>
       </trans-unit>
       <trans-unit id="4fcb6dbd1b656de4f606e061af0ed606d3fdc547" datatype="html" approved="yes">
         <source>User Name</source>
@@ -2431,7 +2443,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रयाेगकर्ताकाे नाम</target>
+        <target xml:lang="ne-NP" state="translated">प्रयाेगकर्ताकाे नाम</target>
       </trans-unit>
       <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html" approved="yes">
         <source>Roles</source>
@@ -2439,7 +2451,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target xml:lang="ne-NP">भूमिकाहरू</target>
+        <target xml:lang="ne-NP" state="translated">भूमिकाहरू</target>
       </trans-unit>
       <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html">
         <source>Action</source>
@@ -2484,7 +2496,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="ne-NP"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>पासवर्ड परिवर्तन गर्नुहोस्<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="ne-NP" state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>पासवर्ड परिवर्तन गर्नुहोस्<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html" approved="yes">
         <source>Full Name</source>
@@ -2492,7 +2504,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ne-NP">पुरा नाम</target>
+        <target xml:lang="ne-NP" state="translated">पुरा नाम</target>
       </trans-unit>
       <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html" approved="yes">
         <source>DOB</source>
@@ -2500,7 +2512,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target xml:lang="ne-NP">जन्म मिति</target>
+        <target xml:lang="ne-NP" state="translated">जन्म मिति</target>
       </trans-unit>
       <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html" approved="yes">
         <source>Phone</source>
@@ -2508,7 +2520,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="ne-NP">फोन</target>
+        <target xml:lang="ne-NP" state="translated">फोन</target>
       </trans-unit>
       <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html" approved="yes">
         <source>Level</source>
@@ -2516,7 +2528,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target xml:lang="ne-NP">तह</target>
+        <target xml:lang="ne-NP" state="translated">तह</target>
         <alt-trans>
           <target xml:lang="ne-NP">स्तर</target>
         </alt-trans>
@@ -2527,7 +2539,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ne-NP">प्रोफाइल</target>
+        <target xml:lang="ne-NP" state="translated">प्रोफाइल</target>
       </trans-unit>
       <trans-unit id="3909338c4bd606fae7ba39a4d80533aa94514241" datatype="html" approved="yes">
         <source>BirthDate</source>
@@ -2535,7 +2547,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="ne-NP">जन्म मिति</target>
+        <target xml:lang="ne-NP" state="translated">जन्म मिति</target>
       </trans-unit>
       <trans-unit id="003d4f5e4909ccf01b6a204c688fd6dab15c20bd" datatype="html" approved="yes">
         <source>Gender</source>
@@ -2543,7 +2555,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target xml:lang="ne-NP">लिङ्ग</target>
+        <target xml:lang="ne-NP" state="translated">लिङ्ग</target>
       </trans-unit>
       <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
@@ -2551,7 +2563,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target xml:lang="ne-NP">तह</target>
+        <target xml:lang="ne-NP" state="translated">तह</target>
         <alt-trans>
           <target xml:lang="ne-NP">स्तर</target>
         </alt-trans>
