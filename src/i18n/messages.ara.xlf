@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target xml:lang="ar">rtl</target>
+        <target xml:lang="ar" state="translated">rtl</target>
       </trans-unit>
       <trans-unit id="f52df91ad79481987baa252e69202d15e60ae9e4" datatype="html">
         <source>
@@ -17,8 +17,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
-    Oops!</target>
+        <target xml:lang="ar" state="translated">
+    عذراً!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html">
         <source>
@@ -27,8 +27,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
-    404 Not Found</target>
+        <target xml:lang="ar" state="translated">
+    لم يتم العثور على الصفحة 404</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html">
         <source>
@@ -38,8 +38,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
-    Sorry, an error has occured, Requested page not found!
+        <target xml:lang="ar" state="translated">
+    عذرا، لقد حدث خطا، لم يتم العثور على الصفحة!
   </target>
       </trans-unit>
       <trans-unit id="a008bcc957d031735f52caa28f05b132266c960c" datatype="html">
@@ -48,7 +48,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Click here back to the app</target>
+        <target xml:lang="ar" state="translated">انقر فوق هنا العودة إلى التطبيق</target>
       </trans-unit>
       <trans-unit id="c99e1cd58a71ebed52a27ff4103657b363c6dfd8" datatype="html">
         <source>Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/>
@@ -93,7 +93,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">OK</target>
+        <target xml:lang="ar" state="translated">حسناً</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
@@ -125,7 +125,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Cancel</target>
+        <target xml:lang="ar" state="translated">إلغاء</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -133,7 +133,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target xml:lang="ar" state="translated">اسم: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -141,7 +141,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target xml:lang="ar" state="translated">الرمز: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -149,7 +149,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target xml:lang="ar" state="translated">رابط محلِّي: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="a773e23ee56a2fdee79cba8081bbba2a32a1f8ac" datatype="html">
         <source>Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -157,7 +157,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target xml:lang="ar" state="translated">العنوان الأصلي: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -165,7 +165,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target xml:lang="ar" state="translated">نوع الكوكب: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
@@ -173,7 +173,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target xml:lang="ar" state="translated">تاريخ الإنشاء: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -181,7 +181,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target xml:lang="ar" state="translated">لغة: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -189,7 +189,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target xml:lang="ar" state="translated">الحالة: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -197,7 +197,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target xml:lang="ar" state="translated">البريد الإلكتروني: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -205,7 +205,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target xml:lang="ar" state="translated">رقم الهاتف: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="7c2fe53d437c5c9915174de6a0ed5aea0f83467a" datatype="html">
         <source>Requests List</source>
@@ -213,7 +213,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Requests List</target>
+        <target xml:lang="ar" state="translated">قائمة الطلبات</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
@@ -233,7 +233,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Search</target>
+        <target xml:lang="ar" state="translated">بحث</target>
       </trans-unit>
       <trans-unit id="2d78f8c2108598d4f1f05bce677f97d0c7a64d98" datatype="html">
         <source>Your Current List of Requests</source>
@@ -241,7 +241,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Your Current List of Requests</target>
+        <target xml:lang="ar" state="translated">قائمة الطلبات الحالية</target>
       </trans-unit>
       <trans-unit id="68572de01b84c678be4bf8a27b990ecac2f41ce9" datatype="html">
         <source>Code</source>
@@ -257,7 +257,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Code</target>
+        <target xml:lang="ar" state="translated">الرمز</target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
         <source>URL</source>
@@ -281,7 +281,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Created Date</target>
+        <target xml:lang="ar" state="translated">تاريخ الإنشاء</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
         <source>Actions</source>
@@ -309,7 +309,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">View</target>
+        <target xml:lang="ar" state="translated">عرض التفاصيل</target>
       </trans-unit>
       <trans-unit id="06ab37164fa01d9d68cee6d59bcf4b02172d01f0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
@@ -381,7 +381,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Username</target>
+        <target xml:lang="ar" state="translated">اسم المستخدم</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -393,7 +393,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Password</target>
+        <target xml:lang="ar" state="translated">كلمة المرور</target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html">
         <source>Confirm Password</source>
@@ -897,7 +897,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">View Course</target>
+        <target xml:lang="ar" state="translated">عرض المنهج</target>
       </trans-unit>
       <trans-unit id="2d24d1eb8d295534d8669dbeaf56201c141285af" datatype="html">
         <source>Credits</source>
@@ -905,7 +905,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Credits</target>
+        <target xml:lang="ar" state="translated">إعتمادات</target>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html">
         <source>Progress</source>
@@ -1009,7 +1009,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Exam</target>
+        <target xml:lang="ar" state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> إمتحان</target>
       </trans-unit>
       <trans-unit id="4188ef67a196ca21d68f20405b99fb6b2f6476c7" datatype="html">
         <source>Add Question</source>
@@ -1029,7 +1029,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Exam Title</target>
+        <target xml:lang="ar" state="translated">عنوان الاختبار</target>
       </trans-unit>
       <trans-unit id="041620337eaebda87971d345d05697639dfe78e4" datatype="html">
         <source>Step</source>
@@ -1045,7 +1045,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
+        <target xml:lang="ar" state="translated">المحاولات السابقة: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html">
         <source>
@@ -1055,8 +1055,8 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
-      Open resource new tab
+        <target xml:lang="ar" state="translated">
+      فتح تبويب مصدر مفتوح
     </target>
       </trans-unit>
       <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html">
@@ -1065,7 +1065,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">List of Resources</target>
+        <target xml:lang="ar" state="translated">قائمة المصادر</target>
       </trans-unit>
       <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
@@ -1089,7 +1089,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Enter answer here</target>
+        <target xml:lang="ar" state="translated">أدخل إجابتك هنا</target>
       </trans-unit>
       <trans-unit id="eb5afce50958c64ab0a831a30db94c7ff967576c" datatype="html">
         <source>Submitted answer:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -1097,7 +1097,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Submitted answer:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target xml:lang="ar" state="translated">الإجابات المقدمة:<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/> <x id="INTERPOLATION" equiv-text="{{answer.value.text || answer.value}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="3db39135c783da4bb320d5826f4de893f62c7e1b" datatype="html">
         <source>Correct</source>
@@ -1105,7 +1105,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Correct</target>
+        <target xml:lang="ar" state="translated">صحيح</target>
       </trans-unit>
       <trans-unit id="8b42d54000704393a3c06e5f8b668880014f6986" datatype="html">
         <source>Incorrect</source>
@@ -1113,7 +1113,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Incorrect</target>
+        <target xml:lang="ar" state="translated">غير صحيح</target>
       </trans-unit>
       <trans-unit id="12530729254d51dd0c7513ca846cdd5e417ea3a6" datatype="html">
         <source>
@@ -1123,8 +1123,8 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
-        Submit Answer
+        <target xml:lang="ar" state="translated">
+        تقديم الإجابة
       </target>
       </trans-unit>
       <trans-unit id="e3b437177444483ae45895ed7db8dca06a1d7568" datatype="html">
@@ -1133,7 +1133,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">Incorrect answer, please try again</target>
+        <target xml:lang="ar" state="translated">اجابة غير صحيحة، الرجاء حاول مرة أخرى</target>
       </trans-unit>
       <trans-unit id="52c61ad3237bb31120f504b3c3a5e70ca6988539" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {The number cannot exceed <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} }</source>
@@ -1150,8 +1150,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="ar" state="needs-translation">
-    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target xml:lang="ar" state="translated">
+    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> جميع
   </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
