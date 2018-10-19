@@ -49,7 +49,7 @@
       <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
     </ng-container>
   </div>
-  <div *ngIf="pin" i18n>Your tablet pin number is: {{pin}}
+  <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> {{pin}}
     <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
   </div>
   <div>
