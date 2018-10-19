@@ -144,10 +144,10 @@
           <context context-type="linenumber">2</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">
-    
+
     Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...}}"/>
       the <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
-  
+
   </target>
       </trans-unit>
       <trans-unit id="00c4e22fec4807de5423c76ce4aa933797852cd4" datatype="html">
@@ -417,9 +417,9 @@
           <context context-type="linenumber">59</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">
-              
+
               <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
-            
+
             </target>
       </trans-unit>
       <trans-unit id="2d423cf26bc3185eae01eb0e2e976b87656457f1" datatype="html">
@@ -430,9 +430,9 @@
           <context context-type="linenumber">63</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">
-            
+
             <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
-          
+
           </target>
       </trans-unit>
       <trans-unit id="de80e491246200ef6b61aec7a244dd26f394fc3e" datatype="html">
@@ -1202,16 +1202,6 @@
           <context context-type="linenumber">15</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">Add Question</target>
-      </trans-unit>
-      <trans-unit id="588c234a37b2550dece8156d40e050bd08b8f122" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{pageType}}"/>
-          <x id="ICU" equiv-text="{examType, select, courses {...} surveys {...}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
@@ -2345,9 +2335,9 @@
           <context context-type="linenumber">20</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">
-      
+
       Get Courses (<x id="INTERPOLATION" equiv-text="{{pushedItems?.courses?.length}}"/>)
-    
+
     </target>
       </trans-unit>
       <trans-unit id="77772f229783b2c3314e6108e564cab9ff3ea654" datatype="html">
@@ -2359,9 +2349,9 @@
           <context context-type="linenumber">23</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">
-      
+
       Get Resources (<x id="INTERPOLATION" equiv-text="{{pushedItems?.resources?.length}}"/>)
-    
+
     </target>
       </trans-unit>
       <trans-unit id="f952046e3a5630623461b24625911309a96f1c17" datatype="html">
@@ -3116,9 +3106,9 @@
           <context context-type="linenumber">108</context>
         </context-group>
         <target xml:lang="es-ES" state="needs-translation">
-            
+
             <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
-          
+
           </target>
       </trans-unit>
       <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html">
