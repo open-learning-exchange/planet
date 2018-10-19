@@ -1179,20 +1179,6 @@
         </context-group>
         <target xml:lang="zu" state="needs-translation">Take exam</target>
       </trans-unit>
-      <trans-unit id="588c234a37b2550dece8156d40e050bd08b8f122" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{pageType}}"/>
-          <x id="ICU" equiv-text="{examType, select, courses {...} surveys {...}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="feee99b11743fd0ee450a8f1de83293d0dac1a2a" datatype="html">
         <source>{VAR_SELECT, select, courses {Exam} surveys {Survey} }</source>
         <context-group purpose="location">
@@ -1216,6 +1202,16 @@
           <context context-type="linenumber">15</context>
         </context-group>
         <target xml:lang="zu" state="needs-translation">Add Question</target>
+      </trans-unit>
+      <trans-unit id="588c234a37b2550dece8156d40e050bd08b8f122" datatype="html">
+        <source>
+          <x id="INTERPOLATION" equiv-text="{{pageType}}"/>
+          <x id="ICU" equiv-text="{examType, select, courses {...} surveys {...}}"/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
@@ -2639,15 +2635,6 @@
           <context context-type="linenumber">41</context>
         </context-group>
         <target xml:lang="zu" state="needs-translation">Last Sync</target>
-      </trans-unit>
-      <trans-unit id="7732d66ed058bd90ac1b356353825a52da96bd50" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{planetCode}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html">
         <source>Join</source>
