@@ -23,6 +23,9 @@
     <button i18n mat-raised-button *ngIf="pushedItems?.resources?.length" (click)="getPushedItem('resources')">
       Get Resources ({{pushedItems?.resources?.length}})
     </button>
+    <button i18n mat-raised-button *ngIf="pushedItems?.exams?.length" (click)="getPushedItem('exams')">
+      Get Exams ({{pushedItems?.exams?.length}})
+    </button>
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>

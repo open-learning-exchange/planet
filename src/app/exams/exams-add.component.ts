@@ -24,6 +24,7 @@ export class ExamsAddComponent implements OnInit {
   questionsFormArray: FormArray;
   documentInfo: any = {};
   pageType = 'Add';
+  courseName = '';
   examType = this.route.snapshot.paramMap.get('type') || 'courses';
   successMessage = this.examType === 'surveys' ? 'New survey added' : 'New exam added';
   steps = [];
@@ -76,6 +77,7 @@ export class ExamsAddComponent implements OnInit {
         console.log(error);
       });
     }
+    this.courseName = this.coursesService.course.form.courseTitle;
   }
 
   onSubmit() {

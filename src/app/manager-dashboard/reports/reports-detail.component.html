@@ -45,7 +45,7 @@
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile>Highest Rated Courses</mat-grid-tile><mat-grid-tile>Average Rating</mat-grid-tile>
       <ng-container *ngFor="let rating of reports?.courseRatings">
-        <mat-grid-tile><a [routerLink]="['/course/view', rating.item]">{{rating?.title}}</a></mat-grid-tile><mat-grid-tile>{{rating?.value}}</mat-grid-tile>
+        <mat-grid-tile><a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a></mat-grid-tile><mat-grid-tile>{{rating?.value}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
   </div>
