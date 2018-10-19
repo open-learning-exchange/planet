@@ -1198,20 +1198,6 @@
         </context-group>
         <target xml:lang="so" state="translated">Imtixaan qaado</target>
       </trans-unit>
-      <trans-unit id="588c234a37b2550dece8156d40e050bd08b8f122" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{pageType}}"/>
-          <x id="ICU" equiv-text="{examType, select, courses {...} surveys {...}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="feee99b11743fd0ee450a8f1de83293d0dac1a2a" datatype="html">
         <source>{VAR_SELECT, select, courses {Exam} surveys {Survey} }</source>
         <context-group purpose="location">
@@ -1238,6 +1224,16 @@
         <alt-trans>
           <target xml:lang="so">Suaal Kudar </target>
         </alt-trans>
+      </trans-unit>
+      <trans-unit id="588c234a37b2550dece8156d40e050bd08b8f122" datatype="html">
+        <source>
+          <x id="INTERPOLATION" equiv-text="{{pageType}}"/>
+          <x id="ICU" equiv-text="{examType, select, courses {...} surveys {...}}"/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
@@ -2669,15 +2665,6 @@ Khayraadka</target>
         </context-group>
         <target xml:lang="so" state="needs-translation">Last Sync</target>
       </trans-unit>
-      <trans-unit id="7732d66ed058bd90ac1b356353825a52da96bd50" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{planetCode}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html" approved="yes">
         <source>Join</source>
         <context-group purpose="location">
@@ -2900,7 +2887,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Kulanka Kulanka:<x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
+        <target xml:lang="so" state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Kulanka Kulanka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="23b0021caf8864daf9006a8d85f164e30b07867e" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail.endTime ? '-' : '' }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail.endTime}}"/></source>
