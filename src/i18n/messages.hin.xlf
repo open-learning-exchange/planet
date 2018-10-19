@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">ltr</target>
+        <target xml:lang="hi" state="translated">ltr</target>
       </trans-unit>
       <trans-unit id="f52df91ad79481987baa252e69202d15e60ae9e4" datatype="html">
         <source>
@@ -17,8 +17,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">
-    Oops!</target>
+        <target xml:lang="hi" state="translated">
+    ओह!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html">
         <source>
@@ -27,8 +27,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">
-    404 Not Found</target>
+        <target xml:lang="hi" state="translated">
+    404 नहीं मिला</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html">
         <source>
@@ -38,8 +38,8 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">
-    Sorry, an error has occured, Requested page not found!
+        <target xml:lang="hi" state="translated">
+    क्षमा करें, कोई त्रुटि उत्पन्न हुई, अनुरोधित पृष्ठ नहीं मिला!
   </target>
       </trans-unit>
       <trans-unit id="a008bcc957d031735f52caa28f05b132266c960c" datatype="html">
@@ -48,7 +48,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Click here back to the app</target>
+        <target xml:lang="hi" state="translated">यहां क्लिक करें वापस app करने के लिए</target>
       </trans-unit>
       <trans-unit id="c99e1cd58a71ebed52a27ff4103657b363c6dfd8" datatype="html">
         <source>Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/>
@@ -58,9 +58,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} unlink {...} delete {...}}"/>
-      the <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
-  
+        <target xml:lang="hi" state="translated">क्या आप निश्चयपूर्वक &lt; div class = "notranslate" &gt; 0 &lt;/div&gt; &lt; div class = "notranslate" &gt; 1 &lt;/div&gt; &lt; div क्लास = "notranslate" &gt; 2 &lt;/div&gt; &lt; div class = "notranslate" &gt; 3 &lt;/div&gt;  
   </target>
       </trans-unit>
       <trans-unit id="b3b7b0b5d0a6b1dbab492e6d68ae1fa227d7bb58" datatype="html">
@@ -69,7 +67,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">{VAR_SELECT, select, accept {accept} reject {reject} unlink {unlink} delete {delete} }</target>
+        <target xml:lang="hi" state="translated">! &lt; div class = "notranslate" &gt; 0 &lt;/div&gt;! स्वीकार! &lt; div class = "notranslate" &gt; 1 &lt;/div&gt;! अस्वीकार! &lt; div class = "notranslate" &gt; 2 &lt;/div&gt;! अनलिंक! &lt; div class = "notranslate" &gt; 3 &lt;/div&gt;! हटाएँ! &lt; div class = "notranslate" &gt; 4 &lt;/div&gt;!</target>
       </trans-unit>
       <trans-unit id="8af474afa842e4a721a11dbd41b653dbdd8af972" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
@@ -79,9 +77,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
-      } many {selected {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} }?
-      } }</target>
+        <target xml:lang="hi" state="translated">! &lt; div class = "notranslate" &gt; १३ &lt;/div&gt;! निम्न! &lt; div class = "notranslate" &gt; 0 &lt;/div&gt;! समुदाय! &lt; div class = "notranslate" &gt; 1 &lt;/div&gt;! राष्ट्र! &lt; div class = "notranslate" &gt; 2 &lt;/div&gt;! पाठ्यक्रम! &lt; div class = "notranslate" &gt; 3 &lt;/div&gt;! संसाधन! &lt; div class = "notranslate" &gt; 4 &lt;/div&gt;! Meetup! &lt; div class = "notranslate" &gt; 5 &lt;/div&gt;! उपयोगकर्ता! &lt; div class = "notranslate" &gt; 6 &lt;/div&gt;!? &lt; div class = "notranslate" &gt; 16 &lt;/div&gt;! &lt; div class = "notranslate" &gt; 14 &lt;/div&gt;! चयनित! &lt; div class = "notranslate" &gt; 7 &lt;/div&gt;! समुदायों! &lt; div class = "notranslate" &gt; 8 &lt;/div&gt;! देशों! &lt; div class = "notranslate" &gt; 9 &lt;/div&gt;! पाठ्यक्रम! &lt; div class = "notranslate" &gt; 10 &lt;/div&gt;! संसाधनों! &lt; div class = "notranslate" &gt; 11 &lt;/div&gt;! Meetups! &lt; div class = "notranslate" &gt; १२ &lt;/div&gt;!? &lt; div class = "notranslate" &gt; 17 &lt;/div&gt;! &lt; div class = "notranslate" &gt; 15 &lt;/div&gt;!</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
         <source>OK</source>
@@ -93,7 +89,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">OK</target>
+        <target xml:lang="hi" state="translated">ठीक है</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
@@ -125,7 +121,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Cancel</target>
+        <target xml:lang="hi" state="translated">रद्द करें</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -133,7 +129,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target xml:lang="hi" state="translated">नाम: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -141,7 +137,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target xml:lang="hi" state="translated">कोड <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -149,7 +145,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target xml:lang="hi" state="translated">स्थानीय URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="a773e23ee56a2fdee79cba8081bbba2a32a1f8ac" datatype="html">
         <source>Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -157,7 +153,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target xml:lang="hi" state="translated">पैरेंट URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -165,7 +161,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target xml:lang="hi" state="translated">ग्रह Url: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
@@ -173,7 +169,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target xml:lang="hi" state="translated">बनाया गया दिनांक: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -181,7 +177,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target xml:lang="hi" state="translated">भाषा : <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -189,7 +185,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target xml:lang="hi" state="translated">स्थिति <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -197,7 +193,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target xml:lang="hi" state="translated">ईमेल: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -205,7 +201,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target xml:lang="hi" state="translated">फ़ोन नंबर <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="7c2fe53d437c5c9915174de6a0ed5aea0f83467a" datatype="html">
         <source>Requests List</source>
@@ -213,7 +209,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Requests List</target>
+        <target xml:lang="hi" state="translated">अनुरोध सूची (Automatic Translation)</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
@@ -233,7 +229,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Search</target>
+        <target xml:lang="hi" state="translated">खोजे:</target>
       </trans-unit>
       <trans-unit id="2d78f8c2108598d4f1f05bce677f97d0c7a64d98" datatype="html">
         <source>Your Current List of Requests</source>
@@ -241,7 +237,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Your Current List of Requests</target>
+        <target xml:lang="hi" state="translated">आपकी वर्तमान अनुरोधों की सूची</target>
       </trans-unit>
       <trans-unit id="68572de01b84c678be4bf8a27b990ecac2f41ce9" datatype="html">
         <source>Code</source>
@@ -257,7 +253,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Code</target>
+        <target xml:lang="hi" state="translated">कोड</target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
         <source>URL</source>
@@ -269,7 +265,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">URL</target>
+        <target xml:lang="hi" state="translated">URL</target>
       </trans-unit>
       <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html">
         <source>Created Date</source>
@@ -281,7 +277,7 @@
           <context context-type="sourcefile">app/nation/nation.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Created Date</target>
+        <target xml:lang="hi" state="translated">बनाया गया दिनांक</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html">
         <source>Actions</source>
@@ -289,7 +285,7 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Actions</target>
+        <target xml:lang="hi" state="translated">कार्रवाई</target>
       </trans-unit>
       <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html">
         <source>View</source>
@@ -309,7 +305,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">View</target>
+        <target xml:lang="hi" state="translated">देखें</target>
       </trans-unit>
       <trans-unit id="06ab37164fa01d9d68cee6d59bcf4b02172d01f0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
@@ -318,10 +314,9 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">
+        <target xml:lang="hi" state="translated">
             
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link_off<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Unlink
-          
+&lt; div क्लास = "notranslate" &gt; 0 &lt;/div&gt; &lt; div class = "notranslate" &gt; १ &lt;/div&gt; link_off &lt; div class = "notranslate" &gt; 2 &lt;/div&gt; अनलिंक &lt; div class = "notranslate" &gt; 3 &lt;/div&gt;          
           </target>
       </trans-unit>
       <trans-unit id="6361513ae85cb1490e45f7c47f0163d49289a4d2" datatype="html">
@@ -369,7 +364,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Create Admin</target>
+        <target xml:lang="hi" state="translated">व्यवस्थापक बनाएं</target>
       </trans-unit>
       <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
         <source>Username</source>
@@ -381,7 +376,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Username</target>
+        <target xml:lang="hi" state="translated">प्रयोक्ता नाम:</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -393,7 +388,7 @@
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target xml:lang="hi" state="needs-translation">Password</target>
+        <target xml:lang="hi" state="translated">पासवर्ड </target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html">
         <source>Confirm Password</source>
