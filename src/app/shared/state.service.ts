@@ -13,7 +13,7 @@ export class StateService {
   private stateUpdated = new Subject<any>();
 
   get configuration(): any {
-    return this.state.local.configurations.docs[0];
+    return this.state.local.configurations.docs[0] || {};
   }
 
   constructor(
