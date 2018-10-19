@@ -14,8 +14,8 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
   template: `
     <span *ngIf="shouldShowError()" [matTooltip]="tooltipText()" i18n>{updateError(), select,
       required {This field is required}
-      min {The number cannot be below {{number}}}
-      max {The number cannot exceed {{number}}}
+      min {The number cannot be below}
+      max {The number cannot exceed}
       duplicate {Value already exists}
       email {Please enter a valid email}
       matchPassword {Passwords must match}
@@ -33,7 +33,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidFirstCharacter {Must start with letter or number}
       invalidFutureDate {Cannot be after current date}
       dateRequired {This field is required as valid date}
-    }</span>
+    }{{' ' + number}}</span>
   `
 })
 export class FormErrorMessagesComponent {
@@ -41,7 +41,7 @@ export class FormErrorMessagesComponent {
   @Input() private control: AbstractControlDirective | AbstractControl;
 
   error = '';
-  number = 0;
+  number: number;
 
   shouldShowError(): boolean {
     return (
@@ -54,7 +54,9 @@ export class FormErrorMessagesComponent {
   // Show one error at a time
   updateError(): string {
     const errorType = Object.keys(this.control.errors)[0];
-    this.number = this.control.errors[errorType].min || this.control.errors[errorType].max || 0;
+    if (this.control.errors[errorType].min !== undefined || this.control.errors[errorType].max !== undefined) {
+      this.number = this.control.errors[errorType].min || this.control.errors[errorType].max || 0;
+    }
     return errorType;
   }
 
