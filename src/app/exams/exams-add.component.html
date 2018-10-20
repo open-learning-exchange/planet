@@ -4,9 +4,9 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{{examType === 'courses' && !courseName ? 'New Course:' : ''}}
-               {{examType === 'courses' && courseName ? courseName + ':' : ''}}
-               {{pageType}} {examType, select, courses {Exam} surveys {Survey}}</span>
+    <span>{{examType === 'courses' && !courseName ? 'New Course:' : ''}}
+          {{examType === 'courses' && courseName ? courseName + ':' : ''}}
+          {{pageType}} </span><span i18n>{examType, select, courses {Exam} surveys {Survey}}</span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
   </mat-toolbar>
