@@ -41,10 +41,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
-        <ng-container *ngIf="question.type === 'selectMultiple'; else singleAnswer">
-          <p *ngFor="let a of answer">{{a?.text || a}}</p>
-        </ng-container>
-        <ng-template #singleAnswer><p> {{answer?.text || answer}}</p></ng-template>
+        <p>{{answer?.text || answer}}</p>
       </ng-container>
     </ng-container>
     <div class="v-align-center">
