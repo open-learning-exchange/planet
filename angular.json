@@ -54,6 +54,12 @@
                   "with": "src/environments/environment.test.ts"
                 }
               ]
+            },
+            "language": {
+              "i18nFile": "src/i18n/messages.som.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "so",
+              "aot": true
             }
           }
         },
@@ -70,6 +76,9 @@
             },
             "test": {
               "browserTarget": "ang-bell-app:build:test"
+            },
+            "language": {
+              "browserTarget": "ang-bell-app:build:language"
             }
           }
         },
