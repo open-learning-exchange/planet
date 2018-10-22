@@ -83,7 +83,11 @@ export class ReportsService {
 
   getAdminActivities(planetCode?: string) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode)).pipe(map(adminActivities => {
-      return this.groupBy(adminActivities.sort((a, b) => b.time - a.time), [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
+      return this.groupBy(
+        adminActivities.sort((a: any, b: any) => b.time - a.time),
+        [ 'parentCode', 'createdOn', 'type' ],
+        { maxField: 'time' }
+      );
     }));
   }
 
