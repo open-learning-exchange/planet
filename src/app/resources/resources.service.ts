@@ -41,10 +41,10 @@ export class ResourcesService {
     );
   }
 
-  requestResourcesUpdate(parent: boolean, rating: boolean = true) {
+  requestResourcesUpdate(parent: boolean, fetchRating: boolean = true) {
     this.isActiveResourceFetch = true;
     this.stateService.requestData(this.dbName, parent ? 'parent' : 'local');
-    if (rating) {
+    if (fetchRating) {
       this.ratingService.newRatings(parent);
     }
   }
