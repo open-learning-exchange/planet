@@ -4,6 +4,7 @@ import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
 import { StateService } from '../state.service';
 import { ReplaySubject } from 'rxjs';
+import { CouchService } from '../couchdb.service';
 
 const listColumns = {
   'resources': [ 'title' ],
@@ -18,7 +19,8 @@ export class DialogsListService {
 
   constructor(
     private stateService: StateService,
-    private userService: UserService
+    private userService: UserService,
+    private couchService: CouchService
   ) {}
 
   defaultSelectorFunctions() {
@@ -47,8 +49,8 @@ export class DialogsListService {
 
   getListAndColumns(db: string, selector?: any, planetField: string = 'local') {
     selector = selector || this.defaultSelectorFunctions()[db];
-    const fields = db === '_users' || db === 'child_users' ? this.userService.userProperties : [];
-
+    const fields = db === '_users' || db === 'child_users' ? this.couchService.post('_users/_find', { 'selector': { } }) : [];
+    // console.log(this.couchService.post('_users/_find', { 'selector': { } }));
     return this.stateService.getCouchState(db, planetField).pipe(
       map((newData: any) => {
         const tableData = selector ? this.filterResults(newData, selector) : newData;

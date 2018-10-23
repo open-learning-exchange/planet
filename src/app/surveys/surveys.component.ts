@@ -84,8 +84,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyDialog(survey) {
     forkJoin([
-      this.couchService.post('_users/_find', { 'selector': {} }),
-      this.couchService.post('child_users/_find', { 'selector': {} })
+      this.dialogsListService.getListAndColumns('_users'),
+      this.dialogsListService.getListAndColumns('child_users')
     ]).pipe(takeUntil(this.onDestroy$)).subscribe(responses => {
       console.log(responses);
       const response = responses.reduce((fullArray, array) => ({
