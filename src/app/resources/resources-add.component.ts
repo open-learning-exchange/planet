@@ -135,7 +135,7 @@ export class ResourcesAddComponent implements OnInit {
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const obs = this.pageType === 'Update' ? this.updateResource(newResource) : this.addResource(newResource);
-        const message = this.pageType === 'Update' ? 'Resource Updated Successfully' : 'New Resource Created';
+        const message = this.pageType === 'Update' ? 'Resource Updated Successfully' : this.resourceForm.value.title  + ' Resource Created';
         obs.pipe(switchMap((res) => {
           if (file) {
             const opts = { headers: { 'Content-Type': file.type } };
