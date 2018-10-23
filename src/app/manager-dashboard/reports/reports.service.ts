@@ -89,7 +89,7 @@ export class ReportsService {
 
   mostRecentAdminActivities(planet, logins, adminActivities) {
     const adminName = planet.adminName.split('@')[0];
-    const findPlanetLog = (item: any) => item.createdOn === planet.code;
+    const findPlanetLog = (item: any) => item.createdOn === planet.code && item.parentCode === planet.parentCode;
     const findAdminActivity = (type: any) => (activity: any) => activity.type === type && findPlanetLog(activity);
     return ({
       lastAdminLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
