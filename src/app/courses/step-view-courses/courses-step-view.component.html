@@ -40,6 +40,7 @@
     <td-markdown *ngIf="stepDetail?.description" class="description" [content]="stepDetail.description"></td-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
+      [fetchRating]="false"
       [resourceId]="resource._id"
       (resourceUrl)="setResourceUrl($event)">
     </planet-resources-viewer>
