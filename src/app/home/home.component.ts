@@ -84,13 +84,13 @@ export class HomeComponent implements OnInit, AfterViewInit, DoCheck, OnDestroy 
     this.mainContent._updateContentMargins();
     this.mainContent._changeDetectorRef.markForCheck();
     const toolbarElement = this.toolbar.nativeElement;
-    const style = window.getComputedStyle(toolbarElement);
+    const toolbarStyle = window.getComputedStyle(toolbarElement);
     this.classicToolbarWidth =
       toolbarElement.querySelector('.navbar-left').offsetWidth +
       toolbarElement.querySelector('.navbar-center').offsetWidth +
       toolbarElement.querySelector('.navbar-right').offsetWidth +
-      parseInt(style.paddingLeft, 10) +
-      parseInt(style.paddingRight, 10);
+      parseInt(toolbarStyle.paddingLeft, 10) +
+      parseInt(toolbarStyle.paddingRight, 10);
   }
 
   ngOnDestroy() {
