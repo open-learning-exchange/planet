@@ -1,44 +1,20 @@
-import { Component, Input, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
-import { interval, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { debug } from '../debug-operator';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'planet-home-modern',
   templateUrl: './home-modern.component.html',
-  styleUrls: [ './home.scss' ],
-  animations: [
-    trigger('sidenavState', [
-      state('closed', style({
-        width: '72px'
-      })),
-      state('open', style({
-        width: '150px'
-      })),
-      transition('closed <=> open', animate('500ms ease'))
-    ])
-  ]
+  styleUrls: [ './home.scss' ]
 })
-export class HomeModernComponent implements AfterViewInit, OnDestroy {
-  sidenavState = 'closed';
-  @ViewChild('content') private mainContent;
+export class HomeModernComponent {
+
   @Input() notifications = [];
   @Input() user: any = {};
   @Input() userImgSrc = '';
-
-  // Sets the margin for the main content to match the sidenav width
-  animObs = interval(15).pipe(
-    debug('Menu animation'),
-    tap(() => {
-      this.mainContent._updateContentMargins();
-      this.mainContent._changeDetectorRef.markForCheck();
-    }
-  ));
+  @Input() sidenavState;
+  @Output() sidenavStateChange = new EventEmitter<string>();
+  @Input() animObs;
   // For disposable returned by observer to unsubscribe
   animDisp: any;
-
-  private onDestroy$ = new Subject<void>();
 
   @Input() logoutClick: any = () => {};
   @Input() readNotification: any = () => {};
@@ -46,18 +22,9 @@ export class HomeModernComponent implements AfterViewInit, OnDestroy {
 
   constructor() {}
 
-  ngAfterViewInit() {
-    this.mainContent._updateContentMargins();
-    this.mainContent._changeDetectorRef.markForCheck();
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
   toggleNav() {
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
+    this.sidenavStateChange.emit(this.sidenavState);
     this.animDisp = this.animObs.subscribe();
   }
 

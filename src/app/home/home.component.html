@@ -1,20 +1,98 @@
-<ng-container [ngSwitch]="layout">
-  <planet-home-modern
-    *ngSwitchCase="'modern'"
-    [notifications]="notifications"
-    [user]="user"
-    [userImgSrc]="userImgSrc"
-    [logoutClick]="logoutClick()"
-    [readNotification]="readNotification()"
-    [backgroundRoute]="backgroundRoute()">
-  </planet-home-modern>
-  <planet-home-classic
-    *ngSwitchCase="'classic'"
-    [notifications]="notifications"
-    [user]="user"
-    [userImgSrc]="userImgSrc"
-    [logoutClick]="logoutClick()"
-    [readNotification]="readNotification()"
-    [backgroundRoute]="backgroundRoute()">
-  </planet-home-classic>
-</ng-container>
+<planet-home-classic
+  *ngIf="layout === 'classic'"
+  [notifications]="notifications"
+  [user]="user"
+  [userImgSrc]="userImgSrc"
+  [logoutClick]="logoutClick()"
+  [readNotification]="readNotification()"
+  [backgroundRoute]="backgroundRoute()"
+  (sizeChange)="sizeChange($event)">
+</planet-home-classic>
+<planet-home-modern
+  *ngIf="layout === 'modern' || forceModern"
+  [notifications]="notifications"
+  [user]="user"
+  [userImgSrc]="userImgSrc"
+  [logoutClick]="logoutClick()"
+  [readNotification]="readNotification()"
+  [backgroundRoute]="backgroundRoute()"
+  [(sidenavState)]="sidenavState"
+  [animObs]="animObs">
+</planet-home-modern>
+<mat-sidenav-container class="main-content" #content>
+  <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()" *ngIf="layout === 'modern' || forceModern">
+    <!--Top part, user content etc.-->
+    <ul class="top-nav">
+      <li>
+        <a mat-button routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}"
+          planetPulsateIcon
+          i18n-title title="Home">
+          <mat-icon svgIcon="home"></mat-icon>
+          <label i18n>Home</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/resources"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Library">
+          <mat-icon svgIcon="myLibrary"></mat-icon>
+          <label i18n>Library</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/courses"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Courses">
+          <mat-icon svgIcon="myCourses"></mat-icon>
+          <label i18n>Courses</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/teams"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Teams">
+          <mat-icon svgIcon="myTeams"></mat-icon>
+          <label i18n>Teams</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/meetups"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Meetups">
+          <mat-icon svgIcon="myMeetups"></mat-icon>
+          <label i18n>Meetups</label>
+        </a>
+      </li>
+    </ul>
+    <!--Bottom part-->
+    <ul class="bottom-nav">
+      <li>
+        <a mat-button routerLink="/surveys" i18n-title title="Surveys">
+          <mat-icon svgIcon="surveys"></mat-icon>
+          <label i18n>Surveys</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button planetFeedback i18n-title title="Feedback">
+          <mat-icon svgIcon="feedback"></mat-icon>
+          <label i18n>Feedback</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button (click)="logoutClick()" i18n-title title="Logout">
+          <mat-icon svgIcon="logout"></mat-icon>
+          <label i18n>Logout</label>
+        </a>
+      </li>
+    </ul>
+  </mat-sidenav>
+  <mat-sidenav-content [ngClass]="{'gradient-background': backgroundRoute()}">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

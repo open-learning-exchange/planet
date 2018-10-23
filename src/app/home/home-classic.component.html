@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="classic-header-nav header-nav nav-shadow">
+<mat-toolbar color="primary" class="classic-header-nav header-nav nav-shadow" #toolbar [ngClass]="{ 'invisible': isScreenTooNarrow }">
   <span class="classic-navbar-left">
     <a routerLink="/">
       <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo classic-ole-logo"/>
@@ -57,8 +57,3 @@
     </mat-menu>
   </span>
 </mat-toolbar>
-<!--Left sidebar-->
-<div [ngClass]="{'gradient-background': backgroundRoute()}">
-  <router-outlet></router-outlet>
-</div>
-

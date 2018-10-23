@@ -1,17 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { Subject, forkJoin } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, interval } from 'rxjs';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
+import { HomeModernComponent } from './home-modern.component';
 
 @Component({
   templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ],
+  animations: [
+    trigger('sidenavState', [
+      state('closed', style({
+        width: '72px'
+      })),
+      state('open', style({
+        width: '150px'
+      })),
+      transition('closed <=> open', animate('500ms ease'))
+    ])
+  ]
 })
 export class HomeComponent implements OnInit {
 
@@ -19,6 +33,19 @@ export class HomeComponent implements OnInit {
   user: any = {};
   userImgSrc = '';
   layout: string;
+  forceModern: boolean;
+  sidenavState = 'closed';
+  @ViewChild('content') private mainContent;
+  @ViewChild(HomeModernComponent) private homeModernComponent: HomeModernComponent;
+
+  // Sets the margin for the main content to match the sidenav width
+  animObs = interval(15).pipe(
+    debug('Menu animation'),
+    tap(() => {
+      this.mainContent._updateContentMargins();
+      this.mainContent._changeDetectorRef.markForCheck();
+    }
+  ));
 
   private onDestroy$ = new Subject<void>();
 
@@ -42,6 +69,16 @@ export class HomeComponent implements OnInit {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
     });
+  }
+
+  ngAfterViewInit() {
+    this.mainContent._updateContentMargins();
+    this.mainContent._changeDetectorRef.markForCheck();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   // Used to swap in different background.
@@ -118,6 +155,16 @@ export class HomeComponent implements OnInit {
         this.userService.setNotificationStateChange();
       },  (err) => console.log(err));
     };
+  }
+
+  sizeChange(forceModern: boolean) {
+    this.forceModern = forceModern;
+  }
+
+  endAnimation() {
+    if (this.homeModernComponent) {
+      this.homeModernComponent.endAnimation();
+    }
   }
 
 }
