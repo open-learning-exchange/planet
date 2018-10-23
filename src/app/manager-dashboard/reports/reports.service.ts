@@ -83,17 +83,13 @@ export class ReportsService {
 
   getAdminActivities(planetCode?: string) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode)).pipe(map(adminActivities => {
-      return this.groupBy(
-        adminActivities.sort((a: any, b: any) => b.time - a.time),
-        [ 'parentCode', 'createdOn', 'type' ],
-        { maxField: 'time' }
-      );
+      return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
     }));
   }
 
   mostRecentAdminActivities(planet, logins, adminActivities) {
     const adminName = planet.adminName.split('@')[0];
-    const findPlanetLog = (item: any) => item.createdOn === planet.code;
+    const findPlanetLog = (item: any) => item.createdOn === planet.code && item.parentCode === planet.parentCode;
     const findAdminActivity = (type: any) => (activity: any) => activity.type === type && findPlanetLog(activity);
     return ({
       lastAdminLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
