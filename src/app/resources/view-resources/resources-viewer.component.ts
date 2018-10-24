@@ -17,6 +17,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
   @Input() resource: any;
+  @Input() fetchRating = true;
   @Output() resourceUrl = new EventEmitter<any>();
   mediaType: string;
   contentType: string;
@@ -46,7 +47,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
         .subscribe((resources) => {
           this.setResource(resources.find((r: any) => r._id === this.resourceId));
         });
-      this.resourcesService.requestResourcesUpdate(this.parent);
+      this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
     } else {
       this.setResource(this.resource);
     }
