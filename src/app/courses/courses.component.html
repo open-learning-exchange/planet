@@ -72,7 +72,7 @@
         <mat-cell  *matCellDef="let element" class="list-content-menu">
           <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
           </h3>
-          <td-markdown class="content" [content]="element.description"></td-markdown>
+          <td-markdown class="content">{{ element.description }}</td-markdown>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>

@@ -39,6 +39,7 @@
       <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
     </span>
   </mat-toolbar>
+
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" matSort>
       <ng-container matColumnDef="select">

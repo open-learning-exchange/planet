@@ -1,3 +1,4 @@
+
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
@@ -28,6 +29,7 @@
       </button>
     </span>
   </mat-toolbar>
+
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="meetups" matSort>
       <ng-container matColumnDef="select">
