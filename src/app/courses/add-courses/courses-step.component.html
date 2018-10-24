@@ -8,6 +8,7 @@
     <button mat-icon-button *ngIf="!isLast" (click)="moveStep($event,i,1)"><mat-icon>arrow_downward</mat-icon></button>
     <button mat-icon-button (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
   </planet-step-list-item>
+  <span class="editing-style">Editing Step {{ this.activeStepIndex + 1 }} of {{ steps.length }}</span>
   <div planetStepListForm>
     <form class="vertical-form" [formGroup]="stepForm">
       <mat-form-field>

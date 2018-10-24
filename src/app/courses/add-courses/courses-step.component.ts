@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -16,10 +16,15 @@ import { CoursesService } from '../courses.service';
     planet-courses-step .mat-chip-list-wrapper {
       margin: 0;
     }
+    .editing-style {
+      padding: 0 0.5rem 0 0;
+      margin: 0.5rem 0;
+      font-size: 15px;
+    }
   ` ],
   encapsulation: ViewEncapsulation.None
 })
-export class CoursesStepComponent implements OnDestroy {
+export class CoursesStepComponent implements OnChanges, OnDestroy {
 
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any>();
@@ -30,6 +35,7 @@ export class CoursesStepComponent implements OnDestroy {
   activeStepIndex = -1;
   spinnerOn = true;
   private onDestroy$ = new Subject<void>();
+  @Input() nextIndex: number;
 
   constructor(
     private router: Router,
@@ -47,6 +53,15 @@ export class CoursesStepComponent implements OnDestroy {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
       this.stepsChange.emit(this.steps);
     });
+  }
+
+  ngOnChanges() {
+    if  (this.nextIndex > this.activeStepIndex) {
+      this.activeStepIndex = this.nextIndex;
+      this.stepForm.patchValue(this.steps[this.activeStepIndex]);
+      this.stepForm.setValue({  id: '', stepTitle: '', description: ''  });
+      this.stepsChange.emit(this.steps);
+    }
   }
 
   ngOnDestroy() {
@@ -114,5 +129,4 @@ export class CoursesStepComponent implements OnDestroy {
     }
     this.stepsChange.emit(this.steps);
   }
-
 }

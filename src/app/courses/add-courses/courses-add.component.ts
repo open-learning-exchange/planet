@@ -35,6 +35,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this._steps = value;
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
   }
+  nextStepIndex: number;
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -187,6 +188,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       description: '',
       resources: []
     });
+    this.nextStepIndex = this.steps.length  - 1 ;
   }
 
   navigateBack() {
