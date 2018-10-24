@@ -57,7 +57,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
-        // this.resourceActivity(this.resource, 'visit');
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
       });
   }
