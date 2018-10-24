@@ -4,7 +4,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1" i18n>{{pageType}} resource</mat-toolbar>
-  <div class="view-container">
+  <div class="view-container view-full-height">
     <form class="form-spacing" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
