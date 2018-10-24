@@ -82,7 +82,8 @@ export class ResourcesAddComponent implements OnInit {
     this.resourceForm = this.fb.group({
       title: [
         '',
-        Validators.required,
+        [Validators.required,
+        Validators.pattern(".*\\S.*[a-zA-z0-9 ]")],
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         this.route.snapshot.url[0].path === 'update'
           ? ac => this.validatorService.isNameAvailible$(this.dbName, 'title', ac, this.route.snapshot.params.id)
@@ -90,7 +91,7 @@ export class ResourcesAddComponent implements OnInit {
       ],
       author: '',
       year: '',
-      description: [ '', Validators.required ],
+      description: [ '', [Validators.required, Validators.pattern(".*\\S.*[a-zA-z0-9 ]")] ],
       tags: [ [] ],
       language: '',
       publisher: '',
