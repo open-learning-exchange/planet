@@ -64,7 +64,9 @@ export class ExamsAddComponent implements OnInit {
     this.examForm = this.fb.group({
       name: [
         title,
-        Validators.required,
+        [ Validators.required, 
+          Validators.pattern(".*\\S.*[a-zA-z0-9 ]")
+        ],
         this.nameValidator()
       ],
       passingPercentage: [
