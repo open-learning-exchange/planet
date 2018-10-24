@@ -127,6 +127,8 @@ body {
       grid-area: cn;
       text-align: justify;
       text-justify: inter-word;
+      max-height: 6rem;
+      overflow-y: auto;
     }
 
     .menu {

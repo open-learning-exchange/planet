@@ -60,7 +60,7 @@
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
           </h3>
-          <td-markdown class="content">{{element.description | truncate : 500}}</td-markdown>
+          <td-markdown class="content" [content]="element.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
             <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag)">
               {{tag}}
