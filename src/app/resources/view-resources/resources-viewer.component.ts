@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 import { ResourcesService } from '../resources.service';
 import { ActivatedRoute } from '@angular/router';
 import { StateService } from '../../shared/state.service';
+import { UserService } from '../../shared/user.service';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   selector: 'planet-resources-viewer',
@@ -30,7 +32,9 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private sanitizer: DomSanitizer,
     private resourcesService: ResourcesService,
     private route: ActivatedRoute,
-    private stateService: StateService
+    private stateService: StateService,
+    private userService: UserService,
+    private couchService: CouchService,
   ) { }
 
   get urlPrefix() {
@@ -58,8 +62,25 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  resourceActivity(resource: any, activity) {
+    const data = {
+      'resourceId': resource._id,
+      'title': resource.title,
+      'user': this.userService.get().name,
+      'type': activity,
+      'time': Date.now(),
+      'createdOn': this.stateService.configuration.code,
+      'parentCode': this.stateService.configuration.parentCode
+    };
+    this.couchService.post('resource_activities', data)
+      .subscribe((response) => {
+        console.log(response);
+      }, (error) => console.log('Error'));
+  }
+
   setResource(resource: any) {
     this.resource = resource;
+    this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
     this.mediaType = resource.mediaType;
