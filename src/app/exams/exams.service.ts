@@ -29,10 +29,7 @@ export class ExamsService {
 
   newQuestionChoice(newId, intialValue?) {
     return this.setInitalFormValue(new FormGroup({
-      'text': new FormControl('', [
-        Validators.required,
-        Validators.pattern(".*\\S.*[a-zA-z0-9 ]")
-      ]),
+      'text': new FormControl('', Validators.required),
       'id': new FormControl(newId)
     }), intialValue);
   }
