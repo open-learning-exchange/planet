@@ -4,9 +4,9 @@
 </mat-toolbar>
 
 <div class="space-container">
-<mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3">{{resource?.title}}</span>
-    <button mat-stroked-button (click)="toggleFullView()" i18n>
+    <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
     <span class="toolbar-fill"></span>
