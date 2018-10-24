@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output } from '@angular/core';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
@@ -16,7 +16,7 @@ import { debug } from '../../debug-operator';
   templateUrl: './resources-viewer.component.html',
   styleUrls: [ './resources-viewer.scss' ]
 })
-export class ResourcesViewerComponent implements OnInit, OnChanges, OnDestroy {
+export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
   @Input() resource: any;
@@ -26,7 +26,6 @@ export class ResourcesViewerComponent implements OnInit, OnChanges, OnDestroy {
   resourceSrc: string;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
-  isUserEnrolled = false;
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -44,21 +43,6 @@ export class ResourcesViewerComponent implements OnInit, OnChanges, OnDestroy {
       domain = 'http://' + this.stateService.configuration.parentDomain + '/resources/';
     }
     return domain;
-  }
-
-  ngOnInit() {
-    this.route.paramMap
-      .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
-      .subscribe((params: ParamMap) => {
-        this.resourceId = params.get('id');
-        this.resourcesService.requestResourcesUpdate(this.parent);
-      }, error => console.log(error), () => console.log('complete getting resource id'));
-    this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
-      .subscribe((resources) => {
-        this.resource = resources.find((r: any) => r._id === this.resourceId);
-        this.resourceActivity(this.resource, 'visit');
-        this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
-      });
   }
 
   ngOnChanges() {
