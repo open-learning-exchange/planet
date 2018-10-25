@@ -19,7 +19,9 @@
   }
 }
 
-planet-markdown-textbox .CodeMirror {
-  height: 15vh;
-  min-height: 15vh;
+planet-markdown-textbox {
+  .CodeMirror, .CodeMirror-scroll {
+    height: 15vh;
+    min-height: 15vh;
+  }
 }
