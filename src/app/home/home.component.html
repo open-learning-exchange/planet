@@ -1,20 +1,137 @@
-<ng-container [ngSwitch]="layout">
-  <planet-home-modern
-    *ngSwitchCase="'modern'"
-    [notifications]="notifications"
-    [user]="user"
-    [userImgSrc]="userImgSrc"
-    [logoutClick]="logoutClick()"
-    [readNotification]="readNotification()"
-    [backgroundRoute]="backgroundRoute()">
-  </planet-home-modern>
-  <planet-home-classic
-    *ngSwitchCase="'classic'"
-    [notifications]="notifications"
-    [user]="user"
-    [userImgSrc]="userImgSrc"
-    [logoutClick]="logoutClick()"
-    [readNotification]="readNotification()"
-    [backgroundRoute]="backgroundRoute()">
-  </planet-home-classic>
-</ng-container>
+<mat-toolbar color="primary" class="header-nav nav-shadow" #toolbar>
+  <span class="navbar-left">
+    <button mat-icon-button class="menu-button" (click)="toggleNav()" i18n-title title="Menu" *ngIf="layout === 'modern' || forceModern"><mat-icon>menu</mat-icon></button>
+    <a routerLink="/">
+      <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo"/>
+      <h1 i18n>Planet Learning</h1>
+    </a>
+  </span>
+  <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
+    <a mat-button routerLink="/resources"
+      routerLinkActive="active"
+      i18n-title title="Library" i18n>Library</a>
+    <a mat-button routerLink="/courses"
+      routerLinkActive="active"
+      i18n-title title="Courses" i18n>Courses</a>
+    <a mat-button routerLink="/teams"
+      routerLinkActive="active"
+      i18n-title title="Teams" i18n>Teams</a>
+    <a mat-button routerLink="/meetups"
+      routerLinkActive="active"
+      i18n-title title="Meetups" i18n>Meetups</a>
+    <a mat-button routerLink="/surveys" i18n-title title="Surveys" i18n>
+      Surveys
+    </a>
+  </span>
+  <span class="navbar-right">
+    <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon svgIcon="feedback"></mat-icon></button>
+    <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
+    <button mat-icon-button *ngIf="user.isUserAdmin" routerLink="/manager" i18n-title title="Manager Settings"><mat-icon svgIcon="usersettings"></mat-icon></button>
+    <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
+      <mat-icon matBadge={{notifications.length}} matBadgeColor="warn" MatBadgeSize="small">notifications</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="notifications.length === 0" routerLink="/notifications" i18n-title title="No Notification"><mat-icon>notifications_none</mat-icon></button>
+    <planet-language></planet-language>
+    <button mat-icon-button [matMenuTriggerFor]="userProfile">
+      <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
+      <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
+    </button>
+    <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
+      <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
+      <button mat-menu-item i18n planetChangePassword>Change Password</button>
+      <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+    </mat-menu>
+    <!--Notification dropdown menu-->
+    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
+      <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
+        class="menu-item-notification"
+        [ngClass]="{'primary-text-color':notification.status==='unread'}"
+        mat-menu-item
+        *ngFor="let notification of notifications"
+        (click)="readNotification(notification)">
+        <p><b>{{notification.message}}</b><p>
+        <p class="small">{{notification.time | date: 'mediumDate'}}</p>
+        <mat-divider></mat-divider>
+      </a>
+      <a routerLink="/notifications" mat-menu-item>See All</a>
+    </mat-menu>
+  </span>
+</mat-toolbar>
+<mat-sidenav-container class="main-content" #content>
+  <mat-sidenav #sidenav mode="side" class="primary-color main-sidenav nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()" *ngIf="layout === 'modern' || forceModern">
+    <!--Top part, user content etc.-->
+    <ul class="top-nav">
+      <li>
+        <a mat-button routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}"
+          planetPulsateIcon
+          i18n-title title="Home">
+          <mat-icon svgIcon="home"></mat-icon>
+          <label i18n>Home</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/resources"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Library">
+          <mat-icon svgIcon="myLibrary"></mat-icon>
+          <label i18n>Library</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/courses"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Courses">
+          <mat-icon svgIcon="myCourses"></mat-icon>
+          <label i18n>Courses</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/teams"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Teams">
+          <mat-icon svgIcon="myTeams"></mat-icon>
+          <label i18n>Teams</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button routerLink="/meetups"
+          routerLinkActive="active"
+          planetPulsateIcon
+          i18n-title title="Meetups">
+          <mat-icon svgIcon="myMeetups"></mat-icon>
+          <label i18n>Meetups</label>
+        </a>
+      </li>
+    </ul>
+    <!--Bottom part-->
+    <ul class="bottom-nav">
+      <li>
+        <a mat-button routerLink="/surveys" i18n-title title="Surveys">
+          <mat-icon svgIcon="surveys"></mat-icon>
+          <label i18n>Surveys</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button planetFeedback i18n-title title="Feedback">
+          <mat-icon svgIcon="feedback"></mat-icon>
+          <label i18n>Feedback</label>
+        </a>
+      </li>
+      <li>
+        <a mat-button (click)="logoutClick()" i18n-title title="Logout">
+          <mat-icon svgIcon="logout"></mat-icon>
+          <label i18n>Logout</label>
+        </a>
+      </li>
+    </ul>
+  </mat-sidenav>
+  <mat-sidenav-content [ngClass]="{'gradient-background': backgroundRoute()}">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

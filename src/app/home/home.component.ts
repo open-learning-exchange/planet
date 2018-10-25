@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, DoCheck, OnDestroy } from '@angular/core';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { Subject, forkJoin } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, interval } from 'rxjs';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
@@ -12,13 +14,40 @@ import { StateService } from '../shared/state.service';
 @Component({
   templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ],
+  animations: [
+    trigger('sidenavState', [
+      state('closed', style({
+        width: '72px'
+      })),
+      state('open', style({
+        width: '150px'
+      })),
+      transition('closed <=> open', animate('500ms ease'))
+    ])
+  ]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, DoCheck, OnDestroy {
 
   notifications = [];
   user: any = {};
   userImgSrc = '';
-  layout: string;
+  layout = 'classic';
+  forceModern: boolean;
+  sidenavState = 'closed';
+  classicToolbarWidth = 0;
+  @ViewChild('content') private mainContent;
+  @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
+
+  // Sets the margin for the main content to match the sidenav width
+  animObs = interval(15).pipe(
+    debug('Menu animation'),
+    tap(() => {
+      this.mainContent._updateContentMargins();
+      this.mainContent._changeDetectorRef.markForCheck();
+    }
+  ));
+  // For disposable returned by observer to unsubscribe
+  animDisp: any;
 
   private onDestroy$ = new Subject<void>();
 
@@ -44,22 +73,44 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  ngDoCheck() {
+    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
+    if (this.forceModern !== isScreenTooNarrow) {
+      this.forceModern = isScreenTooNarrow;
+    }
+  }
+
+  ngAfterViewInit() {
+    this.mainContent._updateContentMargins();
+    this.mainContent._changeDetectorRef.markForCheck();
+    const toolbarElement = this.toolbar.nativeElement;
+    const toolbarStyle = window.getComputedStyle(toolbarElement);
+    this.classicToolbarWidth =
+      toolbarElement.querySelector('.navbar-left').offsetWidth +
+      toolbarElement.querySelector('.navbar-center').offsetWidth +
+      toolbarElement.querySelector('.navbar-right').offsetWidth +
+      parseInt(toolbarStyle.paddingLeft, 10) +
+      parseInt(toolbarStyle.paddingRight, 10);
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
-    const router = this.router;
-    return () => {
-      const routesWithBackground = [
-        'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams'
-      ];
-      // Leaving the exception variable in so we can easily use this while still testing backgrounds
-      const routesWithoutBackground = [];
-      const isException = routesWithoutBackground
-        .findIndex((route) => router.url.indexOf(route) > -1) > -1;
-      const isRoute = routesWithBackground
-        .findIndex((route) => router.url.indexOf(route) > -1) > -1;
-      return isRoute && !isException;
-    };
+    const routesWithBackground = [
+      'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams'
+    ];
+    // Leaving the exception variable in so we can easily use this while still testing backgrounds
+    const routesWithoutBackground = [];
+    const isException = routesWithoutBackground
+      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
+    const isRoute = routesWithBackground
+      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
+    return isRoute && !isException;
   }
 
   onUserUpdate() {
@@ -73,22 +124,20 @@ export class HomeComponent implements OnInit {
   }
 
   logoutClick() {
-    return () => {
-      const configuration = this.stateService.configuration;
-      this.userService.endSessionLog().pipe(switchMap(() => {
-        const obsArr = [ this.pouchAuthService.logout() ];
-        const localAdminName = configuration.adminName.split('@')[0];
-        if (localAdminName === this.userService.get().name) {
-          obsArr.push(
-            this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
-          );
-        }
-        return forkJoin(obsArr);
-      })).subscribe((response: any) => {
-          this.userService.unset();
-          this.router.navigate([ '/login' ], {});
-      }, err => console.log(err));
-    };
+    const configuration = this.stateService.configuration;
+    this.userService.endSessionLog().pipe(switchMap(() => {
+      const obsArr = [ this.pouchAuthService.logout() ];
+      const localAdminName = configuration.adminName.split('@')[0];
+      if (localAdminName === this.userService.get().name) {
+        obsArr.push(
+          this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
+        );
+      }
+      return forkJoin(obsArr);
+    })).subscribe((response: any) => {
+        this.userService.unset();
+        this.router.navigate([ '/login' ], {});
+    }, err => console.log(err));
   }
 
   getNotification() {
@@ -111,13 +160,26 @@ export class HomeComponent implements OnInit {
     }, (error) => console.log(error));
   }
 
-  readNotification() {
-    return (notification) => {
-      const updateNotificaton =  { ...notification, 'status': 'read' };
-      this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
-        this.userService.setNotificationStateChange();
-      },  (err) => console.log(err));
-    };
+  readNotification(notification) {
+    const updateNotificaton =  { ...notification, 'status': 'read' };
+    this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
+      this.userService.setNotificationStateChange();
+    },  (err) => console.log(err));
+  }
+
+  sizeChange(forceModern: boolean) {
+    this.forceModern = forceModern;
+  }
+
+  toggleNav() {
+    this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
+    this.animDisp = this.animObs.subscribe();
+  }
+
+  endAnimation() {
+    if (this.animDisp) {
+      this.animDisp.unsubscribe();
+    }
   }
 
 }

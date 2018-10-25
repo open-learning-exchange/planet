@@ -39,17 +39,22 @@
     position: relative;
     z-index: 10;
     //box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12)
+    display: grid;
+    grid-template-areas: "left center right";
+    width: 100%;
+    align-items: center;
 
     h1 {
+      display: inline;
       font-size: 1.5rem;
     }
 
-    .ole-logo {
-      margin: 0 10px 0 26px;
+    .menu-button {
+      margin-right: 26px;
     }
 
-    .ole-logo.classic-ole-logo {
-      margin: 0 10px 0 0;
+    .ole-logo {
+      margin-right: 10px;
     }
 
   }
@@ -62,31 +67,21 @@
     top: 100%;
   }
 
-  .classic-header-nav {
-    display: grid;
-    grid-template-areas: "left center right";
-    width: 100%;
-    align-items: center;
-
-    h1 {
-      display: inline;
-    }
-  }
-
-  .classic-navbar-left {
+  .navbar-left {
     grid-area: left;
+    display: flex;
     a {
       display: flex;
       align-items: center;
     }
   }
 
-  .classic-navbar-center {
+  .navbar-center {
     grid-area: center;
     justify-self: center;
   }
 
-  .classic-navbar-right {
+  .navbar-right {
     grid-area: right;
     justify-self: right;
     align-self: center;
@@ -152,6 +147,11 @@
       margin-bottom: 16px;
     }
 
+  }
+
+  .hidden-classic {
+    height: 0;
+    overflow: hidden;
   }
 
 }
