@@ -110,7 +110,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submissionAction(submission) {
-    if ((this.mode === 'survey' && submission.status !== 'complete') || (this.mode !== 'survey' && submission.status !== 'pending')) {
+    if (this.mode === 'survey' || (this.mode !== 'survey' && submission.status !== 'pending')) {
       this.router.navigate([
         './exam',
         { submissionId: submission._id, questionNum: 1, status: submission.status, mode: this.surveyMode(this.mode, submission.type) }
