@@ -4,6 +4,6 @@
   </mat-list-item>
 </mat-nav-list>
 <ng-container *ngIf="!listMode">
-  <button class="back-button" (click)="toList()" mat-button><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
+  <button class="back-button" (click)="toList()" mat-stroked-button><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
   <ng-content selector="planet-step-list-form"></ng-content>
 </ng-container>
