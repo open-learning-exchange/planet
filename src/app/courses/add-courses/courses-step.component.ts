@@ -16,11 +16,6 @@ import { CoursesService } from '../courses.service';
     planet-courses-step .mat-chip-list-wrapper {
       margin: 0;
     }
-    .editing-style {
-      padding: 0 0.5rem 0 0;
-      margin: 0.5rem 0;
-      font-size: 15px;
-    }
   ` ],
   encapsulation: ViewEncapsulation.None
 })
