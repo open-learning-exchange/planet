@@ -11,8 +11,8 @@
     <span>{{user.name}}</span>
   </mat-toolbar>
   <div class="view-container">
-    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
-      <div>
+    <div class="form-container">
+      <form [formGroup]="editForm" class="form-spacing" (ngSubmit)="onSubmit()">
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages></mat-error>
@@ -24,8 +24,6 @@
           <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </div>
-      <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
@@ -38,8 +36,6 @@
           </mat-select>
           <mat-error><planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </div>
-      <div>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" [required]="!submissionMode">
           <mat-error><planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
@@ -50,24 +46,6 @@
           <mat-datepicker #dp></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <div>
-          <mat-radio-group formControlName="gender" [required]="!submissionMode">
-            <label i18n>Gender</label>
-            <mat-radio-button class="planet-radio-button" value="male">
-              <div class="radio-icon-label">
-                <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
-              </div>
-            </mat-radio-button>
-            <mat-radio-button class="planet-radio-button" value="female">
-              <div class="radio-icon-label">
-                <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span i18n>Female</span>
-              </div>
-            </mat-radio-button>
-            <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
-          </mat-radio-group>
-        </div>
-      </div>
-      <div>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
             <mat-option *ngFor="let level of educationLevel" [value]="level">
@@ -76,12 +54,26 @@
           </mat-select>
           <mat-error><planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
-      </div>
-      <div>
-        <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
-        <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
-      </div>
-    </form>
+        <mat-radio-group formControlName="gender" [required]="!submissionMode" class="full-width">
+          <label i18n>Gender</label>
+          <mat-radio-button class="planet-radio-button" value="male">
+            <div class="radio-icon-label">
+              <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
+            </div>
+          </mat-radio-button>
+          <mat-radio-button class="planet-radio-button" value="female">
+            <div class="radio-icon-label">
+              <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span i18n>Female</span>
+            </div>
+          </mat-radio-button>
+          <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
+        </mat-radio-group>
+        <div>
+          <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+          <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
+        </div>
+      </form>
+    </div>
     <div *ngIf="!submissionMode">
       <img class="profile-image-update" [src]="previewSrc">
       <div>
