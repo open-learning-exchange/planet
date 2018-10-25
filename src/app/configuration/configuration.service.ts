@@ -96,9 +96,10 @@ export class ConfigurationService {
   }
 
   postConfiguration(configuration) {
-    return this.couchService.post('configurations', configuration).pipe(
-      switchMap(() => this.updateAutoAccept(configuration.autoAccept))
-    );
+    return forkJoin([
+      this.couchService.post('configurations', configuration),
+      this.updateAutoAccept(configuration.autoAccept)
+    ]);
   }
 
   updateAutoAccept(autoAccept) {
@@ -127,7 +128,7 @@ export class ConfigurationService {
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
       switchMap(() => this.postConfiguration(configuration)),
-      switchMap((conf) => {
+      switchMap(([ conf, autoAcceptRes ]) => {
         return forkJoin([
           // When creating a planet, add admin
           this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
