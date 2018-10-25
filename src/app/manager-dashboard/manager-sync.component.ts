@@ -87,7 +87,7 @@ export class ManagerSyncComponent implements OnInit {
     return forkJoin([
       this.couchService.findAll('_users', findDocuments(
         { 'isUserAdmin': { '$exists': true }, 'requestId': { '$exists': false } },
-        this.userService.userProperties
+        this.userService.userProperties.filter(prop => prop !== 'requestId')
       )),
       this.couchService.findAll('replicator_users', { 'selector': {} })
     ]).pipe(

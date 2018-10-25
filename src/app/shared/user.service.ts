@@ -4,7 +4,7 @@ import { catchError, switchMap, map } from 'rxjs/operators';
 import { of, Observable, Subject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
-import { addToArray, removeFromArray } from './utils';
+import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
 import { StateService } from './state.service';
 
 // Holds the currently logged in user information
@@ -60,18 +60,19 @@ export class UserService {
   }
 
   setUserAndShelf(user: any) {
-    return this.couchService.get('_users/org.couchdb.user:' + user.name).pipe(catchError(() => {
+    return this.couchService.findAll('_users').pipe(catchError(() => {
         // If not found in users database, just use userCtx object
         this.user = user;
         return of(false);
       }),
-      switchMap((userData) => {
+      switchMap((users: any[]) => {
+        this.setUserProperties(users);
+        const userData = users.find(u => u.name === user.name);
         if (userData) {
           // Remove hashed password information from the data object
           const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
           this.credentials = { derived_key, iterations, password_scheme, salt };
           this.user = profile;
-          this.userProperties = Object.keys(profile);
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
@@ -83,6 +84,14 @@ export class UserService {
         this.shelf = shelf;
         return of(true);
       }));
+  }
+
+  setUserProperties(users) {
+    this.userProperties = users.reduce((properties: string[], user: any) => {
+      const { derived_key, iterations, password_scheme, salt, ...profile } = user;
+      const newProperties = Object.keys(profile);
+      return properties.concat(newProperties).reduce(dedupeShelfReduce, []);
+    }, []);
   }
 
   getShelf() {

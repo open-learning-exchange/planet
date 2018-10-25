@@ -117,8 +117,7 @@ export class DialogsListComponent implements AfterViewInit {
     const otherFilterPredicates = this.tableData.filterPredicate;
     this.dropdownFilter = dropdownSettings.startingValue.value ?
       { [dropdownSettings.field]: dropdownSettings.startingValue.value } : { [dropdownSettings.field]: '' };
-    this.tableData.filterPredicate = this.dropdownFilter.value ?
-      composeFilterFunctions([ otherFilterPredicates, filterDropdowns(this.dropdownFilter) ]) : otherFilterPredicates;
+    this.tableData.filterPredicate = composeFilterFunctions([ otherFilterPredicates, filterDropdowns(this.dropdownFilter) ]);
     this.tableData.filter = ' ';
   }
 
