@@ -10,6 +10,7 @@
       <mat-select i18n-placeholder placeholder="List of Steps" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
         <mat-option *ngFor="let step of course?.steps; index as i" [value]="step">
           {{ step.stepTitle }}
+          <span *ngIf="!step.stepTitle">Step {{i+1}}</span>  
         </mat-option>
       </mat-select>
     </mat-form-field>
