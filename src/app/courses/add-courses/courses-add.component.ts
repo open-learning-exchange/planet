@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -14,6 +14,7 @@ import { UserService } from '../../shared/user.service';
 import { uniqueId } from '../../shared/utils';
 import { ConfigurationService } from '../../configuration/configuration.service';
 import { StateService } from '../../shared/state.service';
+import { CoursesStepComponent } from './courses-step.component';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -35,7 +36,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this._steps = value;
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
   }
-  nextStepIndex: number;
+  @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
 
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -188,7 +189,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       description: '',
       resources: []
     });
-    this.nextStepIndex = this.steps.length  - 1 ;
+    this.coursesStepComponent.stepClick(this.steps.length - 1);
   }
 
   navigateBack() {
