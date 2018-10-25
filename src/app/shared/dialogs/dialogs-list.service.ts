@@ -49,8 +49,10 @@ export class DialogsListService {
 
   getListAndColumns(db: string, selector?: any, planetField: string = 'local') {
     selector = selector || this.defaultSelectorFunctions()[db];
-    const fields = db === '_users' || db === 'child_users' ? this.couchService.post('_users/_find', { 'selector': { } }) : [];
-    // console.log(this.couchService.post('_users/_find', { 'selector': { } }));
+    if (db === '_users') {
+      return this.couchService.findAll('_users', findDocuments({}, this.userService.userProperties))
+        .pipe(map((newData) => ({ tableData: this.filterResults(newData, selector), columns: listColumns[db] })));
+    }
     return this.stateService.getCouchState(db, planetField).pipe(
       map((newData: any) => {
         const tableData = selector ? this.filterResults(newData, selector) : newData;
