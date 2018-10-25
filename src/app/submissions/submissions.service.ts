@@ -90,7 +90,8 @@ export class SubmissionsService {
   }
 
   updateStatus(submission: any) {
-    if (submission.status === 'complete') {
+    console.log(submission);
+    if (submission.type === 'survey' && submission.status === 'complete') {
       return 'complete';
     }
     const statusProgression = new Map([ [ 'pending', 'complete' ], [ 'complete', 'graded' ] ]);
