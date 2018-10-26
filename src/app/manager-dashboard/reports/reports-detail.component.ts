@@ -5,7 +5,7 @@ import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
-  styleUrls: ['./reports.scss'],
+  styleUrls: [ './reports.scss' ],
 })
 export class ReportsDetailComponent {
 
