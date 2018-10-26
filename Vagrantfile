@@ -136,6 +136,10 @@ Vagrant.configure(2) do |config|
     prod.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
     prod.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
 
+    dev.vm.provider "virtualbox" do |vb|
+      vb.name = "planet-prod"
+    end
+
     prod.vm.provision "shell", inline: <<-SHELL
       docker pull treehouses/planet:0.5.3
       docker pull treehouses/planet:db-init-0.5.3
