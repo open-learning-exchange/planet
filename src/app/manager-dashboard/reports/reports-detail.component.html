@@ -14,36 +14,36 @@
   <div class="view-container view-full-height">
     <mat-grid-list cols="4" rowHeight="2rem">
       <mat-grid-tile></mat-grid-tile>
-      <mat-grid-tile>Male</mat-grid-tile><mat-grid-tile>Female</mat-grid-tile><mat-grid-tile>Did not specify</mat-grid-tile>
-      <mat-grid-tile>Registered Members</mat-grid-tile>
+      <mat-grid-tile class="label">Male</mat-grid-tile><mat-grid-tile class="label">Female</mat-grid-tile><mat-grid-tile class="label">Did not specify</mat-grid-tile>
+      <mat-grid-tile class="label">Registered Members</mat-grid-tile>
       <mat-grid-tile>{{reports?.usersByGender?.male || 0}}</mat-grid-tile>
       <mat-grid-tile>{{reports?.usersByGender?.female || 0}}</mat-grid-tile>
       <mat-grid-tile>{{reports?.usersByGender?.didNotSpecify || 0}}</mat-grid-tile>
     </mat-grid-list>
     <mat-grid-list cols="3" rowHeight="2rem">
-      <mat-grid-tile>Total Members</mat-grid-tile>
-      <mat-grid-tile>Total Resources</mat-grid-tile>
-      <mat-grid-tile>Total Courses</mat-grid-tile>
+      <mat-grid-tile class="label">Total Members</mat-grid-tile>
+      <mat-grid-tile class="label">Total Resources</mat-grid-tile>
+      <mat-grid-tile class="label">Total Courses</mat-grid-tile>
       <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile><mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile><mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
-      <mat-grid-tile>Members by Visits</mat-grid-tile><mat-grid-tile>Total Visits</mat-grid-tile>
+      <mat-grid-tile class="label">Members by Visits</mat-grid-tile><mat-grid-tile class="label">Total Visits</mat-grid-tile>
       <tr *ngFor="let visit of reports?.visits"><mat-grid-tile><a [routerLink]="['/users/profile', visit.user]">{{visit.user}}</a></mat-grid-tile><mat-grid-tile>{{visit.count}}</mat-grid-tile>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
-      <mat-grid-tile>Most Visited Resources</mat-grid-tile><mat-grid-tile>Total Visits</mat-grid-tile>
+      <mat-grid-tile class="label">Most Visited Resources</mat-grid-tile><mat-grid-tile class="label">Total Visits</mat-grid-tile>
       <ng-container *ngFor="let resource of reports?.resources">
         <mat-grid-tile><a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.title}}</a></mat-grid-tile><mat-grid-tile>{{resource.count}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
-      <mat-grid-tile>Highest Rated Resources</mat-grid-tile><mat-grid-tile>Average Rating</mat-grid-tile>
+      <mat-grid-tile class="label">Highest Rated Resources</mat-grid-tile><mat-grid-tile class="label">Average Rating</mat-grid-tile>
       <ng-container *ngFor="let rating of reports?.resourceRatings">
         <mat-grid-tile><a [routerLink]="['/resources/view', rating.item]">{{rating?.title}}</a></mat-grid-tile><mat-grid-tile>{{rating?.value}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
-      <mat-grid-tile>Highest Rated Courses</mat-grid-tile><mat-grid-tile>Average Rating</mat-grid-tile>
+      <mat-grid-tile class="label">Highest Rated Courses</mat-grid-tile><mat-grid-tile class="label">Average Rating</mat-grid-tile>
       <ng-container *ngFor="let rating of reports?.courseRatings">
         <mat-grid-tile><a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a></mat-grid-tile><mat-grid-tile>{{rating?.value}}</mat-grid-tile>
       </ng-container>
