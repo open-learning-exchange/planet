@@ -28,7 +28,7 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
 ## Getting Started
 
-1. Install CouchDB 2.0
+1. Install CouchDB 2.2.0
 
     1.1. OSX
 
