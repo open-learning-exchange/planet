@@ -36,6 +36,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
+      this.courseDetail.steps = this.courseDetail.steps.map(step => {
+        step.resources = step.resources.filter(res => res._attachments);
+        return step;
+      });
       this.progress = progress;
       this.isUserEnrolled = this.checkMyCourses(course._id);
     });
