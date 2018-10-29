@@ -35,8 +35,8 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
         $ brew install couchdb
 
     1.2. Ubuntu
-
-        $ apt-get install couchdb
+    
+    Follow the instruction in the official page [here][COUCHDB_INSTALL].
 
     1.3. Docker (**Suggested!**)
 
