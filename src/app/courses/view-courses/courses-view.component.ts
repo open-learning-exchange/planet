@@ -15,6 +15,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 })
 
 export class CoursesViewComponent implements OnInit, OnDestroy {
+
   onDestroy$ = new Subject<void>();
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
@@ -35,6 +36,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
       this.courseDetail = course;
+      this.courseDetail.steps = this.courseDetail.steps.map(step => {
+        step.resources = step.resources.filter(res => res._attachments);
+        return step;
+      });
       this.progress = progress;
       this.isUserEnrolled = this.checkMyCourses(course._id);
     });
