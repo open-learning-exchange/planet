@@ -1,0 +1,15 @@
+@import '../../variables';
+
+.label{
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+mat-grid-list {
+  margin-top: 0.5rem;
+}
+
+mat-grid-list:not(:last-child) {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid $light-grey;
+}
