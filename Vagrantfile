@@ -136,7 +136,7 @@ Vagrant.configure(2) do |config|
     prod.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
     prod.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
 
-    dev.vm.provider "virtualbox" do |vb|
+    prod.vm.provider "virtualbox" do |vb|
       vb.name = "planet-prod"
     end
 
