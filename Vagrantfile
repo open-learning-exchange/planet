@@ -89,9 +89,6 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SHELL
     # Add CouchDB Docker
     sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.2.0
-    # Install Angular CLI
-    #sudo npm install -g @angular/cli
-    #sudo npm install -g webdriver-manager
 
     # Add CORS to CouchDB so app has access to databases
     #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
@@ -110,7 +107,7 @@ Vagrant.configure(2) do |config|
     #echo "Preparing local node_modules folder…"
     #mkdir -p /vagrant_node_modules
     mkdir -p /vagrant/node_modules
-    chown vagrant:vagrant /vagrant_node_modules
+    #chown vagrant:vagrant /vagrant_node_modules
     #mount --bind /vagrant_node_modules /vagrant/node_modules
     #npm i --unsafe-perm
     #sudo npm run webdriver-set-version
