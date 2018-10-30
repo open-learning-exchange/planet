@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ole/stretch64"
-  config.vm.box_version = "0.4.1"
+  config.vm.box_version = "0.5.2"
 
   config.vm.hostname = "planet"
 
@@ -107,13 +107,13 @@ Vagrant.configure(2) do |config|
     curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/writer -d '"file"'
 
     # node_modules folder breaks when setting up in Windows, so use binding to fix
-    echo "Preparing local node_modules folder…"
-    mkdir -p /vagrant_node_modules
-    mkdir -p /vagrant/node_modules
+    #echo "Preparing local node_modules folder…"
+    #mkdir -p /vagrant_node_modules
+    #mkdir -p /vagrant/node_modules
     chown vagrant:vagrant /vagrant_node_modules
-    mount --bind /vagrant_node_modules /vagrant/node_modules
-    npm i --unsafe-perm
-    sudo npm run webdriver-set-version
+    #mount --bind /vagrant_node_modules /vagrant/node_modules
+    #npm i --unsafe-perm
+    #sudo npm run webdriver-set-version
     # End node_modules fix
 
     # Add initial Couch databases here
