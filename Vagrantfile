@@ -141,13 +141,6 @@ Vagrant.configure(2) do |config|
     end
 
     prod.vm.provision "shell", inline: <<-SHELL
-      docker pull treehouses/planet:0.5.3
-      docker pull treehouses/planet:db-init-0.5.3
-      docker tag treehouses/planet:0.5.3 treehouses/planet:local
-      docker tag treehouses/planet:db-init-0.5.3 treehouses/planet:db-init-local
-      wget https://raw.githubusercontent.com/open-learning-exchange/planet/master/docker/planet.yml
-      wget https://raw.githubusercontent.com/open-learning-exchange/planet/master/docker/volumes.yml
-      wget https://raw.githubusercontent.com/open-learning-exchange/planet/master/docker/install.yml
       sed -i 's/2200:5984/2300:5984/' planet.yml
       sed -i 's/80:80/3100:80/' planet.yml
       docker-compose -f install.yml -f planet.yml -f volumes.yml -p planet up -d
