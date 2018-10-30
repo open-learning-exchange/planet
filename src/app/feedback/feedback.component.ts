@@ -70,7 +70,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
-    this.feedback.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.feedback.sortingDataAccessor = (item, property) => item[property].toString().toLowerCase();
   }
 
   ngAfterViewInit() {
