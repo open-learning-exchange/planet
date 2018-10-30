@@ -109,7 +109,7 @@ export class FeedbackDirective {
     const formGroup = {
       priority: [ this.priority, Validators.required ],
       type: [ this.type, Validators.required ],
-      message: [ this.message, Validators.required ]
+      message: [ this.message, [Validators.required, Validators.pattern(".*\\S.*[a-zA-z0-9 ]")] ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
