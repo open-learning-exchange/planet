@@ -135,6 +135,10 @@ Vagrant.configure(2) do |config|
     # Port expose for docker inside vagrant (2300:2300 = CouchDB 3100:3100 = App)
     prod.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
     prod.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 22, host: 222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
+
+    # Prevent TTY Errors (copied from laravel/homestead: "homestead.rb" file)... By default this is "bash -l".
+    prod.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
     prod.vm.provider "virtualbox" do |vb|
       vb.name = "planet-prod"
