@@ -29,11 +29,12 @@
       <p><b>Description:</b> <td-markdown [content]="resource?.description"></td-markdown></p>
       <p><b>Author:</b> <i>{{resource?.author}}</i></p>
       <p><b>Published by:</b> {{resource?.Publisher}} on {{resource?.year}}</p>
+      <p><b>Level:</b><span *ngFor="let l of resource?.level; last as isLast;"> {{ !isLast ? l + ', ' : l }} </span></p>
       <p><b>Media:</b> {{ resource?.medium }}</p>
       <p><b>Language:</b> {{ resource?.language }}</p>
-      <p><b>Subject/s:</b> {{resource?.subject}}</p>
+      <p><b>Subject/s:</b><span *ngFor="let s of resource?.subject; last as isLast;"> {{ !isLast ? s + ', ' : s }} </span></p>
       <p><b>to License:</b> <a href={{resource?.linkToLicense}} target="_blank">{{resource?.linkToLicense}}</a></p>
-      <p><b>Resource:</b> {{ resource?.resourceFor }}</p>
+      <p><b>Resource:</b><span *ngFor="let r of resource?.resourceFor; last as isLast;"> {{ !isLast ? r + ', ' : r }} </span></p>
       <p><b>Type:</b> {{ resource?.resourceType }}</p>
     </div>
     <planet-resources-viewer
