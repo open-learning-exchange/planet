@@ -35,7 +35,7 @@ export class TeamsService {
   addTeamDialog(shelf, team?) {
     const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ team ? team.name : '', Validators.required ],
+      name: [ team ? team.name : '', [Validators.required, Validators.pattern(".*\\S.*[a-zA-z0-9 ]")]],
       description: team ? team.description : '',
       requests: [ team ? team.requests : [] ]
     };
