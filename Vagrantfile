@@ -109,7 +109,7 @@ Vagrant.configure(2) do |config|
     # node_modules folder breaks when setting up in Windows, so use binding to fix
     #echo "Preparing local node_modules folder…"
     #mkdir -p /vagrant_node_modules
-    #mkdir -p /vagrant/node_modules
+    mkdir -p /vagrant/node_modules
     chown vagrant:vagrant /vagrant_node_modules
     #mount --bind /vagrant_node_modules /vagrant/node_modules
     #npm i --unsafe-perm
