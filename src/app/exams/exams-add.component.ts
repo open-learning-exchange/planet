@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -31,8 +28,7 @@ export class ExamsAddComponent implements OnInit {
   showFormError = false;
   returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
-  private onDestroy$ = new Subject<void>();
-  private _question: any
+  private _question: any;
   get question(): any {
     return this._question;
   }
@@ -141,37 +137,9 @@ export class ExamsAddComponent implements OnInit {
     this.question = this.examForm.get('questions').value[index];
   }
 
-  newQuestionForm(question: any = {}, choices = []) {
-    return Object.assign(
-      {
-        body: [ '', Validators.required ],
-        type: 'input'
-      },
-      question,
-      {
-        marks: [ question.marks || 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array(choices || []),
-        correctChoice: [
-          typeof question.correctChoice === 'string' ? [ question.correctChoice ] : question.correctChoice || [],
-          CustomValidators.choiceSelected(this.examType === 'courses')
-        ]
-      }
-    );
-  }
-
-  updateQuestion(question: any = { choices: [] }) {
-    const choices = question.choices.map((choice) => {
-      return new FormGroup({
-        'text': new FormControl(choice.text),
-        'id': new FormControl(choice.id)
-      });
-    });
-    this.question.patchValue(question);
-    this.question.patchValue({ choices });
-  }
-
   addQuestion() {
     this.examForm.get('questions').value.push({
+      title: '',
       body: '',
       type: 'input',
       correctChoice: '',
