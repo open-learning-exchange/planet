@@ -147,7 +147,7 @@ Vagrant.configure(2) do |config|
     prod.vm.provision "shell", inline: <<-SHELL
       sed -i 's/2200:5984/2300:5984/' planet.yml
       sed -i 's/80:80/3100:80/' planet.yml
-      docker-compose -f install.yml -f planet.yml -f volumes.yml -p planet up -d
+      docker-compose -f planet.yml -f volumes.yml -p planet up -d
     SHELL
 
     # Start docker on every startup
