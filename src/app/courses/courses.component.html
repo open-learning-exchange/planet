@@ -34,9 +34,9 @@
           <span i18n>Send Courses</span>
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
-        <button mat-button [disabled]="!selection.selected.length" (click)="enrollInSelected(selection.selected, 'add')">
+        <button mat-button [disabled]="!selection.selected.length || !selectedNotEnrolled.length" (click)="enrollInSelected(selection.selected, 'add')">
           <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Enroll in Selected</span>
-          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+          <span *ngIf="selection?.selected?.length "> ({{selectedNotEnrolled.length}})</span>
         </button>
         <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
@@ -62,7 +62,7 @@
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+          <mat-checkbox (change)="$event ? rowToggle(row) : null"
             [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
         </mat-cell>

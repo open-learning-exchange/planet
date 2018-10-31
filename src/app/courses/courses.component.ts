@@ -34,6 +34,8 @@ import { StateService } from '../shared/state.service';
 
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
+  alreadyEnrolled = [];
+  selectedNotEnrolled = [];
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -96,6 +98,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         // Sort in descending createdDate order, so the new courses can be shown on the top
         courses.sort((a, b) => b.createdDate - a.createdDate);
         this.userShelf = this.userService.shelf;
+        this.alreadyEnrolled = this.userShelf.courseIds.slice();
         return this.setupList(courses, this.userShelf.courseIds);
       }),
       switchMap((courses: any) => this.parent ? this.couchService.localComparison(this.dbName, courses) : of(courses))
@@ -212,6 +215,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   enrollInSelected(courseIds, type) {
     this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {}, (error) => ((error)));
+    for (const courseId of courseIds) {
+      this.selection.deselect(courseId);
+      this.alreadyEnrolled.push(courseId);
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -222,11 +229,29 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
+    this.selectedNotEnrolled = [];
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    if  (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      for  (const o of this.selection.selected) {
+         if  (this.alreadyEnrolled.indexOf(o) === -1) {
+          this.selectedNotEnrolled.push(o);
+        }
+      }
+    }
+  }
+
+  rowToggle(row) {
+    this.selectedNotEnrolled = [];
+    this.selection.toggle(row._id);
+    for (const o of this.selection.selected) {
+       if (this.alreadyEnrolled.indexOf(o) === -1) {
+        this.selectedNotEnrolled.push(o);
+      }
+    }
   }
 
   onFilterChange(filterValue: string, field: string) {
