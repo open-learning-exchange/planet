@@ -8,7 +8,8 @@ import {
   ViewChild,
   TemplateRef,
   Injectable,
-  OnDestroy
+  OnDestroy,
+  AfterContentChecked
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -64,7 +65,7 @@ export class PlanetStepListItemComponent {
     }
   ` ]
 })
-export class PlanetStepListComponent implements OnDestroy {
+export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any[]>();

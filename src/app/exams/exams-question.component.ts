@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -26,7 +26,7 @@ import { CustomValidators } from '../validators/custom-validators';
     }
   ` ]
 })
-export class ExamsQuestionComponent implements OnChanges {
+export class ExamsQuestionComponent implements OnInit, OnChanges {
 
   @Input() question: any = {};
   @Output() questionChange = new EventEmitter<any>();
