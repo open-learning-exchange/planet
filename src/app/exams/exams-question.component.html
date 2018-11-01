@@ -1,47 +1,35 @@
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      Title
-    </mat-panel-title>
-    <mat-panel-description>
-      Fill step type here
-    </mat-panel-description>
-  </mat-expansion-panel-header>
-  <form class="vertical-form" [formGroup]="questionForm">
+<form class="vertical-form" [formGroup]="questionForm">
+  <mat-form-field class="full-width">
+    <input matInput class="full-width" placeholder="Question Title" [formControl]="questionForm.controls.title">
+    <mat-error><planet-form-error-messages [control]="questionForm.controls.title"></planet-form-error-messages></mat-error>
+  </mat-form-field>
+  <mat-form-field class="full-width mat-form-field-type-no-underline">
+    <planet-markdown-textbox class="full-width" required="true" placeholder="Question Detail" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
+    <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
+  </mat-form-field>
+  <div>
     <mat-form-field>
-      <input matInput i18n-placeholder placeholder="Question Title" formControlName="header">
+      <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
+        <mat-option value="input" i18n>Text - Short answer</mat-option>
+        <mat-option value="textarea" i18n>Text - Long answer</mat-option>
+        <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
+        <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
+      </mat-select>
     </mat-form-field>
-    <mat-form-field class="full-width mat-form-field-type-no-underline">
-      <planet-markdown-textbox class="full-width" required="true" placeholder="Question Detail" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
-      <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
-    </mat-form-field>
-    <div>
+    <button type="button" mat-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')">Add Choice</button>
+  </div>
+  <div class="question-choices"
+    [ngClass]="{'survey-question': examType === 'surveys'}">
+    <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
-          <mat-option value="input" i18n>Text - Short answer</mat-option>
-          <mat-option value="textarea" i18n>Text - Long answer</mat-option>
-          <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
-          <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
-        </mat-select>
+        <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
+        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
       </mat-form-field>
-      <button type="button" mat-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')">Add Choice</button>
-    </div>
-    <div class="question-choices"
-      [ngClass]="{'survey-question': examType === 'surveys'}">
-      <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
-          <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
-        </mat-form-field>
-        <mat-checkbox
-          (change)="setCorrect($event, choice)"
-          [checked]="correctCheckboxes[choice.controls.id.value]"
-          *ngIf="examType !== 'surveys'">
-        </mat-checkbox>
-      </ng-container>
-    </div>
-  </form>
-  <mat-action-row>
-    <button mat-icon-button (click)="deleteQuestion()"><mat-icon>delete</mat-icon></button>
-  </mat-action-row>
-</mat-expansion-panel>
+      <mat-checkbox
+        (change)="setCorrect($event, choice)"
+        [checked]="correctCheckboxes[choice.controls.id.value]"
+        *ngIf="examType !== 'surveys'">
+      </mat-checkbox>
+    </ng-container>
+  </div>
+</form>

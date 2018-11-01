@@ -1,11 +1,15 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import {
   FormGroup,
   FormControl,
   FormArray,
+  FormBuilder,
   Validators
 } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   selector: 'planet-exam-question',
@@ -22,21 +26,35 @@ import { uniqueId } from '../shared/utils';
     }
   ` ]
 })
-export class ExamsQuestionComponent implements OnInit {
+export class ExamsQuestionComponent implements OnInit, OnChanges {
 
-  @Input() questionForm: FormGroup;
+  @Input() question: any = {};
+  @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
-  choices: FormArray;
   correctCheckboxes: any = {};
+  questionForm: FormGroup = this.newQuestionForm();
+  initializing = true;
+  private onDestroy$ = new Subject<void>();
+  get choices(): FormArray {
+    return (<FormArray>this.questionForm.controls.choices);
+  }
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.choices = <FormArray>this.questionForm.controls.choices;
-    const correctChoice = this.questionForm.controls.correctChoice.value;
-    this.choices.controls.forEach((choice: any) =>
-      this.correctCheckboxes[choice.controls.id.value] = correctChoice.indexOf(choice.controls.id.value) > -1);
+    const onFormChange = (value) => {
+      if (!this.initializing) {
+        this.questionChange.emit(value);
+      }
+    };
+    this.questionForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
+    this.questionForm.controls.choices.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
+  }
+
+  ngOnChanges() {
+    this.initializing = true;
+    this.updateQuestion(this.question);
   }
 
   addChoice() {
@@ -80,6 +98,32 @@ export class ExamsQuestionComponent implements OnInit {
     while (this.choices.length !== 0) {
       this.removeChoice(0);
     }
+  }
+
+  newQuestionForm() {
+    return this.fb.group(Object.assign(
+      {
+        title: '',
+        body: [ '', Validators.required ],
+        type: 'input',
+        correctChoice: '',
+        marks: [ 1, CustomValidators.positiveNumberValidator ],
+        choices: this.fb.array([])
+      }
+    ));
+  }
+
+  updateQuestion(question: any = { body: '', choices: [] }) {
+    const choices = question.choices.map((choice) => {
+      return new FormGroup({
+        'text': new FormControl(choice.text),
+        'id': new FormControl(choice.id)
+      });
+    });
+    this.questionForm.patchValue(question);
+    this.questionForm.setControl('choices', this.fb.array(choices));
+    this.questionForm.get('body').setValue(question.body);
+    this.initializing = false;
   }
 
 }

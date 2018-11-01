@@ -106,12 +106,8 @@ export class CoursesStepComponent implements OnDestroy {
     }
   }
 
-  moveStep(event, i, direction = 0) {
-    event.stopPropagation();
-    const step = this.steps.splice(i, 1)[0];
-    if (direction !== 0) {
-      this.steps.splice(i + direction, 0, step);
-    }
+  stepsMoved(steps) {
+    this.steps = steps;
     this.stepsChange.emit(this.steps);
   }
 
