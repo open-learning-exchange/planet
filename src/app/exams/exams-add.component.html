@@ -24,7 +24,7 @@
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
-      <planet-step-list class="exam-questions" [steps]="examForm.controls.questions.value" (stepsChange)="stepsMoved($event)" [nameProp]="'title'" (stepClicked)="stepClick($event)">
+      <planet-step-list class="exam-questions" [steps]="examForm.controls.questions.value" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of examForm.controls.questions.value; index as i">
           <span>{{question.title || 'Question ' + (i+1)}}</span>
         </planet-step-list-item>

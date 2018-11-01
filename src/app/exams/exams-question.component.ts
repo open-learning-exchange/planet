@@ -36,6 +36,9 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   questionForm: FormGroup = this.newQuestionForm();
   initializing = true;
   private onDestroy$ = new Subject<void>();
+  get choices(): FormArray {
+    return (<FormArray>this.questionForm.controls.choices);
+  }
 
   constructor(private fb: FormBuilder) {}
 
@@ -57,14 +60,14 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   addChoice() {
     const newId = uniqueId();
     this.correctCheckboxes[newId] = false;
-    (<FormArray>this.questionForm.controls.choices).push(new FormGroup({
+    this.choices.push(new FormGroup({
       'text': new FormControl('', Validators.required),
       'id': new FormControl(newId)
     }));
   }
 
   removeChoice(index: number) {
-    (<FormArray>this.questionForm.controls.choices).removeAt(index);
+    this.choices.removeAt(index);
   }
 
   deleteQuestion() {
@@ -92,7 +95,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
 
   clearChoices() {
     this.questionForm.patchValue({ 'correctChoice': '' });
-    while ((<FormArray>this.questionForm.controls.choices).length !== 0) {
+    while (this.choices.length !== 0) {
       this.removeChoice(0);
     }
   }
