@@ -45,7 +45,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
-        <p>{{answer?.text || answer}}</p>
+        <td-markdown [content]="answer?.text || answer"></td-markdown>
       </ng-container>
     </ng-container>
     <div class="v-align-center">
