@@ -40,13 +40,15 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="chat-list" #chatList>
-      <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
-        <div class="chat-list-user">
-          <p>{{message.user}}</p>
-          <p class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</p>
+    <div class="wrapper">
+      <div class="chat-list" #chatList>
+        <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
+          <div class="chat-list-user">
+            <p class="user-name">{{message.user}}<p>
+            <p class="date">{{message.time | date:'MMM d, y h:mm a'}}</p>
+          </div>
+          <div class="chat-list-message"><mat-card [ngClass]="message.user === user.name ? 'primary-color' : 'accent-color'">{{message.message}}</mat-card></div>
         </div>
-        <div class="chat-list-message"><mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card></div>
       </div>
     </div>
     <div class="chat-reply">

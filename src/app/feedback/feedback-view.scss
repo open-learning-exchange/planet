@@ -1,40 +1,29 @@
-.view-container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-areas: "messages textarea";
-  grid-column-gap: 10px;
-  textarea {
-    grid-area: textarea;
-  }
-  .chat-list {
-    grid-area: messages;
-    overflow-y: auto;
-    max-height: inherit;
-  }
+.wrapper {
+  margin: auto;
+  max-width: 500px;
 }
 
-.chat-list-item {
-  display: grid;
-  grid-template-columns: 75px 1fr;
-  grid-template-areas: "user message";
-  grid-column-gap: 5px;
+button {
+  display: block;
+}
+
+mat-form-field {
   width: 100%;
-  margin-bottom: 10px;
-  .chat-list-user {
-    grid-area: user;
-  }
-  .chat-list-message {
-    grid-area: message;
-    justify-self: end;
-  }
 }
 
-.chat-reply {
-  mat-form-field {
-    width: 100%;
-  }
+.chat-list-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 3vh;
 }
 
-.title-edit {
-  width: 40%;
+.user-name {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.date {
+  font-size: 0.7em;
+  font-style: italic;
 }
