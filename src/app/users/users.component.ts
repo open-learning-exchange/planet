@@ -8,7 +8,7 @@ import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from 
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, debounceTime } from 'rxjs/operators';
 import { filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
@@ -51,6 +51,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  private searchChange = new Subject<string>();
 
   constructor(
     private dialog: MatDialog,
@@ -98,6 +99,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
     this.allUsers.filterPredicate = composeFilterFunctions([ this.filter, filterSpecificFields([ 'doc.name' ]) ]);
     this.allUsers.filter = this.allUsers.filter || ' ';
+    this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
+      this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
+    });
   }
 
   applyFilter(filterValue: string) {
@@ -107,7 +111,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   searchChanged(searchText: string) {
-    this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
+    this.searchChange.next(searchText);
   }
 
   ngAfterViewInit() {
