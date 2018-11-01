@@ -65,15 +65,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: [
         '',
         [ Validators.required,
-          Validators.pattern(".*\\S.*[a-zA-z0-9 ]")
+          Validators.pattern('.*\\S.*[a-zA-z0-9 ]')
         ],
         this.courseTitleValidator(this.route.snapshot.paramMap.get('id') || this.coursesService.course._id)
       ],
       description: [ '',
                     [ Validators.required,
-                      Validators.pattern(".*\\S.*[a-zA-z0-9 ]")
+                      Validators.pattern('.*\\S.*[a-zA-z0-9 ]')
                     ]
-                   ],
+                  ],
       languageOfInstruction: '',
       memberLimit: [
         10, // need to compose validators if we use more than one

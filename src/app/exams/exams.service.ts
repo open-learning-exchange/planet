@@ -31,7 +31,7 @@ export class ExamsService {
     return this.setInitalFormValue(new FormGroup({
       'text': new FormControl('', [
         Validators.required,
-        Validators.pattern(".*\\S.*[a-zA-z0-9 ]")
+        Validators.pattern('.*\\S.*[a-zA-z0-9 ]')
       ]),
       'id': new FormControl(newId)
     }), intialValue);
