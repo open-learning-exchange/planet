@@ -90,7 +90,6 @@ export class SubmissionsService {
   }
 
   updateStatus(submission: any) {
-    console.log(submission);
     if (submission.type === 'survey' && submission.status === 'complete') {
       return 'complete';
     }
