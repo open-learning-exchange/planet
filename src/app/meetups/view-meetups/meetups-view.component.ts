@@ -123,7 +123,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   inviteNotification(userId, meetupDetail) {
     return {
       'user': userId,
-      'message': this.userService.get().name + ' would like you to join ' + meetupDetail.title + ' at ' + meetupDetail.meetupLocation,
+      'message': this.userService.get().name + ' would like you to join ' + meetupDetail.title +
+        (meetupDetail.meetupLocation ? ' at ' + meetupDetail.meetupLocation : ''),
       'link': this.router.url,
       'item': meetupDetail._id,
       'type': 'meetup',
