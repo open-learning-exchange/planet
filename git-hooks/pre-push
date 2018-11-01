@@ -51,13 +51,13 @@ TOTAL_CHANGES=$(($CHANGES + $CHANGES_CACHED))
 git stash -k
 
 # Check if vagrant is running
-vagrant_status=$(vagrant status --machine-readable | grep state,running)
+vagrant_status=$(vagrant status dev --machine-readable | grep state,running)
 
 echo "Running Linters:"
 if [ "$vagrant_status" = "" ]; then
   tslint=$(npm run lint)
 else
-  tslint=$(vagrant ssh -- -t 'cd /vagrant;npm run lint')
+  tslint=$(vagrant ssh dev -- -t 'cd /vagrant;npm run lint')
 fi
 
 ret_code_tslint=$?
