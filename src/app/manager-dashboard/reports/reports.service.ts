@@ -57,7 +57,8 @@ export class ReportsService {
         byGender: users.reduce((usersByGender: any, user: any) => {
           usersByGender[user.gender || 'didNotSpecify'] += 1;
           return usersByGender;
-        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 })
+        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+        byMonth: this.groupByMonth(users, 'joinDate')
       });
     }));
   }

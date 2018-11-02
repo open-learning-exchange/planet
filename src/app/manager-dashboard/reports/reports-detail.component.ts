@@ -15,6 +15,8 @@ export class ReportsDetailComponent {
   planetCode = '';
   reports: any = {};
   chart: Chart;
+  chartOptions: any = [];
+  selectedChart: any = {};
 
   constructor(
     private activityService: ReportsService,
@@ -38,19 +40,27 @@ export class ReportsDetailComponent {
   }
 
   getTotalUsers(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).subscribe(({ count, byGender }) => {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe(({ count, byGender, byMonth }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
+      this.chartOptions.push({ label: 'Registrations', data: byMonth });
+      // this.setChart('Registrations', byMonth.map((visit: any) => ({
+      //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      //   y: visit.count
+      // })));
     });
   }
 
   getLoginActivities() {
     this.activityService.getLoginActivities(this.planetCode).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
       this.reports.visits = byUser.slice(0, 5);
-      this.setChart('Visits', byMonth.map((visit: any) => ({
-        x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        y: visit.count
-      })));
+      const reportObj = { label: 'Visits', data: byMonth };
+      this.chartOptions.push(reportObj);
+      this.onReportViewChange(this.chartOptions.length - 1);
+      // this.setChart('Visits', byMonth.map((visit: any) => ({
+      //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      //   y: visit.count
+      // })));
     });
   }
 
@@ -72,7 +82,16 @@ export class ReportsDetailComponent {
     this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
   }
 
-  setChart(label: string, data: any[]) {
+  onReportViewChange(index: number) {
+    this.selectedChart = { ...this.chartOptions[index], index };
+    this.setChart(this.selectedChart);
+  }
+
+  setChart({ label, data }) {
+    data = data.map(datum => ({
+      x: new Date(datum.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      y: datum.count
+    }));
     this.chart = new Chart('reportsChart', {
       type: 'bar',
       data: {
