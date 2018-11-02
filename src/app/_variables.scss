@@ -45,6 +45,11 @@ $form-width-1: 181px;
 // Width for form field in grid layout
 $form-field-width: 180px;
 
+:export {
+  primary: $primary;
+  primaryLight: $primary-light;
+}
+
 /*
  * Old Planet Material Colors
  * Saved in case we want to revert
