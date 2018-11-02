@@ -5,7 +5,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
+
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -70,7 +71,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     this.getFeedback();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
-    this.feedback.sortingDataAccessor = (item, property) => item[property].toString().toLowerCase();
+    this.feedback.sortingDataAccessor = sortNumberOrString;
   }
 
   ngAfterViewInit() {
