@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
+import { Chart } from 'chart.js';
+import { styleVariables } from '../../shared/utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -12,6 +14,7 @@ export class ReportsDetailComponent {
   parentCode = '';
   planetCode = '';
   reports: any = {};
+  chart: Chart;
 
   constructor(
     private activityService: ReportsService,
@@ -42,8 +45,12 @@ export class ReportsDetailComponent {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.planetCode).subscribe(visits => {
-      this.reports.visits = visits.slice(0, 5);
+    this.activityService.getLoginActivities(this.planetCode).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+      this.reports.visits = byUser.slice(0, 5);
+      this.setChart('Visits', byMonth.map((visit: any) => ({
+        x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        y: visit.count
+      })));
     });
   }
 
@@ -63,6 +70,36 @@ export class ReportsDetailComponent {
   getPlanetCounts() {
     this.activityService.getDatabaseCount('resources').subscribe(count => this.reports.totalResources = count);
     this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
+  }
+
+  setChart(label: string, data: any[]) {
+    this.chart = new Chart('reportsChart', {
+      type: 'bar',
+      data: {
+        datasets: [ {
+          label,
+          data,
+          backgroundColor: styleVariables.primaryLight
+        } ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [ {
+            labels: data.map(datum => datum.x),
+            type: 'category',
+          } ],
+          yAxes: [ {
+            type: 'linear',
+            ticks: {
+              beginAtZero: true,
+              precision: 0,
+              suggestedMax: 10
+            }
+          } ]
+        }
+      }
+    });
   }
 
 }

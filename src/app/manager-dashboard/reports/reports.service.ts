@@ -32,6 +32,16 @@ export class ReportsService {
     }, []);
   }
 
+  groupByMonth(array, dateField) {
+    return this.groupBy(
+      array.map(item => {
+        const fullDate = new Date(item[dateField]);
+        return { ...item, date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf() };
+      }),
+      [ 'date' ]
+    );
+  }
+
   selector(planetCode?: string, field: string = 'createdOn') {
     return planetCode ? findDocuments({ [field]: planetCode }) : undefined;
   }
@@ -54,8 +64,11 @@ export class ReportsService {
 
   getLoginActivities(planetCode?: string) {
     return this.couchService.findAll('login_activities', this.selector(planetCode)).pipe(map((loginActivities: any) => {
-      return this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
-        .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count);
+      return ({
+        byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
+          .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
+        byMonth: this.groupByMonth(loginActivities, 'loginTime')
+      });
     }));
   }
 
