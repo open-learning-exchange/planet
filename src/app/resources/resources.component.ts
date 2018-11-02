@@ -8,7 +8,7 @@ import { takeUntil, map, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields, composeFilterFunctions, filterTags } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
@@ -107,7 +107,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         case 'rating':
           return item.rating.rateSum / item.rating.totalRating;
         default:
-          return item[property].toLowerCase();
+          return sortNumberOrString(item, property);
       }
     };
 
