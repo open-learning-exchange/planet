@@ -150,7 +150,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.dbName,
       { ...courseInfo, steps: this.steps, updatedDate: Date.now(), ...this.documentInfo }
     ).subscribe((res) => {
-      const message = this.pageType === 'Update' ? 'Course Updated Successfully' : 'New Course Added';
+      const message = courseInfo.courseTitle + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
       this.courseChangeComplete(message, res, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred

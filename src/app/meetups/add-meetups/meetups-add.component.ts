@@ -112,7 +112,7 @@ export class MeetupsAddComponent implements OnInit {
       })
     ).subscribe(() => {
         this.router.navigate([ '/meetups' ]);
-        this.planetMessageService.showMessage('Meetup Updated Successfully');
+        this.planetMessageService.showMessage(meetupInfo.title  + ' Updated Successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -126,7 +126,7 @@ export class MeetupsAddComponent implements OnInit {
       'endDate': Date.parse(meetupInfo.endDate),
     }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
-      this.planetMessageService.showMessage('Meetup created');
+      this.planetMessageService.showMessage(meetupInfo.title  + ' created');
     }, (err) => console.log(err));
   }
 
