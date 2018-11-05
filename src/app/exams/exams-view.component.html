@@ -12,13 +12,15 @@
   <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(questionNum)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container">
-    <div class="question-header"><b>{{question.header}}</b></div>
     <td-markdown [content]="question.body"></td-markdown>
     <ng-container [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question.type">
           <mat-form-field *ngSwitchCase="'input'">
             <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer">
+          </mat-form-field>
+          <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
+            <planet-markdown-textbox [(ngModel)]="answer"></planet-markdown-textbox>
           </mat-form-field>
           <mat-radio-group *ngSwitchCase="'select'" class="question-list planet-radio-group" [(ngModel)]="answer">
             <mat-radio-button *ngFor="let option of question.choices" [value]="option">
@@ -33,7 +35,8 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
-        <p><b i18n>Submitted answer:</b><span>{{' ' + (answer?.text || answer || '')}}</span></p>
+        <p><b i18n>Submitted answer:</b></p>
+        <td-markdown [content]="answer?.text || answer"></td-markdown>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
@@ -41,7 +44,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
-        <p>{{answer?.text || answer}}</p>
+        <td-markdown [content]="answer?.text || answer"></td-markdown>
       </ng-container>
     </ng-container>
     <div class="v-align-center">
