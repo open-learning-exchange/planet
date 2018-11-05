@@ -90,8 +90,11 @@ export class ReportsService {
 
   getResourceVisits(planetCode?: string) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode)).pipe(map((resourceActivites) => {
-      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
-        .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined);
+      return ({
+        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
+          .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined);
+        byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
+      });
     }));
   }
 

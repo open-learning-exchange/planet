@@ -262,7 +262,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.activityService.getRatingInfo(configuration.code)
     ]).subscribe(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
       this.activityLogs = {
-        resourceVisits: resourceVisits.length ? resourceVisits[0].count : 0,
+        resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
         ratings: ratings.reduce((total, rating) => total + rating.count, 0),
         ...this.activityService.mostRecentAdminActivities(configuration, loginActivities, adminActivities)
       };

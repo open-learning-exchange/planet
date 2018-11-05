@@ -51,7 +51,7 @@ export class ReportsComponent {
     ]).subscribe(([ planets, resourceVisits, loginActivities, adminActivities ]) => {
         this.logs.data = planets.map((planet: any) => ({
           ...planet,
-          resourceViews: this.countByPlanet(planet, resourceVisits),
+          resourceViews: this.countByPlanet(planet, resourceVisits.byResource),
           userVisits: this.countByPlanet(planet, loginActivities),
           ...this.activityService.mostRecentAdminActivities(planet, loginActivities, adminActivities)
         }));

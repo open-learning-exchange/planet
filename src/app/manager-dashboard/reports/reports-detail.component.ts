@@ -43,7 +43,6 @@ export class ReportsDetailComponent {
     return this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
-      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'registrationChart' });
       // this.setChart('Registrations', byMonth.map((visit: any) => ({
       //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       //   y: visit.count
@@ -55,6 +54,7 @@ export class ReportsDetailComponent {
     this.activityService.getLoginActivities(this.planetCode).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
+      this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
       // this.setChart('Visits', byMonth.map((visit: any) => ({
       //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       //   y: visit.count
@@ -70,8 +70,9 @@ export class ReportsDetailComponent {
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.planetCode).subscribe(resourceVisits => {
-      this.reports.resources = resourceVisits.sort((a, b) => b.count - a.count).slice(0, 5);
+    this.activityService.getResourceVisits(this.planetCode).subscribe(({ byResource, byMonth }) => {
+      this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
+      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
     });
   }
 
@@ -80,10 +81,10 @@ export class ReportsDetailComponent {
     this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
   }
 
-  xyChartData(data) {
+  xyChartData(data, unique) {
     return data.map((visit: any) => ({
       x: this.monthDataLabels(visit.date),
-      y: visit.count || 0
+      y: unique ? visit.unique.length : visit.count || 0
     }));
   }
 
@@ -99,16 +100,16 @@ export class ReportsDetailComponent {
     return { label, data, backgroundColor, stack: 1 }
   }
 
-  setGenderDatasets(data) {
+  setGenderDatasets(data, unique = false) {
     const uniqueMonths = this.uniqueMonths(data);
     const genderFilter = (gender: string) =>
-      uniqueMonths.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month });
+      uniqueMonths.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     return ({
       data: {
         datasets: [
-          this.datasetObject('Male', this.xyChartData(genderFilter('male')), styleVariables.primaryLight),
-          this.datasetObject('Female', this.xyChartData(genderFilter('female')), styleVariables.accentLight),
-          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined)), styleVariables.grey)
+          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLight),
+          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLight),
+          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey)
         ]
       },
       labels: uniqueMonths.map(month => this.monthDataLabels(month))
@@ -136,8 +137,9 @@ export class ReportsDetailComponent {
 
   titleOfChartName(chartName: string) {
     const chartNames = {
-      registrationChart: 'New Members',
-      visitChart: 'Total Visits'
+      resourceViewChart: 'Resource Views',
+      visitChart: 'Total Visits',
+      uniqueVisitChart: 'Unique Member Visits'
     }
     return chartNames[chartName];
   }
