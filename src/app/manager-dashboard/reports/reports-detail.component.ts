@@ -89,19 +89,28 @@ export class ReportsDetailComponent {
   }
 
   datasetObject(label, data, backgroundColor) {
-    return { label, data, backgroundColor, stack: 1 }
+    return { label, data, backgroundColor };
   }
 
   setGenderDatasets(data, unique = false) {
     const uniqueMonths = this.uniqueMonths(data);
     const genderFilter = (gender: string) =>
       uniqueMonths.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
+    const monthlyObj = (month) => {
+      const monthlyData = data.filter((datum: any) => datum.date === month);
+      return ({
+        count: monthlyData.reduce((count: number, datum: any) => count + datum.count, 0),
+        unique: monthlyData.reduce((unique: string[], datum: any) => unique.concat(datum.unique), [])
+      });
+    };
+    const totals = () => uniqueMonths.map((month) => ({ date: month, ...monthlyObj(month) }));
     return ({
       data: {
         datasets: [
           this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLight),
           this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLight),
-          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey)
+          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
       labels: uniqueMonths.map(month => this.monthDataLabels(month))
@@ -117,7 +126,7 @@ export class ReportsDetailComponent {
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { labels, type: 'category', stacked: true } ],
+          xAxes: [ { labels, type: 'category' } ],
           yAxes: [ {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
