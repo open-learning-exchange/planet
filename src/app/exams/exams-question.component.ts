@@ -24,6 +24,9 @@ import { CustomValidators } from '../validators/custom-validators';
     .survey-question {
       grid-template-columns: repeat(auto-fill, 180px);
     }
+    .textbox-detail {
+      overflow: hidden;
+    }
   ` ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges {
