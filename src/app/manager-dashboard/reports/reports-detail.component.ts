@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
-import { styleVariables } from '../../shared/utils';
+import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -14,9 +15,7 @@ export class ReportsDetailComponent {
   parentCode = '';
   planetCode = '';
   reports: any = {};
-  chart: Chart;
-  chartOptions: any = [];
-  selectedChart: any = {};
+  charts: Chart[] = [];
 
   constructor(
     private activityService: ReportsService,
@@ -32,31 +31,30 @@ export class ReportsDetailComponent {
   }
 
   initializeData(local: boolean) {
-    this.getTotalUsers(local);
-    this.getLoginActivities();
-    this.getRatingInfo();
-    this.getResourceVisits();
-    this.getPlanetCounts();
+    this.getTotalUsers(local).subscribe(() => {
+      this.getLoginActivities();
+      this.getRatingInfo();
+      this.getResourceVisits();
+      this.getPlanetCounts();
+    });
   }
 
   getTotalUsers(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).subscribe(({ count, byGender, byMonth }) => {
+    return this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
-      this.chartOptions.push({ label: 'Registrations', data: byMonth });
+      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'registrationChart' });
       // this.setChart('Registrations', byMonth.map((visit: any) => ({
       //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       //   y: visit.count
       // })));
-    });
+    }));
   }
 
   getLoginActivities() {
     this.activityService.getLoginActivities(this.planetCode).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
       this.reports.visits = byUser.slice(0, 5);
-      const reportObj = { label: 'Visits', data: byMonth };
-      this.chartOptions.push(reportObj);
-      this.onReportViewChange(this.chartOptions.length - 1);
+      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
       // this.setChart('Visits', byMonth.map((visit: any) => ({
       //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       //   y: visit.count
@@ -82,43 +80,66 @@ export class ReportsDetailComponent {
     this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
   }
 
-  onReportViewChange(index: number) {
-    this.selectedChart = { ...this.chartOptions[index], index };
-    this.setChart(this.selectedChart);
+  xyChartData(data) {
+    return data.map((visit: any) => ({
+      x: this.monthDataLabels(visit.date),
+      y: visit.count || 0
+    }));
   }
 
-  setChart({ label, data }) {
-    data = data.map(datum => ({
-      x: new Date(datum.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-      y: datum.count
-    }));
-    this.chart = new Chart('reportsChart', {
-      type: 'bar',
+  monthDataLabels(date) {
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  }
+
+  uniqueMonths(data) {
+    return data.map((datum: any) => datum.date).reduce(dedupeShelfReduce, []);
+  }
+
+  datasetObject(label, data, backgroundColor) {
+    return { label, data, backgroundColor, stack: 1 }
+  }
+
+  setGenderDatasets(data) {
+    const uniqueMonths = this.uniqueMonths(data);
+    const genderFilter = (gender: string) =>
+      uniqueMonths.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month });
+    return ({
       data: {
-        datasets: [ {
-          label,
-          data,
-          backgroundColor: styleVariables.primaryLight
-        } ]
+        datasets: [
+          this.datasetObject('Male', this.xyChartData(genderFilter('male')), styleVariables.primaryLight),
+          this.datasetObject('Female', this.xyChartData(genderFilter('female')), styleVariables.accentLight),
+          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined)), styleVariables.grey)
+        ]
       },
+      labels: uniqueMonths.map(month => this.monthDataLabels(month))
+    });
+  }
+
+  setChart({ data, labels, chartName }) {
+    this.charts.push(new Chart(chartName, {
+      type: 'bar',
+      data,
       options: {
+        title: { display: true, text: this.titleOfChartName(chartName), fontSize: 16 },
+        legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ {
-            labels: data.map(datum => datum.x),
-            type: 'category',
-          } ],
+          xAxes: [ { labels, type: 'category', stacked: true } ],
           yAxes: [ {
             type: 'linear',
-            ticks: {
-              beginAtZero: true,
-              precision: 0,
-              suggestedMax: 10
-            }
+            ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
           } ]
         }
       }
-    });
+    }));
+  }
+
+  titleOfChartName(chartName: string) {
+    const chartNames = {
+      registrationChart: 'New Members',
+      visitChart: 'Total Visits'
+    }
+    return chartNames[chartName];
   }
 
 }

@@ -9,16 +9,11 @@
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
       <span>{{planetCode}}</span>
-      <span class="toolbar-fill"></span>
-      <mat-form-field class="font-size-1 margin-lr-3">
-        <mat-select placeholder="Report View" [value]="selectedChart.index" (selectionChange)="onReportViewChange($event.value)">
-          <mat-option *ngFor="let option of chartOptions; index as i" value={{i}}>{{option.label}}</mat-option>
-        </mat-select>
-      </mat-form-field>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <canvas id="reportsChart"></canvas>
+    <canvas id="registrationChart"></canvas>
+    <canvas id="visitChart"></canvas>
     <mat-grid-list cols="4" rowHeight="2rem">
       <mat-grid-tile></mat-grid-tile>
       <mat-grid-tile class="label">Male</mat-grid-tile><mat-grid-tile class="label">Female</mat-grid-tile><mat-grid-tile class="label">Did not specify</mat-grid-tile>
