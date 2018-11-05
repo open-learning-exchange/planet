@@ -43,10 +43,6 @@ export class ReportsDetailComponent {
     return this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
-      // this.setChart('Registrations', byMonth.map((visit: any) => ({
-      //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-      //   y: visit.count
-      // })));
     }));
   }
 
@@ -55,10 +51,6 @@ export class ReportsDetailComponent {
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
       this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
-      // this.setChart('Visits', byMonth.map((visit: any) => ({
-      //   x: new Date(visit.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-      //   y: visit.count
-      // })));
     });
   }
 
@@ -137,9 +129,9 @@ export class ReportsDetailComponent {
 
   titleOfChartName(chartName: string) {
     const chartNames = {
-      resourceViewChart: 'Resource Views',
-      visitChart: 'Total Visits',
-      uniqueVisitChart: 'Unique Member Visits'
+      resourceViewChart: 'Resource Views by Month',
+      visitChart: 'Total Member Visits by Month',
+      uniqueVisitChart: 'Unique Member Visits by Month'
     }
     return chartNames[chartName];
   }
