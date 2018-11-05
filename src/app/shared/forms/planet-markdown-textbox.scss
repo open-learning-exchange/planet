@@ -24,4 +24,14 @@ planet-markdown-textbox {
     height: 15vh;
     min-height: 15vh;
   }
+
+  .CodeMirror.CodeMirror-fullscreen {
+    margin-top: 10px;
+    margin-left: 70px;
+  }
+
+  .CodeMirror.CodeMirror-fullscreen .CodeMirror-scroll{
+    height: 100vh;
+    min-height: 100vh;
+  }
 }
