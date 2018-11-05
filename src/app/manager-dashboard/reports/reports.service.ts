@@ -123,7 +123,7 @@ export class ReportsService {
 
   appendGender(array) {
     return array.map((item: any) => {
-      const user = this.users.find((user: any) => user.name === item.user) || {};
+      const user = this.users.find((u: any) => u.name === item.user) || {};
       return ({
         ...item,
         gender: user.gender

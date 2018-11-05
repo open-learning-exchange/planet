@@ -81,7 +81,7 @@ export class ReportsDetailComponent {
   }
 
   monthDataLabels(date) {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 
   uniqueMonths(data) {
@@ -95,12 +95,14 @@ export class ReportsDetailComponent {
   setGenderDatasets(data, unique = false) {
     const uniqueMonths = this.uniqueMonths(data);
     const genderFilter = (gender: string) =>
-      uniqueMonths.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
+      uniqueMonths.map((month) =>
+        data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] }
+      );
     const monthlyObj = (month) => {
       const monthlyData = data.filter((datum: any) => datum.date === month);
       return ({
         count: monthlyData.reduce((count: number, datum: any) => count + datum.count, 0),
-        unique: monthlyData.reduce((unique: string[], datum: any) => unique.concat(datum.unique), [])
+        unique: monthlyData.reduce((allUnique: string[], datum: any) => allUnique.concat(datum.unique), [])
       });
     };
     const totals = () => uniqueMonths.map((month) => ({ date: month, ...monthlyObj(month) }));
@@ -141,7 +143,7 @@ export class ReportsDetailComponent {
       resourceViewChart: 'Resource Views by Month',
       visitChart: 'Total Member Visits by Month',
       uniqueVisitChart: 'Unique Member Visits by Month'
-    }
+    };
     return chartNames[chartName];
   }
 
