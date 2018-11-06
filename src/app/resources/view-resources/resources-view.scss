@@ -22,6 +22,7 @@
   .resource-detail {
     grid-area: detail;
     padding: 1rem;
+    overflow-y: auto;
   }
 
   .resource-view {
