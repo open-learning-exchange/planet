@@ -9,9 +9,8 @@
 
   form {
     display: grid;
-    height: inherit;
     grid-template-areas: "buttons" "inputs" "questions";
-    grid-template-rows: 48px 72px calc(#{$view-container-height} - 120px);
+    grid-template-rows: 48px 72px calc(#{$view-container-height} - 120px - 2rem);
   }
 
   .exam-buttons {
