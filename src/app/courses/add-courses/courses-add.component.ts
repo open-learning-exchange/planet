@@ -25,7 +25,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   members = [];
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
-  documentInfo = { rev: '', id: '' };
+  documentInfo = { '_rev': undefined, '_id': undefined };
   pageType = 'Add new';
   private onDestroy$ = new Subject<void>();
   private _steps = [];
@@ -98,7 +98,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
           step['id'] = uniqueId();
         });
         this.pageType = 'Update';
-        this.documentInfo = { rev: data._rev, id: data._id };
+        this.documentInfo = { _rev: data._rev, _id: data._id };
         if (this.route.snapshot.params.continue !== 'true') {
           this.setFormAndSteps({ form: data, steps: data.steps });
         }
@@ -108,6 +108,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     }
     if (this.route.snapshot.params.continue === 'true') {
       this.setFormAndSteps(this.coursesService.course);
+      this.submitAddedExam();
     }
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
@@ -122,6 +123,16 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  submitAddedExam() {
+    setTimeout(() => {
+      if (!this.courseForm.pending) {
+        this.onSubmit(false);
+      } else {
+        this.submitAddedExam();
+      }
+    }, 1000);
+  }
+
   setFormAndSteps(course: any) {
     this.courseForm.patchValue(course.form);
     this.steps = course.steps || [];
@@ -133,27 +144,23 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCourse(courseInfo) {
+  updateCourse(courseInfo, shouldNavigate) {
     this.deleteStepIdProperty();
-    this.couchService.put(
-      this.dbName + '/' + this.documentInfo.id,
-      { ...courseInfo, '_rev': this.documentInfo.rev, steps: this.steps, updatedDate: Date.now() }
-    ).subscribe(() => {
-      this.navigateBack();
-      this.planetMessageService.showMessage('Course Updated Successfully');
+    this.couchService.post(
+      this.dbName,
+      { ...courseInfo, steps: this.steps, updatedDate: Date.now(), ...this.documentInfo }
+    ).subscribe((res) => {
+      const message = this.pageType === 'Update' ? 'Course Updated Successfully' : 'New Course Added';
+      this.courseChangeComplete(message, res, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
   }
 
-  onSubmit() {
+  onSubmit(shouldNavigate = true) {
     if (this.courseForm.valid) {
-      if (this.route.snapshot.url[0].path === 'update') {
-        this.updateCourse(this.courseForm.value);
-      } else {
-        this.addCourse(this.courseForm.value);
-      }
+      this.updateCourse(this.courseForm.value, shouldNavigate);
     } else {
       Object.keys(this.courseForm.controls).forEach(field => {
         const control = this.courseForm.get(field);
@@ -162,18 +169,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  addCourse(courseInfo) {
-    // ...is the rest syntax for object destructuring
-    // By deleting the id property, ngFor trackBy will break
-    // If user is not rerouted after update moving steps will no longer work
-    this.deleteStepIdProperty();
-    this.couchService.post(this.dbName, { ...courseInfo, steps: this.steps }).subscribe(() => {
+  courseChangeComplete(message, response: any, shouldNavigate) {
+    if (shouldNavigate) {
       this.navigateBack();
-      this.planetMessageService.showMessage('New Course Added');
-    }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    });
+    }
+    this.documentInfo = { '_id': response.id, '_rev': response.rev };
+    this.planetMessageService.showMessage(message);
   }
 
   deleteStepIdProperty() {
