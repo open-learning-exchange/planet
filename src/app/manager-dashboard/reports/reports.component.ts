@@ -44,7 +44,10 @@ export class ReportsComponent {
   getLogs() {
     forkJoin([
       this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ 'parentCode': this.stateService.configuration.code }, 0, [ { 'createdDate': 'desc' } ] )),
+        findDocuments(
+          { 'parentCode': this.stateService.configuration.code, 'registrationRequest': 'accepted' }, 0, [ { 'createdDate': 'desc' } ]
+        )
+      ),
       this.activityService.getResourceVisits(),
       this.activityService.getLoginActivities(),
       this.activityService.getAdminActivities()
