@@ -79,7 +79,10 @@ export class ExamsAddComponent implements OnInit {
         console.log(error);
       });
     }
-    this.courseName = this.coursesService.course.form.courseTitle;
+
+    this.courseName = this.coursesService.course.form ?
+                      this.coursesService.course.form.courseTitle
+                      : '';
   }
 
   onSubmit() {
