@@ -126,7 +126,7 @@ export class MeetupsAddComponent implements OnInit {
       'endDate': Date.parse(meetupInfo.endDate),
     }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
-      this.planetMessageService.showMessage(meetupInfo.title  + ' created');
+      this.planetMessageService.showMessage(meetupInfo.title  + ' Added');
     }, (err) => console.log(err));
   }
 
