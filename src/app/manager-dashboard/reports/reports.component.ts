@@ -52,8 +52,8 @@ export class ReportsComponent {
         this.logs.data = planets.map((planet: any) => ({
           ...planet,
           resourceViews: this.countByPlanet(planet, resourceVisits.byResource),
-          userVisits: this.countByPlanet(planet, loginActivities),
-          ...this.activityService.mostRecentAdminActivities(planet, loginActivities, adminActivities)
+          userVisits: this.countByPlanet(planet, loginActivities.byUser),
+          ...this.activityService.mostRecentAdminActivities(planet, loginActivities.byUser, adminActivities)
         }));
     }, (error) => this.planetMessageService.showAlert('There was a problem getting Activity Logs'));
   }
