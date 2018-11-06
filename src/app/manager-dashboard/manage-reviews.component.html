@@ -37,7 +37,7 @@
       <mat-cell *matCellDef="let element" class="list-content-menu">
 
         <h3 class="header">
-          <a [routerLink]="['view', element._id]">{{element.itemName}}</a>
+          {{element.itemName}}
         </h3>
         
         <div class="content"><p>{{ element.description }}</p></div>
