@@ -156,7 +156,7 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? 'Course successfully resigned from myCourses' : 'Course added to your dashboard';
+      const admissionMessage = type === 'resign' ? 'Course successfully removed from myCourses' : 'Course added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));

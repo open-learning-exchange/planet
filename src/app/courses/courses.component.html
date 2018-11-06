@@ -84,11 +84,11 @@
           <mat-menu #resourceMenu="matMenu">
             <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>
-              <span i18n>Admission</span>
+              <span i18n>Join</span>
             </a>
             <a mat-menu-item *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">
               <mat-icon>clear</mat-icon>
-              <span i18n>Resign</span>
+              <span i18n>Leave</span>
             </a>
             <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
               <mat-icon>feedback</mat-icon>
