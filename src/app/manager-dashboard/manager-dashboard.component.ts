@@ -264,7 +264,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.activityLogs = {
         resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
         ratings: ratings.reduce((total, rating) => total + rating.count, 0),
-        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities, adminActivities)
+        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities.byUser, adminActivities)
       };
     });
   }

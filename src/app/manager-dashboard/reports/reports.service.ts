@@ -9,7 +9,7 @@ import { dedupeShelfReduce } from '../../shared/utils';
 })
 export class ReportsService {
 
-  users: any[];
+  users: any[] = [];
 
   constructor(
     private couchService: CouchService
