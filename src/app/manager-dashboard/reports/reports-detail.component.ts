@@ -84,18 +84,14 @@ export class ReportsDetailComponent {
     return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 
-  uniqueMonths(data) {
-    return data.map((datum: any) => datum.date).reduce(dedupeShelfReduce, []);
-  }
-
   datasetObject(label, data, backgroundColor) {
     return { label, data, backgroundColor };
   }
 
   setGenderDatasets(data, unique = false) {
-    const uniqueMonths = this.uniqueMonths(data);
+    const months = this.setMonths();
     const genderFilter = (gender: string) =>
-      uniqueMonths.map((month) =>
+      months.map((month) =>
         data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] }
       );
     const monthlyObj = (month) => {
@@ -105,7 +101,7 @@ export class ReportsDetailComponent {
         unique: monthlyData.reduce((allUnique: string[], datum: any) => allUnique.concat(datum.unique), [])
       });
     };
-    const totals = () => uniqueMonths.map((month) => ({ date: month, ...monthlyObj(month) }));
+    const totals = () => months.map((month) => ({ date: month, ...monthlyObj(month) }));
     return ({
       data: {
         datasets: [
@@ -115,7 +111,7 @@ export class ReportsDetailComponent {
           this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: uniqueMonths.map(month => this.monthDataLabels(month))
+      labels: months.map(month => this.monthDataLabels(month))
     });
   }
 
@@ -145,6 +141,15 @@ export class ReportsDetailComponent {
       uniqueVisitChart: 'Unique Member Visits by Month'
     };
     return chartNames[chartName];
+  }
+
+  setMonths() {
+    // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
+    const planetLaunchDate = new Date(2018, 6, 1).valueOf();
+    const now = new Date();
+    return Array(12).fill(1)
+      .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
+      .filter((month: number) => month > planetLaunchDate);
   }
 
 }
