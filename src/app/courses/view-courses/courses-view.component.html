@@ -8,10 +8,10 @@
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
       <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
-        Admission
+        Join
       </button>
       <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled && courseDetail.steps.length">
-        Resign
+        Leave
       </button>
     </ng-container>
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
