@@ -26,12 +26,18 @@ planet-markdown-textbox {
   }
 
   .CodeMirror.CodeMirror-fullscreen {
-    padding-top: 30px;
+    padding-top: 70px;
     padding-left: 80px;
   }
 
   .CodeMirror.CodeMirror-fullscreen .CodeMirror-scroll{
     height: 100vh;
     min-height: 100vh;
+  }
+
+  .editor-toolbar.fullscreen{
+    z-index: 1000;
+    top:70px;
+    left: 65px;
   }
 }
