@@ -35,7 +35,7 @@ export class ReportsDetailComponent {
       this.getLoginActivities();
       this.getRatingInfo();
       this.getResourceVisits();
-      this.getPlanetCounts();
+      this.getPlanetCounts(local);
     });
   }
 
@@ -70,9 +70,16 @@ export class ReportsDetailComponent {
     });
   }
 
-  getPlanetCounts() {
-    this.activityService.getDatabaseCount('resources').subscribe(count => this.reports.totalResources = count);
-    this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
+  getPlanetCounts(local: boolean) {
+    if (local) {
+      this.activityService.getDatabaseCount('resources').subscribe(count => this.reports.totalResources = count);
+      this.activityService.getDatabaseCount('courses').subscribe(count => this.reports.totalCourses = count);
+    } else {
+      this.activityService.getChildDatabaseCounts(this.planetCode).subscribe((response: any) => {
+        this.reports.totalResources = response.totalResources;
+        this.reports.totalCourses = response.totalCourses;
+      });
+    }
   }
 
   xyChartData(data, unique) {
