@@ -122,14 +122,14 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   sendStatsToParent() {
-    const domain = this.planetConfiguration.parentDomain;
+    const { code, parentDomain: domain } = this.planetConfiguration;
     return forkJoin([
       this.reportsService.getDatabaseCount('resources'),
       this.reportsService.getDatabaseCount('courses'),
-      this.couchService.get('child_statistics/' + this.planetConfiguration.code, { domain })
+      this.couchService.get('child_statistics/' + code, { domain })
     ]).pipe(switchMap(([ totalResources, totalCourses, stats ]) => {
-      const { error, reason, ...statsDoc } = stats;
-      return this.couchService.post('child_statistics', { ...stats, totalCourses, totalResources }, { domain });
+      const { error, reason, docs, rows, ...statsDoc } = stats;
+      return this.couchService.post('child_statistics', { _id: code, ...statsDoc, totalCourses, totalResources }, { domain });
     }));
   }
 
