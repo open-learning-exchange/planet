@@ -1,0 +1,4 @@
+<p i18n>Subject(s)</p>
+<mat-chip-list [multiple]="true">
+  <mat-chip *ngFor="let subject of subjects" [selected]="isSelected(subject)" (click)="chipClick(subject)">{{subject}}</mat-chip>
+</mat-chip-list>

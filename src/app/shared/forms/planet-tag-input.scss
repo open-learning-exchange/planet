@@ -1,0 +1,23 @@
+:host {
+
+  .tag-input-suffix {
+    white-space: nowrap;
+    flex: none;
+    position: relative;
+
+    button {
+      height: 1.5em;
+      width: 1.5em;
+
+      .mat-icon {
+        height: 1.125em;
+        line-height: 1.125;
+        font-size: inherit;
+        width: 1em;
+      }
+
+    }
+
+  }
+
+}

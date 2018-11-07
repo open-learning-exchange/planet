@@ -2,16 +2,36 @@ import {
   Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef, OnInit
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { MatFormFieldControl, MatAutocomplete } from '@angular/material';
+import { MatFormFieldControl, MatAutocomplete, MatDialog } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Subject, Observable } from 'rxjs';
 import { startWith, map, takeUntil, auditTime } from 'rxjs/operators';
 import { TagsService } from './tags.service';
+import { subjectList } from '../../resources/resources-constants';
+
+@Component({
+  'templateUrl': 'planet-tag-input-dialog.component.html'
+})
+export class PlanetTagInputDialogComponent {
+
+  subjects = subjectList;
+  selected = new Map(this.subjects.map(value => [ value, false ] as [ string, boolean ]));
+
+  chipClick(subject: string) {
+    this.selected.set(subject, !this.selected.get(subject));
+  }
+
+  isSelected(subject: string) {
+    return this.selected.get(subject);
+  }
+
+}
 
 @Component({
   'selector': 'planet-tag-input',
   'templateUrl': './planet-tag-input.component.html',
+  'styleUrls': [ 'planet-tag-input.scss' ],
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ]
@@ -68,7 +88,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialog: MatDialog
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -141,6 +162,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   setDescribedByIds(ids: string[]) {
     this.describedBy = ids.join(' ');
+  }
+
+  openPresetDialog() {
+    this.dialog.open(PlanetTagInputDialogComponent, {
+      width: '600px',
+      height: '400px'
+    });
   }
 
 }

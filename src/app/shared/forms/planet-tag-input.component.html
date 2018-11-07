@@ -4,6 +4,7 @@
     <mat-icon matChipRemove>clear</mat-icon>
   </mat-chip>
   <input
+    matInput
     #tagInput
     [formControl]="inputControl"
     [matAutocomplete]="tagAuto"
@@ -13,6 +14,9 @@
     (matChipInputTokenEnd)="inputAddTag($event)"
     required>
 </mat-chip-list>
+<div class="tag-input-suffix">
+  <button type="button" mat-icon-button (click)="openPresetDialog()"><mat-icon>add</mat-icon></button>
+</div>
 <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="autocompleteAddTag($event)">
   <mat-option *ngFor="let tag of filteredTags | async" [value]="tag.key">
     {{tag.key}}
