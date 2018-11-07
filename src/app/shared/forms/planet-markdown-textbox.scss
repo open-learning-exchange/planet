@@ -25,34 +25,58 @@ planet-markdown-textbox {
     min-height: 15vh;
   }
 
-//
-// Full screen mode
-//
-  .CodeMirror.CodeMirror-fullscreen {
-    padding-top: 70px;
-    padding-left: 80px;
-
-    // preview
-    .editor-preview {
-      top: 70px;
-      left: 70px;
-    }
-  }
-
   .CodeMirror.CodeMirror-fullscreen .CodeMirror-scroll {
     height: 100vh;
     min-height: 100vh;
   }
 
-  .editor-toolbar.fullscreen {
-    z-index: 10;
-    top: 70px;
-    left: 65px;
-  }
-
-  // side by side
   .editor-preview-side {
     padding-top: 70px;
     background-color: hsl(100%, 100%, 100%);
+  }
+
+  .CodeMirror.CodeMirror-fullscreen {
+    padding-top: 70px;
+
+    .editor-preview {
+      top: 70px;
+    }
+  }
+
+  .editor-toolbar.fullscreen {
+    z-index: 10;
+    top: 70px;
+  }
+}
+
+@media (min-width: 960px) {
+  planet-markdown-textbox {
+    .CodeMirror.CodeMirror-fullscreen {
+      padding-left: 20px;
+
+      .editor-preview {
+        left: 10px;
+      }
+    }
+
+    .editor-toolbar.fullscreen {
+      left: 5px;
+    }
+  }
+}
+
+@media (max-width: 959px) {
+  planet-markdown-textbox {
+    .CodeMirror.CodeMirror-fullscreen {
+      padding-left: 90px;
+
+      .editor-preview {
+        left: 80px;
+      }
+    }
+
+    .editor-toolbar.fullscreen {
+      left: 75px;
+    }
   }
 }
