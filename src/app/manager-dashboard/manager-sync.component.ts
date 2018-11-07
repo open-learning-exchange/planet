@@ -8,6 +8,7 @@ import { SyncService } from '../shared/sync.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
+import { ReportsService } from './reports/reports.service';
 
 @Component({
   templateUrl: './manager-sync.component.html'
@@ -24,7 +25,8 @@ export class ManagerSyncComponent implements OnInit {
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private stateService: StateService
+    private stateService: StateService,
+    private reportsService: ReportsService
   ) {}
 
   ngOnInit() {
@@ -51,6 +53,9 @@ export class ManagerSyncComponent implements OnInit {
       return { ...rep, _deleted: true };
     });
     this.syncService.deleteReplicators(deleteArray).pipe(
+      switchMap(data => {
+        return this.sendStatsToParent();
+      }),
       switchMap(data => {
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
       }),
@@ -114,6 +119,18 @@ export class ManagerSyncComponent implements OnInit {
         planetCode: planetCode
       };
     });
+  }
+
+  sendStatsToParent() {
+    const domain = this.planetConfiguration.parentDomain;
+    return forkJoin([
+      this.reportsService.getDatabaseCount('resources'),
+      this.reportsService.getDatabaseCount('courses'),
+      this.couchService.get('child_statistics/' + this.planetConfiguration.code, { domain })
+    ]).pipe(switchMap(([ totalResources, totalCourses, stats ]) => {
+      const { error, reason, ...statsDoc } = stats;
+      return this.couchService.post('child_statistics', { ...stats, totalCourses, totalResources }, { domain });
+    }));
   }
 
 }
