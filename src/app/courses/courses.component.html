@@ -35,7 +35,7 @@
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button mat-button [disabled]="!selection.selected.length" (click)="enrollInSelected(selection.selected, 'add')">
-          <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Enroll in Selected</span>
+          <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
