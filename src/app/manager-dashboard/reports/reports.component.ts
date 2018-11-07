@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -10,7 +10,7 @@ import { StateService } from '../../shared/state.service';
 @Component({
   templateUrl: './reports.component.html',
 })
-export class ReportsComponent {
+export class ReportsComponent implements AfterViewInit {
 
   logs = new MatTableDataSource();
   displayedColumns = [
@@ -22,6 +22,8 @@ export class ReportsComponent {
     'lastUpgrade',
     'lastSync'
   ];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,
@@ -30,6 +32,11 @@ export class ReportsComponent {
     private stateService: StateService
   ) {
     this.getLogs();
+  }
+
+  ngAfterViewInit() {
+    this.logs.paginator = this.paginator;
+    this.logs.sort = this.sort;
   }
 
   countByPlanet(planet, logs) {
@@ -44,7 +51,10 @@ export class ReportsComponent {
   getLogs() {
     forkJoin([
       this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ 'parentCode': this.stateService.configuration.code }, 0, [ { 'createdDate': 'desc' } ] )),
+        findDocuments(
+          { 'parentCode': this.stateService.configuration.code, 'registrationRequest': 'accepted' }, 0, [ { 'createdDate': 'desc' } ]
+        )
+      ),
       this.activityService.getResourceVisits(),
       this.activityService.getLoginActivities(),
       this.activityService.getAdminActivities()
