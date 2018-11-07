@@ -83,7 +83,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: Date.now() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: Date.now(), gradeTime: Date.now() };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }
