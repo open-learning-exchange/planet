@@ -104,6 +104,10 @@ export class ReportsService {
     }));
   }
 
+  getChildDatabaseCounts(code: string) {
+    return this.couchService.get('child_statistics/' + code);
+  }
+
   getAdminActivities(planetCode?: string) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode)).pipe(map(adminActivities => {
       return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
