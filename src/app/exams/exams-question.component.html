@@ -1,7 +1,7 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title>
-      Title
+      {{questionForm.get('header').value ? questionForm.get('header').value : 'Title'}}
     </mat-panel-title>
     <mat-panel-description>
       Fill step type here
