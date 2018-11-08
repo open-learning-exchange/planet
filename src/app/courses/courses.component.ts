@@ -215,8 +215,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   enrollInSelected(courseIds, type) {
-    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {}, (error) => ((error)));
-    this.selectedNotEnrolled = 0;
+    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
+      this.selectedNotEnrolled = 0;
+    }, (error) => ((error)));
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
