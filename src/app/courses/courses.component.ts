@@ -227,7 +227,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedNotEnrolled = 0;
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
-    if  (this.isAllSelected()) {
+    if (this.isAllSelected()) {
       this.selection.clear();
     } else {
       this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
@@ -242,8 +242,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectNotEnrolled() {
-    for  (const o of this.selection.selected) {
-      if  (this.userShelf.courseIds.indexOf(o) === -1) {
+    for (const o of this.selection.selected) {
+      if (this.userShelf.courseIds.indexOf(o) === -1) {
        this.selectedNotEnrolled++;
      }
    }
