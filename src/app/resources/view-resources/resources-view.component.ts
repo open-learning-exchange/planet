@@ -67,7 +67,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   setResourceUrl(resourceUrl: string) {
-    this.resourceSrc = resourceUrl;
+    setTimeout( () => {
+      this.resourceSrc = resourceUrl;
+    });
   }
 
   toggleFullView() {
