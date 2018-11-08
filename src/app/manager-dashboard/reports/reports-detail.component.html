@@ -12,6 +12,9 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
+    <canvas id="visitChart"></canvas>
+    <canvas id="resourceViewChart"></canvas>
+    <canvas id="uniqueVisitChart"></canvas>
     <mat-grid-list cols="4" rowHeight="2rem">
       <mat-grid-tile></mat-grid-tile>
       <mat-grid-tile class="label">Male</mat-grid-tile><mat-grid-tile class="label">Female</mat-grid-tile><mat-grid-tile class="label">Did not specify</mat-grid-tile>
@@ -20,11 +23,17 @@
       <mat-grid-tile>{{reports?.usersByGender?.female || 0}}</mat-grid-tile>
       <mat-grid-tile>{{reports?.usersByGender?.didNotSpecify || 0}}</mat-grid-tile>
     </mat-grid-list>
-    <mat-grid-list cols="3" rowHeight="2rem">
+    <mat-grid-list cols="5" rowHeight="2rem">
       <mat-grid-tile class="label">Total Members</mat-grid-tile>
+      <mat-grid-tile class="label">Total Member Visits</mat-grid-tile>
       <mat-grid-tile class="label">Total Resources</mat-grid-tile>
+      <mat-grid-tile class="label">Total Resource Views</mat-grid-tile>
       <mat-grid-tile class="label">Total Courses</mat-grid-tile>
-      <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile><mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile><mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
+      <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
+      <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
+      <mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile>
+      <mat-grid-tile>{{reports?.totalResourceViews}}</mat-grid-tile>
+      <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile class="label">Members by Visits</mat-grid-tile><mat-grid-tile class="label">Total Visits</mat-grid-tile>

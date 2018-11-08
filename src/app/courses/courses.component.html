@@ -35,8 +35,8 @@
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button mat-button [disabled]="!selection.selected.length || selectedNotEnrolled === 0" (click)="enrollInSelected(selection.selected, 'add')">
-          <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Enroll in Selected</span>
-          <span *ngIf="selection?.selected?.length "> ({{selectedNotEnrolled}})</span>
+          <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
+          <span *ngIf="selection?.selected?.length"> ({{selectedNotEnrolled}})</span>
         </button>
         <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
@@ -84,11 +84,11 @@
           <mat-menu #resourceMenu="matMenu">
             <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>
-              <span i18n>Admission</span>
+              <span i18n>Join</span>
             </a>
             <a mat-menu-item *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">
               <mat-icon>clear</mat-icon>
-              <span i18n>Resign</span>
+              <span i18n>Leave</span>
             </a>
             <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
               <mat-icon>feedback</mat-icon>
@@ -133,7 +133,7 @@
     </mat-table>
 
     <mat-paginator #paginator
-      [pageSize]="10"
+      [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
       (page)="onPaginateChange($event)">
     </mat-paginator>

@@ -23,16 +23,18 @@ Vagrant.configure(2) do |config|
     end
 
     # Port expose for docker inside vagrant (2300:2300 = CouchDB 3100:3100 = App)
-    prod.vm.network "forwarded_port", guest: 3100, host: 3100, auto_correct: true
-    prod.vm.network "forwarded_port", guest: 2300, host: 2300, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 80, host: 80, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 80, host: 3100, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 2200, host: 2300, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 2200, host: 5984, auto_correct: true
     prod.vm.network "forwarded_port", guest: 22, host: 2223, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
 
     # Prevent TTY Errors (copied from laravel/homestead: "homestead.rb" file)... By default this is "bash -l".
     prod.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
     prod.vm.provision "shell", inline: <<-SHELL
-      sed -i 's/2200:5984/2300:5984/' planet.yml
-      sed -i 's/80:80/3100:80/' planet.yml
+      # docker-compose in install mode ... ?
     SHELL
 
     # Start docker on every startup

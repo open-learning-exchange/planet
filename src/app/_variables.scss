@@ -24,6 +24,7 @@ $accent-text: mat-contrast($planet-accent, $accent-hue);
 $light-grey: mat-color($mat-grey, 100);
 $grey: mat-color($mat-grey, 400);
 $primary-light: mat-color($planet-app-primary, 100);
+$accent-light: mat-color($planet-app-accent, 100);
 
 $shadow: rgba(0, 0, 0, 0.2);
 
@@ -44,6 +45,15 @@ $form-width-2: 365px;
 $form-width-1: 181px;
 // Width for form field in grid layout
 $form-field-width: 180px;
+
+:export {
+  primary: $primary;
+  primaryLight: $primary-light;
+  accent: $accent;
+  accentLight: $accent-light;
+  grey: $grey;
+  lightGrey: $light-grey;
+}
 
 /*
  * Old Planet Material Colors

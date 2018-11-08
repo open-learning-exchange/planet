@@ -2,17 +2,20 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { dedupeShelfReduce } from '../../shared/utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportsService {
 
+  users: any[] = [];
+
   constructor(
     private couchService: CouchService
   ) {}
 
-  groupBy(array, fields, { sumField = '', maxField = '' } = {}) {
+  groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
     return array.reduce((group, item) => {
       const currentValue = group.find((groupItem) => fields.every(field => groupItem[field] === item[field]));
       if (currentValue) {
@@ -21,15 +24,27 @@ export class ReportsService {
         currentValue.max = maxField ?
           (currentValue.max[maxField] < item[maxField] ? item : currentValue.max) :
           {};
+        currentValue.unique = uniqueField ? currentValue.unique.concat([ item[uniqueField] ]).reduce(dedupeShelfReduce, []) : [];
       } else {
         const newEntry = fields.reduce((newObj, field) => {
           newObj[field] = item[field];
           return newObj;
         }, {});
-        group.push({ ...newEntry, count: 1, sum: sumField ? item[sumField] : 0, max: item });
+        group.push({ ...newEntry, count: 1, sum: sumField ? item[sumField] : 0, max: item, unique: [ item[uniqueField] ] });
       }
       return group;
     }, []);
+  }
+
+  groupByMonth(array, dateField, uniqueField = '') {
+    return this.groupBy(
+      array.map(item => {
+        const fullDate = new Date(item[dateField]);
+        return { ...item, date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf() };
+      }),
+      [ 'date', 'gender' ],
+      { uniqueField }
+    );
   }
 
   selector(planetCode?: string, field: string = 'createdOn') {
@@ -42,20 +57,25 @@ export class ReportsService {
       this.couchService.findAll('child_users', this.selector(planetCode, 'planetCode'));
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite');
+      this.users = users;
       return ({
         count: users.length,
         byGender: users.reduce((usersByGender: any, user: any) => {
           usersByGender[user.gender || 'didNotSpecify'] += 1;
           return usersByGender;
-        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 })
+        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+        byMonth: this.groupByMonth(users, 'joinDate')
       });
     }));
   }
 
   getLoginActivities(planetCode?: string) {
     return this.couchService.findAll('login_activities', this.selector(planetCode)).pipe(map((loginActivities: any) => {
-      return this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
-        .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count);
+      return ({
+        byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
+          .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
+        byMonth: this.groupByMonth(this.appendGender(loginActivities), 'loginTime', 'user')
+      });
     }));
   }
 
@@ -70,8 +90,11 @@ export class ReportsService {
 
   getResourceVisits(planetCode?: string) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode)).pipe(map((resourceActivites) => {
-      return this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
-        .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined);
+      return ({
+        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
+          .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
+        byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
+      });
     }));
   }
 
@@ -79,6 +102,10 @@ export class ReportsService {
     return this.couchService.get(db + '/_design_docs').pipe(map((res: any) => {
       return res.total_rows - res.rows.length;
     }));
+  }
+
+  getChildDatabaseCounts(code: string) {
+    return this.couchService.get('child_statistics/' + code);
   }
 
   getAdminActivities(planetCode?: string) {
@@ -95,6 +122,16 @@ export class ReportsService {
       lastAdminLogin: logins.find((item: any) => item.user === adminName && findPlanetLog(item)),
       lastUpgrade: adminActivities.find(findAdminActivity('upgrade')),
       lastSync: adminActivities.find(findAdminActivity('sync'))
+    });
+  }
+
+  appendGender(array) {
+    return array.map((item: any) => {
+      const user = this.users.find((u: any) => u.name === item.user) || {};
+      return ({
+        ...item,
+        gender: user.gender
+      });
     });
   }
 
