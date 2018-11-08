@@ -34,6 +34,7 @@ import { StateService } from '../shared/state.service';
 
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
+  selectedNotEnrolled = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -102,6 +103,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((courses: any) => {
       this.courses.data = courses;
       this.emptyData = !this.courses.data.length;
+    });
+    this.selection.onChange.subscribe(({ source }) => {
+      this.countSelectNotEnrolled(source.selected);
     });
   }
 
@@ -211,7 +215,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   enrollInSelected(courseIds, type) {
-    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {}, (error) => ((error)));
+    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
+      this.selectedNotEnrolled = 0;
+    }, (error) => ((error)));
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -224,9 +230,15 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   masterToggle() {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    }
+  }
+
+  countSelectNotEnrolled(selected: any) {
+    this.selectedNotEnrolled = selected.reduce((count, id) => count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0), 0);
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -273,6 +285,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   courseToggle(courseId, type) {
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
 
