@@ -227,7 +227,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.selectedNotEnrolled = 0;
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
     if (this.isAllSelected()) {
