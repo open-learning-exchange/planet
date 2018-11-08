@@ -62,7 +62,7 @@
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="$event ? rowToggle(row) : null"
+          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
         </mat-cell>

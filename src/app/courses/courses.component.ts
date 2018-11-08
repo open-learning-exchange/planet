@@ -104,6 +104,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.courses.data = courses;
       this.emptyData = !this.courses.data.length;
     });
+    this.selection.onChange.subscribe(({ source }) => {
+      this.countSelectNotEnrolled(source.selected);
+    });
   }
 
   ngOnDestroy() {
@@ -231,22 +234,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.clear();
     } else {
       this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
-      this.countSelectNotEnrolled();
     }
   }
 
-  rowToggle(row) {
-    this.selectedNotEnrolled = 0;
-    this.selection.toggle(row._id);
-    this.countSelectNotEnrolled();
-  }
-
-  countSelectNotEnrolled() {
-    for (const o of this.selection.selected) {
-      if (this.userShelf.courseIds.indexOf(o) === -1) {
-       this.selectedNotEnrolled++;
-     }
-   }
+  countSelectNotEnrolled(selected: any) {
+    this.selectedNotEnrolled = selected.reduce((count, id) => count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0), 0);
   }
 
   onFilterChange(filterValue: string, field: string) {
