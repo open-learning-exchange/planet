@@ -14,7 +14,7 @@
     (matChipInputTokenEnd)="inputAddTag($event)"
     required>
 </mat-chip-list>
-<div class="tag-input-suffix">
+<div class="mat-form-field-suffix">
   <button type="button" mat-icon-button (click)="openPresetDialog()"><mat-icon>add</mat-icon></button>
 </div>
 <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="autocompleteAddTag($event)">

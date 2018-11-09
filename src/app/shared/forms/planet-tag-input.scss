@@ -1,23 +1,12 @@
 :host {
 
-  .tag-input-suffix {
-    white-space: nowrap;
-    flex: none;
-    position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  box-sizing: border-box;
+  width: 100%;
 
-    button {
-      height: 1.5em;
-      width: 1.5em;
-
-      .mat-icon {
-        height: 1.125em;
-        line-height: 1.125;
-        font-size: inherit;
-        width: 1em;
-      }
-
-    }
-
+  mat-chip-list {
+    width: 100%;
   }
 
 }
