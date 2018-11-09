@@ -18,7 +18,12 @@ export class PlanetTagInputDialogComponent {
   subjects = subjectList;
   selected = new Map(this.subjects.map(value => [ value, false ] as [ string, boolean ]));
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    this.data.startingTags
+      .map((tag: string) => this.subjects.find((subject) => tag.split(': ')[1] === subject.toLowerCase()))
+      .filter((tag: string) => tag)
+      .forEach(tag => this.chipClick(tag));
+  }
 
   chipClick(subject: string) {
     this.selected.set(subject, !this.selected.get(subject));
@@ -172,7 +177,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       width: '600px',
       height: '400px',
       data: {
-        chipUpdate: this.dialogChipUpdate.bind(this)
+        chipUpdate: this.dialogChipUpdate.bind(this),
+        startingTags: this.value
       }
     });
   }
