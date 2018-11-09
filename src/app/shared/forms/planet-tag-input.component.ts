@@ -1,8 +1,8 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef, OnInit
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef, OnInit, Inject
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { MatFormFieldControl, MatAutocomplete, MatDialog } from '@angular/material';
+import { MatFormFieldControl, MatAutocomplete, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Subject, Observable } from 'rxjs';
@@ -18,8 +18,11 @@ export class PlanetTagInputDialogComponent {
   subjects = subjectList;
   selected = new Map(this.subjects.map(value => [ value, false ] as [ string, boolean ]));
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+
   chipClick(subject: string) {
     this.selected.set(subject, !this.selected.get(subject));
+    this.data.chipUpdate(('subject: ' + subject).toLowerCase(), this.selected.get(subject));
   }
 
   isSelected(subject: string) {
@@ -167,8 +170,19 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   openPresetDialog() {
     this.dialog.open(PlanetTagInputDialogComponent, {
       width: '600px',
-      height: '400px'
+      height: '400px',
+      data: {
+        chipUpdate: this.dialogChipUpdate.bind(this)
+      }
     });
+  }
+
+  dialogChipUpdate(tag, isSelected) {
+    if (isSelected) {
+      this.addTag(tag);
+    } else {
+      this.removeTag(tag);
+    }
   }
 
 }
