@@ -20,6 +20,15 @@ export class StateService {
     private couchService: CouchService
   ) {}
 
+  requestBaseData() {
+    const baseDbs = [ 'resources' ];
+    baseDbs.forEach(db => {
+      if (!this.state.local[db]) {
+        this.requestData(db, 'local');
+      }
+    });
+  }
+
   requestData(db: string, planetField: string) {
     this.getCouchState(db, planetField).subscribe(() => {});
   }

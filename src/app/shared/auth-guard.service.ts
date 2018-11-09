@@ -31,6 +31,7 @@ export class AuthService {
           if (sessionInfo.userCtx.name === this.userService.get().name) {
             return of(true);
           }
+          this.stateService.requestBaseData();
           return this.userService.setUserAndShelf(sessionInfo.userCtx);
         }
         this.userService.unset();
