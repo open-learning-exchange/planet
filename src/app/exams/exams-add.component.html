@@ -25,7 +25,7 @@
         </mat-form-field>
       </div>
       <planet-step-list class="exam-questions" [steps]="examForm.controls.questions.value" [nameProp]="'title'" (stepClicked)="stepClick($event)">
-        <planet-step-list-item *ngFor="let question of examForm.controls.questions.value; index as i">
+        <planet-step-list-item type="button" *ngFor="let question of examForm.controls.questions.value; index as i">
           <span>{{question.title || 'Question ' + (i+1)}}</span>
         </planet-step-list-item>
         <div planetStepListForm>
