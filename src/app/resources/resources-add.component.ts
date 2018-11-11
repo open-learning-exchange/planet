@@ -33,6 +33,7 @@ export class ResourcesAddComponent implements OnInit {
   userDetail: any = {};
   pageType = 'Add new';
   disableDownload = true;
+  disableDelete = true;
   resourceFilename = '';
 
   constructor(
@@ -243,6 +244,7 @@ export class ResourcesAddComponent implements OnInit {
   bindFile(event) {
     this.file = event.target.files[0];
     this.disableDownload = false;
+    this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
   }
 
