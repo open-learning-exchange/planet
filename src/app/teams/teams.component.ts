@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 
 @Component({
@@ -41,7 +41,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getTeams();
     this.teams.filterPredicate = filterSpecificFields([ 'doc.name' ]);
-    this.teams.sortingDataAccessor = (item: any, property) => item.doc[property].toLowerCase();
+    this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
   }
 
   getTeams() {
