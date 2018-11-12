@@ -11,6 +11,7 @@ export class StateService {
 
   state: any = { local: {}, parent: {} };
   private stateUpdated = new Subject<any>();
+  private inProgress = { local: new Map(), parent: new Map() };
 
   get configuration(): any {
     return this.state.local.configurations.docs[0] || {};
@@ -20,8 +21,20 @@ export class StateService {
     private couchService: CouchService
   ) {}
 
+  requestBaseData() {
+    const baseDbs = [ 'resources' ];
+    baseDbs.forEach(db => {
+      if (!this.state.local[db]) {
+        this.requestData(db, 'local');
+      }
+    });
+  }
+
   requestData(db: string, planetField: string) {
-    this.getCouchState(db, planetField).subscribe(() => {});
+    if (this.inProgress[planetField].get(db) !== true) {
+      this.inProgress[planetField].set(db, true);
+      this.getCouchState(db, planetField).subscribe(() => {});
+    }
   }
 
   getCouchState(db: string, planetField: string) {
@@ -36,6 +49,7 @@ export class StateService {
         const newData = this.couchService.combineChanges(data, changes);
         this.state[planetField][db].docs = newData;
         this.stateUpdated.next({ newData, db, planetField });
+        this.inProgress[planetField].set(db, false);
         return newData;
       })
     );
