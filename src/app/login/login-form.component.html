@@ -18,7 +18,9 @@
     </mat-error>
   </mat-form-field>
   <button mat-button [planetSubmit]="userForm.valid">{{ createMode ? 'Become a member' : 'SIGN-IN' }}</button>
-  <a class = "addUser" [routerLink]="createMode ? ['/login'] : ['newmember']">
-    {{ createMode ? 'Already have an account?' : 'Become a member' }}
-  </a>
+  <button mat-button>
+    <a class = "addUser" [routerLink]="createMode ? ['/login'] : ['newmember']">
+      {{ createMode ? 'Already have an account?' : 'Become a member' }}
+    </a>
+</button>
 </form>
