@@ -45,7 +45,7 @@ export class TeamsService {
         debug('Dialog confirm'),
         switchMap((response: any) => {
           if (response !== undefined) {
-            return this.updateTeam({ limit: 12, status: 'active', ...team, ...response });
+            return this.updateTeam({ limit: 12, status: 'active', createdDate: Date.now(), ...team, ...response, updatedDate: Date.now() });
           }
           return empty();
         }),
