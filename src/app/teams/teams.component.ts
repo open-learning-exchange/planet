@@ -19,7 +19,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   userShelf: any = [];
-  displayedColumns = [ 'name', 'action' ];
+  displayedColumns = [ 'name', 'createdDate', 'action' ];
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
