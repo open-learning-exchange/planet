@@ -34,9 +34,9 @@ export class PlanetStepListService {
   template: `
     <ng-template>
       <ng-content></ng-content>
-      <button mat-icon-button *ngIf="!isFirst" (click)="moveStep($event,-1)"><mat-icon>arrow_upward</mat-icon></button>
-      <button mat-icon-button *ngIf="!isLast" (click)="moveStep($event,1)"><mat-icon>arrow_downward</mat-icon></button>
-      <button mat-icon-button (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button type="button" *ngIf="!isFirst" (click)="moveStep($event,-1)"><mat-icon>arrow_upward</mat-icon></button>
+      <button mat-icon-button type="button" *ngIf="!isLast" (click)="moveStep($event,1)"><mat-icon>arrow_downward</mat-icon></button>
+      <button mat-icon-button type="button" (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
     </ng-template>
   `
 })
