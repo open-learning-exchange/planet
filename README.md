@@ -75,6 +75,8 @@ We use Angular for our front-end and CouchDB as our back-end and database. And f
 
 We encourage you to contribute to Planet! Please check out the [Contributing to Planet](CONTRIBUTING.md) guide for guidelines about how to proceed. Join us!
 
+Everyone interacting in Planet and its sub-projects' codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [Planet code of conduct](CODE_OF_CONDUCT.md).
+
 ## License
 
 Planet is released under the [AGPL-3.0](LICENSE)
