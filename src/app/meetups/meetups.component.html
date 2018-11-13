@@ -94,7 +94,7 @@
               <span>{{ ' ' + element.startTime }}</span>
               <span *ngIf="element.endTime">{{ ' - ' + element.endTime }}</span>
             </p>
-            <p><span i18n>Status:</span> <span *ngIf="element.participate; else joinMeetup" i18n>Joined</span><ng-template #joinMeetup><span i18n>Left</span></ng-template></p>
+            <p><span i18n>Status:</span><span *ngIf="element.participate; else joinMeetup" i18n>Joined</span><ng-template #joinMeetup><span i18n>Left</span></ng-template></p>
             <p *ngIf="element.recurring"><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
             <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
             <p *ngIf="element.meetupLocation"><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
