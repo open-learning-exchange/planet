@@ -104,7 +104,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.courses.data = courses;
       this.emptyData = !this.courses.data.length;
     });
-    this.selection.onChange.subscribe(({ source }) => {
+    this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
   }
