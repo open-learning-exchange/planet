@@ -7,6 +7,10 @@
 
 Vagrant.configure(2) do |config|
 
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+  end
+
   # production VM
   config.vm.define "prod" do |prod|
     prod.vm.box = "ole/stretch64"
@@ -95,7 +99,7 @@ Vagrant.configure(2) do |config|
       mkdir -p /vagrant/node_modules
       #chown vagrant:vagrant /vagrant_node_modules
       #mount --bind /vagrant_node_modules /vagrant/node_modules
-      #npm i --unsafe-perm
+      npm i --unsafe-perm
       #sudo npm run webdriver-set-version
       # End node_modules fix
 
