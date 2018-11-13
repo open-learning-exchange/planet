@@ -34,6 +34,7 @@ export class ResourcesAddComponent implements OnInit {
   userDetail: any = {};
   pageType = 'Add new';
   disableDownload = true;
+  disableDelete = true;
   resourceFilename = '';
 
   constructor(
@@ -67,6 +68,7 @@ export class ResourcesAddComponent implements OnInit {
           this.existingResource = data;
           // If the resource does not have an attachment, disable file downloadable toggle
           this.disableDownload = !this.existingResource._attachments;
+          this.disableDelete = !this.existingResource._attachments;
           this.resourceFilename = this.existingResource._attachments ? Object.keys(this.existingResource._attachments)[0] : '';
           this.resourceForm.patchValue(data);
         }, (error) => {
@@ -245,6 +247,7 @@ export class ResourcesAddComponent implements OnInit {
   bindFile(event) {
     this.file = event.target.files[0];
     this.disableDownload = false;
+    this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
   }
 
