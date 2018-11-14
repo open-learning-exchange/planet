@@ -103,7 +103,7 @@
             <a
               *ngIf="element.doc.roles.length > 0 && !filterAssociated"
               (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
-              mat-raised-button color="primary" i18n><mat-icon>swap_vert</mat-icon>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
+              mat-raised-button color="primary" i18n><mat-icon>verified_user</mat-icon>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
           <a routerLink="profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
             <mat-icon>folder_open</mat-icon>View Profile
