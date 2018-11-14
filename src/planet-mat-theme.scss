@@ -36,3 +36,10 @@ $accent-map: (
   background-color: mat-color($planet-app-primary, $light-hue);
   color: mat-contrast($planet-app-primary, $light-hue);
 }
+
+.mat-raised-button.primary-btn-hover{
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: mat-color($planet-app-primary, $dark-hue);
+  }
+}
