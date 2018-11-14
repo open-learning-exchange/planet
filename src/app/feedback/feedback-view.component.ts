@@ -91,7 +91,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     const data = {
       'user': 'org.couchdb.user:' + this.feedback.owner,
       'message': 'Feedback has been replied.',
-      'link': '/feedback/vi e w/' + this.feedback._id,
+      'link': '/feedback/view/' + this.feedback._id,
       'type': 'feedback response',
       'priority': 1,
       'status': 'unread',
