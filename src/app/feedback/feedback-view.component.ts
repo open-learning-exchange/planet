@@ -95,7 +95,9 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       'type': 'feedback response',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': Date.now(),
+      'target': this.feedback.code,
+      'targetParent': this.feedback.parentCode
     };
     return this.couchService.post('notifications', data);
   }
