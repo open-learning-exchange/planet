@@ -278,6 +278,10 @@ body {
     display: none;
   }
 
+  .mat-form-field-dynamic-width .mat-form-field-infix {
+    width: auto;
+  }
+
   .profile-image-update {
     border-radius: 50%;
     margin-left: 2rem;
