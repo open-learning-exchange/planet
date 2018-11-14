@@ -142,9 +142,15 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
       return forkJoin(obsArr);
     })).subscribe((response: any) => {
-        this.userService.unset();
-        this.router.navigate([ '/login' ], {});
-    }, err => console.log(err));
+       this.navigateLogin();
+    }, (error) => {
+      this.navigateLogin();
+    });
+  }
+
+  navigateLogin() {
+    this.userService.unset();
+    this.router.navigate([ '/login' ], {});
   }
 
   getNotification() {
