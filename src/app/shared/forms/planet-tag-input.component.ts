@@ -8,30 +8,39 @@ import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Subject, Observable } from 'rxjs';
 import { startWith, map, takeUntil, auditTime } from 'rxjs/operators';
 import { TagsService } from './tags.service';
-import { subjectList } from '../../resources/resources-constants';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
 })
 export class PlanetTagInputDialogComponent {
 
-  subjects = subjectList;
-  selected = new Map(this.subjects.map(value => [ value, false ] as [ string, boolean ]));
+  tags: any[] = [];
+  selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
+  filterValue = '';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private tagsService: TagsService
+  ) {
+    this.tags = this.data.tags;
     this.data.startingTags
-      .map((tag: string) => this.subjects.find((subject) => tag.split(': ')[1] === subject.toLowerCase()))
       .filter((tag: string) => tag)
-      .forEach(tag => this.chipClick(tag));
+      .forEach(tag => this.tagChange({ value: tag, selected: true }));
   }
 
-  chipClick(subject: string) {
-    this.selected.set(subject, !this.selected.get(subject));
-    this.data.chipUpdate(('subject: ' + subject).toLowerCase(), this.selected.get(subject));
+  tagChange(option) {
+    const tag = option.value;
+    this.selected.set(tag, option.selected);
+    this.data.tagUpdate(tag, this.selected.get(tag));
   }
 
-  isSelected(subject: string) {
-    return this.selected.get(subject);
+  isSelected(tag: string) {
+    return this.selected.get(tag);
+  }
+
+  updateFilter(value) {
+    this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
+    console.log(this.tags);
   }
 
 }
@@ -174,16 +183,17 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   openPresetDialog() {
     this.dialog.open(PlanetTagInputDialogComponent, {
-      width: '600px',
+      width: '80vw',
       maxHeight: '80vh',
       data: {
-        chipUpdate: this.dialogChipUpdate.bind(this),
-        startingTags: this.value
+        tagUpdate: this.dialogTagUpdate.bind(this),
+        startingTags: this.value,
+        tags: this.tags
       }
     });
   }
 
-  dialogChipUpdate(tag, isSelected) {
+  dialogTagUpdate(tag, isSelected) {
     if (isSelected) {
       this.addTag(tag);
     } else {

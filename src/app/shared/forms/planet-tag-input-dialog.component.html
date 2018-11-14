@@ -1,8 +1,10 @@
 <mat-dialog-content>
-  <p i18n>Subject(s)</p>
-  <mat-chip-list [multiple]="true">
-    <mat-chip *ngFor="let subject of subjects" [selected]="isSelected(subject)" (click)="chipClick(subject)">{{subject}}</mat-chip>
-  </mat-chip-list>
+  <mat-form-field class="full-width">
+    <input matInput i18n-placeholder placeholder="Filter Labels" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
+  </mat-form-field>
+  <mat-selection-list (selectionChange)="tagChange($event.option)">
+    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.key)" [value]="tag.key">{{tag.key + ' (' + tag.value + ')'}}</mat-list-option>
+  </mat-selection-list>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button type="button" mat-dialog-close i18n mat-raised-button color="primary">OK</button>
