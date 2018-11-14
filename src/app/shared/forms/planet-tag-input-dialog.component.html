@@ -1,11 +1,15 @@
 <mat-dialog-content>
-  <mat-form-field class="full-width">
+  <mat-form-field>
     <input matInput i18n-placeholder placeholder="Filter Labels" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
-  <mat-selection-list (selectionChange)="tagChange($event.option)">
+  <mat-slide-toggle i81n [(ngModel)]="selectMany" class="margin-lr-5">Select Many Labels</mat-slide-toggle>
+  <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
     <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.key)" [value]="tag.key">{{tag.key + ' (' + tag.value + ')'}}</mat-list-option>
   </mat-selection-list>
+  <mat-nav-list *ngIf="!selectMany">
+    <a mat-list-item *ngFor="let tag of tags" (click)="selectOne(tag.key)" mat-dialog-close>{{tag.key + ' (' + tag.value + ')'}}</a>
+  </mat-nav-list>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="selectMany">
   <button type="button" mat-dialog-close i18n mat-raised-button color="primary">OK</button>
 </mat-dialog-actions>

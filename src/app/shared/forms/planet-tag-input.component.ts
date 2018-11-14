@@ -2,7 +2,7 @@ import {
   Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ViewChild, ElementRef, OnInit, Inject
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { MatFormFieldControl, MatAutocomplete, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatFormFieldControl, MatAutocomplete, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Subject, Observable } from 'rxjs';
@@ -17,8 +17,10 @@ export class PlanetTagInputDialogComponent {
   tags: any[] = [];
   selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   filterValue = '';
+  selectMany = false;
 
   constructor(
+    public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService
   ) {
@@ -40,7 +42,11 @@ export class PlanetTagInputDialogComponent {
 
   updateFilter(value) {
     this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
-    console.log(this.tags);
+  }
+
+  selectOne(tag) {
+    this.data.tagUpdate(tag, true, true);
+    this.dialogRef.close();
   }
 
 }
@@ -183,8 +189,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   openPresetDialog() {
     this.dialog.open(PlanetTagInputDialogComponent, {
-      width: '80vw',
+      maxWidth: '80vw',
       maxHeight: '80vh',
+      autoFocus: false,
       data: {
         tagUpdate: this.dialogTagUpdate.bind(this),
         startingTags: this.value,
@@ -193,7 +200,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
-  dialogTagUpdate(tag, isSelected) {
+  dialogTagUpdate(tag, isSelected, tagOne = false) {
+    if (tagOne) {
+      this.value = [];
+    }
     if (isSelected) {
       this.addTag(tag);
     } else {
