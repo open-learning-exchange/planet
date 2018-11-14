@@ -21,7 +21,7 @@
         <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-tag-input [formControl]="resourceForm.controls.tags" i18n-placeholder placeholder="Labels"></planet-tag-input>
+        <planet-tag-input [formControl]="resourceForm.controls.tags" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
       </mat-form-field>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Language" formControlName="language">

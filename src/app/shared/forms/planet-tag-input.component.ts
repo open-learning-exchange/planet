@@ -23,6 +23,7 @@ export class PlanetTagInputDialogComponent {
     private tagsService: TagsService
   ) {
     this.tags = this.data.tags;
+    this.selectMany = this.data.mode === 'add';
     this.data.startingTags
       .filter((tag: string) => tag)
       .forEach(tag => this.tagChange({ value: tag, selected: true }));
@@ -83,6 +84,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     this._placeholder = text;
     this.stateChanges.next();
   }
+  @Input() mode = 'filter';
 
   shouldLabelFloat = false;
   onTouched;
@@ -152,7 +154,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
       data: {
         tagUpdate: this.dialogTagUpdate.bind(this),
         startingTags: this.value,
-        tags: this.tags
+        tags: this.tags,
+        mode: this.mode
       }
     });
   }

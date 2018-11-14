@@ -3,4 +3,9 @@
   <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
   <span *ngSwitchDefault [matTooltip]="tooltipLabels">Hover to see selected labels</span>
 </span>
-<button type="button" mat-stroked-button (click)="openPresetDialog()">Filter Labels</button>
+<button type="button" mat-stroked-button (click)="openPresetDialog()">
+  <ng-container [ngSwitch]="mode">
+    <span i18n *ngSwitchCase="'filter'">Filter Labels</span>
+    <span i18n *ngSwitchCase="'add'">Add Labels</span>
+  </ng-container>
+</button>
