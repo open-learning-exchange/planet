@@ -43,23 +43,26 @@
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile class="label">Most Visited Resources</mat-grid-tile><mat-grid-tile class="label">Total Visits</mat-grid-tile>
       <div *ngIf="!reports?.resources || reports?.resources.length === 0; else other_block"><mat-grid-tile>null</mat-grid-tile><mat-grid-tile>0</mat-grid-tile></div>
-      <ng-container #other_block *ngFor="let resource of reports?.resources">
+      <ng-template #other_block><ng-container *ngFor="let resource of reports?.resources">
         <mat-grid-tile><a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.title}}</a></mat-grid-tile><mat-grid-tile>{{resource.count}}</mat-grid-tile>
       </ng-container>
+      </ng-template>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile class="label">Highest Rated Resources</mat-grid-tile><mat-grid-tile class="label">Average Rating</mat-grid-tile>
       <div *ngIf="!reports?.resourceRatings || reports?.resourceRatings.length === 0; else other_one"><mat-grid-tile>null</mat-grid-tile><mat-grid-tile>0</mat-grid-tile></div>
-      <ng-container #other_one *ngFor="let rating of reports?.resourceRatings">
+      <ng-template #other_one><ng-container *ngFor="let rating of reports?.resourceRatings">
         <mat-grid-tile><a [routerLink]="['/resources/view', rating.item]">{{rating?.title}}</a></mat-grid-tile><mat-grid-tile>{{rating?.value}}</mat-grid-tile>
       </ng-container>
+      </ng-template>
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="2rem">
       <mat-grid-tile class="label">Highest Rated Courses</mat-grid-tile><mat-grid-tile class="label">Average Rating</mat-grid-tile>
       <div *ngIf="!reports?.courseRatings || reports?.courseRatings.length === 0; else other_situation"><mat-grid-tile>null</mat-grid-tile><mat-grid-tile>0</mat-grid-tile></div>
-      <ng-container #other_situation *ngFor="let rating of reports?.courseRatings">
+      <ng-template #other_situation><ng-container *ngFor="let rating of reports?.courseRatings">
         <mat-grid-tile><a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a></mat-grid-tile><mat-grid-tile>{{rating?.value}}</mat-grid-tile>
       </ng-container>
+    </ng-template>
     </mat-grid-list>
   </div>
 </div>
