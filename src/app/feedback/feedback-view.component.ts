@@ -77,10 +77,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
-        this.sendNotifications();
+        //this.sendNotifications();
         return this.getFeedback(res.id);
-      }))
-      .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
+      }),
+      switchMap(() => {return this.sendNotifications();})
+      ).subscribe(this.setFeedback.bind(this) , error => this.planetMessageService.showAlert('There was an error adding your message'));
   }
 
   sendNotifications() {
@@ -93,8 +94,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       'status': 'unread',
       'time': Date.now()
     };
-    console.log(data);
-    this.couchService.post('notifications', data);
+    console.log(this.feedback);
+    return this.couchService.post('notifications', data);
   }
 
   editTitle(mode) {
