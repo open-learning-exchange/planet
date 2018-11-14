@@ -77,9 +77,24 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
+        this.sendNotifications();
         return this.getFeedback(res.id);
       }))
       .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
+  }
+
+  sendNotifications() {
+    const data = {
+      'user': 'org.couchdb.user:' + this.feedback.owner,
+      'message': 'Feedback has been replied.',
+      'link': '/feedback/view/'+this.feedback._id,
+      'type': 'Feedback reply',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
+    console.log(data);
+    this.couchService.post('notifications', data);
   }
 
   editTitle(mode) {
