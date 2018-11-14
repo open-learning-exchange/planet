@@ -70,7 +70,7 @@
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
         <mat-cell  *matCellDef="let element" class="list-content-menu">
-          <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
+          <h3 class="header"><a [routerLink]="['view', element._id]">{{element.courseTitle}}</a><sup><mat-icon [inline]="true" *ngIf="element.admission">check_circle</mat-icon></sup>
           </h3>
           <td-markdown class="content">{{ element.description }}</td-markdown>
           <planet-local-status [status]="element.localStatus"></planet-local-status>

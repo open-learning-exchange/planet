@@ -46,12 +46,11 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a [routerLink]="['view', element._id]">{{element.title}}</a>
+            <a [routerLink]="['view', element._id]">{{element.title}}</a><sup><mat-icon [inline]="true" *ngIf="element.participate">check_circle</mat-icon></sup>
           </h3>
           <div class="content">
             <td-markdown [content]="element.description"></td-markdown>
           </div>
-          <mat-icon *ngIf="element.participate">playlist_add_check</mat-icon>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
             <mat-icon>more_vert</mat-icon>
           </button>

@@ -59,7 +59,7 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a [routerLink]="['view', element._id]">{{element.title}}</a>
+            <a [routerLink]="['view', element._id]">{{element.title}}</a><sup><mat-icon [inline]="true" *ngIf="element.libraryInfo">check_circle</mat-icon></sup>
           </h3>
           <td-markdown class="content" [content]="element.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
