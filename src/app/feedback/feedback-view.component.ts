@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -77,24 +77,26 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
-        //this.sendNotifications();
-        return this.getFeedback(res.id);
-      }),
-      switchMap(() => {return this.sendNotifications();})
-      ).subscribe(this.setFeedback.bind(this) , error => this.planetMessageService.showAlert('There was an error adding your message'));
+        const obs = [ this.getFeedback(res.id) ];
+        if ( this.user.name !== this.feedback.owner ) {
+          obs.push(this.sendNotifications());
+        }
+        return forkJoin(obs);
+      })
+      ).subscribe(([ feedbacks, notice ]) => { this.setFeedback(feedbacks); },
+        error => this.planetMessageService.showAlert('There was an error adding your message'));
   }
 
   sendNotifications() {
     const data = {
       'user': 'org.couchdb.user:' + this.feedback.owner,
       'message': 'Feedback has been replied.',
-      'link': '/feedback/view/'+this.feedback._id,
-      'type': 'Feedback reply',
+      'link': '/feedback/vi e w/' + this.feedback._id,
+      'type': 'feedback response',
       'priority': 1,
       'status': 'unread',
       'time': Date.now()
     };
-    console.log(this.feedback);
     return this.couchService.post('notifications', data);
   }
 
