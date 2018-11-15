@@ -15,6 +15,7 @@ export class PlanetTagInputDialogComponent {
   tags: any[] = [];
   selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   filterValue = '';
+  mode = 'filter';
   selectMany = false;
 
   constructor(
@@ -23,7 +24,8 @@ export class PlanetTagInputDialogComponent {
     private tagsService: TagsService
   ) {
     this.tags = this.data.tags;
-    this.selectMany = this.data.mode === 'add';
+    this.mode = this.data.mode;
+    this.selectMany = this.mode === 'add';
     this.data.startingTags
       .filter((tag: string) => tag)
       .forEach(tag => this.tagChange({ value: tag, selected: true }));
