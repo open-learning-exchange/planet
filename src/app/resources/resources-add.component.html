@@ -95,7 +95,7 @@
       <p *ngIf="existingResource._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
       <div class="inner-gaps full-width">
         <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable">File downloadable</mat-checkbox>
-        <ng-container *ngIf="pageType==='Update'">
+        <ng-container *ngIf="existingResource._attachments">
           <mat-checkbox [disabled]="disableDelete" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
         </ng-container>
       </div>
