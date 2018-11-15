@@ -142,17 +142,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
       return forkJoin(obsArr);
     })).subscribe((response: any) => {
-       this.navigateLogin();
+      this.userService.unset();
+      this.router.navigate([ '/login' ], {});
     }, (error) => {
-      this.navigateLogin();
+      console.log(error);
+      this.router.navigate([ '/login' ], {});
     });
   }
-
-  navigateLogin() {
-    this.userService.unset();
-    this.router.navigate([ '/login' ], {});
-  }
-
+  
   getNotification() {
     const userFilter = [ {
       'user': 'org.couchdb.user:' + this.userService.get().name
