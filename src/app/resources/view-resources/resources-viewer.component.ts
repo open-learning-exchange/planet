@@ -35,18 +35,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
-  ) { }
-
-  get urlPrefix() {
-    let domain = environment.couchAddress + '/resources/';
-    if (this.parent) {
-      domain = 'http://' + this.stateService.configuration.parentDomain + '/resources/';
-    }
-    return domain;
-  }
-
-  ngOnChanges() {
-    if (this.resource === undefined || this.resource._id !== this.resourceId) {
+  ) { if (this.resource === undefined || this.resource._id !== this.resourceId) {
       this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
         .subscribe((resources) => {
           this.setResource(resources.find((r: any) => r._id === this.resourceId));
@@ -54,7 +43,14 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
     } else {
       this.setResource(this.resource);
+    } }
+
+  get urlPrefix() {
+    let domain = environment.couchAddress + '/resources/';
+    if (this.parent) {
+      domain = 'http://' + this.stateService.configuration.parentDomain + '/resources/';
     }
+    return domain;
   }
 
   ngOnDestroy() {
