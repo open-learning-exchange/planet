@@ -60,6 +60,7 @@
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
+            <mat-icon class="margin-lr-3" i18n-title title="In Library" [inline]="true" *ngIf="element.libraryInfo">check</mat-icon>
           </h3>
           <td-markdown class="content" [content]="element.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
