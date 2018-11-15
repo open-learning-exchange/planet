@@ -23,7 +23,8 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3>
-            <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}</a><sup><mat-icon [inline]="true" *ngIf="element.userStatus=='member'">check_circle</mat-icon></sup>
+            <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}</a>
+            <mat-icon class="margin-lr-3" i18n-title title="Joined Team" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
           </h3>
         </mat-cell>
       </ng-container>
