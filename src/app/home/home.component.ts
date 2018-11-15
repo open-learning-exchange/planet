@@ -149,7 +149,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       this.router.navigate([ '/login' ], {});
     });
   }
-  
+
   getNotification() {
     const userFilter = [ {
       'user': 'org.couchdb.user:' + this.userService.get().name
