@@ -47,7 +47,7 @@
             <p class="user-name">{{message.user}}<p>
             <p class="date">{{message.time | date:'MMM d, y h:mm a'}}</p>
           </div>
-          <div class="chat-list-message"><mat-card [ngClass]="message.user === user.name ? 'primary-color' : 'accent-color'">{{message.message}}</mat-card></div>
+          <div class="chat-list-message"><mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card></div>
         </div>
       </div>
     </div>
