@@ -33,7 +33,7 @@ export class CoursesService {
     private stateService: StateService
   ) {
     this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
-      const { ids, opts } = this.currentParams;
+      const { ids, opts } = this.currentParams || { ids: [], opts: {} };
       return this.findRatings(ids, opts);
     })).subscribe((ratings) => {
       this.updateCourses(this.createCourseList(this.courses, ratings.docs));
