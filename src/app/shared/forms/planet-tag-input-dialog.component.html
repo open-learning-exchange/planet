@@ -3,6 +3,20 @@
     <input matInput i18n-placeholder placeholder="Filter Labels" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
   <mat-slide-toggle i18n [(ngModel)]="selectMany" class="margin-lr-5" *ngIf="mode==='filter'">Select Many Labels</mat-slide-toggle>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>Create New Label</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-form-field>
+      <input matInput placeholder="Label">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select placeholder="Attached to...">
+        <mat-option>Mathematics</mat-option>
+        <mat-option>Early Education</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
     <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.key)" [value]="tag.key">{{tag.key + ' (' + tag.value + ')'}}</mat-list-option>
   </mat-selection-list>
