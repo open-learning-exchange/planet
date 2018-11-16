@@ -97,9 +97,9 @@ Vagrant.configure(2) do |config|
       #echo "Preparing local node_modules folder…"
       #mkdir -p /vagrant_node_modules
       mkdir -p /vagrant/node_modules
-      #chown vagrant:vagrant /vagrant_node_modules
-      #mount --bind /vagrant_node_modules /vagrant/node_modules
-      npm i --unsafe-perm
+      chown vagrant:vagrant /vagrant_node_modules
+      mount --bind /vagrant_node_modules /vagrant/node_modules
+      npm i --unsafe-perm # -g --prefix  /vagrant_node_modules/ /vagrant/
       #sudo npm run webdriver-set-version
       # End node_modules fix
 
