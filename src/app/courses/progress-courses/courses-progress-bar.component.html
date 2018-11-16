@@ -2,5 +2,5 @@
   *ngFor="let step of course?.steps; index as i"
   [matTooltip]="step.stepTitle || 'Step ' + (i+1)"
   [ngClass]="{ 'completed': completed || ((i+1) < courseProgress?.stepNum), 'not-started': (i+1) > courseProgress?.stepNum }"
-  (click)="routing(i)">
+  class="cursor-pointer" (click)="routing(step,i)">
 </div>

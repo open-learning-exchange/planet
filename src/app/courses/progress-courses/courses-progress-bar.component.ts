@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'planet-courses-progress-bar',
@@ -20,7 +21,9 @@ export class CoursesProgressBarComponent implements OnChanges {
     this.completed = this.course.steps.length === this.courseProgress.stepNum && this.courseProgress.passed;
   }
 
-  routing(i) {
-    this.router.navigate([ '/courses/view', this.course._id,  'step',  i  + 1 ]);
+  routing(step, i) {
+    if  (step.exam) {
+      this.router.navigate([ '/courses/view', this.course._id, 'step', i + 1 ]);
+    }
   }
 }
