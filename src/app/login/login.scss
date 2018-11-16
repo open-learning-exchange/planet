@@ -50,6 +50,10 @@
     a, button {
       margin-bottom: 1rem;
     }
+
+    a:hover {
+      color: $primary;
+    }
   }
 
   .ole-logo {
