@@ -1,6 +1,6 @@
 <form class="vertical-form" [formGroup]="questionForm">
   <mat-form-field class="full-width">
-    <input matInput class="full-width" placeholder="Question Title" [formControl]="questionForm.controls.title">
+    <input matInput matTooltip="Used only for organizational purposes" matTooltipPosition="left" [matTooltipClass]="'tooltip'" class="full-width" placeholder="Question Title" [formControl]="questionForm.controls.title">
     <mat-error><planet-form-error-messages [control]="questionForm.controls.title"></planet-form-error-messages></mat-error>
   </mat-form-field>
   <mat-form-field class="full-width mat-form-field-type-no-underline">
