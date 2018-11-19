@@ -1,5 +1,5 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, ElementRef, Inject
+  Component, Input, Optional, Self, OnInit, OnDestroy, HostBinding, EventEmitter, Output, ElementRef, Inject
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -60,7 +60,7 @@ export class PlanetTagInputDialogComponent {
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ]
 })
-export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy {
+export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnDestroy {
 
   static nextId = 0;
 
@@ -87,6 +87,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     this.stateChanges.next();
   }
   @Input() mode = 'filter';
+  @Input() parent = false;
 
   shouldLabelFloat = false;
   onTouched;
@@ -106,7 +107,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnDestroy 
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
-    this.tagsService.getTags().subscribe((tags: string[]) => {
+  }
+
+  ngOnInit() {
+    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
       this.tags = tags;
     });
   }
