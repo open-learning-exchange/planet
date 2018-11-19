@@ -19,7 +19,7 @@ export class TagsService {
   }
 
   filterTags(tags: any[], filterString: string): string[] {
-    return tags.filter((tag: any) => tag.key.indexOf(filterString) > -1);
+    return tags.filter((tag: any) => tag.key.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
   }
 
 }
