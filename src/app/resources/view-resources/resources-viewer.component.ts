@@ -15,10 +15,9 @@ import { CouchService } from '../../shared/couchdb.service';
   templateUrl: './resources-viewer.component.html',
   styleUrls: [ './resources-viewer.scss' ]
 })
-export class ResourcesViewerComponent implements OnDestroy {
+export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
-  @Input() resource: any;
   @Input() fetchRating = true;
   @Output() resourceUrl = new EventEmitter<any>();
   mediaType: string;
@@ -35,15 +34,16 @@ export class ResourcesViewerComponent implements OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
-  ) { if (this.resource === undefined || this.resource._id !== this.resourceId) {
-      this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
-        .subscribe((resources) => {
-          this.setResource(resources.find((r: any) => r._id === this.resourceId));
-        });
-      this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
-    } else {
-      this.setResource(this.resource);
-    } }
+  ) {
+    this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
+      .subscribe((resources) => {
+        this.setResource(resources.find((r: any) => r._id === this.resourceId));
+      });
+  }
+
+  ngOnChanges() {
+    this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
+  }
 
   get urlPrefix() {
     let domain = environment.couchAddress + '/resources/';

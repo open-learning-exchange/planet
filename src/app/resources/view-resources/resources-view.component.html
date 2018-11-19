@@ -39,7 +39,6 @@
     </div>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
-      [resource]="resource"
       [resourceId]="resourceId"
       (resourceUrl)="setResourceUrl($event)">
     </planet-resources-viewer>
