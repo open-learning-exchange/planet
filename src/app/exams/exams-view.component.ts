@@ -58,6 +58,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       } else if (submissionId) {
         this.fromSubmission = true;
         this.mode = mode || 'grade';
+        console.log(this.mode);
         this.grade = mode === 'take' ? 0 : undefined;
         this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
       }
@@ -151,7 +152,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
         const ans = submission.answers[this.questionNum - 1] || {};
-        this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
+        if (this.mode !== 'take') {
+          this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
+        }
         this.grade = ans ? ans.grade || this.grade : this.grade;
       }
     });
