@@ -11,10 +11,13 @@ Vagrant.configure(2) do |config|
     config.vbguest.auto_update = false
   end
 
+  BOX = "ole/stretch64"
+  BOX_VERSION = "0.5.4"
+
   # production VM
   config.vm.define "prod" do |prod|
-    prod.vm.box = "ole/stretch64"
-    prod.vm.box_version = "0.5.3"
+    prod.vm.box = BOX
+    prod.vm.box_version = BOX_VERSION
 
     prod.vm.hostname = "planet"
 
@@ -53,8 +56,8 @@ Vagrant.configure(2) do |config|
 
   # development VM
   config.vm.define "dev", autostart: false do |dev|
-    dev.vm.box = "ole/stretch64"
-    dev.vm.box_version = "0.5.3"
+    dev.vm.box = BOX
+    dev.vm.box_version = BOX_VERSION
 
     dev.vm.hostname = "dev"
 
@@ -99,7 +102,7 @@ Vagrant.configure(2) do |config|
       mkdir -p /vagrant/node_modules
       #chown vagrant:vagrant /vagrant_node_modules
       #mount --bind /vagrant_node_modules /vagrant/node_modules
-      npm i --unsafe-perm
+      #npm i --unsafe-perm
       #sudo npm run webdriver-set-version
       # End node_modules fix
 
