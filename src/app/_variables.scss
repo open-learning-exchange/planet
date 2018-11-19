@@ -46,6 +46,16 @@ $form-width-1: 181px;
 // Width for form field in grid layout
 $form-field-width: 180px;
 
+// Typography
+$font-size-md: 1rem;
+$font-size-sm: 0.75rem;
+
+// Values of sidenav width below used in home.component.ts for animation.
+// If you need to adjust these values, you also might need to change
+// home.component.ts values of sidenav width in animation.
+$mat-sidenav-closed-width: 72px;
+$mat-sidenav-open-width: 150px;
+
 :export {
   primary: $primary;
   primaryLight: $primary-light;

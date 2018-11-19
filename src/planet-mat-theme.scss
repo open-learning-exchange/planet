@@ -37,12 +37,12 @@ $accent-map: (
   color: mat-contrast($planet-app-primary, $light-hue);
 }
 
-@media (max-width: 959px){
+@media ($mat-small){
   .mat-tooltip.tooltip {
-      margin-left: 77px; //sidebar width 72px + margin
+      margin-left: calc(#{$mat-sidenav-closed-width} + 1.2rem);
   }
 }
 
 .mat-tooltip.tooltip {
-    font-size: 0.8rem;
+    font-size: $font-size-sm;
 }

@@ -61,7 +61,7 @@ body {
 
   // Use to reset font size to base
   .font-size-1 {
-    font-size: 1rem;
+    font-size: $font-size-md;
   }
 
   .full-width {
@@ -247,7 +247,7 @@ body {
   }
 
   .small {
-    font-size: 0.75rem;
+    font-size: $font-size-sm;
   }
 
   mat-table .highlight, .primary-light-color {
