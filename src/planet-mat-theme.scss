@@ -39,7 +39,7 @@ $accent-map: (
 
 @media ($mat-small){
   .mat-tooltip.tooltip {
-      margin-left: calc(#{$mat-sidenav-closed-width} + 1.2rem);
+      margin-left: calc(#{$mat-sidenav-open-width} + 1.2rem);
   }
 }
 
