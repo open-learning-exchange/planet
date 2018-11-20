@@ -42,7 +42,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       this.submissions = submissions;
       this.createChart(this.courses, submissions);
     });
-    this.submissionsService.updateSubmissions({ query: { 'selector': { 'user': this.user.name } } });
+    this.submissionsService.updateSubmissions({ query: { 'selector': { 'user.name': this.user.name } } });
     this.coursesService.getUsersCourses(this.user._id);
   }
 
