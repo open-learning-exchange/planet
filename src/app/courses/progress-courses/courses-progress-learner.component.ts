@@ -103,4 +103,6 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     this.router.navigate([ '/courses' ]);
   }
 
+  changeData(event) {}
+
 }

@@ -6,8 +6,9 @@
   <mat-toolbar class="primary-color font-size-1">
     <span i18n>{{headingStart ? headingStart + ' ' : ''}}Course Progress</span>
     <span class="toolbar-fill"></span>
+    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
     <mat-form-field *ngIf="course?.steps.length > 1">
-      <mat-select i18n-placeholder placeholder="List of Steps" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
+      <mat-select i18n-placeholder placeholder="View Step Detail" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
         <mat-option *ngFor="let step of course?.steps; index as i" [value]="step">
           {{ step.stepTitle || 'Step ' + (i + 1) }}
         </mat-option>
@@ -15,7 +16,7 @@
     </mat-form-field>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [inputs]="chartData" [height]="yAxisLength">
+    <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [inputs]="chartData" [height]="yAxisLength" (changeData)="changeData($event)">
     </planet-courses-progress-chart>
     <ng-template #noProgress i18n>No Progress record available</ng-template>
   </div>

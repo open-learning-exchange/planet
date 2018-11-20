@@ -50,7 +50,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   onStepChange(value: any) {
     this.selectedStep = value;
-    this.setSubmissions();
+    this.setSingleStep(this.submissions);
   }
 
   setSubmissions() {
@@ -69,6 +69,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   setFullCourse(submissions: any[]) {
+    this.selectedStep = undefined;
     this.yAxisLength = this.course.steps.length;
     const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
@@ -90,8 +91,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   setSingleStep(submissions: any[]) {
+    const step = this.selectedStep;
     this.yAxisLength = this.selectedStep.exam.questions.length;
-    this.chartData = submissions.map(
+    this.chartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
       submission => {
         const answers = this.totalSubmissionAnswers(submission);
         return {
@@ -100,6 +102,17 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         };
       }
     );
+  }
+
+  changeData({ index }) {
+    if (this.selectedStep === undefined) {
+      this.selectedStep = this.course.steps[this.course.steps.length - (index + 1)];
+      this.setSingleStep(this.submissions);
+    }
+  }
+
+  resetToFullCourse() {
+    this.setFullCourse(this.submissions);
   }
 
 }

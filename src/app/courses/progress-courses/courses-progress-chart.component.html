@@ -10,7 +10,8 @@
   <div
     class="border-bottom"
     [ngClass]="{'primary-color':item.fill}"
-    *ngFor="let item of set?.items; index as i">
+    *ngFor="let item of set?.items; index as i"
+    (click)="dataClick($event, set, i)">
     {{item.number}}
   </div>
   <div>{{set.total}}</div>
