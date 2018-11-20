@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, DoCheck, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
@@ -26,7 +26,7 @@ import { StateService } from '../shared/state.service';
     ])
   ]
 })
-export class HomeComponent implements OnInit, AfterViewInit, DoCheck, OnDestroy {
+export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
   notifications = [];
   user: any = {};
@@ -74,28 +74,35 @@ export class HomeComponent implements OnInit, AfterViewInit, DoCheck, OnDestroy 
   }
 
   ngDoCheck() {
-    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
-    if (this.forceModern !== isScreenTooNarrow) {
-      this.forceModern = isScreenTooNarrow;
-    }
+    this.onResize();
   }
 
-  ngAfterViewInit() {
-    this.mainContent._updateContentMargins();
-    this.mainContent._changeDetectorRef.markForCheck();
+  ngAfterViewChecked() {
     const toolbarElement = this.toolbar.nativeElement;
     const toolbarStyle = window.getComputedStyle(toolbarElement);
-    this.classicToolbarWidth =
-      toolbarElement.querySelector('.navbar-left').offsetWidth +
-      toolbarElement.querySelector('.navbar-center').offsetWidth +
-      toolbarElement.querySelector('.navbar-right').offsetWidth +
-      parseInt(toolbarStyle.paddingLeft, 10) +
-      parseInt(toolbarStyle.paddingRight, 10);
+    const navbarCenter = toolbarElement.querySelector('.navbar-center');
+    if (navbarCenter !== null) {
+      this.classicToolbarWidth =
+        toolbarElement.querySelector('.navbar-left').offsetWidth +
+        navbarCenter.offsetWidth +
+        toolbarElement.querySelector('.navbar-right').offsetWidth +
+        parseInt(toolbarStyle.paddingLeft, 10) +
+        parseInt(toolbarStyle.paddingRight, 10);
+      this.mainContent._updateContentMargins();
+      this.mainContent._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  @HostListener('window:resize') onResize() {
+    const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
+    if (this.forceModern !== isScreenTooNarrow) {
+      this.forceModern = isScreenTooNarrow;
+    }
   }
 
   // Used to swap in different background.

@@ -7,29 +7,6 @@
   grid-template-areas: "header" "main";
   height: 100vh;
 
-  mat-sidenav li {
-    a {
-      border-radius: 0;
-    }
-
-    // takes the left sidenav and alters color of text, background and svg-fill on .active class
-    a.active {
-      background-color: $primary-text;
-      color: $primary;
-      transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1),
-        color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
-      .mat-button-focus-overlay {
-        background-color: rgba(0, 0, 0, 0.06);
-        transition: background-color 1s ease-in;
-      }
-    }
-
-    // Animates pulsating icon when navbar link clicked
-    a.pulsate mat-icon {
-      animation: pulsate 1000ms linear alternate-reverse infinite;
-    }
-  }
-
   @keyframes pulsate {
     100% { transform: scale(1.1) }
   }
@@ -105,50 +82,6 @@
     top: 0;
   }
 
-  .main-sidenav {
-    display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: "tp" "." "btm";
-    overflow: visible;
-
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: inline;
-    }
-
-    a {
-      width: 100%;
-      min-width: 0;
-      text-align: left;
-      // Fixed height so text visibility doesn't add pixel
-      height: 36px;
-      // align with top mat-icon-button
-      padding: 0 24px;
-
-      label {
-        cursor: pointer;
-        margin: 0 24px;
-      }
-    }
-
-    .top-nav, .bottom-nav {
-      overflow: hidden;
-    }
-
-    .top-nav {
-      grid-area: tp;
-    }
-
-    .bottom-nav {
-      grid-area: btm;
-      margin-bottom: 16px;
-    }
-
-  }
-
   .hidden-classic {
     height: 0;
     overflow: hidden;
@@ -176,4 +109,74 @@
   :host {
     grid-template-rows: 56px 1fr;
   }
+}
+
+.main-sidenav {
+
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "tp" "." "btm";
+  overflow: visible;
+  height: 100%;
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: inline;
+
+    li {
+      a {
+        border-radius: 0;
+      }
+
+      // takes the left sidenav and alters color of text, background and svg-fill on .active class
+      a.active {
+        background-color: $primary-text;
+        color: $primary;
+        transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1),
+          color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
+        .mat-button-focus-overlay {
+          background-color: rgba(0, 0, 0, 0.06);
+          transition: background-color 1s ease-in;
+        }
+      }
+
+      // Animates pulsating icon when navbar link clicked
+      a.pulsate mat-icon {
+        animation: pulsate 1000ms linear alternate-reverse infinite;
+      }
+    }
+
+  }
+
+  a {
+    width: 100%;
+    min-width: 0;
+    text-align: left;
+    // Fixed height so text visibility doesn't add pixel
+    height: 36px;
+    // align with top mat-icon-button
+    padding: 0 24px;
+
+    label {
+      cursor: pointer;
+      margin: 0 24px;
+    }
+  }
+
+  .top-nav, .bottom-nav {
+    overflow: hidden;
+  }
+
+  .top-nav {
+    grid-area: tp;
+  }
+
+  .bottom-nav {
+    grid-area: btm;
+    margin-bottom: 16px;
+  }
+
 }
