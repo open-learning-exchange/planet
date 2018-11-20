@@ -73,16 +73,19 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
       const answers = this.course.steps.map((step: any) => {
-        const submission = submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
+        const submission =
+          submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
         if (submission) {
-          return { number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0), fill: true };
+          return {
+            number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0), fill: true
+          };
         }
         return { number: '', fill: false };
       }).reverse();
       return ({
         items: answers,
         label: user
-      })
+      });
     });
   }
 
