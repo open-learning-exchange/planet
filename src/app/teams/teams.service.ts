@@ -115,19 +115,15 @@ export class TeamsService {
   }
 
   sendNotifications(type, members, notificationParams) {
-    let notify = [ ];
-    if (type === 'request') {
-      notify = members.map((user: any) => {
+    const notifications = members.filter((user: any) => {
+      return this.userService.get().name !== user.name && user.name !== 'satellite';
+    }).map((user: any) => {
+      if (type === 'request') {
         return this.requestNotification(user._id, notificationParams);
-      });
-    } else {
-      notify = members.filter((user: any) => {
-        return this.userService.get().name !== user.name && user.name !== 'satellite';
-      }).map((user: any) => {
-        return this.memberAddNotification(user._id, notificationParams);
-      });
-    }
-    return this.couchService.post('notifications/_bulk_docs', { docs: notify });
+      }
+      return this.memberAddNotification(user._id, notificationParams);
+    });
+    return this.couchService.post('notifications/_bulk_docs', { docs: notifications });
   }
 
   memberAddNotification(userId, { team, url, newMembersLength }) {
