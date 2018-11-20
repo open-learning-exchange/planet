@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
   templateUrl: 'courses-progress.component.html',
@@ -16,6 +17,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   headingStart = '';
   selectedStep: any;
   chartData: any[];
+  submissions: any[] = [];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
 
@@ -36,16 +38,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.setSubmissions();
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
-      this.yAxisLength = this.selectedStep.exam.questions.length;
-      this.chartData = submissions.map(
-        submission => {
-          const answers = submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
-          return {
-            items: answers,
-            label: submission.user.name
-          };
-        }
-      );
+      this.submissions = submissions;
+      this.setFullCourse(submissions);
     });
   }
 
@@ -62,12 +56,47 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setSubmissions() {
     this.chartData = [];
     if (this.selectedStep.exam) {
-      this.submissionsService.updateSubmissions({ parentId: this.selectedStep.exam._id + '@' + this.course._id });
+      this.submissionsService.updateSubmissions({ parentId: this.course._id });
     }
   }
 
   navigateBack() {
     this.router.navigate([ '/courses' ]);
+  }
+
+  totalSubmissionAnswers(submission: any) {
+    return submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
+  }
+
+  setFullCourse(submissions: any[]) {
+    this.yAxisLength = this.course.steps.length;
+    const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
+    this.chartData = users.map((user: string) => {
+      const answers = this.course.steps.map((step: any) => {
+        const submission = submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
+        if (submission) {
+          return { number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0), fill: true };
+        }
+        return { number: '', fill: false };
+      }).reverse();
+      return ({
+        items: answers,
+        label: user
+      })
+    });
+  }
+
+  setSingleStep(submissions: any[]) {
+    this.yAxisLength = this.selectedStep.exam.questions.length;
+    this.chartData = submissions.map(
+      submission => {
+        const answers = this.totalSubmissionAnswers(submission);
+        return {
+          items: answers,
+          label: submission.user.name
+        };
+      }
+    );
   }
 
 }

@@ -121,8 +121,8 @@ export class SubmissionsService {
   }
 
   filterSubmissions(submissions, parentId) {
-    return submissions.filter(s => s.parentId === parentId).reduce((subs, submission) => {
-      const userSubmissionIndex = subs.findIndex((s) => s.user._id === submission.user._id);
+    return submissions.filter(s => s.parentId.indexOf(parentId) > -1).reduce((subs, submission) => {
+      const userSubmissionIndex = subs.findIndex((s) => s.user._id === submission.user._id && s.parentId === submission.parentId);
       if (userSubmissionIndex !== -1) {
         const oldSubmission = subs[userSubmissionIndex];
         subs[userSubmissionIndex] = this.calcTotalGrade(submission) > this.calcTotalGrade(oldSubmission) ?
