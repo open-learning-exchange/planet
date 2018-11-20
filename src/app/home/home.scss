@@ -87,6 +87,15 @@
     overflow: hidden;
   }
 
+  mat-sidenav-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateY(0px);
+  }
+
 }
 
 .menu-item-notification {

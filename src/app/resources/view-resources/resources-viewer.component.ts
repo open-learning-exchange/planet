@@ -18,7 +18,6 @@ import { CouchService } from '../../shared/couchdb.service';
 export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
-  @Input() resource: any;
   @Input() fetchRating = true;
   @Output() resourceUrl = new EventEmitter<any>();
   mediaType: string;
@@ -35,7 +34,16 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
-  ) { }
+  ) {
+    this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
+      .subscribe((resources) => {
+        this.setResource(resources.find((r: any) => r._id === this.resourceId));
+      });
+  }
+
+  ngOnChanges() {
+    this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
+  }
 
   get urlPrefix() {
     let domain = environment.couchAddress + '/resources/';
@@ -43,18 +51,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       domain = 'http://' + this.stateService.configuration.parentDomain + '/resources/';
     }
     return domain;
-  }
-
-  ngOnChanges() {
-    if (this.resource === undefined || this.resource._id !== this.resourceId) {
-      this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
-        .subscribe((resources) => {
-          this.setResource(resources.find((r: any) => r._id === this.resourceId));
-        });
-      this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
-    } else {
-      this.setResource(this.resource);
-    }
   }
 
   ngOnDestroy() {
@@ -79,7 +75,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   setResource(resource: any) {
-    this.resource = resource;
     this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];

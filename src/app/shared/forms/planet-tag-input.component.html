@@ -1,20 +1,11 @@
-<mat-chip-list #tagsList>
-  <mat-chip *ngFor="let tag of _value" [removable]="true" (removed)="removeTag(tag)">
-    {{tag}}
-    <mat-icon matChipRemove>clear</mat-icon>
-  </mat-chip>
-  <input
-    #tagInput
-    [formControl]="inputControl"
-    [matAutocomplete]="tagAuto"
-    [matChipInputFor]="tagsList"
-    [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
-    [matChipInputAddOnBlur]="true"
-    (matChipInputTokenEnd)="inputAddTag($event)"
-    required>
-</mat-chip-list>
-<mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="autocompleteAddTag($event)">
-  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag.key">
-    {{tag.key}}
-  </mat-option>
-</mat-autocomplete>
+<span [ngSwitch]="value.length" class="small margin-lr-5">
+  <span *ngSwitchCase="0" i18n>No labels selected</span>
+  <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
+  <span *ngSwitchDefault [matTooltip]="tooltipLabels">Hover to see selected labels</span>
+</span>
+<button type="button" mat-stroked-button (click)="openPresetDialog()">
+  <ng-container [ngSwitch]="mode">
+    <span i18n *ngSwitchCase="'filter'">Filter Labels</span>
+    <span i18n *ngSwitchCase="'add'">Add Labels</span>
+  </ng-container>
+</button>

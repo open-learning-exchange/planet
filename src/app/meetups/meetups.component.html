@@ -47,6 +47,7 @@
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
+            <mat-icon class="margin-lr-3" i18n-title title="Joined Meetup" [inline]="true" *ngIf="element.participate">check</mat-icon>
           </h3>
           <div class="content">
             <td-markdown [content]="element.description"></td-markdown>

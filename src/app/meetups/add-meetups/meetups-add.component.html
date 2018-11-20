@@ -22,7 +22,7 @@
       </mat-form-field>
       <div>
         <mat-form-field>
-          <input matInput [matDatepicker]="datepickerStart" i18n-placeholder placeholder="Start Date" formControlName="startDate">
+          <input matInput [matDatepicker]="datepickerStart" i18n-placeholder required="true" placeholder="Start Date" formControlName="startDate">
           <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
           <mat-datepicker #datepickerStart></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
