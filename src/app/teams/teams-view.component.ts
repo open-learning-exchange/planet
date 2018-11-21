@@ -6,11 +6,12 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
+import { addToArray } from '../shared/utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -142,7 +143,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
       }),
       switchMap((notifyShelf) => {
-        return this.sendNotifications('addMember', selected.length);
+        return forkJoin([
+          this.teamsService.sendNotifications('added', selected, {
+            url: this.router.url, team: { ...this.team }
+          }),
+          this.sendNotifications('addMember', selected.length)
+        ]);
       })
     ).subscribe(res => {
       this.getMembers();
