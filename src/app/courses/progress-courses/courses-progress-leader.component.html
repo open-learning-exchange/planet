@@ -4,7 +4,11 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{{headingStart ? headingStart + ' ' : ''}}Course Progress</span>
+    <span>
+      {{headingStart ? headingStart + ' ' : ''}}
+      <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
+      <ng-container *ngIf="selectedStep !== undefined" i18n>Exam Progress</ng-container>
+    </span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
     <mat-form-field *ngIf="course?.steps.length > 1">

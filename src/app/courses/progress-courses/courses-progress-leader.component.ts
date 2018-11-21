@@ -7,7 +7,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
-  templateUrl: 'courses-progress.component.html',
+  templateUrl: 'courses-progress-leader.component.html',
   styleUrls: [ 'courses-progress.scss' ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
@@ -70,6 +70,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   setFullCourse(submissions: any[]) {
     this.selectedStep = undefined;
+    this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
     const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
@@ -92,6 +93,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   setSingleStep(submissions: any[]) {
     const step = this.selectedStep;
+    this.headingStart = this.selectedStep.stepTitle;
     this.yAxisLength = this.selectedStep.exam.questions.length;
     this.chartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
       submission => {
