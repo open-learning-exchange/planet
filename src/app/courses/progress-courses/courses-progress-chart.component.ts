@@ -5,7 +5,7 @@
  *  }
  * ]
  */
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'planet-courses-progress-chart',
@@ -16,6 +16,7 @@ export class CoursesProgressChartComponent implements OnChanges {
 
   @Input() inputs = [];
   @Input() height = 0;
+  @Output() changeData = new EventEmitter<{ set, index }>();
   sets = [];
   horizTotals = [];
 
@@ -27,8 +28,12 @@ export class CoursesProgressChartComponent implements OnChanges {
       total: input.items.reduce((total, item) => total + (item.number || 0), 0)
     }));
     this.horizTotals = this.sets.reduce((totals, set) => {
-      return set.items.map((item, index) => (item.number || 0) + (totals[index] || 0));
-    }, []);
+      return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
+    }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
+  }
+
+  dataClick(event, set, index) {
+    this.changeData.emit({ set, index });
   }
 
 }

@@ -4,9 +4,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
-  templateUrl: 'courses-progress.component.html',
+  templateUrl: 'courses-progress-leader.component.html',
   styleUrls: [ 'courses-progress.scss' ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
@@ -16,6 +17,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   headingStart = '';
   selectedStep: any;
   chartData: any[];
+  submissions: any[] = [];
+  progress: any[] = [];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
 
@@ -33,19 +36,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ course }) => {
       this.course = course;
       this.selectedStep = course.steps[0];
-      this.setSubmissions();
+      this.setProgress(course);
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
-      this.yAxisLength = this.selectedStep.exam.questions.length;
-      this.chartData = submissions.map(
-        submission => {
-          const answers = submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
-          return {
-            items: answers,
-            label: submission.user.name
-          };
-        }
-      );
+      this.submissions = submissions;
+      this.setFullCourse(submissions);
     });
   }
 
@@ -54,20 +49,101 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  setProgress(course) {
+    this.coursesService.findProgress([ course._id ], { allUsers: true }).subscribe((progress) => {
+      this.progress = progress;
+      this.setSubmissions();
+    });
+  }
+
   onStepChange(value: any) {
     this.selectedStep = value;
-    this.setSubmissions();
+    this.setSingleStep(this.submissions);
   }
 
   setSubmissions() {
     this.chartData = [];
     if (this.selectedStep.exam) {
-      this.submissionsService.updateSubmissions({ parentId: this.selectedStep.exam._id + '@' + this.course._id });
+      this.submissionsService.updateSubmissions({ parentId: this.course._id });
     }
   }
 
   navigateBack() {
     this.router.navigate([ '/courses' ]);
+  }
+
+  arraySubmissionAnswers(submission: any) {
+    return submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
+  }
+
+  totalSubmissionAnswers(submission: any) {
+    return {
+      number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0),
+      fill: true,
+      clickable: true
+    };
+  }
+
+  userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
+    const userProgress = this.userProgress(user);
+    if (!step.exam) {
+      return { number: '', fill: userProgress.stepNum > index };
+    }
+    const submission =
+      submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
+    if (submission) {
+      return this.totalSubmissionAnswers(submission);
+    }
+    return { number: '', fill: false, clickable: true };
+  }
+
+  setFullCourse(submissions: any[]) {
+    this.selectedStep = undefined;
+    this.headingStart = this.course.courseTitle;
+    this.yAxisLength = this.course.steps.length;
+    const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
+    this.chartData = users.map((user: string) => {
+      const answers = this.course.steps.map((step: any, index: number) => {
+        return this.userCourseAnswers(user, step, index, submissions);
+      }).reverse();
+      return ({
+        items: answers,
+        label: user
+      });
+    });
+  }
+
+  setSingleStep(submissions: any[]) {
+    const step = this.selectedStep;
+    this.headingStart = this.selectedStep.stepTitle;
+    this.yAxisLength = this.selectedStep.exam.questions.length;
+    this.chartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
+      submission => {
+        const answers = this.arraySubmissionAnswers(submission);
+        return {
+          items: answers,
+          label: submission.user.name
+        };
+      }
+    );
+  }
+
+  changeData({ index }) {
+    const courseIndex = this.course.steps.length - (index + 1);
+    if (this.selectedStep === undefined && this.course.steps[courseIndex].exam) {
+      this.selectedStep = this.course.steps[courseIndex];
+      this.setSingleStep(this.submissions);
+    }
+  }
+
+  resetToFullCourse() {
+    this.setFullCourse(this.submissions);
+  }
+
+  userProgress(user) {
+    return (this.progress
+      .filter((p: any) => p.userId === 'org.couchdb.user:' + user)
+      .reduce((max: any, p: any) => p.stepNum > max.stepNum ? p : max, { stepNum: 0 }));
   }
 
 }

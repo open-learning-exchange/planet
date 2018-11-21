@@ -7,7 +7,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../../shared/user.service';
 
 @Component({
-  templateUrl: 'courses-progress.component.html',
+  templateUrl: 'courses-progress-learner.component.html',
   styleUrls: [ 'courses-progress.scss' ]
 })
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
@@ -42,7 +42,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       this.submissions = submissions;
       this.createChart(this.courses, submissions);
     });
-    this.submissionsService.updateSubmissions({ query: { 'selector': { 'user': this.user.name } } });
+    this.submissionsService.updateSubmissions({ query: { 'selector': { 'user.name': this.user.name } } });
     this.coursesService.getUsersCourses(this.user._id);
   }
 
@@ -102,5 +102,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   navigateBack() {
     this.router.navigate([ '/courses' ]);
   }
+
+  changeData(event) {}
 
 }
