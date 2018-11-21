@@ -28,8 +28,8 @@ export class CoursesProgressChartComponent implements OnChanges {
       total: input.items.reduce((total, item) => total + (item.number || 0), 0)
     }));
     this.horizTotals = this.sets.reduce((totals, set) => {
-      return set.items.map((item, index) => (item.number || 0) + (totals[index] || 0));
-    }, []);
+      return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
+    }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
   }
 
   dataClick(event, set, index) {

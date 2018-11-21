@@ -91,10 +91,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
           submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
         if (submission) {
           return {
-            number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0), fill: true
+            number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0),
+            fill: true,
+            clickable: true
           };
         }
-        return { number: '', fill: false };
+        return { number: '', fill: false, clickable: true };
       }).reverse();
       return ({
         items: answers,
@@ -119,7 +121,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   changeData({ index }) {
-    const courseIndex = this.course.steps.length - (index + 1)
+    const courseIndex = this.course.steps.length - (index + 1);
     if (this.selectedStep === undefined && this.course.steps[courseIndex].exam) {
       this.selectedStep = this.course.steps[courseIndex];
       this.setSingleStep(this.submissions);

@@ -1,15 +1,27 @@
 <div class="errors errors-total">
   <div i18n>Total Errors</div>
-  <div class="accent-color border-bottom" *ngFor="let total of horizTotals">{{total}}</div>
+  <div
+    class="accent-color border-bottom"
+    *ngFor="let total of horizTotals; index as i"
+    [ngClass]="{'cursor-pointer':total.clickable}"
+    (click)="dataClick($event, [], i)">
+    {{total.count}}
+  </div>
 </div>
 <div class="errors errors-index">
   <div i18n>Steps</div>
-  <div class="border-bottom" *ngFor="let total of horizTotals; index as i">{{height - i}}</div>
+  <div
+    class="border-bottom"
+    *ngFor="let total of horizTotals; index as i"
+    [ngClass]="{'cursor-pointer':total.clickable}"
+    (click)="dataClick($event, [], i)">
+    {{height - i}}
+  </div>
 </div>
 <div class="errors errors-user" *ngFor="let set of sets">
   <div
     class="border-bottom"
-    [ngClass]="{'primary-color':item.fill}"
+    [ngClass]="{'primary-color':item.fill,'cursor-pointer':item.clickable}"
     *ngFor="let item of set?.items; index as i"
     (click)="dataClick($event, set, i)">
     {{item.number}}
