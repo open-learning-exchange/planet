@@ -18,6 +18,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedStep: any;
   chartData: any[];
   submissions: any[] = [];
+  progress: any[] = [];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
 
@@ -35,7 +36,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ course }) => {
       this.course = course;
       this.selectedStep = course.steps[0];
-      this.setSubmissions();
+      this.setProgress(course);
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
       this.submissions = submissions;
@@ -46,6 +47,13 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setProgress(course) {
+    this.coursesService.findProgress([ course._id ], { allUsers: true }).subscribe((progress) => {
+      this.progress = progress;
+      this.setSubmissions();
+    });
   }
 
   onStepChange(value: any) {
@@ -74,7 +82,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.yAxisLength = this.course.steps.length;
     const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
-      const answers = this.course.steps.map((step: any) => {
+      const answers = this.course.steps.map((step: any, index: number) => {
+        const userProgress = this.userProgress(user);
+        if (!step.exam) {
+          return { number: '', fill: userProgress.stepNum > index };
+        }
         const submission =
           submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
         if (submission) {
@@ -115,6 +127,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   resetToFullCourse() {
     this.setFullCourse(this.submissions);
+  }
+
+  userProgress(user) {
+    return (this.progress
+      .filter((p: any) => p.userId === 'org.couchdb.user:' + user)
+      .reduce((max: any, p: any) => p.stepNum > max.stepNum ? p : max, { stepNum: 0 }));
   }
 
 }

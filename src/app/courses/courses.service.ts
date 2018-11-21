@@ -125,9 +125,10 @@ export class CoursesService {
   }
 
   findProgress(ids, opts) {
+    const userQuery = opts.allUsers ? {} : { 'userId': this.userService.get()._id };
     return this.couchService.findAll(
       this.progressDb,
-      findDocuments({ 'courseId': inSelector(ids), 'userId': this.userService.get()._id }), opts
+      findDocuments({ 'courseId': inSelector(ids), ...userQuery }), opts
     );
   }
 
