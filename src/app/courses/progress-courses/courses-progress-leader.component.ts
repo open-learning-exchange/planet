@@ -72,8 +72,16 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.router.navigate([ '/courses' ]);
   }
 
-  totalSubmissionAnswers(submission: any) {
+  arraySubmissionAnswers(submission: any) {
     return submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
+  }
+
+  totalSubmissionAnswers(submission: any) {
+    return {
+      number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0),
+      fill: true,
+      clickable: true
+    };
   }
 
   setFullCourse(submissions: any[]) {
@@ -90,11 +98,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         const submission =
           submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
         if (submission) {
-          return {
-            number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0),
-            fill: true,
-            clickable: true
-          };
+          return this.totalSubmissionAnswers(submission);
         }
         return { number: '', fill: false, clickable: true };
       }).reverse();
@@ -111,7 +115,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.yAxisLength = this.selectedStep.exam.questions.length;
     this.chartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
       submission => {
-        const answers = this.totalSubmissionAnswers(submission);
+        const answers = this.arraySubmissionAnswers(submission);
         return {
           items: answers,
           label: submission.user.name
