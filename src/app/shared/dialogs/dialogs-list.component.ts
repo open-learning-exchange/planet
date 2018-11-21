@@ -24,6 +24,10 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
       white-space: pre-line;
       font-size: 14px;
     }
+    .tooltip-label {
+      font-size: 15px;
+      margin-top: 10px;
+    }
   ` ]
 })
 export class DialogsListComponent implements AfterViewInit {
@@ -107,17 +111,13 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   selectIdentifier(row: any) {
-    return row._id + (row.planetCode === undefined ? '' : row.planetCode);
-  }
-
-  selections() {
     this.selectedElements = [];
-    this.selection.selected.map(id => this.tableData.data.filter((row: any) => {
-      if (row._id === id) {
-        this.selectedElements.push(row.name);
+    this.selection.selected.map(id => this.tableData.data.filter((user: any) => {
+      if (user._id === id) {
+        this.selectedElements.push(user.name);
         this.selectedNames = this.selectedElements.join('\r\n');
       }}));
-    return this.selectedNames;
+    return row._id + (row.planetCode === undefined ? '' : row.planetCode);
   }
 
   allowSubmit() {
