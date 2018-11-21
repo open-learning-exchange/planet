@@ -84,6 +84,19 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     };
   }
 
+  userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
+    const userProgress = this.userProgress(user);
+    if (!step.exam) {
+      return { number: '', fill: userProgress.stepNum > index };
+    }
+    const submission =
+      submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
+    if (submission) {
+      return this.totalSubmissionAnswers(submission);
+    }
+    return { number: '', fill: false, clickable: true };
+  }
+
   setFullCourse(submissions: any[]) {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
@@ -91,16 +104,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
       const answers = this.course.steps.map((step: any, index: number) => {
-        const userProgress = this.userProgress(user);
-        if (!step.exam) {
-          return { number: '', fill: userProgress.stepNum > index };
-        }
-        const submission =
-          submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
-        if (submission) {
-          return this.totalSubmissionAnswers(submission);
-        }
-        return { number: '', fill: false, clickable: true };
+        return this.userCourseAnswers(user, step, index, submissions);
       }).reverse();
       return ({
         items: answers,
