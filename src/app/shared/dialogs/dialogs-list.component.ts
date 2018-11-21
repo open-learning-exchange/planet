@@ -116,8 +116,7 @@ export class DialogsListComponent implements AfterViewInit {
       if (row._id === id) {
         this.selectedElements.push(row.name);
         this.selectedNames = this.selectedElements.join('\r\n');
-      }
-    }));
+      }}));
     return this.selectedNames;
   }
 
