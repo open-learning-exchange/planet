@@ -119,8 +119,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   changeData({ index }) {
-    if (this.selectedStep === undefined) {
-      this.selectedStep = this.course.steps[this.course.steps.length - (index + 1)];
+    const courseIndex = this.course.steps.length - (index + 1)
+    if (this.selectedStep === undefined && this.course.steps[courseIndex].exam) {
+      this.selectedStep = this.course.steps[courseIndex];
       this.setSingleStep(this.submissions);
     }
   }
