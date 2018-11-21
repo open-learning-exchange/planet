@@ -30,6 +30,11 @@
   [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
 </mat-paginator>
 <mat-dialog-actions>
+  <button mat-raised-button
+          [matTooltip]=selections()
+          matTooltipClass = "tooltip">
+    {{this.selection.selected.length}} users selected
+  </button>
   <button mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
   <button mat-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>
