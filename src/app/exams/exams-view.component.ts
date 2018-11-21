@@ -152,9 +152,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
         const ans = submission.answers[this.questionNum - 1] || {};
-        if (this.mode !== 'take') {
-          this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
-        }
+        this.answer = (Array.isArray(ans.value) && this.mode !== 'take') ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
         this.grade = ans ? ans.grade || this.grade : this.grade;
       }
     });
