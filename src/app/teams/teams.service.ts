@@ -131,7 +131,7 @@ export class TeamsService {
   addedToTeamNotification(userId, { team, url }) {
     return {
       'user': userId,
-      'message': 'You have been added to ' + team.name + ' team. ',
+      'message': 'You have been added to ' + team.name + ' team.',
       'link': url,
       'item': team._id,
       'type': 'team',
