@@ -239,7 +239,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   countSelectNotEnrolled(selected: any) {
     this.selectedNotEnrolled = selected.reduce((count, id) => {
-      return this.hasSteps(id) ?  count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count }, 0);
+      return this.hasSteps(id) ?  count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count; }, 0);
   }
 
   hasSteps(id: string) {
