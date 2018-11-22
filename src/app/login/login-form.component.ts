@@ -126,6 +126,7 @@ export class LoginFormComponent {
   }
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
+    this.planetConfiguration = this.stateService.configuration;
     this.pouchAuthService.login(name, password).pipe(
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(this.createSession(name, password)),

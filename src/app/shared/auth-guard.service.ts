@@ -17,15 +17,12 @@ export class AuthService {
   ) { }
 
   private getSession$() {
-    return forkJoin([
-      this.pouchAuthService.getSessionInfo(),
-      this.stateService.getCouchState('configurations', 'local')
-    ]);
+    return this.pouchAuthService.getSessionInfo();
   }
 
   private checkUser(url: any): Observable<boolean> {
     return this.getSession$().pipe(
-      switchMap(([ sessionInfo, configRes ]) => {
+      switchMap((sessionInfo) => {
         if (sessionInfo.userCtx.name) {
           // If user already matches one on the user service, do not make additional call to CouchDB
           if (sessionInfo.userCtx.name === this.userService.get().name) {
@@ -51,7 +48,7 @@ export class AuthService {
   // For login route will redirect to main app if there is an active session
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.getSession$().pipe(
-      map(([ sessionInfo, configRes ]) => {
+      map((sessionInfo) => {
         if (sessionInfo.userCtx.name) {
           this.router.navigate([ '' ]);
           return false;
