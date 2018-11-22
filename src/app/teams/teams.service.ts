@@ -118,12 +118,29 @@ export class TeamsService {
     const notifications = members.filter((user: any) => {
       return this.userService.get().name !== user.name && user.name !== 'satellite';
     }).map((user: any) => {
-      if (type === 'request') {
-        return this.requestNotification(user._id, notificationParams);
+      switch (type) {
+        case 'request':
+          return this.requestNotification(user._id, notificationParams);
+        case 'added':
+          return this.addedToTeamNotification(user._id, notificationParams);
+        default:
+          return this.memberAddNotification(user._id, notificationParams);
       }
-      return this.memberAddNotification(user._id, notificationParams);
     });
     return this.couchService.post('notifications/_bulk_docs', { docs: notifications });
+  }
+
+  addedToTeamNotification(userId, { team, url }) {
+    return {
+      'user': userId,
+      'message': 'You have been added to ' + team.name + ' team.',
+      'link': url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': Date.now()
+    };
   }
 
   memberAddNotification(userId, { team, url, newMembersLength }) {
