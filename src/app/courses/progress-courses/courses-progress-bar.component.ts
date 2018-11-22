@@ -20,8 +20,8 @@ export class CoursesProgressBarComponent implements OnChanges {
     this.completed = this.course.steps.length === this.courseProgress.stepNum && this.courseProgress.passed;
   }
 
-  routing(step, i) {
-    if  (step.exam) {
+  routing(completedStepNum, i) {
+    if (i < completedStepNum) {
       this.router.navigate([ '/courses/view', this.course._id, 'step', i + 1 ]);
     }
   }
