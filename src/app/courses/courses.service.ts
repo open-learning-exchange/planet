@@ -61,7 +61,7 @@ export class CoursesService {
       this.couchService.post(this.progressDb + '/_find', findDocuments({
         'userId': this.userService.get()._id,
         courseId
-      }))
+      }), opts)
     ];
     if (!forceLatest && courseId === this.course._id) {
       obs.push(of(this.course));

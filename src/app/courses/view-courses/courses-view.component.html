@@ -13,8 +13,8 @@
       <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled && courseDetail.steps.length">
         Leave
       </button>
+      <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
     </ng-container>
-    <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length && !parent">
@@ -44,7 +44,7 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
-            <mat-action-row>
+            <mat-action-row *ngIf="!parent">
               <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
               <button *ngIf="step?.resources?.length > 1 && step?.resources?.length" mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
               <mat-menu #resourceList="matMenu">
