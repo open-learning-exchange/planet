@@ -38,7 +38,7 @@ export class ManagerService {
       password: [ '', [ Validators.required, () => passwordInvalid ] ]
     };
     return this.dialogsFormService
-    .confirm(title, passwordFormFields, formGroup)
+    .confirm(title, passwordFormFields, formGroup, true)
     .pipe(
       debug('Dialog confirm'),
       switchMap((response: any) => {
