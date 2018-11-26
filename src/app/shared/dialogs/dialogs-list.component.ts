@@ -20,10 +20,6 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
       overflow-y: auto;
       height: calc(100% - 160px);
     }
-    ::ng-deep .tooltip {
-      white-space: pre-line;
-      font-size: 14px;
-    }
     .tooltip-label {
       font-size: 15px;
       margin-top: 10px;
