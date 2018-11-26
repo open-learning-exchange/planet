@@ -22,11 +22,13 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
+    <!-- TODO: To Uncomment once figured out about conflict
     <ng-container *ngIf="parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
       </button>
     </ng-container>
+    -->
     <ng-container *ngIf="!parent">
       <ng-container *ngIf="user.isUserAdmin">
         <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
