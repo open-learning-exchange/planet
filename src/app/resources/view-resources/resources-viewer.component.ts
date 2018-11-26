@@ -23,7 +23,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   mediaType: string;
   contentType: string;
   resourceSrc: string;
-  isResource: boolean = true;
+  shownResourceId: string;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
   private onDestroy$ = new Subject<void>();
@@ -38,13 +38,13 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
-        this.isResource = false;
+        this.shownResourceId = this.resourceId;
         this.setResource(resources.find((r: any) => r._id === this.resourceId));
       });
   }
 
   ngOnChanges() {
-    if (this.isResource) {
+    if (this.shownResourceId === this.resourceId) {
         this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
     }
   }
