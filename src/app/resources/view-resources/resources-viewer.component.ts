@@ -23,7 +23,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   mediaType: string;
   contentType: string;
   resourceSrc: string;
-  isResource: boolean = true;
+  isResource = true;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
   private onDestroy$ = new Subject<void>();
