@@ -37,7 +37,7 @@ const loginForm = {
 export class LoginFormComponent {
   public userForm: FormGroup;
   private planetConfiguration: any = this.stateService.configuration;
-  showPassword = true;
+  showPassword = false;
 
   constructor(
     private couchService: CouchService,
