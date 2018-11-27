@@ -105,7 +105,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
         case 'rating':
-          return item.rating.rateSum / item.rating.totalRating;
+          return item.rating.rateSum / item.rating.totalRating || 0;
         default:
           return sortNumberOrString(item, property);
       }
