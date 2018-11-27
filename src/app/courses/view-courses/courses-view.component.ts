@@ -28,7 +28,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private planetMessageService: PlanetMessageService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -44,8 +44,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       this.isUserEnrolled = this.checkMyCourses(course._id);
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (params: ParamMap) => this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true }),
-      error => console.log(error)
+      (params: ParamMap) => this.coursesService.requestCourse(
+        { courseId: params.get('id'), forceLatest: true, parent: this.parent }
+      ), error => console.log(error)
     );
   }
 

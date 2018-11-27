@@ -25,6 +25,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   resource: any;
   progress: any;
   examPassed = false;
+  parent = false;
 
   constructor(
     private router: Router,
@@ -41,13 +42,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
       this.progress = progress;
-      if (this.stepNum > progress.stepNum) {
+      if (!this.parent && this.stepNum > progress.stepNum) {
         this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, progress });
       }
       this.maxStep = course.steps.length;
       this.attempts = 0;
       if (this.stepDetail.exam) {
-        this.showExamButton = this.checkMyCourses(course._id);
+        this.showExamButton = !this.parent && this.checkMyCourses(course._id);
         this.submissionsService.openSubmission({
           parentId: this.stepDetail.exam._id + '@' + course._id,
           parent: this.stepDetail.exam,
@@ -61,7 +62,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.attempts = attempts;
         const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
         this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-        if (this.progress.passed !== this.examPassed) {
+        if (!this.parent && this.progress.passed !== this.examPassed) {
           this.coursesService.updateProgress({
             courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed, progress: this.progress
           });
@@ -69,9 +70,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       });
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
+      this.parent = this.route.snapshot.data.parent;
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
       this.courseId =  params.get('id');
-      this.coursesService.requestCourse({ courseId: this.courseId });
+      this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
   }
 
