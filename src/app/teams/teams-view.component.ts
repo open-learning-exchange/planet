@@ -143,9 +143,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
       }),
       switchMap((notifyShelf) => {
-        this.team.requests = this.team.requests.filter(reqId => {
-          return selectedIds.indexOf(reqId) === -1;
-        });
+        this.team.requests = this.team.requests.filter(reqId => selectedIds.indexOf(reqId) === -1);
         return forkJoin([
           this.teamsService.updateTeam(this.team),
           this.teamsService.sendNotifications('added', selected, {
