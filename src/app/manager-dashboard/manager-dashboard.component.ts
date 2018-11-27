@@ -210,7 +210,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   getPushedList() {
-    
     this.couchService.post(`send_items/_find`,
       findDocuments({ 'sendTo': this.planetConfiguration.code }),
         { domain: this.planetConfiguration.parentDomain })
@@ -226,7 +225,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   getPushedItem() {
     const dbs = Object.keys(this.pushedItems);
-    let replicators = [];
+    const replicators = [];
     let deleteItems = [];
     dbs.map(db => {
       deleteItems = [].concat(deleteItems, this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true })));
