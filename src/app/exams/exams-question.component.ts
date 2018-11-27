@@ -125,6 +125,8 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
       question.correctChoice.forEach(choiceId => {
         this.correctCheckboxes[choiceId] = true;
       });
+    } else {
+      this.correctCheckboxes[question.correctChoice] = true;
     }
     this.questionForm.setControl('choices', this.fb.array(choices));
     this.questionForm.get('body').setValue(question.body);
