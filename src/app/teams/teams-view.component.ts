@@ -143,14 +143,17 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
       }),
       switchMap((notifyShelf) => {
+        const newTeam = { ...this.team, requests: this.team.requests.filter(reqId => selectedIds.indexOf(reqId) === -1) };
         return forkJoin([
+          this.teamsService.updateTeam(newTeam),
           this.teamsService.sendNotifications('added', selected, {
-            url: this.router.url, team: { ...this.team }
+            url: this.router.url, team: { ...newTeam }
           }),
           this.sendNotifications('addMember', selected.length)
         ]);
       })
-    ).subscribe(res => {
+    ).subscribe(([ updatedTeam, notificationRes1, notificationRes2 ]) => {
+      this.team = updatedTeam;
       this.getMembers();
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
