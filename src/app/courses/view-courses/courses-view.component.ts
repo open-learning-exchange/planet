@@ -8,7 +8,6 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -29,8 +28,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -47,8 +45,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
       (params: ParamMap) => this.coursesService.requestCourse(
-        { courseId: params.get('id'), forceLatest: true },
-        { domain: this.parent ? this.stateService.configuration.parentDomain : '' }
+        { courseId: params.get('id'), forceLatest: true, parent: this.parent }
       ), error => console.log(error)
     );
   }

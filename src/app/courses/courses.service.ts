@@ -55,7 +55,8 @@ export class CoursesService {
   // If the id already matches what is stored on the service, return that.
   // Or will get new version if forceLatest set to true
   // Always queries CouchDB for the latest progress by the logged in user
-  requestCourse({ courseId, forceLatest = false }, opts: any = {}) {
+  requestCourse({ courseId, forceLatest = false, parent = false }, opts: any = {}) {
+    opts = { ...opts, domain: parent ? this.stateService.configuration.parentDomain : '' };
     this.currentParams = { ids: [ courseId ], opts };
     const obs = [
       this.couchService.post(this.progressDb + '/_find', findDocuments({
