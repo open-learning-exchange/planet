@@ -58,12 +58,7 @@ export class CoursesService {
   requestCourse({ courseId, forceLatest = false, parent = false }, opts: any = {}) {
     opts = { ...opts, domain: parent ? this.stateService.configuration.parentDomain : '' };
     this.currentParams = { ids: [ courseId ], opts };
-    const obs = [
-      this.couchService.post(this.progressDb + '/_find', findDocuments({
-        'userId': this.userService.get()._id,
-        courseId
-      }), opts)
-    ];
+    const obs = [ parent ? of([]) : this.findOneCourseProgress(courseId) ];
     if (!forceLatest && courseId === this.course._id) {
       obs.push(of(this.course));
     } else {
@@ -72,7 +67,7 @@ export class CoursesService {
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
 
     forkJoin(obs).subscribe(([ progress, course, ratings ]) => {
-      this.updateCourse({ progress: progress.docs[0], course: this.createCourseList([ course ], ratings.docs)[0] });
+      this.updateCourse({ progress: progress.docs, course: this.createCourseList([ course ], ratings.docs)[0] });
     });
   }
 
@@ -82,11 +77,19 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, passed = true, progress = {} }) {
+  updateProgress({ courseId, stepNum, passed = true }) {
     const configuration = this.stateService.configuration;
-    const newProgress = { ...progress, stepNum, courseId, passed,
-      userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode };
-    this.couchService.post(this.progressDb, newProgress).subscribe(() => {
+    const newProgress = { stepNum, courseId, passed,
+      userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
+      updatedDate: Date.now()
+    };
+    this.findOneCourseProgress(courseId).pipe(switchMap((progress = []) => {
+      const currentProgress = progress.docs.length > 0 ? progress.docs.find((p: any) => p.stepNum === stepNum) : undefined;
+      if (currentProgress !== undefined && currentProgress.passed === newProgress.passed) {
+        return of({});
+      }
+      return this.couchService.post(this.progressDb, { createdDate: Date.now(), ...currentProgress, ...newProgress });
+    })).subscribe(() => {
       this.requestCourse({ courseId });
     });
   }
@@ -131,6 +134,13 @@ export class CoursesService {
       this.progressDb,
       findDocuments({ 'courseId': inSelector(ids), ...userQuery }), opts
     );
+  }
+
+  findOneCourseProgress(courseId: string) {
+    return this.couchService.post(this.progressDb + '/_find', findDocuments({
+      'userId': this.userService.get()._id,
+      courseId
+    }));
   }
 
   findRatings(ids, opts) {

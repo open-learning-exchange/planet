@@ -38,12 +38,12 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = { stepNum: 0, passed: false } }: { course: any, progress: any }) => {
+    .subscribe(({ course, progress = [] }: { course: any, progress: any }) => {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
-      this.progress = progress;
-      if (!this.parent && this.stepNum > progress.stepNum) {
-        this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, progress, passed: this.stepDetail === undefined });
+      this.progress = progress.find((p: any) => p.stepNum === this.stepNum) || { passed: false };
+      if (!this.parent && this.progress.stepNum === undefined) {
+        this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined });
       }
       this.maxStep = course.steps.length;
       this.attempts = 0;
@@ -65,7 +65,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
       if (!this.parent && this.progress.passed !== this.examPassed) {
         this.coursesService.updateProgress({
-          courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed, progress: this.progress
+          courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
         });
       }
     });
