@@ -9,20 +9,32 @@ import { Router } from '@angular/router';
 export class CoursesProgressBarComponent implements OnChanges {
 
   @Input() course: any = { steps: [] };
-  @Input() courseProgress: any = { stepNum: 0 };
-  completed = false;
+  @Input() courseProgress: any[] = [];
+  steps: any[] = [];
 
   constructor(
     private router: Router
   ) { }
 
   ngOnChanges() {
-    this.completed = this.course.steps.length === this.courseProgress.stepNum && this.courseProgress.passed;
+    this.steps = this.course.steps.map((step: any, index: number) => {
+      const progress = this.courseProgress.find((p: any) => p.stepNum === (index + 1));
+      const status = this.progressStatus(progress);
+      return { stepTitle: step.stepTitle, status };
+    });
   }
 
-  routing(completedStepNum, i) {
-    if (i < completedStepNum) {
+  routing(status, i) {
+    if (status !== 'not started') {
       this.router.navigate([ '/courses/view', this.course._id, 'step', i + 1 ]);
     }
   }
+
+  progressStatus(progress: any) {
+    if (progress === undefined) {
+      return 'not started';
+    }
+    return progress.passed ? 'completed' : 'pending';
+  }
+
 }
