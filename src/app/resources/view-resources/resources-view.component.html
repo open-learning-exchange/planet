@@ -28,8 +28,8 @@
       <planet-rating [rating]="resource?.rating" [item]="resource" [parent]="parent" [ratingType]="'resource'"></planet-rating>
       <p><b>Description:</b> <td-markdown [content]="resource?.description"></td-markdown></p>
       <p><b>Author:</b> <i>{{resource?.author}}</i></p>
-      <p><b>Published by:</b> {{resource?.publisher}}  
-        <span *ngIf="resource?.year"> {{ 'on ' + resource?.year}}</span>
+      <p><b>Published by:</b> {{resource?.publisher}}
+        <ng-container *ngIf="resource?.year"> <span i18n>on</span>{{ ' ' + resource?.year}}</ng-container>
       </p>
       <p><b>Level:</b> {{ resource?.level?.join(', ') }}</p>
       <p><b>Media:</b> {{ resource?.medium }}</p>
