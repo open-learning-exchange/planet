@@ -21,7 +21,7 @@ const popupFormFields = [
     'label': 'Comment',
     'type': 'textarea',
     'name': 'comment',
-    'placeholder': 'Leave your comment',
+    'placeholder': 'Would you like to leave a comment?',
     'required': false
   }
 ];
