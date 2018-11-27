@@ -35,7 +35,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   versionLocal = '';
   versionParent = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
-  pushedItems = { course: [], resource: [] };
+  pushedItems = { course: [], resource: [], exam: [] };
+  pushedCount = 0;
   pin: string;
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
@@ -209,10 +210,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   getPushedList() {
+    
     this.couchService.post(`send_items/_find`,
       findDocuments({ 'sendTo': this.planetConfiguration.code }),
         { domain: this.planetConfiguration.parentDomain })
     .subscribe(data => {
+      this.pushedCount = data.docs.length;
       this.pushedItems = data.docs.reduce((items, item) => {
         items[item.db] = items[item.db] ? items[item.db] : [];
         items[item.db].push(item);
@@ -221,16 +224,21 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getPushedItem(db: string) {
-    const deleteItems = this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
-    const itemList = this.pushedItems[db].map(item => item.item);
-    const replicators = [ { db, type: 'pull', date: true, items: itemList } ];
+  getPushedItem() {
+    const dbs = Object.keys(this.pushedItems);
+    let replicators = [];
+    let deleteItems = [];
+    dbs.map(db => {
+      deleteItems = [].concat(deleteItems, this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true })));
+      const itemList = this.pushedItems[db].map(item => item.item);
+      replicators.push({ db, type: 'pull', date: true, items: itemList });
+    });
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(data => {
         return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
         { domain: this.planetConfiguration.parentDomain });
       })
-    ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
+    ).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
   }
 
   resetPin() {
