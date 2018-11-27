@@ -63,9 +63,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   setSubmissions() {
     this.chartData = [];
-    if (this.selectedStep.exam) {
-      this.submissionsService.updateSubmissions({ parentId: this.course._id });
-    }
+    this.submissionsService.updateSubmissions({ parentId: this.course._id });
   }
 
   navigateBack() {
