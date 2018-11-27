@@ -15,7 +15,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { ReportsService } from './reports/reports.service';
+import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 
 @Component({
@@ -52,13 +52,16 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private syncService: SyncService,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private activityService: ReportsService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
-      this.getPushedList();
+      this.managerService.getPushedList().subscribe(([ pcount, pitems ]) => {
+        this.pushedCount = pcount;
+        this.pushedItems = pitems;
+      });
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
@@ -72,7 +75,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
-    this.getLogs();
+    this.managerService.getLogs().subscribe(logs => this.activityLogs = logs);
+    console.log(this.activityLogs);
   }
 
   ngOnDestroy() {
@@ -209,20 +213,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.sendOnAcceptOkClick('exams', previousExams)(exams);
   }
 
-  getPushedList() {
-    this.couchService.post(`send_items/_find`,
-      findDocuments({ 'sendTo': this.planetConfiguration.code }),
-        { domain: this.planetConfiguration.parentDomain })
-    .subscribe(data => {
-      this.pushedCount = data.docs.length;
-      this.pushedItems = data.docs.reduce((items, item) => {
-        items[item.db] = items[item.db] ? items[item.db] : [];
-        items[item.db].push(item);
-        return items;
-      }, {});
-    });
-  }
-
   getPushedItem() {
     const dbs = Object.keys(this.pushedItems);
     const replicators = [];
@@ -258,22 +248,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   getVersion(opts: any = {}) {
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
-  }
-
-  getLogs() {
-    const configuration = this.planetConfiguration;
-    forkJoin([
-      this.activityService.getLoginActivities(configuration.code),
-      this.activityService.getAdminActivities(configuration.code),
-      this.activityService.getResourceVisits(configuration.code),
-      this.activityService.getRatingInfo(configuration.code)
-    ]).subscribe(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
-      this.activityLogs = {
-        resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
-        ratings: ratings.reduce((total, rating) => total + rating.count, 0),
-        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities.byUser, adminActivities)
-      };
-    });
   }
 
 }
