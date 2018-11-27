@@ -116,7 +116,7 @@ export class CoursesService {
       if (addProgress) {
         courses = courses.map(course => ({
           ...course,
-          progress: progress.find((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || { stepNum: 0 }
+          progress: progress.filter((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || []
         }));
       }
       this.courses = courses;
