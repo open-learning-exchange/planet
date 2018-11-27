@@ -38,12 +38,12 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
+    .subscribe(({ course, progress = [] }: { course: any, progress: any }) => {
       // To be readable by non-technical people stepNum param will start at 1
       this.stepDetail = course.steps[this.stepNum - 1];
-      this.progress = progress;
-      if (!this.parent && this.stepNum > progress.stepNum) {
-        this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, progress });
+      this.progress = progress.find((p: any) => p.stepNum === this.stepNum) || { passed: false };
+      if (!this.parent && this.progress.stepNum === undefined) {
+        this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined });
       }
       this.maxStep = course.steps.length;
       this.attempts = 0;
@@ -56,18 +56,18 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           type: 'exam' });
       }
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
-      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-        this.examStart = submission.answers.reduce((totalPassed, answer) => totalPassed + (answer.passed ? 1 : 0), 0) + 1;
-        this.attempts = attempts;
-        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-        if (!this.parent && this.progress.passed !== this.examPassed) {
-          this.coursesService.updateProgress({
-            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed, progress: this.progress
-          });
-        }
-      });
+    });
+    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+      this.examStart = submission.answers.reduce((totalPassed, answer) => totalPassed + (answer.passed ? 1 : 0), 0) + 1;
+      this.attempts = attempts;
+      const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
+      this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
+      if (!this.parent && this.progress.passed !== this.examPassed) {
+        this.coursesService.updateProgress({
+          courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
+        });
+      }
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.parent = this.route.snapshot.data.parent;
