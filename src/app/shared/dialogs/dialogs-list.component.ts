@@ -134,8 +134,8 @@ export class DialogsListComponent implements AfterViewInit {
     }
   }
 
-  removeFromSelectedNames(row) {
-    this.selectedNames.splice(this.selectedNames.indexOf(row[this.data.nameProperty]), 1);
+  removeFromSelectedNames(name) {
+    this.selectedNames.splice(this.selectedNames.indexOf(name), 1);
   }
 
   allowSubmit() {
