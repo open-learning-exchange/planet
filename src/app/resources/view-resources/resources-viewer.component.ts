@@ -45,7 +45,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   ngOnChanges() {
     if (this.shownResourceId === this.resourceId) {
-        this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
+      this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
     }
   }
 
