@@ -95,7 +95,7 @@ export class DialogsListComponent implements AfterViewInit {
       if (isAllSelected) {
         this.selection.deselect(selectIdentifier);
       } else {
-        this.selection.select(selectIdentifier)
+        this.selection.select(selectIdentifier);
       }
       this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
     });
