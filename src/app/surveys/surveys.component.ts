@@ -96,6 +96,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         data: {
           ...response,
           allowMulti: true,
+          itemDescription: 'members',
+          nameProperty: 'name',
           okClick: this.sendSurvey(survey).bind(this),
           dropdownSettings: {
             field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' },

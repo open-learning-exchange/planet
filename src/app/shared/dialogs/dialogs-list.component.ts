@@ -41,6 +41,7 @@ export class DialogsListComponent implements AfterViewInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[],
     columns: string[],
+    itemDescription: string,
     nameProperty: string,
     okClick: any,
     dropdownSettings: { field: string, startingValue?: { value: string, text: string } },

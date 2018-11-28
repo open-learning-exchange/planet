@@ -172,6 +172,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       const data = {
         okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
         filterPredicate: this.setFilterPredicate(db),
+        itemDescription: db,
+        nameProperty: db === 'courses' ? 'courseTitle' :'title',
         allowMulti: true,
         initialSelection,
         selectionOptional: true,
