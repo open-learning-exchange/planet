@@ -45,6 +45,12 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
+            <div *ngIf="!(step.description.length !== 0 || step?.exam?.questions.length > 0 || step?.resources?.length > 0)">
+                <div>There is no content for this step.</div>
+            </div>
+            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length > 0 || step?.resources?.length > 0)"> 
+                <div>There is no description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} questions.</div>
+            </div>
             <mat-action-row *ngIf="!parent">
               <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
               <button *ngIf="step?.resources?.length > 1 && step?.resources?.length" mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
