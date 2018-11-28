@@ -20,10 +20,6 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
       overflow-y: auto;
       height: calc(100% - 160px);
     }
-    .tooltip-label {
-      font-size: 15px;
-      margin-top: 10px;
-    }
   ` ]
 })
 export class DialogsListComponent implements AfterViewInit {
@@ -128,7 +124,7 @@ export class DialogsListComponent implements AfterViewInit {
     } else {
       this.removeFromSelectedNames(name);
     }
-    this.tooltipText = this.selectedNames.join('\r\n');
+    this.tooltipText = this.selectedNames.join(', ');
   }
 
   addToSelectedNames(name) {
