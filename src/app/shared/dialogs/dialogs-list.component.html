@@ -20,7 +20,7 @@
   <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>
   <mat-row
     *matRowDef="let row; columns: tableColumns"
-    (click)="!disableRowClick ? selection.toggle(selectIdentifier(row)) : ''"
+    (click)="rowClick(row)"
     [ngClass]="{highlight:selection.isSelected(selectIdentifier(row))}"
     class="cursor-pointer">
   </mat-row>
@@ -30,7 +30,7 @@
   [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
 </mat-paginator>
 <mat-dialog-actions>
-  <mat-label class="tooltip-label" matTooltip={{this.selectedNames}} matTooltipClass="tooltip" i18n>{{this.selection.selected.length}} users selected</mat-label>
+  <mat-label class="tooltip-label" [matTooltip]="tooltipText" matTooltipClass="tooltip" i18n>{{this.selection.selected.length}} users selected</mat-label>
   <button mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
   <button mat-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>

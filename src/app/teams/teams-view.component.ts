@@ -121,6 +121,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         okClick: this.addMembers.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
+        nameProperty: 'name',
         ...res
       };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
