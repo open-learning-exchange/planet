@@ -11,11 +11,11 @@ import {
 export class DialogsFormService {
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
 
-  public confirm(title: string, fields: any, formGroup: any): Observable<boolean> {
+  public confirm(title: string, fields: any, formGroup: any, autoFocus = false): Observable<boolean> {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
     dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
-      autoFocus: false
+      autoFocus: autoFocus
     });
     if (formGroup instanceof FormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
