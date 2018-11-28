@@ -38,15 +38,15 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
-        this.shownResourceId = this.resourceId;
-        this.setResource(resources.find((r: any) => r._id === this.resourceId));
+        if (this.shownResourceId !== this.resourceId) {
+          this.shownResourceId = this.resourceId;
+          this.setResource(resources.find((r: any) => r._id === this.resourceId));
+        }
       });
   }
 
   ngOnChanges() {
-    if (this.shownResourceId === this.resourceId) {
-      this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
-    }
+    this.resourcesService.requestResourcesUpdate(this.parent, this.fetchRating);
   }
 
   get urlPrefix() {
