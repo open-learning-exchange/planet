@@ -35,7 +35,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   versionLocal = '';
   versionParent = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
-  pushedItems = { course: [], resource: [], exam: [] };
+  pushedItems: any[] = [];
   pushedCount = 0;
   pin: string;
   activityLogs: any = {};
@@ -58,9 +58,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
-      this.managerService.getPushedList().subscribe(([ pcount, pitems ]) => {
-        this.pushedCount = pcount;
-        this.pushedItems = pitems;
+      this.managerService.getPushedList().subscribe((pushedList: any) => {
+        this.pushedCount = pushedList.docs.length;
+        this.pushedItems = pushedList.docs;
       });
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -213,18 +213,19 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   getPushedItem() {
-    const dbs = Object.keys(this.pushedItems);
-    const replicators = [];
-    let deleteItems = [];
-    dbs.map(db => {
-      deleteItems = [].concat(deleteItems, this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true })));
-      const itemList = this.pushedItems[db].map(item => item.item);
-      replicators.push({ db, type: 'pull', date: true, items: itemList });
-    });
+    const deleteItems = this.pushedItems.map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+    const replicators = this.pushedItems.reduce((reps, item) => {
+      const replicatorIndex = reps.findIndex((rep: any) => rep.db === item.db);
+      if (replicatorIndex === -1) {
+        reps.push({ db: item.db, type: 'pull', date: true, items: [ item ] });
+      } else {
+        reps[replicatorIndex].items.push(item);
+      }
+      return reps;
+    }, []);
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
-      switchMap(data => {
-        return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
-        { domain: this.planetConfiguration.parentDomain });
+      switchMap(() => {
+        return this.couchService.post('send_items/_bulk_docs', deleteItems, { domain: this.planetConfiguration.parentDomain });
       })
     ).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
   }

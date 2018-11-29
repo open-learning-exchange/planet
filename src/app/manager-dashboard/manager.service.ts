@@ -94,18 +94,11 @@ export class ManagerService {
   }
 
   getPushedList() {
-    return this.couchService.post(`send_items/_find`,
+    return this.couchService.post(
+      `send_items/_find`,
       findDocuments({ 'sendTo': this.configuration.code }),
-        { domain: this.configuration.parentDomain })
-    .pipe(map(data => {
-      const pushedCount = data.docs.length;
-      const pushedItems = data.docs.reduce((items, item) => {
-        items[item.db] = items[item.db] ? items[item.db] : [];
-        items[item.db].push(item);
-        return items;
-      }, {});
-      return [ pushedCount, pushedItems ];
-    }));
+      { domain: this.configuration.parentDomain }
+    );
   }
 
 }
