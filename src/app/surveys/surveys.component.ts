@@ -87,11 +87,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogsListService.getListAndColumns('_users'),
       this.dialogsListService.getListAndColumns('child_users')
     ]).pipe(takeUntil(this.onDestroy$)).subscribe(responses => {
-      console.log(responses);
-      const response = responses.reduce((fullArray, array) => ({
-        tableData: [ ...fullArray.tableData, ...array.tableData ],
-        columns: [ ...array.columns ]
-      }), { tableData: [], columns: [] });
+      const response = responses.reduce(
+        (fullArray, array) => ({ tableData: [ ...fullArray.tableData, ...array.tableData ], columns: [ ...array.columns ] }),
+        { tableData: [], columns: [] }
+      );
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: {
           ...response,
