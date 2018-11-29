@@ -225,7 +225,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }, []);
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
       switchMap(() => {
-        return this.couchService.post('send_items/_bulk_docs', deleteItems, { domain: this.planetConfiguration.parentDomain });
+        return this.couchService.post('send_items/_bulk_docs', { docs: deleteItems }, { domain: this.planetConfiguration.parentDomain });
       })
     ).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
   }
