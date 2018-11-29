@@ -98,6 +98,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setFullCourse(submissions: any[]) {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
+
+    this.course.steps = this.course.steps.filter(step => {
+      if(step.exam){
+        step = submissions.find(submission => submission.parentId === (step.exam._id + '@' + this.course._id));
+      }
+      return step;
+    });
+
     this.yAxisLength = this.course.steps.length;
     const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
