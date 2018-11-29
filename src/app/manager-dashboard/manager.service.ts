@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { throwError, of, forkJoin } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -84,8 +84,8 @@ export class ManagerService {
       this.activityService.getAdminActivities(configuration.code),
       this.activityService.getResourceVisits(configuration.code),
       this.activityService.getRatingInfo(configuration.code)
-    ]).pipe(switchMap(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
-      return of({
+    ]).pipe(map(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
+      return ({
         resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
         ratings: ratings.reduce((total, rating) => total + rating.count, 0),
         ...this.activityService.mostRecentAdminActivities(configuration, loginActivities.byUser, adminActivities)
@@ -97,14 +97,14 @@ export class ManagerService {
     return this.couchService.post(`send_items/_find`,
       findDocuments({ 'sendTo': this.configuration.code }),
         { domain: this.configuration.parentDomain })
-    .pipe(switchMap(data => {
+    .pipe(map(data => {
       const pushedCount = data.docs.length;
       const pushedItems = data.docs.reduce((items, item) => {
         items[item.db] = items[item.db] ? items[item.db] : [];
         items[item.db].push(item);
         return items;
       }, {});
-      return of([ pushedCount, pushedItems ]);
+      return [ pushedCount, pushedItems ];
     }));
   }
 

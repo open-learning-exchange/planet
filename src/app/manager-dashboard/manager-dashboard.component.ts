@@ -76,7 +76,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
     this.getSatellitePin();
     this.managerService.getLogs().subscribe(logs => this.activityLogs = logs);
-    console.log(this.activityLogs);
   }
 
   ngOnDestroy() {
