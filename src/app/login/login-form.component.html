@@ -13,7 +13,8 @@
     </mat-error>
   </mat-form-field>
   <mat-form-field class="full-width" *ngIf="createMode">
-    <input matInput i18n-placeholder placeholder="Repeat Password" name="repeatPassword" [type]="showPassword ? 'text' : 'password'"  formControlName = "repeatPassword" />
+    <input matInput i18n-placeholder placeholder="Repeat Password" name="repeatPassword" [type]="showRepeatPassword ? 'text' : 'password'"  formControlName = "repeatPassword" />
+    <mat-icon matSuffix (click)="showRepeatPassword = !showRepeatPassword" style="cursor: pointer">{{showRepeatPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     <mat-error>
       <planet-form-error-messages [control]="userForm.controls.repeatPassword"></planet-form-error-messages>
     </mat-error>
