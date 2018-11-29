@@ -12,6 +12,7 @@
   <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(questionNum)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container">
+    <span class="mat-h2">{{question.title}}</span>
     <td-markdown [content]="question.body"></td-markdown>
     <ng-container [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
