@@ -218,4 +218,27 @@ export class CustomValidators {
       return { dateRequired: true };
     }
   }
+
+  static isQuestionValid(hasCorrectAnswer) {
+    return (question) => {
+      if (question.type === 'select' || question.type === 'selectMultiple') {
+        return (
+          (question.correctChoice.length === 0 && hasCorrectAnswer) ||
+          question.choices.length === 0 ||
+          question.choices.find((choice: any) => choice.text === '') !== undefined
+        );
+      }
+      return question.body === '';
+    };
+  }
+
+  static questionValidator(hasCorrectAnswer): ValidatorFn {
+    return (ac: AbstractControl) => {
+      const invalidQuestion = ac.value.find(this.isQuestionValid(hasCorrectAnswer));
+      if (invalidQuestion !== undefined) {
+        return { questionError: true };
+      }
+    };
+  }
+
 }

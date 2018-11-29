@@ -35,6 +35,7 @@ export class ExamsAddComponent implements OnInit {
   set question(newQuestion: any) {
     this.examForm.controls.questions.value[this.activeQuestionIndex] = newQuestion;
     this._question = newQuestion;
+    this.examForm.controls.questions.updateValueAndValidity();
   }
 
   constructor(
@@ -61,7 +62,10 @@ export class ExamsAddComponent implements OnInit {
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
-      questions: [ [] ],
+      questions: [
+        [],
+        [ CustomValidators.questionValidator(this.examType === 'courses') ]
+      ],
       type: this.examType
     });
   }
@@ -149,6 +153,7 @@ export class ExamsAddComponent implements OnInit {
       marks: 1,
       choices: []
     });
+    this.examForm.controls.questions.updateValueAndValidity();
   }
 
   removeQuestion(index) {
