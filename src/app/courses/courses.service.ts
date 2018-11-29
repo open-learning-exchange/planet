@@ -185,7 +185,7 @@ export class CoursesService {
       if ( courseIds.length > 1 ) {
           prefix = courseIds.length + ' Courses';
       } else {
-        prefix = this.getCourseNameFromId(courseIds[0])
+        prefix = this.getCourseNameFromId(courseIds[0]);
       }
       const admissionMessage = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
