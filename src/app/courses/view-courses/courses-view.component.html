@@ -48,8 +48,14 @@
             <div *ngIf="!(step.description.length !== 0 || step?.exam?.questions.length > 0 || step?.resources?.length > 0)">
                 <div>There is no content for this step.</div>
             </div>
-            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length > 0 || step?.resources?.length > 0)"> 
+            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length > 1 && step?.resources?.length > 1)"> 
                 <div>There is no description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} questions.</div>
+            </div>
+            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length < 2 && step?.exam?.questions.length > -1 && step?.resources?.length >1)"> 
+              <div>There is no description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} question.</div>
+            </div>
+            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length >1 && step?.resources?.length < 2 && step?.resources?.length >-1)"> 
+              <div>There is no description for this step. There are {{step?.resources?.length}} resource and the exam has {{step?.exam?.questions.length}} questions.</div>
             </div>
             <mat-action-row *ngIf="!parent">
               <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
