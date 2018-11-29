@@ -15,7 +15,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { ReportsService } from './reports/reports.service';
+import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 
 @Component({
@@ -35,7 +35,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   versionLocal = '';
   versionParent = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
-  pushedItems = { course: [], resource: [] };
+  pushedItems: any[] = [];
+  pushedCount = 0;
   pin: string;
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
@@ -51,13 +52,16 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private syncService: SyncService,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private activityService: ReportsService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
-      this.getPushedList();
+      this.managerService.getPushedList().subscribe((pushedList: any) => {
+        this.pushedCount = pushedList.docs.length;
+        this.pushedItems = pushedList.docs;
+      });
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (!this.isUserAdmin) {
@@ -71,7 +75,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
-    this.getLogs();
+    this.managerService.getLogs().subscribe(logs => this.activityLogs = logs);
   }
 
   ngOnDestroy() {
@@ -210,29 +214,22 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.sendOnAcceptOkClick('exams', previousExams)(exams);
   }
 
-  getPushedList() {
-    this.couchService.post(`send_items/_find`,
-      findDocuments({ 'sendTo': this.planetConfiguration.code }),
-        { domain: this.planetConfiguration.parentDomain })
-    .subscribe(data => {
-      this.pushedItems = data.docs.reduce((items, item) => {
-        items[item.db] = items[item.db] ? items[item.db] : [];
-        items[item.db].push(item);
-        return items;
-      }, {});
-    });
-  }
-
-  getPushedItem(db: string) {
-    const deleteItems = this.pushedItems[db].map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
-    const itemList = this.pushedItems[db].map(item => item.item);
-    const replicators = [ { db, type: 'pull', date: true, items: itemList } ];
+  getPushedItem() {
+    const deleteItems = this.pushedItems.map(item => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+    const replicators = this.pushedItems.reduce((reps, item) => {
+      const replicatorIndex = reps.findIndex((rep: any) => rep.db === item.db);
+      if (replicatorIndex === -1) {
+        reps.push({ db: item.db, type: 'pull', date: true, items: [ item ] });
+      } else {
+        reps[replicatorIndex].items.push(item);
+      }
+      return reps;
+    }, []);
     this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
-      switchMap(data => {
-        return this.couchService.post('send_items/_bulk_docs', { docs:  deleteItems },
-        { domain: this.planetConfiguration.parentDomain });
+      switchMap(() => {
+        return this.couchService.post('send_items/_bulk_docs', { docs: deleteItems }, { domain: this.planetConfiguration.parentDomain });
       })
-    ).subscribe(() => this.planetMessageService.showMessage(db[0].toUpperCase() + db.substr(1) + ' are being fetched'));
+    ).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
   }
 
   resetPin() {
@@ -253,22 +250,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   getVersion(opts: any = {}) {
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
-  }
-
-  getLogs() {
-    const configuration = this.planetConfiguration;
-    forkJoin([
-      this.activityService.getLoginActivities(configuration.code),
-      this.activityService.getAdminActivities(configuration.code),
-      this.activityService.getResourceVisits(configuration.code),
-      this.activityService.getRatingInfo(configuration.code)
-    ]).subscribe(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
-      this.activityLogs = {
-        resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
-        ratings: ratings.reduce((total, rating) => total + rating.count, 0),
-        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities.byUser, adminActivities)
-      };
-    });
   }
 
 }

@@ -17,14 +17,8 @@
     <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     <a routerLink="/surveys" i18n mat-raised-button>Surveys</a>
     <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-    <button i18n mat-raised-button *ngIf="pushedItems?.courses?.length" (click)="getPushedItem('courses')">
-      Get Courses ({{pushedItems?.courses?.length}})
-    </button>
-    <button i18n mat-raised-button *ngIf="pushedItems?.resources?.length" (click)="getPushedItem('resources')">
-      Get Resources ({{pushedItems?.resources?.length}})
-    </button>
-    <button i18n mat-raised-button *ngIf="pushedItems?.exams?.length" (click)="getPushedItem('exams')">
-      Get Exams ({{pushedItems?.exams?.length}})
+    <button i18n mat-raised-button *ngIf="pushedCount" (click)="getPushedItem()">
+      Get Resources/Courses ({{pushedCount}})
     </button>
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
