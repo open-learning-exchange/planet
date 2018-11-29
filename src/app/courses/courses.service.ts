@@ -175,10 +175,18 @@ export class CoursesService {
   }
 
   courseAdmissionMany(courseIds, type) {
+    console.log('test');
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
-      const admissionMessage = type === 'remove' ? 'Courses successfully removed from myCourses' : 'Courses added to your dashboard';
+      let prefix = '';
+      if ( courseIds.length > 1 ) {
+          prefix = courseIds.length + ' Courses';
+      } else {
+        prefix = this.courses.find((mCourse) => mCourse._id === courseIds[0]).courseTitle;
+      }
+      const admissionMessage = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
   }
+
 }
