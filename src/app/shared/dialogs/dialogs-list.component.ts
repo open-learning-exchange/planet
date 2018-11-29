@@ -33,11 +33,16 @@ export class DialogsListComponent implements AfterViewInit {
   dropdownOptions: any;
   dropdownFilter: any = {};
   dropdownField: string;
+  selectedElements: any[];
+  selectedNames: string[] = [];
+  tooltipText = '';
   @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[],
     columns: string[],
+    itemDescription: string,
+    nameProperty: string,
     okClick: any,
     dropdownSettings: { field: string, startingValue?: { value: string, text: string } },
     filterPredicate?: any,
@@ -84,13 +89,23 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   masterToggle() {
-    if (this.isAllSelected() === 'yes') {
-      this.tableData.filteredData.forEach((row: any) => {
-        this.selection.deselect(this.selectIdentifier(row));
-      });
-    } else {
-      // Only select items in the filter
-      this.tableData.filteredData.forEach((row: any) => this.selection.select(this.selectIdentifier(row)));
+    const isAllSelected = this.isAllSelected() === 'yes';
+    this.tableData.filteredData.forEach((row: any) => {
+      const selectIdentifier = this.selectIdentifier(row);
+      if (isAllSelected) {
+        this.selection.deselect(selectIdentifier);
+      } else {
+        this.selection.select(selectIdentifier);
+      }
+      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
+    });
+  }
+
+  rowClick(row: any) {
+    if (!this.disableRowClick) {
+      const selectIdentifier = this.selectIdentifier(row);
+      this.selection.toggle(selectIdentifier);
+      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
     }
   }
 
@@ -102,6 +117,25 @@ export class DialogsListComponent implements AfterViewInit {
 
   selectIdentifier(row: any) {
     return row._id + (row.planetCode === undefined ? '' : row.planetCode);
+  }
+
+  setSelectedNames(name, selectIdentifier) {
+    if (this.selection.isSelected(selectIdentifier)) {
+      this.addToSelectedNames(name);
+    } else {
+      this.removeFromSelectedNames(name);
+    }
+    this.tooltipText = this.selectedNames.join(', ');
+  }
+
+  addToSelectedNames(name) {
+    if (this.selectedNames.indexOf(name) === -1) {
+      this.selectedNames.push(name);
+    }
+  }
+
+  removeFromSelectedNames(name) {
+    this.selectedNames.splice(this.selectedNames.indexOf(name), 1);
   }
 
   allowSubmit() {
