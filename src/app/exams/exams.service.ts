@@ -67,4 +67,18 @@ export class ExamsService {
     }
   }
 
+  checkValidFormComponent(formField, asTouched = true) {
+    Object.keys(formField.controls).forEach(field => {
+      const control = formField.get(field);
+      if (asTouched) {
+        control.markAsTouched({ onlySelf: true });
+      } else {
+        control.markAsUntouched({ onlySelf: true });
+      }
+      if (control.controls) {
+        this.checkValidFormComponent(control);
+      }
+    });
+  }
+
 }

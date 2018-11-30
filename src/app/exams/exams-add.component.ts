@@ -94,8 +94,9 @@ export class ExamsAddComponent implements OnInit {
     if (this.examForm.valid) {
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
     } else {
-      this.checkValidFormComponent(this.examForm);
+      this.examsService.checkValidFormComponent(this.examForm);
       this.showFormError = true;
+      this.stepClick(this.activeQuestionIndex);
     }
   }
 
@@ -103,16 +104,6 @@ export class ExamsAddComponent implements OnInit {
     return ac => this.validatorService.isUnique$(
       this.dbName, 'name', ac, { exceptions: [ exception ], selectors: { type: this.examType } }
     );
-  }
-
-  checkValidFormComponent(formField) {
-    Object.keys(formField.controls).forEach(field => {
-      const control = formField.get(field);
-      control.markAsTouched({ onlySelf: true });
-      if (control.controls) {
-        this.checkValidFormComponent(control);
-      }
-    });
   }
 
   addExam(examInfo) {

@@ -105,6 +105,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
     } else {
       this.correctCheckboxes[question.value.correctChoice] = true;
     }
+    this.examsService.checkValidFormComponent(this.questionForm, question.touched);
     this.initializing = false;
   }
 
