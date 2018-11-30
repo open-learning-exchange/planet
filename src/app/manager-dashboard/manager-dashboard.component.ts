@@ -219,9 +219,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     const replicators = this.pushedItems.reduce((reps, item) => {
       const replicatorIndex = reps.findIndex((rep: any) => rep.db === item.db);
       if (replicatorIndex === -1) {
-        reps.push({ db: item.db, type: 'pull', date: true, items: [ item ] });
+        reps.push({ db: item.db, type: 'pull', date: true, items: [ item.item ] });
       } else {
-        reps[replicatorIndex].items.push(item);
+        reps[replicatorIndex].items.push(item.item);
       }
       return reps;
     }, []);
