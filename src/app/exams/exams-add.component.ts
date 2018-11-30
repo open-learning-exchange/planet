@@ -40,6 +40,9 @@ export class ExamsAddComponent implements OnInit {
     this._question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
+  get questions(): FormArray {
+    return <FormArray>this.examForm.controls.questions;
+  }
 
   constructor(
     private router: Router,
