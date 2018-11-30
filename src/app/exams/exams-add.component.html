@@ -29,7 +29,7 @@
           <span>{{question.title || 'Question ' + (i+1)}}</span>
         </planet-step-list-item>
         <div planetStepListForm>
-          <planet-exam-question [(question)]="question" [examType]="examType"></planet-exam-question>
+          <planet-exam-question [(question)]="question" [examType]="examType" *ngIf="activeQuestionIndex > -1"></planet-exam-question>
         </div>
       </planet-step-list>
     </form>

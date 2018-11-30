@@ -1,15 +1,12 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import {
   FormGroup,
-  FormControl,
-  FormArray,
-  FormBuilder,
-  Validators
+  FormArray
 } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
-import { CustomValidators } from '../validators/custom-validators';
+import { ExamsService } from './exams.service';
 
 @Component({
   selector: 'planet-exam-question',
@@ -28,24 +25,26 @@ import { CustomValidators } from '../validators/custom-validators';
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges {
 
-  @Input() question: any = {};
+  @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   correctCheckboxes: any = {};
-  questionForm: FormGroup = this.newQuestionForm();
+  questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   private onDestroy$ = new Subject<void>();
   get choices(): FormArray {
     return (<FormArray>this.questionForm.controls.choices);
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private examsService: ExamsService
+  ) {}
 
   ngOnInit() {
-    const onFormChange = (value) => {
+    const onFormChange = () => {
       if (!this.initializing) {
-        this.questionChange.emit(value);
+        this.questionChange.emit(this.questionForm);
       }
     };
     this.questionForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
@@ -60,10 +59,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   addChoice() {
     const newId = uniqueId();
     this.correctCheckboxes[newId] = false;
-    this.choices.push(new FormGroup({
-      'text': new FormControl('', Validators.required),
-      'id': new FormControl(newId)
-    }));
+    this.choices.push(this.examsService.newQuestionChoice(newId));
   }
 
   removeChoice(index: number) {
@@ -79,13 +75,17 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
     const newChoiceId = choice.controls.id.value;
     let correctChoices = formControls.correctChoice.value || [];
     if (event.checked) {
-      correctChoices = formControls.type.value === 'selectMultiple' ? correctChoices.concat([ newChoiceId ]) : [ newChoiceId ];
+      if (formControls.type.value === 'selectMultiple') {
+        correctChoices = correctChoices.concat([ newChoiceId ]);
+      } else {
+        correctChoices = [ newChoiceId ];
+      }
     } else {
-      correctChoices.splice(correctChoices.indexOf(newChoiceId));
+      correctChoices.splice(correctChoices.indexOf(newChoiceId), 1);
     }
     this.questionForm.controls.correctChoice.setValue(correctChoices);
-    Object.keys(this.correctCheckboxes).forEach((key) => {
-      this.correctCheckboxes[key] = correctChoices.indexOf(key) > -1;
+    this.questionForm.controls.choices.value.forEach(({ id }) => {
+      this.correctCheckboxes[id] = correctChoices.indexOf(id) > -1;
     });
   }
 
@@ -100,36 +100,15 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
     }
   }
 
-  newQuestionForm() {
-    return this.fb.group(Object.assign(
-      {
-        title: '',
-        body: [ '', Validators.required ],
-        type: 'input',
-        correctChoice: '',
-        marks: [ 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array([])
-      }
-    ));
-  }
-
-  updateQuestion(question: any = { body: '', choices: [] }) {
-    const choices = question.choices.map((choice) => {
-      return new FormGroup({
-        'text': new FormControl(choice.text),
-        'id': new FormControl(choice.id)
-      });
-    });
-    this.questionForm.patchValue(question);
-    if (question.correctChoice instanceof Array) {
-      question.correctChoice.forEach(choiceId => {
+  updateQuestion(question: FormGroup) {
+    this.examsService.updateQuestion(this.questionForm, question);
+    if (question.value.correctChoice instanceof Array) {
+      question.value.correctChoice.forEach(choiceId => {
         this.correctCheckboxes[choiceId] = true;
       });
     } else {
-      this.correctCheckboxes[question.correctChoice] = true;
+      this.correctCheckboxes[question.value.correctChoice] = true;
     }
-    this.questionForm.setControl('choices', this.fb.array(choices));
-    this.questionForm.get('body').setValue(question.body);
     this.initializing = false;
   }
 
