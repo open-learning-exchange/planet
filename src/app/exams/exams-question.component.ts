@@ -75,11 +75,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
     const newChoiceId = choice.controls.id.value;
     let correctChoices = formControls.correctChoice.value || [];
     if (event.checked) {
-      if (formControls.type.value === 'selectMultiple') {
-        correctChoices = correctChoices.concat([ newChoiceId ]);
-      } else {
-        correctChoices = [ newChoiceId ];
-      }
+      correctChoices = formControls.type.value === 'selectMultiple' ? correctChoices.concat([ newChoiceId ]) : correctChoices;
     } else {
       correctChoices.splice(correctChoices.indexOf(newChoiceId), 1);
     }
