@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, of } from 'rxjs';
+import { Subject, of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Injectable()
 export class SubmissionsService {
@@ -20,12 +21,21 @@ export class SubmissionsService {
 
   constructor(
     private couchService: CouchService,
-    private stateService: StateService
+    private stateService: StateService,
+    private courseService: CoursesService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
-    this.getSubmissions(query, opts).subscribe((submissions: any) => {
+    forkJoin([
+      this.getSubmissions(query, opts),
+      this.courseService.findCourses([], opts)
+    ]).subscribe(([submissions, courses] : [any, any]) => {
       this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
+      this.submissions = this.submissions.map(sub => ({
+        ...sub,
+        course: courses.find((c: any) => sub.parentId.split('@')[1] === c._id) || false
+      }));
+      this.submissions = this.submissions.filter(s => !(s.status === 'pending' && s.type === 'exam' && !s.course));
       this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
