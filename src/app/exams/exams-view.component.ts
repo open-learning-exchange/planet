@@ -101,10 +101,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers.every((a: any) => correctChoice.find(choice => a.id === choice));
   }
 
-  resetCheckboxes() {
-    this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
-  }
-
   examComplete() {
     if (this.route.snapshot.data.newUser === true) {
       this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
@@ -188,7 +184,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
-        this.resetCheckboxes();
         return {
           obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close),
           correctAnswer
