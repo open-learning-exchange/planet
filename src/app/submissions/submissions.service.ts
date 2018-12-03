@@ -29,7 +29,7 @@ export class SubmissionsService {
     forkJoin([
       this.getSubmissions(query, opts),
       this.courseService.findCourses([], opts)
-    ]).subscribe(([submissions, courses] : [any, any]) => {
+    ]).subscribe(([ submissions, courses ]: [any, any]) => {
       this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
       this.submissions = this.submissions.map(sub => ({
         ...sub,
