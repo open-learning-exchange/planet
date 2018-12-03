@@ -7,7 +7,7 @@
     <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
-      <button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()">
+      <button mat-stroked-button class="margin-lr-3" (click)="openInviteMemberDialog()">
         <span i18n>Invite Member</span>
       </button>
       <button mat-raised-button color="accent" class="margin-lr-3" (click)="joinMeetup()">
@@ -21,7 +21,11 @@
       <p i18n><b>Meetup Title:</b> {{meetupDetail.title}}</p>
       <p i18n><b>Created By:</b><i> {{meetupDetail.createdBy}}</i></p>
       <p i18n><b>Category:</b> {{meetupDetail.category}}</p>
-      <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} - {{meetupDetail.endDate | date: 'fullDate'}}</p>
+      <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}}
+        <ng-container *ngIf="meetupDetail.endDate">
+          <span i18n> - </span>{{meetupDetail.endDate | date: 'fullDate'}}
+        </ng-container>     
+      </p>
       <p i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
       <p i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
       <p i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
