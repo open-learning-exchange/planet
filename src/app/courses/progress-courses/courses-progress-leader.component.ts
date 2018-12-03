@@ -35,7 +35,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     });
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ course }) => {
       this.course = course;
-      this.selectedStep = course.steps[0];
       this.setProgress(course);
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
