@@ -1,8 +1,6 @@
 <div [ngSwitch]="mediaType">
   <img [src]="resourceSrc" *ngSwitchCase="'image'">
-  <video controls *ngSwitchCase="'video'">
-    <source [src]="resourceSrc" [type]="contentType" />
-    Browser not supported
+  <video controls *ngSwitchCase="'video'" [src]="resourceSrc">
   </video>
   <audio controls *ngSwitchCase="'audio'">
     <source [src]="resourceSrc" [type]="contentType" />
