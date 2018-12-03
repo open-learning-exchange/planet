@@ -99,9 +99,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
 
-    this.course.steps = this.course.steps.filter(step => {
-      if (step.exam){
-        step = submissions.find(s => s.parentId === (step.exam._id + '@' + this.course._id));
+    this.course.steps = this.course.steps.filter((step: any) => {
+      if (step.exam) {
+        step = submissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
       }
       return step;
     });
