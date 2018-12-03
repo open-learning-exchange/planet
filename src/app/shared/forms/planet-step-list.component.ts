@@ -69,7 +69,6 @@ export class PlanetStepListItemComponent {
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   @Input() steps: any[] | FormArray;
-  @Output() stepsChange = new EventEmitter<any[] | FormArray>();
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Output() stepClicked = new EventEmitter<number>();
@@ -120,7 +119,6 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     if (direction !== 0) {
       steps.splice(index + direction, 0, step);
     }
-    this.stepsChange.emit(steps);
   }
 
   moveFormArrayStep(index, direction, steps: FormArray) {
@@ -129,7 +127,6 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     if (direction !== 0) {
       steps.insert(index + direction, step);
     }
-    this.stepsChange.emit(steps);
   }
 
 }
