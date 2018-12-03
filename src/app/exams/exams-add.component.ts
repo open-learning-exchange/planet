@@ -83,9 +83,7 @@ export class ExamsAddComponent implements OnInit {
         this.documentInfo = { _rev: data._rev, _id: data._id };
         this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
         this.examForm.patchValue(data);
-        data.questions.forEach((question) => {
-          (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'courses', question));
-        });
+        this.initializeQuestions(data.questions);
       }, (error) => {
         console.log(error);
       });
@@ -137,6 +135,12 @@ export class ExamsAddComponent implements OnInit {
   stepClick(index: number) {
     this.activeQuestionIndex = index;
     this.question = (<FormGroup>(<FormArray>this.examForm.get('questions')).at(index));
+  }
+
+  initializeQuestions(questions: any[]) {
+    questions.forEach((question) => {
+      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'courses', question));
+    });
   }
 
   addQuestion() {

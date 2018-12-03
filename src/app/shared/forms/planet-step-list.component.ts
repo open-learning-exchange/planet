@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FormArray } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -67,8 +68,8 @@ export class PlanetStepListItemComponent {
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
-  @Input() steps: any[];
-  @Output() stepsChange = new EventEmitter<any[]>();
+  @Input() steps: any[] | FormArray;
+  @Output() stepsChange = new EventEmitter<any[] | FormArray>();
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Output() stepClicked = new EventEmitter<number>();
@@ -107,11 +108,28 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   }
 
   moveStep({ index, direction }) {
-    const step = this.steps.splice(index, 1)[0];
-    if (direction !== 0) {
-      this.steps.splice(index + direction, 0, step);
+    if (this.steps instanceof Array) {
+      this.moveArrayStep(index, direction, this.steps);
+    } else if (this.steps instanceof FormArray) {
+      this.moveFormArrayStep(index, direction, this.steps);
     }
-    this.stepsChange.emit(this.steps);
+  }
+
+  moveArrayStep(index, direction, steps: any[]) {
+    const step = steps.splice(index, 1)[0];
+    if (direction !== 0) {
+      steps.splice(index + direction, 0, step);
+    }
+    this.stepsChange.emit(steps);
+  }
+
+  moveFormArrayStep(index, direction, steps: FormArray) {
+    const step = steps.at(index);
+    steps.removeAt(index);
+    if (direction !== 0) {
+      steps.insert(index + direction, step);
+    }
+    this.stepsChange.emit(steps);
   }
 
 }
