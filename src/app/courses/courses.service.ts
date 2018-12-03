@@ -168,7 +168,8 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? this.getCourseNameFromId(courseId) + ' successfully removed from myCourses' : this.getCourseNameFromId(courseId) + ' added to your dashboard';
+      const admissionMessage = type === 'resign' ? this.getCourseNameFromId(courseId) + ' successfully removed from myCourses' :
+      this.getCourseNameFromId(courseId) + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
@@ -179,7 +180,6 @@ export class CoursesService {
   }
 
   courseAdmissionMany(courseIds, type) {
-    console.log('test');
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
       let prefix = '';
       if ( courseIds.length > 1 ) {
