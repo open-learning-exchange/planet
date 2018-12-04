@@ -69,6 +69,7 @@ export class ResourcesService {
       ...resource,
       tagNames: resource.tags.map(tag => this.tagsService.findTag(tag, tags).name)
     }));
+    this.resourcesUpdated.next(this.resources);
   }
 
   getRatings(resourceIds: string[], opts: any) {
