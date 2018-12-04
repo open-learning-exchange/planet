@@ -20,7 +20,7 @@ export class TagsService {
     ]).pipe(
       map(([ existingTags, dbTags ]: [ any, any ]) => {
         const unusedTags = dbTags.filter((dbTag: any) => {
-          return existingTags.rows.find((tag: any) => tag.key === dbTag._id) === undefined
+          return existingTags.rows.find((tag: any) => tag.key === dbTag._id) === undefined;
         });
         return existingTags.rows.sort((a, b) => b.value - a.value).map((tag: any) => ({
           count: tag.value,
