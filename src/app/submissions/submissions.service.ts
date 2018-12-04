@@ -30,12 +30,12 @@ export class SubmissionsService {
       this.getSubmissions(query, opts),
       this.courseService.findCourses([], opts)
     ]).subscribe(([ submissions, courses ]: [any, any]) => {
-      this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
-      this.submissions = this.submissions.map(sub => ({
-        ...sub,
-        course: courses.find((c: any) => sub.parentId.split('@')[1] === c._id) || false
-      }));
-      this.submissions = this.submissions.filter(s => !(s.status === 'pending' && s.type === 'exam' && !s.course));
+      this.submissions = (parentId ? this.filterSubmissions(submissions, parentId) : submissions).filter(sub => {
+        if (sub.status !== 'pending' || sub.type !== 'exam') {
+          return true;
+        }
+        return courses.find((c: any) => sub.parentId.split('@')[1] === c._id) !== undefined;
+      });
       this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
