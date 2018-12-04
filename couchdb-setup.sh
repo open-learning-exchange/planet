@@ -122,6 +122,7 @@ curl -X PUT $COUCHURL/child_users
 curl -X PUT $COUCHURL/replicator_users
 curl -X PUT $COUCHURL/admin_activities
 curl -X PUT $COUCHURL/child_statistics
+curl -X PUT $COUCHURL/tags
 
 # Create design documents
 node ./design/create-design-docs.js
