@@ -77,7 +77,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
     const examsToPull = [].concat.apply([], courseSteps.map(step => step.exam || []));
     resourcesToPull = resourcesToPull.concat.apply([], courseSteps.map(step => step.resources));
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
-    let replicators = [];
+    const replicators = [];
     if (resourcesToPull) {
       replicators['resources'] = { db: 'resources', type: 'pull', date: true, items: resourcesToPull };
     }
