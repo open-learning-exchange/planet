@@ -36,6 +36,7 @@ export class ResourcesService {
     });
     this.stateService.couchStateListener('tags').subscribe(response => {
       if (response !== undefined) {
+        this.tags[response.planetField] = response.newData;
         this.setTags(this.resources[response.planetField], response.newData, response.planetField);
       }
     });
@@ -64,7 +65,7 @@ export class ResourcesService {
   setTags(resources, tags, planetField) {
     this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
       ...resource,
-      tags: resource.tags.map(tag => {
+      tagNames: resource.tags.map(tag => {
         const tagInfo = tags.find((t: any) => t._id === tag);
         return tagInfo ? tagInfo.name : tag;
       })
