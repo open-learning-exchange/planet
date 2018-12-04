@@ -64,7 +64,7 @@
           </h3>
           <td-markdown class="content" [content]="element.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
-            <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag)">
+            <mat-chip *ngFor="let tag of element.tagNames" (click)="addTag(tag)">
               {{tag}}
             </mat-chip>
           </mat-chip-list>

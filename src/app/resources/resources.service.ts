@@ -5,6 +5,7 @@ import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
+import { TagsService } from '../shared/forms/tags.service';
 
 @Injectable()
 export class ResourcesService {
@@ -12,13 +13,15 @@ export class ResourcesService {
   private resourcesUpdated = new Subject<any>();
   resources = { local: [], parent: [] };
   ratings = { local: [], parent: [] };
+  tags = { local: [], parent: [] };
   isActiveResourceFetch = false;
 
   constructor(
     private ratingService: RatingService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private stateService: StateService,
+    private tagsService: TagsService
   ) {
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       const planetField = res.parent ? 'parent' : 'local';
@@ -31,6 +34,12 @@ export class ResourcesService {
       if (response !== undefined) {
         this.isActiveResourceFetch = false;
         this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
+      }
+    });
+    this.stateService.couchStateListener('tags').subscribe(response => {
+      if (response !== undefined) {
+        this.tags[response.planetField] = response.newData;
+        this.setTags(this.resources[response.planetField], response.newData, response.planetField);
       }
     });
   }
@@ -50,7 +59,16 @@ export class ResourcesService {
   }
 
   setResources(resources, ratings, planetField) {
-    this.resources[planetField] = this.ratingService.createItemList(resources, ratings);
+    this.setTags(resources, this.tags[planetField], planetField);
+    this.resources[planetField] = this.ratingService.createItemList(this.resources[planetField], ratings);
+    this.resourcesUpdated.next(this.resources);
+  }
+
+  setTags(resources, tags, planetField) {
+    this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
+      ...resource,
+      tagNames: resource.tags.map(tag => this.tagsService.findTag(tag, tags).name)
+    }));
     this.resourcesUpdated.next(this.resources);
   }
 

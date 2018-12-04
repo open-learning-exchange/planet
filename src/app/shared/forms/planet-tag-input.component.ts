@@ -1,11 +1,13 @@
 import {
   Component, Input, Optional, Self, OnInit, OnDestroy, HostBinding, EventEmitter, Output, ElementRef, Inject
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
+import { PlanetMessageService } from '../planet-message.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
@@ -17,11 +19,15 @@ export class PlanetTagInputDialogComponent {
   filterValue = '';
   mode = 'filter';
   selectMany = false;
+  addTagForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private fb: FormBuilder,
+    private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService
   ) {
     this.tags = this.data.tags;
     this.mode = this.data.mode;
@@ -29,6 +35,10 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: string) => tag)
       .forEach(tag => this.tagChange({ value: tag, selected: true }));
+    this.addTagForm = this.fb.group({
+      name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
+      attachedTo: [ [] ]
+    });
   }
 
   tagChange(option) {
@@ -48,6 +58,20 @@ export class PlanetTagInputDialogComponent {
   selectOne(tag) {
     this.data.tagUpdate(tag, true, true);
     this.dialogRef.close();
+  }
+
+  addLabel() {
+    if (this.addTagForm.valid) {
+      this.tagsService.newTag(this.addTagForm.value).subscribe(() => {
+        this.planetMessageService.showMessage('New label added');
+        this.data.initTags();
+        this.dialogRef.close();
+      });
+    } else {
+      Object.entries(this.addTagForm.controls).forEach(([ key, value ]) => {
+        value.markAsTouched({ onlySelf: true });
+      });
+    }
   }
 
 }
@@ -110,9 +134,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   ngOnInit() {
-    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
-      this.tags = tags;
-    });
+    this.initTags();
   }
 
   ngOnDestroy() {
@@ -121,6 +143,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   onChange(_: any) {}
+
+  initTags() {
+    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
+      this.tags = tags;
+    });
+  }
 
   addTag(newTag: string) {
     if (this.value.indexOf(newTag.trim()) > -1) {
@@ -137,7 +165,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   writeValue(tags) {
     this.value = tags;
-    this.tooltipLabels = tags.join(', ');
+    const tagsNames = tags.map((tag: any) => this.tagsService.findTag(tag, this.tags).name);
+    this.tooltipLabels = tagsNames.join(', ');
   }
 
   registerOnChange(fn: (_: any) => void) {
@@ -159,6 +188,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       autoFocus: false,
       data: {
         tagUpdate: this.dialogTagUpdate.bind(this),
+        initTags: this.initTags.bind(this),
         startingTags: this.value,
         tags: this.tags,
         mode: this.mode

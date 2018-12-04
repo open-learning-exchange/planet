@@ -3,11 +3,28 @@
     <input matInput i18n-placeholder placeholder="Filter Labels" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
   <mat-slide-toggle i18n [(ngModel)]="selectMany" class="margin-lr-5" *ngIf="mode==='filter'">Select Many Labels</mat-slide-toggle>
+  <mat-expansion-panel *ngIf="mode==='add'">
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>Create New Label</mat-panel-title>
+    </mat-expansion-panel-header>
+    <form class="form-spacing" (ngSubmit)="addLabel()" [formGroup]="addTagForm">
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Label" formControlName="name" required>
+        <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Sublabel of..." formControlName="attachedTo" multiple>
+          <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <span><button type="submit" i18n mat-raised-button color="primary">Add Label</button></span>
+    </form>
+  </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
-    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.key)" [value]="tag.key">{{tag.key + ' (' + tag.value + ')'}}</mat-list-option>
+    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag._id || tag.name)" [value]="tag._id || tag.name">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
-    <a mat-list-item *ngFor="let tag of tags" (click)="selectOne(tag.key)" mat-dialog-close>{{tag.key + ' (' + tag.value + ')'}}</a>
+    <a mat-list-item *ngFor="let tag of tags" (click)="selectOne(tag._id || tag.name)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>
   </mat-nav-list>
 </mat-dialog-content>
 <mat-dialog-actions *ngIf="selectMany">
