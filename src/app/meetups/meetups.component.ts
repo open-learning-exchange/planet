@@ -22,8 +22,6 @@ import { StateService } from '../shared/state.service';
     }
     .mat-column-info {
       max-width: 500px;
-    }
-    .mat-cell.mat-column-info {
       align-self: flex-start;
     }
   ` ]
