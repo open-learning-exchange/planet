@@ -6,6 +6,7 @@ import { MatFormFieldControl, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
+import { PlanetMessageService } from '../planet-message.service';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
@@ -23,7 +24,8 @@ export class PlanetTagInputDialogComponent {
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private planetMessageService: PlanetMessageService
   ) {
     this.tags = this.data.tags;
     this.mode = this.data.mode;
@@ -33,7 +35,7 @@ export class PlanetTagInputDialogComponent {
       .forEach(tag => this.tagChange({ value: tag, selected: true }));
     this.addTagForm = this.fb.group({
       name: [ '', Validators.required ],
-      parents: [ [] ]
+      attachedTo: [ [] ]
     });
   }
 
@@ -57,7 +59,11 @@ export class PlanetTagInputDialogComponent {
   }
 
   addLabel() {
-    console.log(this.addTagForm.value);
+    this.tagsService.newTag(this.addTagForm.value).subscribe(() => {
+      this.planetMessageService.showMessage('New label added');
+      this.data.initTags();
+      this.dialogRef.close();
+    });
   }
 
 }
@@ -120,9 +126,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   ngOnInit() {
-    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
-      this.tags = tags;
-    });
+    this.initTags();
   }
 
   ngOnDestroy() {
@@ -131,6 +135,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   onChange(_: any) {}
+
+  initTags() {
+    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
+      this.tags = tags;
+    });
+  }
 
   addTag(newTag: string) {
     if (this.value.indexOf(newTag.trim()) > -1) {
@@ -169,6 +179,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       autoFocus: false,
       data: {
         tagUpdate: this.dialogTagUpdate.bind(this),
+        initTags: this.initTags.bind(this),
         startingTags: this.value,
         tags: this.tags,
         mode: this.mode

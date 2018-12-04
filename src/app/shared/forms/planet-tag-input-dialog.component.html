@@ -3,7 +3,7 @@
     <input matInput i18n-placeholder placeholder="Filter Labels" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
   <mat-slide-toggle i18n [(ngModel)]="selectMany" class="margin-lr-5" *ngIf="mode==='filter'">Select Many Labels</mat-slide-toggle>
-  <mat-expansion-panel>
+  <mat-expansion-panel *ngIf="mode==='add'">
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Label</mat-panel-title>
     </mat-expansion-panel-header>
@@ -12,7 +12,7 @@
         <input matInput i18n-placeholder placeholder="Label" formControlName="name">
       </mat-form-field>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Sublevel of..." formControlName="parents" multiple>
+        <mat-select i18n-placeholder placeholder="Sublevel of..." formControlName="attachedTo" multiple>
           <mat-option value="Mathematics">Mathematics</mat-option>
           <mat-option>Early Education</mat-option>
         </mat-select>
@@ -21,10 +21,10 @@
     </form>
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
-    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.key)" [value]="tag.key">{{tag.key + ' (' + tag.value + ')'}}</mat-list-option>
+    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.name)" [value]="tag.name">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
-    <a mat-list-item *ngFor="let tag of tags" (click)="selectOne(tag.key)" mat-dialog-close>{{tag.key + ' (' + tag.value + ')'}}</a>
+    <a mat-list-item *ngFor="let tag of tags" (click)="selectOne(tag.name)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>
   </mat-nav-list>
 </mat-dialog-content>
 <mat-dialog-actions *ngIf="selectMany">
