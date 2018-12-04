@@ -137,10 +137,13 @@ export class SubmissionsService {
   sendSubmissionRequests(users: string[], { parentId, parent }) {
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
+      'parent': { '_rev': parent._rev },
       '$or': users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }))
     })).pipe(
       switchMap((submissions: any) => {
-        const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
+        const newSubmissionUsers = users.filter((user: any) =>
+          submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
+        );
         const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
         return this.couchService.post('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
