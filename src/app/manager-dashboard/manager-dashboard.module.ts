@@ -8,6 +8,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { ManagerDashboardRouterModule } from './manger-dashboard-router.module';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { ManagerSyncComponent } from './manager-sync.component';
+import { ManagerFetchComponent } from './manager-fetch.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { ReportsComponent } from './reports/reports.component';
@@ -29,6 +30,7 @@ import { ReportsDetailComponent } from './reports/reports-detail.component';
   declarations: [
     ManagerDashboardComponent,
     ManagerSyncComponent,
+    ManagerFetchComponent,
     ManagerDashboardConfigurationComponent,
     ReportsComponent,
     ReportsDetailComponent
