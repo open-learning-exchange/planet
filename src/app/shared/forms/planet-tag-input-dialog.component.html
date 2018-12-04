@@ -13,9 +13,8 @@
         <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Sublevel of..." formControlName="attachedTo" multiple>
-          <mat-option value="Mathematics">Mathematics</mat-option>
-          <mat-option>Early Education</mat-option>
+        <mat-select i18n-placeholder placeholder="Sublabel of..." formControlName="attachedTo" multiple>
+          <mat-option *ngFor="let tag of tags" value="tag._id || tag.name">{{tag.name}}</mat-option>
         </mat-select>
       </mat-form-field>
       <span><button type="submit" i18n mat-raised-button color="primary">Add Label</button></span>
