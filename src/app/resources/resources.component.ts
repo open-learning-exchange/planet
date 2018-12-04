@@ -110,7 +110,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           return sortNumberOrString(item, property);
       }
     };
-
+    this.stateService.requestData('tags', this.parent ? 'parent' : 'local');
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.resources.data = this.setupList(this.resources.data, shelf.resourceIds);

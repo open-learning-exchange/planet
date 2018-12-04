@@ -22,7 +22,7 @@
     </form>
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
-    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.name)" [value]="tag.name">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
+    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.name)" [value]="tag._id || tag.name">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
     <a mat-list-item *ngFor="let tag of tags" (click)="selectOne(tag.name)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>

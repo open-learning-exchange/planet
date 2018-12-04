@@ -12,6 +12,7 @@ export class ResourcesService {
   private resourcesUpdated = new Subject<any>();
   resources = { local: [], parent: [] };
   ratings = { local: [], parent: [] };
+  tags = { local: [], parent: [] };
   isActiveResourceFetch = false;
 
   constructor(
@@ -33,6 +34,11 @@ export class ResourcesService {
         this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
       }
     });
+    this.stateService.couchStateListener('tags').subscribe(response => {
+      if (response !== undefined) {
+        this.setTags(this.resources[response.planetField], response.newData, response.planetField);
+      }
+    });
   }
 
   resourcesListener(parent: boolean) {
@@ -50,8 +56,19 @@ export class ResourcesService {
   }
 
   setResources(resources, ratings, planetField) {
-    this.resources[planetField] = this.ratingService.createItemList(resources, ratings);
+    this.setTags(resources, this.tags[planetField], planetField);
+    this.resources[planetField] = this.ratingService.createItemList(this.resources[planetField], ratings);
     this.resourcesUpdated.next(this.resources);
+  }
+
+  setTags(resources, tags, planetField) {
+    this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
+      ...resource,
+      tags: resource.tags.map(tag => {
+        const tagInfo = tags.find((t: any) => t._id === tag);
+        return tagInfo ? tagInfo.name : tag;
+      })
+    }));
   }
 
   getRatings(resourceIds: string[], opts: any) {
