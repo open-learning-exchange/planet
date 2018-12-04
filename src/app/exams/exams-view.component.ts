@@ -76,6 +76,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(() => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
+        this.answer = undefined;
         this.spinnerOn = false;
       } else {
         this.routeToNext(close);
