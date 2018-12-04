@@ -31,9 +31,6 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true });
-    });
     this.coursesService.coursesUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((courses: any[]) => {
       this.courses = courses;
       this.createChart(courses, this.submissions);
