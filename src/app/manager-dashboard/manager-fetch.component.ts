@@ -21,6 +21,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   planetConfiguration = this.stateService.configuration;
   displayedColumns = [ 'select', 'item' ];
   pushedItems = new MatTableDataSource();
+  emptyData = false;
 
   constructor(
     private couchService: CouchService,
@@ -33,9 +34,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.managerService.getPushedList().subscribe((pushedList: any) => {
-        /*this.pushedCount = pushedList.docs.length; */
         this.pushedItems.data = pushedList.docs;
-        console.log(this.pushedItems.data);
+        this.emptyData = !this.pushedItems.data.length;
     });
   }
 
@@ -69,7 +69,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
     this.router.navigate([ '/manager' ]);
   }
 
-  sendCourse() {
+  getPushedItem() {
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
     let resourcesToPull = itemsToPull.filter(item => item.db === 'resources');
     const coursesToPull = itemsToPull.filter(item => item.db === 'courses');
