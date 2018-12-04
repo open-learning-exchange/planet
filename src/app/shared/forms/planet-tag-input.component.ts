@@ -1,80 +1,12 @@
 import {
-  Component, Input, Optional, Self, OnInit, OnDestroy, HostBinding, EventEmitter, Output, ElementRef, Inject
+  Component, Input, Optional, Self, OnInit, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MatFormFieldControl, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
+import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
-import { PlanetMessageService } from '../planet-message.service';
-import { ValidatorService } from '../../validators/validator.service';
-
-@Component({
-  'templateUrl': 'planet-tag-input-dialog.component.html'
-})
-export class PlanetTagInputDialogComponent {
-
-  tags: any[] = [];
-  selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
-  filterValue = '';
-  mode = 'filter';
-  selectMany = false;
-  addTagForm: FormGroup;
-
-  constructor(
-    public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private tagsService: TagsService,
-    private fb: FormBuilder,
-    private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
-  ) {
-    this.tags = this.data.tags;
-    this.mode = this.data.mode;
-    this.selectMany = this.mode === 'add';
-    this.data.startingTags
-      .filter((tag: string) => tag)
-      .forEach(tag => this.tagChange({ value: tag, selected: true }));
-    this.addTagForm = this.fb.group({
-      name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
-      attachedTo: [ [] ]
-    });
-  }
-
-  tagChange(option) {
-    const tag = option.value;
-    this.selected.set(tag, option.selected);
-    this.data.tagUpdate(tag, this.selected.get(tag));
-  }
-
-  isSelected(tag: string) {
-    return this.selected.get(tag);
-  }
-
-  updateFilter(value) {
-    this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
-  }
-
-  selectOne(tag) {
-    this.data.tagUpdate(tag, true, true);
-    this.dialogRef.close();
-  }
-
-  addLabel() {
-    if (this.addTagForm.valid) {
-      this.tagsService.newTag(this.addTagForm.value).subscribe(() => {
-        this.planetMessageService.showMessage('New label added');
-        this.data.initTags();
-        this.dialogRef.close();
-      });
-    } else {
-      Object.entries(this.addTagForm.controls).forEach(([ key, value ]) => {
-        value.markAsTouched({ onlySelf: true });
-      });
-    }
-  }
-
-}
+import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 
 @Component({
   'selector': 'planet-tag-input',
@@ -120,6 +52,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   inputControl = new FormControl();
   focused = false;
   tooltipLabels = '';
+  dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -147,6 +80,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   initTags() {
     this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
       this.tags = tags;
+      if (this.dialogRef && this.dialogRef.componentInstance) {
+        this.dialogRef.componentInstance.data = this.dialogData();
+        this.dialogRef.componentInstance.dataInit();
+      }
     });
   }
 
@@ -182,17 +119,21 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   openPresetDialog() {
-    this.dialog.open(PlanetTagInputDialogComponent, {
+    this.dialogRef = this.dialog.open(PlanetTagInputDialogComponent, {
       maxWidth: '80vw',
       maxHeight: '80vh',
       autoFocus: false,
-      data: {
-        tagUpdate: this.dialogTagUpdate.bind(this),
-        initTags: this.initTags.bind(this),
-        startingTags: this.value,
-        tags: this.tags,
-        mode: this.mode
-      }
+      data: this.dialogData()
+    });
+  }
+
+  dialogData() {
+    return ({
+      tagUpdate: this.dialogTagUpdate.bind(this),
+      initTags: this.initTags.bind(this),
+      startingTags: this.value,
+      tags: this.tags,
+      mode: this.mode
     });
   }
 
