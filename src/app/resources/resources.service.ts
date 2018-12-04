@@ -5,6 +5,7 @@ import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
+import { TagsService } from '../shared/forms/tags.service';
 
 @Injectable()
 export class ResourcesService {
@@ -19,7 +20,8 @@ export class ResourcesService {
     private ratingService: RatingService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private stateService: StateService,
+    private tagsService: TagsService
   ) {
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       const planetField = res.parent ? 'parent' : 'local';
@@ -65,10 +67,7 @@ export class ResourcesService {
   setTags(resources, tags, planetField) {
     this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
       ...resource,
-      tagNames: resource.tags.map(tag => {
-        const tagInfo = tags.find((t: any) => t._id === tag);
-        return tagInfo ? tagInfo.name : tag;
-      })
+      tagNames: resource.tags.map(tag => this.tagsService.findTag(tag, tags).name)
     }));
   }
 
