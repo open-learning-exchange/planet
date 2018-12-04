@@ -9,7 +9,8 @@
     </mat-expansion-panel-header>
     <form class="form-spacing" (ngSubmit)="addLabel()" [formGroup]="addTagForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Label" formControlName="name">
+        <input matInput i18n-placeholder placeholder="Label" formControlName="name" required>
+        <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Sublevel of..." formControlName="attachedTo" multiple>

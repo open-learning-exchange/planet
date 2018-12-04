@@ -7,6 +7,7 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
@@ -25,7 +26,8 @@ export class PlanetTagInputDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
     private fb: FormBuilder,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private validatorService: ValidatorService
   ) {
     this.tags = this.data.tags;
     this.mode = this.data.mode;
@@ -34,7 +36,7 @@ export class PlanetTagInputDialogComponent {
       .filter((tag: string) => tag)
       .forEach(tag => this.tagChange({ value: tag, selected: true }));
     this.addTagForm = this.fb.group({
-      name: [ '', Validators.required ],
+      name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
     });
   }
