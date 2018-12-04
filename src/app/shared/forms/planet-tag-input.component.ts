@@ -1,7 +1,7 @@
 import {
   Component, Input, Optional, Self, OnInit, OnDestroy, HostBinding, EventEmitter, Output, ElementRef, Inject
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { Subject } from 'rxjs';
@@ -17,11 +17,13 @@ export class PlanetTagInputDialogComponent {
   filterValue = '';
   mode = 'filter';
   selectMany = false;
+  addTagForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private fb: FormBuilder
   ) {
     this.tags = this.data.tags;
     this.mode = this.data.mode;
@@ -29,6 +31,10 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: string) => tag)
       .forEach(tag => this.tagChange({ value: tag, selected: true }));
+    this.addTagForm = this.fb.group({
+      name: [ '', Validators.required ],
+      parents: [ [] ]
+    });
   }
 
   tagChange(option) {
@@ -48,6 +54,10 @@ export class PlanetTagInputDialogComponent {
   selectOne(tag) {
     this.data.tagUpdate(tag, true, true);
     this.dialogRef.close();
+  }
+
+  addLabel() {
+    console.log(this.addTagForm.value);
   }
 
 }

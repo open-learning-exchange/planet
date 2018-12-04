@@ -7,15 +7,18 @@
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Label</mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-form-field>
-      <input matInput placeholder="Label">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-select placeholder="Attached to...">
-        <mat-option>Mathematics</mat-option>
-        <mat-option>Early Education</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <form class="form-spacing" (ngSubmit)="addLabel()" [formGroup]="addTagForm">
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Label" formControlName="name">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select i18n-placeholder placeholder="Sublevel of..." formControlName="parents" multiple>
+          <mat-option value="Mathematics">Mathematics</mat-option>
+          <mat-option>Early Education</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <span><button type="submit" i18n mat-raised-button color="primary">Add Label</button></span>
+    </form>
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
     <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag.key)" [value]="tag.key">{{tag.key + ' (' + tag.value + ')'}}</mat-list-option>
