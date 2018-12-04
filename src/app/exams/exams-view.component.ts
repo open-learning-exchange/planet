@@ -76,6 +76,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(() => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
+        this.answer = undefined;
         this.spinnerOn = false;
       } else {
         this.routeToNext(close);
@@ -99,6 +100,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isMultiCorrect(correctChoice, answers) {
     return correctChoice.every(choice => answers.find((a: any) => a.id === choice)) &&
       answers.every((a: any) => correctChoice.find(choice => a.id === choice));
+  }
+
+  resetCheckboxes() {
+    this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
   }
 
   examComplete() {
@@ -184,6 +189,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
+        this.resetCheckboxes();
         return {
           obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close),
           correctAnswer
