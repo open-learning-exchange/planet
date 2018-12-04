@@ -165,7 +165,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   writeValue(tags) {
     this.value = tags;
-    this.tooltipLabels = tags.join(', ');
+    const tagsNames = tags.map((tag: any) => this.tagsService.findTag(tag, this.tags).name);
+    this.tooltipLabels = tagsNames.join(', ');
   }
 
   registerOnChange(fn: (_: any) => void) {
