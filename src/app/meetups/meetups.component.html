@@ -15,9 +15,9 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <span *ngIf="!parent">
-      <button mat-button [disabled]="!selection.selected.length" (click)="addToMeetups(selection.selected)">
+      <button mat-button [disabled]="!selection.selected.length || selectedNotJoined === 0" (click)="addToMeetups(selection.selected)">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+        <span *ngIf="selection?.selected?.length">({{selectedNotJoined}})</span>
       </button>
       <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
