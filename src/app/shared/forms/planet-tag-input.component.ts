@@ -61,11 +61,17 @@ export class PlanetTagInputDialogComponent {
   }
 
   addLabel() {
-    this.tagsService.newTag(this.addTagForm.value).subscribe(() => {
-      this.planetMessageService.showMessage('New label added');
-      this.data.initTags();
-      this.dialogRef.close();
-    });
+    if (this.addTagForm.valid) {
+      this.tagsService.newTag(this.addTagForm.value).subscribe(() => {
+        this.planetMessageService.showMessage('New label added');
+        this.data.initTags();
+        this.dialogRef.close();
+      });
+    } else {
+      Object.entries(this.addTagForm.controls).forEach(([ key, value ]) => {
+        value.markAsTouched({ onlySelf: true });
+      });
+    }
   }
 
 }

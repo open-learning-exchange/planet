@@ -14,7 +14,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Sublabel of..." formControlName="attachedTo" multiple>
-          <mat-option *ngFor="let tag of tags" value="tag._id || tag.name">{{tag.name}}</mat-option>
+          <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
         </mat-select>
       </mat-form-field>
       <span><button type="submit" i18n mat-raised-button color="primary">Add Label</button></span>
