@@ -25,7 +25,7 @@ export class TagsService {
         return existingTags.rows.sort((a, b) => b.value - a.value).map((tag: any) => ({
           count: tag.value,
           ...this.findTag(tag.key, dbTags)
-        })).concat(unusedTags);
+        })).concat(unusedTags).map(this.fillSubTags);
       })
     );
   }
@@ -40,7 +40,11 @@ export class TagsService {
 
   findTag(tagKey: any, fullTags: any[]) {
     const fullTag = fullTags.find((dbTag: any) => dbTag._id === tagKey);
-    return { ...(fullTag ? fullTag : { name: tagKey }) };
+    return { ...(fullTag ? fullTag : { _id: tagKey, name: tagKey, attachedTo: [] }) };
+  }
+
+  fillSubTags(tag: any, index: number, tags: any[]) {
+    return { ...tag, subTags: tags.filter(t => t.attachedTo.indexOf(tag._id) > -1) };
   }
 
 }
