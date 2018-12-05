@@ -68,6 +68,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
   }
   emptyData = false;
+  selectedNotAdded = 0;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -118,6 +119,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || ' ';
+    });
+    this.selection.onChange.subscribe(({ source }) => {
+      this.countSelectedNotAdded(source.selected);
     });
   }
 
@@ -236,7 +240,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   libraryToggle(resourceIds, type) {
-    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => { }, (error) => ((error)));
+    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+      this.countSelectedNotAdded(this.selection.selected);
+    }, (error) => ((error)));
   }
 
   shareResource(type, resources) {
@@ -290,5 +296,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
     };
+  }
+
+  countSelectedNotAdded(selected: any) {
+    this.selectedNotAdded = selected.reduce((count, id) => count + (this.userService.shelf.resourceIds.indexOf(id) === -1 ? 1 : 0), 0);
   }
 }
