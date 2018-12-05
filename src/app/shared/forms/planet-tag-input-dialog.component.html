@@ -21,7 +21,13 @@
     </form>
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
-    <mat-list-option *ngFor="let tag of tags" [selected]="isSelected(tag._id || tag.name)" [value]="tag._id || tag.name">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
+    <ng-container *ngFor="let tag of tags">
+      <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
+      <mat-list-option *ngFor="let subTag of tag.subTags" [value]="[ subTag._id || subTag.name, tag._id || tag.name ]" [selected]="isSelected(subTag._id || subTag.name)">
+        <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
+        {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+      </mat-list-option>
+    </ng-container>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
     <ng-container *ngFor="let tag of tags">
