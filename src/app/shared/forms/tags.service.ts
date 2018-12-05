@@ -31,7 +31,7 @@ export class TagsService {
   }
 
   filterTags(tags: any[], filterString: string): string[] {
-    return tags.filter((tag: any) => tag.key.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+    return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
   }
 
   newTag({ name, attachedTo }) {
