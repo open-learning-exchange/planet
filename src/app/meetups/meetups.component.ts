@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingComponent } from '../shared/dialogs/dialogs-loading.component';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -43,6 +44,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   emptyData = false;
   selectedNotJoined = 0;
+  spinnerDialog: MatDialogRef<DialogsLoadingComponent>;
 
   constructor(
     private couchService: CouchService,
@@ -56,12 +58,16 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
+      disableClose: true
+    });
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((meetups) => {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
       this.emptyData = !this.meetups.data.length;
+      this.closeSpinner();
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
@@ -200,4 +206,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   countSelectedNotJoined(selected: any) {
     this.selectedNotJoined = selected.reduce((count, id) => count + (this.userService.shelf.meetupIds.indexOf(id) === -1 ? 1 : 0), 0);
   }
+
+  closeSpinner() {
+    for (const entry of this.dialog.openDialogs) {
+      if (entry === this.spinnerDialog) {
+        this.spinnerDialog.close();
+      }
+    }
+  }
+
 }

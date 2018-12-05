@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatDialog, MatSort, MatPaginator, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -8,6 +8,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
+import { DialogsLoadingComponent } from '../shared/dialogs/dialogs-loading.component';
 
 @Component({
   templateUrl: './teams.component.html'
@@ -23,9 +24,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
+  spinnerDialog: MatDialogRef<DialogsLoadingComponent>;
 
   constructor(
     private userService: UserService,
+    private dialog: MatDialog,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
@@ -39,6 +42,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
+      disableClose: true
+    });
     this.getTeams();
     this.teams.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
@@ -49,6 +55,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.userShelf = this.userService.shelf;
       this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
       this.emptyData = !this.teams.data.length;
+      this.closeSpinner();
     }, (error) => console.log(error));
   }
 
@@ -106,6 +113,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue;
+  }
+
+  closeSpinner() {
+    for (const entry of this.dialog.openDialogs) {
+      if (entry === this.spinnerDialog) {
+        this.spinnerDialog.close();
+      }
+    }
   }
 
 }
