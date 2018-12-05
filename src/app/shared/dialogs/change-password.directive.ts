@@ -11,11 +11,14 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { StateService } from '../state.service';
 
+const showPassword = true;
+
 const changePasswordFields = [
   {
     'label': 'Old Password',
     'type': 'textbox',
-    'inputType': 'password',
+    'inputType': showPassword ? 'password' : 'text',
+    'togglePassword': showPassword,
     'name': 'oldPassword',
     'placeholder': 'Old Password',
     'required': true
@@ -23,7 +26,8 @@ const changePasswordFields = [
   {
     'label': 'Password',
     'type': 'textbox',
-    'inputType': 'password',
+    'inputType': showPassword ? 'password' : 'text',
+    'togglePassword': showPassword,
     'name': 'password',
     'placeholder': 'Password',
     'required': true
@@ -31,7 +35,8 @@ const changePasswordFields = [
   {
     'label': 'Confirm Password',
     'type': 'textbox',
-    'inputType': 'password',
+    'inputType': showPassword ? 'password' : 'text',
+    'togglePassword': showPassword,
     'name': 'confirmPassword',
     'placeholder': 'Confirm Password',
     'required': true
