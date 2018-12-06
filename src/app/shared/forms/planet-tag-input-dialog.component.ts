@@ -30,7 +30,7 @@ export class PlanetTagInputDialogComponent {
     this.selectMany = this.mode === 'add';
     this.data.startingTags
       .filter((tag: string) => tag)
-      .forEach(tag => this.tagChange({ value: tag, selected: true }));
+      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }));
     this.addTagForm = this.fb.group({
       name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
@@ -47,9 +47,13 @@ export class PlanetTagInputDialogComponent {
   }
 
   tagChange(option) {
-    const tag = option.value;
-    this.selected.set(tag, option.selected);
-    this.data.tagUpdate(tag, this.selected.get(tag));
+    const tags = option.value;
+    tags.forEach((tag, index) => {
+      if (index === 0 || option.selected) {
+        this.selected.set(tag, option.selected);
+        this.data.tagUpdate(tag, this.selected.get(tag));
+      }
+    });
   }
 
   isSelected(tag: string) {
@@ -60,8 +64,11 @@ export class PlanetTagInputDialogComponent {
     this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
-  selectOne(tag) {
+  selectOne(tag, subTag?) {
     this.data.tagUpdate(tag, true, true);
+    if (subTag !== undefined) {
+      this.data.tagUpdate(subTag, true);
+    }
     this.dialogRef.close();
   }
 
