@@ -21,6 +21,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   progress: any[] = [];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
+  submittedExamSteps: any[] = [];
 
   constructor(
     private router: Router,
@@ -41,6 +42,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
       this.submissions = submissions;
       this.setFullCourse(submissions);
+      this.filterSubmittedExamSteps(submissions);
     });
   }
 
@@ -142,6 +144,21 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     return (this.progress
       .filter((p: any) => p.userId === 'org.couchdb.user:' + user)
       .reduce((max: any, p: any) => p.stepNum > max.stepNum ? p : max, { stepNum: 0 }));
+  }
+
+  isSubmittedExam(submissions: any[], step: any) {
+    return (step.exam &&
+            submissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)));
+  }
+
+  filterSubmittedExamSteps(submissions: any[]) {
+    this.course.steps
+      .filter((step: any, index: number) => {
+        if (this.isSubmittedExam(submissions, step)) {
+          step.index = index;
+          this.submittedExamSteps.push(step);
+        }
+      });
   }
 
 }
