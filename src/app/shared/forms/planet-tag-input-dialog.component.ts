@@ -80,6 +80,7 @@ export class PlanetTagInputDialogComponent {
         this.planetMessageService.showMessage('New label added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
+        this.addTagForm.get('name').reset();
       });
     } else {
       onAllFormControls(([ key, value ]) => value.markAsTouched({ onlySelf: true }));
