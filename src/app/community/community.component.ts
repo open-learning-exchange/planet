@@ -1,50 +1,41 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
-import { filterSpecificFields, composeFilterFunctions, filterDropdowns, sortNumberOrString } from '../shared/table-helpers';
-import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { StateService } from '../shared/state.service';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { Validators } from '@angular/forms';
+import { ValidatorService } from '../validators/validator.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './community.component.html'
 })
-export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CommunityComponent implements OnInit, OnDestroy {
   message = '';
   searchValue = '';
-  communities = new MatTableDataSource();
-  nations = [];
-  filter = {
-    registrationRequest: 'pending'
-  };
-  displayedColumns = [
-    'name',
-    'code',
-    'localDomain',
-    'createdDate',
-    'action'
-  ];
+  data = [];
+  filteredData = [];
+  hubs = [];
+  shownStatus = 'pending';
   editDialog: any;
   viewNationDetailDialog: any;
   dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-
   constructor(
     private couchService: CouchService,
-    private dialogsListService: DialogsListService,
-    private dialog: MatDialog,
+    private validatorService: ValidatorService,
+    private dialogsFormService: DialogsFormService,
     private route: ActivatedRoute,
-    private stateService: StateService
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -52,17 +43,9 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.onDestroy$)
     ).subscribe((params: ParamMap) => {
       const searchValue = params.get('search');
-      this.searchValue = searchValue;
-      this.getCommunityList(searchValue);
+      this.searchValue = searchValue || '';
+      this.getCommunityList();
     });
-
-    this.communities.sortingDataAccessor = sortNumberOrString;
-    this.communities.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'code', 'name' ]) ]);
-  }
-
-  ngAfterViewInit() {
-    this.communities.paginator = this.paginator;
-    this.communities.sort = this.sort;
   }
 
   ngOnDestroy() {
@@ -70,159 +53,43 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  onFilterChange(filterValue: string, field: string) {
-    this.filter[field] = filterValue;
-    // Force filter to update by setting it to a space if empty
-    this.communities.filter = this.communities.filter || ' ';
+  shownStatusChange(newStatus: string) {
+    this.shownStatus = newStatus;
+    this.filterData();
+  }
+
+  filterData(search = this.searchValue) {
+    const filterFunction = filterSpecificFields([ 'code', 'name' ]);
+    this.filteredData = this.data.filter((item: any) => item.registrationRequest === this.shownStatus && filterFunction(item, search));
   }
 
   requestListFilter(filterValue: string) {
-    this.communities.filter = filterValue || this.dropdownsFill();
+    this.searchValue = filterValue;
   }
 
-  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
-  // search text is deleted, but does not run when there are no active filters.
-  dropdownsFill() {
-    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
-      if (val) {
-        return ' ';
-      }
-      return emptySpace;
-    }, '');
+  getCommunityList(search = this.searchValue) {
+    forkJoin([
+      this.couchService.findAll('communityregistrationrequests',
+        findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
+      this.couchService.findAll('hubs')
+    ]).subscribe(([ data, hubs ]) => {
+      this.hubs = hubs;
+      this.data = data;
+      this.filterData(search);
+    }, (error) => this.message = 'There was a problem getting Communities');
   }
 
-  getCommunityList(search = '') {
-    this.couchService.findAll('communityregistrationrequests',
-      findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
-      .subscribe((data) => {
-        this.communities.data = data;
-        this.requestListFilter(search);
-      }, (error) => this.message = 'There was a problem getting Communities');
-  }
-
-  updateRev(item, array) {
-    array = array.map((c: any) => {
-      if (c._id === item.id) {
-        c._rev = item.rev;
-      }
-      return c;
-    });
-  }
-
-  updateClick(community, change) {
-    this.editDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.updateCommunity(community, change),
-        changeType: change,
-        type: 'community',
-        displayName: community.name
-      }
-    });
-  }
-
-  updateCommunity(community, change) {
-    // Return a function with community on its scope to pass to delete dialog
-    return () => {
-      // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      // Split community object into id, rev, and all other props in communityInfo
-      const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
-      switch (change) {
-        case 'delete':
-          this.deleteCommunity(community);
-          break;
-        case 'accept':
-          forkJoin([
-            // When accepting a registration request, add learner role to user from that community/nation,
-            this.unlockUser(community),
-            // update registration request to accepted
-            this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
-          ]).subscribe((data) => {
-            community.registrationRequest = 'accepted';
-            this.updateRev(data, this.communities.data);
-            this.getCommunityList(this.searchValue);
-            this.editDialog.close();
-          }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
-      }
-    };
-  }
-
-  // Checks response and creates couch call if a doc was returned
-  addDeleteObservable(res, db) {
-    if (res.docs.length > 0) {
-      const doc = res.docs[0];
-      return this.couchService.delete(db + doc._id + '?rev=' + doc._rev);
-    }
-    return of({ 'ok': true });
-  }
-
-  deleteCommunity(community) {
-    // Return a function with community on its scope to pass to delete dialog
-    const { _id: id, _rev: rev } = community;
-    return this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community)
-    .subscribe(([ data, userRes ]) => {
-      // It's safer to remove the item from the array based on its id than to splice based on the index
-      this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
-      this.editDialog.close();
-    }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
-  }
-
-  pipeRemovePlanetUser(obs: any, community) {
-    return obs.pipe(
-      switchMap(data => {
-        return forkJoin([ of(data), this.removePlanetUser(community) ]);
-      })
+  addHubClick() {
+    const type = this.planetType === 'nation' ? 'Center' : 'Region';
+    this.dialogsFormService.confirm(
+      'Add ' + (this.planetType === 'nation' ? 'Center' : 'Region'),
+      [ { placeholder: 'Name', name: 'name', required: true, type: 'textbox' } ],
+      { name: [ '', Validators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
+    ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, attached: [] }) : of())
+    ).subscribe(
+      () => this.planetMessageService.showMessage(type + ' Added'),
+      () => this.planetMessageService.showAlert('There was an error adding ' + type)
     );
-  }
-
-  removePlanetUser(community) {
-    return forkJoin([
-      this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
-      this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
-    ]).pipe(switchMap(([ user, shelf ]) => {
-      return forkJoin([
-        this.addDeleteObservable(user, '_users/'),
-        this.addDeleteObservable(shelf, 'shelf/')
-      ]);
-    }));
-  }
-
-  // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
-  unlockUser(community) {
-    return this.couchService.post('_users/_find', { 'selector': { 'requestId': community._id } })
-      .pipe(switchMap(data => {
-        const user = data.docs[0];
-        return this.couchService.put('_users/' + user._id + '?rev=' + user._rev,
-          { ...user, roles: [ 'learner' ] });
-      }));
-  }
-
-  view(planet) {
-    this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
-      width: '600px',
-      autoFocus: false,
-      data: {
-        allData: planet,
-        title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
-      }
-    });
-  }
-
-  getChildPlanet(url: string) {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests',
-    { 'registrationRequest': 'accepted' }, url)
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planets) => {
-      const data = {
-        disableSelection: true,
-        filterPredicate: filterSpecificFields([ 'name', 'code' ]),
-        ...planets };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        height: '500px',
-        width: '600px',
-        autoFocus: false
-      });
-    });
   }
 
 }
