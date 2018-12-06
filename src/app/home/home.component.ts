@@ -4,8 +4,8 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { Subject, forkJoin, interval } from 'rxjs';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Subject, forkJoin, interval, of } from 'rxjs';
+import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
@@ -144,10 +144,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     })).subscribe((response: any) => {
       this.userService.unset();
       this.router.navigate([ '/login' ], {});
-    }, (error) => {
+    }, catchError (error => {
       console.log(error);
       this.router.navigate([ '/login' ], {});
-    });
+      return of([]);
+    }));
   }
 
   getNotification() {
