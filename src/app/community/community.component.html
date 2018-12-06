@@ -3,7 +3,7 @@
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span i18n>Requests List</span>
+  <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
   <span class="toolbar-fill"></span>
   <mat-button-toggle-group
     class="margin-lr-5 font-size-1"
@@ -25,7 +25,10 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <span i18n>Your Current List of Requests</span>
+      <span i18n>{ filter.registrationRequest, select,
+        pending {Your Current List of Requests}
+        accepted {{ planetType, select, nation {Connected Community Centers} center {Connected Regions} }} }
+      </span>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">

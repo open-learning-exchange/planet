@@ -10,6 +10,7 @@ import { filterSpecificFields, composeFilterFunctions, filterDropdowns, sortNumb
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './community.component.html'
@@ -33,6 +34,7 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
   viewNationDetailDialog: any;
   dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
+  planetType = this.stateService.configuration.planetType;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -41,7 +43,8 @@ export class CommunityComponent implements OnInit, AfterViewInit, OnDestroy {
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
