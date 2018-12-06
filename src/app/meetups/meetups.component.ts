@@ -22,6 +22,7 @@ import { StateService } from '../shared/state.service';
     }
     .mat-column-info {
       max-width: 500px;
+      align-self: flex-start;
     }
   ` ]
 })
