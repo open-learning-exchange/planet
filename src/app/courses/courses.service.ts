@@ -181,12 +181,7 @@ export class CoursesService {
 
   courseAdmissionMany(courseIds, type) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
-      let prefix = '';
-      if ( courseIds.length > 1 ) {
-          prefix = courseIds.length + ' Courses';
-      } else {
-        prefix = this.getCourseNameFromId(courseIds[0]);
-      }
+      const prefix = courseIds.length > 1 ? courseIds.length + ' courses' : this.getCourseNameFromId(courseIds[0]);
       const admissionMessage = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
