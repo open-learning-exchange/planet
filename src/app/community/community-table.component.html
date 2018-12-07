@@ -23,6 +23,17 @@
         <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
           Communities
         </button>
+        <button mat-raised-button color="primary" i18n [matMenuTriggerFor]="hubMenu" *ngIf="(hub==='sandbox' && hubs.length > 0) || hubs.length > 1">
+          { hub, select,
+            sandbox {Add to { planetType, select, nation {Center} center {Region} }}
+            other {Move { planetType, select, nation {Centers} center {Regions} }}
+          }
+        </button>
+        <mat-menu #hubMenu="matMenu">
+          <ng-container *ngFor="let h of hubs">
+            <button *ngIf="h.name!==hub.name" (click)="addHubClick(element.code, h.name)" mat-menu-item>{{h.name}}</button>
+          </ng-container>
+        </mat-menu>
       </ng-container>
       <ng-container *ngIf="element.registrationRequest === 'pending'">
         <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>

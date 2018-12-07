@@ -35,7 +35,21 @@
       </button>
     </mat-toolbar-row>
   </mat-toolbar>
-  <div class="view-container view-full-height view-table">
-    <planet-community-table [data]="filteredData"></planet-community-table>
+  <div class="view-container view-full-height" [ngClass]="{'view-table':shownStatus==='pending'}">
+    <planet-community-table *ngIf="shownStatus==='pending'" [data]="filteredData" (requestUpdate)="getCommunityList()"></planet-community-table>
+    <ng-container *ngIf="shownStatus==='accepted'">
+      <mat-expansion-panel *ngFor="let hub of hubs">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{hub.name}}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-community-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-community-table>
+      </mat-expansion-panel>
+    </ng-container>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Sandbox</mat-panel-title>
+      </mat-expansion-panel-header>
+      <planet-community-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-community-table>
+    </mat-expansion-panel>
   </div>
 </div>

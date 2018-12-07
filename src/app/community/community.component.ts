@@ -22,6 +22,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   data = [];
   filteredData = [];
   hubs = [];
+  sandboxPlanets = [];
   shownStatus = 'pending';
   editDialog: any;
   viewNationDetailDialog: any;
@@ -61,6 +62,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
   filterData(search = this.searchValue) {
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
     this.filteredData = this.data.filter((item: any) => item.registrationRequest === this.shownStatus && filterFunction(item, search));
+    this.hubs = this.hubs.map((hub: any) => ({
+      ...hub,
+      children: hub.attached.map(code => this.filteredData.find((item: any) => item.code === code)).filter(child => child)
+    }));
+    this.sandboxPlanets = this.filteredData.filter(
+      (item: any) => this.hubs.find((hub: any) => hub.attached.indexOf(item.code) > -1) === undefined
+    );
+    console.log(this.sandboxPlanets);
   }
 
   requestListFilter(filterValue: string) {
@@ -87,7 +96,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       { name: [ '', Validators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
     ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, attached: [] }) : of())
     ).subscribe(
-      () => this.planetMessageService.showMessage(type + ' Added'),
+      () => {
+        this.planetMessageService.showMessage(type + ' Added');
+        this.getCommunityList();
+      },
       () => this.planetMessageService.showAlert('There was an error adding ' + type)
     );
   }

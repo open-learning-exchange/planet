@@ -17,6 +17,8 @@ import { StateService } from '../shared/state.service';
 export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   @Input() data = [];
+  @Input() hubs = [];
+  @Input() hub: any = 'sandbox';
   @Output() requestUpdate = new EventEmitter<void>();
   communities = new MatTableDataSource();
   nations = [];
@@ -169,6 +171,19 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
         width: '600px',
         autoFocus: false
       });
+    });
+  }
+
+  addHubClick(planetCode, hubName) {
+    const hub = this.hubs.find((hb: any) => hb.name === hubName);
+    hub.attached.push(planetCode);
+    this.couchService.post('hubs', hub).pipe(switchMap(() => {
+      if (this.hub !== 'sandbox') {
+        return this.couchService.post('hubs', { ...this.hub, attached: this.hub.attached.filter(code => code !== planetCode) });
+      }
+      return of();
+    })).subscribe(() => {
+      this.requestUpdate.emit();
     });
   }
 
