@@ -1,12 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
-import { MatDialogRef } from '@angular/material';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { StateService } from '../shared/state.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
@@ -17,18 +15,18 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   templateUrl: './community.component.html'
 })
 export class CommunityComponent implements OnInit, OnDestroy {
-  message = '';
+
   searchValue = '';
   data = [];
   filteredData = [];
   hubs = [];
   sandboxPlanets = [];
   shownStatus = 'pending';
-  editDialog: any;
-  viewNationDetailDialog: any;
-  dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
+  get childType() {
+    return this.planetType === 'nation' ? 'Center' : 'Region';
+  }
 
   constructor(
     private couchService: CouchService,
@@ -69,11 +67,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.sandboxPlanets = this.filteredData.filter(
       (item: any) => this.hubs.find((hub: any) => hub.attached.indexOf(item.code) > -1) === undefined
     );
-    console.log(this.sandboxPlanets);
   }
 
   requestListFilter(filterValue: string) {
     this.searchValue = filterValue;
+    this.filterData();
   }
 
   getCommunityList(search = this.searchValue) {
@@ -85,13 +83,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.hubs = hubs;
       this.data = data;
       this.filterData(search);
-    }, (error) => this.message = 'There was a problem getting Communities');
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
   addHubClick() {
-    const type = this.planetType === 'nation' ? 'Center' : 'Region';
+    const type = this.childType;
     this.dialogsFormService.confirm(
-      'Add ' + (this.planetType === 'nation' ? 'Center' : 'Region'),
+      'Add ' + type,
       [ { placeholder: 'Name', name: 'name', required: true, type: 'textbox' } ],
       { name: [ '', Validators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
     ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, attached: [] }) : of())

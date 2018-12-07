@@ -88,7 +88,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]).subscribe((data) => {
-
+            this.requestUpdate.emit();
             this.editDialog.close();
           }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
       }
@@ -110,7 +110,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     return this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community)
     .subscribe(([ data, userRes ]) => {
       // It's safer to remove the item from the array based on its id than to splice based on the index
-      this.communities.data = this.communities.data.filter((comm: any) => data.id !== comm._id);
+      this.requestUpdate.emit();
       this.editDialog.close();
     }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
   }
