@@ -10,6 +10,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './community.component.html'
@@ -34,7 +35,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
@@ -60,13 +62,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   filterData(search = this.searchValue) {
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
     this.filteredData = this.data.filter((item: any) => item.registrationRequest === this.shownStatus && filterFunction(item, search));
-    this.hubs = this.hubs.map((hub: any) => ({
-      ...hub,
-      children: hub.attached.map(code => this.filteredData.find((item: any) => item.code === code)).filter(child => child)
-    }));
-    this.sandboxPlanets = this.filteredData.filter(
-      (item: any) => this.hubs.find((hub: any) => hub.attached.indexOf(item.code) > -1) === undefined
-    );
+    const { hubs, sandboxPlanets } = this.managerService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
+    this.hubs = hubs;
+    this.sandboxPlanets = sandboxPlanets;
   }
 
   requestListFilter(filterValue: string) {

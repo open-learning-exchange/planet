@@ -1,0 +1,36 @@
+<mat-table #table [dataSource]="logs" matSort>
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
+    <mat-cell *matCellDef="let element"><a [routerLink]="['detail', { parentCode: element.parentCode, code: element.code }]">{{element.name}}</a></mat-cell>
+  </ng-container>
+  <!-- <ng-container matColumnDef="downloads">
+    <mat-header-cell *matHeaderCellDef i18n>Resource Downloads</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.resource_downloads?.value}}</mat-cell>
+  </ng-container> -->
+  <ng-container matColumnDef="views">
+    <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.resourceViews}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="logins">
+    <mat-header-cell *matHeaderCellDef i18n>Member Visits</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.userVisits}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="lastAdminLogin">
+    <mat-header-cell *matHeaderCellDef i18n>Last Admin Login</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.lastAdminLogin?.max?.loginTime | date}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="lastUpgrade">
+    <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.lastUpgrade?.max?.time | date}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="lastSync">
+    <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.lastSync?.max?.time | date}}</mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+<mat-paginator #paginator
+  [pageSize]="50"
+  [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+</mat-paginator>

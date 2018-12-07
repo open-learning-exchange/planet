@@ -11,6 +11,7 @@ import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { ReportsComponent } from './reports/reports.component';
+import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 
 @NgModule({
@@ -31,6 +32,7 @@ import { ReportsDetailComponent } from './reports/reports-detail.component';
     ManagerSyncComponent,
     ManagerDashboardConfigurationComponent,
     ReportsComponent,
+    ReportsTableComponent,
     ReportsDetailComponent
   ]
 })

@@ -101,4 +101,16 @@ export class ManagerService {
     );
   }
 
+  arrangePlanetsIntoHubs(planets, hubs) {
+    return ({
+      hubs: hubs.map((hub: any) => ({
+        ...hub,
+        children: hub.attached.map(code => planets.find((planet: any) => planet.code === code)).filter(child => child)
+      })),
+      sandboxPlanets: planets.filter(
+        (planet: any) => hubs.find((hub: any) => hub.attached.indexOf(planet.code) > -1) === undefined
+      )
+    });
+  }
+
 }
