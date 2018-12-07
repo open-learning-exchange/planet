@@ -71,21 +71,21 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   getPushedItem() {
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
-    let resourcesToPull = itemsToPull.filter(item => item.db === 'resources');
-    const coursesToPull = itemsToPull.filter(item => item.db === 'courses');
+    let resourcesToPull = itemsToPull.filter(item => item.db === 'resources').map(item => item.item);
+    const coursesToPull = itemsToPull.filter(item => item.db === 'courses').map(item => item.item);
     const courseSteps = [].concat.apply([], coursesToPull.map(course => course.steps));
     const examsToPull = [].concat.apply([], courseSteps.map(step => step.exam || []));
     resourcesToPull = resourcesToPull.concat.apply([], courseSteps.map(step => step.resources));
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
     const replicators = [];
     if (resourcesToPull) {
-      replicators['resources'] = { db: 'resources', type: 'pull', date: true, items: resourcesToPull };
+      replicators.push({ db: 'resources', type: 'pull', date: true, items: resourcesToPull });
     }
     if (coursesToPull) {
-      replicators['courses'] = { db: 'courses', type: 'pull', date: true, items: coursesToPull };
+      replicators.push({ db: 'courses', type: 'pull', date: true, items: coursesToPull });
     }
     if (examsToPull) {
-      replicators['exams'] = { db: 'exams', type: 'pull', date: true, items: examsToPull };
+      replicators.push({ db: 'exams', type: 'pull', date: true, items: examsToPull });
     }
     if (replicators) {
       this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
