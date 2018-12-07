@@ -26,7 +26,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
   get childType() {
-    return this.planetType === 'nation' ? 'Center' : 'Region';
+    return this.planetType === 'nation' ? 'Network' : 'Region';
   }
 
   constructor(

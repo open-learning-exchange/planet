@@ -27,11 +27,11 @@
     <mat-toolbar-row class="primary-color font-size-1">
       <span i18n>{ shownStatus, select,
         pending {Your Current List of Requests}
-        accepted {{ planetType, select, nation {Connected Community Centers} center {Connected Regions} }} }
+        accepted {{ planetType, select, nation {Connected Community Networks} center {Connected Regions} }} }
       </span>
       <span class="toolbar-fill"></span>
       <button *ngIf="shownStatus==='accepted'" mat-raised-button color="accent" i18n (click)="addHubClick()">
-        { planetType, select, nation {Add Center} center {Add Region} }
+        { planetType, select, nation {Add Network} center {Add Region} }
       </button>
     </mat-toolbar-row>
   </mat-toolbar>

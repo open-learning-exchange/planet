@@ -25,8 +25,8 @@
         </button>
         <button mat-raised-button color="primary" i18n [matMenuTriggerFor]="hubMenu" *ngIf="(hub==='sandbox' && hubs.length > 0) || hubs.length > 1">
           { hub, select,
-            sandbox {Add to { planetType, select, nation {Center} center {Region} }}
-            other {Move { planetType, select, nation {Centers} center {Regions} }}
+            sandbox {Add to { planetType, select, nation {Network} center {Region} }}
+            other {Move { planetType, select, nation {Networks} center {Regions} }}
           }
         </button>
         <mat-menu #hubMenu="matMenu">
