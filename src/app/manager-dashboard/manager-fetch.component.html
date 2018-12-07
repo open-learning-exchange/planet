@@ -27,14 +27,14 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="item">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
-        <mat-cell  *matCellDef="let element" class="list-content-menu">
-          <ng-container *ngIf="element.db === 'resources'">{{ element.item.title }}<mat-icon svgIcon="myLibrary"></mat-icon></ng-container>
-          <ng-container *ngIf="element.db === 'courses'">{{ element.item.courseTitle }}<mat-icon svgIcon="myCourses"></mat-icon></ng-container>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.db === 'resources'">{{ element.item.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon></ng-container>
+          <ng-container *ngIf="element.db === 'courses'">{{ element.item.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
     </mat-table>
 
     <mat-paginator #paginator

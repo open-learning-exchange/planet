@@ -11,7 +11,12 @@ import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  templateUrl: './manager-fetch.component.html'
+  templateUrl: './manager-fetch.component.html',
+  styles: [ `
+    .mat-column-select {
+      max-width: 44px;
+    }
+  ` ]
 })
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {
@@ -34,8 +39,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.managerService.getPushedList().subscribe((pushedList: any) => {
-        this.pushedItems.data = pushedList.docs;
-        this.emptyData = !this.pushedItems.data.length;
+      this.pushedItems.data = pushedList.docs;
+      this.emptyData = !this.pushedItems.data.length;
     });
   }
 
