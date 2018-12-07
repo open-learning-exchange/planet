@@ -181,7 +181,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
       if (this.hub !== 'sandbox') {
         return this.couchService.post('hubs', { ...this.hub, attached: this.hub.attached.filter(code => code !== planetCode) });
       }
-      return of();
+      return of({});
     })).subscribe(() => {
       this.requestUpdate.emit();
     });
