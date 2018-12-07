@@ -175,7 +175,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   }
 
   addHubClick(planetCode, hubName) {
-    const hub = this.hubs.find((hb: any) => hb.name === hubName);
+    const { children, ...hub } = this.hubs.find((hb: any) => hb.name === hubName);
     hub.attached.push(planetCode);
     this.couchService.post('hubs', hub).pipe(switchMap(() => {
       if (this.hub !== 'sandbox') {
