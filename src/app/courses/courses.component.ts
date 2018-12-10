@@ -35,6 +35,7 @@ import { StateService } from '../shared/state.service';
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
+  selectedNotLeft = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -106,6 +107,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
+      this.countSelectNotLeft(source.selected);
     });
   }
 
@@ -214,12 +216,20 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  enrollInSelected(courseIds, type) {
+  coursesToggle(courseIds, type) {
     this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
       this.selectedNotEnrolled = 0;
+      this.selectedNotLeft = 0;
     }, (error) => ((error)));
   }
 
+  courseToggle(courseId, type) {
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.countSelectNotEnrolled(this.selection.selected);
+      this.countSelectNotLeft(this.selection.selected);
+    }, (error) => ((error)));
+  }
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
@@ -240,6 +250,13 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   countSelectNotEnrolled(selected: any) {
     this.selectedNotEnrolled = selected.reduce((count, id) => {
       return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count;
+    }, 0);
+
+  }
+
+  countSelectNotLeft(selected: any) {
+    this.selectedNotLeft = selected.reduce((count, id) => {
+      return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 0 : 1) : count;
     }, 0);
   }
 
@@ -288,12 +305,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
-  courseToggle(courseId, type) {
-    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
-      this.setupList(this.courses.data, this.userShelf.courseIds);
-      this.countSelectNotEnrolled(this.selection.selected);
-    }, (error) => ((error)));
-  }
+
 
   shareCourse(type, courseIds) {
     const courses = courseIds.map(courseId => findByIdInArray(this.courses.data, courseId));
