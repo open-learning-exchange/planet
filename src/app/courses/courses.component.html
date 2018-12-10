@@ -36,11 +36,11 @@
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         -->
-        <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="coursesToggle(selection.selected, 'add')">
+        <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
           <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
           <span *ngIf="selectedNotEnrolled > 0"> ({{selectedNotEnrolled}})</span>
         </button>
-        <button mat-button [disabled]="selectedNotLeft === 0" (click)="coursesToggle(selection.selected, 'remove')">
+        <button mat-button [disabled]="selectedNotLeft === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
           <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
           <span *ngIf="selectedNotLeft > 0"> ({{selectedNotLeft}})</span>
         </button>
