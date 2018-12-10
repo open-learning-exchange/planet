@@ -15,6 +15,7 @@ export class PlanetMessageService {
 
   showAlert(message: string) {
     this.snackBar.open(message, 'X', {
+      duration: 3000
     });
   }
 }
