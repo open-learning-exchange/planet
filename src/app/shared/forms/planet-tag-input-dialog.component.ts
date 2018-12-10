@@ -17,6 +17,7 @@ export class PlanetTagInputDialogComponent {
   selectMany = false;
   addTagForm: FormGroup;
   newTagId: string;
+  filter = false;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -62,6 +63,7 @@ export class PlanetTagInputDialogComponent {
 
   updateFilter(value) {
     this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
+    this.filter = value && value.length !== 0 ? true : false;
   }
 
   selectOne(tag, subTag?) {
