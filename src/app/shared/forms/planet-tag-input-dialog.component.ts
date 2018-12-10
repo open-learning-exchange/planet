@@ -31,7 +31,6 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: string) => tag)
       .forEach(tag => {
-        console.log(tag);
         return this.tagChange({ value: [ tag ], selected: true });
       });
     this.addTagForm = this.fb.group({
