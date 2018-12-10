@@ -152,7 +152,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
         const ans = submission.answers[this.questionNum - 1] || {};
-        if (this.mode === 'take') {
+        if (this.mode === 'take' && ans.value) {
           this.setAnswerForRetake(ans);
         } else {
           this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
@@ -204,10 +204,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setAnswerForRetake(answer: any) {
     switch (this.question.type) {
       case 'selectMultiple':
-        if (answer.value) {
           this.setSelectMultipleAnswer(answer.value);
-        }
-        break;
+          break;
       case 'select':
         this.answer = this.question.choices.find((choice) => choice.text === answer.value.text);
         break;
