@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10vh;
+      padding-top: 10vh;
     }
   ` ]
 })
