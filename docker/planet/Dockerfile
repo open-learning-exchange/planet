@@ -17,7 +17,7 @@ RUN apk add --update \
 RUN npm i --silent
 RUN ./compile_planet.sh
 RUN cat package.json | jq -r .version > dist/version
-RUN cat appmeta.json >> dist/appmeta
+RUN cat appmeta.json > dist/appmeta
 
 #####
 
