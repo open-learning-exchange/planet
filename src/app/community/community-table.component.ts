@@ -176,15 +176,23 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
 
   addHubClick(planetCode, hubName) {
     const { children, ...hub } = this.hubs.find((hb: any) => hb.name === hubName);
-    hub.attached.push(planetCode);
+    hub.spokes.push(planetCode);
     this.couchService.post('hubs', hub).pipe(switchMap(() => {
       if (this.hub !== 'sandbox') {
-        return this.couchService.post('hubs', { ...this.hub, attached: this.hub.attached.filter(code => code !== planetCode) });
+        return this.removeFromHub(planetCode);
       }
       return of({});
     })).subscribe(() => {
       this.requestUpdate.emit();
     });
+  }
+
+  removeHubClick(planetCode) {
+    this.removeFromHub(planetCode).subscribe(() => this.requestUpdate.emit());
+  }
+
+  removeFromHub(planetCode) {
+    return this.couchService.post('hubs', { ...this.hub, spokes: this.hub.spokes.filter(code => code !== planetCode) });
   }
 
 }

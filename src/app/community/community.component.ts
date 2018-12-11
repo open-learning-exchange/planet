@@ -90,7 +90,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       'Add ' + type,
       [ { placeholder: 'Name', name: 'name', required: true, type: 'textbox' } ],
       { name: [ '', Validators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
-    ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, attached: [] }) : of())
+    ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, spokes: [] }) : of())
     ).subscribe(
       () => {
         this.planetMessageService.showMessage(type + ' Added');
