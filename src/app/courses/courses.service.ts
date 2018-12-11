@@ -169,7 +169,7 @@ export class CoursesService {
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
       const admissionMessage = type === 'resign' ? this.getCourseNameFromId(courseId) + ' successfully removed from myCourses' :
-      this.getCourseNameFromId(courseId) + ' added to your dashboard';
+        this.getCourseNameFromId(courseId) + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
