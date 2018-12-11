@@ -204,8 +204,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setAnswerForRetake(answer: any) {
     switch (this.question.type) {
       case 'selectMultiple':
-          this.setSelectMultipleAnswer(answer.value);
-          break;
+        this.setSelectMultipleAnswer(answer.value);
+        break;
       case 'select':
         this.answer = this.question.choices.find((choice) => choice.text === answer.value.text);
         break;
