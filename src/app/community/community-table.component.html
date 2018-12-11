@@ -32,8 +32,8 @@
         <mat-menu #hubMenu="matMenu">
           <ng-container *ngFor="let h of hubs">
             <button *ngIf="h.name!==hub.name" (click)="addHubClick(element.code, h.name)" mat-menu-item>{{h.name}}</button>
-            <button (click)="removeHubClick(element.code)" mat-menu-item>Sandbox</button>
           </ng-container>
+          <button (click)="removeHubClick(element.code)" *ngIf="hub!=='sandbox'" mat-menu-item>Sandbox</button>
         </mat-menu>
       </ng-container>
       <ng-container *ngIf="element.registrationRequest === 'pending'">
