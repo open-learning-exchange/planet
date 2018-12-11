@@ -52,9 +52,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       const surveyId = params.get('surveyId');
       const mode = params.get('mode');
-      this.status = params.get('status');
-      this.submittedBy = params.get('source');
-      this.updatedOn = params.get('lastUpdateTime');
       this.answer = undefined;
       this.spinnerOn = true;
       if (courseId) {
@@ -152,6 +149,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+      this.status = submission.status;
+      this.submittedBy = submission.user;
+      this.updatedOn = submission.startTime;
+
       this.submissionId = submission._id;
       if (this.fromSubmission === true) {
         this.examType = submission.parent.type;

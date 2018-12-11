@@ -67,8 +67,8 @@
     </div>
     <div *ngIf="examType == 'surveys'" class="right-tile">
         <p i18n><b>Status: </b>{{status}}</p>
-        <p i18n><b>Submitted by: </b>{{submittedBy}}</p>
-        <p i18n><b>Updated on: </b>{{(updatedOn | date: 'medium') || '--'}}</p>
+        <p i18n><b>Submitted by: </b>{{submittedBy?.name}}</p>
+        <p i18n><b>Submitted on: </b>{{(updatedOn | date: 'medium') || '--'}}</p>
       </div>
   </div>
 </div>
