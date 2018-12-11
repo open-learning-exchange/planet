@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'planet-page-not-found',
   templateUrl: './page-not-found.component.html',
   styles: [ `
-    .error {
+    :host {
       display: flex;
       flex-direction: column;
       align-items: center;
