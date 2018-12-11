@@ -56,7 +56,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate([ './step/' + (this.progress.stepNum || 1) ], { relativeTo: this.route });
+    const latestStep = this.progress.reduce((stepNum, prog) => {
+      return prog.stepNum > stepNum ? prog.stepNum : stepNum;
+    }, 1);
+    this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
   }
 
   goToExam(stepDetail, stepNum) {
