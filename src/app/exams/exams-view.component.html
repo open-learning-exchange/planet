@@ -6,7 +6,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{{title}} : Question {{questionNum}} of {{maxQuestions}}</span>
+    <span>{{title ? title + ': ' : ''}}<ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions}}</span>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
   <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(questionNum)"><mat-icon>navigate_next</mat-icon></button>
