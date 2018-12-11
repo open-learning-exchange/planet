@@ -16,6 +16,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { CommunityTableComponent } from '../community/community-table.component';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     HomeComponent,
     DashboardComponent,
     CommunityComponent,
+    CommunityTableComponent,
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective,
