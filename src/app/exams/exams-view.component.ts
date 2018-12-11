@@ -118,6 +118,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.isNewQuestion = true;
   }
 
   setTakingExam(exam, parentId, type, title) {
@@ -156,7 +157,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.setQuestion(submission.parent.questions);
         this.grade = ans ? ans.grade || this.grade : this.grade;
       }
-      if (this.mode === 'take' && !this.isNewQuestion) {
+      if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
       } else if (this.mode !== 'take') {
         this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
@@ -205,6 +206,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
+    this.answer = undefined;
     if (!answer.value) {
       return;
     }
