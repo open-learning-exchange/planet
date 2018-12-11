@@ -105,10 +105,10 @@ export class ManagerService {
     return ({
       hubs: hubs.map((hub: any) => ({
         ...hub,
-        children: hub.attached.map(code => planets.find((planet: any) => planet.code === code)).filter(child => child)
+        children: hub.spokes.map(code => planets.find((planet: any) => planet.code === code)).filter(child => child)
       })),
       sandboxPlanets: planets.filter(
-        (planet: any) => hubs.find((hub: any) => hub.attached.indexOf(planet.code) > -1) === undefined
+        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.code) > -1) === undefined
       )
     });
   }
