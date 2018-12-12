@@ -41,7 +41,7 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.data.tags;
     this.mode = this.data.mode;
     if (this.newTagId !== undefined) {
-      this.tagChange({ value: this.newTagId, selected: true });
+      this.tagChange({ value: [ this.newTagId ], selected: true });
       this.newTagId = undefined;
     }
   }
@@ -80,6 +80,7 @@ export class PlanetTagInputDialogComponent {
         this.planetMessageService.showMessage('New label added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
+        this.addTagForm.get('name').reset();
       });
     } else {
       onAllFormControls(([ key, value ]) => value.markAsTouched({ onlySelf: true }));

@@ -7,7 +7,7 @@
   </mat-form-field>
   <mat-form-field class="full-width">
     <input matInput i18n-placeholder placeholder="Password" name="password" [type]="showPassword ? 'text' : 'password'" formControlName = "password"/>
-    <button type="button" mat-icon-button matSuffix (click)="showPassword = !showPassword">
+    <button type="button" mat-icon-button matSuffix (click)="showPassword = !showPassword" tabindex="-1">
       <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
     <mat-error>
@@ -16,7 +16,7 @@
   </mat-form-field>
   <mat-form-field class="full-width" *ngIf="createMode">
     <input matInput i18n-placeholder placeholder="Repeat Password" name="repeatPassword" [type]="showRepeatPassword ? 'text' : 'password'"  formControlName = "repeatPassword" />
-    <button type="button" mat-icon-button matSuffix (click)="showRepeatPassword = !showRepeatPassword">
+    <button type="button" mat-icon-button matSuffix (click)="showRepeatPassword = !showRepeatPassword" tabindex="-1">
       <mat-icon>{{showRepeatPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
     <mat-error>

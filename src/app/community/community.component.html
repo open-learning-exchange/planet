@@ -3,74 +3,53 @@
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span i18n>Requests List</span>
+  <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
   <span class="toolbar-fill"></span>
   <mat-button-toggle-group
     class="margin-lr-5 font-size-1"
-    (change)="onFilterChange($event.value, 'registrationRequest')"
+    (change)="shownStatusChange($event.value)"
     #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="pending" [checked]="this.filter.registrationRequest === 'pending'">
+    <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'">
       Pending
     </mat-button-toggle>
-    <mat-button-toggle value="accepted" [checked]="this.filter.registrationRequest === 'accepted'">
+    <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'">
       Connected
     </mat-button-toggle>
   </mat-button-toggle-group>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="requestListFilter($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search">
+    <input matInput (keyup)="requestListFilter($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
   </mat-form-field>
 </mat-toolbar>
 
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <span i18n>Your Current List of Requests</span>
+      <span i18n>{ shownStatus, select,
+        pending {Your Current List of Requests}
+        accepted {{ planetType, select, nation {Connected Community Networks} center {Connected Regions} }} }
+      </span>
+      <span class="toolbar-fill"></span>
+      <button *ngIf="shownStatus==='accepted'" mat-raised-button color="accent" i18n (click)="addHubClick()">
+        { planetType, select, nation {Add Network} center {Add Region} }
+      </button>
     </mat-toolbar-row>
   </mat-toolbar>
-  <div class="view-container view-full-height view-table">
-    <mat-table #table [dataSource]="communities" matSort>
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="code">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="localDomain">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.localDomain}}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.createdDate | date: 'mediumDate'}}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="view(element)" i18n>View</button>
-          <ng-container *ngIf="element.registrationRequest === 'accepted'">
-            <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
-              Communities
-            </button>
-          </ng-container>
-          <ng-container *ngIf="element.registrationRequest === 'pending'">
-            <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>
-              <mat-icon>link</mat-icon>Accept
-            </button>
-          </ng-container>
-          <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')" i18n>
-            <mat-icon>delete</mat-icon>Delete
-          </button>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-    <mat-paginator #paginator
-      [pageSize]="50"
-      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
-    </mat-paginator>
+  <div class="view-container view-full-height" [ngClass]="{'view-table':shownStatus==='pending'}">
+    <planet-community-table *ngIf="shownStatus==='pending'" [data]="filteredData" (requestUpdate)="getCommunityList()"></planet-community-table>
+    <ng-container *ngIf="shownStatus==='accepted'">
+      <mat-expansion-panel *ngFor="let hub of hubs">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{hub.name}}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-community-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-community-table>
+      </mat-expansion-panel>
+    </ng-container>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Sandbox</mat-panel-title>
+      </mat-expansion-panel-header>
+      <planet-community-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-community-table>
+    </mat-expansion-panel>
   </div>
 </div>

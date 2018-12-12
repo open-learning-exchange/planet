@@ -50,6 +50,15 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
+      submissions = submissions.reduce((sList, s1) => {
+        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
+        if (sIndex === -1) {
+          sList.push(s1);
+        } else if (s1.parent.updatedDate > (sList[sIndex].parent.updatedDate || 0)) {
+          sList[sIndex] = s1;
+        }
+        return sList;
+      }, []);
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       const fullName = (firstName, lastName) => ((firstName || '') + ' ' + (lastName || '')).trim();
