@@ -1,11 +1,9 @@
 <div [ngSwitch]="mediaType">
   <img [src]="resourceSrc" *ngSwitchCase="'image'">
-  <video controls *ngSwitchCase="'video'">
-    <source [src]="resourceSrc" [type]="contentType" />
+  <video controls *ngSwitchCase="'video'" [src]="resourceSrc">
     Browser not supported
   </video>
-  <audio controls *ngSwitchCase="'audio'">
-    <source [src]="resourceSrc" [type]="contentType" />
+  <audio controls [src]="resourceSrc" *ngSwitchCase="'audio'">
     Browser not supported
   </audio>
   <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen

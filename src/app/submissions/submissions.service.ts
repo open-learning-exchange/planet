@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, of } from 'rxjs';
+import { Subject, of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Injectable()
 export class SubmissionsService {
@@ -20,12 +21,21 @@ export class SubmissionsService {
 
   constructor(
     private couchService: CouchService,
-    private stateService: StateService
+    private stateService: StateService,
+    private courseService: CoursesService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
-    this.getSubmissions(query, opts).subscribe((submissions: any) => {
-      this.submissions = parentId ? this.filterSubmissions(submissions, parentId) : submissions;
+    forkJoin([
+      this.getSubmissions(query, opts),
+      this.courseService.findCourses([], opts)
+    ]).subscribe(([ submissions, courses ]: [any, any]) => {
+      this.submissions = (parentId ? this.filterSubmissions(submissions, parentId) : submissions).filter(sub => {
+        if (sub.status !== 'pending' || sub.type !== 'exam') {
+          return true;
+        }
+        return courses.find((c: any) => sub.parentId.split('@')[1] === c._id) !== undefined;
+      });
       this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
@@ -137,10 +147,13 @@ export class SubmissionsService {
   sendSubmissionRequests(users: string[], { parentId, parent }) {
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
+      'parent': { '_rev': parent._rev },
       '$or': users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }))
     })).pipe(
       switchMap((submissions: any) => {
-        const newSubmissionUsers = users.filter((user: any) => submissions.docs.findIndex((s: any) => s.user._id === user._id) === -1);
+        const newSubmissionUsers = users.filter((user: any) =>
+          submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
+        );
         const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
         return this.couchService.post('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))

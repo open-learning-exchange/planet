@@ -99,6 +99,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         okClick: this.sendInvitations.bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
+        itemDescription: 'members',
+        nameProperty: 'name',
         ...res
       };
       this.dialogRef = this.dialog.open(DialogsListComponent, {

@@ -22,6 +22,7 @@ import { StateService } from '../shared/state.service';
     }
     .mat-column-info {
       max-width: 500px;
+      align-self: flex-start;
     }
   ` ]
 })
@@ -41,6 +42,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   pageEvent: PageEvent;
   currentUser = this.userService.get();
   emptyData = false;
+  selectedNotJoined = 0;
 
   constructor(
     private couchService: CouchService,
@@ -64,6 +66,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.selection.onChange.subscribe(({ source }) => {
+      this.countSelectedNotJoined(source.selected);
+    });
   }
 
   ngAfterViewInit() {
@@ -175,6 +180,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addToMeetups(meetups) {
     this.meetupService.attendMeetups(meetups).subscribe((res) => {
+      this.countSelectedNotJoined(this.selection.selected);
       const msg = 'You have joined ' + meetups.length + ' meetups.';
       this.planetMessageService.showMessage(msg);
     });
@@ -184,8 +190,14 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
       meetup.participate = !res.participate;
+      if (!res.participate) {
+        this.countSelectedNotJoined(this.selection.selected);
+      }
       this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
     });
   }
 
+  countSelectedNotJoined(selected: any) {
+    this.selectedNotJoined = selected.reduce((count, id) => count + (this.userService.shelf.meetupIds.indexOf(id) === -1 ? 1 : 0), 0);
+  }
 }

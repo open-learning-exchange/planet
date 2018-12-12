@@ -238,7 +238,13 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectNotEnrolled(selected: any) {
-    this.selectedNotEnrolled = selected.reduce((count, id) => count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0), 0);
+    this.selectedNotEnrolled = selected.reduce((count, id) => {
+      return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count;
+    }, 0);
+  }
+
+  hasSteps(id: string) {
+    return this.courses.data.find((course: any) => course._id === id && course.steps.length > 0);
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -268,7 +274,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
-      this.setupList(this.courses.data,  this.userShelf.courseIds);
+      this.setupList(this.courses.data, this.userShelf.courseIds);
       this.planetMessageService.showMessage(message + ' myCourses');
     }, (error) => (error));
   }
@@ -319,14 +325,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendCourse(db: string) {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      const courseSteps = [].concat.apply([], coursesToSend.map(course => course.steps));
-      const resourcesToSend = [].concat.apply([], courseSteps.map(step => step.resources));
-      const examsToSend = [].concat.apply([], courseSteps.map(step => step.exam || []));
-      forkJoin([
-        this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code),
-        this.syncService.createChildPullDoc(resourcesToSend, 'resources', selected[0].code),
-        this.syncService.createChildPullDoc(examsToSend, 'exams', selected[0].code),
-      ]).subscribe(() => {
+      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
+        this.planetMessageService.showMessage('Courses queued to push to child.');
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
     };

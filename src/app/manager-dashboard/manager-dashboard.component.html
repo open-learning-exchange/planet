@@ -7,7 +7,7 @@
 <div class="space-container">
   <div *ngIf="displayDashboard">
     <span *ngIf="planetType !== 'community'">
-      <a routerLink="/requests" i18n mat-raised-button>Requests</a>
+      <a routerLink="/requests" i18n mat-raised-button>{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
       <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
     </span>
     <button *ngIf="planetType !== center && showResendConfiguration"
@@ -17,15 +17,7 @@
     <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     <a routerLink="/surveys" i18n mat-raised-button>Surveys</a>
     <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-    <button i18n mat-raised-button *ngIf="pushedItems?.courses?.length" (click)="getPushedItem('courses')">
-      Get Courses ({{pushedItems?.courses?.length}})
-    </button>
-    <button i18n mat-raised-button *ngIf="pushedItems?.resources?.length" (click)="getPushedItem('resources')">
-      Get Resources ({{pushedItems?.resources?.length}})
-    </button>
-    <button i18n mat-raised-button *ngIf="pushedItems?.exams?.length" (click)="getPushedItem('exams')">
-      Get Exams ({{pushedItems?.exams?.length}})
-    </button>
+    <a routerLink="fetch" i18n mat-raised-button>Fetch Items</a>
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>

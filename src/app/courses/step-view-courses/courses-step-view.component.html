@@ -6,7 +6,7 @@
   <mat-toolbar class="primary-color font-size-1">
       <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
-    <span *ngIf="attempts" i18n>Past attempts: {{attempts}}</span>
+    <span *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
     <a
       mat-raised-button
       color="accent"

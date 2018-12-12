@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { throwError, of } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { throwError, of, forkJoin } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
+import { ReportsService } from './reports/reports.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 const passwordFormFields = [
   {
@@ -28,7 +30,8 @@ export class ManagerService {
     private dialogsFormService: DialogsFormService,
     private couchService: CouchService,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private activityService: ReportsService
   ) {}
 
   openPasswordConfirmation() {
@@ -38,7 +41,7 @@ export class ManagerService {
       password: [ '', [ Validators.required, () => passwordInvalid ] ]
     };
     return this.dialogsFormService
-    .confirm(title, passwordFormFields, formGroup)
+    .confirm(title, passwordFormFields, formGroup, true)
     .pipe(
       debug('Dialog confirm'),
       switchMap((response: any) => {
@@ -72,6 +75,42 @@ export class ManagerService {
       time: Date.now()
     };
     return this.couchService.post('admin_activities', { ...log, type });
+  }
+
+  getLogs() {
+    const configuration = this.configuration;
+    return forkJoin([
+      this.activityService.getLoginActivities(configuration.code),
+      this.activityService.getAdminActivities(configuration.code),
+      this.activityService.getResourceVisits(configuration.code),
+      this.activityService.getRatingInfo(configuration.code)
+    ]).pipe(map(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
+      return ({
+        resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
+        ratings: ratings.reduce((total, rating) => total + rating.count, 0),
+        ...this.activityService.mostRecentAdminActivities(configuration, loginActivities.byUser, adminActivities)
+      });
+    }));
+  }
+
+  getPushedList() {
+    return this.couchService.post(
+      `send_items/_find`,
+      findDocuments({ 'sendTo': this.configuration.code }),
+      { domain: this.configuration.parentDomain }
+    );
+  }
+
+  arrangePlanetsIntoHubs(planets, hubs) {
+    return ({
+      hubs: hubs.map((hub: any) => ({
+        ...hub,
+        children: hub.spokes.map(code => planets.find((planet: any) => planet.code === code)).filter(child => child)
+      })),
+      sandboxPlanets: planets.filter(
+        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.code) > -1) === undefined
+      )
+    });
   }
 
 }

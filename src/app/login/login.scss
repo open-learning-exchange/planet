@@ -47,7 +47,7 @@
   }
 
   .login-form {
-    a, button {
+    a, button[mat-raised-button] {
       margin-bottom: 1rem;
     }
 

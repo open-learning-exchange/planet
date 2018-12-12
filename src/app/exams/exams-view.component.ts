@@ -29,6 +29,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
   checkboxState: any = {};
+  isNewQuestion = true;
 
   constructor(
     private router: Router,
@@ -76,6 +77,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(() => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
+        this.answer = undefined;
         this.spinnerOn = false;
       } else {
         this.routeToNext(close);
@@ -93,6 +95,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   moveQuestion(direction: number) {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    this.isNewQuestion = true;
     this.spinnerOn = false;
   }
 
@@ -115,6 +118,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.isNewQuestion = true;
   }
 
   setTakingExam(exam, parentId, type, title) {
@@ -146,18 +150,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submissionId = submission._id;
+      const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
         this.examType = submission.parent.type;
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
-        const ans = submission.answers[this.questionNum - 1] || {};
-        if (this.mode === 'take') {
-          this.setAnswerForRetake(ans);
-        } else {
-          this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
-        }
         this.grade = ans ? ans.grade || this.grade : this.grade;
       }
+      if (this.mode === 'take' && this.isNewQuestion) {
+        this.setAnswerForRetake(ans);
+      } else if (this.mode !== 'take') {
+        this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
+      }
+      this.isNewQuestion = false;
     });
   }
 
@@ -201,6 +206,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
+    this.answer = undefined;
+    if (!answer.value) {
+      return;
+    }
     switch (this.question.type) {
       case 'selectMultiple':
         this.setSelectMultipleAnswer(answer.value);

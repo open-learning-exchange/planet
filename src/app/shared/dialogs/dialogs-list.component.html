@@ -20,7 +20,7 @@
   <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>
   <mat-row
     *matRowDef="let row; columns: tableColumns"
-    (click)="!disableRowClick ? selection.toggle(selectIdentifier(row)) : ''"
+    (click)="rowClick(row)"
     [ngClass]="{highlight:selection.isSelected(selectIdentifier(row))}"
     class="cursor-pointer">
   </mat-row>
@@ -30,6 +30,17 @@
   [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
 </mat-paginator>
 <mat-dialog-actions>
+  <span class="mat-caption margin-lr-3" [matTooltip]="tooltipText" *ngIf="data.allowMulti">
+    {{selection.selected.length + ' '}}
+    <span i18n>{data.itemDescription, select,
+        members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}
+        resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}
+        courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}
+        meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}
+        other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}
+      } selected
+    </span>
+  </span>
   <button mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
   <button mat-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>

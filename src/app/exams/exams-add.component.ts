@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormArray,
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -11,6 +12,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { ExamsService } from './exams.service';
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -28,13 +30,18 @@ export class ExamsAddComponent implements OnInit {
   showFormError = false;
   returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
-  private _question: any;
-  get question(): any {
+  private _question: FormGroup;
+  get question(): FormGroup {
     return this._question;
   }
-  set question(newQuestion: any) {
-    this.examForm.controls.questions.value[this.activeQuestionIndex] = newQuestion;
+  set question(newQuestion: FormGroup) {
+    const question = (<FormGroup>(<FormArray>this.examForm.controls.questions).at(this.activeQuestionIndex));
+    this.examsService.updateQuestion(question, newQuestion);
     this._question = newQuestion;
+    this.examForm.controls.questions.updateValueAndValidity();
+  }
+  get questions(): FormArray {
+    return <FormArray>this.examForm.controls.questions;
   }
 
   constructor(
@@ -44,7 +51,8 @@ export class ExamsAddComponent implements OnInit {
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private examsService: ExamsService
   ) {
     this.createForm();
   }
@@ -61,7 +69,7 @@ export class ExamsAddComponent implements OnInit {
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
-      questions: [ [] ],
+      questions: this.fb.array([]),
       type: this.examType
     });
   }
@@ -75,22 +83,21 @@ export class ExamsAddComponent implements OnInit {
         this.documentInfo = { _rev: data._rev, _id: data._id };
         this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
         this.examForm.patchValue(data);
+        this.initializeQuestions(data.questions);
       }, (error) => {
         console.log(error);
       });
     }
-
-    this.courseName = this.coursesService.course.form ?
-                      this.coursesService.course.form.courseTitle
-                      : '';
+    this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
   }
 
   onSubmit() {
     if (this.examForm.valid) {
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
     } else {
-      this.checkValidFormComponent(this.examForm);
+      this.examsService.checkValidFormComponent(this.examForm);
       this.showFormError = true;
+      this.stepClick(this.activeQuestionIndex);
     }
   }
 
@@ -100,18 +107,8 @@ export class ExamsAddComponent implements OnInit {
     );
   }
 
-  checkValidFormComponent(formField) {
-    Object.keys(formField.controls).forEach(field => {
-      const control = formField.get(field);
-      control.markAsTouched({ onlySelf: true });
-      if (control.controls) {
-        this.checkValidFormComponent(control);
-      }
-    });
-  }
-
   addExam(examInfo) {
-    this.couchService.post(this.dbName, examInfo).subscribe((res) => {
+    this.couchService.post(this.dbName, { createdDate: Date.now(), ...examInfo, updatedDate: Date.now() }).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       let routerParams = {};
       if (this.examType === 'courses') {
@@ -137,22 +134,22 @@ export class ExamsAddComponent implements OnInit {
 
   stepClick(index: number) {
     this.activeQuestionIndex = index;
-    this.question = this.examForm.get('questions').value[index];
+    this.question = (<FormGroup>(<FormArray>this.examForm.get('questions')).at(index));
   }
 
-  addQuestion() {
-    this.examForm.get('questions').value.push({
-      title: '',
-      body: '',
-      type: 'input',
-      correctChoice: '',
-      marks: 1,
-      choices: []
+  initializeQuestions(questions: any[]) {
+    questions.forEach((question) => {
+      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'courses', question));
     });
   }
 
+  addQuestion() {
+    (<FormArray>this.examForm.get('questions')).push(this.examsService.newQuestionForm(this.examType === 'courses'));
+    this.examForm.controls.questions.updateValueAndValidity();
+  }
+
   removeQuestion(index) {
-    this.examForm.get('questions').value.splice(index, 1);
+    (<FormArray>this.examForm.get('questions')).removeAt(index);
   }
 
   goBack() {
