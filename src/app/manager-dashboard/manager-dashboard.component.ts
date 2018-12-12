@@ -38,7 +38,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   pin: string;
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
-  fetechItemTitle = 'Fetch Items';
+  fetchItemCount = 0;
 
   constructor(
     private userService: UserService,
@@ -97,8 +97,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   countFetchItemAvailable() {
     this.managerService.getPushedList().subscribe((pushedList: any) => {
-      const totalItems = pushedList.docs.length;
-      this.fetechItemTitle += ' (' + totalItems + ')';
+      this.fetchItemCount = pushedList.docs.length;
     });
   }
 
