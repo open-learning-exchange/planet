@@ -41,7 +41,7 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.data.tags;
     this.mode = this.data.mode;
     if (this.newTagId !== undefined) {
-      this.tagChange({ value: this.newTagId, selected: true });
+      this.tagChange({ value: [ this.newTagId ], selected: true });
       this.newTagId = undefined;
     }
   }
