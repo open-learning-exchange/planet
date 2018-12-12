@@ -123,6 +123,7 @@ curl -X PUT $COUCHURL/replicator_users
 curl -X PUT $COUCHURL/admin_activities
 curl -X PUT $COUCHURL/child_statistics
 curl -X PUT $COUCHURL/tags
+curl -X PUT $COUCHURL/apk_logs
 curl -X PUT $COUCHURL/hubs
 
 # Create design documents
