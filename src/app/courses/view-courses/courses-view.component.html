@@ -48,23 +48,23 @@
             <div *ngIf="!(step.description.length !== 0 || step?.exam?.questions.length > 0 || step?.resources?.length > 0)">
                 <div>There is no content for this step.</div>
             </div>
-            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length > 1 && step?.resources?.length > 1)"> 
-                <div>There is no description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} questions.</div>
+            <div *ngIf="step.description.length === 0; else have_desc">
+               There is no description for this step.
             </div>
-            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length < 2 && step?.exam?.questions.length > -1 && step?.resources?.length >1)"> 
-              <div>There is no description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} question.</div>
+            <div #have_desc *ngIf="step.description.length > 0">
+                There is a description for this step.
             </div>
-            <div *ngIf="step.description.length === 0 && (step?.exam?.questions.length >1 && step?.resources?.length < 2 && step?.resources?.length >-1)"> 
-              <div>There is no description for this step. There are {{step?.resources?.length}} resource and the exam has {{step?.exam?.questions.length}} questions.</div>
+            <div *ngIf= "step?.resources?.length > 1 else other_resource">
+              There are {{step?.resources?.length}} resources.
             </div>
-            <div *ngIf="step.description.length > 0 && (step?.exam?.questions.length > 1 && step?.resources?.length > 1)"> 
-              <div>There is a description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} questions.</div>
+            <div #other_resource *ngIf="step?.resources?.length < 2 && step?.resources?.length >-1">
+                There is {{step?.resources?.length || 0 }} resource.
             </div>
-            <div *ngIf="step.description.length > 0 && (step?.exam?.questions.length < 2 && step?.exam?.questions.length > -1 && step?.resources?.length >1)"> 
-              <div>There is a description for this step. There are {{step?.resources?.length}} resources and the exam has {{step?.exam?.questions.length}} question.</div>
+            <div *ngIf= "step?.exam?.questions.length >1 else other_exam" >
+              The exam has {{step?.exam?.questions.length}} questions.
             </div>
-            <div *ngIf="step.description.length > 0 && (step?.exam?.questions.length >1 && step?.resources?.length < 2 && step?.resources?.length >-1)"> 
-              <div>There is a description for this step. There are {{step?.resources?.length}} resource and the exam has {{step?.exam?.questions.length}} questions.</div>
+            <div #other_exam *ngIf="step?.exam?.questions.length < 2 && step?.exam?.questions.length >-1">
+              The exam has {{step?.exam?.questions.length || 0 }} question.
             </div>
             <mat-action-row *ngIf="!parent">
               <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
