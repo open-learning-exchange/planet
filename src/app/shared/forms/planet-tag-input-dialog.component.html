@@ -30,7 +30,7 @@
     </ng-container>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
-    <ng-container *ngFor="let tag of tags" >
+    <ng-container *ngFor="let tag of tags">
       <a mat-list-item (click)="selectOne(tag._id || tag.name)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>
       <a mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(tag._id || tag.name, subTag._id || subTag.name)" mat-dialog-close>
         <mat-icon>subdirectory_arrow_right</mat-icon>
