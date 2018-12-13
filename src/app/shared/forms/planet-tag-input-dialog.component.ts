@@ -14,7 +14,14 @@ export class PlanetTagInputDialogComponent {
   selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   filterValue = '';
   mode = 'filter';
-  selectMany = false;
+  _selectMany = false;
+  get selectMany() {
+    return this._selectMany;
+  }
+  set selectMany(value: boolean) {
+    this._selectMany = value;
+    this.data.reset(value);
+  }
   addTagForm: FormGroup;
   newTagId: string;
 
@@ -38,7 +45,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   dataInit() {
-    this.tags = this.data.tags;
+    this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagId !== undefined) {
       this.tagChange({ value: this.newTagId, selected: true });
@@ -61,7 +68,12 @@ export class PlanetTagInputDialogComponent {
   }
 
   updateFilter(value) {
-    this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
+    this.filterValue = value;
+    this.tags = this.filterTags(value);
+  }
+
+  filterTags(value) {
+    return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
   selectOne(tag, subTag?) {

@@ -73,9 +73,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   ngOnChanges() {
-    if (this.dialogRef && this.selectMany) {
-      this.dialogRef.componentInstance.data = this.dialogData();
-      this.dialogRef.componentInstance.dataInit();
+    if (this.selectMany) {
+      this.resetDialogData();
     }
   }
 
@@ -89,10 +88,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   initTags() {
     this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
       this.tags = tags;
-      if (this.dialogRef && this.dialogRef.componentInstance) {
-        this.dialogRef.componentInstance.data = this.dialogData();
-        this.dialogRef.componentInstance.dataInit();
-      }
+      this.resetDialogData();
     });
   }
 
@@ -140,6 +136,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     return ({
       tagUpdate: this.dialogTagUpdate.bind(this),
       initTags: this.initTags.bind(this),
+      reset: this.resetDialogData.bind(this),
       startingTags: this.value,
       tags: this.filterTags(this.tags, this.selectMany),
       mode: this.mode,
@@ -147,15 +144,21 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
+  resetDialogData(selectMany = this.selectMany) {
+    this.selectMany = selectMany;
+    if (this.dialogRef && this.dialogRef.componentInstance) {
+      this.dialogRef.componentInstance.data = this.dialogData();
+      this.dialogRef.componentInstance.dataInit();
+    }
+  }
+
   filterTags(tags, selectMany = false) {
-    const filteredTags = tags.map((tag) => {
+    return this.mode === 'add' ? tags : tags.map((tag) => {
       return !selectMany ? tag : ({
         ...tag,
         count: this.filteredData.reduce((count, item: any) => count + ((item.tags || []).indexOf(tag._id) > -1 ? 1 : 0), 0)
       });
     }).filter((tag: any) => tag.count > 0);
-    console.log(filteredTags);
-    return this.mode === 'add' ? tags : filteredTags;
   }
 
   dialogTagUpdate(tag, isSelected, tagOne = false) {
