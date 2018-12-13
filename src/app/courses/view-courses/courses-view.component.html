@@ -5,6 +5,9 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
+    <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
+      {fullView, select, on {Show} off {Hide}} details
+    </button>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!parent">
       <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
@@ -18,12 +21,12 @@
     <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length && !parent">
+    <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length">
       <span i18n>Your progress:</span>
       <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>
-    <div class="course-container">
-      <div class="course-detail bg-light-grey">
+    <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
+      <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
         <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="parent" [ratingType]="'course'"></planet-rating>
         <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
         <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>

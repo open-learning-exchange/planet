@@ -21,6 +21,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
   progress = [ { stepNum: 1 } ];
+  fullView = 'on';
 
   constructor(
     private router: Router,
@@ -93,6 +94,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
+  }
+
+  toggleFullView() {
+    this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
 }
