@@ -222,9 +222,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleResourceAttachments(resources) {
-    this.couchService.findAll('tags', findDocuments({ '$in': resources.tags })).subscribe((tags) => {
-      this.sendOnAcceptOkClick('tags', [])(tags);
-    });
+    const tagIds = [].concat.apply([], resources.map((resource: any) => resource.tags || []));
+    if (tagIds.length > 0) {
+      this.couchService.findAll('tags', findDocuments({ '_id': { '$in': tagIds } })).subscribe((tags) => {
+        this.sendOnAcceptOkClick('tags', [])(tags);
+      });
+    }
   }
 
   resetPin() {
