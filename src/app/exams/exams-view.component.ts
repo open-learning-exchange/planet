@@ -26,6 +26,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   title = '';
   grade;
   submissionId: string;
+  submittedBy = '';
+  updatedOn = '';
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
   checkboxState: any = {};
@@ -149,6 +151,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+      this.submittedBy = this.submissionsService.submissionName(submission.user);
+      this.updatedOn = submission.startTime;
+
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
