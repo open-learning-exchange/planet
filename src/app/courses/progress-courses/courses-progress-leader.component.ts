@@ -91,9 +91,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   populateMistakes(submission: any) {
     return submission.answers.map(answer => {
-      (answer.grade === 1 || answer.grade === undefined)
-          ? answer.mistakes = 0
-          : answer.mistakes = 1;
+      if (answer.grade === 0) {
+        answer.mistakes = 1;
       });
   }
 
