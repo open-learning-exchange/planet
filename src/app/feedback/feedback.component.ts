@@ -127,11 +127,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeFeedback(feedback: any) {
-    const updateFeedback =  { ...feedback, 'closeTime': this.couchService.datePlaceholder,  'status': 'Closed' };
-    this.couchService.updateDocument(this.dbName + '/' + feedback._id, updateFeedback).subscribe((data) => {
-      this.planetMessageService.showMessage('You closed this feedback.');
-      this.getFeedback();
-    },  (err) => console.log(err));
+    this.feedbackService.closeFb(feedback).subscribe(() => this.getFeedback());
   }
 
   openFeedback(feedback: any) {

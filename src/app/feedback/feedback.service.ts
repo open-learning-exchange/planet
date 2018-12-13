@@ -22,9 +22,17 @@ export class FeedbackService {
   }
 
   openFb(feedback: any){
-      const updateFeedback =  { ...feedback, closeTime: '',  status: 'Reopened' };
-      return this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).pipe(map((data) => {
-        this.planetMessageService.showMessage('You re-opened this feedback.');
-      }));
+    const updateFeedback =  { ...feedback, closeTime: '',  status: 'Reopened' };
+    return this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).pipe(map((data) => {
+      this.planetMessageService.showMessage('You re-opened this feedback.');
+    }));
     }
+
+
+  closeFb(feedback: any) {
+    const updateFeedback =  { ...feedback, 'closeTime': this.couchService.datePlaceholder,  'status': 'Closed' };
+    return this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).pipe(map((data) => {
+      this.planetMessageService.showMessage('You closed this feedback.');
+    }));
   }
+}
