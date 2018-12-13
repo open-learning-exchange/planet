@@ -93,7 +93,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     return submission.answers.map(answer => {
       if (answer.grade === 0) {
         answer.mistakes = 1;
-      });
+      }
+    });
   }
 
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
