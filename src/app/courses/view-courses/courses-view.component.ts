@@ -20,8 +20,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
-  progress = { stepNum: 1 };
+  progress = [ { stepNum: 1 } ];
   fullView = 'on';
+
   constructor(
     private router: Router,
     private userService: UserService,
