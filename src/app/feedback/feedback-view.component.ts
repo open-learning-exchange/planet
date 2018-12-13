@@ -113,6 +113,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.feedbackServive.closeFb(feedback).subscribe(() => this.getFeedback(feedback.id));
   }
 
+  openFeedback(feedback) {
+    this.feedbackServive.openFb(feedback).subscribe(() => this.getFeedback(feedback.id));
+  }
+
   scrollToBottom() {
     this.chatListElement.nativeElement.scrollTo({ top: this.chatListElement.nativeElement.scrollHeight, behavior: 'smooth' });
   }
