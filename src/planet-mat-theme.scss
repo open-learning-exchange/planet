@@ -43,3 +43,7 @@ $accent-map: (
     background-color: mat-color($planet-app-primary, $dark-hue);
   }
 }
+
+.mat-raised-button[color="primary"][disabled] {
+  pointer-events: none;
+}

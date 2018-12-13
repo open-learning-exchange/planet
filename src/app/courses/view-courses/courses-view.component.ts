@@ -22,7 +22,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   isUserEnrolled = false;
   progress = { stepNum: 1 };
   fullView = 'on';
-
   constructor(
     private router: Router,
     private userService: UserService,
@@ -35,7 +34,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = { stepNum: 0 } }: { course: any, progress: any }) => {
+    .subscribe(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
       this.courseDetail = course;
       this.courseDetail.steps = this.courseDetail.steps.map(step => {
         step.resources = step.resources.filter(res => res._attachments);
@@ -57,7 +56,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    this.router.navigate([ './step/' + (this.progress.stepNum || 1) ], { relativeTo: this.route });
+    const latestStep = this.progress.reduce((stepNum, prog) => {
+      return prog.stepNum > stepNum ? prog.stepNum : stepNum;
+    }, 1);
+    this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
   }
 
   goToExam(stepDetail, stepNum) {

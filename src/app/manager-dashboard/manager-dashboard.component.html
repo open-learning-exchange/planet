@@ -17,7 +17,7 @@
     <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     <a routerLink="/surveys" i18n mat-raised-button>Surveys</a>
     <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-    <a routerLink="fetch" i18n mat-raised-button>Fetch Items</a>
+    <a routerLink="fetch" mat-raised-button *ngIf="fetchItemCount > 0"><span i18n>Fetch Items</span>{{ ' (' + fetchItemCount + ')' }}</a>
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
