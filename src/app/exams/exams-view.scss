@@ -20,11 +20,4 @@
   .question-header {
     margin-bottom: 8px;
   }
-
-  .view-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "lt rt";
-  }
 }
-
