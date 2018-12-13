@@ -28,7 +28,6 @@ export class MeetupsAddComponent implements OnInit {
   pageType = 'Add new';
   revision = null;
   id = null;
-  start_date = null;
   days = constants.days;
   meetupFrequency = [];
 
@@ -54,8 +53,9 @@ export class MeetupsAddComponent implements OnInit {
         this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
         data.startDate = new Date(data.startDate);
         data.endDate = data.endDate ? new Date(data.endDate) : '';
-        this.start_date = data.start_date;
         this.meetupForm.patchValue(data);
+        this.meetupForm.get('startDate').setValidators(this.startDateValidator(data.startDate));
+        this.meetupForm.get('startDate').updateValueAndValidity();
       }, (error) => {
         console.log(error);
       });
@@ -66,7 +66,7 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
-      startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
+      startDate: [ '', [], this.startDateValidator() ],
       endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: '',
       day: this.fb.array([]),
@@ -83,6 +83,10 @@ export class MeetupsAddComponent implements OnInit {
       createdBy: this.userService.get().name,
       createdDate: this.couchService.datePlaceholder
     });
+  }
+
+  startDateValidator(oldDate?) {
+    return ac => this.validatorService.notDateInPast$(ac, oldDate);
   }
 
   onSubmit() {
