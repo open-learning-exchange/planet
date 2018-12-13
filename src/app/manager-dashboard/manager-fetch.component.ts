@@ -76,7 +76,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   getPushedItem() {
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
-    const replicators = this.createRepicatorsArray(itemsToPull, []);
+    const replicators = this.syncService.createRepicatorsArray(itemsToPull, 'pull', []);
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
     if (replicators.length > 0) {
       this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
@@ -85,33 +85,6 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
         })
       ).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
     }
-  }
-
-  createRepicatorsArray(itemsToPull, replicators = []) {
-    return itemsToPull.reduce((newReplicators: any[], item: any) => {
-      const pullItem = item.item;
-      let pullObject = newReplicators.find((replicator: any) => replicator.db === item.db);
-      if (!pullObject) {
-        pullObject = { db: item.db, type: 'pull', date: true, items: [ pullItem ] };
-        newReplicators.push(pullObject);
-      } else {
-        pullObject.items.push(pullItem);
-      }
-      if (item.db === 'courses') {
-        return this.coursesItemsToPull(pullItem, newReplicators);
-      }
-      return newReplicators;
-    }, replicators);
-  }
-
-  coursesItemsToPull(course, replicators) {
-    return this.createRepicatorsArray(
-      [].concat.apply([], course.steps.map(step =>
-        step.resources.map(r => ({ item: r, db: 'resources' }))
-        .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : []))
-      ),
-      replicators
-    );
   }
 
 }
