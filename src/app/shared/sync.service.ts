@@ -106,7 +106,7 @@ export class SyncService {
   }
 
   resourcesItemsToSync(resource, type, replicators) {
-    return this.createRepicatorsArray(
+    return resource.tags === undefined ? replicators : this.createRepicatorsArray(
       resource.tags.map(tag => ({ item: { _id: tag }, db: 'tags' })),
       type,
       replicators
