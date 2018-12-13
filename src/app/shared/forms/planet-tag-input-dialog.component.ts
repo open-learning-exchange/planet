@@ -17,7 +17,6 @@ export class PlanetTagInputDialogComponent {
   selectMany = false;
   addTagForm: FormGroup;
   newTagId: string;
-  filter = false;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -28,10 +27,10 @@ export class PlanetTagInputDialogComponent {
     private validatorService: ValidatorService
   ) {
     this.dataInit();
-    this.selectMany = this.mode === 'add';
+    this.selectMany = this.mode === 'add' || this.data.initSelectMany;
     this.data.startingTags
       .filter((tag: string) => tag)
-      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }));
+      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }, !this.data.initSelectMany));
     this.addTagForm = this.fb.group({
       name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
@@ -47,12 +46,12 @@ export class PlanetTagInputDialogComponent {
     }
   }
 
-  tagChange(option) {
+  tagChange(option, tagOne = false) {
     const tags = option.value;
     tags.forEach((tag, index) => {
       if (index === 0 || option.selected) {
         this.selected.set(tag, option.selected);
-        this.data.tagUpdate(tag, this.selected.get(tag));
+        this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
   }
@@ -63,7 +62,6 @@ export class PlanetTagInputDialogComponent {
 
   updateFilter(value) {
     this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
-    this.filter = value && value.length !== 0 ? true : false;
   }
 
   selectOne(tag, subTag?) {

@@ -1,5 +1,5 @@
 import {
-  Component, Input, Optional, Self, OnInit, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
+  Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
@@ -16,7 +16,7 @@ import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.compone
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ]
 })
-export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnDestroy {
+export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
   static nextId = 0;
 
@@ -44,6 +44,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   @Input() mode = 'filter';
   @Input() parent = false;
+  @Input() filteredData = [];
 
   shouldLabelFloat = false;
   onTouched;
@@ -53,6 +54,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   focused = false;
   tooltipLabels = '';
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
+  selectMany = false;
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -68,6 +70,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   ngOnInit() {
     this.initTags();
+  }
+
+  ngOnChanges() {
+    if (this.dialogRef && this.selectMany) {
+      this.dialogRef.componentInstance.data = this.dialogData();
+      this.dialogRef.componentInstance.dataInit();
+    }
   }
 
   ngOnDestroy() {
@@ -132,12 +141,25 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       tagUpdate: this.dialogTagUpdate.bind(this),
       initTags: this.initTags.bind(this),
       startingTags: this.value,
-      tags: this.tags,
-      mode: this.mode
+      tags: this.filterTags(this.tags, this.selectMany),
+      mode: this.mode,
+      initSelectMany: this.selectMany
     });
   }
 
+  filterTags(tags, selectMany = false) {
+    const filteredTags = tags.map((tag) => {
+      return !selectMany ? tag : ({
+        ...tag,
+        count: this.filteredData.reduce((count, item: any) => count + ((item.tags || []).indexOf(tag._id) > -1 ? 1 : 0), 0)
+      });
+    }).filter((tag: any) => tag.count > 0);
+    console.log(filteredTags);
+    return this.mode === 'add' ? tags : filteredTags;
+  }
+
   dialogTagUpdate(tag, isSelected, tagOne = false) {
+    this.selectMany = !tagOne;
     if (tagOne) {
       this.value = [];
     }

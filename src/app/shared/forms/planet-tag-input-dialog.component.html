@@ -22,24 +22,20 @@
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
     <ng-container *ngFor="let tag of tags">
-      <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]" *ngIf="(filter === true && tag.count>0)|| (filter === false)">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
-      <div *ngFor="let subTag of tag.subTags">
-        <mat-list-option [value]="[ subTag._id || subTag.name, tag._id || tag.name ]" [selected]="isSelected(subTag._id || subTag.name)" *ngIf="(filter === true && subTag.count>0)|| (filter === false)">
-            <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
-            {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
-        </mat-list-option>
-      </div>
+      <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
+      <mat-list-option *ngFor="let subTag of tag.subTags" [value]="[ subTag._id || subTag.name, tag._id || tag.name ]" [selected]="isSelected(subTag._id || subTag.name)">
+        <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
+        {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+      </mat-list-option>
     </ng-container>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
     <ng-container *ngFor="let tag of tags" >
-      <a mat-list-item (click)="selectOne(tag._id || tag.name)" *ngIf="(filter === true && tag.count>0)|| (filter === false)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>
-      <div *ngFor="let subTag of tag.subTags">
-        <a mat-list-item (click)="selectOne(tag._id || tag.name, subTag._id || subTag.name)" *ngIf="(filter === true && subTag.count>0)|| (filter === false)" mat-dialog-close>
-            <mat-icon>subdirectory_arrow_right</mat-icon>
-            {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
-        </a>
-      </div>
+      <a mat-list-item (click)="selectOne(tag._id || tag.name)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>
+      <a mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(tag._id || tag.name, subTag._id || subTag.name)" mat-dialog-close>
+        <mat-icon>subdirectory_arrow_right</mat-icon>
+        {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+      </a>
       <mat-divider></mat-divider>
     </ng-container>
   </mat-nav-list>
