@@ -73,4 +73,44 @@ export class SyncService {
     };
   }
 
+  createRepicatorsArray(items, type: 'pull' | 'push', replicators = []) {
+    return items.reduce((newReplicators: any[], item: any) => {
+      const doc = item.item;
+      let syncObject = newReplicators.find((replicator: any) => replicator.db === item.db);
+      if (!syncObject) {
+        syncObject = { db: item.db, type, date: true, items: [ doc ] };
+        newReplicators.push(syncObject);
+      } else {
+        syncObject.items.push(doc);
+      }
+      switch (item.db) {
+        case 'courses':
+          return this.coursesItemsToSync(doc, type, newReplicators);
+        case 'resources':
+          return this.resourcesItemsToSync(doc, type, newReplicators);
+        default:
+          return newReplicators;
+      }
+    }, replicators);
+  }
+
+  coursesItemsToSync(course, type, replicators) {
+    return this.createRepicatorsArray(
+      [].concat.apply([], course.steps.map(step =>
+        step.resources.map(r => ({ item: r, db: 'resources' }))
+        .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : []))
+      ),
+      type,
+      replicators
+    );
+  }
+
+  resourcesItemsToSync(resource, type, replicators) {
+    return this.createRepicatorsArray(
+      resource.tags.map(tag => ({ item: { _id: tag }, db: 'tags' })),
+      type,
+      replicators
+    );
+  }
+
 }
