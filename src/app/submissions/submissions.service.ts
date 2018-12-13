@@ -163,4 +163,8 @@ export class SubmissionsService {
     return this.couchService.post('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
   }
 
+  submissionName(user) {
+    return user.name || ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+  }
+
 }

@@ -26,7 +26,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   title = '';
   grade;
   submissionId: string;
-  status = '';
   submittedBy = '';
   updatedOn = '';
   fromSubmission = false;
@@ -149,8 +148,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
-      this.status = submission.status;
-      this.submittedBy = submission.user;
+      this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.startTime;
 
       this.submissionId = submission._id;
