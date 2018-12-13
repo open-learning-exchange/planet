@@ -1,0 +1,55 @@
+<mat-table #table [dataSource]="communities" matSort>
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="code">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="localDomain">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.localDomain}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="createdDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.createdDate | date: 'mediumDate'}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="action">
+    <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <button mat-raised-button color="primary" (click)="view(element)" i18n>View</button>
+      <ng-container *ngIf="element.registrationRequest === 'accepted'">
+        <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
+          Communities
+        </button>
+        <button mat-raised-button color="primary" i18n [matMenuTriggerFor]="hubMenu" *ngIf="(hub==='sandbox' && hubs.length > 0) || hubs.length > 1">
+          { hub, select,
+            sandbox {Add to { planetType, select, nation {Network} center {Region} }}
+            other {Move { planetType, select, nation {Networks} center {Regions} }}
+          }
+        </button>
+        <mat-menu #hubMenu="matMenu">
+          <ng-container *ngFor="let h of hubs">
+            <button *ngIf="h.name!==hub.name" (click)="addHubClick(element.code, h.name)" mat-menu-item>{{h.name}}</button>
+          </ng-container>
+          <button (click)="removeHubClick(element.code)" *ngIf="hub!=='sandbox'" mat-menu-item>Sandbox</button>
+        </mat-menu>
+      </ng-container>
+      <ng-container *ngIf="element.registrationRequest === 'pending'">
+        <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>
+          <mat-icon>link</mat-icon>Accept
+        </button>
+      </ng-container>
+      <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')" i18n>
+        <mat-icon>delete</mat-icon>Delete
+      </button>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+<mat-paginator #paginator
+  [pageSize]="50"
+  [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+</mat-paginator>

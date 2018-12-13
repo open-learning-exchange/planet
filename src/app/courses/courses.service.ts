@@ -168,17 +168,24 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? 'Course successfully removed from myCourses' : 'Course added to your dashboard';
+      const admissionMessage = type === 'resign' ? this.getCourseNameFromId(courseId) + ' successfully removed from myCourses' :
+        this.getCourseNameFromId(courseId) + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
   }
 
+  getCourseNameFromId(courseId) {
+    return (this.courses.find( (mCourse) => mCourse._id === courseId )).courseTitle;
+  }
+
   courseAdmissionMany(courseIds, type) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
-      const admissionMessage = type === 'remove' ? 'Courses successfully removed from myCourses' : 'Courses added to your dashboard';
+      const prefix = courseIds.length > 1 ? courseIds.length + ' courses' : this.getCourseNameFromId(courseIds[0]);
+      const admissionMessage = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
   }
+
 }
