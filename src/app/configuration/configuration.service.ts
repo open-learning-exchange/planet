@@ -77,6 +77,8 @@ export class ConfigurationService {
       // create replicator for pulling from parent at first as we do not have session
       this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
       this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
+      this.syncService.sync({ ...replicatorObj, db: 'exams' }, credentials),
+      this.syncService.sync({ ...replicatorObj, db: 'tags' }, credentials),
       this.syncService.sync(userReplicator, credentials)
     ]);
   }

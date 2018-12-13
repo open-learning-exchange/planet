@@ -198,8 +198,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       const removedItems = previousList.filter(item => selected.findIndex(i => i._id === item.id) < 0)
         .map(item => ({ ...item, sendOnAccept: false }));
       const dataUpdate = selected.map(item => ({ ...item, sendOnAccept: true })).concat(removedItems);
-      if (db === 'courses') {
-        this.handleCourseAttachments(selected, previousList);
+      switch (db) {
+        case 'courses':
+          this.handleCourseAttachments(selected, previousList);
+          break;
+        case 'resources':
+          this.handleResourceAttachments(selected);
+          break;
       }
       this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
         this.planetMessageService.showMessage('Send on accept list updated');
@@ -214,6 +219,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     const previousExams = this.coursesService.attachedItemsOfCourses(removedCourses).exams;
     this.sendOnAcceptOkClick('resources', [])(resources);
     this.sendOnAcceptOkClick('exams', previousExams)(exams);
+  }
+
+  handleResourceAttachments(resources) {
+    this.couchService.findAll('tags', findDocuments({ '$in': resources.tags })).subscribe((tags) => {
+      this.sendOnAcceptOkClick('tags', [])(tags);
+    });
   }
 
   resetPin() {
