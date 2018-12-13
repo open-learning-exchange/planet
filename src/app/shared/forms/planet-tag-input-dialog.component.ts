@@ -14,7 +14,14 @@ export class PlanetTagInputDialogComponent {
   selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   filterValue = '';
   mode = 'filter';
-  selectMany = false;
+  _selectMany = false;
+  get selectMany() {
+    return this._selectMany;
+  }
+  set selectMany(value: boolean) {
+    this._selectMany = value;
+    this.data.reset(value);
+  }
   addTagForm: FormGroup;
   newTagId: string;
 
@@ -27,10 +34,10 @@ export class PlanetTagInputDialogComponent {
     private validatorService: ValidatorService
   ) {
     this.dataInit();
-    this.selectMany = this.mode === 'add';
+    this.selectMany = this.mode === 'add' || this.data.initSelectMany;
     this.data.startingTags
       .filter((tag: string) => tag)
-      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }));
+      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }, !this.data.initSelectMany));
     this.addTagForm = this.fb.group({
       name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
@@ -38,7 +45,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   dataInit() {
-    this.tags = this.data.tags;
+    this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagId !== undefined) {
       this.tagChange({ value: [ this.newTagId ], selected: true });
@@ -46,12 +53,12 @@ export class PlanetTagInputDialogComponent {
     }
   }
 
-  tagChange(option) {
+  tagChange(option, tagOne = false) {
     const tags = option.value;
     tags.forEach((tag, index) => {
       if (index === 0 || option.selected) {
         this.selected.set(tag, option.selected);
-        this.data.tagUpdate(tag, this.selected.get(tag));
+        this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
   }
@@ -61,7 +68,12 @@ export class PlanetTagInputDialogComponent {
   }
 
   updateFilter(value) {
-    this.tags = value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
+    this.filterValue = value;
+    this.tags = this.filterTags(value);
+  }
+
+  filterTags(value) {
+    return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
   selectOne(tag, subTag?) {
