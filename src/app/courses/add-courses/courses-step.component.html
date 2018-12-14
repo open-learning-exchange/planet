@@ -10,6 +10,8 @@
         <span i18n>Editing Step</span>{{ ' ' + (this.activeStepIndex + 1) + ' ' }}
         <span i18n>of</span>{{ ' ' + steps.length }}
       </span>
+      <button mat-raised-button color="accent" (click)="forward(1)">next</button>
+      <button mat-raised-button color="warn" [disabled]="this.activeStepIndex === 0" (click)="goBack(-1)">previous</button>
     <form class="vertical-form" [formGroup]="stepForm">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
