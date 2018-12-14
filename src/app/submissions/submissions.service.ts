@@ -63,7 +63,7 @@ export class SubmissionsService {
 
   private submissionSource(configuration, user) {
     if (user.planetCode !== undefined && configuration.code !== user.planetCode) {
-      return { source: user.planetCode, parentCode: user.parentCode };
+      return { source: user.planetCode, parentCode: configuration.code };
     }
     return { source: configuration.code, parentCode: configuration.parentCode };
   }
