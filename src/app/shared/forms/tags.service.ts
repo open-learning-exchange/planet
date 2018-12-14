@@ -31,8 +31,11 @@ export class TagsService {
   }
 
   filterTags(tags: any[], filterString: string): string[] {
-    return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+    filterString = filterString.toLowerCase();
+    return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString) > -1 ||
+           tag.subTags.find((subTag: any) => subTag.name.toLowerCase() === filterString));
   }
+
 
   newTag({ name, attachedTo }) {
     return this.couchService.post('tags', { name, attachedTo });
