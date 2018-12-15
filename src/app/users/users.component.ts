@@ -35,6 +35,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   allUsers = new MatTableDataSource();
   message = '';
   searchValue = '';
+  selectedChild: any;
   filterAssociated = false;
   filter: any;
   planetType = '';
@@ -42,6 +43,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
   isUserAdmin = false;
   deleteDialog: any;
+  children: any;
   // List of all possible roles to add to users
   roleList: string[] = [ 'learner', 'leader' ];
   selectedRoles: string[] = [];
@@ -85,8 +87,14 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onDestroy$.complete();
   }
 
+  onChildChange(value: any) {
+    this.selectedChild = value;
+    this.changeFilter('child');
+  }
+
   changeFilter(type) {
     switch (type) {
+      case 'child':
       case 'associated':
         this.displayedColumns = [ 'profile', 'name', 'action' ];
         this.filterAssociated = true;
@@ -96,7 +104,12 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterAssociated = false;
         break;
     }
-    this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
+    if (type === 'child') {
+      this.filter['planetCode'] = this.selectedChild.planetCode;
+    } else {
+      this.selectedChild = null;
+      this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
+    }
     this.allUsers.filterPredicate = composeFilterFunctions([ this.filter, filterSpecificFields([ 'doc.name' ]) ]);
     this.allUsers.filter = this.allUsers.filter || ' ';
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
@@ -140,19 +153,23 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   getUsersAndLoginActivities() {
     return forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
-      this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 })
+      this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 }),
+      this.couchService.findAll('tablet_users', { 'selector': {} }),
+      this.couchService.findAll('communityregistrationrequests', { 'selector': {} })
     ]);
   }
 
   initializeData() {
     const currentLoginUser = this.userService.get().name;
     this.selection.clear();
-    this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities ]) => {
+    this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities, childUsers, communities ]) => {
+      this.children = communities;
       this.allUsers.data = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         return currentLoginUser !== user.name && user.name !== 'satellite';
-      }).map((user: any) => {
+      }).concat(childUsers)
+      .map((user: any) => {
         const userInfo = { doc: user, imageSrc: '', visitCount: this.userLoginCount(user, loginActivities) };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];

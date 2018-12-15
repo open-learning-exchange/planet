@@ -2,18 +2,26 @@
   <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Members</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
-    *ngIf="planetType !== 'community'"
-    (change)="changeFilter(filterGroup.value)"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="local" [checked]="!filterAssociated">
-      Local
-    </mat-button-toggle>
-    <mat-button-toggle value="associated" [checked]="filterAssociated">
-      Associated
-    </mat-button-toggle>
-  </mat-button-toggle-group>
+  <ng-container *ngIf="planetType !== 'community'">
+    <mat-button-toggle-group
+      class="margin-lr-5 font-size-1"
+      (change)="changeFilter(filterGroup.value)"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="local" [checked]="!filterAssociated">
+        Local
+      </mat-button-toggle>
+      <mat-button-toggle value="associated" [checked]="filterAssociated && !selectedChild">
+        Associated
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field>
+      <mat-select i18n-placeholder placeholder="Children" [value]="selectedChild" (selectionChange)="onChildChange($event.value)">
+        <mat-option *ngFor="let com of children" [value]="com">
+          {{ com.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Type text to search...">
@@ -92,7 +100,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span *ngIf="isUserAdmin">
+          <span *ngIf="isUserAdmin && !selectedChild">
             <span *ngIf="!element.doc.isUserAdmin">
               <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
                 <mat-icon>lock</mat-icon>
