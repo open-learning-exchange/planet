@@ -34,7 +34,7 @@
       <ng-template #memberList>
         <ul>
           <li *ngFor="let mem of members">
-            <a routerLink="/manager/users/profile/{{mem}}">
+            <a [routerLink]="['/users/profile', mem]">
               <span *ngIf="mem === currentUserName; else otherMember">{{mem}} (You)</span>
               <ng-template #otherMember><span>{{mem}}</span></ng-template>
           </a>
