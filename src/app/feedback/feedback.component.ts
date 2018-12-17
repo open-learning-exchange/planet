@@ -42,6 +42,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedback.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   user: any = {};
@@ -70,7 +71,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.user = this.userService.get();
     this.getFeedback();
-    this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
+    this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter),
+      filterSpecificFields([ 'owner', 'title', 'status' ]) ]);
     this.feedback.sortingDataAccessor = sortNumberOrString;
   }
 
