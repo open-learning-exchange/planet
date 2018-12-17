@@ -76,7 +76,7 @@ export class ManagerService {
     return this.couchService.updateDocument('admin_activities', { ...log, type });
   }
 
-  getLogs() {
+  getLogs(tillDate?: number) {
     const configuration = this.configuration;
     return forkJoin([
       this.activityService.getLoginActivities(configuration.code),
