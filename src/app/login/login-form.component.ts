@@ -70,19 +70,14 @@ export class LoginFormComponent {
       if (this.createMode) {
         this.createUser(this.userForm.value);
       } else {
-        console.log(this.userForm.value.name);
-        this.couchService.get("_users/org.couchdb.user:"+this.userForm.value.name)
+        this.couchService.get('_users/org.couchdb.user:' + this.userForm.value.name)
         .subscribe((data: any) => {
-          console.log('_id' in data);
-          if('_id' in data) {
+          if ('_id' in data) {
             this.login(this.userForm.value, false);
           } else {
-            this.loginError("Member " + this.userForm.value.name + " is not registered");
-          }
-          // this.login(this.userForm.value, false);
-        }, error => {
-          console.log(error);
-        } );  
+            this.planetMessageService.showMessage('Member ' + this.userForm.value.name + ' is not registered' );
+            this.userForm.reset();
+          } });
       }
     } else {
       Object.keys(this.userForm.controls).forEach(fieldName => {
