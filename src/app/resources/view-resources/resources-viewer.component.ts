@@ -68,7 +68,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       'title': resource.title,
       'user': this.userService.get().name,
       'type': activity,
-      'time': this.couchService.datePlaceholder(),
+      'time': this.couchService.datePlaceholder,
       'createdOn': this.stateService.configuration.code,
       'parentCode': this.stateService.configuration.parentCode
     };

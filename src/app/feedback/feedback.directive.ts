@@ -76,7 +76,7 @@ export class FeedbackDirective {
   ) {}
 
   addFeedback(post: any) {
-    const date = this.couchService.datePlaceholder();
+    const date = this.couchService.datePlaceholder;
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
       startingMessage: Message = { message, time: date, user },

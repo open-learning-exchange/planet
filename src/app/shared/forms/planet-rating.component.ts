@@ -105,7 +105,7 @@ export class PlanetRatingComponent implements OnChanges {
       item: this.item._id,
       title: this.item.title || this.item.courseTitle
     }, this.rating.userRating, form.value, {
-      time: this.couchService.datePlaceholder(),
+      time: this.couchService.datePlaceholder,
       user: this.userService.get(),
       createdOn: configuration.code,
       parentCode: configuration.parentCode

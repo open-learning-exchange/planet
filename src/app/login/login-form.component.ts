@@ -87,7 +87,7 @@ export class LoginFormComponent {
       'type': 'register',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     };
     this.couchService.updateDocument('notifications', data)
       .subscribe();
@@ -104,7 +104,7 @@ export class LoginFormComponent {
         isUserAdmin: false,
         planetCode: configuration.code,
         parentCode: configuration.parentCode,
-        joinDate: this.couchService.datePlaceholder(),
+        joinDate: this.couchService.datePlaceholder,
       },
       roles: configuration.autoAccept ? [ 'learner' ] : []
     };
@@ -155,7 +155,7 @@ export class LoginFormComponent {
       'type': 'new user',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     };
     return this.couchService.updateDocument('notifications', data);
   }

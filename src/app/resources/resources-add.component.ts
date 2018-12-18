@@ -105,8 +105,8 @@ export class ResourcesAddComponent implements OnInit {
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
-      createdDate: this.couchService.datePlaceholder(),
-      updatedDate: this.couchService.datePlaceholder()
+      createdDate: this.couchService.datePlaceholder,
+      updatedDate: this.couchService.datePlaceholder
     });
   }
 
@@ -170,7 +170,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   updateResource(resourceInfo) {
-    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder() });
+    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder });
   }
 
   deleteAttachmentToggle(event) {

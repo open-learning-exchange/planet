@@ -45,7 +45,7 @@ export class TeamsService {
         debug('Dialog confirm'),
         switchMap((response: any) => {
           if (response !== undefined) {
-            return this.updateTeam({ limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder(), ...team, ...response });
+            return this.updateTeam({ limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, ...team, ...response });
           }
           return empty();
         }),
@@ -139,7 +139,7 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     };
   }
 
@@ -152,7 +152,7 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     };
   }
 
@@ -165,7 +165,7 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     };
   }
 

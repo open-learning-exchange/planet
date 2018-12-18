@@ -55,7 +55,7 @@ export class SubmissionsService {
   }
 
   private createNewSubmission({ parentId, parent, user, type }) {
-    const date = this.couchService.datePlaceholder();
+    const date = this.couchService.datePlaceholder;
     const times = { startTime: date, lastUpdateTime: date };
     const configuration = this.stateService.configuration;
     return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
@@ -80,7 +80,7 @@ export class SubmissionsService {
   }
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
       value: answer,
@@ -94,7 +94,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }

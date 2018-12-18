@@ -79,7 +79,7 @@ export class MeetupsAddComponent implements OnInit {
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
-      createdDate: this.couchService.datePlaceholder()
+      createdDate: this.couchService.datePlaceholder
     });
   }
 
@@ -176,7 +176,7 @@ export class MeetupsAddComponent implements OnInit {
       'type': 'meetup',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     })) };
   }
 

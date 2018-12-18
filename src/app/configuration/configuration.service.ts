@@ -31,7 +31,7 @@ export class ConfigurationService {
         'type': 'request',
         'priority': 1,
         'status': 'unread',
-        'time': this.couchService.datePlaceholder()
+        'time': this.couchService.datePlaceholder
       };
       // Send notification to parent
       return this.couchService.post('notifications', requestNotification, {
@@ -120,7 +120,7 @@ export class ConfigurationService {
       'roles': [],
       'type': 'user',
       'isUserAdmin': true,
-      'joinDate': this.couchService.datePlaceholder(),
+      'joinDate': this.couchService.datePlaceholder,
       'planetCode': configuration.code
     };
     const pin = this.userService.createPin();

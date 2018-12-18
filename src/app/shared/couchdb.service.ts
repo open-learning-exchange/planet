@@ -15,6 +15,7 @@ export class CouchService {
   private defaultOpts = { headers: this.headers, withCredentials: true };
   private baseUrl = environment.couchAddress;
   private reqNum = 0;
+  datePlaceholder = new DatePlaceholder();
 
   private setOpts(opts: any = {}) {
     const { domain, protocol, ...httpOpts } = opts;
@@ -181,10 +182,6 @@ export class CouchService {
       default:
         return data;
     }
-  }
-
-  datePlaceholder(): DatePlaceholder {
-    return new DatePlaceholder();
   }
 
 }

@@ -81,7 +81,7 @@ export class CoursesService {
     const configuration = this.stateService.configuration;
     const newProgress = { stepNum, courseId, passed,
       userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
-      updatedDate: this.couchService.datePlaceholder()
+      updatedDate: this.couchService.datePlaceholder
     };
     this.findOneCourseProgress(courseId).pipe(switchMap((progress = []) => {
       const currentProgress = progress.docs.length > 0 ? progress.docs.find((p: any) => p.stepNum === stepNum) : undefined;
@@ -89,7 +89,7 @@ export class CoursesService {
         return of({});
       }
       return this.couchService.updateDocument(
-        this.progressDb, { createdDate: this.couchService.datePlaceholder(), ...currentProgress, ...newProgress }
+        this.progressDb, { createdDate: this.couchService.datePlaceholder, ...currentProgress, ...newProgress }
       );
     })).subscribe(() => {
       this.requestCourse({ courseId });

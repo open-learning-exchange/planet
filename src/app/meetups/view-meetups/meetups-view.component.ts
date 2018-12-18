@@ -132,7 +132,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       'type': 'meetup',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder()
+      'time': this.couchService.datePlaceholder
     };
   }
 

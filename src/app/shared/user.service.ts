@@ -144,7 +144,7 @@ export class UserService {
   }
 
   newSessionLog() {
-    this.sessionStart = this.couchService.datePlaceholder();
+    this.sessionStart = this.couchService.datePlaceholder;
     return this.getNewLogObj().pipe(switchMap(logObj => {
       return this.couchService.updateDocument(this.logsDb, this.logObj());
     }),
@@ -168,7 +168,7 @@ export class UserService {
       }));
     }
     return newObs.pipe(switchMap(() => {
-      return this.couchService.updateDocument(this.logsDb, this.logObj(this.couchService.datePlaceholder()));
+      return this.couchService.updateDocument(this.logsDb, this.logObj(this.couchService.datePlaceholder));
     }), map((res: any) => {
       this.sessionRev = res.rev;
       return res;
