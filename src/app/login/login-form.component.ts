@@ -70,15 +70,7 @@ export class LoginFormComponent {
       if (this.createMode) {
         this.createUser(this.userForm.value);
       } else {
-        this.couchService.get('_users/org.couchdb.user:' + this.userForm.value.name)
-        .subscribe((data: any) => {
-          if ('_id' in data) {
-            this.login(this.userForm.value, false);
-          } else {
-            this.planetMessageService.showMessage('Member ' + this.userForm.value.name + ' is not registered' );
-            this.userForm.reset();
-          }
-        });
+        this.login(this.userForm.value, false);
       }
     } else {
       Object.keys(this.userForm.controls).forEach(fieldName => {
@@ -125,7 +117,7 @@ export class LoginFormComponent {
         this.welcomeNotification(res.id);
         this.login(this.userForm.value, true);
       },
-      this.loginError('An error occurred please try again')
+      this.errorHandler('An error occurred please try again')
     );
   }
 
@@ -144,10 +136,20 @@ export class LoginFormComponent {
         const adminName = this.planetConfiguration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
-    ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
+    ).subscribe(() => {}, this.loginError.bind(this));
   }
 
-  loginError(message: string) {
+  loginError() {
+    this.couchService.get('_users/org.couchdb.user:' + this.userForm.value.name).subscribe((data: any) => {
+      if ('_id' in data) {
+        this.errorHandler('Username and/or password do not match')();
+      } else {
+        this.errorHandler('Member ' + this.userForm.value.name + ' is not registered')();
+      }
+    });
+  }
+
+  errorHandler(message: string) {
     return () => {
       this.userForm.setErrors({ 'invalid': true });
       this.planetMessageService.showAlert(message);
