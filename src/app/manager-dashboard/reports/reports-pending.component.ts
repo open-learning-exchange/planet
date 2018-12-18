@@ -44,6 +44,7 @@ export class ReportsPendingComponent implements OnInit {
       this.planets = planets;
       this.data = data;
       this.filterData();
+      console.log(this.data);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 

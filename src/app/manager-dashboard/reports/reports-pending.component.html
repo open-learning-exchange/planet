@@ -17,23 +17,9 @@
   <div class="view-container view-full-height">
     <mat-expansion-panel *ngFor="let planet of planets">
       <mat-expansion-panel-header>
-        <mat-panel-title>{{planet.name}}</mat-panel-title>
+        <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-table [dataSource]="planet.children" matSort>
-        <ng-container matColumnDef="item">
-            <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-            <mat-cell *matCellDef="let element">
-            <ng-container *ngIf="element.db === 'resources'">{{ element.item.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon></ng-container>
-            <ng-container *ngIf="element.db === 'courses'">{{ element.item.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-      <mat-paginator
-        [pageSize]="50"
-        [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
-      </mat-paginator>
+      <planet-pending-table [data]="planet.children"></planet-pending-table>
     </mat-expansion-panel>
   </div>
 </div>
