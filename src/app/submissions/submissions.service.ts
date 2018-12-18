@@ -58,7 +58,14 @@ export class SubmissionsService {
     const times = { startTime: Date.now(), lastUpdateTime: Date.now() };
     const configuration = this.stateService.configuration;
     return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
-      source: configuration.code, parentCode: configuration.parentCode, ...times };
+      ...this.submissionSource(configuration, user), ...times };
+  }
+
+  private submissionSource(configuration, user) {
+    if (user.planetCode !== undefined && configuration.code !== user.planetCode) {
+      return { source: user.planetCode, parentCode: configuration.code };
+    }
+    return { source: configuration.code, parentCode: configuration.parentCode };
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
@@ -154,7 +161,6 @@ export class SubmissionsService {
         const newSubmissionUsers = users.filter((user: any) =>
           submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
-        const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
         return this.couchService.post('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
         });
