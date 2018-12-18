@@ -45,7 +45,7 @@ export class TeamsService {
         debug('Dialog confirm'),
         switchMap((response: any) => {
           if (response !== undefined) {
-            return this.updateTeam({ limit: 12, status: 'active', createdDate: Date.now(), ...team, ...response });
+            return this.updateTeam({ limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder(), ...team, ...response });
           }
           return empty();
         }),
@@ -59,7 +59,7 @@ export class TeamsService {
   }
 
   updateTeam(team: any) {
-    return this.couchService.post(this.dbName, team).pipe(switchMap((res: any) => {
+    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
       return of({ _rev: res.rev, _id: res.id, ...team });
     }));
   }
@@ -127,7 +127,7 @@ export class TeamsService {
           return this.memberAddNotification(user._id, notificationParams);
       }
     });
-    return this.couchService.post('notifications/_bulk_docs', { docs: notifications });
+    return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 
   addedToTeamNotification(userId, { team, url }) {
@@ -139,7 +139,7 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder()
     };
   }
 
@@ -152,7 +152,7 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder()
     };
   }
 
@@ -165,7 +165,7 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder()
     };
   }
 

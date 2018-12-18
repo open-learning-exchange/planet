@@ -105,19 +105,13 @@ export class PlanetRatingComponent implements OnChanges {
       item: this.item._id,
       title: this.item.title || this.item.courseTitle
     }, this.rating.userRating, form.value, {
-      time: Date.now(),
+      time: this.couchService.datePlaceholder(),
       user: this.userService.get(),
       createdOn: configuration.code,
       parentCode: configuration.parentCode
     });
-    let couchRequest = this.couchService.post,
-      couchUrl = this.dbName;
-    if (newRating._rev) {
-      couchRequest = this.couchService.put;
-      couchUrl = couchUrl + '/' + newRating._id;
-    }
     // Use call because 'this' will be undefined otherwise
-    return couchRequest.call(this.couchService, couchUrl, newRating).pipe(map((res: any) => {
+    return this.couchService.updateDocument(this.dbName, newRating).pipe(map((res: any) => {
       newRating._rev = res.rev;
       newRating._id = res.id;
       this.rating.userRating = newRating;

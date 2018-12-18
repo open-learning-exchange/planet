@@ -31,7 +31,7 @@ export class ConfigurationService {
         'type': 'request',
         'priority': 1,
         'status': 'unread',
-        'time': Date.now()
+        'time': this.couchService.datePlaceholder()
       };
       // Send notification to parent
       return this.couchService.post('notifications', requestNotification, {
@@ -87,7 +87,7 @@ export class ConfigurationService {
     if (isNewConfig) {
       configuration.registrationRequest = 'pending';
     }
-    return this.couchService.post('communityregistrationrequests', configuration, {
+    return this.couchService.updateDocument('communityregistrationrequests', configuration, {
       domain: configuration.parentDomain
     }).pipe(
       takeWhile(() => isNewConfig),
@@ -99,7 +99,7 @@ export class ConfigurationService {
 
   postConfiguration(configuration) {
     return forkJoin([
-      this.couchService.post('configurations', configuration),
+      this.couchService.updateDocument('configurations', configuration),
       this.updateAutoAccept(configuration.autoAccept)
     ]);
   }
@@ -120,7 +120,7 @@ export class ConfigurationService {
       'roles': [],
       'type': 'user',
       'isUserAdmin': true,
-      'joinDate': Date.now(),
+      'joinDate': this.couchService.datePlaceholder(),
       'planetCode': configuration.code
     };
     const pin = this.userService.createPin();
@@ -163,7 +163,7 @@ export class ConfigurationService {
   }
 
   createUser(name, details, opts?) {
-    return this.couchService.put('_users/org.couchdb.user:' + name, details, opts);
+    return this.couchService.updateDocument('_users/org.couchdb.user:' + name, details, opts);
   }
 
 }

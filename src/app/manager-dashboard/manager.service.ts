@@ -72,9 +72,9 @@ export class ManagerService {
       createdOn: this.configuration.code,
       parentCode: this.configuration.parentCode,
       user: this.userService.get().name,
-      time: Date.now()
+      time: this.couchService.datePlaceholder()
     };
-    return this.couchService.post('admin_activities', { ...log, type });
+    return this.couchService.updateDocument('admin_activities', { ...log, type });
   }
 
   getLogs() {

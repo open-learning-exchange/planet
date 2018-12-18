@@ -65,8 +65,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     }
     const newFeedback = Object.assign({}, this.feedback, reopen);
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
-    newFeedback.messages = [].concat(this.feedback.messages, { message: this.newMessage, user: this.user.name, time: Date.now() });
-    this.couchService.put(this.dbName + '/' + this.feedback._id, newFeedback)
+    newFeedback.messages = [].concat(
+      this.feedback.messages,
+      { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder() }
+    );
+    this.couchService.updateDocument(this.dbName + '/' + this.feedback._id, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
         return this.getFeedback(res.id);
