@@ -77,7 +77,8 @@ export class LoginFormComponent {
           } else {
             this.planetMessageService.showMessage('Member ' + this.userForm.value.name + ' is not registered' );
             this.userForm.reset();
-          } });
+          }
+        });
       }
     } else {
       Object.keys(this.userForm.controls).forEach(fieldName => {
@@ -101,7 +102,6 @@ export class LoginFormComponent {
   }
 
   reRoute() {
-    console.log(this.returnUrl);
     return this.router.navigateByUrl(this.returnUrl);
   }
 
