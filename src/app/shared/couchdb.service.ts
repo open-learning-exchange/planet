@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable, of } from 'rxjs';
-import { catchError, map, expand, takeWhile, toArray, flatMap } from 'rxjs/operators';
+import { catchError, map, expand, takeWhile, toArray, flatMap, switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
 import { findDocuments, inSelector } from './mangoQueries';
+
+class DatePlaceholder {}
 
 @Injectable()
 export class CouchService {
@@ -74,6 +76,13 @@ export class CouchService {
           // Filter out any design documents
           return doc._id.indexOf('_design') === -1;
         });
+    }));
+  }
+
+  updateDocument(db: string, doc: any, opts?: any) {
+    return this.currentTime().pipe(switchMap((date) => {
+      const docWithDate = this.fillInDateFields(doc, date);
+      return this.post(db, docWithDate, opts);
     }));
   }
 
@@ -150,6 +159,27 @@ export class CouchService {
       changesDocs.filter((cDoc: any) =>
         cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
     );
+  }
+
+  currentTime() {
+    return this.getUrl('time').pipe(catchError(() => {
+      return of(Date.now());
+    }));
+  }
+
+  fillInDateFields(data, date) {
+    return Object.entries(data).reduce((dataWithDate, [ key, value ]) => {
+      if (value instanceof DatePlaceholder) {
+        dataWithDate[key] = date;
+      } else {
+        dataWithDate[key] = value;
+      }
+      return dataWithDate;
+    }, {});
+  }
+
+  datePlaceholder(): DatePlaceholder {
+    return new DatePlaceholder();
   }
 
 }
