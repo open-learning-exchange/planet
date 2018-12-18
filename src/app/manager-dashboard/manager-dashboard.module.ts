@@ -14,6 +14,8 @@ import { ConfigurationModule } from '../configuration/configuration.module';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
+import { ReportsPendingComponent } from './reports/reports-pending.component';
+import { PendingTableComponent } from './reports/pending-table.component';
 
 @NgModule({
   imports: [
@@ -35,7 +37,9 @@ import { ReportsDetailComponent } from './reports/reports-detail.component';
     ManagerDashboardConfigurationComponent,
     ReportsComponent,
     ReportsTableComponent,
-    ReportsDetailComponent
+    ReportsDetailComponent,
+    ReportsPendingComponent,
+    PendingTableComponent
   ]
 })
 export class ManagerDashboardModule {}
