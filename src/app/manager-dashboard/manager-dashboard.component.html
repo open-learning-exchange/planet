@@ -9,7 +9,6 @@
     <span *ngIf="planetType !== 'community'">
       <a routerLink="/requests" i18n mat-raised-button>{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
       <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
-      <a [routerLink]="['reports/pending']" i18n mat-raised-button>Pending Reports</a>
     </span>
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
@@ -24,6 +23,18 @@
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
     <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
+  </div>
+  <div *ngIf="pendingPushCount > 0">
+    <p>
+      <span i18n>There {pendingPushCount, plural, =0 {are} =1 {is} other {are}}</span>
+      {{ ' ' + pendingPushCount + ' ' }}
+      <span i18n>{planetType, select,
+        nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}
+        center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}
+      } with pending courses and/or resources for download.
+        <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
+      </span>
+    </p>
   </div>
   <div class="view-container" *ngIf="planetType !== 'community'">
     <h3 i18n>Send On Accept</h3><br />
