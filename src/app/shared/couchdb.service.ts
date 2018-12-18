@@ -168,14 +168,19 @@ export class CouchService {
   }
 
   fillInDateFields(data, date) {
-    return Object.entries(data).reduce((dataWithDate, [ key, value ]) => {
-      if (value instanceof DatePlaceholder) {
-        dataWithDate[key] = date;
-      } else {
-        dataWithDate[key] = value;
-      }
-      return dataWithDate;
-    }, {});
+    switch (data && data.constructor) {
+      case DatePlaceholder:
+        return date;
+      case Array:
+        return data.map((item) => this.fillInDateFields(item, date));
+      case Object:
+        return Object.entries(data).reduce((dataWithDate, [ key, value ]) => {
+          dataWithDate[key] = this.fillInDateFields(value, date);
+          return dataWithDate;
+        }, {});
+      default:
+        return data;
+    }
   }
 
   datePlaceholder(): DatePlaceholder {
