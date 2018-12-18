@@ -78,6 +78,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   listMode = true;
   openIndex = -1;
   private onDestroy$ = new Subject<void>();
+  @Output() newStep = new EventEmitter<boolean>();
 
   constructor(private planetStepListService: PlanetStepListService) {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(this.moveStep.bind(this));
@@ -129,6 +130,19 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
   }
 
+  forward(direction) {
+    if (this.steps.length > (this.openIndex + 1)) {
+      this.newStep.emit(false);
+      this.stepClick(this.openIndex + direction);
+    } else if (this.steps.length === this.openIndex + 1) {
+       this.newStep.emit(true);
+    }
+  }
+
+   goBack(direction) {
+    this.newStep.emit(false);
+    this.stepClick(this.openIndex + direction);
+  }
 }
 
 @Directive({

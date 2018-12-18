@@ -115,10 +115,8 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepsChange.emit(this.steps);
   }
 
-  forward(direction) {
-    if (this.steps.length > (this.activeStepIndex + 1)) {
-        this.stepClick(this.activeStepIndex + direction);
-    } else if (this.steps.length === (this.activeStepIndex + 1)) {
+  addNewStep(event) {
+    if (event === true) {
       this.steps.push({
         id: uniqueId(),
         stepTitle: '',
@@ -127,9 +125,5 @@ export class CoursesStepComponent implements OnDestroy {
       });
       this.stepClick(this.steps.length - 1);
     }
-  }
-
-  goBack(direction) {
-    this.stepClick(this.activeStepIndex + direction);
   }
 }

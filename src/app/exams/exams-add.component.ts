@@ -156,4 +156,9 @@ export class ExamsAddComponent implements OnInit {
     this.router.navigateByUrl(this.returnUrl);
   }
 
+  addNewQuestion(event) {
+    if (event === true) {
+        this.addQuestion();
+    }
+  }
 }
