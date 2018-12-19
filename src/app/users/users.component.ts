@@ -39,7 +39,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   filter: any;
   planetType = '';
   displayTable = true;
-  displayedColumns = [ 'select', 'profile', 'name', 'roles', 'action' ];
+  displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
   isUserAdmin = false;
   deleteDialog: any;
   // List of all possible roles to add to users
@@ -92,7 +92,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterAssociated = true;
         break;
       default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'roles', 'action' ];
+        this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
         this.filterAssociated = false;
         break;
     }
