@@ -152,7 +152,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setSubmissionListener() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
-      this.updatedOn = submission.startTime;
+      this.updatedOn = submission.lastUpdateTime;
 
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};

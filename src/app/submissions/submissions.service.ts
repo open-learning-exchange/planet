@@ -162,7 +162,7 @@ export class SubmissionsService {
         const newSubmissionUsers = users.filter((user: any) =>
           submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
-        return this.couchService.post('submissions/_bulk_docs', {
+        return this.couchService.updateDocument('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
         });
       })
@@ -170,7 +170,7 @@ export class SubmissionsService {
   }
 
   createSubmission(parent: any, type: string, user: any = '') {
-    return this.couchService.post('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
+    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
   }
 
   submissionName(user) {
