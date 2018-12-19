@@ -163,7 +163,7 @@ export class ConfigurationService {
   }
 
   createUser(name, details, opts?) {
-    return this.couchService.updateDocument('_users/org.couchdb.user:' + name, details, opts);
+    return this.couchService.updateDocument('_users', { '_id': 'org.couchdb.user:' + name, ...details }, opts);
   }
 
 }
