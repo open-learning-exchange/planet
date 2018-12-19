@@ -37,7 +37,7 @@
             <a [routerLink]="['/users/profile', mem]">
               <span *ngIf="mem === currentUserName; else otherMember">{{mem}} (You)</span>
               <ng-template #otherMember><span>{{mem}}</span></ng-template>
-          </a>
+            </a>
           </li>
         </ul>
       </ng-template>
