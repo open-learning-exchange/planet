@@ -116,7 +116,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     const invites = selected.map((user: any) => {
       return this.inviteNotification(user._id, this.meetupDetail);
     });
-    this.couchService.post('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
+    console.log(invites);
+    console.log(this.couchService.datePlaceholder);
+    this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
     });
