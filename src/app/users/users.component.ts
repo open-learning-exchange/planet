@@ -78,7 +78,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       return sortNumberOrString(item.doc, property);
     };
-    console.log(this.allUsers);
   }
 
   ngOnDestroy() {
@@ -93,7 +92,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterAssociated = true;
         break;
       default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount','joined_date', 'roles', 'action' ];
+        this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joined_date', 'roles', 'action' ];
         this.filterAssociated = false;
         break;
     }
