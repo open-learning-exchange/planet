@@ -55,7 +55,8 @@ export class SubmissionsService {
   }
 
   private createNewSubmission({ parentId, parent, user, type }) {
-    const times = { startTime: Date.now(), lastUpdateTime: Date.now() };
+    const date = this.couchService.datePlaceholder;
+    const times = { startTime: date, lastUpdateTime: date };
     const configuration = this.stateService.configuration;
     return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
       ...this.submissionSource(configuration, user), ...times };
@@ -86,7 +87,7 @@ export class SubmissionsService {
   }
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: Date.now() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
       value: answer,
@@ -100,7 +101,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: Date.now() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }
@@ -125,7 +126,7 @@ export class SubmissionsService {
 
   updateSubmission(submission: any, takingExam: boolean, close: boolean) {
     submission.status = close ? this.updateStatus(submission) : submission.status;
-    return this.couchService.post('submissions', submission).pipe(map((res) => {
+    return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
         attempts += 1;

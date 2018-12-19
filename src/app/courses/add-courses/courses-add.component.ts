@@ -82,11 +82,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       method: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
-      createdDate: Date.now(),
+      createdDate: this.couchService.datePlaceholder,
       creator: this.userService.get().name + '@' + configuration.code,
       sourcePlanet: configuration.code,
       resideOn: configuration.code,
-      updatedDate: Date.now()
+      updatedDate: this.couchService.datePlaceholder
     });
   }
 
@@ -146,9 +146,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   updateCourse(courseInfo, shouldNavigate) {
     this.deleteStepIdProperty();
-    this.couchService.post(
+    this.couchService.updateDocument(
       this.dbName,
-      { ...courseInfo, steps: this.steps, updatedDate: Date.now(), ...this.documentInfo }
+      { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
     ).subscribe((res) => {
       const message = courseInfo.courseTitle + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
       this.courseChangeComplete(message, res, shouldNavigate);

@@ -25,7 +25,6 @@ const mime = new Mime(require('mime/types/standard.json'));
 
 export class ResourcesAddComponent implements OnInit {
   constants = constants;
-  currentDate = new Date();
   file: any;
   existingResource: any = {};
   deleteAttachment = false;
@@ -106,8 +105,8 @@ export class ResourcesAddComponent implements OnInit {
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
-      createdDate: Date.now(),
-      updatedDate: Date.now()
+      createdDate: this.couchService.datePlaceholder,
+      updatedDate: this.couchService.datePlaceholder
     });
   }
 
@@ -136,9 +135,8 @@ export class ResourcesAddComponent implements OnInit {
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-        const obs = this.pageType === 'Update' ? this.updateResource(newResource) : this.addResource(newResource);
         const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
-        obs.pipe(switchMap((res) => {
+        this.updateResource(newResource).pipe(switchMap((res) => {
           if (file) {
             const opts = { headers: { 'Content-Type': file.type } };
             return this.couchService.putAttachment(this.dbName + '/' + res.id + '/' + file.name + '?rev=' + res.rev, file, opts);
@@ -171,13 +169,8 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  addResource(resourceInfo) {
-    // ...is the rest syntax for object destructuring
-    return this.couchService.post(this.dbName, { ...resourceInfo });
-  }
-
   updateResource(resourceInfo) {
-    return this.couchService.put(this.dbName + '/' + resourceInfo._id, { ...resourceInfo, updatedDate: Date.now() });
+    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder });
   }
 
   deleteAttachmentToggle(event) {

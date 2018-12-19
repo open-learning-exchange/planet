@@ -27,7 +27,7 @@ export class UserService {
       this.shelfChange.next(shelf);
     }
   }
-  sessionStart: number;
+  sessionStart: any;
   sessionRev: string;
   sessionId: string;
   userProperties: string[] = [];
@@ -115,7 +115,7 @@ export class UserService {
     this.shelf = {};
   }
 
-  logObj(logoutTime: number = 0) {
+  logObj(logoutTime: any = 0) {
     return Object.assign({
       user: this.user.name,
       type: 'login',
@@ -124,7 +124,8 @@ export class UserService {
       createdOn: this.stateService.configuration.code,
       parentCode: this.stateService.configuration.parentCode
     }, this.sessionRev ? {
-      _rev: this.sessionRev
+      _rev: this.sessionRev,
+      _id: this.sessionId
     } : {});
   }
 
@@ -143,9 +144,9 @@ export class UserService {
   }
 
   newSessionLog() {
-    this.sessionStart = Date.now();
+    this.sessionStart = this.couchService.datePlaceholder;
     return this.getNewLogObj().pipe(switchMap(logObj => {
-      return this.couchService.post(this.logsDb, this.logObj());
+      return this.couchService.updateDocument(this.logsDb, this.logObj());
     }),
     map((res: any) => {
       this.sessionRev = res.rev;
@@ -167,7 +168,7 @@ export class UserService {
       }));
     }
     return newObs.pipe(switchMap(() => {
-      return this.couchService.put(this.logsDb + '/' + this.sessionId, this.logObj(Date.now()));
+      return this.couchService.updateDocument(this.logsDb, this.logObj(this.couchService.datePlaceholder));
     }), map((res: any) => {
       this.sessionRev = res.rev;
       return res;

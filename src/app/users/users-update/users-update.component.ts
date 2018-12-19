@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -41,7 +42,6 @@ export class UsersUpdateComponent implements OnInit {
   file: any;
   roles: string[] = [];
   languages = languages;
-  maxDate = new Date();
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
 
@@ -51,7 +51,8 @@ export class UsersUpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private validatorService: ValidatorService
   ) {
     this.userData();
   }
@@ -91,7 +92,11 @@ export class UsersUpdateComponent implements OnInit {
       email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
       language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       phoneNumber: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      birthDate: [ '', [ this.conditionalValidator(CustomValidators.dateValidRequired).bind(this), CustomValidators.notDateInFuture ] ],
+      birthDate: [
+        '',
+        this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
+        ac => this.validatorService.notDateInFuture$(ac)
+      ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       level: [ '', this.conditionalValidator(Validators.required).bind(this) ]
     });

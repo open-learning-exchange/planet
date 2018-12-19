@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   displayName: string = this.userService.get().firstName !== undefined ?
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
-  dateNow = Date.now();
+  dateNow: any;
   visits = 0;
   surveys = [];
 
@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
       .subscribe(() => {
         this.ngOnInit();
       });
+    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
   ngOnInit() {

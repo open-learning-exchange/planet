@@ -14,6 +14,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './meetups-add.component.html'
@@ -36,7 +37,8 @@ export class MeetupsAddComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private validatorService: ValidatorService
   ) {
     this.createForm();
   }
@@ -62,7 +64,7 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', Validators.required ],
       description: [ '', Validators.required ],
-      startDate: [ '', CustomValidators.notDateInPast ],
+      startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
       endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: '',
       day: this.fb.array([]),
@@ -77,7 +79,7 @@ export class MeetupsAddComponent implements OnInit {
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
-      createdDate: Date.now()
+      createdDate: this.couchService.datePlaceholder
     });
   }
 
@@ -97,8 +99,9 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   updateMeetup(meetupInfo) {
-    this.couchService.put(this.dbName + '/' + this.id, {
+    this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
+      '_id': this.id,
       '_rev': this.revision,
       'startDate': Date.parse(meetupInfo.startDate),
       'endDate': Date.parse(meetupInfo.endDate)
@@ -108,7 +111,7 @@ export class MeetupsAddComponent implements OnInit {
         }, [ '_id' ], 0));
       }),
       switchMap(data => {
-        return this.couchService.post('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
+        return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
       })
     ).subscribe(() => {
         this.router.navigate([ '/meetups' ]);
@@ -120,7 +123,7 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   addMeetup(meetupInfo) {
-    this.couchService.post(this.dbName, {
+    this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
       'startDate': Date.parse(meetupInfo.startDate),
       'endDate': Date.parse(meetupInfo.endDate),
@@ -173,7 +176,7 @@ export class MeetupsAddComponent implements OnInit {
       'type': 'meetup',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder
     })) };
   }
 
