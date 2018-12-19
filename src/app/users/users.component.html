@@ -75,7 +75,7 @@
       </ng-container>
       <ng-container matColumnDef="joined_date">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Joined Date</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.doc.joinDate | date:'dd/MM/yyyy'}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.doc.joinDate | date: 'mediumDate'}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="roles">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Roles</mat-header-cell>
