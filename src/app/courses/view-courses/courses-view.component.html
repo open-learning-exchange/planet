@@ -45,27 +45,24 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
-            <div *ngIf="!(step.description.length !== 0 || step?.exam?.questions.length > 0 || step?.resources?.length > 0)">
-                <div>There is no content for this step.</div>
+            <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
+              There is no content for this step.
             </div>
-            <div *ngIf="step.description.length === 0; else have_desc">
-               There is no description for this step.
-            </div>
-            <div #have_desc *ngIf="step.description.length > 0">
-                There is a description for this step.
-            </div>
-            <div *ngIf= "step?.resources?.length > 1 else other_resource">
-              There are {{step?.resources?.length}} resources.
-            </div>
-            <div #other_resource *ngIf="step?.resources?.length < 2 && step?.resources?.length >-1">
-                There is {{step?.resources?.length || 0 }} resource.
-            </div>
-            <div *ngIf= "step?.exam?.questions.length >1 else other_exam" >
-              The exam has {{step?.exam?.questions.length}} questions.
-            </div>
-            <div #other_exam *ngIf="step?.exam?.questions.length < 2 && step?.exam?.questions.length >-1">
-              The exam has {{step?.exam?.questions.length || 0 }} question.
-            </div>
+            <ng-template #contentMessage>
+              <span *ngIf="step.description.length === 0" i18n>There is no description for this step.</span>
+              {{' '}}
+              <span *ngIf= "step?.resources?.length > 0">
+                <span i18n>{step.resources.length, plural, =1 {There is} other {There are}}</span>
+                {{ ' ' + step?.resources?.length + ' '}}
+                <span i18n>{step.resources.length, plural, =1 {resource} other {resources}}.</span>
+                {{' '}}
+              </span>
+              <span *ngIf= "step?.exam?.questions.length > 0">
+                <span i18n>The exam has</span>
+                {{ ' ' + step?.exam.questions?.length + ' '}}
+                <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
+              </span>
+            </ng-template>
             <mat-action-row *ngIf="!parent">
               <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
               <button *ngIf="step?.resources?.length > 1 && step?.resources?.length" mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
