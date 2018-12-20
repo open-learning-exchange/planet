@@ -35,6 +35,7 @@ import { StateService } from '../shared/state.service';
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
+  selectedEnrolled = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -214,9 +215,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  enrollInSelected(courseIds, type) {
+  enrollLeaveToggle(courseIds, type) {
     this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
-      this.selectedNotEnrolled = 0;
+      this.selectedNotEnrolled = type === 'add' ? 0 : this.selection.selected.length;
+      this.selectedEnrolled = this.selection.selected.length - this.selectedNotEnrolled;
     }, (error) => ((error)));
   }
 
@@ -241,6 +243,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedNotEnrolled = selected.reduce((count, id) => {
       return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count;
     }, 0);
+    this.selectedEnrolled = this.selection.selected.length - this.selectedNotEnrolled;
   }
 
   hasSteps(id: string) {
