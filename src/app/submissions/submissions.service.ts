@@ -61,8 +61,8 @@ export class SubmissionsService {
       source: configuration.code, parentCode: configuration.parentCode, ...times };
   }
 
-  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
-    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name };
+  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }: any) {
+    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
       let attempts = res.docs.length - 1;
