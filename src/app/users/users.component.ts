@@ -106,6 +106,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (type === 'child') {
       this.filter['planetCode'] = this.selectedChild.planetCode;
+      this.filter['requestId'] = { '$exists': false };
     } else {
       this.selectedChild = null;
       this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
@@ -154,7 +155,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     return forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 }),
-      this.couchService.findAll('tablet_users', { 'selector': {} }),
+      this.couchService.findAll('child_users', { 'selector': {} }),
       this.couchService.findAll('communityregistrationrequests', { 'selector': {} })
     ]);
   }
