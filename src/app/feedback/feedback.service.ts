@@ -35,7 +35,7 @@ export class FeedbackService {
   }
 
   modifyFeedback(feedback: any, message) {
-    return this.couchService.updateDocument(this.dbName + '/' + feedback._id, feedback).pipe(map((data) => {
+    return this.couchService.updateDocument(this.dbName, feedback).pipe(map((data) => {
       this.planetMessageService.showMessage(message);
     }));
   }
