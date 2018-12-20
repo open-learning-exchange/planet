@@ -9,6 +9,7 @@ import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
+import { FeedbackService } from './feedback.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -29,7 +30,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private route: ActivatedRoute,
     private dialogsFormService: DialogsFormService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private feedbackServive: FeedbackService
   ) {}
 
   ngOnInit() {
@@ -65,8 +67,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     }
     const newFeedback = Object.assign({}, this.feedback, reopen);
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
-    newFeedback.messages = [].concat(this.feedback.messages, { message: this.newMessage, user: this.user.name, time: Date.now() });
-    this.couchService.put(this.dbName + '/' + this.feedback._id, newFeedback)
+    newFeedback.messages = [].concat(
+      this.feedback.messages,
+      { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder }
+    );
+    this.couchService.updateDocument(this.dbName + '/' + this.feedback._id, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
         return this.getFeedback(res.id);
@@ -101,6 +106,14 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
           this.setCouchListener(id);
         }
       });
+  }
+
+  closeFeedback(feedback) {
+    this.feedbackServive.closeFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
+  }
+
+  openFeedback(feedback) {
+    this.feedbackServive.openFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
   }
 
   scrollToBottom() {

@@ -116,7 +116,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     const invites = selected.map((user: any) => {
       return this.inviteNotification(user._id, this.meetupDetail);
     });
-    this.couchService.post('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
+    this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
     });
@@ -132,7 +132,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       'type': 'meetup',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder
     };
   }
 

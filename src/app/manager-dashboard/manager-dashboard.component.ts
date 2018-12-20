@@ -39,6 +39,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
+  pendingPushCount = 0;
 
   constructor(
     private userService: UserService,
@@ -72,6 +73,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.getSatellitePin();
     this.managerService.getLogs().subscribe(logs => this.activityLogs = logs);
     this.countFetchItemAvailable();
+    this.couchService.findAll('send_items').subscribe((items: any) => {
+      this.pendingPushCount = items.reduce(
+        (planets, item) => planets.concat(planets.indexOf(item.sendTo) > -1 ? [] : [ item.sendTo ]), []
+      ).length;
+    });
   }
 
   ngOnDestroy() {

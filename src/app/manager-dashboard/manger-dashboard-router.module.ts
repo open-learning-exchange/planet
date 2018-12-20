@@ -6,6 +6,7 @@ import { ManagerFetchComponent } from './manager-fetch.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
+import { ReportsPendingComponent } from './reports/reports-pending.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
@@ -17,7 +18,8 @@ const routes: Routes = [
   { path: 'configuration', component: ManagerDashboardConfigurationComponent, data: { update: true } },
   { path: 'users', loadChildren: '../users/users.module#UsersModule' },
   { path: 'reports', component: ReportsComponent },
-  { path: 'reports/detail', component: ReportsDetailComponent }
+  { path: 'reports/detail', component: ReportsDetailComponent },
+  { path: 'reports/pending', component: ReportsPendingComponent }
 ];
 
 @NgModule({

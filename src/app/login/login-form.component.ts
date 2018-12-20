@@ -87,9 +87,9 @@ export class LoginFormComponent {
       'type': 'register',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder
     };
-    this.couchService.post('notifications', data)
+    this.couchService.updateDocument('notifications', data)
       .subscribe();
   }
 
@@ -104,7 +104,7 @@ export class LoginFormComponent {
         isUserAdmin: false,
         planetCode: configuration.code,
         parentCode: configuration.parentCode,
-        joinDate: Date.now(),
+        joinDate: this.couchService.datePlaceholder,
       },
       roles: configuration.autoAccept ? [ 'learner' ] : []
     };
@@ -117,7 +117,7 @@ export class LoginFormComponent {
         this.welcomeNotification(res.id);
         this.login(this.userForm.value, true);
       },
-      this.loginError('An error occurred please try again')
+      this.errorHandler('An error occurred please try again')
     );
   }
 
@@ -136,10 +136,20 @@ export class LoginFormComponent {
         const adminName = this.planetConfiguration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
-    ).subscribe(() => {}, this.loginError('Username and/or password do not match'));
+    ).subscribe(() => {}, this.loginError.bind(this));
   }
 
-  loginError(message: string) {
+  loginError() {
+    this.couchService.get('_users/org.couchdb.user:' + this.userForm.value.name).subscribe((data: any) => {
+      if ('_id' in data) {
+        this.errorHandler('Username and/or password do not match')();
+      } else {
+        this.errorHandler('Member ' + this.userForm.value.name + ' is not registered')();
+      }
+    });
+  }
+
+  errorHandler(message: string) {
     return () => {
       this.userForm.setErrors({ 'invalid': true });
       this.planetMessageService.showAlert(message);
@@ -155,9 +165,9 @@ export class LoginFormComponent {
       'type': 'new user',
       'priority': 1,
       'status': 'unread',
-      'time': Date.now()
+      'time': this.couchService.datePlaceholder
     };
-    return this.couchService.post('notifications', data);
+    return this.couchService.updateDocument('notifications', data);
   }
 
   createSession(name, password) {

@@ -12,10 +12,10 @@ import { debug } from '../debug-operator';
 @Injectable()
 export class ValidatorService {
 
-constructor(
-  private couchService: CouchService,
-  private userService: UserService
-) {}
+  constructor(
+    private couchService: CouchService,
+    private userService: UserService
+  ) {}
 
   public checkUnique$(db: string, selectors: any, opts = {}): Observable<boolean> {
     return this.couchService
@@ -84,6 +84,14 @@ constructor(
       catchError(err => {
         return of({ invalidOldPassword: true });
       }));
+  }
+
+  public notDateInFuture$(ac: AbstractControl): Observable<ValidationErrors | null> {
+    return this.couchService.currentTime().pipe(map(date => ac.value > date ? ({ invalidFutureDate: true }) : null));
+  }
+
+  public notDateInPast$(ac: AbstractControl): Observable<ValidationErrors | null> {
+    return this.couchService.currentTime().pipe(map(date => ac.value > date ? null : ({ dateInPast: true })));
   }
 
 }

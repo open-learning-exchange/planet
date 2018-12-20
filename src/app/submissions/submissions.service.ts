@@ -55,14 +55,22 @@ export class SubmissionsService {
   }
 
   private createNewSubmission({ parentId, parent, user, type }) {
-    const times = { startTime: Date.now(), lastUpdateTime: Date.now() };
+    const date = this.couchService.datePlaceholder;
+    const times = { startTime: date, lastUpdateTime: date };
     const configuration = this.stateService.configuration;
     return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
-      source: configuration.code, parentCode: configuration.parentCode, ...times };
+      ...this.submissionSource(configuration, user), ...times };
   }
 
-  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }) {
-    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name };
+  private submissionSource(configuration, user) {
+    if (user.planetCode !== undefined && configuration.code !== user.planetCode) {
+      return { source: user.planetCode, parentCode: configuration.code };
+    }
+    return { source: configuration.code, parentCode: configuration.parentCode };
+  }
+
+  openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }: any) {
+    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
       let attempts = res.docs.length - 1;
@@ -79,7 +87,7 @@ export class SubmissionsService {
   }
 
   submitAnswer(answer, correct: boolean, index: number, close: boolean) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: Date.now() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
       value: answer,
@@ -93,7 +101,7 @@ export class SubmissionsService {
   }
 
   submitGrade(grade, index: number, close) {
-    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: Date.now() };
+    const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
     return this.updateSubmission(submission, false, close);
   }
@@ -118,7 +126,7 @@ export class SubmissionsService {
 
   updateSubmission(submission: any, takingExam: boolean, close: boolean) {
     submission.status = close ? this.updateStatus(submission) : submission.status;
-    return this.couchService.post('submissions', submission).pipe(map((res) => {
+    return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
         attempts += 1;
@@ -154,8 +162,7 @@ export class SubmissionsService {
         const newSubmissionUsers = users.filter((user: any) =>
           submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
-        const newSubmissions = newSubmissionUsers.map((user) => this.newSubmission({ user, parentId, parent, type: 'survey' }));
-        return this.couchService.post('submissions/_bulk_docs', {
+        return this.couchService.updateDocument('submissions/_bulk_docs', {
           'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
         });
       })
@@ -163,7 +170,7 @@ export class SubmissionsService {
   }
 
   createSubmission(parent: any, type: string, user: any = '') {
-    return this.couchService.post('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
+    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
   }
 
   submissionName(user) {

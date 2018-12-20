@@ -72,15 +72,19 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   arraySubmissionAnswers(submission: any) {
-    return submission.answers.map(a => ({ number: a.mistakes || (1 - (a.grade || 0)), fill: true })).reverse();
+    return submission.answers.map(a => ({ number: this.answerErrorCount(a), fill: true })).reverse();
   }
 
   totalSubmissionAnswers(submission: any) {
     return {
-      number: submission.answers.reduce((total, answer) => total + answer.mistakes || (1 - (answer.grade || 0)), 0),
+      number: submission.answers.reduce((total, answer) => total + (this.answerErrorCount(answer) || 0), 0),
       fill: true,
       clickable: true
     };
+  }
+
+  answerErrorCount(answer) {
+    return answer.grade === undefined ? '' : answer.mistakes || (1 - answer.grade);
   }
 
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {

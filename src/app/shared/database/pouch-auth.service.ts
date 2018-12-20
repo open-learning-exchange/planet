@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
+import { CouchService } from '../couchdb.service';
 
 interface SessionInfo {
   userCtx: {
@@ -13,7 +14,10 @@ interface SessionInfo {
 export class PouchAuthService {
   private authDB;
 
-  constructor(private pouchService: PouchService) {
+  constructor(
+    private pouchService: PouchService,
+    private couchService: CouchService
+  ) {
     this.authDB = this.pouchService.getAuthDB();
   }
 
@@ -30,7 +34,8 @@ export class PouchAuthService {
   }
 
   signup(username, password, opts = {}) {
-    return from(this.authDB.signUp(username, password, opts)).pipe(
+    return this.couchService.currentTime().pipe(
+      switchMap((date) => from(this.authDB.signUp(username, password, this.couchService.fillInDateFields(opts, date)))),
       catchError(this.handleError)
     );
   }

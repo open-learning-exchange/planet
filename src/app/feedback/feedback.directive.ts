@@ -12,15 +12,15 @@ import { StateService } from '../shared/state.service';
 export class Message {
   message: string;
   user: string;
-  time: Number;
+  time: any;
 }
 export class Feedback {
   type: string;
   priority: boolean;
   owner: string;
   title: string;
-  openTime: Number;
-  closeTime: Number;
+  openTime: any;
+  closeTime: any;
   source: string;
   url: string;
   messages: Array<Message>;
@@ -76,13 +76,14 @@ export class FeedbackDirective {
   ) {}
 
   addFeedback(post: any) {
+    const date = this.couchService.datePlaceholder;
     const user = this.userService.get().name,
       { message, ...feedbackInfo } = post,
-      startingMessage: Message = { message, time: Date.now(), user },
+      startingMessage: Message = { message, time: date, user },
       newFeedback: Feedback = {
         owner: user,
         ...feedbackInfo,
-        openTime: Date.now(),
+        openTime: date,
         status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
@@ -90,7 +91,7 @@ export class FeedbackDirective {
         parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
       };
-    this.couchService.post('feedback/', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
+    this.couchService.updateDocument('feedback', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
     .subscribe((data) => {
       this.feedbackService.setfeedback();
       this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
