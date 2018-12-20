@@ -24,7 +24,6 @@ export class CoursesService {
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
-  myCourseIndexes: any = [];
 
   constructor(
     private couchService: CouchService,
