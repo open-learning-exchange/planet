@@ -220,7 +220,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       if (type === 'add') {
         this.selectedNotEnrolled = 0;
         this.selectedEnrolled = this.selection.selected.length;
-      }else {
+      } else {
         this.selectedEnrolled = 0;
         this.selectedNotEnrolled = this.selection.selected.length;
       }
