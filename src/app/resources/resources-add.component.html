@@ -96,7 +96,7 @@
       <div class="inner-gaps full-width">
         <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable">File downloadable</mat-checkbox>
         <ng-container *ngIf="existingResource._attachments">
-          <mat-checkbox [disabled]="disableDelete" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
+          <mat-checkbox [disabled]="disableDelete || this.file" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
         </ng-container>
       </div>
       <div class="inner-gaps by-column full-width align-end">
