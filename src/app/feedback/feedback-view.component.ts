@@ -9,6 +9,7 @@ import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
+import { FeedbackService } from './feedback.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -29,7 +30,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private route: ActivatedRoute,
     private dialogsFormService: DialogsFormService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private feedbackServive: FeedbackService
   ) {}
 
   ngOnInit() {
@@ -104,6 +106,14 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
           this.setCouchListener(id);
         }
       });
+  }
+
+  closeFeedback(feedback) {
+    this.feedbackServive.closeFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
+  }
+
+  openFeedback(feedback) {
+    this.feedbackServive.openFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
   }
 
   scrollToBottom() {
