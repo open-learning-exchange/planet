@@ -78,7 +78,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   totalSubmissionAnswers(submission: any) {
     return {
       number: submission.answers.reduce((total, answer) => total + (this.answerErrorCount(answer) || 0), 0),
-      error: submission.answers.reduce((total, answer) => total + answer.mistakes, 0),
       fill: true,
       clickable: true
     };
