@@ -72,29 +72,20 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   arraySubmissionAnswers(submission: any) {
-    return submission.answers.map(a => ({
-      number: a.mistakes + (a.grade || 0),
-      error: a.mistakes,
-      fill: true
-    })).reverse();
+    return submission.answers.map(a => ({ number: this.answerErrorCount(a), fill: true })).reverse();
   }
 
   totalSubmissionAnswers(submission: any) {
-    this.populateMistakes(submission);
     return {
-      number: submission.answers.reduce((total, answer) => total + answer.mistakes + (answer.grade || 0), 0),
+      number: submission.answers.reduce((total, answer) => total + (this.answerErrorCount(answer) || 0), 0),
       error: submission.answers.reduce((total, answer) => total + answer.mistakes, 0),
       fill: true,
       clickable: true
     };
   }
 
-  populateMistakes(submission: any) {
-    return submission.answers.map(answer => {
-      if (answer.grade === 0) {
-        answer.mistakes = 1;
-      }
-    });
+  answerErrorCount(answer) {
+    return answer.grade === undefined ? '' : answer.mistakes || (1 - answer.grade);
   }
 
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
