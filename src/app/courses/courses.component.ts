@@ -35,7 +35,7 @@ import { StateService } from '../shared/state.service';
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
-  selectedNotLeft = 0;
+  selectedEnrolled = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -107,7 +107,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
-      this.countSelectNotLeft(source.selected);
     });
   }
 
@@ -218,8 +217,13 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   enrollLeaveToggle(courseIds, type) {
     this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
-      this.selectedNotEnrolled = 0;
-      this.selectedNotLeft = 0;
+      if (type === 'add') {
+        this.selectedNotEnrolled = 0;
+        this.selectedEnrolled = this.selection.selected.length;
+      }else {
+        this.selectedEnrolled = 0;
+        this.selectedNotEnrolled = this.selection.selected.length;
+      }
     }, (error) => ((error)));
   }
 
@@ -227,7 +231,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
-      this.countSelectNotLeft(this.selection.selected);
     }, (error) => ((error)));
   }
   /** Whether the number of selected elements matches the total number of rows. */
@@ -251,13 +254,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedNotEnrolled = selected.reduce((count, id) => {
       return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count;
     }, 0);
-
-  }
-
-  countSelectNotLeft(selected: any) {
-    this.selectedNotLeft = selected.reduce((count, id) => {
-      return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 0 : 1) : count;
-    }, 0);
+    this.selectedEnrolled = this.selection.selected.length - this.selectedNotEnrolled;
   }
 
   hasSteps(id: string) {

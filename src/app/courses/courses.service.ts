@@ -24,7 +24,7 @@ export class CoursesService {
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
-  myCourseIndexes: any= [];
+  myCourseIndexes: any = [];
 
   constructor(
     private couchService: CouchService,
@@ -183,14 +183,6 @@ export class CoursesService {
   }
 
   courseAdmissionMany(courseIds, type) {
-    const addedCourseIds: any = [ ...this.userService.shelf.courseIds ];
-    console.log(addedCourseIds);
-    if (type === 'remove') {
-        this.myCourseIndexes = courseIds.indexOf(courseIds);
-        addedCourseIds.splice(this.myCourseIndexes, this.myCourseIndexes.length);
-    } else {
-        addedCourseIds.push(courseIds);
-    }
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
       const prefix = courseIds.length > 1 ? courseIds.length + ' courses' : this.getCourseNameFromId(courseIds[0]);
       const admissionMessage = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
