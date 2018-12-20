@@ -20,17 +20,24 @@ export class FeedbackService {
   ) {}
 
   openFeedback(feedback: any) {
-    const updateFeedback =  { ...feedback, closeTime: '',  status: 'Reopened' };
-    return this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).pipe(map((data) => {
-      this.planetMessageService.showMessage('You re-opened this feedback.');
-    }));
+    return this.modifyFeedback(
+      { ...feedback, closeTime: '', status: 'Reopened' },
+      'You re-opened this feedback.'
+    );
   }
 
 
   closeFeedback(feedback: any) {
-    const updateFeedback =  { ...feedback, 'closeTime': this.couchService.datePlaceholder,  'status': 'Closed' };
-    return this.couchService.put(this.dbName + '/' + feedback._id, updateFeedback).pipe(map((data) => {
-      this.planetMessageService.showMessage('You closed this feedback.');
+    return this.modifyFeedback(
+      { ...feedback, 'closeTime': this.couchService.datePlaceholder, 'status': 'Closed' },
+      'You closed this feedback.'
+    );
+  }
+
+  modifyFeedback(feedback: any, message) {
+    return this.couchService.updateDocument(this.dbName + '/' + feedback._id, feedback).pipe(map((data) => {
+      this.planetMessageService.showMessage(message);
     }));
   }
+
 }
