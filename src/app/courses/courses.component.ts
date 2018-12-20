@@ -227,12 +227,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, (error) => ((error)));
   }
 
-  courseToggle(courseId, type) {
-    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
-      this.setupList(this.courses.data, this.userShelf.courseIds);
-      this.countSelectNotEnrolled(this.selection.selected);
-    }, (error) => ((error)));
-  }
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
@@ -302,7 +296,12 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
-
+  courseToggle(courseId, type) {
+    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+      this.setupList(this.courses.data, this.userShelf.courseIds);
+      this.countSelectNotEnrolled(this.selection.selected);
+    }, (error) => ((error)));
+  }
 
   shareCourse(type, courseIds) {
     const courses = courseIds.map(courseId => findByIdInArray(this.courses.data, courseId));
