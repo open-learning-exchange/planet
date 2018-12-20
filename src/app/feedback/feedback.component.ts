@@ -127,11 +127,11 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeFeedback(feedback: any) {
-    this.feedbackService.closeFb(feedback).subscribe(() => this.getFeedback());
+    this.feedbackService.closeFeedback(feedback).subscribe(() => this.getFeedback());
   }
 
   openFeedback(feedback: any) {
-    this.feedbackService.openFb(feedback).subscribe(() => this.getFeedback());
+    this.feedbackService.openFeedback(feedback).subscribe(() => this.getFeedback());
   }
 
   goBack() {

@@ -11,7 +11,6 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
 
-
 @Component({
   templateUrl: './feedback-view.component.html',
   styleUrls: [ './feedback-view.scss' ]
@@ -110,11 +109,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   closeFeedback(feedback) {
-    this.feedbackServive.closeFb(feedback).subscribe(() => this.getFeedback(feedback.id));
+    this.feedbackServive.closeFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
   }
 
   openFeedback(feedback) {
-    this.feedbackServive.openFb(feedback).subscribe(() => this.getFeedback(feedback.id));
+    this.feedbackServive.openFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
   }
 
   scrollToBottom() {
