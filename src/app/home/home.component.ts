@@ -4,8 +4,8 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { Subject, forkJoin, interval } from 'rxjs';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Subject, forkJoin, interval, of } from 'rxjs';
+import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
@@ -132,18 +132,24 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   logoutClick() {
     const configuration = this.stateService.configuration;
-    this.userService.endSessionLog().pipe(switchMap(() => {
-      const obsArr = [ this.pouchAuthService.logout() ];
-      const localAdminName = configuration.adminName.split('@')[0];
-      if (localAdminName === this.userService.get().name) {
-        obsArr.push(
-          this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
-        );
-      }
-      return forkJoin(obsArr);
-    })).subscribe((response: any) => {
-        this.userService.unset();
-        this.router.navigate([ '/login' ], {});
+    this.userService.endSessionLog().pipe(
+      catchError (error => {
+        console.log(error);
+        return of({});
+      }),
+      switchMap(() => {
+        const obsArr = [ this.pouchAuthService.logout() ];
+        const localAdminName = configuration.adminName.split('@')[0];
+        if (localAdminName === this.userService.get().name) {
+          obsArr.push(
+            this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
+          );
+        }
+        return forkJoin(obsArr);
+      })
+    ).subscribe((response: any) => {
+      this.userService.unset();
+      this.router.navigate([ '/login' ], {});
     }, err => console.log(err));
   }
 
