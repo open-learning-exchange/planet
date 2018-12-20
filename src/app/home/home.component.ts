@@ -132,23 +132,25 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   logoutClick() {
     const configuration = this.stateService.configuration;
-    this.userService.endSessionLog().pipe(switchMap(() => {
-      const obsArr = [ this.pouchAuthService.logout() ];
-      const localAdminName = configuration.adminName.split('@')[0];
-      if (localAdminName === this.userService.get().name) {
-        obsArr.push(
-          this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
-        );
-      }
-      return forkJoin(obsArr);
-    })).subscribe((response: any) => {
+    this.userService.endSessionLog().pipe(
+      catchError (error => {
+        console.log(error);
+        return of({});
+      }),
+      switchMap(() => {
+        const obsArr = [ this.pouchAuthService.logout() ];
+        const localAdminName = configuration.adminName.split('@')[0];
+        if (localAdminName === this.userService.get().name) {
+          obsArr.push(
+            this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
+          );
+        }
+        return forkJoin(obsArr);
+      })
+    ).subscribe((response: any) => {
       this.userService.unset();
       this.router.navigate([ '/login' ], {});
-    }, catchError (error => {
-      console.log(error);
-      this.router.navigate([ '/login' ], {});
-      return of([]);
-    }));
+    });
   }
 
   getNotification() {
