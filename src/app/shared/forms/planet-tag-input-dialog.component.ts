@@ -73,7 +73,6 @@ export class PlanetTagInputDialogComponent {
   }
 
   filterTags(value) {
-    // check wether its sub label has the fiter value as well or not
     return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
