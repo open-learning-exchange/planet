@@ -7,7 +7,7 @@
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Label</mat-panel-title>
     </mat-expansion-panel-header>
-    <form class="form-spacing" (ngSubmit)="addLabel()" [formGroup]="addTagForm">
+    <form class="form-spacing" [formGroup]="addTagForm">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Label" formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
@@ -17,7 +17,7 @@
           <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
         </mat-select>
       </mat-form-field>
-      <span><button type="submit" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid">Add Label</button></span>
+      <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Label</button></span>
     </form>
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
