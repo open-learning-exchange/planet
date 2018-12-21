@@ -34,7 +34,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   typeOptions: any = [ 'Question', 'Bug', 'Suggestion' ];
   statusOptions: any = [ 'Open', 'Closed' ];
   filter = {
-    'type': ''
+    'type': '',
+    'status': ''
   };
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
