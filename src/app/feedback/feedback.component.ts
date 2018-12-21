@@ -32,6 +32,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   typeOptions: any = [ 'Question', 'Bug', 'Suggestion' ];
+  statusOptions: any = [ 'Open', 'Closed' ];
   filter = {
     'type': ''
   };
@@ -70,8 +71,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.user = this.userService.get();
     this.getFeedback();
-    this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter),
-      filterSpecificFields([ 'owner', 'title', 'status' ]) ]);
+    this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
     this.feedback.sortingDataAccessor = sortNumberOrString;
   }
 

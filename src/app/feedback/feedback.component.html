@@ -9,6 +9,12 @@
       <mat-option *ngFor="let option of typeOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select placeholder="Feedback Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+      <mat-option i18n value="All">All</mat-option>
+      <mat-option *ngFor="let option of statusOptions" value={{option}}>{{option}}</mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput i18n-placeholder placeholder="Type text to search..." [(ngModel)]="titleSearch">
