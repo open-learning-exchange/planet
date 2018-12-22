@@ -113,6 +113,8 @@ export class UserService {
   unset(): any {
     this.user = { name: '' };
     this.shelf = {};
+    this.sessionId = '';
+    this.sessionRev = '';
   }
 
   logObj(logoutTime: any = 0) {
