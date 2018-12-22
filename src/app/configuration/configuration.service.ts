@@ -34,7 +34,7 @@ export class ConfigurationService {
         'time': this.couchService.datePlaceholder
       };
       // Send notification to parent
-      return this.couchService.post('notifications', requestNotification, {
+      return this.couchService.updateDocument('notifications', requestNotification, {
         domain: configuration.parentDomain
       });
     });
