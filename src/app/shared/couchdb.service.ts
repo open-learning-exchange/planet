@@ -81,10 +81,16 @@ export class CouchService {
   }
 
   updateDocument(db: string, doc: any, opts?: any) {
-    return this.currentTime().pipe(switchMap((date) => {
-      const docWithDate = this.fillInDateFields(doc, date);
-      return this.post(db, docWithDate, opts);
-    }));
+    let docWithDate: any;
+    return this.currentTime().pipe(
+      switchMap((date) => {
+        docWithDate = this.fillInDateFields(doc, date);
+        return this.post(db, docWithDate, opts);
+      }),
+      map((res: any) => {
+        return ({ ...res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } });
+      })
+    );
   }
 
   localComparison(db: string, parentDocs: any[]) {

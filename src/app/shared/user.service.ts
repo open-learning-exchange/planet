@@ -27,9 +27,7 @@ export class UserService {
       this.shelfChange.next(shelf);
     }
   }
-  sessionStart: any;
-  sessionRev: string;
-  sessionId: string;
+  currentSession: any;
   userProperties: string[] = [];
   credentials: any;
 
@@ -113,21 +111,20 @@ export class UserService {
   unset(): any {
     this.user = { name: '' };
     this.shelf = {};
-    this.sessionId = '';
-    this.sessionRev = '';
+    this.currentSession = undefined;
   }
 
-  logObj(logoutTime: any = 0) {
+  logObj(loginTime, logoutTime: any = 0) {
     return Object.assign({
       user: this.user.name,
       type: 'login',
-      loginTime: this.sessionStart,
-      logoutTime: logoutTime,
+      loginTime,
+      logoutTime,
       createdOn: this.stateService.configuration.code,
       parentCode: this.stateService.configuration.parentCode
-    }, this.sessionRev ? {
-      _rev: this.sessionRev,
-      _id: this.sessionId
+    }, this.currentSession ? {
+      _rev: this.currentSession._rev,
+      _id: this.currentSession._id
     } : {});
   }
 
@@ -137,7 +134,7 @@ export class UserService {
     return Observable.create(observer => {
       const timer = setInterval(() => {
         if (this.user.name) {
-          observer.next(this.logObj());
+          observer.next(this.logObj(this.couchService.datePlaceholder));
           observer.complete();
         }
       }, 500);
@@ -146,33 +143,29 @@ export class UserService {
   }
 
   newSessionLog() {
-    this.sessionStart = this.couchService.datePlaceholder;
     return this.getNewLogObj().pipe(switchMap(logObj => {
-      return this.couchService.updateDocument(this.logsDb, this.logObj());
+      return this.couchService.updateDocument(this.logsDb, logObj);
     }),
     map((res: any) => {
-      this.sessionRev = res.rev;
-      this.sessionId = res.id;
+      this.currentSession = res.doc;
     }));
   }
 
   endSessionLog() {
     let newObs: Observable<any> = of({});
-    if (this.sessionId === undefined) {
+    if (this.currentSession === undefined) {
       newObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
         { 'user': this.get().name },
         [ '_id', '_rev', 'loginTime' ],
         [ { 'loginTime': 'desc' } ]
       )).pipe(map(data => {
-        this.sessionId = data.docs[0]['_id'];
-        this.sessionRev = data.docs[0]['_rev'];
-        this.sessionStart = data.docs[0]['loginTime'];
+        this.currentSession = data.docs[0];
       }));
     }
     return newObs.pipe(switchMap(() => {
-      return this.couchService.updateDocument(this.logsDb, this.logObj(this.couchService.datePlaceholder));
+      return this.couchService.updateDocument(this.logsDb, this.logObj(this.currentSession.loginTime, this.couchService.datePlaceholder));
     }), map((res: any) => {
-      this.sessionRev = res.rev;
+      this.currentSession = res.doc;
       return res;
     }));
   }
