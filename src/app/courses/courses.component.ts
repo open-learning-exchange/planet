@@ -36,6 +36,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
+  stepCount = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -243,7 +244,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedNotEnrolled = selected.reduce((count, id) => {
       return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) === -1 ? 1 : 0) : count;
     }, 0);
-    this.selectedEnrolled = this.selection.selected.length - this.selectedNotEnrolled;
+    this.selectedEnrolled = selected.reduce((count, id) => {
+      return this.hasSteps(id) ? count + (this.userShelf.courseIds.indexOf(id) !== -1 ? 1 : 0) : count;
+    }, 0);
   }
 
   hasSteps(id: string) {
