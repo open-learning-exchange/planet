@@ -37,15 +37,15 @@ export class CustomValidators {
         return null;
       }
       let hasDuplicate = false;
-      if(ac.root.value.choices) {
+      if (ac.root.value.choices) {
         console.log(ac.root.value.choices);
-       var textData = ac.root.value.choices.map(data => data.text);
-       var currentData = ac.parent.get('text').value;
-       console.log(currentData);
-       const matched = textData.filter((data) => data === currentData);
-       console.log(matched);
-       hasDuplicate = matched.length > 0;
-       console.log(textData);
+        const textData = ac.root.value.choices.map(data => data.text);
+        const currentData = ac.parent.get('text').value;
+        console.log(currentData);
+        const matched = textData.filter((data) => data === currentData);
+        console.log(matched);
+        hasDuplicate = matched.length > 0;
+        console.log(textData);
       }
       if (hasDuplicate) {
         return { duplicateAnswer: true };

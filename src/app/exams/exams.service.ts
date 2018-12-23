@@ -29,7 +29,7 @@ export class ExamsService {
 
   newQuestionChoice(newId, intialValue?) {
     return this.setInitalFormValue(new FormGroup({
-      'text': new FormControl('', [CustomValidators.required, CustomValidators.isUniqueAnswer(true)]),
+      'text': new FormControl('', [ CustomValidators.required, CustomValidators.isUniqueAnswer(true) ]),
       'id': new FormControl(newId)
     }), intialValue);
   }
