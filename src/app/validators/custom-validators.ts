@@ -31,6 +31,30 @@ export class CustomValidators {
     };
   }
 
+  static isUniqueAnswer(uniqueRequired: boolean) {
+    return (ac: AbstractControl): ValidationErrors => {
+      if (!ac.parent || !uniqueRequired) {
+        return null;
+      }
+      let hasDuplicate = false;
+      if(ac.root.value.choices) {
+        console.log(ac.root.value.choices);
+       var textData = ac.root.value.choices.map(data => data.text);
+       var currentData = ac.parent.get('text').value;
+       console.log(currentData);
+       const matched = textData.filter((data) => data === currentData);
+       console.log(matched);
+       hasDuplicate = matched.length > 0;
+       console.log(textData);
+      }
+      if (hasDuplicate) {
+        return { duplicateAnswer: true };
+      } else {
+        return null;
+      }
+    };
+  }
+
   static hexValidator(ac: AbstractControl): ValidationErrors {
 
     if (!ac.value) {

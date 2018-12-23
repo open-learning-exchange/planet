@@ -23,6 +23,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidPositive {The number cannot be negative}
       invalidHex {Hex is not valid}
       invalidTime {Time is invalid}
+      duplicateAnswer {Cannot have same answer}
       invalidDateFormat {Date is in incorrect format}
       invalidDate {Date is invalid}
       invalidEndDate {End date cannot be before start date}
