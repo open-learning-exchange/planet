@@ -71,7 +71,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       this.feedback.messages,
       { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder }
     );
-    this.couchService.updateDocument(this.dbName + '/' + this.feedback._id, newFeedback)
+    this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
         return this.getFeedback(res.id);
