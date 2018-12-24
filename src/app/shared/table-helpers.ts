@@ -1,8 +1,16 @@
 import { FormControl } from '../../../node_modules/@angular/forms';
 
+const dropdownString = (fieldValue: any, value: string) => {
+  return fieldValue instanceof Array ? fieldValue.indexOf(value) === -1 : value.toLowerCase() !== fieldValue.toLowerCase();
+};
+
+const dropdownArray = (fieldValue: any, values: string[]) => {
+  return values.findIndex(value => !dropdownString(fieldValue, value)) === -1;
+};
+
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
   // If field is an array field, check if one value matches.  If not check if values match exactly.
-  const noMatch = data[field] instanceof Array ? data[field].indexOf(val) === -1 : val.toLowerCase() !== data[field].toLowerCase();
+  const noMatch = val instanceof Array ? dropdownArray(data[field], val) : dropdownString(data[field], val);
   if (val && noMatch) {
     return false;
   }
