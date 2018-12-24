@@ -10,7 +10,7 @@
 
       <mat-form-field *ngIf="field.type === 'password'" class="full-width">
         <input matInput placeholder="{{field.placeholder}}" type="{{(field.showPassword) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
-        <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(field)">
+        <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(field)" tabindex="-1">
           <mat-icon>{{field.showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
         </button>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
