@@ -16,6 +16,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  notificationStatus: any = [ 'read', 'unread' ];
 
   constructor(
     private couchService: CouchService,
@@ -52,6 +53,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
        this.notifications.data = notification;
        this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
+  }
+
+  onFilterChange(filterValue: string) {
+    filterValue = filterValue === 'All' ? '' : filterValue;
+    this.notifications.filter =  filterValue ? filterValue : ' ';
   }
 
   readNotification(notification) {
