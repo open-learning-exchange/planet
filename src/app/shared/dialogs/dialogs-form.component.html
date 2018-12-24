@@ -4,10 +4,15 @@
     <div *ngFor="let field of fields">
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
-        <input matInput placeholder="{{field.placeholder}}" type="{{(field.togglePassword && field.inputType == 'password') ? 'password' : 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">
-          <button *ngIf="field.inputType" type="button" mat-icon-button matSuffix (click)="field.togglePassword = !field.togglePassword">
-            <mat-icon>{{field.togglePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
+        <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="field.type === 'password'" class="full-width">
+        <input matInput placeholder="{{field.placeholder}}" type="{{(field.showPassword) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(field)">
+          <mat-icon>{{field.showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </button>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 

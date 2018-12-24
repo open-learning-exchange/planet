@@ -34,4 +34,8 @@ export class DialogsFormComponent {
     console.log(fieldName);
   }
 
+  toggleVisibility(field) {
+    field.showPassword = !field.showPassword;
+  }
+
 }
