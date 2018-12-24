@@ -32,7 +32,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
   typeOptions: any = [ 'Question', 'Bug', 'Suggestion' ];
-  statusOptions: any = [ 'Open', 'Closed' ];
+  statusOptions: any = [ { text: 'Open', value: [ 'Open', 'Reopened' ] }, { text: 'Closed', value: 'Closed' } ];
   filter = {
     'type': '',
     'status': ''
