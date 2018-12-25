@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -16,6 +17,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  notificationStatus = [ 'All', 'Read', 'Unread' ];
+  filter = { 'status': '' };
 
   constructor(
     private couchService: CouchService,
@@ -27,6 +30,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.notifications.filterPredicate = filterDropdowns(this.filter);
     this.getNotifications();
   }
 
@@ -52,6 +56,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
        this.notifications.data = notification;
        this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
+  }
+
+  onFilterChange(filterValue: string) {
+    this.filter['status'] = filterValue === 'all' ? '' : filterValue;
+    this.notifications.filter = ' ';
   }
 
   readNotification(notification) {
