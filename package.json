@@ -1,6 +1,6 @@
 {
   "name": "ang-bell-app",
-  "version": "0.6.15",
+  "version": "0.6.16",
   "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
