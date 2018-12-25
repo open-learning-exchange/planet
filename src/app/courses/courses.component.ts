@@ -245,9 +245,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     selected.map(id => {
       if (this.hasSteps(id)) {
         if (this.userShelf.courseIds.indexOf(id) === -1) {
-          this.selectedEnrolled++;
-        } else {
           this.selectedNotEnrolled++;
+        } else {
+          this.selectedEnrolled++;
         }
       }
     });
