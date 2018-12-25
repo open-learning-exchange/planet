@@ -36,7 +36,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
-  stepCount = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
