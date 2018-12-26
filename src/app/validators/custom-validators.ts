@@ -31,24 +31,13 @@ export class CustomValidators {
     };
   }
 
-  static isUniqueAnswer(uniqueRequired: boolean) {
+  static isUniqueAnswer() {
     return (ac: AbstractControl): ValidationErrors => {
-      if (!ac.parent || !uniqueRequired) {
+      if (!ac.parent || !ac.root.value.choices) {
         return null;
       }
-      let hasDuplicate = false;
-      if (ac.root.value.choices) {
-        console.log(ac.root.value.choices);
-        const textData = ac.root.value.choices.map(data => data.text);
-        const currentData = ac.parent.get('text').value;
-        console.log(currentData);
-        const matched = textData.filter((data) => data === currentData);
-        console.log(matched);
-        hasDuplicate = matched.length > 0;
-        console.log(textData);
-      }
-      if (hasDuplicate) {
-        return { duplicateAnswer: true };
+      if (ac.value === undefined || !ac.value || ac.root.value.choices.find(choice => choice.text === ac.value)) {
+        return { isDuplicateAnswer: true };
       } else {
         return null;
       }
