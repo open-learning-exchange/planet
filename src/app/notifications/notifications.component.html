@@ -14,8 +14,7 @@
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
           <p [ngClass]="{'primary-text-color':element.status==='unread'}">
             <a [routerLink]="element.link ? [ element.link, element.linkParams || {} ] : '/notifications'">
-              <p>{{element.message}}</p>
-              <p class="small">{{element.time | date: 'MMM d, yyyy'}}</p>
+              {{element.message}}<span class="mat-caption margin-lr-8">{{element.time | date: 'mediumDate'}}</span>
             </a>
           </p>
         </mat-cell>
