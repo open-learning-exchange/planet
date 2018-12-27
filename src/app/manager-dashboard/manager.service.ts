@@ -13,8 +13,7 @@ import { findDocuments } from '../shared/mangoQueries';
 const passwordFormFields = [
   {
     'label': 'Password',
-    'type': 'textbox',
-    'inputType': 'password',
+    'type': 'password',
     'name': 'password',
     'placeholder': 'Password',
     'required': true

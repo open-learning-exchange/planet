@@ -14,24 +14,21 @@ import { StateService } from '../state.service';
 const changePasswordFields = [
   {
     'label': 'Old Password',
-    'type': 'textbox',
-    'inputType': 'password',
+    'type': 'password',
     'name': 'oldPassword',
     'placeholder': 'Old Password',
     'required': true
   },
   {
     'label': 'Password',
-    'type': 'textbox',
-    'inputType': 'password',
+    'type': 'password',
     'name': 'password',
     'placeholder': 'Password',
     'required': true
   },
   {
     'label': 'Confirm Password',
-    'type': 'textbox',
-    'inputType': 'password',
+    'type': 'password',
     'name': 'confirmPassword',
     'placeholder': 'Confirm Password',
     'required': true

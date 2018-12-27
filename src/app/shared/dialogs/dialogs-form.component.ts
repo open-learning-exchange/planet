@@ -10,6 +10,7 @@ export class DialogsFormComponent {
   public title: string;
   public fields: any;
   public modalForm: any;
+  passwordVisibility = new Map();
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -32,6 +33,11 @@ export class DialogsFormComponent {
 
   onRatingChange(fieldName: string) {
     console.log(fieldName);
+  }
+
+  togglePasswordVisibility(fieldName) {
+    const visibility = this.passwordVisibility.get(fieldName) || false;
+    this.passwordVisibility.set(fieldName, !visibility);
   }
 
 }

@@ -8,6 +8,15 @@
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
+      <!-- password field -->
+      <mat-form-field *ngIf="field.type === 'password'" class="full-width">
+        <input matInput placeholder="{{field.placeholder}}" type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <button type="button" mat-icon-button matSuffix (click)="togglePasswordVisibility(field.name)" tabindex="-1">
+          <mat-icon>{{passwordVisibility.get(field.name) ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </button>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
       <!-- selectbox -->
       <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
         <mat-select placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
