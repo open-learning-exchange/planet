@@ -59,8 +59,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   onFilterChange(filterValue: string) {
-    this.filter['status'] = filterValue === 'all' ? '' : filterValue;
-    this.notifications.filter = ' ';
+    this.filter['status'] = filterValue;
+    this.notifications.filter = filterValue === 'all' ? '' : ' ';
   }
 
   readNotification(notification) {
