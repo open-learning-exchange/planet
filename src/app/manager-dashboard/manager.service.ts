@@ -14,7 +14,6 @@ const passwordFormFields = [
   {
     'label': 'Password',
     'type': 'password',
-    'showPassword': false,
     'name': 'password',
     'placeholder': 'Password',
     'required': true

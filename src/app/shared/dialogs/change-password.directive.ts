@@ -17,7 +17,6 @@ const changePasswordFields = [
     'type': 'password',
     'name': 'oldPassword',
     'placeholder': 'Old Password',
-    'showPassword': false,
     'required': true
   },
   {
@@ -25,7 +24,6 @@ const changePasswordFields = [
     'type': 'password',
     'name': 'password',
     'placeholder': 'Password',
-    'showPassword': false,
     'required': true
   },
   {
@@ -33,7 +31,6 @@ const changePasswordFields = [
     'type': 'password',
     'name': 'confirmPassword',
     'placeholder': 'Confirm Password',
-    'showPassword': false,
     'required': true
   }
 ];
