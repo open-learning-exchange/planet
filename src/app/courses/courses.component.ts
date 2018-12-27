@@ -217,8 +217,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   enrollLeaveToggle(courseIds, type) {
     this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
-      this.selectedNotEnrolled = type === 'add' ? 0 : this.selection.selected.length;
-      this.selectedEnrolled = this.selection.selected.length - this.selectedNotEnrolled;
+      this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
 
@@ -240,17 +239,17 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectNotEnrolled(selected: any) {
-    this.selectedEnrolled = 0;
-    this.selectedNotEnrolled = 0;
-    selected.map(id => {
-      if (this.hasSteps(id)) {
-        if (this.userShelf.courseIds.indexOf(id) === -1) {
-          this.selectedEnrolled++;
-        } else {
-          this.selectedNotEnrolled++;
-        }
-      }
-    });
+    const { enrolledCount, notEnrolledCount } = selected.reduce((counts: any, id) => {
+      const hasSteps = this.hasSteps(id) ? 1 : 0,
+        enrolled = this.userShelf.courseIds.indexOf(id) > -1 ? 1 : 0;
+      return ({
+        ...counts,
+        enrolledCount: counts.enrolledCount + (hasSteps * enrolled),
+        notEnrolledCount: counts.notEnrolledCount + (hasSteps * Math.abs(enrolled - 1))
+      });
+    }, { enrolledCount: 0, notEnrolledCount: 0 });
+    this.selectedEnrolled = enrolledCount;
+    this.selectedNotEnrolled = notEnrolledCount;
   }
 
   hasSteps(id: string) {
