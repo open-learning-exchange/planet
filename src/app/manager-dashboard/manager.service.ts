@@ -86,7 +86,7 @@ export class ManagerService {
       this.activityService.getRatingInfo(configuration.code)
     ]).pipe(map(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
       return ({
-        resourceVisits: resourceVisits.byResource.length ? resourceVisits.byResource[0].count : 0,
+        resourceVisits: resourceVisits.byResource.reduce((total, visit) => total + visit.count, 0),
         ratings: ratings.reduce((total, rating) => total + rating.count, 0),
         ...this.activityService.mostRecentAdminActivities(configuration, loginActivities.byUser, adminActivities)
       });
