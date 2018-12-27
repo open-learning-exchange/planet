@@ -254,11 +254,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   roleSubmit(userIds: any[], roles: string[]) {
     const users: any = this.idsToUsers(userIds);
     forkJoin(users.reduce((observers, user) => {
-      // Do not add role if it already exists on user and also not allow an admin to be given another role
+      // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
-        // Make copy of user so UI doesn't change until DB change succeeds (manually deep copy roles array)
-        const newRoles = [ ...user.roles, ...roles ].reduce(dedupeShelfReduce, []);
-        const tempUser = { ...user, roles: newRoles };
+        // Make copy of user so UI doesn't change until DB change succeeds
+        const tempUser = { ...user, roles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
@@ -268,7 +267,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       users.map((user) => {
         if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = [ ...user.roles, ...roles ].reduce(dedupeShelfReduce, []);
+          user.roles = roles;
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
         }
