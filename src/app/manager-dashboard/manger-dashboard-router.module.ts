@@ -11,7 +11,8 @@ import { ReportsPendingComponent } from './reports/reports-pending.component';
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
   { path: 'sync', component: ManagerSyncComponent },
-  { path: 'fetch', component: ManagerFetchComponent },
+  { path: 'fetch', component: ManagerFetchComponent, data: { child: false } },
+  { path: 'fetch/child', component: ManagerFetchComponent, data: { child: true } },
   { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule', data: { parent: true } },
   { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule', data: { parent: true } },
   { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },

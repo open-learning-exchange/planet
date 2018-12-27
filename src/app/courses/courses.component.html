@@ -38,11 +38,10 @@
         <span *ngIf="selectedEnrolled > 0"> ({{selectedEnrolled}})</span>
       </button>
       <ng-container *ngIf="user.isUserAdmin">
-        <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
-        <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
+        <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="uploadCourse()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
           <span i18n>Send Courses</span>
-          <span *ngIf="selectedLocal > 0"> ({{selectedLocal}})</span>
+          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>

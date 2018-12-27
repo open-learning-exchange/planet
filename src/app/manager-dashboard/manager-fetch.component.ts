@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
@@ -24,13 +24,15 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   planetConfiguration = this.stateService.configuration;
-  displayedColumns = [ 'select', 'item' ];
+  child = this.route.snapshot.data.child;
+  displayedColumns = this.child ? [ 'select', 'item' ] : [ 'select', 'item' ];
   pushedItems = new MatTableDataSource();
   emptyData = false;
 
   constructor(
     private couchService: CouchService,
     private router: Router,
+    private route: ActivatedRoute,
     private stateService: StateService,
     private managerService: ManagerService,
     private syncService: SyncService,
@@ -38,7 +40,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.managerService.getPushedList().subscribe((pushedList: any) => {
+    this.managerService.getPushedList(this.child).subscribe((pushedList: any) => {
       this.pushedItems.data = pushedList.docs;
       this.emptyData = !this.pushedItems.data.length;
     });

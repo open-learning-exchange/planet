@@ -22,6 +22,7 @@
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
     <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
+    <a routerLink="fetch/child" mat-raised-button *ngIf="hasSentItem" i18n>Child Items</a>
   </div>
   <div *ngIf="pendingPushCount > 0">
     <p>

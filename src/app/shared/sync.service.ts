@@ -19,7 +19,13 @@ export class SyncService {
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
-    const resourcesToSend = items.map(item => ({ db, sendTo: planetCode, item }));
+    const resourcesToSend = items.map(item => ({
+      db,
+      sendTo: planetCode,
+      sendFrom: this.stateService.configuration.code,
+      item,
+      'time': this.couchService.datePlaceholder
+    }));
     return this.couchService.post('send_items/_bulk_docs', { 'docs': resourcesToSend });
   }
 
@@ -58,7 +64,7 @@ export class SyncService {
   }
 
   private itemSelector(items) {
-    return { '$or': items.map((res) => ({ _id: res._id, _rev: res._rev })) };
+    return { '$or': items.map((res) => ({ _id: res._id || res.id, _rev: res._rev || res.rev })) };
   }
 
   private dbObj(dbName, credentials, parent: boolean) {
