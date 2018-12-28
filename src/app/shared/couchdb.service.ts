@@ -105,15 +105,15 @@ export class CouchService {
     }));
   }
 
-  findAll(db: string, query: any, opts?: any) {
+  findAll(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
     return this.findAllRequest(db, query, opts).pipe(flatMap(({ docs }) => docs), toArray());
   }
 
-  findAllStream(db: string, query: any, opts?: any) {
+  findAllStream(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
     return this.findAllRequest(db, query, opts).pipe(map(({ docs }) => docs));
   }
 
-  private findAllRequest(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
+  private findAllRequest(db: string, query: any, opts: any) {
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
       return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
     }), takeWhile((res) => {
