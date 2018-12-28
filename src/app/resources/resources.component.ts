@@ -98,6 +98,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((resources) => {
       this.resources.data = resources;
       this.emptyData = !this.resources.data.length;
+      this.resources.paginator = this.paginator;
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = composeFilterFunctions(
