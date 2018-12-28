@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject, forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, flatMap, toArray, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -42,11 +42,11 @@ export class StateService {
     this.state[planetField] = this.state[planetField] || {};
     this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
     const currentData = this.state[planetField][db].docs;
-    const getCurrentData = currentData.length === 0 ?
-      this.getAll(db, opts) : of(currentData);
-    return forkJoin([ getCurrentData, this.getChanges(db, opts, planetField) ]).pipe(
-      map(([ data, changes ]) => {
-        const newData = this.couchService.combineChanges(data, changes);
+    const getData = currentData.length === 0 ?
+      this.getAll(db, opts) : this.getChanges(db, opts, planetField);
+    return getData.pipe(
+      map((changes) => {
+        const newData = this.combineChanges(this.state[planetField][db].docs, changes);
         this.state[planetField][db].docs = newData;
         this.stateUpdated.next({ newData, db, planetField });
         this.inProgress[planetField].set(db, false);
@@ -67,7 +67,7 @@ export class StateService {
   }
 
   getAll(db: string, opts: any) {
-    return this.couchService.findAll(db, findDocuments({
+    return this.couchService.findAllStream(db, findDocuments({
       '_id': { '$gt': null }
     }, [], [], 1000), opts);
   }
@@ -83,6 +83,20 @@ export class StateService {
 
   couchStateListener(db: string) {
     return this.stateUpdated.pipe(map((stateObj: { newData, db, planetField }) => db === stateObj.db ? stateObj : undefined));
+  }
+
+  combineChanges(docs: any[], changesDocs: any[]) {
+    return docs.reduce((newDocs: any[], doc: any) => {
+      const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
+      if (changesDoc && changesDoc._deleted === true) {
+        return newDocs;
+      }
+      newDocs.push(changesDoc !== undefined ? changesDoc : doc);
+      return newDocs;
+    }, []).concat(
+      changesDocs.filter((cDoc: any) =>
+        cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
+    );
   }
 
 }
