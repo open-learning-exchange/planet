@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
             this.router.navigate([ '/login/configuration' ]);
             return of([]);
           }
-          return this.couchService.allDocs('configurations');
+          return this.couchService.findAll('configurations');
         }),
         switchMap(data => {
           if (!data[0] || data[0].planetType === 'center') {

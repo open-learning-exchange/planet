@@ -34,7 +34,7 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   getReplicators() {
-    this.couchService.allDocs('_replicator').subscribe(data => {
+    this.couchService.findAll('_replicator').subscribe(data => {
       this.replicators = data;
     });
   }
