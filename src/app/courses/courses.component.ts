@@ -98,7 +98,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         default:
           return sortNumberOrString(item, property);
       }
-    };    this.coursesService.coursesUpdated$.pipe(
+    };
+    this.coursesService.coursesUpdated$.pipe(
       takeUntil(this.onDestroy$),
       map((courses: any) => {
         // Sort in descending createdDate order, so the new courses can be shown on the top
