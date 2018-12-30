@@ -91,14 +91,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
-    this.courses.sortingDataAccessor = (item: any, property: string) => {
-      switch (property) {
-        case 'rating':
-          return item.rating.rateSum / item.rating.totalRating || 0;
-        default:
-          return sortNumberOrString(item, property);
-      }
-    };
+    this.courses.sortingDataAccessor = (item: any, property: string) => this.sortData(item, property);
     this.coursesService.coursesUpdated$.pipe(
       takeUntil(this.onDestroy$),
       map((courses: any) => {
@@ -115,6 +108,15 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
+  }
+
+  sortData(item, property) {
+    switch (property) {
+      case 'rating':
+        return item.rating.rateSum / item.rating.totalRating || 0;
+      default:
+        return sortNumberOrString(item, property);
+    }
   }
 
   ngOnDestroy() {
