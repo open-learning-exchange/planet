@@ -6,14 +6,14 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3"><h3>{{team?.name}}</h3></span>
     <span class="toolbar-fill"></span>
-    <button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+    <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
       Add Members
     </button>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
-      <button *ngSwitchCase="'member'" mat-button class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
+      <button mat-raised-button color="accent" *ngSwitchCase="'member'" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
         Leave
       </button>
-      <button *ngSwitchCase="'unrelated'" mat-button class="margin-lr-3" (click)="requestToJoin()">
+      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="requestToJoin()">
         <ng-container i18n>Request to Join</ng-container>
       </button>
       <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
