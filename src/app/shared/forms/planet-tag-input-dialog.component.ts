@@ -6,6 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { UserService } from '../user.service';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
@@ -26,6 +27,7 @@ export class PlanetTagInputDialogComponent {
   }
   addTagForm: FormGroup;
   newTagId: string;
+  isUserAdmin = false;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -34,7 +36,8 @@ export class PlanetTagInputDialogComponent {
     private fb: FormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private userService: UserService
   ) {
     this.dataInit();
     this.selectMany = this.mode === 'add' || this.data.initSelectMany;
@@ -45,6 +48,7 @@ export class PlanetTagInputDialogComponent {
       name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
     });
+    this.isUserAdmin = this.userService.get().isUserAdmin;
   }
 
   dataInit() {
@@ -114,7 +118,6 @@ export class PlanetTagInputDialogComponent {
       this.planetMessageService.showMessage('Label updated');
       this.data.initTags();
     });
-
   }
 
   tagForm(tag: any = {}) {
