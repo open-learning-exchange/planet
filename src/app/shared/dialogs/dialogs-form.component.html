@@ -10,7 +10,7 @@
 
       <!-- selectbox -->
       <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
-        <mat-select placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <mat-select placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
           <mat-option *ngFor="let option of field.options" [value]="option.value">{{option.name}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
