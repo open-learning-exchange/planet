@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable, of } from 'rxjs';
+import { Observable, of, empty } from 'rxjs';
 import { catchError, map, expand, takeWhile, toArray, flatMap, switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
@@ -115,9 +115,7 @@ export class CouchService {
 
   private findAllRequest(db: string, query: any, opts: any) {
     return this.post(db + '/_find', query, opts).pipe(expand((res) => {
-      return this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts);
-    }), takeWhile((res) => {
-      return res.docs.length > 0;
+      return res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty();
     }));
   }
 
