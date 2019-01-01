@@ -70,8 +70,7 @@ export class ReportsService {
   }
 
   getLoginActivities(planetCode?: string, tillDate?: number) {
-    const timeFilter = tillDate ? { 'selector': { 'loginTime': { '$gt': tillDate } } } : {};
-    return this.couchService.findAll('login_activities', { ...this.selector(planetCode), ...timeFilter })
+    return this.couchService.findAll('login_activities', { ...this.selector(planetCode), ...this.timeFilter('loginTime', tillDate) })
     .pipe(map((loginActivities: any) => {
       return ({
         byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
@@ -82,8 +81,7 @@ export class ReportsService {
   }
 
   getRatingInfo(planetCode?: string, tillDate?: number) {
-    const timeFilter = tillDate ? { 'selector': { 'loginTime': { '$gt': tillDate } } } : {};
-    return this.couchService.findAll('ratings', { ...this.selector(planetCode), ...timeFilter })
+    return this.couchService.findAll('ratings', { ...this.selector(planetCode), ...this.timeFilter('loginTime', tillDate) })
     .pipe(map((ratings: any) => {
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .filter(rating => rating.title !== '' && rating.title !== undefined)
@@ -93,8 +91,7 @@ export class ReportsService {
   }
 
   getResourceVisits(planetCode?: string, tillDate?: number) {
-    const timeFilter = tillDate ? { 'selector': { 'time': { '$gt': tillDate } } } : {};
-    return this.couchService.findAll('resource_activities', { ...this.selector(planetCode), ...timeFilter })
+    return this.couchService.findAll('resource_activities', { ...this.selector(planetCode), ...this.timeFilter('time', tillDate) })
     .pipe(map((resourceActivites) => {
       return ({
         byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
@@ -115,8 +112,7 @@ export class ReportsService {
   }
 
   getAdminActivities(planetCode?: string, tillDate?: number) {
-    const timeFilter = tillDate ? { 'selector': { 'time': { '$gt': tillDate } } } : {};
-    return this.couchService.findAll('admin_activities', { ...this.selector(planetCode), ...timeFilter })
+    return this.couchService.findAll('admin_activities', { ...this.selector(planetCode), ...this.timeFilter('time', tillDate) })
     .pipe(map(adminActivities => {
       return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
     }));
@@ -141,6 +137,10 @@ export class ReportsService {
         gender: user.gender
       });
     });
+  }
+
+  timeFilter(field, time) {
+    return time !== undefined ? { 'selector': { [field]: { '$gt': time } } } : {};
   }
 
 }
