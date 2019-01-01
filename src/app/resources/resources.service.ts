@@ -61,7 +61,7 @@ export class ResourcesService {
   setResources(resources, ratings, planetField) {
     this.setTags(resources, this.tags[planetField], planetField);
     this.resources[planetField] = this.ratingService.createItemList(this.resources[planetField], ratings);
-    this.resourcesUpdated.next(this.resources);
+    this.updateResources(this.resources);
   }
 
   setTags(resources, tags, planetField) {
@@ -69,7 +69,13 @@ export class ResourcesService {
       ...resource,
       tagNames: resource.tags.map(tag => this.tagsService.findTag(tag, tags).name)
     }));
-    this.resourcesUpdated.next(this.resources);
+    this.updateResources(this.resources);
+  }
+
+  updateResources(resources) {
+    if (!this.isActiveResourceFetch) {
+      this.resourcesUpdated.next(resources);
+    }
   }
 
   getRatings(resourceIds: string[], opts: any) {
