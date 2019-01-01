@@ -135,7 +135,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           this.couchService.delete('_node/nonode@nohost/_config/satellite/pin')
         ])
       ),
-      switchMap(() => this.couchService.allDocs('_replicator')),
+      switchMap(() => this.couchService.findAll('_replicator')),
       switchMap((docs: any) => {
         const replicators = docs.map(doc => {
           return { _id: doc._id, _rev: doc._rev, _deleted: true };

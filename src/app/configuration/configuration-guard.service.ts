@@ -13,7 +13,7 @@ export class ConfigurationGuard {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.couchService.allDocs('configurations').pipe(map((data: any[]) => {
+    return this.couchService.findAll('configurations').pipe(map((data: any[]) => {
       if (data.length > 0) {
         this.router.navigate([ '/login' ]);
       }
