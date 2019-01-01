@@ -67,19 +67,6 @@ export class CouchService {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
   }
 
-  allDocs(db: string, opts?: any) {
-    return this.couchDBReq('get', db + '/_all_docs?include_docs=true', this.setOpts(opts)).pipe(map((data: any) => {
-      // _all_docs returns object with rows array of objects with 'doc' property that has an object with the data.
-      return data.rows.map((res: any) => {
-          // Map over data.rows to remove the 'doc' property layer
-          return res.doc;
-        }).filter((doc: any) => {
-          // Filter out any design documents
-          return doc._id.indexOf('_design') === -1;
-        });
-    }));
-  }
-
   updateDocument(db: string, doc: any, opts?: any) {
     let docWithDate: any;
     return this.currentTime().pipe(
