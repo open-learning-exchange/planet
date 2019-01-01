@@ -15,7 +15,7 @@
           <p [ngClass]="{'primary-text-color':element.status==='unread'}">
             <a [routerLink]="element.link ? [ element.link, element.linkParams || {} ] : '/notifications'">
               {{element.message}}
-              <span *ngIf="element.time" class="mat-caption margin-lr-8">{{element.time | date: 'mediumDate'}}</span>
+              <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'mediumDate'}}</span>
             </a>
           </p>
         </mat-cell>
