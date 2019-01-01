@@ -36,7 +36,7 @@ export class MeetupService {
   }
 
   getAllMeetups(opts: any) {
-    return this.couchService.findAll('meetups', findDocuments({ '_id': { '$gt': null } }, 0 ),opts);
+    return this.couchService.findAll('meetups', findDocuments({ '_id': { '$gt': null } }, 0 ), opts);
   }
 
   getMeetups(meetupIds: string[], opts: any) {
