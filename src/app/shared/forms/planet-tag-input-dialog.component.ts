@@ -43,7 +43,7 @@ export class PlanetTagInputDialogComponent {
     this.selectMany = this.mode === 'add' || this.data.initSelectMany;
     this.data.startingTags
       .filter((tag: string) => tag)
-      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }, !this.data.initSelectMany));
+      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }, !this.selectMany));
     this.addTagForm = this.fb.group({
       name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
