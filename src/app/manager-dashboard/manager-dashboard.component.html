@@ -68,7 +68,7 @@
   </div>
   <mat-grid-list cols="5" rowHeight="2rem">
     <mat-grid-tile>Last Login</mat-grid-tile><mat-grid-tile>Last Upgrade</mat-grid-tile><mat-grid-tile>Last Sync</mat-grid-tile>
-    <mat-grid-tile>Total Resource Views</mat-grid-tile><mat-grid-tile>Total Ratings</mat-grid-tile>
+    <mat-grid-tile>Resource Views Last 30 Days</mat-grid-tile><mat-grid-tile>Total Ratings Last 30 Days</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastAdminLogin?.max.loginTime | date: 'medium'}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastSync?.max.time | date: 'medium'}}</mat-grid-tile>
