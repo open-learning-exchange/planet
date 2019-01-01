@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
@@ -91,7 +91,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
-    this.courses.sortingDataAccessor = (item, property) => item[property].toLowerCase();
+    this.courses.sortingDataAccessor = (item: any, property: string) => this.sortData(item, property);
     this.coursesService.coursesUpdated$.pipe(
       takeUntil(this.onDestroy$),
       map((courses: any) => {
@@ -108,6 +108,15 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
+  }
+
+  sortData(item, property) {
+    switch (property) {
+      case 'rating':
+        return item.rating.rateSum / item.rating.totalRating || 0;
+      default:
+        return sortNumberOrString(item, property);
+    }
   }
 
   ngOnDestroy() {
