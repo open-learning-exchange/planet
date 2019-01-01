@@ -71,10 +71,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         .subscribe((version: string) => this.versionParent = version);
     }
     this.getSatellitePin();
-    const tillDate = new Date();
-    tillDate.setDate(tillDate.getDate() - 30);
-    tillDate.setHours(0, 0, 0, 0);
-    this.managerService.getLogs(tillDate.getTime()).subscribe(logs => this.activityLogs = logs);
+    this.couchService.currentTime().pipe(switchMap((time: number) => {
+      const tillDate = new Date(time);
+      return this.managerService.getLogs(new Date(tillDate.getFullYear(), tillDate.getMonth(), tillDate.getDate() - 30).getTime());
+    })).subscribe(logs => this.activityLogs = logs);
     this.countFetchItemAvailable();
     this.couchService.findAll('send_items').subscribe((items: any) => {
       this.pendingPushCount = items.reduce(
