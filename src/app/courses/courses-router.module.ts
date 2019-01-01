@@ -9,6 +9,7 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
+import { CoursesCompareComponent } from './courses-compare.component';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
@@ -20,7 +21,8 @@ const routes: Routes = [
   { path: 'view/:id/step/:stepNum/exam', component: ExamsViewComponent },
   { path: 'update/exam/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
-  { path: 'myProgress', component: CoursesProgressLearnerComponent }
+  { path: 'myProgress', component: CoursesProgressLearnerComponent },
+  { path: 'compare/:id', component: CoursesCompareComponent }
 ];
 
 @NgModule({

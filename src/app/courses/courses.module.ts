@@ -17,6 +17,7 @@ import { CoursesProgressLeaderComponent } from './progress-courses/courses-progr
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
 import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
 import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
+import { CoursesCompareComponent } from './courses-compare.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
@@ -41,7 +42,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     CoursesProgressLeaderComponent,
     CoursesProgressLearnerComponent,
     CoursesProgressBarComponent,
-    CoursesProgressChartComponent
+    CoursesProgressChartComponent,
+    CoursesCompareComponent
   ]
 })
 export class CoursesModule {}
