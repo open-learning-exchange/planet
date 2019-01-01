@@ -9,7 +9,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, takeUntil, debounceTime } from 'rxjs/operators';
-import { filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString } from '../shared/table-helpers';
+import {
+  filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
+} from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
 import { dedupeShelfReduce } from '../shared/utils';
@@ -36,7 +38,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   message = '';
   searchValue = '';
   selectedChild: any;
-  filterAssociated = false;
+  filterType = 'local';
   filter: any;
   planetType = '';
   displayTable = true;
@@ -87,31 +89,19 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onDestroy$.complete();
   }
 
-  onChildChange(value: any) {
-    this.selectedChild = value;
-    this.changeFilter('child');
-  }
-
-  changeFilter(type) {
-    switch (type) {
-      case 'child':
-      case 'associated':
-        this.displayedColumns = [ 'profile', 'name', 'action' ];
-        this.filterAssociated = true;
-        break;
-      default:
-        this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
-        this.filterAssociated = false;
-        break;
-    }
-    if (type === 'child') {
-      this.filter['planetCode'] = this.selectedChild.planetCode;
-      this.filter['requestId'] = { '$exists': false };
+  changeFilter(type, child: any = {}) {
+    if (type === 'local') {
+      this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
     } else {
-      this.selectedChild = null;
-      this.filter = filterFieldExists([ 'doc.requestId' ], this.filterAssociated);
+      this.displayedColumns = [ 'profile', 'name', 'joinDate', 'action' ];
     }
-    this.allUsers.filterPredicate = composeFilterFunctions([ this.filter, filterSpecificFields([ 'doc.name' ]) ]);
+    this.filterType = type;
+    this.selectedChild = child;
+    this.allUsers.filterPredicate = composeFilterFunctions([
+      filterDropdowns({ 'doc.planetCode': this.filterType === 'associated' ? '' : child.code || this.stateService.configuration.code }),
+      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
+      filterSpecificFields([ 'doc.name' ])
+    ]);
     this.allUsers.filter = this.allUsers.filter || ' ';
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
       this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
@@ -121,7 +111,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
     this.allUsers.filter = filterValue;
-    this.changeFilter(this.filterAssociated ? 'associated' : 'local');
+    this.changeFilter(this.filterType);
   }
 
   searchChanged(searchText: string) {

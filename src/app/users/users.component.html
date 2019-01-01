@@ -7,17 +7,17 @@
       class="margin-lr-5 font-size-1"
       (change)="changeFilter(filterGroup.value)"
       #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="local" [checked]="!filterAssociated">
+      <mat-button-toggle value="local" [checked]="filterType==='local'">
         Local
       </mat-button-toggle>
-      <mat-button-toggle value="associated" [checked]="filterAssociated && !selectedChild">
+      <mat-button-toggle value="associated" [checked]="filterType==='associated'">
         Associated
       </mat-button-toggle>
     </mat-button-toggle-group>
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Children" [value]="selectedChild" (selectionChange)="onChildChange($event.value)">
-        <mat-option *ngFor="let com of children" [value]="com">
-          {{ com.name }}
+      <mat-select i18n-placeholder placeholder="Children" [value]="selectedChild" (selectionChange)="changeFilter('child', $event.value)">
+        <mat-option *ngFor="let child of children" [value]="child">
+          {{ child.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -31,7 +31,7 @@
 <div class="space-container" *ngIf="displayTable">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <div class="margin-lr-3" *ngIf="!filterAssociated">
+    <div class="margin-lr-3" *ngIf="filterType==='local'">
       <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Set roles of selected">
@@ -100,7 +100,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span *ngIf="isUserAdmin && !selectedChild">
+          <span *ngIf="isUserAdmin && filterType === 'local'">
             <span *ngIf="!element.doc.isUserAdmin">
               <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
                 <mat-icon>lock</mat-icon>
@@ -113,7 +113,7 @@
               <mat-icon>delete</mat-icon>Delete
             </button>
             <a
-              *ngIf="element.doc.roles.length > 0 && !filterAssociated"
+              *ngIf="element.doc.roles.length > 0 && filterType === 'local'"
               (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
               mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
