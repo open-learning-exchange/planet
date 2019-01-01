@@ -69,8 +69,9 @@ export class ReportsService {
     }));
   }
 
-  getLoginActivities(planetCode?: string) {
-    return this.couchService.findAll('login_activities', this.selector(planetCode)).pipe(map((loginActivities: any) => {
+  getLoginActivities(planetCode?: string, tillDate?: number) {
+    return this.couchService.findAll('login_activities', { ...this.selector(planetCode), ...this.timeFilter('loginTime', tillDate) })
+    .pipe(map((loginActivities: any) => {
       return ({
         byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
           .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
@@ -79,8 +80,9 @@ export class ReportsService {
     }));
   }
 
-  getRatingInfo(planetCode?: string) {
-    return this.couchService.findAll('ratings', this.selector(planetCode)).pipe(map((ratings: any) => {
+  getRatingInfo(planetCode?: string, tillDate?: number) {
+    return this.couchService.findAll('ratings', { ...this.selector(planetCode), ...this.timeFilter('loginTime', tillDate) })
+    .pipe(map((ratings: any) => {
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .filter(rating => rating.title !== '' && rating.title !== undefined)
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
@@ -88,8 +90,9 @@ export class ReportsService {
     }));
   }
 
-  getResourceVisits(planetCode?: string) {
-    return this.couchService.findAll('resource_activities', this.selector(planetCode)).pipe(map((resourceActivites) => {
+  getResourceVisits(planetCode?: string, tillDate?: number) {
+    return this.couchService.findAll('resource_activities', { ...this.selector(planetCode), ...this.timeFilter('time', tillDate) })
+    .pipe(map((resourceActivites) => {
       return ({
         byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
           .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
@@ -108,8 +111,9 @@ export class ReportsService {
     return this.couchService.get('child_statistics/' + code);
   }
 
-  getAdminActivities(planetCode?: string) {
-    return this.couchService.findAll('admin_activities', this.selector(planetCode)).pipe(map(adminActivities => {
+  getAdminActivities(planetCode?: string, tillDate?: number) {
+    return this.couchService.findAll('admin_activities', { ...this.selector(planetCode), ...this.timeFilter('time', tillDate) })
+    .pipe(map(adminActivities => {
       return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
     }));
   }
@@ -133,6 +137,10 @@ export class ReportsService {
         gender: user.gender
       });
     });
+  }
+
+  timeFilter(field, time) {
+    return time !== undefined ? { 'selector': { [field]: { '$gt': time } } } : {};
   }
 
 }
