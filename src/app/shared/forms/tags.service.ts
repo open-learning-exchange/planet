@@ -41,8 +41,8 @@ export class TagsService {
     return (tag: any) => (checkSubTags && tag.subTags.length > 0) || tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1;
   }
 
-  newTag({ name, attachedTo }) {
-    return this.couchService.post('tags', { name, attachedTo });
+  updateTag(tag) {
+    return this.couchService.post('tags', tag);
   }
 
   findTag(tagKey: any, fullTags: any[]) {

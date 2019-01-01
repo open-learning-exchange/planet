@@ -2,8 +2,11 @@ import { Component, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TagsService } from './tags.service';
+import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
+import { DialogsFormService } from '../dialogs/dialogs-form.service';
+import { UserService } from '../user.service';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
@@ -24,6 +27,7 @@ export class PlanetTagInputDialogComponent {
   }
   addTagForm: FormGroup;
   newTagId: string;
+  isUserAdmin = false;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -31,7 +35,9 @@ export class PlanetTagInputDialogComponent {
     private tagsService: TagsService,
     private fb: FormBuilder,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private dialogsFormService: DialogsFormService,
+    private userService: UserService
   ) {
     this.dataInit();
     this.selectMany = this.mode === 'add' || this.data.initSelectMany;
@@ -42,6 +48,7 @@ export class PlanetTagInputDialogComponent {
       name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
     });
+    this.isUserAdmin = this.userService.get().isUserAdmin;
   }
 
   dataInit() {
@@ -87,7 +94,7 @@ export class PlanetTagInputDialogComponent {
   addLabel() {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
-      this.tagsService.newTag(this.addTagForm.value).subscribe((res) => {
+      this.tagsService.updateTag(this.addTagForm.value).subscribe((res) => {
         this.newTagId = res.id;
         this.planetMessageService.showMessage('New label added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
@@ -99,6 +106,29 @@ export class PlanetTagInputDialogComponent {
     } else {
       onAllFormControls(([ key, value ]) => value.markAsTouched({ onlySelf: true }));
     }
+  }
+
+  editTagClick(event, tag) {
+    event.stopPropagation();
+    const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
+    this.dialogsFormService.confirm('Edit tag', [
+      { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
+      { placeholder: 'Sublabel of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
+    ], this.tagForm(tag), false).pipe(switchMap((newTag: any) => this.tagsService.updateTag({ ...tag, ...newTag }))).subscribe(() => {
+      this.planetMessageService.showMessage('Label updated');
+      this.data.initTags();
+    });
+  }
+
+  tagForm(tag: any = {}) {
+    return this.fb.group({
+      name: [
+        tag.name || '',
+        Validators.required,
+        ac => this.validatorService.isUnique$('tags', 'name', ac, { exceptions: [ tag.name ] })
+      ],
+      attachedTo: [ tag.attachedTo || [] ]
+    });
   }
 
 }

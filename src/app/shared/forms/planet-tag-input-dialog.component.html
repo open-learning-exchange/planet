@@ -22,19 +22,33 @@
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
     <ng-container *ngFor="let tag of tags">
-      <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]">{{tag.name + ' (' + (tag.count || 0) + ')'}}</mat-list-option>
+      <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]">
+        <span>
+          {{tag.name + ' (' + (tag.count || 0) + ')'}}
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)" class="margin-lr-5">Edit</button>
+        </span>
+      </mat-list-option>
       <mat-list-option *ngFor="let subTag of tag.subTags" [value]="[ subTag._id || subTag.name, tag._id || tag.name ]" [selected]="isSelected(subTag._id || subTag.name)">
         <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
-        {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+        <span>
+          {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
+        </span>
       </mat-list-option>
     </ng-container>
   </mat-selection-list>
   <mat-nav-list *ngIf="!selectMany">
     <ng-container *ngFor="let tag of tags">
-      <a mat-list-item (click)="selectOne(tag._id || tag.name)" mat-dialog-close>{{tag.name + ' (' + (tag.count || 0) + ')'}}</a>
+      <a mat-list-item (click)="selectOne(tag._id || tag.name)" mat-dialog-close>
+        {{tag.name + ' (' + (tag.count || 0) + ')'}}
+        <span class="toolbar-fill"></span>
+        <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
+      </a>
       <a mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(tag._id || tag.name, subTag._id || subTag.name)" mat-dialog-close>
         <mat-icon>subdirectory_arrow_right</mat-icon>
         {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+        <span class="toolbar-fill"></span>
+        <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
       </a>
       <mat-divider></mat-divider>
     </ng-container>
