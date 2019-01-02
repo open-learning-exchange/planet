@@ -151,6 +151,7 @@ export class ExamsAddComponent implements OnInit {
     questions.push(this.examsService.newQuestionForm(this.examType === 'courses'));
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
+    this.stepClick(questions.length - 1);
   }
 
   removeQuestion(index) {
