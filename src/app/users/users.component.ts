@@ -267,7 +267,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       users.map((user) => {
         if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = roles;
+          user.roles = [ ...roles ];
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
         }
