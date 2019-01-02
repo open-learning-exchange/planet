@@ -69,7 +69,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field>
-        <input matInput [value]="resourceForm.controls.createdDate.value | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
+        <input matInput [value]="articleDate | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
       </mat-form-field>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
