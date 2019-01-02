@@ -24,7 +24,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
-  parent = this.route.snapshot.data.parent;
 
   constructor(
     private couchService: CouchService,
@@ -72,7 +71,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+    this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 
   routeToEditSurvey(route, id = '') {
