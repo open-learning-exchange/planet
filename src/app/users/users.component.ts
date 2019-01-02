@@ -308,7 +308,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   gotoProfileView(userName: string) {
-    const optParams = this.selectedChild.code ? { planet: this.selectedChild.code } : {}
+    const optParams = this.selectedChild.code ? { planet: this.selectedChild.code } : {};
     this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
