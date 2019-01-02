@@ -66,10 +66,10 @@
         <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div *ngIf="element.imageSrc; else noImage">
-            <img class="profile-image cursor-pointer" [src]="element.imageSrc" routerLink="profile/{{element.doc.name}}">
+            <img class="profile-image cursor-pointer" [src]="element.imageSrc" (click)="gotoProfileView(element.doc.name)">
           </div>
           <ng-template #noImage>
-            <img class="profile-image cursor-pointer" src="assets/avatar.png" routerLink="profile/{{element.doc.name}}">
+            <img class="profile-image cursor-pointer" src="assets/avatar.png" (click)="gotoProfileView(element.doc.name)">
           </ng-template>
         </mat-cell>
       </ng-container>
@@ -117,7 +117,7 @@
               (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
               mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
-          <a routerLink="profile/{{element.doc.name}}" mat-raised-button color="primary" i18n>
+          <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
             <mat-icon>folder_open</mat-icon>View Profile
           </a>
         </mat-cell>

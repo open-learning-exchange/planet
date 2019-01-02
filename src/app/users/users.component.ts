@@ -37,7 +37,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   allUsers = new MatTableDataSource();
   message = '';
   searchValue = '';
-  selectedChild: any;
+  selectedChild: any = {};
   filterType = 'local';
   filter: any;
   planetType = '';
@@ -305,6 +305,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   userLoginCount(user: any, loginActivities: any[]) {
     return loginActivities.filter((logItem: any) => logItem.user === user.name).length;
+  }
+
+  gotoProfileView(userName: string) {
+    const optParams = this.selectedChild.code ? { planet: this.selectedChild.code } : {}
+    this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
 }
