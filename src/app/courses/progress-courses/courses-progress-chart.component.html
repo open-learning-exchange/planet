@@ -2,6 +2,8 @@
   <div i18n>Total Errors</div>
   <div
     class="accent-color border-bottom"
+    matTooltip="Click to see exam detail"
+    [matTooltipDisabled]="!total.clickable"
     *ngFor="let total of horizTotals; index as i"
     [ngClass]="{'cursor-pointer':total.clickable}"
     (click)="dataClick($event, [], i)">
@@ -12,6 +14,8 @@
   <div i18n>Steps</div>
   <div
     class="border-bottom"
+    matTooltip="Click to see exam detail"
+    [matTooltipDisabled]="!total.clickable"
     *ngFor="let total of horizTotals; index as i"
     [ngClass]="{'cursor-pointer':total.clickable}"
     (click)="dataClick($event, [], i)">
@@ -21,6 +25,8 @@
 <div class="errors errors-user" *ngFor="let set of sets">
   <div
     class="border-bottom"
+    matTooltip="Click to see exam detail"
+    [matTooltipDisabled]="!item.clickable"
     [ngClass]="{'primary-color':item.fill,'cursor-pointer':item.clickable}"
     *ngFor="let item of set?.items; index as i"
     (click)="dataClick($event, set, i)">
