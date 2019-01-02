@@ -18,15 +18,14 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">
-      <p i18n><b>Meetup Title:</b> {{meetupDetail.title}}</p>
       <p i18n><b>Created By:</b><i> {{meetupDetail.createdBy}}</i></p>
       <p i18n><b>Category:</b> {{meetupDetail.category}}</p>
       <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate ? '-' : '' }} {{meetupDetail.endDate | date: 'fullDate'}}</p>
       <p i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
       <p i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
+      <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
       <p i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
       <b i18n>Description:</b><td-markdown [content]="meetupDetail.description"></td-markdown>
-      <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days:</b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
     </div>
     <div class="right-tile">
       <span i18n><b>Joined Members: ({{members.length}})</b></span>
