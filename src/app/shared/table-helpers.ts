@@ -1,6 +1,9 @@
 import { FormControl } from '../../../node_modules/@angular/forms';
 
 const dropdownString = (fieldValue: any, value: string) => {
+  if (fieldValue === undefined || value === undefined) {
+    return false;
+  }
   return fieldValue instanceof Array ? fieldValue.indexOf(value) === -1 : value.toLowerCase() !== fieldValue.toLowerCase();
 };
 
