@@ -25,6 +25,7 @@ export class UsersProfileComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   planetCode: string | null = null;
+  editable = false;
 
   constructor(
     private couchService: CouchService,
@@ -45,6 +46,7 @@ export class UsersProfileComponent implements OnInit {
   profileView() {
     const dbName = this.planetCode === null ? this.dbName : 'child_users';
     const userId = this.planetCode === null ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
+    this.editable = userId.indexOf('@') === -1;
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
