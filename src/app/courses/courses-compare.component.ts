@@ -1,57 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { Component, Input, OnChanges } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Component({
+  selector: 'planet-courses-compare',
   templateUrl: './courses-compare.component.html'
 })
 
-export class CoursesCompareComponent implements OnInit {
+export class CoursesCompareComponent implements OnChanges {
 
-  onDestroy$ = new Subject<void>();
-  courseDetail: any = { };
-  localCourse: any = { };
-  isUserEnrolled = false;
-  progress = [ { stepNum: 1 } ];
-  fullView = 'on';
+  @Input() courseDetail: any = { steps: [] };
 
-  constructor(
-    private route: ActivatedRoute,
-    private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
-  ) { }
-
-  ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (params: ParamMap) => this.fetchCourse(
-        params.get('id')
-      ), error => console.log(error)
-    );
-  }
-
-  fetchCourse(id) {
-    this.couchService.get('send_items/' + id)
-    .pipe(switchMap(send => {
-      this.courseDetail = send;
-      this.courseDetail = send;
-      return this.couchService.get('courses/' + courseId);
-    }))
-    .subscribe((course) => {
-      this.localCourse = course;
+  ngOnChanges() {
+    this.courseDetail.steps = this.courseDetail.steps.map(step => {
+      step.resources = step.resources.filter(res => res._attachments);
+      return step;
     });
-    this.coursesService.
-    this.couchService.get('courses/' + courseId, opts)
-    this.couchService.get('send_items/' + courseId, opts)
-    this.localCourse
-    this.courseDetail
-  }
-  
-  toggleFullView() {
-    this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 
+  resourceUrl(resource) {
+    if (resource._attachments && Object.keys(resource._attachments)[0]) {
+      const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+      return environment.couchAddress + '/resources/' + resource._id + '/' + filename;
+    }
+  }
 }

@@ -33,6 +33,7 @@
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.db === 'resources'">{{ element.item.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon></ng-container>
           <ng-container *ngIf="element.db === 'courses'">{{ element.item.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
+          <button *ngIf="child" [routerLink]="['/manager/compare', element._id]">View</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

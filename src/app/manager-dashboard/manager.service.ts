@@ -92,7 +92,7 @@ export class ManagerService {
     }));
   }
 
-  getPushedList(child) {
+  getPushedList(child?: false) {
     return this.couchService.post(
       `send_items/_find`,
       findDocuments({ 'sendTo': this.configuration.code }),
