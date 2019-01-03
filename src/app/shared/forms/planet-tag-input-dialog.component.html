@@ -1,23 +1,23 @@
 <mat-dialog-content>
   <mat-form-field>
-    <input matInput i18n-placeholder placeholder="Filter Labels" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
+    <input matInput i18n-placeholder placeholder="Filter Collections" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
-  <mat-slide-toggle i18n [(ngModel)]="selectMany" class="margin-lr-5" *ngIf="mode==='filter'">Select Many Labels</mat-slide-toggle>
+  <mat-slide-toggle i18n [(ngModel)]="selectMany" class="margin-lr-5" *ngIf="mode==='filter'">Select Many Collections</mat-slide-toggle>
   <mat-expansion-panel *ngIf="mode==='add'">
     <mat-expansion-panel-header>
-      <mat-panel-title i18n>Create New Label</mat-panel-title>
+      <mat-panel-title i18n>Create New Collection</mat-panel-title>
     </mat-expansion-panel-header>
     <form class="form-spacing" [formGroup]="addTagForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Label" formControlName="name" required>
+        <input matInput i18n-placeholder placeholder="Collection" formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Sublabel of..." formControlName="attachedTo" multiple>
+        <mat-select i18n-placeholder placeholder="Subcollection of..." formControlName="attachedTo" multiple>
           <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
         </mat-select>
       </mat-form-field>
-      <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Label</button></span>
+      <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
     </form>
   </mat-expansion-panel>
   <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">

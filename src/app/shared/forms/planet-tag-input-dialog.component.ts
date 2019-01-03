@@ -96,7 +96,7 @@ export class PlanetTagInputDialogComponent {
     if (this.addTagForm.valid) {
       this.tagsService.updateTag(this.addTagForm.value).subscribe((res) => {
         this.newTagId = res.id;
-        this.planetMessageService.showMessage('New label added');
+        this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.get('name').reset();
@@ -111,11 +111,11 @@ export class PlanetTagInputDialogComponent {
   editTagClick(event, tag) {
     event.stopPropagation();
     const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
-    this.dialogsFormService.confirm('Edit tag', [
+    this.dialogsFormService.confirm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
-      { placeholder: 'Sublabel of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
+      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
     ], this.tagForm(tag), false).pipe(switchMap((newTag: any) => this.tagsService.updateTag({ ...tag, ...newTag }))).subscribe(() => {
-      this.planetMessageService.showMessage('Label updated');
+      this.planetMessageService.showMessage('Collection updated');
       this.data.initTags();
     });
   }
