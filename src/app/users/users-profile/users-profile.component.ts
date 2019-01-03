@@ -24,6 +24,8 @@ export class UsersProfileComponent implements OnInit {
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
+  planetCode: string | null = null;
+  editable = false;
 
   constructor(
     private couchService: CouchService,
@@ -34,19 +36,18 @@ export class UsersProfileComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.userService.get();
-
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap) =>
-        of(params.get('name'))
-      )
-    ).subscribe((urlName) => {
-      this.urlName = urlName;
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.urlName = params.get('name');
+      this.planetCode = params.get('planet');
       this.profileView();
     });
   }
 
   profileView() {
-    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName).subscribe((response) => {
+    const dbName = this.planetCode === null ? this.dbName : 'child_users';
+    const userId = this.planetCode === null ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
+    this.editable = userId.indexOf('@') === -1;
+    this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
       if (response['_attachments']) {
