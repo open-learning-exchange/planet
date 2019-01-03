@@ -1,6 +1,10 @@
 import { FormControl } from '../../../node_modules/@angular/forms';
 
 const dropdownString = (fieldValue: any, value: string) => {
+  if (fieldValue === undefined || value === undefined) {
+    // If there is no value to filter, include item.  If the data field is undefined, exclude item.
+    return value !== undefined;
+  }
   return fieldValue instanceof Array ? fieldValue.indexOf(value) === -1 : value.toLowerCase() !== fieldValue.toLowerCase();
 };
 
