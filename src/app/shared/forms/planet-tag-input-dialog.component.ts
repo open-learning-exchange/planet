@@ -96,7 +96,7 @@ export class PlanetTagInputDialogComponent {
     if (this.addTagForm.valid) {
       this.tagsService.updateTag(this.addTagForm.value).subscribe((res) => {
         this.newTagId = res.id;
-        this.planetMessageService.showMessage('New label added');
+        this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.get('name').reset();
