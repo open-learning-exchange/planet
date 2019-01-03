@@ -8,7 +8,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './compare.component.html',
-  styles: [`
+  styles: [ `
     .full-view-container {
       grid-template-columns: 1fr;
       grid-template-areas: "detail";
@@ -20,7 +20,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
       grid-template-areas: "detail view";
       height: calc(100vh - 382px);
     }
-  `]
+  ` ]
 })
 
 export class CompareComponent implements OnInit {
@@ -61,7 +61,7 @@ export class CompareComponent implements OnInit {
       console.log(this.remoteCopy, this.localCopy);
     });
   }
-  
+
   toggleFullView(copy) {
     if (copy === 'remote') {
       this.remoteView = this.remoteView === 'on' ? 'off' : 'on';

@@ -40,7 +40,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
   pendingPushCount = 0;
-  hasSentItem:boolean = false;
+  hasSentItem = false;
 
   constructor(
     private userService: UserService,
