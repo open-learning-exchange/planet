@@ -35,6 +35,7 @@ export class ResourcesAddComponent implements OnInit {
   disableDownload = true;
   disableDelete = true;
   resourceFilename = '';
+  articleDate = '';
 
   constructor(
     private router: Router,
@@ -65,6 +66,7 @@ export class ResourcesAddComponent implements OnInit {
         .subscribe((data) => {
           this.pageType = 'Update';
           this.existingResource = data;
+          this.articleDate = this.existingResource.createdDate;
           // If the resource does not have an attachment, disable file downloadable toggle
           this.disableDownload = !this.existingResource._attachments;
           this.disableDelete = !this.existingResource._attachments;
