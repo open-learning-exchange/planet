@@ -67,7 +67,7 @@ export class ResourcesService {
   setTags(resources, tags, planetField) {
     this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
       ...resource,
-      tagNames: resource.tags.map(tag => this.tagsService.findTag(tag, tags).name)
+      tagObjects: resource.tags.map(tag => ({ name: this.tagsService.findTag(tag, tags).name, _id: tag }))
     }));
     this.updateResources(this.resources);
   }
