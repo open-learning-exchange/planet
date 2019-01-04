@@ -64,8 +64,8 @@
           </h3>
           <td-markdown class="content" [content]="element.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
-            <mat-chip *ngFor="let tag of element.tagNames" (click)="addTag(tag)">
-              {{tag}}
+            <mat-chip *ngFor="let tag of element.tagObjects" (click)="addTag(tag._id)">
+              {{tag.name}}
             </mat-chip>
           </mat-chip-list>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
