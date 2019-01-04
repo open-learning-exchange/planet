@@ -25,16 +25,16 @@
       </button>
       <button mat-button [disabled]="!selection.selected.length || selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
-        <span *ngIf="selection?.selected?.length">({{selectedNotAdded}})</span>
+        <span *ngIf="selection?.selected?.length"> ({{selectedNotAdded}})</span>
       </button>
       <button *ngIf="planetType !== 'community'" mat-button (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
         <span i18n>Push To Child</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
       </button>
       <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-        <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
+        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
       </button>
       <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
     </span>
