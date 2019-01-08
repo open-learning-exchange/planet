@@ -12,10 +12,10 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="toolbar-fill"></span>
     <button mat-mini-fab (click)="routeToEditSurvey('add')">
       <mat-icon>add</mat-icon>
     </button>
+    <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="surveys" matSort>

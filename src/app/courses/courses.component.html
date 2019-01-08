@@ -21,6 +21,7 @@
 </mat-toolbar>
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
+    <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
@@ -54,7 +55,6 @@
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
       </ng-container>
-      <button mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
     </ng-container>
   </mat-toolbar>
 

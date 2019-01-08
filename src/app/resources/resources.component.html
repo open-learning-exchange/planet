@@ -13,6 +13,7 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
+    <button *ngIf="!parent" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
     <span class="toolbar-fill"></span>
     <span *ngIf="parent">
       <button mat-button [disabled]="!selection.selected.length" (click)="shareResource('pull', selection.selected)">
@@ -36,7 +37,6 @@
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
         <span *ngIf="selection?.selected?.length">({{selection?.selected?.length}})</span>
       </button>
-      <button mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
     </span>
   </mat-toolbar>
 
