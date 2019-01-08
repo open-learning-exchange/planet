@@ -1,0 +1,13 @@
+planet-courses-step .mat-chip-list-wrapper {
+  margin: 0;
+}
+
+.step-form-container {
+  display: grid;
+  grid-template-rows: minmax(auto, min-content) auto;
+  height: calc(100% - 36px - 1rem);
+
+  .vertical-form {
+    overflow-y: auto;
+  }
+}

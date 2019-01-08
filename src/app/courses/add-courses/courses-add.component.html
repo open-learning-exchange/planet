@@ -5,8 +5,6 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span i18n>{{this.pageType}} Course</span>
-    <span class="toolbar-fill"></span>
-    <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="form-container">
@@ -41,8 +39,8 @@
         </mat-form-field>
       </form>
     </div>
-    <div>
-      <planet-courses-step [(steps)]="steps"></planet-courses-step>
+    <div class="steps-container">
+      <planet-courses-step [(steps)]="steps" (addStepEvent)="addStep()"></planet-courses-step>
     </div>
     <div>
       <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>

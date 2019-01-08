@@ -12,17 +12,14 @@ import { CoursesService } from '../courses.service';
 @Component({
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html',
-  styles: [ `
-    planet-courses-step .mat-chip-list-wrapper {
-      margin: 0;
-    }
-  ` ],
+  styleUrls: [ 'courses-step.scss' ],
   encapsulation: ViewEncapsulation.None
 })
 export class CoursesStepComponent implements OnDestroy {
 
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any>();
+  @Output() addStepEvent = new EventEmitter<void>();
 
   stepForm: FormGroup;
   dialogRef: MatDialogRef<DialogsListComponent>;
@@ -112,6 +109,10 @@ export class CoursesStepComponent implements OnDestroy {
   stepsMoved(steps) {
     this.steps = steps;
     this.stepsChange.emit(this.steps);
+  }
+
+  addStep() {
+    this.addStepEvent.emit();
   }
 
 }

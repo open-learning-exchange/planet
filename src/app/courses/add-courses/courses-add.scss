@@ -9,4 +9,8 @@
       overflow-y: auto;
     }
   }
+
+  .steps-container {
+    grid-row: span 2;
+  }
 }
