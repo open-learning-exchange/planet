@@ -36,6 +36,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
+  selectedLocal = 0;
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -249,21 +250,28 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectNotEnrolled(selected: any) {
-    const { enrolledCount, notEnrolledCount } = selected.reduce((counts: any, id) => {
+    const { enrolledCount, notEnrolledCount, localCount } = selected.reduce((counts: any, id) => {
       const hasSteps = this.hasSteps(id) ? 1 : 0,
-        enrolled = this.userShelf.courseIds.indexOf(id) > -1 ? 1 : 0;
+        enrolled = this.userShelf.courseIds.indexOf(id) > -1 ? 1 : 0,
+        isLocalCopy = this.isLocal(id) ? 1 : 0;
       return ({
         ...counts,
         enrolledCount: counts.enrolledCount + (hasSteps * enrolled),
-        notEnrolledCount: counts.notEnrolledCount + (hasSteps * Math.abs(enrolled - 1))
+        notEnrolledCount: counts.notEnrolledCount + (hasSteps * Math.abs(enrolled - 1)),
+        localCount: counts.localCount + isLocalCopy
       });
-    }, { enrolledCount: 0, notEnrolledCount: 0 });
+    }, { enrolledCount: 0, notEnrolledCount: 0, localCount: 0 });
     this.selectedEnrolled = enrolledCount;
     this.selectedNotEnrolled = notEnrolledCount;
+    this.selectedLocal = localCount;
   }
 
   hasSteps(id: string) {
     return this.courses.data.find((course: any) => course._id === id && course.steps.length > 0);
+  }
+
+  isLocal(id: string) {
+    return this.courses.data.find((course: any) => course._id === id && course.sourcePlanet === this.planetConfiguration.code);
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -312,6 +320,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
+  }
+
+  shareLocal() {
+    const localSelections = this.selection.selected;
+    this.shareCourse('push', localSelections);
   }
 
   shareCourse(type, courseIds) {
