@@ -21,7 +21,9 @@
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
         </mat-cell>
