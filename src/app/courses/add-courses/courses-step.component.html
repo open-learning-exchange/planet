@@ -10,25 +10,30 @@
         <span i18n>Editing Step</span>{{ ' ' + (this.activeStepIndex + 1) + ' ' }}
         <span i18n>of</span>{{ ' ' + steps.length }}
       </span>
-    <form class="vertical-form" [formGroup]="stepForm">
-      <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
-      </mat-form-field>
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="stepForm.controls.description"></planet-markdown-textbox>
-        <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-    </form>
-    <ng-container *ngIf="activeStep?.resources?.length">
-      <span i18n class="margin-lr-4">Attached Resources: </span>
-      <mat-chip-list>
-        <mat-chip *ngFor="let resource of activeStep.resources; let i = index">
-          {{resource.title}}
-          <mat-icon matChipRemove (click)="removeResource(i)">clear</mat-icon>
-        </mat-chip>
-      </mat-chip-list>
-    </ng-container>
-    <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>
-    <button mat-raised-button color="primary" (click)="attachItem('resources')" [planetSubmit]="spinnerOn">Add Resource</button>
+    <div class="step-form-container">
+      <form class="vertical-form" [formGroup]="stepForm">
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="stepForm.controls.description"></planet-markdown-textbox>
+          <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </form>
+      <ng-container *ngIf="activeStep?.resources?.length">
+        <span i18n class="margin-lr-4">Attached Resources: </span>
+        <mat-chip-list>
+          <mat-chip *ngFor="let resource of activeStep.resources; let i = index">
+            {{resource.title}}
+            <mat-icon matChipRemove (click)="removeResource(i)">clear</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+      </ng-container>
+      <div>
+        <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>
+        <button mat-raised-button color="primary" (click)="attachItem('resources')" [planetSubmit]="spinnerOn">Add Resource</button>
+        <button mat-raised-button color="accent" (click)="addStep()" i18n>Add New Step</button>
+      </div>
+    </div>
   </span>
 </planet-step-list>
