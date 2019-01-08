@@ -322,13 +322,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, (error) => ((error)));
   }
 
-  shareLocal() {
-    const localSelections = this.selection.selected.reduce((localCopies: any, id) => {
-      if (this.isLocal(id)) {
-        localCopies.push(id);
-      }
-      return localCopies;
-    }, { localCopies: [] });
+  shareLocal(selectedIds) {
+    const localSelections = selectedIds.filter(id => this.isLocal(id) !== undefined);
     this.shareCourse('push', localSelections);
   }
 
