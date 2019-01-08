@@ -24,7 +24,6 @@ export class CoursesService {
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
-  prefix: any;
 
   constructor(
     private couchService: CouchService,
@@ -184,12 +183,13 @@ export class CoursesService {
 
   courseAdmissionMany(courseIds, type, enrolled, notEnrolled) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
+      let prefix: string;
       if (type === 'remove') {
-        this.prefix = enrolled > 1 ? enrolled + ' courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
+        prefix = enrolled > 1 ? enrolled + ' courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
       } else {
-        this.prefix = notEnrolled > 1 ? notEnrolled + 'courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
+        prefix = notEnrolled > 1 ? notEnrolled + 'courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
       }
-      const message = type === 'remove' ? this.prefix + ' successfully removed from myCourses' : this.prefix + ' added to your dashboard';
+      const message = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
       this.planetMessageService.showMessage(message);
       return res;
     }));
