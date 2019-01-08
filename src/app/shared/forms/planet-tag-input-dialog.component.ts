@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TagsService } from './tags.service';
 import { switchMap } from 'rxjs/operators';
@@ -99,16 +99,18 @@ export class PlanetTagInputDialogComponent {
         this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
-        this.addTagForm.get('name').reset();
-        this.addTagForm.get('name').markAsPristine();
-        this.addTagForm.get('name').markAsUntouched();
-        this.addTagForm.get('attachedTo').reset();
-        this.addTagForm.get('attachedTo').markAsPristine();
-        this.addTagForm.get('attachedTo').markAsUntouched();
+        this.resetFormControl(this.addTagForm.get('name'));
+        this.resetFormControl(this.addTagForm.get('attachedTo'));
       });
     } else {
       onAllFormControls(([ key, value ]) => value.markAsTouched({ onlySelf: true }));
     }
+  }
+
+  resetFormControl(control: AbstractControl) {
+    control.reset();
+    control.markAsPristine();
+    control.markAsUntouched();
   }
 
   editTagClick(event, tag) {
