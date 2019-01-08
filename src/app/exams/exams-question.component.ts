@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
 import { ExamsService } from './exams.service';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   selector: 'planet-exam-question',
@@ -42,6 +43,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
+    this.questionForm.controls.correctChoice.setValidators(CustomValidators.choiceSelected(this.examType === 'courses'));
     const onFormChange = () => {
       if (!this.initializing) {
         this.questionChange.emit(this.questionForm);
