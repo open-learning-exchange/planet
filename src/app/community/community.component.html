@@ -44,12 +44,12 @@
         </mat-expansion-panel-header>
         <planet-community-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-community-table>
       </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Sandbox</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-community-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-community-table>
+      </mat-expansion-panel>
     </ng-container>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Sandbox</mat-panel-title>
-      </mat-expansion-panel-header>
-      <planet-community-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-community-table>
-    </mat-expansion-panel>
   </div>
 </div>
