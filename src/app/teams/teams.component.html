@@ -10,10 +10,10 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
+    <button mat-mini-fab *ngIf="user.isUserAdmin || user.roles.length" (click)="addTeam()"><mat-icon>add</mat-icon></button>
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3">
       <button mat-button routerLink='/teams/users' i18n>All Members</button>
-      <button mat-mini-fab *ngIf="user.isUserAdmin || user.roles.length" (click)="addTeam()"><mat-icon>add</mat-icon></button>
     </div>
   </mat-toolbar>
 
