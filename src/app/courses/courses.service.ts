@@ -181,14 +181,9 @@ export class CoursesService {
     return (this.courses.find( (mCourse) => mCourse._id === courseId )).courseTitle;
   }
 
-  courseAdmissionMany(courseIds, type, enrolled, notEnrolled) {
+  courseAdmissionMany(courseIds, type, count) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map((res) => {
-      let prefix: string;
-      if (type === 'remove') {
-        prefix = enrolled > 1 ? enrolled + ' courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
-      } else {
-        prefix = notEnrolled > 1 ? notEnrolled + 'courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
-      }
+      const prefix = count > 1 ? count + ' courses' : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
       const message = type === 'remove' ? prefix + ' successfully removed from myCourses' : prefix + ' added to your dashboard';
       this.planetMessageService.showMessage(message);
       return res;
