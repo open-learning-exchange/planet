@@ -102,6 +102,9 @@ export class PlanetTagInputDialogComponent {
         this.addTagForm.get('name').reset();
         this.addTagForm.get('name').markAsPristine();
         this.addTagForm.get('name').markAsUntouched();
+        this.addTagForm.get('attachedTo').reset();
+        this.addTagForm.get('attachedTo').markAsPristine();
+        this.addTagForm.get('attachedTo').markAsUntouched();    
       });
     } else {
       onAllFormControls(([ key, value ]) => value.markAsTouched({ onlySelf: true }));
