@@ -29,13 +29,12 @@
       </button>
     </ng-container>
     <ng-container *ngIf="!parent">
-      <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent
-      <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareCourse('push', selection.selected)" [disabled]="!selection.selected.length">
+      <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
+      <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
         <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
         <span i18n>Send Courses</span>
-        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+        <span *ngIf="selectedLocal > 0"> ({{selectedLocal}})</span>
       </button>
-      -->
       <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
         <span *ngIf="selectedNotEnrolled > 0"> ({{selectedNotEnrolled}})</span>
