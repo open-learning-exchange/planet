@@ -13,7 +13,13 @@ import { StateService } from '../shared/state.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  course: any = {};
+  _course: any = {};
+  get course() {
+    return this._course;
+  }
+  set course(newCourse: any) {
+    this._course = { ...this._course, ...newCourse };
+  }
   progress: any;
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
@@ -72,7 +78,7 @@ export class CoursesService {
   }
 
   reset() {
-    this.course = {};
+    this._course = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }

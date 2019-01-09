@@ -34,7 +34,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
   set steps(value: any[]) {
     this._steps = value;
-    this.coursesService.course = { ...this.coursesService.course, form: this.courseForm.value, steps: this._steps };
+    this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
   }
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
 
@@ -114,7 +114,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     }
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
-    this.coursesService.course = { ...this.coursesService.course, form: this.courseForm.value, steps: this.steps };
+    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
   }
 
   ngOnDestroy() {
@@ -142,7 +142,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   onFormChanges() {
     this.courseForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
-      this.coursesService.course = { ...this.coursesService.course, form: value, steps: this.steps };
+      this.coursesService.course = { form: value, steps: this.steps };
     });
   }
 
@@ -177,7 +177,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     }
     this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
-    this.coursesService.course = { ...this.coursesService.course, ...this.documentInfo };
+    this.coursesService.course = { ...this.documentInfo };
     this.planetMessageService.showMessage(message);
   }
 
