@@ -226,7 +226,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   enrollLeaveToggle(courseIds, type) {
-    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
+    this.coursesService.courseAdmissionMany(courseIds.filter(id => this.hasSteps(id)), type).subscribe((res) => {
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
