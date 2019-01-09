@@ -301,16 +301,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedNotAdded(selected: any) {
-    const { addedCount, notAddedCount } = selected.reduce((counts: any, id) => {
-      const added = this.userService.shelf.resourceIds.indexOf(id) > -1 ? 1 : 0
-      return ({
-        ...counts,
-        addedCount: counts.addedCount + added,
-        notAddedCount: counts.notAddedCount +  Math.abs(added - 1)
-      });
-    }, { addedCount: 0, notAddedCount: 0 });
-    this.selectedAdded = addedCount;
-    this.selectedNotAdded = notAddedCount;
+    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
+    this.selectedAdded = inShelf;
+    this.selectedNotAdded = notInShelf;
   }
 
 }

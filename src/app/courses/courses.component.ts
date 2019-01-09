@@ -249,20 +249,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectNotEnrolled(selected: any) {
-    const { enrolledCount, notEnrolledCount, localCount } = selected.reduce((counts: any, id) => {
-      const hasSteps = this.hasSteps(id) ? 1 : 0,
-        enrolled = this.userShelf.courseIds.indexOf(id) > -1 ? 1 : 0,
-        isLocalCopy = this.isLocal(id) ? 1 : 0;
-      return ({
-        ...counts,
-        enrolledCount: counts.enrolledCount + (hasSteps * enrolled),
-        notEnrolledCount: counts.notEnrolledCount + (hasSteps * Math.abs(enrolled - 1)),
-        localCount: counts.localCount + isLocalCopy
-      });
-    }, { enrolledCount: 0, notEnrolledCount: 0, localCount: 0 });
-    this.selectedEnrolled = enrolledCount;
-    this.selectedNotEnrolled = notEnrolledCount;
-    this.selectedLocal = localCount;
+    const { inShelf, notInShelf } = this.userService.countInShelf(selected.filter(id => this.hasSteps(id)), 'courseIds');
+    this.selectedEnrolled = inShelf;
+    this.selectedNotEnrolled = notInShelf;
+    this.selectedLocal = selected.filter(id => this.isLocal(id)).length;
   }
 
   hasSteps(id: string) {

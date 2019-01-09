@@ -189,4 +189,15 @@ export class UserService {
     return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
+  countInShelf(ids: string[], shelfName: string) {
+    return ids.reduce((counts: any, id) => {
+      const added = this.shelf[shelfName].indexOf(id) > -1 ? 1 : 0;
+      return ({
+        ...counts,
+        inShelf: counts.inShelf + added,
+        notInShelf: counts.notInShelf + Math.abs(added - 1)
+      });
+    }, { inShelf: 0, notInShelf: 0 });
+  }
+
 }
