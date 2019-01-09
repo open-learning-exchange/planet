@@ -226,8 +226,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   enrollLeaveToggle(courseIds, type) {
-    const count = type === 'remove' ? this.selectedEnrolled : this.selectedNotEnrolled;
-    this.coursesService.courseAdmissionMany(courseIds, type, count).subscribe((res) => {
+    this.coursesService.courseAdmissionMany(courseIds, type).subscribe((res) => {
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }

@@ -82,11 +82,12 @@ export class ResourcesService {
     return this.ratingService.getRatings({ itemIds: resourceIds, type: 'resource' }, opts);
   }
 
-  libraryAddRemove(resourceIds, type, count) {
-    return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map((res) => {
-      const message = type === 'remove' ? count + ' Resources successfully removed from myLibrary' : count + ' Resources added to your dashboard';
+  libraryAddRemove(resourceIds, type) {
+    return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map(({ shelf, countChanged }) => {
+      const message = type === 'remove' ?
+        countChanged + ' Resources successfully removed from myLibrary' : countChanged + ' Resources added to your dashboard';
       this.planetMessageService.showMessage(message);
-      return res;
+      return shelf;
     }));
   }
 }

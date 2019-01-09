@@ -242,8 +242,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   libraryToggle(resourceIds, type) {
-    const count = type === 'remove' ? this.selectedAdded : this.selectedNotAdded;
-    this.resourcesService.libraryAddRemove(resourceIds, type, count).subscribe((res) => {
+    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
       this.countSelectedNotAdded(this.selection.selected);
     }, (error) => ((error)));
   }
