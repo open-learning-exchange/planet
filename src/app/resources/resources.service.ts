@@ -82,10 +82,10 @@ export class ResourcesService {
     return this.ratingService.getRatings({ itemIds: resourceIds, type: 'resource' }, opts);
   }
 
-  libraryAddRemove(resourceIds, type) {
+  libraryAddRemove(resourceIds, type, count) {
     return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map((res) => {
-      const admissionMessage = type === 'remove' ? 'Resource successfully removed from myLibrary' : 'Resource added to your dashboard';
-      this.planetMessageService.showMessage(admissionMessage);
+      const message = type === 'remove' ? count + ' Resources successfully removed from myLibrary' : count + ' Resources added to your dashboard';
+      this.planetMessageService.showMessage(message);
       return res;
     }));
   }

@@ -69,6 +69,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   emptyData = false;
   selectedNotAdded = 0;
+  selectedAdded = 0;
+  selectedLocal = 0;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -241,7 +243,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   libraryToggle(resourceIds, type) {
-    this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+    const count = type === 'remove' ? this.selectedAdded : this.selectedNotAdded;
+    this.resourcesService.libraryAddRemove(resourceIds, type, count).subscribe((res) => {
       this.countSelectedNotAdded(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -300,6 +303,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedNotAdded(selected: any) {
-    this.selectedNotAdded = selected.reduce((count, id) => count + (this.userService.shelf.resourceIds.indexOf(id) === -1 ? 1 : 0), 0);
+    const { addedCount, notAddedCount, localCount } = selected.reduce((counts: any, id) => {
+      const added = this.userService.shelf.resourceIds.indexOf(id) > -1 ? 1 : 0,
+        isLocalCopy = this.isLocal(id) ? 1 : 0;
+      return ({
+        ...counts,
+        addedCount: counts.addedCount + added,
+        notAddedCount: counts.notAddedCount +  Math.abs(added - 1),
+        localCount: counts.localCount + isLocalCopy
+      });
+    }, { addedCount: 0, notAddedCount: 0, localCount: 0 });
+    this.selectedAdded = addedCount;
+    this.selectedNotAdded = notAddedCount;
+    this.selectedLocal = localCount;
+  }
+
+  isLocal(id: string) {
+    return this.resources.data.find((resource: any) => resource._id === id && resource.sourcePlanet === this.planetConfiguration.code);
   }
 }
