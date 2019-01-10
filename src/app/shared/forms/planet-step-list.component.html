@@ -6,8 +6,8 @@
 <ng-container *ngIf="!listMode">
   <div class="action-buttons">
     <button class="back-button" (click)="toList()" mat-stroked-button><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
-    <button mat-stroked-button [disabled]="this.openIndex === 0" (click)="goBack(-1)" i18n>Previous</button>
-    <button mat-stroked-button (click)="forward(1)" i18n>Next</button>
+    <button mat-stroked-button [disabled]="this.openIndex === 0" (click)="changeStep(-1)" i18n>Previous</button>
+    <button mat-stroked-button [disabled]="this.openIndex >= (this.stepListItems.length - 1)" (click)="changeStep(1)" i18n>Next</button>
   </div>
   <ng-content selector="planet-step-list-form"></ng-content>
 </ng-container>
