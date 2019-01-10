@@ -92,7 +92,7 @@ export class SubmissionsService {
     submission.answers[index] = {
       value: answer,
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
-      passed: correct !== false
+      passed: correct !== false && answer !== undefined && answer !== ''
     };
     const nextQuestion = this.nextQuestion(submission, index, 'passed');
     if (correct !== undefined) {
