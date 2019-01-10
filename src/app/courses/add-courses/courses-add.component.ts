@@ -65,10 +65,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: [
         '',
         Validators.required,
-        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        this.route.snapshot.url[0].path === 'update'
-        ? ac => this.validatorService.isNameAvailible$(this.dbName, 'courseTitle', ac, this.route.snapshot.params.id)
-        : ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac)
+        this.courseTitleValidator(this.route.snapshot.paramMap.get('id') || this.coursesService.course._id)
       ],
       description: [ '', Validators.required ],
       languageOfInstruction: '',
@@ -90,6 +87,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
+  courseTitleValidator(id: string = '') {
+    return ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': id } } });
+  }
+
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
@@ -107,6 +108,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       });
     }
     if (this.route.snapshot.params.continue === 'true') {
+      this.documentInfo = { '_rev': this.coursesService.course._rev, '_id': this.coursesService.course._id };
       this.setFormAndSteps(this.coursesService.course);
       this.submitAddedExam();
     }
@@ -173,7 +175,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (shouldNavigate) {
       this.navigateBack();
     }
+    this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
+    this.coursesService.course = { ...this.documentInfo };
     this.planetMessageService.showMessage(message);
   }
 
