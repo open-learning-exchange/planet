@@ -13,7 +13,7 @@ import { StateService } from '../shared/state.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  _course: any = {};
+  private _course: any = {};
   get course() {
     return this._course;
   }
