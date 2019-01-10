@@ -34,7 +34,7 @@ export class ValidatorService {
     if (exceptions.findIndex(exception => ac.value === exception) > -1) {
       return of(null);
     }
-    selectors = { [fieldName]: ac.value, ...selectors };
+    selectors = { [fieldName]: { '$regex': `(?i)^${ac.value}$` }, ...selectors };
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => this.checkUnique$(dbName, selectors, opts)),
