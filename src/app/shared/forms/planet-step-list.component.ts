@@ -62,6 +62,12 @@ export class PlanetStepListItemComponent {
   styles: [ `
     .back-button {
       padding: 0 0.5rem 0 0;
+    }
+    .action-buttons {
+      display: grid;
+      grid-column-gap: 0.5rem;
+      grid-auto-columns: min-content;
+      grid-auto-flow: column;
       margin: 0.5rem 0;
     }
   ` ]
