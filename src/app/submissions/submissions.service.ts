@@ -86,7 +86,7 @@ export class SubmissionsService {
     });
   }
 
-  submitAnswer(answer, correct: boolean, index: number, close: boolean) {
+  submitAnswer(answer, correct: boolean, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
@@ -94,16 +94,23 @@ export class SubmissionsService {
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false
     };
+    const nextQuestion = this.nextQuestion(submission, index, 'value');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
-    return this.updateSubmission(submission, this.submission.type === 'exam', close);
+    return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion);
   }
 
-  submitGrade(grade, index: number, close) {
+  submitGrade(grade, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
-    return this.updateSubmission(submission, false, close);
+    const nextQuestion = this.nextQuestion(submission, index, 'grade');
+    return this.updateSubmission(submission, false, nextQuestion);
+  }
+
+  nextQuestion(submission, index, field) {
+    const close = this.shouldCloseSubmission(submission, field);
+    return close ? -1 : this.findNextQuestion(submission, index + 1, field);
   }
 
   updateGrade(submission, grade, index) {
@@ -124,8 +131,8 @@ export class SubmissionsService {
       total + (submission.parent.questions[index].marks * (answer.grade || 0)), 0);
   }
 
-  updateSubmission(submission: any, takingExam: boolean, close: boolean) {
-    submission.status = close ? this.updateStatus(submission) : submission.status;
+  updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
+    submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
@@ -135,6 +142,7 @@ export class SubmissionsService {
         this.submission = { ...submission, _id: res.id, _rev: res.rev };
       }
       this.submissionUpdated.next({ submission: this.submission, attempts });
+      return { submission, nextQuestion };
     }));
   }
 
@@ -175,6 +183,18 @@ export class SubmissionsService {
 
   submissionName(user) {
     return user.name || ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+  }
+
+  shouldCloseSubmission(submission, field) {
+    return submission.answers.filter(answer => answer[field] !== undefined).length >= submission.parent.questions.length;
+  }
+
+  findNextQuestion(submission, index, field) {
+    if (index >= submission.parent.questions.length) {
+      return this.findNextQuestion(submission, 0, field);
+    }
+    return submission.answers[index] && submission.answers[index][field] !== undefined ?
+      this.findNextQuestion(submission, index + 1, field) : index;
   }
 
 }
