@@ -203,7 +203,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
           correctAnswer
         };
       case 'grade':
-        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close), correctAnswer };
+        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1), correctAnswer };
       default:
         return { obs: of({ nextQuestion: this.questionNum + 1 }), correctAnswer };
     }

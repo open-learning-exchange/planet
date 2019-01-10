@@ -94,7 +94,7 @@ export class SubmissionsService {
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false
     };
-    const close = submission.answers.filter(answer => answer.value).length >= submission.parent.questions.length;
+    const close = this.shouldCloseSubmission(submission, 'value');
     const nextQuestion = close ? -1 : this.nextQuestion(submission, index + 1, 'value');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
@@ -102,10 +102,12 @@ export class SubmissionsService {
     return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion);
   }
 
-  submitGrade(grade, index: number, close) {
+  submitGrade(grade, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
-    return this.updateSubmission(submission, false, close);
+    const close = this.shouldCloseSubmission(submission, 'grade');
+    const nextQuestion = close ? -1 : this.nextQuestion(submission, index + 1, 'grade');
+    return this.updateSubmission(submission, false, nextQuestion);
   }
 
   updateGrade(submission, grade, index) {
@@ -178,6 +180,10 @@ export class SubmissionsService {
 
   submissionName(user) {
     return user.name || ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+  }
+
+  shouldCloseSubmission(submission, field) {
+    return submission.answers.filter(answer => answer[field] !== undefined).length >= submission.parent.questions.length;
   }
 
   nextQuestion(submission, index, field) {
