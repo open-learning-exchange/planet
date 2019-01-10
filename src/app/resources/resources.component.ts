@@ -69,6 +69,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   emptyData = false;
   selectedNotAdded = 0;
+  selectedAdded = 0;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -300,6 +301,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedNotAdded(selected: any) {
-    this.selectedNotAdded = selected.reduce((count, id) => count + (this.userService.shelf.resourceIds.indexOf(id) === -1 ? 1 : 0), 0);
+    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
+    this.selectedAdded = inShelf;
+    this.selectedNotAdded = notInShelf;
   }
+
 }

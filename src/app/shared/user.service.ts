@@ -177,15 +177,27 @@ export class UserService {
   }
 
   updateShelf(ids: string[], shelfName: string) {
+    const countChanged = Math.abs(this.shelf[shelfName].length - ids.length);
     const newShelf = { ...this.shelf, [shelfName]: ids };
     return this.couchService.put('shelf/' + this.user._id, newShelf).pipe(map((res) => {
       this.shelf = { ...newShelf, '_rev': res.rev };
-      return this.shelf;
+      return { shelf: this.shelf, countChanged };
     }));
   }
 
   createPin() {
     return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
+  }
+
+  countInShelf(ids: string[], shelfName: string) {
+    return ids.reduce((counts: any, id) => {
+      const added = this.shelf[shelfName].indexOf(id) > -1 ? 1 : 0;
+      return ({
+        ...counts,
+        inShelf: counts.inShelf + added,
+        notInShelf: counts.notInShelf + Math.abs(added - 1)
+      });
+    }, { inShelf: 0, notInShelf: 0 });
   }
 
 }
