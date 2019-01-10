@@ -13,6 +13,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService } from './exams.service';
+import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -52,7 +53,8 @@ export class ExamsAddComponent implements OnInit {
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
     private coursesService: CoursesService,
-    private examsService: ExamsService
+    private examsService: ExamsService,
+    private planetStepListService: PlanetStepListService
   ) {
     this.createForm();
   }
@@ -144,8 +146,10 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addQuestion() {
-    (<FormArray>this.examForm.get('questions')).push(this.examsService.newQuestionForm(this.examType === 'courses'));
-    this.examForm.controls.questions.updateValueAndValidity();
+    const questions = (<FormArray>this.examForm.get('questions'));
+    questions.push(this.examsService.newQuestionForm(this.examType === 'courses'));
+    questions.updateValueAndValidity();
+    this.planetStepListService.addStep(questions.length - 1);
   }
 
   removeQuestion(index) {

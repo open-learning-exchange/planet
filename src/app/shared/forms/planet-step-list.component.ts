@@ -21,11 +21,16 @@ import { FormArray } from '@angular/forms';
 export class PlanetStepListService {
 
   stepMoveClick$ = new Subject<any>();
+  stepAdded$ = new Subject<number>();
 
   constructor() {}
 
   moveStep(index, direction) {
     this.stepMoveClick$.next({ index, direction });
+  }
+
+  addStep(index: number) {
+    this.stepAdded$.next(index);
   }
 
 }
@@ -87,6 +92,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   constructor(private planetStepListService: PlanetStepListService) {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(this.moveStep.bind(this));
+    this.planetStepListService.stepAdded$.pipe(takeUntil(this.onDestroy$)).subscribe(this.stepClick.bind(this));
   }
 
   ngAfterContentChecked() {
