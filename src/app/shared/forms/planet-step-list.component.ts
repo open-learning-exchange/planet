@@ -84,7 +84,6 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   listMode = true;
   openIndex = -1;
   private onDestroy$ = new Subject<void>();
-  @Output() newStep = new EventEmitter<boolean>();
 
   constructor(private planetStepListService: PlanetStepListService) {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(this.moveStep.bind(this));

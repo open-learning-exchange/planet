@@ -1,4 +1,4 @@
-<planet-step-list [steps]="steps" (newStep)="addNewStep($event)" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
+<planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
   <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
     <span>{{step.stepTitle || 'Step ' + (i+1)}}</span>
     <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>

@@ -8,7 +8,6 @@ import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { CoursesService } from '../courses.service';
-import { uniqueId } from '../../shared/utils';
 
 @Component({
   selector: 'planet-courses-step',
@@ -115,15 +114,4 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepsChange.emit(this.steps);
   }
 
-  addNewStep(event) {
-    if (event === true) {
-      this.steps.push({
-        id: uniqueId(),
-        stepTitle: '',
-        description: '',
-        resources: []
-      });
-      this.stepClick(this.steps.length - 1);
-    }
-  }
 }

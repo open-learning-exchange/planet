@@ -24,7 +24,7 @@
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
-      <planet-step-list class="exam-questions" [steps]="questions" (newStep)="addNewQuestion($event)" [nameProp]="'title'" (stepClicked)="stepClick($event)">
+      <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
           <span>{{question.value.title || 'Question ' + (i+1)}}</span>
           <span i18n class="margin-lr-4 mat-caption warn-text-color" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
