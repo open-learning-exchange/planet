@@ -94,8 +94,7 @@ export class SubmissionsService {
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false
     };
-    const close = this.shouldCloseSubmission(submission, 'value');
-    const nextQuestion = close ? -1 : this.nextQuestion(submission, index + 1, 'value');
+    const nextQuestion = this.nextQuestion(submission, index, 'value');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
@@ -105,9 +104,13 @@ export class SubmissionsService {
   submitGrade(grade, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
-    const close = this.shouldCloseSubmission(submission, 'grade');
-    const nextQuestion = close ? -1 : this.nextQuestion(submission, index + 1, 'grade');
+    const nextQuestion = this.nextQuestion(submission, index, 'grade');
     return this.updateSubmission(submission, false, nextQuestion);
+  }
+
+  nextQuestion(submission, index, field) {
+    const close = this.shouldCloseSubmission(submission, field);
+    return close ? -1 : this.findNextQuestion(submission, index + 1, field);
   }
 
   updateGrade(submission, grade, index) {
@@ -186,12 +189,12 @@ export class SubmissionsService {
     return submission.answers.filter(answer => answer[field] !== undefined).length >= submission.parent.questions.length;
   }
 
-  nextQuestion(submission, index, field) {
+  findNextQuestion(submission, index, field) {
     if (index >= submission.parent.questions.length) {
-      return this.nextQuestion(submission, 0, field);
+      return this.findNextQuestion(submission, 0, field);
     }
     return submission.answers[index] && submission.answers[index][field] !== undefined ?
-      this.nextQuestion(submission, index + 1, field) : index;
+      this.findNextQuestion(submission, index + 1, field) : index;
   }
 
 }
