@@ -94,7 +94,7 @@ export class SubmissionsService {
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false
     };
-    const nextQuestion = correct !== false && this.nextQuestion(submission, index, 'value');
+    const nextQuestion = this.nextQuestion(submission, index, 'passed');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
@@ -186,15 +186,19 @@ export class SubmissionsService {
   }
 
   shouldCloseSubmission(submission, field) {
-    return submission.answers.filter(answer => answer[field] !== undefined).length >= submission.parent.questions.length;
+    return submission.answers.filter(answer => this.validAnswer(answer[field])).length >= submission.parent.questions.length;
   }
 
   findNextQuestion(submission, index, field) {
     if (index >= submission.parent.questions.length) {
       return this.findNextQuestion(submission, 0, field);
     }
-    return submission.answers[index] && submission.answers[index][field] !== undefined ?
+    return submission.answers[index] && this.validAnswer(submission.answers[index][field]) ?
       this.findNextQuestion(submission, index + 1, field) : index;
+  }
+
+  validAnswer(field) {
+    return field !== undefined && field !== false;
   }
 
 }
