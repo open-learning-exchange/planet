@@ -86,7 +86,7 @@ export class SubmissionsService {
     });
   }
 
-  submitAnswer(answer, correct: boolean, index: number, close: boolean) {
+  submitAnswer(answer, correct: boolean, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = {
@@ -94,10 +94,12 @@ export class SubmissionsService {
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false
     };
+    const close = submission.answers.filter(answer => answer.value).length >= submission.parent.questions.length;
+    const nextQuestion = close ? -1 : this.nextQuestion(submission, index + 1, 'value');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
-    return this.updateSubmission(submission, this.submission.type === 'exam', close);
+    return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion);
   }
 
   submitGrade(grade, index: number, close) {
@@ -124,8 +126,8 @@ export class SubmissionsService {
       total + (submission.parent.questions[index].marks * (answer.grade || 0)), 0);
   }
 
-  updateSubmission(submission: any, takingExam: boolean, close: boolean) {
-    submission.status = close ? this.updateStatus(submission) : submission.status;
+  updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
+    submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
@@ -135,6 +137,7 @@ export class SubmissionsService {
         this.submission = { ...submission, _id: res.id, _rev: res.rev };
       }
       this.submissionUpdated.next({ submission: this.submission, attempts });
+      return { submission, nextQuestion };
     }));
   }
 
@@ -175,6 +178,14 @@ export class SubmissionsService {
 
   submissionName(user) {
     return user.name || ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+  }
+
+  nextQuestion(submission, index, field) {
+    if (index >= submission.parent.questions.length) {
+      return this.nextQuestion(submission, 0, field);
+    }
+    return submission.answers[index] && submission.answers[index][field] !== undefined ?
+      this.nextQuestion(submission, index + 1, field) : index;
   }
 
 }

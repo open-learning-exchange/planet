@@ -10,7 +10,7 @@
     <span class="margin-lr-2" i18n *ngIf="mode === 'grade' || mode === 'view'">By {{submittedBy}}<span i18n *ngIf="!submittedBy">Unknown</span> on {{(updatedOn | date: 'short') || '--'}}</span>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(questionNum)"><mat-icon>navigate_next</mat-icon></button>
+    <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(true)"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container">
     <span class="mat-h2">{{question.title}}</span>
@@ -54,7 +54,7 @@
         *ngIf="mode !== 'view'"
         mat-raised-button
         color="primary"
-        (click)="nextQuestion(questionNum)"
+        (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
         [disabled]="answer === undefined || answer === '' || grade === undefined || grade === null"
         i18n>

@@ -72,26 +72,25 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  nextQuestion(questionNum: number) {
-    const close = questionNum === this.maxQuestions;
-    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable(close);
+  nextQuestion(nextClicked: boolean = false) {
+    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable();
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
-    obs.subscribe(() => {
+    obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
         this.answer = undefined;
         this.spinnerOn = false;
       } else {
-        this.routeToNext(close);
+        this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
       }
     });
   }
 
-  routeToNext (close) {
-    if (close) {
+  routeToNext (nextQuestion) {
+    if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
       this.examComplete();
     } else {
-      this.moveQuestion(1);
+      this.moveQuestion(nextQuestion - this.questionNum + 1);
     }
   }
 
@@ -194,19 +193,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers[0].id === this.question.correctChoice;
   }
 
-  createAnswerObservable(close) {
+  createAnswerObservable() {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         this.resetCheckboxes();
         return {
-          obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1, correctAnswer !== false && close),
+          obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1),
           correctAnswer
         };
       case 'grade':
         return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, close), correctAnswer };
       default:
-        return { obs: of({}), correctAnswer };
+        return { obs: of({ nextQuestion: this.questionNum + 1 }), correctAnswer };
     }
   }
 
