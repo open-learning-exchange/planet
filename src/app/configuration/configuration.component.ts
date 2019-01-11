@@ -108,8 +108,8 @@ export class ConfigurationComponent implements OnInit {
       autoAccept: true
     });
     this.contactFormGroup = this.formBuilder.group({
-      firstName: [ '', Validators.required ],
-      lastName: [ '', Validators.required ],
+      firstName: [ '', CustomValidators.required ],
+      lastName: [ '', CustomValidators.required ],
       middleName: [ '' ],
       email: [
         '',
@@ -118,7 +118,7 @@ export class ConfigurationComponent implements OnInit {
           Validators.email
         ])
       ],
-      phoneNumber: [ '', Validators.required ]
+      phoneNumber: [ '', CustomValidators.required ]
     });
     this.getNationList();
   }

@@ -26,11 +26,7 @@ const registerForm = {
 };
 
 const loginForm = {
-  name: [ '', Validators.compose([
-      Validators.required,
-      Validators.pattern('.*\\S.*[a-zA-z0-9 ]')
-    ])
-   ],
+  name: [ '', CustomValidators.required ],
   password: [ '', Validators.required ]
 };
 

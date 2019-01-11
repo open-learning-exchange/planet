@@ -225,4 +225,8 @@ export class CustomValidators {
     };
   }
 
+  static required(ac: AbstractControl) {
+    return Validators.pattern('.*\\S.*[a-zA-z0-9 ]')(ac) === null ? null : { 'required': true };
+  }
+
 }

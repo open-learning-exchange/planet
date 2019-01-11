@@ -62,8 +62,8 @@ export class MeetupsAddComponent implements OnInit {
 
   createForm() {
     this.meetupForm = this.fb.group({
-      title: [ '', [ Validators.required, Validators.pattern('.*\\S.*[a-zA-z0-9 ]') ] ],
-      description: [ '', [ Validators.required, Validators.pattern('.*\\S.*[a-zA-z0-9 ]') ] ],
+      title: [ '', CustomValidators.required ],
+      description: [ '', CustomValidators.required ],
       startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
       endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: '',

@@ -11,6 +11,7 @@ import { Validators } from '@angular/forms';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: './community.component.html'
@@ -89,7 +90,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialogsFormService.confirm(
       'Add ' + type,
       [ { placeholder: 'Name', name: 'name', required: true, type: 'textbox' } ],
-      { name: [ '', Validators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
+      { name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
     ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, spokes: [] }) : of())
     ).subscribe(
       () => {

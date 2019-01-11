@@ -86,12 +86,12 @@ export class UsersUpdateComponent implements OnInit {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       middleName: '',
-      lastName: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
       language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      phoneNumber: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       birthDate: [
         '',
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),

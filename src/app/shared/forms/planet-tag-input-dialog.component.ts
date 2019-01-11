@@ -7,6 +7,7 @@ import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html'
@@ -45,7 +46,7 @@ export class PlanetTagInputDialogComponent {
       .filter((tag: string) => tag)
       .forEach(tag => this.tagChange({ value: [ tag ], selected: true }, !this.selectMany));
     this.addTagForm = this.fb.group({
-      name: [ '', Validators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
+      name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -129,7 +130,7 @@ export class PlanetTagInputDialogComponent {
     return this.fb.group({
       name: [
         tag.name || '',
-        Validators.required,
+        CustomValidators.required,
         ac => this.validatorService.isUnique$('tags', 'name', ac, { exceptions: [ tag.name ] })
       ],
       attachedTo: [ tag.attachedTo || [] ]
