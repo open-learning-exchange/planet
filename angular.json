@@ -22,7 +22,8 @@
             ],
             "styles": [
               "node_modules/material-design-icons/iconfont/material-icons.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/styles/roboto.scss"
             ],
             "scripts": [],
             "poll": 2000
