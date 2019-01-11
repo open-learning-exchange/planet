@@ -89,16 +89,20 @@ export class SubmissionsService {
   submitAnswer(answer, correct: boolean, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
-    submission.answers[index] = {
-      value: answer,
-      mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
-      passed: correct !== false && this.validAnswer(answer)
-    };
+    submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
     const nextQuestion = this.nextQuestion(submission, index, 'passed');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
     return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion);
+  }
+
+  newAnswer(answer, oldAnswer, correct) {
+    return ({
+      value: answer,
+      mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
+      passed: correct !== false && this.validAnswer(answer)
+    });
   }
 
   submitGrade(grade, index: number) {
