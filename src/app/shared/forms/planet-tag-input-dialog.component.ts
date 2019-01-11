@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TagsService } from './tags.service';
@@ -33,6 +33,7 @@ export class PlanetTagInputDialogComponent {
   addTagForm: FormGroup;
   newTagId: string;
   isUserAdmin = false;
+  subcollectionIsOpen = new Map();
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -140,5 +141,25 @@ export class PlanetTagInputDialogComponent {
       attachedTo: [ tag.attachedTo || [] ]
     });
   }
+
+  toggleSubcollection(event, tagId) {
+    event.stopPropagation();
+    this.subcollectionIsOpen.set(tagId, !this.subcollectionIsOpen.get(tagId));
+  }
+
+}
+
+@Component({
+  'selector': 'planet-tag-input-toggle-icon',
+  'template': `
+    <button mat-icon-button>
+      <mat-icon *ngIf="!isOpen">expand_more</mat-icon>
+      <mat-icon *ngIf="isOpen">expand_less</mat-icon>
+    </button>
+  `
+})
+export class PlanetTagInputToggleIconComponent {
+
+  @Input() isOpen = false;
 
 }
