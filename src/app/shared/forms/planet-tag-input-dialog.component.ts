@@ -9,7 +9,12 @@ import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
 
 @Component({
-  'templateUrl': 'planet-tag-input-dialog.component.html'
+  'templateUrl': 'planet-tag-input-dialog.component.html',
+  'styles': [ `
+    :host .mat-list-option span {
+      font-weight: inherit;
+    }
+  ` ]
 })
 export class PlanetTagInputDialogComponent {
 
