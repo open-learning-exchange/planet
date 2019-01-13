@@ -11,7 +11,7 @@
         <span i18n>of</span>{{ ' ' + steps.length }}
       </span>
     <div class="step-form-container">
-      <form class="vertical-form" [formGroup]="stepForm">
+      <form [formGroup]="stepForm">
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
         </mat-form-field>
