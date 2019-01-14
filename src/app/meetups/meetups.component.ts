@@ -14,7 +14,6 @@ import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
-
 @Component({
   templateUrl: './meetups.component.html',
   styles: [ `
@@ -206,5 +205,4 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   countSelectedNotJoined(selected: any) {
     this.selectedNotJoined = selected.reduce((count, id) => count + (this.userService.shelf.meetupIds.indexOf(id) === -1 ? 1 : 0), 0);
   }
-
 }

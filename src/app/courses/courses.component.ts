@@ -356,5 +356,4 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
     };
   }
-
 }
