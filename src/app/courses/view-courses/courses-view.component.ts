@@ -70,7 +70,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       user: this.userService.get(),
       type: 'exam' });
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
-      const questionNum = this.submissionsService.nextQuestion(submission, submission.answers.length, 'passed') + 1;
+      const questionNum = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
         { questionNum } ], { relativeTo: this.route });
     });

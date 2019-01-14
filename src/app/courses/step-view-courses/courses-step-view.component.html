@@ -13,7 +13,7 @@
       class="margin-lr-10"
       *ngIf="stepDetail?.exam?.questions.length && showExamButton"
       (click)="goToExam()">
-      {{examStart === 1 ? "Take Exam" : "Continue Exam"}}
+      {{isExamInProgress ? "Take Exam" : "Continue Exam"}}
     </a>
     <a
       mat-raised-button
