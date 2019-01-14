@@ -18,7 +18,7 @@
     <ng-container [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question.type">
-          <mat-form-field *ngSwitchCase="'input'">
+          <mat-form-field class="full-width" *ngSwitchCase="'input'">
             <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer">
           </mat-form-field>
           <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
