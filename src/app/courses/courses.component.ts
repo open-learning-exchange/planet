@@ -18,6 +18,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -79,14 +80,16 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private syncService: SyncService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
         this.setupList(this.courses.data, shelf.courseIds);
       });
-   }
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.getCourses();
@@ -105,6 +108,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((courses: any) => {
       this.courses.data = courses;
       this.emptyData = !this.courses.data.length;
+      this.dialogsLoadingService.stop();
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);

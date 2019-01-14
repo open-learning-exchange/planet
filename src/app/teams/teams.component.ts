@@ -8,6 +8,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './teams.component.html'
@@ -29,13 +30,15 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
-    private router: Router
+    private router: Router,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
         this.teams.data = this.teamList(this.teams.data, shelf.myTeamIds);
       });
+    this.dialogsLoadingService.start();
   }
 
   ngOnInit() {
@@ -49,6 +52,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.userShelf = this.userService.shelf;
       this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
       this.emptyData = !this.teams.data.length;
+      this.dialogsLoadingService.stop();
     }, (error) => console.log(error));
   }
 

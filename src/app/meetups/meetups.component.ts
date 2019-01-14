@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -52,8 +53,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private meetupService: MeetupService,
-    private stateService: StateService
-  ) { }
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
@@ -62,6 +66,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
       this.emptyData = !this.meetups.data.length;
+      this.dialogsLoadingService.stop();
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
