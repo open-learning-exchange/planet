@@ -16,7 +16,6 @@ import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { PendingTableComponent } from './reports/pending-table.component';
-import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -29,8 +28,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     ManagerDashboardRouterModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    ConfigurationModule,
-    SharedComponentsModule
+    ConfigurationModule
   ],
   declarations: [
     ManagerDashboardComponent,
