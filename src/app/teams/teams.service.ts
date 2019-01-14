@@ -8,6 +8,7 @@ import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { findDocuments } from '../shared/mangoQueries';
+import { CustomValidators } from '../validators/custom-validators';
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -35,7 +36,7 @@ export class TeamsService {
   addTeamDialog(shelf, team?) {
     const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ team ? team.name : '', Validators.required ],
+      name: [ team ? team.name : '', CustomValidators.required ],
       description: team ? team.description : '',
       requests: [ team ? team.requests : [] ]
     };

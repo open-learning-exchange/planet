@@ -26,7 +26,7 @@ const registerForm = {
 };
 
 const loginForm = {
-  name: [ '', Validators.required ],
+  name: [ '', CustomValidators.required ],
   password: [ '', Validators.required ]
 };
 

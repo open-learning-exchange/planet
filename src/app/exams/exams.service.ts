@@ -16,7 +16,7 @@ export class ExamsService {
     return this.setInitalFormValue(this.fb.group(Object.assign(
       {
         title: '',
-        body: [ '', Validators.required ],
+        body: [ '', CustomValidators.required ],
         type: 'input',
         correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
         marks: [ 1, CustomValidators.positiveNumberValidator ],
@@ -29,7 +29,7 @@ export class ExamsService {
 
   newQuestionChoice(newId, intialValue?) {
     return this.setInitalFormValue(new FormGroup({
-      'text': new FormControl('', Validators.required),
+      'text': new FormControl('', CustomValidators.required),
       'id': new FormControl(newId)
     }), intialValue);
   }

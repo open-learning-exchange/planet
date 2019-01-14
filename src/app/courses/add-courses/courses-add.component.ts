@@ -64,10 +64,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.courseForm = this.fb.group({
       courseTitle: [
         '',
-        Validators.required,
+        CustomValidators.required,
         this.courseTitleValidator(this.route.snapshot.paramMap.get('id') || this.coursesService.course._id)
       ],
-      description: [ '', Validators.required ],
+      description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
       memberLimit: [
         10, // need to compose validators if we use more than one

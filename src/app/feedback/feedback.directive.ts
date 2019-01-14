@@ -8,6 +8,7 @@ import { FeedbackService } from './feedback.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
+import { CustomValidators } from '../validators/custom-validators';
 
 export class Message {
   message: string;
@@ -109,7 +110,7 @@ export class FeedbackDirective {
     const formGroup = {
       priority: [ this.priority, Validators.required ],
       type: [ this.type, Validators.required ],
-      message: [ this.message, Validators.required ]
+      message: [ this.message, CustomValidators.required ]
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
