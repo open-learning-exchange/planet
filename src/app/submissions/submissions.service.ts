@@ -89,16 +89,20 @@ export class SubmissionsService {
   submitAnswer(answer, correct: boolean, index: number) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
-    submission.answers[index] = {
-      value: answer,
-      mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
-      passed: correct !== false
-    };
-    const nextQuestion = this.nextQuestion(submission, index, 'value');
+    submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
+    const nextQuestion = this.nextQuestion(submission, index, 'passed');
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
     return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion);
+  }
+
+  newAnswer(answer, oldAnswer, correct) {
+    return ({
+      value: answer,
+      mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
+      passed: correct !== false && this.validAnswer(answer)
+    });
   }
 
   submitGrade(grade, index: number) {
@@ -186,15 +190,19 @@ export class SubmissionsService {
   }
 
   shouldCloseSubmission(submission, field) {
-    return submission.answers.filter(answer => answer[field] !== undefined).length >= submission.parent.questions.length;
+    return submission.answers.filter(answer => this.validAnswer(answer[field])).length >= submission.parent.questions.length;
   }
 
   findNextQuestion(submission, index, field) {
     if (index >= submission.parent.questions.length) {
       return this.findNextQuestion(submission, 0, field);
     }
-    return submission.answers[index] && submission.answers[index][field] !== undefined ?
+    return submission.answers[index] && this.validAnswer(submission.answers[index][field]) ?
       this.findNextQuestion(submission, index + 1, field) : index;
+  }
+
+  validAnswer(field) {
+    return field !== undefined && field !== false && field !== '';
   }
 
 }
