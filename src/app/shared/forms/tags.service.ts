@@ -42,7 +42,8 @@ export class TagsService {
   }
 
   updateTag(tag) {
-    return this.couchService.post('tags', tag);
+    const { count, subTags, ...tagData } = tag;
+    return this.couchService.post('tags', tagData);
   }
 
   findTag(tagKey: any, fullTags: any[]) {
