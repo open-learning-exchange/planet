@@ -12,7 +12,8 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
-import { DialogsLoadingComponent } from '../shared/dialogs/dialogs-loading.component';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -44,7 +45,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   emptyData = false;
   selectedNotJoined = 0;
-  spinnerDialog: MatDialogRef<DialogsLoadingComponent>;
 
   constructor(
     private couchService: CouchService,
@@ -54,20 +54,20 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private meetupService: MeetupService,
-    private stateService: StateService
-  ) { }
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
-    this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
-      disableClose: true
-    });
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((meetups) => {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
       this.emptyData = !this.meetups.data.length;
-      this.closeSpinner();
+      this.dialogsLoadingService.stop();
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
@@ -205,14 +205,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   countSelectedNotJoined(selected: any) {
     this.selectedNotJoined = selected.reduce((count, id) => count + (this.userService.shelf.meetupIds.indexOf(id) === -1 ? 1 : 0), 0);
-  }
-
-  closeSpinner() {
-    for (const entry of this.dialog.openDialogs) {
-      if (entry === this.spinnerDialog) {
-        this.spinnerDialog.close();
-      }
-    }
   }
 
 }

@@ -19,7 +19,7 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
-import { DialogsLoadingComponent } from '../shared/dialogs/dialogs-loading.component';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -71,7 +71,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
-  spinnerDialog: MatDialogRef<DialogsLoadingComponent>;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -86,13 +85,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private resourcesService: ResourcesService,
     private syncService: SyncService,
     private dialogsListService: DialogsListService,
-    private stateService: StateService
-  ) {}
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
-    this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
-      disableClose: true
-    });
     this.resourcesService.resourcesListener(this.parent).pipe(
       takeUntil(this.onDestroy$),
       map((resources) => {
@@ -105,7 +104,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.data = resources;
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
-      this.closeSpinner();
+      this.dialogsLoadingService.stop();
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = composeFilterFunctions(
@@ -310,14 +309,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
-  }
-
-  closeSpinner() {
-    for (const entry of this.dialog.openDialogs) {
-      if (entry === this.spinnerDialog) {
-        this.spinnerDialog.close();
-      }
-    }
   }
 
 }

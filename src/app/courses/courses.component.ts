@@ -18,7 +18,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
-import { DialogsLoadingComponent } from '../shared/dialogs/dialogs-loading.component';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -69,7 +69,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
   emptyData = false;
-  spinnerDialog: MatDialogRef<DialogsLoadingComponent>;
 
   constructor(
     private couchService: CouchService,
@@ -81,19 +80,18 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private syncService: SyncService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
         this.setupList(this.courses.data, shelf.courseIds);
       });
-   }
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
-    this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
-      disableClose: true
-    });
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
@@ -110,7 +108,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((courses: any) => {
       this.courses.data = courses;
       this.emptyData = !this.courses.data.length;
-      this.closeSpinner();
+      this.dialogsLoadingService.stop();
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
@@ -357,14 +355,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
     };
-  }
-
-  closeSpinner() {
-    for (const entry of this.dialog.openDialogs) {
-      if (entry === this.spinnerDialog) {
-        this.spinnerDialog.close();
-      }
-    }
   }
 
 }
