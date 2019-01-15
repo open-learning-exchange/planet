@@ -136,4 +136,8 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     return listMode;
   }
 
+  isNumber(value) {
+    return typeof value === 'number';
+  }
+
 }
