@@ -55,6 +55,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           user: this.userService.get(),
           type: 'exam' });
       }
+      this.stepDetail.resources.sort(function (a, b) {
+        return ('' + a.title).localeCompare(b.title);
+      });
       this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
     });
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
