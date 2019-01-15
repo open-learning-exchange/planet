@@ -39,26 +39,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = [] }: { course: any, progress: any }) => {
-      // To be readable by non-technical people stepNum param will start at 1
-      this.stepDetail = course.steps[this.stepNum - 1];
-      this.progress = progress.find((p: any) => p.stepNum === this.stepNum) || { passed: false };
-      if (!this.parent && this.progress.stepNum === undefined) {
-        this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined });
-      }
-      this.maxStep = course.steps.length;
-      this.attempts = 0;
-      if (this.stepDetail.exam) {
-        this.showExamButton = !this.parent && this.checkMyCourses(course._id);
-        this.submissionsService.openSubmission({
-          parentId: this.stepDetail.exam._id + '@' + course._id,
-          parent: this.stepDetail.exam,
-          user: this.userService.get(),
-          type: 'exam' });
-      }
-      this.stepDetail.resources.sort(function (a, b) {
-        return ('' + a.title).localeCompare(b.title);
-      });
-      this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
+      this.initCourse(course, progress);
     });
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
@@ -83,6 +64,29 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  initCourse(course, progress) {
+    // To be readable by non-technical people stepNum param will start at 1
+    this.stepDetail = course.steps[this.stepNum - 1];
+    this.progress = progress.find((p: any) => p.stepNum === this.stepNum) || { passed: false };
+    if (!this.parent && this.progress.stepNum === undefined) {
+      this.coursesService.updateProgress({ courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined });
+    }
+    this.maxStep = course.steps.length;
+    this.attempts = 0;
+    if (this.stepDetail.exam) {
+      this.showExamButton = !this.parent && this.checkMyCourses(course._id);
+      this.submissionsService.openSubmission({
+        parentId: this.stepDetail.exam._id + '@' + course._id,
+        parent: this.stepDetail.exam,
+        user: this.userService.get(),
+        type: 'exam' });
+    }
+    this.stepDetail.resources.sort(function (a, b) {
+      return ('' + a.title).localeCompare(b.title);
+    });
+    this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
   }
 
   // direction = -1 for previous, 1 for next
