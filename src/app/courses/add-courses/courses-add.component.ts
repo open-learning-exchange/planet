@@ -70,7 +70,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
       memberLimit: [
-        10, // need to compose validators if we use more than one
+        0, // need to compose validators if we use more than one
         Validators.compose([
           CustomValidators.integerValidator,
           CustomValidators.positiveNumberValidator
