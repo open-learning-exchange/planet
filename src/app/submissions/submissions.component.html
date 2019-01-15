@@ -48,7 +48,7 @@
       <ng-container matColumnDef="lastUpdateTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Updated On</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span *ngIf="element.lastUpdateTime">{{(element.lastUpdateTime | date: 'medium') || '--'}}</span>
+          <span>{{(isNumber(element.lastUpdateTime) ? element.lastUpdateTime : null | date: 'medium') || '--'}}</span>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
