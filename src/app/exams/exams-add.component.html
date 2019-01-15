@@ -30,10 +30,10 @@
           <span i18n class="margin-lr-4 mat-caption warn-text-color" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
         </planet-step-list-item>
         <div planetStepListForm>
-            <span class="mat-caption margin-lr-5">
-                <span i18n>Editing Question</span>{{ ' ' + (this.activeQuestionIndex + 1) + ' ' }}
-                <span i18n>of</span>{{ ' ' + questions?.length }}
-            </span>
+          <span class="mat-caption margin-lr-5">
+            <span i18n>Editing Question</span>{{ ' ' + (this.activeQuestionIndex + 1) + ' ' }}
+            <span i18n>of</span>{{ ' ' + questions?.length }}
+          </span>
           <planet-exam-question [(question)]="question" [examType]="examType" *ngIf="activeQuestionIndex > -1"></planet-exam-question>
         </div>
       </planet-step-list>
