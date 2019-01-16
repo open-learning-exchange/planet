@@ -358,7 +358,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     .pipe(switchMap((items) => {
       return this.syncService.confirmPasswordAndRunReplicators([
         { db: 'send_items', items, type: 'push', date: true },
-        ...this.syncService.createReplicatorsArray(coursesToSend, 'push', [], 'dbTarget')
+        ...this.syncService.createReplicatorsArray(coursesToSend.map(course => ({ item: course, db: 'courses' })), 'push', [], 'dbTarget')
       ]);
     })).subscribe(() => {
       this.planetMessageService.showMessage('Courses queued to push to parent.');
