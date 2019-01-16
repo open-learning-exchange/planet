@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'planet-courses-compare',
-  templateUrl: './courses-compare.component.html'
+  selector: 'planet-compare-courses',
+  templateUrl: './compare-courses.component.html'
 })
 
 export class CoursesCompareComponent implements OnChanges {

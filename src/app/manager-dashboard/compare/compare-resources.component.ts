@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
 
 @Component({
-  selector: 'planet-resources-compare',
-  templateUrl: './resources-compare.component.html'
+  selector: 'planet-compare-resources',
+  templateUrl: './compare-resources.component.html'
 })
 
 export class ResourcesCompareComponent implements OnChanges {
