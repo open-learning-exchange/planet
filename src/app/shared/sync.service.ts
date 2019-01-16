@@ -79,43 +79,45 @@ export class SyncService {
     };
   }
 
-  createRepicatorsArray(items, type: 'pull' | 'push', replicators = []) {
+  createReplicatorsArray(items, type: 'pull' | 'push', replicators = [], pending?: 'dbSource' | 'dbTarget' | undefined) {
     return items.reduce((newReplicators: any[], item: any) => {
       const doc = item.item;
       let syncObject = newReplicators.find((replicator: any) => replicator.db === item.db);
       if (!syncObject) {
         syncObject = { db: item.db, type, date: true, items: [ doc ] };
-        newReplicators.push(syncObject);
+        newReplicators.push({ ...syncObject, ...(pending ? { [pending]: item.db + '_pending' } : {}) });
       } else {
         syncObject.items.push(doc);
       }
       switch (item.db) {
         case 'courses':
-          return this.coursesItemsToSync(doc, type, newReplicators);
+          return this.coursesItemsToSync(doc, type, newReplicators, pending);
         case 'resources':
-          return this.resourcesItemsToSync(doc, type, newReplicators);
+          return this.resourcesItemsToSync(doc, type, newReplicators, pending);
         default:
           return newReplicators;
       }
     }, replicators);
   }
 
-  coursesItemsToSync(course, type, replicators) {
-    return this.createRepicatorsArray(
+  coursesItemsToSync(course, type, replicators, pending) {
+    return this.createReplicatorsArray(
       [].concat.apply([], course.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : []))
       ),
       type,
-      replicators
+      replicators,
+      pending
     );
   }
 
-  resourcesItemsToSync(resource, type, replicators) {
-    return resource.tags === undefined ? replicators : this.createRepicatorsArray(
+  resourcesItemsToSync(resource, type, replicators, pending) {
+    return resource.tags === undefined ? replicators : this.createReplicatorsArray(
       resource.tags.map(tag => ({ item: { _id: tag }, db: 'tags' })),
       type,
-      replicators
+      replicators,
+      pending
     );
   }
 

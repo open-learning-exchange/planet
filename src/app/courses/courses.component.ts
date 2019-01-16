@@ -352,11 +352,14 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  uploadCourse(db: string) {
+  uploadCourse() {
     const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-    this.syncService.createChildPullDoc(coursesToSend, 'courses', this.planetConfiguration.parentCode)
+    this.syncService.createChildPullDoc(coursesToSend, this.dbName, this.planetConfiguration.parentCode)
     .pipe(switchMap((items) => {
-      return this.syncService.confirmPasswordAndRunReplicators([ { db: 'send_items', items, type: 'push', date: true } ]);
+      return this.syncService.confirmPasswordAndRunReplicators([
+        { db: 'send_items', items, type: 'push', date: true },
+        ...this.syncService.createReplicatorsArray(coursesToSend, 'push', [], 'dbTarget')
+      ]);
     })).subscribe(() => {
       this.planetMessageService.showMessage('Courses queued to push to parent.');
       this.dialogRef.close();
