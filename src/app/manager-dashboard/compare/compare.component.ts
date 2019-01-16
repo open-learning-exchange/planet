@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { Subject, forkJoin } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './compare.component.html',
@@ -26,8 +24,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 export class CompareComponent implements OnInit {
 
   onDestroy$ = new Subject<void>();
-  remoteCopy: any = { };
-  localCopy: any = { };
+  remoteCopy: any = {};
+  localCopy: any = {};
   fullView = 'on';
   localView = 'off';
   remoteView = 'on';
@@ -37,8 +35,7 @@ export class CompareComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -50,15 +47,17 @@ export class CompareComponent implements OnInit {
 
   fetchItem(id) {
     this.couchService.get('send_items/' + id)
-    .pipe(switchMap(send => {
-      this.remoteCopy = send.item;
-      this.itemId = send.item._id;
-      this.type = send.db;
-      return this.couchService.get(send.db + '/' + this.itemId);
+    .pipe(switchMap((doc: any) => {
+      this.itemId = doc.item._id;
+      this.type = doc.db;
+      return forkJoin([
+        this.couchService.get(doc.db + '_pending/' + this.itemId + '?conflicts=true'),
+        this.couchService.get(doc.db + '/' + this.itemId)
+      ]);
     }))
-    .subscribe((item) => {
-      this.localCopy = item;
-      console.log(this.remoteCopy, this.localCopy);
+    .subscribe(([ remoteItem, localItem ]) => {
+      this.remoteCopy = remoteItem;
+      this.localCopy = localItem;
     });
   }
 
@@ -70,7 +69,6 @@ export class CompareComponent implements OnInit {
       this.localView = this.localView === 'on' ? 'off' : 'on';
     }
     this.fullView = (this.localView === 'off' || this.remoteView === 'off') ? 'on' : 'off';
-    console.log(this.fullView);
   }
 
 }

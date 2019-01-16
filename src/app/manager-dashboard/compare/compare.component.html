@@ -14,12 +14,12 @@
   <div class="view-container view-full-height">
     <div [ngClass]="(fullView=='on') ? 'full-view-container' : 'compare-container'">
       <ng-container *ngIf="type === 'courses'">
-        <planet-courses-compare *ngIf="localCopy && localView === 'on'" [courseDetail]="localCopy"></planet-courses-compare>
-        <planet-courses-compare *ngIf="remoteCopy && remoteView === 'on'" [courseDetail]="remoteCopy"></planet-courses-compare>
+        <planet-compare-courses *ngIf="localCopy && localView === 'on'" [courseDetail]="localCopy"></planet-compare-courses>
+        <planet-compare-courses *ngIf="remoteCopy && remoteView === 'on'" [courseDetail]="remoteCopy"></planet-compare-courses>
       </ng-container>
       <ng-container *ngIf="type === 'resources'">
-        <planet-resources-compare *ngIf="localCopy && localView === 'on'" [resourceDetail]="localCopy"></planet-resources-compare>
-        <planet-resources-compare *ngIf="remoteCopy && remoteView === 'on'" [resourceDetail]="remoteCopy"></planet-resources-compare>
+        <planet-compare-resources *ngIf="localCopy && localView === 'on'" [resourceDetail]="localCopy"></planet-compare-resources>
+        <planet-compare-resources *ngIf="remoteCopy && remoteView === 'on'" [resourceDetail]="remoteCopy"></planet-compare-resources>
       </ng-container>
     </div>
   </div>
