@@ -7,7 +7,14 @@
       {localView, select, on {Hide} off {Show}} Local
     </button>
     <span class="toolbar-fill"></span>
-    <button mat-stroked-button class="margin-lr-3" *ngIf="remoteCopy" (click)="toggleFullView('remote')" i18n>
+    <mat-form-field *ngIf="remoteCopies.length > 1">
+      <mat-select i18n-placeholder placeholder="Select Version" [value]="0" (selectionChange)="onRemoteChange($event.value)">
+        <mat-option class="margin-lr-10" *ngFor="let item of remoteCopies; index as i" [value]="i">
+          {{ item._rev }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-stroked-button class="margin-lr-3" *ngIf="remoteCopies[selectedRemote]" (click)="toggleFullView('remote')" i18n>
       {remoteView, select, on {Hide} off {Show}} Remote
     </button>
   </mat-toolbar>
@@ -15,11 +22,11 @@
     <div [ngClass]="(fullView=='on') ? 'full-view-container' : 'compare-container'">
       <ng-container *ngIf="type === 'courses'">
         <planet-compare-courses *ngIf="localCopy && localView === 'on'" [courseDetail]="localCopy"></planet-compare-courses>
-        <planet-compare-courses *ngIf="remoteCopy && remoteView === 'on'" [courseDetail]="remoteCopy"></planet-compare-courses>
+        <planet-compare-courses *ngIf="remoteCopies[selectedRemote] && remoteView === 'on'" [courseDetail]="remoteCopies[selectedRemote]"></planet-compare-courses>
       </ng-container>
       <ng-container *ngIf="type === 'resources'">
         <planet-compare-resources *ngIf="localCopy && localView === 'on'" [resourceDetail]="localCopy"></planet-compare-resources>
-        <planet-compare-resources *ngIf="remoteCopy && remoteView === 'on'" [resourceDetail]="remoteCopy"></planet-compare-resources>
+        <planet-compare-resources *ngIf="remoteCopies[selectedRemote] && remoteView === 'on'" [resourceDetail]="remoteCopies[selectedRemote]"></planet-compare-resources>
       </ng-container>
     </div>
   </div>

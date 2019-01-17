@@ -24,8 +24,9 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 export class CompareComponent implements OnInit {
 
   onDestroy$ = new Subject<void>();
-  remoteCopy: any = {};
+  remoteCopies: any[] = [];
   localCopy: any = {};
+  selectedRemote = 0;
   fullView = 'on';
   localView = 'off';
   remoteView = 'on';
@@ -52,12 +53,17 @@ export class CompareComponent implements OnInit {
       this.type = doc.db;
       return forkJoin([
         this.couchService.get(doc.db + '_pending/' + this.itemId + '?conflicts=true'),
-        this.couchService.get(doc.db + '/' + this.itemId)
+        this.couchService.get(doc.db + '/' + this.itemId),
       ]);
-    }))
-    .subscribe(([ remoteItem, localItem ]) => {
-      this.remoteCopy = remoteItem;
+    }),
+    switchMap(([ remoteItem, localItem ]) => {
+      this.remoteCopies = [ remoteItem ];
       this.localCopy = localItem;
+      const docs = (remoteItem._conflicts || []).map((rev: any) => ({ id: remoteItem._id, rev }));
+      return this.couchService.bulkGet(this.type + '_pending', docs);
+    }))
+    .subscribe((conflicts) => {
+      this.remoteCopies = [ ...this.remoteCopies, ...conflicts ];
     });
   }
 
@@ -69,6 +75,10 @@ export class CompareComponent implements OnInit {
       this.localView = this.localView === 'on' ? 'off' : 'on';
     }
     this.fullView = (this.localView === 'off' || this.remoteView === 'off') ? 'on' : 'off';
+  }
+
+  onRemoteChange(index) {
+    this.selectedRemote = index;
   }
 
 }
