@@ -226,7 +226,7 @@ export class CustomValidators {
   }
 
   static required(ac: AbstractControl) {
-    return Validators.pattern(/\S/)(ac) === null ? null : { 'required': true };
+    return /\S/.test(ac.value) ? null : { 'required': true };
   }
 
 }
