@@ -115,6 +115,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    this.coursesService.stepIndex = undefined;
   }
 
   ngOnDestroy() {
