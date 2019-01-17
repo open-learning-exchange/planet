@@ -9,7 +9,9 @@ import {
   TemplateRef,
   Injectable,
   OnDestroy,
-  AfterContentChecked
+  AfterContentChecked,
+  ViewEncapsulation,
+  HostBinding
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -64,18 +66,8 @@ export class PlanetStepListItemComponent {
 @Component({
   selector: 'planet-step-list',
   templateUrl: './planet-step-list.component.html',
-  styles: [ `
-    .back-button {
-      padding: 0 0.5rem 0 0;
-    }
-    .action-buttons {
-      display: grid;
-      grid-column-gap: 0.5rem;
-      grid-auto-columns: min-content;
-      grid-auto-flow: column;
-      margin: 0.5rem 0;
-    }
-  ` ]
+  styleUrls: [ './planet-step-list.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
@@ -150,4 +142,18 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 @Directive({
   selector: '[planetStepListForm]'
 })
-export class PlanetStepListFormDirective {}
+export class PlanetStepListFormDirective {
+  @HostBinding('class') class = 'planet-step-list-form';
+}
+
+@Directive({
+  selector: '[planetStepListNumber]'
+})
+export class PlanetStepListNumberDirective {}
+
+@Directive({
+  selector: '[planetStepListActions]'
+})
+export class PlanetStepListActionsDirective {
+  @HostBinding('class') class = 'planet-step-list-actions';
+}

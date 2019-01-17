@@ -1,0 +1,29 @@
+.back-button {
+  padding: 0 0.5rem 0 0;
+}
+
+.planet-step-list-form-container {
+  display: grid;
+  grid-template-rows: min-content minmax(auto, min-content) min-content;
+  height: 100%;
+
+  .action-buttons {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .action-buttons > *, .planet-step-list-actions > * {
+    margin: 0 0 0 0.25rem;
+  }
+
+  .action-buttons > *:first-child, .planet-step-list-actions > *:first-child {
+    margin: 0;
+  }
+
+  .planet-step-list-form {
+    overflow-y: auto;
+  }
+
+  .planet-step-list-actions {
+    margin: 0.5rem 0 0 0;
+  }
+}
