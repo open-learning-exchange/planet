@@ -20,6 +20,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
+  isExamInProgress = false;
   attempts = 0;
   showExamButton = false;
   resource: any;
@@ -43,7 +44,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = submission.answers.reduce((totalPassed, answer) => totalPassed + (answer.passed ? 1 : 0), 0) + 1;
+      this.examStart = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
+      this.isExamInProgress = submission.answers.length === 0;
       this.attempts = attempts;
       const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
       this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;

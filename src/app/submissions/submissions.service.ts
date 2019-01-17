@@ -190,7 +190,7 @@ export class SubmissionsService {
   }
 
   shouldCloseSubmission(submission, field) {
-    return submission.answers.filter(answer => this.validAnswer(answer[field])).length >= submission.parent.questions.length;
+    return submission.answers.filter(answer => answer && this.validAnswer(answer[field])).length >= submission.parent.questions.length;
   }
 
   findNextQuestion(submission, index, field) {
