@@ -8,6 +8,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { UsersAchievementsService } from './users-achievements.service';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -28,7 +29,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   docInfo = { '_rev': undefined };
   readonly dbName = 'achievements';
   editForm: FormGroup;
-  infoTypes = [ 'Language', 'Education', 'History', 'Badges', 'Certificates', 'Internships', 'Degrees', 'Awards' ];
+  infoTypes = this.usersAchievementsService.infoTypes;
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +37,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private usersAchievementsService: UsersAchievementsService
   ) {
     this.createForm();
   }
