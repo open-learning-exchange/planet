@@ -15,9 +15,8 @@
         <a [matBadge]="surveys.length" matBadgeOverlap="false" [matBadgeHidden]="surveys.length<1" i18n>Surveys</a>
         <mat-divider [inset]="true"></mat-divider>
       </mat-list-item>
-      <mat-list-item *ngFor="let item of [ 'Calendar', 'Email', 'Documents' ]; last as last">
-        <span>{{item}}</span>
-        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+      <mat-list-item class="cursor-pointer" routerLink="/myAchievements">
+        <a i18n>Achievements</a>
       </mat-list-item>
     </mat-list>
   </div>

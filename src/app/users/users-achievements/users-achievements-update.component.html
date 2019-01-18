@@ -1,0 +1,53 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Edit Achievements</span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span>{{user.name}}</span>
+  </mat-toolbar>
+  <div class="view-container">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox class="full-width" placeholder="My Purpose" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox class="full-width" placeholder="My Goals" [formControl]="editForm.controls.goals"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox class="full-width" placeholder="Summary of Achievements" [formControl]="editForm.controls.achievementsHeader"></planet-markdown-textbox>
+      </mat-form-field>
+      <div>
+        <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
+        <ng-container *ngFor="let achievement of editForm.controls.achievements.controls">
+          <mat-form-field>
+            <input matInput i18n-placeholder placeholder="Achievement" [formControl]="achievement">
+          </mat-form-field>
+        </ng-container>
+      </div>
+      <div>
+        <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
+        <ng-container *ngFor="let info of editForm.controls.otherInfo.controls">
+          <mat-form-field>
+            <mat-select i18n-placeholder placeholder="Language" [formControl]="info.controls.type">
+              <mat-option *ngFor="let type of infoTypes" [value]="type">
+                {{type}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput i18n-placeholder placeholder="Description" [formControl]="info.controls.description">
+          </mat-form-field>
+        </ng-container>
+      </div>
+      <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
+        Allow your achievements to be shared with the nation
+      </mat-checkbox>
+      <div>
+        <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+        <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

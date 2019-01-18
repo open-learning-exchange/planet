@@ -1,0 +1,19 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Achievements</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span>{{user.name}}</span>
+    <span class="toolbar-fill"></span>
+    <a mat-raised-button color="accent" i18n [routerLink]="['update']"><mat-icon>mode_edit</mat-icon><span>Edit Achievements</span></a>
+  </mat-toolbar>
+  <div class="view-container">
+    <div *ngIf="achievements !== undefined" class="profile-container">
+      <td-markdown [content]="achievements.purpose"></td-markdown>
+      <td-markdown [content]="achievements.goals"></td-markdown>
+    </div>
+  </div>
+</div>
