@@ -20,26 +20,21 @@
       </mat-form-field>
       <div>
         <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
-        <ng-container *ngFor="let achievement of editForm.controls.achievements.controls">
-          <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Achievement" [formControl]="achievement">
-          </mat-form-field>
-        </ng-container>
+        <mat-list>
+          <mat-list-item *ngFor="let achievement of editForm.controls.achievements.controls; index as i">
+            <span mat-line>{{achievement.value}}</span>
+            <button mat-stroked-button type="button" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
+          </mat-list-item>
+        </mat-list>
       </div>
       <div>
         <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
-        <ng-container *ngFor="let info of editForm.controls.otherInfo.controls">
-          <mat-form-field>
-            <mat-select i18n-placeholder placeholder="Language" [formControl]="info.controls.type">
-              <mat-option *ngFor="let type of infoTypes" [value]="type">
-                {{type}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Description" [formControl]="info.controls.description">
-          </mat-form-field>
-        </ng-container>
+        <mat-list>
+          <mat-list-item *ngFor="let info of editForm.controls.otherInfo.controls; index as i">
+            <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
+            <button mat-stroked-button type="button" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
+          </mat-list-item>
+        </mat-list>
       </div>
       <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
         Allow your achievements to be shared with the nation

@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -38,7 +39,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
-    private usersAchievementsService: UsersAchievementsService
+    private usersAchievementsService: UsersAchievementsService,
+    private dialogsFormService: DialogsFormService
   ) {
     this.createForm();
   }
@@ -47,6 +49,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     this.user = this.userService.get();
     this.couchService.get(this.dbName + '/' + this.user._id).subscribe((achievements) => {
       this.editForm.patchValue(achievements);
+      this.editForm.controls.achievements = this.fb.array(achievements.achievements);
+      this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo);
+      this.docInfo._rev = achievements._rev;
     }, (error) => {
       console.log(error);
     });
@@ -63,12 +68,49 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     });
   }
 
-  addAchievement() {
-    (<FormArray>this.editForm.controls.achievements).push(this.fb.control(''));
+  addAchievement(index = -1, achievement?) {
+    this.dialogsFormService.confirm('Add Achievement', [
+      {
+        'type': 'textarea',
+        'name': 'description',
+        'placeholder': 'Description'
+      },
+    ], this.fb.group({ description: achievement })).subscribe((newAchievement) => {
+      if (newAchievement === undefined) {
+        return;
+      }
+      this.updateFormArray(this.editForm.controls.achievements, this.fb.control(newAchievement.description), index);
+    });
   }
 
-  addOtherInfo() {
-    (<FormArray>this.editForm.controls.otherInfo).push(this.fb.group({ type: '', description: '' }));
+  addOtherInfo(index = -1, info?: any) {
+    this.dialogsFormService.confirm('Add Other Information', [
+      {
+        'type': 'selectbox',
+        'options': this.usersAchievementsService.infoTypes.map(type => ({ 'name': type, 'value': type })),
+        'name': 'type',
+        'placeholder': 'Type'
+      },
+      {
+        'type': 'textarea',
+        'name': 'description',
+        'placeholder': 'Description'
+      },
+    ], this.fb.group({ type: '', description: '', ...info })).subscribe((newInfo) => {
+      if (newInfo === undefined) {
+        return;
+      }
+      this.updateFormArray(this.editForm.controls.otherInfo, this.fb.group(newInfo), index);
+    });
+  }
+
+  updateFormArray(formArray: FormArray, value, index = -1) {
+    if (index === -1) {
+      formArray.push(value);
+    } else {
+      formArray.setControl(index, value);
+    }
+    this.editForm.updateValueAndValidity();
   }
 
   onSubmit() {
