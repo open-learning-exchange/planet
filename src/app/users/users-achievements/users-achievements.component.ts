@@ -35,12 +35,12 @@ export class UsersAchievementsComponent implements OnInit {
   ngOnInit() {
     this.user = this.userService.get();
     this.couchService.get(this.dbName + '/' + this.user._id).subscribe((achievements) => {
-      this.achievements = {
+      this.achievements = achievements._id && ({
         ...achievements,
-        ...achievements.otherInfo.reduce((otherInfoObj: any, info) =>
-          ({ ...otherInfoObj, [info.type]: [ ...(otherInfoObj[info.type] || []), info ] })
+        ...(achievements.otherInfo || []).reduce((otherInfoObj: any, info) =>
+          ({ ...otherInfoObj, [info.type]: [ ...(otherInfoObj[info.type] || []), info ] }), {}
         )
-      };
+      });
     }, (error) => {
       this.planetMessageService.showAlert('There was an error getting achievements');
       console.log(error);

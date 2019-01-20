@@ -49,8 +49,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     this.user = this.userService.get();
     this.couchService.get(this.dbName + '/' + this.user._id).subscribe((achievements) => {
       this.editForm.patchValue(achievements);
-      this.editForm.controls.achievements = this.fb.array(achievements.achievements);
-      this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo);
+      this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
+      this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
       this.docInfo._rev = achievements._rev;
     }, (error) => {
       console.log(error);
