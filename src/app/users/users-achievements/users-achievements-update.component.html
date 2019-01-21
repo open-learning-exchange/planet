@@ -21,7 +21,7 @@
       <div>
         <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
         <mat-list>
-          <mat-list-item *ngFor="let achievement of editForm.controls.achievements.controls; index as i">
+          <mat-list-item *ngFor="let achievement of achievements.controls; index as i">
             <span mat-line>{{achievement.value}}</span>
             <button mat-stroked-button type="button" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
           </mat-list-item>
@@ -30,7 +30,7 @@
       <div>
         <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
         <mat-list>
-          <mat-list-item *ngFor="let info of editForm.controls.otherInfo.controls; index as i">
+          <mat-list-item *ngFor="let info of otherInfo.controls; index as i">
             <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
             <button mat-stroked-button type="button" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
           </mat-list-item>

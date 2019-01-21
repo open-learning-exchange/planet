@@ -31,6 +31,12 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   readonly dbName = 'achievements';
   editForm: FormGroup;
   infoTypes = this.usersAchievementsService.infoTypes;
+  get achievements(): FormArray {
+    return <FormArray>this.editForm.controls.achievements;
+  }
+  get otherInfo(): FormArray {
+    return <FormArray>this.editForm.controls.otherInfo;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -75,11 +81,11 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         'name': 'description',
         'placeholder': 'Description'
       },
-    ], this.fb.group({ description: achievement })).subscribe((newAchievement) => {
+    ], this.fb.group({ description: achievement })).subscribe((newAchievement: any) => {
       if (newAchievement === undefined) {
         return;
       }
-      this.updateFormArray(this.editForm.controls.achievements, this.fb.control(newAchievement.description), index);
+      this.updateFormArray(this.achievements, this.fb.control(newAchievement.description), index);
     });
   }
 
@@ -96,11 +102,11 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         'name': 'description',
         'placeholder': 'Description'
       },
-    ], this.fb.group({ type: '', description: '', ...info })).subscribe((newInfo) => {
+    ], this.fb.group({ type: '', description: '', ...info })).subscribe((newInfo: any) => {
       if (newInfo === undefined) {
         return;
       }
-      this.updateFormArray(this.editForm.controls.otherInfo, this.fb.group(newInfo), index);
+      this.updateFormArray(this.otherInfo, this.fb.group(newInfo), index);
     });
   }
 
