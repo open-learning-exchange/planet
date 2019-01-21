@@ -161,7 +161,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   dropdownsFill() {
     return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
       if (val) {
-        return ' ';
+        return '';
       }
       return emptySpace;
     }, '');
