@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce } from '../../shared/utils';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -27,8 +28,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private submissionsService: SubmissionsService
-  ) {}
+    private submissionsService: SubmissionsService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -42,6 +46,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.submissions = submissions;
       this.setFullCourse(submissions);
       this.filterSubmittedExamSteps(submissions);
+      this.dialogsLoadingService.stop();
     });
   }
 
