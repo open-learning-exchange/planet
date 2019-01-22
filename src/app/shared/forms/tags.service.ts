@@ -38,7 +38,7 @@ export class TagsService {
   }
 
   tagFilter(filterString: string, checkSubTags: boolean = false) {
-    return (tag: any) => (checkSubTags && tag.subTags.length > 0) || tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1;
+    return (tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1;
   }
 
   updateTag(tag) {
