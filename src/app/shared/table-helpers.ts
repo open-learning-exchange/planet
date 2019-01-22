@@ -91,3 +91,12 @@ export const sortNumberOrString = (item, property) => {
       return item[property].toLowerCase();
   }
 };
+
+// Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
+// search text is deleted, but does not run when there are no active filters.
+export const dropdownsFill = (filterObj) => Object.entries(filterObj).reduce((emptySpace, [ field, val ]) => {
+  if (val) {
+    return ' ';
+  }
+  return emptySpace;
+}, '');

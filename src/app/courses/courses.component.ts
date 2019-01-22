@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
@@ -282,12 +282,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
-      if (val) {
-        return ' ';
-      }
-      return emptySpace;
-    }, '');
+    return dropdownsFill(this.filter);
   }
 
   updateShelf(newShelf, message: string) {
