@@ -39,6 +39,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       this.courseDetail = course;
       this.courseDetail.steps = this.courseDetail.steps.map(step => {
         step.resources = step.resources.filter(res => res._attachments);
+        step.resources.sort(this.coursesService.stepResourceSort);
         return step;
       });
       this.progress = progress;
