@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
-import { filterSpecificFields, composeFilterFunctions, filterDropdowns } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterDropdowns, dropdownsFill } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -102,15 +102,8 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissions.filter = this.submissions.filter || ' ';
   }
 
-  // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
-  // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
-      if (val) {
-        return ' ';
-      }
-      return emptySpace;
-    }, '');
+    return dropdownsFill(this.filter);
   }
 
   goBack() {

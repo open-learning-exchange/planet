@@ -5,7 +5,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString } from '../shared/table-helpers';
+import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -159,12 +159,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return Object.entries(this.filter).reduce((emptySpace, [ field, val ]) => {
-      if (val) {
-        return '';
-      }
-      return emptySpace;
-    }, '');
+    return dropdownsFill(this.filter);
   }
 
 }
