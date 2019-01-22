@@ -152,8 +152,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetSearch() {
     this.filter.type = '';
-    this.titleSearch = '';
     this.filter.status = '';
+    this.titleSearch = '';
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
