@@ -105,7 +105,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         okClick: this.deleteFeedback(feedback),
         changeType: 'delete',
         type: 'feedback',
-        displayName: feedback.type
+        displayName: feedback.title
       }
     });
     // Reset the message when the dialog closes
