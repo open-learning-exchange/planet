@@ -196,4 +196,8 @@ export class CoursesService {
     }));
   }
 
+  stepResourceSort(a: { title: string }, b: { title: string }) {
+    return a.title.localeCompare(b.title);
+  }
+
 }
