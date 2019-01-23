@@ -7,6 +7,8 @@ import { NotificationsComponent } from '../notifications/notifications.component
 import { SubmissionsComponent } from '../submissions/submissions.component';
 import { SubmissionsModule } from '../submissions/submissions.module';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
+import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
+import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -24,7 +26,9 @@ const routes: Routes = [
       { path: 'mySurveys', loadChildren: '../submissions/submissions.module#SubmissionsModule', data: { mySurveys: true } },
       { path: 'upgrade', component: UpgradeComponent },
       { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' },
-      { path: 'surveys', loadChildren: '../surveys/surveys.module#SurveysModule' }
+      { path: 'surveys', loadChildren: '../surveys/surveys.module#SurveysModule' },
+      { path: 'myAchievements', component: UsersAchievementsComponent },
+      { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent }
     ]
   }
 ];

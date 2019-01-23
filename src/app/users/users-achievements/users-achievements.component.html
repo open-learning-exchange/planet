@@ -1,0 +1,45 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Achievements</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span>{{user.name}}</span>
+    <span class="toolbar-fill"></span>
+    <a mat-raised-button color="accent" i18n [routerLink]="['update']"><mat-icon>mode_edit</mat-icon><span>Edit Achievements</span></a>
+  </mat-toolbar>
+  <div class="view-container">
+    <div *ngIf="achievements !== undefined" class="achievements-container">
+      <h2>{{user.firstName}} {{user.lastName}}</h2>
+      <div *ngIf="achievements.purpose">
+        <h3 i18n>My Purpose</h3>
+        <td-markdown [content]="achievements.purpose"></td-markdown>
+      </div>
+      <div *ngIf="achievements.goals">
+        <h3 i18n>My Goals</h3>
+        <td-markdown [content]="achievements.goals"></td-markdown>
+      </div>
+      <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
+        <h3 i18n>My Achievements</h3>
+        <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
+        <mat-list>
+          <mat-list-item *ngFor="let achievement of achievements.achievements">
+            <mat-icon mat-list-icon>done_outline</mat-icon>
+            <p mat-line>{{achievement}}</p>
+          </mat-list-item>
+        </mat-list>
+      </div>
+      <div *ngFor="let infoType of infoTypes">
+        <h4 *ngIf="achievements[infoType]">{{infoType}}</h4>
+        <mat-list>
+          <mat-list-item *ngFor="let info of achievements[infoType]">
+            <mat-icon mat-list-icon>done_outline</mat-icon>
+            <p mat-line>{{info.description}}</p>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </div>
+</div>

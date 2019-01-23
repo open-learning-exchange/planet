@@ -125,6 +125,7 @@ curl -X PUT $COUCHURL/child_statistics
 curl -X PUT $COUCHURL/tags
 curl -X PUT $COUCHURL/apk_logs
 curl -X PUT $COUCHURL/hubs
+curl -X PUT $COUCHURL/achievements
 
 # Create design documents
 node ./design/create-design-docs.js
