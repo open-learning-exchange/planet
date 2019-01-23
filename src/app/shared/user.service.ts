@@ -190,6 +190,7 @@ export class UserService {
   }
 
   countInShelf(ids: string[], shelfName: string) {
+    console.log('++++++++++++++++++++++++' + ids);
     return ids.reduce((counts: any, id) => {
       const added = this.shelf[shelfName].indexOf(id) > -1 ? 1 : 0;
       return ({

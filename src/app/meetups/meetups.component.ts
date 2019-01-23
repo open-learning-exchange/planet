@@ -44,6 +44,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   emptyData = false;
   selectedNotJoined = 0;
+  selectedJoined = 0;
 
   constructor(
     private couchService: CouchService,
@@ -183,12 +184,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  addToMeetups(meetups) {
-    this.meetupService.attendMeetups(meetups).subscribe((res) => {
+  meetupsToggle(meetupIds, type) {
+    this.meetupService.attendMeetups(meetupIds, type).subscribe((res) => {
       this.countSelectedNotJoined(this.selection.selected);
-      const msg = 'You have joined ' + meetups.length + ' meetups.';
-      this.planetMessageService.showMessage(msg);
-    });
+    }, (error) => ((error)));
   }
 
   attendMeetup(meetup) {
@@ -203,6 +202,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedNotJoined(selected: any) {
-    this.selectedNotJoined = selected.reduce((count, id) => count + (this.userService.shelf.meetupIds.indexOf(id) === -1 ? 1 : 0), 0);
+    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
+    this.selectedJoined = inShelf;
+    this.selectedNotJoined = notInShelf;
   }
 }
