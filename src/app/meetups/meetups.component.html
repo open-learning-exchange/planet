@@ -12,26 +12,24 @@
 </mat-toolbar>
 
 <div class="space-container primary-link-hover">
-  <mat-toolbar class="primary-color font-size-1">
-    <button *ngIf="!parent" mat-mini-fab routerLink="add">
+  <mat-toolbar *ngIf="!parent && (currentUser.isUserAdmin || currentUser.roles.length)" class="primary-color font-size-1">
+    <button mat-mini-fab routerLink="add">
       <mat-icon>add</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
-    <span *ngIf="!parent">
-      <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
-        <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
-        <span *ngIf="selectedNotJoined > 0"> ({{selectedNotJoined}})</span>
-      </button>
-      <button mat-button [disabled]="selectedJoined === 0" (click)="meetupsToggle(selection.selected, 'remove')">
-        <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
-        <span *ngIf="selectedJoined > 0"> ({{selectedJoined}})</span>
-      </button>
-      <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
-        <span i18n>Delete</span>
-        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
-      </button>
-    </span>
+    <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
+      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
+      <span *ngIf="selectedNotJoined > 0"> ({{selectedNotJoined}})</span>
+    </button>
+    <button mat-button [disabled]="selectedJoined === 0" (click)="meetupsToggle(selection.selected, 'remove')">
+      <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
+      <span *ngIf="selectedJoined > 0"> ({{selectedJoined}})</span>
+    </button>
+    <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
+      <span i18n>Delete</span>
+      <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+    </button>
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
