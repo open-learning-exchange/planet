@@ -24,6 +24,7 @@ export class PlanetTagInputDialogComponent {
   filterValue = '';
   mode = 'filter';
   _selectMany = false;
+  countSelected = 0;
   get selectMany() {
     return this._selectMany;
   }
@@ -67,7 +68,8 @@ export class PlanetTagInputDialogComponent {
     }
   }
 
-  tagChange(option, tagOne = false) {
+  tagChange(option, count?, tagOne = false) {
+    this.countSelected = count;
     const tags = option.value;
     tags.forEach((tag, index) => {
       if (index === 0 || option.selected) {

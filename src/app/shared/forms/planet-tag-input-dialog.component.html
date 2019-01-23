@@ -20,7 +20,7 @@
       <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
     </form>
   </mat-expansion-panel>
-  <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
+  <mat-selection-list #tagsSelected (selectionChange)="tagChange($event.option, tagsSelected.selectedOptions.selected.length)" *ngIf="selectMany">
     <ng-container *ngFor="let tag of tags">
       <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }">
         <span>
@@ -61,5 +61,5 @@
   </mat-nav-list>
 </mat-dialog-content>
 <mat-dialog-actions *ngIf="selectMany">
-  <button type="button" mat-dialog-close i18n mat-raised-button color="primary">OK</button>
+  <button type="button" [disabled]="countSelected === 0" mat-dialog-close i18n mat-raised-button color="primary">OK</button>
 </mat-dialog-actions>
