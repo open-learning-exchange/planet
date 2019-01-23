@@ -99,8 +99,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((data) => {
         this.feedback.data = data;
         this.emptyData = !this.feedback.data.length;
+        this.dialogsLoadingService.stop();
       }, (error) => this.message = 'There is a problem of getting data.');
-    this.dialogsLoadingService.stop();
   }
 
   deleteClick(feedback) {

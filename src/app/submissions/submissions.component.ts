@@ -69,11 +69,11 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
         ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
       }));
       this.emptyData = !this.submissions.data.length;
+      this.dialogsLoadingService.stop();
       this.applyFilter('');
     });
     this.submissionsService.updateSubmissions({ query });
     this.setupTable();
-    this.dialogsLoadingService.stop();
   }
 
   ngAfterViewInit() {

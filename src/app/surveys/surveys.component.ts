@@ -52,8 +52,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
         );
         this.emptyData = !this.surveys.data.length;
+        this.dialogsLoadingService.stop();
       });
-    this.dialogsLoadingService.stop();
   }
 
   ngAfterViewInit() {
