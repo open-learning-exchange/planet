@@ -44,6 +44,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   emptyData = false;
   selectedNotJoined = 0;
+  selectedJoined = 0;
 
   constructor(
     private couchService: CouchService,
@@ -72,7 +73,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.selection.onChange.subscribe(({ source }) => {
-      this.countSelectedNotJoined(source.selected);
+      this.countSelectedShelf(source.selected);
     });
   }
 
@@ -183,26 +184,24 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
-  addToMeetups(meetups) {
-    this.meetupService.attendMeetups(meetups).subscribe((res) => {
-      this.countSelectedNotJoined(this.selection.selected);
-      const msg = 'You have joined ' + meetups.length + ' meetups.';
-      this.planetMessageService.showMessage(msg);
-    });
+  meetupsToggle(meetupIds, type) {
+    this.meetupService.attendMeetups(meetupIds, type).subscribe((res) => {
+      this.countSelectedShelf(this.selection.selected);
+    }, (error) => ((error)));
   }
 
   attendMeetup(meetup) {
     this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
       meetup.participate = !res.participate;
-      if (!res.participate) {
-        this.countSelectedNotJoined(this.selection.selected);
-      }
+      this.countSelectedShelf(this.selection.selected);
       this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
     });
   }
 
-  countSelectedNotJoined(selected: any) {
-    this.selectedNotJoined = selected.reduce((count, id) => count + (this.userService.shelf.meetupIds.indexOf(id) === -1 ? 1 : 0), 0);
+  countSelectedShelf(selected: any) {
+    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
+    this.selectedJoined = inShelf;
+    this.selectedNotJoined = notInShelf;
   }
 }

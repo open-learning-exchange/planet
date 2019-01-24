@@ -6,6 +6,7 @@ import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { dedupeShelfReduce } from '../shared/utils';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Injectable()
 export class MeetupService {
@@ -18,6 +19,7 @@ export class MeetupService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.userService.shelfChange$
       .subscribe((shelf: any) => {
@@ -69,9 +71,13 @@ export class MeetupService {
     return this.updateMeetupShelf(newMeetupIds, participate);
   }
 
-  attendMeetups(meetups) {
-    const newMeetupIds = meetups.concat(this.userShelf.meetupIds).reduce(dedupeShelfReduce, []);
-    return this.updateMeetupShelf(newMeetupIds, true);
+  attendMeetups(meetupIds, type) {
+    return this.userService.changeShelf(meetupIds, 'meetupIds', type).pipe(map(({ shelf, countChanged }) => {
+      const message = type === 'remove' ?
+        'You have left ' + countChanged + ' meetups' : 'You have joined ' + countChanged + ' meetups';
+      this.planetMessageService.showMessage(message);
+      return shelf;
+    }));
   }
 
   updateMeetupShelf(meetupIds, participate) {
