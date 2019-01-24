@@ -32,13 +32,7 @@ export class TagsService {
 
   filterTags(tags: any[], filterString: string): string[] {
     // Includes any tag with a sub tag that matches in addition to tags that match
-    return tags
-      .map((tag: any) => ({ ...tag, subTags: tag.subTags.filter(this.tagFilter(filterString)) }))
-      .filter(this.tagFilter(filterString, true));
-  }
-
-  tagFilter(filterString: string, checkSubTags: boolean = false) {
-    return (tag: any) => (checkSubTags && tag.subTags.length > 0) || tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1;
+    return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
   }
 
   updateTag(tag) {
