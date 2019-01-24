@@ -73,7 +73,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.selection.onChange.subscribe(({ source }) => {
-      this.countSelectedNotJoined(source.selected);
+      this.countSelectedShelf(source.selected);
     });
   }
 
@@ -186,7 +186,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetupsToggle(meetupIds, type) {
     this.meetupService.attendMeetups(meetupIds, type).subscribe((res) => {
-      this.countSelectedNotJoined(this.selection.selected);
+      this.countSelectedShelf(this.selection.selected);
     }, (error) => ((error)));
   }
 
@@ -194,14 +194,12 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
       const msg = res.participate ? 'left' : 'joined';
       meetup.participate = !res.participate;
-      if (!res.participate) {
-        this.countSelectedNotJoined(this.selection.selected);
-      }
+      this.countSelectedShelf(this.selection.selected);
       this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
     });
   }
 
-  countSelectedNotJoined(selected: any) {
+  countSelectedShelf(selected: any) {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
     this.selectedJoined = inShelf;
     this.selectedNotJoined = notInShelf;
