@@ -16,6 +16,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { debug } from '../debug-operator';
 import { dedupeShelfReduce } from '../shared/utils';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -64,8 +65,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
-  ) { }
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.planetType = this.stateService.configuration.planetType;
@@ -168,6 +172,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         return userInfo;
       });
       this.emptyData = !this.allUsers.data.length;
+      this.dialogsLoadingService.stop();
     }, (error) => {
       // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
       console.log('Error initializing data!');

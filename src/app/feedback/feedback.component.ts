@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 
 @Component({
@@ -58,7 +59,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService,
     private router: Router,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     if (this.stateService.configuration.planetType === 'community') {
       // Remove source from displayed columns for communities
@@ -67,7 +69,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getFeedback();
     });
-   }
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.user = this.userService.get();
@@ -96,6 +99,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((data) => {
         this.feedback.data = data;
         this.emptyData = !this.feedback.data.length;
+        this.dialogsLoadingService.stop();
       }, (error) => this.message = 'There is a problem of getting data.');
   }
 

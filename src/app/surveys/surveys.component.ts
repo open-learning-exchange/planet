@@ -11,6 +11,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   'templateUrl': './surveys.component.html'
@@ -33,8 +34,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
-    private stateService: StateService
-  ) {}
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
@@ -48,6 +52,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
         );
         this.emptyData = !this.surveys.data.length;
+        this.dialogsLoadingService.stop();
       });
   }
 

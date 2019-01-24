@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './submissions.component.html',
@@ -38,8 +39,11 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private submissionsService: SubmissionsService,
-    private userService: UserService
-  ) { }
+    private userService: UserService,
+    private dialogsLoadingService: DialogsLoadingService
+  ) {
+    this.dialogsLoadingService.start();
+  }
 
   ngOnInit() {
     this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
@@ -65,6 +69,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
         ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
       }));
       this.emptyData = !this.submissions.data.length;
+      this.dialogsLoadingService.stop();
       this.applyFilter('');
     });
     this.submissionsService.updateSubmissions({ query });
