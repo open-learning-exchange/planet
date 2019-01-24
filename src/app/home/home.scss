@@ -6,7 +6,7 @@
   grid-template-rows: 64px 1fr;
   grid-template-areas: "header" "main";
   height: 100vh;
-
+  
   @keyframes pulsate {
     100% { transform: scale(1.1) }
   }
@@ -179,4 +179,11 @@
     margin-bottom: 16px;
   }
 
+}
+
+.navbar-center {
+  a.active {
+    color: $primary-text;
+    background-color: mat-color($planet-app-primary, $dark-hue);
+  }
 }

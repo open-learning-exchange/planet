@@ -8,7 +8,8 @@
   </span>
   <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
     <a mat-button routerLink="/"
-      routerLinkActive="active"
+      routerLinkActive="active" 
+      [routerLinkActiveOptions]="{exact:true}"
       i18n-title title="Home" i18n>Home</a>
     <a mat-button routerLink="/resources"
       routerLinkActive="active"
@@ -22,9 +23,9 @@
     <a mat-button routerLink="/meetups"
       routerLinkActive="active"
       i18n-title title="Meetups" i18n>Meetups</a>
-    <a mat-button routerLink="/surveys" i18n-title title="Surveys" i18n>
-      Surveys
-    </a>
+    <a mat-button routerLink="/surveys"
+      routerLinkActive="active"
+      i18n-title title="Surveys" i18n>Surveys</a>
   </span>
   <span class="navbar-right">
     <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon svgIcon="feedback"></mat-icon></button>
