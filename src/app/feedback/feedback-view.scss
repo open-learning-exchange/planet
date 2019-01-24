@@ -1,14 +1,13 @@
-.wrapper {
-  margin: auto;
-  max-width: 500px;
-}
+.chat-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  margin: 0 2vw;
 
-button {
-  display: block;
-}
-
-mat-form-field {
-  width: 100%;
+  mat-form-field {
+    width: 100%;
+    margin-top: 1vh;
+  }
 }
 
 .chat-list-user {
@@ -16,14 +15,31 @@ mat-form-field {
   justify-content: space-between;
   align-items: baseline;
   margin-top: 3vh;
+  
+  .user-name {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  .date {
+    font-size: 0.7em;
+    font-style: italic;
+  }
 }
 
-.user-name {
-  font-size: 1.2em;
-  font-weight: bold;
+@media (max-width: 767px) {
+  .chat-wrapper {
+    justify-content: center;
+  }
 }
 
-.date {
-  font-size: 0.7em;
-  font-style: italic;
+@media (min-width: 768px) {
+  .chat-wrapper {
+    width: 50vw;
+  }
+}
+
+@media (min-width: 1200px) {
+  .chat-wrapper {
+    width: 40vw;
+  }
 }
