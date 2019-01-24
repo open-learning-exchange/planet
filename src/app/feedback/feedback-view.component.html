@@ -40,7 +40,7 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="wrapper">
+    <div class="chat-wrapper">
       <div class="chat-list" #chatList>
         <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
           <div class="chat-list-user">
@@ -50,14 +50,16 @@
           <div class="chat-list-message"><mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card></div>
         </div>
       </div>
-    </div>
-    <div class="chat-reply">
-      <mat-form-field>
-        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
-      </mat-form-field>
-      <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()"><mat-icon>reply</mat-icon>Reply</button>
-      <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="feedback.status !== 'Closed'">Close</button>
-      <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" *ngIf="feedback.status === 'Closed'">Re-open</button>
-    </div>
+      <div class="chat-reply">
+        <mat-form-field>
+          <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
+        </mat-form-field>
+        <div class="btn-group">
+          <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()"><mat-icon>reply</mat-icon>Reply</button>
+          <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="feedback.status !== 'Closed'">Close</button>
+          <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" *ngIf="feedback.status === 'Closed'">Re-open</button>
+        </div>  
+      </div>
+    </div> 
   </div>
 </div>
