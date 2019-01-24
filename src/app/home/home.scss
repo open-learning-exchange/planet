@@ -56,6 +56,10 @@
   .navbar-center {
     grid-area: center;
     justify-self: center;
+    a.active {
+      color: $primary-text;
+      background-color: mat-color($planet-app-primary, $dark-hue);
+    }
   }
 
   .navbar-right {
