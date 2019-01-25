@@ -31,10 +31,6 @@ export class DialogsFormComponent {
     }
   }
 
-  onRatingChange(fieldName: string) {
-    console.log(fieldName);
-  }
-
   togglePasswordVisibility(fieldName) {
     const visibility = this.passwordVisibility.get(fieldName) || false;
     this.passwordVisibility.set(fieldName, !visibility);
