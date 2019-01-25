@@ -50,6 +50,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
+    <span i18n class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
     <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button i18n>Submit</button>
     <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
   </mat-dialog-actions>

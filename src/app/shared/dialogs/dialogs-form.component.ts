@@ -13,6 +13,7 @@ export class DialogsFormComponent {
   public modalForm: any;
   passwordVisibility = new Map();
   isSpinnerOk = true;
+  errorMessage = '';
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {

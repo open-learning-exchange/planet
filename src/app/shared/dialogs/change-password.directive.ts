@@ -92,6 +92,9 @@ export class ChangePasswordDirective {
         this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
       }
     }, (error) => {
+      if (error.reason === 'Name or password is incorrect.') {
+        this.dialogsFormService.showErrorMessage('Old password isn\'t valid');
+      }
       this.planetMessageService.showAlert('Error changing password');
     });
   }

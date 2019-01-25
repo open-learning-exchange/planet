@@ -42,4 +42,8 @@ export class DialogsFormService {
     this.dialogRef.close();
   }
 
+  showErrorMessage(errorMessage: string) {
+    this.dialogRef.componentInstance.errorMessage = errorMessage;
+  }
+
 }
