@@ -126,6 +126,10 @@ curl -X PUT $COUCHURL/tags
 curl -X PUT $COUCHURL/apk_logs
 curl -X PUT $COUCHURL/hubs
 curl -X PUT $COUCHURL/achievements
+curl -X PUT $COUCHURL/resources_pending
+curl -X PUT $COUCHURL/courses_pending
+curl -X PUT $COUCHURL/exams_pending
+curl -X PUT $COUCHURL/tags_pending
 
 # Create design documents
 node ./design/create-design-docs.js

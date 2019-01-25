@@ -106,8 +106,8 @@ export class CouchService {
     }));
   }
 
-  bulkGet(db: string, ids: string[], opts?: any) {
-    const docs = ids.map(id => ({ id }));
+  bulkGet(db: string, ids: any[], opts?: any) {
+    const docs = ids.map(id => (typeof id === 'string' ? { id } : id));
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
       map((response: any) => response.results
         .map((result: any) => result.docs[0].ok)

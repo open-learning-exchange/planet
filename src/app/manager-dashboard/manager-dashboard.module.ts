@@ -16,9 +16,9 @@ import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { PendingTableComponent } from './reports/pending-table.component';
-import { CompareComponent } from './compare.component';
-import { CoursesCompareComponent } from '../courses/courses-compare.component';
-import { ResourcesCompareComponent } from '../resources/resources-compare.component';
+import { CompareComponent } from './compare/compare.component';
+import { CoursesCompareComponent } from './compare/compare-courses.component';
+import { ResourcesCompareComponent } from './compare/compare-resources.component';
 import { ResourcesModule } from '../resources/resources.module';
 
 @NgModule({
