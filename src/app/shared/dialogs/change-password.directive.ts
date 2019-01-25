@@ -1,15 +1,15 @@
 import { Directive, HostListener, Input } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, finalize } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { Validators } from '@angular/forms';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { debug } from '../../debug-operator';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { StateService } from '../state.service';
+import { DialogsLoadingService } from './dialogs-loading.service';
 
 const changePasswordFields = [
   {
@@ -67,34 +67,40 @@ export class ChangePasswordDirective {
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   @HostListener('click')
   openChangePasswordForm() {
-    const title = 'Change Password';
-    this.dialogsFormService
-      .confirm(title, changePasswordFields, this.changePasswordFormGroup)
-      .pipe(debug('Dialog confirm'))
-      .subscribe((res) => {
-        if (res !== undefined) {
-          this.changePassword(res, this.userDetail || this.userService.get());
-        }
-      });
+    this.dialogsFormService.openDialogsForm(
+      'Change Password', changePasswordFields, this.changePasswordFormGroup, { onSubmit: this.onPasswordSubmit.bind(this) }
+    );
+  }
+
+  onPasswordSubmit(credentialData) {
+    const user = this.userDetail || this.userService.get();
+    this.couchService.post('_session', { 'name': user.name, 'password': credentialData.oldPassword }).pipe(
+      switchMap(() => this.changePassword(credentialData, user)),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((responses) => {
+      const errors = responses.filter(r => r.ok === false);
+      if (errors.length === 0) {
+        this.planetMessageService.showMessage('Password successfully updated');
+        this.dialogsFormService.closeDialogsForm();
+      } else {
+        this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
+      }
+    }, (error) => {
+      this.planetMessageService.showAlert('Error changing password');
+    });
   }
 
   changePassword(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
-    this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
+    return this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
       return forkJoin([ ...responses.map(r => of(r)), this.reinitSession(userDetail.name, credentialData.password) ]);
-    })).subscribe((responses) => {
-      const errors = responses.filter(r => r.ok === false);
-      if (errors.length === 0) {
-        this.planetMessageService.showMessage('Password successfully updated');
-      } else {
-        this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
-      }
-    }, (error) => this.planetMessageService.showAlert('Error changing password'));
+    }));
   }
 
   changePasswordRequest(userData) {
