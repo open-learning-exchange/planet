@@ -9,6 +9,10 @@
   </mat-toolbar>
   <div class="view-container">
     <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+      <div class="achievement-button">
+        <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+        <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
+      </div>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" placeholder="My Purpose" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
       </mat-form-field>
@@ -39,10 +43,6 @@
       <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
         Allow your achievements to be shared with the nation
       </mat-checkbox>
-      <div>
-        <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
-        <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
-      </div>
     </form>
   </div>
 </div>
