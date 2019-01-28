@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable, of, empty } from 'rxjs';
+import { Observable, of, empty, throwError } from 'rxjs';
 import { catchError, map, expand, takeWhile, toArray, flatMap, switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
@@ -37,8 +37,7 @@ export class CouchService {
         if (err.status === 403) {
           this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
         }
-        // Empty response for the _find or _all_docs endpoints
-        return of({ docs: [], rows: [] });
+        return throwError(err);
       }));
   }
 
@@ -101,9 +100,14 @@ export class CouchService {
   }
 
   private findAllRequest(db: string, query: any, opts: any) {
-    return this.post(db + '/_find', query, opts).pipe(expand((res) => {
-      return res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty();
-    }));
+    return this.post(db + '/_find', query, opts).pipe(
+      catchError(() => {
+        return of({ docs: [], rows: [] });
+      }),
+      expand((res) => {
+        return res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty();
+      })
+    );
   }
 
   bulkGet(db: string, ids: string[], opts?: any) {
