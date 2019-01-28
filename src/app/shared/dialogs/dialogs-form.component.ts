@@ -30,7 +30,7 @@ export class DialogsFormComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    if (this.data.formGroup) {
+    if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ? this.data.formGroup : this.fb.group(this.data.formGroup);
       this.title = this.data.title;
       this.fields = this.data.fields;
@@ -43,8 +43,8 @@ export class DialogsFormComponent {
       this.markFormAsTouched(mForm);
       return;
     }
-    this.dialogsLoadingService.start();
-    if (this.data.onSubmit) {
+    if (this.data && this.data.onSubmit) {
+      this.dialogsLoadingService.start();
       this.data.onSubmit(mForm.value);
     } else {
       dialog.close(mForm.value);
