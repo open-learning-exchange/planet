@@ -91,8 +91,8 @@ export class ChangePasswordDirective {
       } else {
         this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
       }
-    }, (error) => {
-      if (error.reason === 'Name or password is incorrect.') {
+    }, (err) => {
+      if (err.error.reason === 'Name or password is incorrect.') {
         this.dialogsFormService.showErrorMessage('Old password isn\'t valid');
       }
       this.planetMessageService.showAlert('Error changing password');
@@ -119,7 +119,7 @@ export class ChangePasswordDirective {
 
   passwordError(reason: string) {
     return () => {
-      return of({ ok: false, reason: reason });
+      return of({ error: { ok: false, reason: reason } });
     };
   }
 
