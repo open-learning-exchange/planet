@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { throwError, of, forkJoin } from 'rxjs';
+import { throwError, of, forkJoin, Observable } from 'rxjs';
 import { map, switchMap, catchError, takeWhile } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -43,13 +43,13 @@ export class ManagerService {
     .confirm(title, passwordFormFields, formGroup, true)
     .pipe(
       debug('Dialog confirm'),
-      switchMap((response: any): any => {
+      switchMap((response: any): Observable<{ name, password, cancelled? }> => {
         if (response !== undefined) {
           return this.verifyPassword(response.password);
         }
-        return of('Cancelled');
+        return of({ name: undefined, password: undefined, cancelled: true });
       }),
-      takeWhile((value) => value !== 'Cancelled'),
+      takeWhile((value) => value.cancelled === true),
       catchError((err) => {
         passwordInvalid = { 'invalidPassword': true };
         const errorMessage = err.error.reason;
