@@ -33,7 +33,7 @@
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.title ? element.title : 'Feedback regarding /'}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.title || element.type + ' regarding ' + element.url}}</mat-cell>
       </ng-container>
       <!-- Type Column -->
       <ng-container matColumnDef="type">
