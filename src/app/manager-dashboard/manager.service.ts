@@ -51,7 +51,7 @@ export class ManagerService {
       }),
       catchError((err) => {
         passwordInvalid = { 'invalidPassword': true };
-        return throwError(err);
+        return throwError('Invalid password');
       })
     );
   }
