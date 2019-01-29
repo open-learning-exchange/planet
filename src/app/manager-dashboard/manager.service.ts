@@ -49,7 +49,7 @@ export class ManagerService {
         }
         return of({ name: undefined, password: undefined, cancelled: true });
       }),
-      takeWhile((value) => value.cancelled === true),
+      takeWhile((value) => value.cancelled !== true),
       catchError((err) => {
         passwordInvalid = { 'invalidPassword': true };
         const errorMessage = err.error.reason;
