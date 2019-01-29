@@ -74,6 +74,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Input() steps: any[] | FormArray;
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
+  @Input() ignoreClick = false;
   @Output() stepClicked = new EventEmitter<number>();
 
   @ContentChildren(PlanetStepListItemComponent) stepListItems;
@@ -101,6 +102,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   }
 
   stepClick(index: number) {
+    if (this.ignoreClick === true) {
+      return;
+    }
     this.listMode = false;
     this.openIndex = index;
     this.stepClicked.emit(index);
