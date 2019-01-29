@@ -2,6 +2,10 @@
   padding: 0 0.5rem 0 0;
 }
 
+.mat-nav-list.no-pointer .mat-list-item {
+  cursor: auto;
+}
+
 .planet-step-list-form-container {
   display: grid;
   grid-template-rows: min-content minmax(auto, min-content) min-content;

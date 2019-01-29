@@ -16,6 +16,7 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FormArray } from '@angular/forms';
+import { uniqueId } from '../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +28,8 @@ export class PlanetStepListService {
 
   constructor() {}
 
-  moveStep(index, direction) {
-    this.stepMoveClick$.next({ index, direction });
+  moveStep(index, direction, listId) {
+    this.stepMoveClick$.next({ index, direction, listId });
   }
 
   addStep(index: number) {
@@ -53,12 +54,13 @@ export class PlanetStepListItemComponent {
   index: number;
   isFirst: boolean;
   isLast: boolean;
+  listId: string;
 
   constructor(private planetStepListService: PlanetStepListService) {}
 
   moveStep(event, direction = 0) {
     event.stopPropagation();
-    this.planetStepListService.moveStep(this.index, direction);
+    this.planetStepListService.moveStep(this.index, direction, this.listId);
   }
 
 }
@@ -74,6 +76,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Input() steps: any[] | FormArray;
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
+  @Input() ignoreClick = false;
   @Output() stepClicked = new EventEmitter<number>();
 
   @ContentChildren(PlanetStepListItemComponent) stepListItems;
@@ -81,6 +84,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   listMode = true;
   openIndex = -1;
   private onDestroy$ = new Subject<void>();
+  listId = uniqueId();
 
   constructor(private planetStepListService: PlanetStepListService) {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(this.moveStep.bind(this));
@@ -92,6 +96,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
       item.index = index;
       item.isFirst = index === 0;
       item.isLast = index === (array.length - 1);
+      item.listId = this.listId;
     });
   }
 
@@ -101,6 +106,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   }
 
   stepClick(index: number) {
+    if (this.ignoreClick === true) {
+      return;
+    }
     this.listMode = false;
     this.openIndex = index;
     this.stepClicked.emit(index);
@@ -110,7 +118,10 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     this.listMode = true;
   }
 
-  moveStep({ index, direction }) {
+  moveStep({ index, direction, listId }) {
+    if (listId !== this.listId) {
+      return;
+    }
     if (this.steps instanceof Array) {
       this.moveArrayStep(index, direction, this.steps);
     } else if (this.steps instanceof FormArray) {
