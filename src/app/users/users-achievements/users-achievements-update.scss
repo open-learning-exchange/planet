@@ -18,4 +18,8 @@
   .achievement-button {
     margin-bottom: 1rem;
   }
+
+  .achievement-button > button:first-of-type {
+    margin-right: 0.5rem;
+  }
 }
