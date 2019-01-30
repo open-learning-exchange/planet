@@ -47,6 +47,10 @@
         <textarea matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}"></textarea>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
+
+      <!-- Dialog Button -->
+      <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
+
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
