@@ -5,6 +5,7 @@ import { UserService } from '../user.service';
 import { StateService } from '../state.service';
 import { ReplaySubject } from 'rxjs';
 import { CouchService } from '../couchdb.service';
+import { filterSpecificFields } from '../table-helpers';
 
 const listColumns = {
   'resources': [ 'title' ],
@@ -59,6 +60,21 @@ export class DialogsListService {
         return { tableData, columns: listColumns[db] };
       })
     );
+  }
+
+  attachDocsData(db: string, field: string, callback: Function, initialSelection?: any[]) {
+    return this.getListAndColumns(db).pipe(map((res) => {
+      res.tableData = db === 'resources' ? res.tableData.filter((tableValue: any) => tableValue._attachments) : res.tableData;
+      return ({ okClick: callback,
+        filterPredicate: filterSpecificFields([ field ]),
+        itemDescription: db,
+        nameProperty: field,
+        selectionOptional: true,
+        allowMulti: true,
+        initialSelection,
+        ...res
+      });
+    }));
   }
 
 }

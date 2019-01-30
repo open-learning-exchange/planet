@@ -59,16 +59,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   attachItem(db: string) {
     const initialSelection = this.activeStep.resources.map(resource => resource._id);
-    this.dialogsListService.getListAndColumns(db).pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
-      res.tableData = res.tableData.filter((tableValue: any) => tableValue._attachments);
-      const data = { okClick: this.dialogOkClick(db).bind(this),
-        filterPredicate: filterSpecificFields([ 'title' ]),
-        itemDescription: 'resources',
-        nameProperty: 'title',
-        selectionOptional: true,
-        allowMulti: true,
-        initialSelection,
-        ...res };
+    this.dialogsListService.attachDocsData(db, 'title', this.dialogOkClick(db).bind(this), initialSelection).subscribe((data) => {
       this.openDialog(data);
       this.spinnerOn = false;
     });
