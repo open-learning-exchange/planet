@@ -18,7 +18,7 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">
-      <p i18n><b>Created By: </b><a [routerLink]="['/users/profile', meetupDetail.createdBy]">{{meetupDetail.createdBy}}</a></p>
+      <p i18n><b>Created By:</b> <a [routerLink]="['/users/profile', meetupDetail.createdBy]">{{' ' + meetupDetail.createdBy}}</a></p>
       <p i18n><b>Category:</b> {{meetupDetail.category}}</p>
       <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate ? '-' : '' }} {{meetupDetail.endDate | date: 'fullDate'}}</p>
       <p i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
