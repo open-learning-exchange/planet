@@ -206,5 +206,70 @@
 			"roles": []
 		}
 	}
+  },
+  {
+	"dbName": "courses_progress",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": ["learner", "leader"]
+		}
+	}
+  },
+  {
+	"dbName": "exams",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": ["learner", "leader"]
+		}
+	}
+  },
+  {
+	"dbName": "hubs",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": ["manager"]
+		}
+	}
+  },
+  {
+	"dbName": "submissions",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": ["learner", "leader"]
+		}
+	}
+  },
+  {
+	"dbName": "surveys",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": ["learner", "leader"]
+		}
+	}
   }
 ]
