@@ -120,6 +120,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   onSubmit() {
+    this.editForm.updateValueAndValidity();
     if (this.editForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value);
     } else {
