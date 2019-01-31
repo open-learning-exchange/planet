@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { ValidatorService } from '../validators/validator.service';
 import { throwError, of, forkJoin, Observable } from 'rxjs';
 import { map, switchMap, catchError, takeWhile } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -30,14 +31,14 @@ export class ManagerService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
-    private activityService: ReportsService
+    private activityService: ReportsService,
+    private validatorService: ValidatorService,
   ) {}
 
   openPasswordConfirmation() {
     const title = 'Admin Confirmation';
-    let passwordInvalid = null;
     const formGroup = {
-      password: [ '', [ Validators.required, () => passwordInvalid ] ]
+      password: [ '', Validators.required, ac => this.validatorService.checkOldPassword$(ac) ]
     };
     return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup, true)
@@ -51,7 +52,6 @@ export class ManagerService {
       }),
       takeWhile((value) => value.cancelled !== true),
       catchError((err) => {
-        passwordInvalid = { 'invalidPassword': true };
         const errorMessage = err.error.reason;
         return throwError(errorMessage === 'Name or password is incorrect.' ? 'Password is incorrect.' : errorMessage);
       })
