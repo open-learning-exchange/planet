@@ -30,29 +30,29 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Email</h4>
-          <p matLine><b>{{userDetail.email ? userDetail.email : 'N/A'}}</b></p>
+          <p matLine><b>{{userDetail.email || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Language</h4>
-          <p matLine><b>{{userDetail.language ? userDetail.language : 'N/A'}}</b></p>
+          <p matLine><b>{{userDetail.language || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
       <mat-list>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>DOB</h4>
-          <p matLine><b>{{userDetail.birthDate ? (userDetail.birthDate | date: 'fullDate') : 'N/A'}}</b></p>
+          <p matLine><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Phone</h4>
-          <p matLine><b>{{userDetail.phoneNumber ? userDetail.phoneNumber : 'N/A'}}</b></p>
+          <p matLine><b>{{userDetail.phoneNumber || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Level</h4>
-          <p matLine><b>{{userDetail.level ? userDetail.level : 'N/A'}}</b></p>
+          <p matLine><b>{{userDetail.level || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
