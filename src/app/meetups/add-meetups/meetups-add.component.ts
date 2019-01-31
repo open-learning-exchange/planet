@@ -170,7 +170,7 @@ export class MeetupsAddComponent implements OnInit {
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
       'user': user._id,
-      'message': meetupInfo.title + ' has been updated.',
+      'message': `<b>"${meetupInfo.title}"</b> has been updated.`,
       'link': '/meetups/view/' + meetupId,
       'item': meetupId,
       'type': 'meetup',

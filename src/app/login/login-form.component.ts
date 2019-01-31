@@ -82,7 +82,7 @@ export class LoginFormComponent {
   welcomeNotification(userId) {
     const data = {
       'user': userId,
-      'message': 'Welcome ' + userId.replace('org.couchdb.user:', '') + ' to the Planet Learning',
+      'message': `Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
       'link': '',
       'type': 'register',
       'priority': 1,
@@ -159,7 +159,7 @@ export class LoginFormComponent {
   sendNotifications(userName, addedMember) {
     const data = {
       'user': 'org.couchdb.user:' + userName,
-      'message': 'New member ' + addedMember + ' has joined.',
+      'message': `New member <b>${addedMember}</b> has joined.`,
       'link': '/manager/users/',
       'linkParams': { 'search': addedMember },
       'type': 'new user',
