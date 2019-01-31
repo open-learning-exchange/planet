@@ -23,6 +23,7 @@ export class UsersAchievementsComponent implements OnInit {
   user: any = {};
   achievements: any;
   infoTypes = this.usersAchievementsService.infoTypes;
+  // hasError = false;
 
   constructor(
     private couchService: CouchService,
@@ -42,7 +43,8 @@ export class UsersAchievementsComponent implements OnInit {
         )
       });
     }, (error) => {
-      this.planetMessageService.showAlert('There was an error getting achievements');
+      // this.planetMessageService.showAlert('There was an error getting achievements');
+      // this.hasError = true;
       console.log(error);
     });
   }
