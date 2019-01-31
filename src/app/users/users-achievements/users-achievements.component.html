@@ -41,8 +41,6 @@
         </mat-list>
       </div>
     </div>
-    <h3 *ngIf="achievements == undefined" i18n>
-      You haven't entered any achievements yet. Click Edit Achievements to add your achievements!
-    </h3>
+    <div *ngIf="!achievements">You haven't entered any achievements yet. Click Edit Achievements to add your achievements!</div>
   </div>
 </div>
