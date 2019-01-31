@@ -5,6 +5,7 @@ import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
 import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
+import {DialogsLoadingService} from "../../shared/dialogs/dialogs-loading.service";
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -20,8 +21,10 @@ export class ReportsDetailComponent {
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
+    this.dialogsLoadingService.start();
     this.route.paramMap.subscribe((params: ParamMap) => {
       const codeParam = params.get('code');
       this.planetCode = codeParam || this.stateService.configuration.code;
@@ -36,6 +39,7 @@ export class ReportsDetailComponent {
       this.getRatingInfo();
       this.getResourceVisits();
       this.getPlanetCounts(local);
+      this.dialogsLoadingService.stop();
     });
   }
 
