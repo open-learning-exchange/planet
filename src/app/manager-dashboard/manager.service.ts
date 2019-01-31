@@ -37,7 +37,6 @@ export class ManagerService {
 
   openPasswordConfirmation() {
     const title = 'Admin Confirmation';
-    let passwordInvalid = null;
     const formGroup = {
       password: [ '', Validators.required, ac => this.validatorService.checkOldPassword$(ac) ]
     };
@@ -53,7 +52,6 @@ export class ManagerService {
       }),
       takeWhile((value) => value.cancelled !== true),
       catchError((err) => {
-        passwordInvalid = { 'invalidPassword': true };
         const errorMessage = err.error.reason;
         return throwError(errorMessage === 'Name or password is incorrect.' ? 'Password is incorrect.' : errorMessage);
       })
