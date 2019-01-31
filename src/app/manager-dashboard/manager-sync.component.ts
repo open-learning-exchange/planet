@@ -29,18 +29,17 @@ export class ManagerSyncComponent implements OnInit {
     private stateService: StateService,
     private reportsService: ReportsService,
     private dialogsLoadingService: DialogsLoadingService
-  ) {
-    this.dialogsLoadingService.start();
-  }
+  ) {}
 
   ngOnInit() {
     this.getReplicators();
-    this.dialogsLoadingService.stop();
   }
 
   getReplicators() {
+    this.dialogsLoadingService.start();
     this.couchService.findAll('_replicator').subscribe(data => {
       this.replicators = data;
+      this.dialogsLoadingService.stop();
     });
   }
 
