@@ -271,5 +271,18 @@
 			"roles": ["learner", "leader"]
 		}
 	}
+  },
+  {
+	"dbName": "teams",
+	"json": {
+		"admins": {
+			"names": [],
+			"roles": []
+		},
+		"members": {
+			"names": [],
+			"roles": ["learner", "leader"]
+		}
+	}
   }
 ]
