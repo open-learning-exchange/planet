@@ -5,7 +5,7 @@ import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
 import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
-import {DialogsLoadingService} from "../../shared/dialogs/dialogs-loading.service";
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
