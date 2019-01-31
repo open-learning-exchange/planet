@@ -1,288 +1,288 @@
 [
-	{
-		"dbName": "communityregistrationrequests",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
-	},
-	{
-		"dbName": "configurations",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
-	},
-	{
-		"dbName": "courses",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["learner", "leader"]
-			}
-		}
-	},
-	{
-		"dbName": "feedback",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
-	},
-	{
-		"dbName": "login_activities",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
-	},
-	{
-		"dbName": "meetups",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["learner", "leader"]
-			}
-		}
-	},
-	{
-		"dbName": "nations",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
-	},
-	{
-		"dbName": "notifications",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
-	},
-	{
-		"dbName": "ratings",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["learner", "leader"]
-			}
-		}
-	},
-	{
-		"dbName": "resource_activities",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["learner", "leader"]
-			}
-		}
-	},
-	{
-		"dbName": "resources",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["learner", "leader"]
-			}
-		}
-	},
-	{
-		"dbName": "shelf",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": []
-			}
-		}
+  {
+    "dbName": "communityregistrationrequests",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   },
   {
-		"dbName": "tablet_users",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": ["satellite"],
-				"roles": []
-			}
-		}
+    "dbName": "configurations",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   },
   {
-		"dbName": "child_users",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["learner"]
-			}
-		}
+    "dbName": "courses",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
   },
   {
-		"dbName": "replicator_users",
-		"json": {
-			"admins": {
-				"names": [],
-				"roles": []
-			},
-			"members": {
-				"names": [],
-				"roles": ["manager"]
-			}
-		}
+    "dbName": "feedback",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   },
   {
-	"dbName": "activity_logs",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": []
-		}
-	}
+    "dbName": "login_activities",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   },
   {
-	"dbName": "courses_progress",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": ["learner", "leader"]
-		}
-	}
+    "dbName": "meetups",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
   },
   {
-	"dbName": "exams",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": ["learner", "leader"]
-		}
-	}
+    "dbName": "nations",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   },
   {
-	"dbName": "hubs",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": ["manager"]
-		}
-	}
+    "dbName": "notifications",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   },
   {
-	"dbName": "submissions",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": ["learner", "leader"]
-		}
-	}
+    "dbName": "ratings",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
   },
   {
-	"dbName": "surveys",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": ["learner", "leader"]
-		}
-	}
+    "dbName": "resource_activities",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
   },
   {
-	"dbName": "teams",
-	"json": {
-		"admins": {
-			"names": [],
-			"roles": []
-		},
-		"members": {
-			"names": [],
-			"roles": ["learner", "leader"]
-		}
-	}
+    "dbName": "resources",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
+  },
+  {
+    "dbName": "shelf",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
+  },
+  {
+    "dbName": "tablet_users",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": ["satellite"],
+        "roles": []
+      }
+    }
+  },
+  {
+    "dbName": "child_users",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner"]
+      }
+    }
+  },
+  {
+    "dbName": "replicator_users",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["manager"]
+      }
+    }
+  },
+  {
+    "dbName": "activity_logs",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
+  },
+  {
+  "dbName": "courses_progress",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
+  },
+  {
+  "dbName": "exams",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
+  },
+  {
+  "dbName": "hubs",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["manager"]
+      }
+    }
+  },
+  {
+  "dbName": "submissions",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
+  },
+  {
+  "dbName": "surveys",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
+  },
+  {
+  "dbName": "teams",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner", "leader"]
+      }
+    }
   }
 ]
