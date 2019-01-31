@@ -9,6 +9,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './manager-sync.component.html'
@@ -26,7 +27,8 @@ export class ManagerSyncComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private stateService: StateService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -34,8 +36,10 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   getReplicators() {
+    this.dialogsLoadingService.start();
     this.couchService.findAll('_replicator').subscribe(data => {
       this.replicators = data;
+      this.dialogsLoadingService.stop();
     });
   }
 
