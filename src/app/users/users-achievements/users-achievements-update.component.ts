@@ -23,7 +23,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   readonly dbName = 'achievements';
   editForm: FormGroup;
   infoTypes = this.usersAchievementsService.infoTypes;
-  showFormError = false;
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
@@ -117,7 +116,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     if (this.editForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value);
     } else {
-      this.showFormError = true;
       Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
         control.markAsTouched({ onlySelf: true });

@@ -1,11 +1,10 @@
 .planet-users-achievements-update {
   .view-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: block;
   }
 
   .view-container form {
-    margin: 0 10px 10px 0;
+    margin: 10px 10px 10px 0;
     width: 100%;
   }
 
@@ -15,11 +14,9 @@
     white-space: pre-wrap;
   }
 
-  .achievement-button {
-    margin-bottom: 1rem;
-  }
-
-  .achievement-button > button:first-of-type {
-    margin-right: 0.5rem;
+  .achievement-button{
+    position: fixed;
+    z-index: 10;
+    bottom: 2px;
   }
 }
