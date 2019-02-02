@@ -18,7 +18,7 @@
   }
 }
 
-@media (max-width: $screen-md) {
+@media (max-width: calc(#{$screen-md} - 1px)) {
   .view-container {
     display: grid;
     grid-template-columns: minmax(auto, 1fr) 1fr;
@@ -35,7 +35,7 @@
   }
 }
 
-@media (min-width: calc(#{$screen-md} - 1px)) {
+@media (min-width: $screen-md) {
   .view-container {
     display: flex;
     flex-direction: column;
