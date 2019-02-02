@@ -2,6 +2,7 @@
 
 .title-edit {
   width: 40%;
+  padding-top: 1em;
 }
 
 .chat-list-user {
@@ -32,6 +33,9 @@
     textarea {
       grid-area: textarea;
     }
+  }
+  .title-edit {
+    width: 65%;
   }
 }
 
