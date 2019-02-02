@@ -41,12 +41,12 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="chat-list" #chatList>
-      <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
+      <div *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
         <div class="chat-list-user">
-          <p>{{message.user}}</p>
-          <p class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</p>
+          <span>{{message.user + ','}}</span>
+          <span class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</span>
         </div>
-        <div class="chat-list-message"><mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card></div>
+        <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card>
       </div>
     </div>
     <div class="chat-reply">

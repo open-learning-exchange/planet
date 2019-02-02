@@ -1,31 +1,14 @@
-.view-container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-areas: "messages textarea";
-  grid-column-gap: 10px;
-  textarea {
-    grid-area: textarea;
-  }
-  .chat-list {
-    grid-area: messages;
-    overflow-y: auto;
-    max-height: inherit;
-  }
+@import '../variables';
+
+.title-edit {
+  width: 40%;
 }
 
-.chat-list-item {
-  display: grid;
-  grid-template-columns: 75px 1fr;
-  grid-template-areas: "user message";
-  grid-column-gap: 5px;
-  width: 100%;
-  margin-bottom: 10px;
-  .chat-list-user {
-    grid-area: user;
-  }
-  .chat-list-message {
-    grid-area: message;
-    justify-self: end;
+.chat-list-user {
+  color: $primary;
+  margin-top: 1.5em;
+  span:first-child {
+    margin-right: 1vw;
   }
 }
 
@@ -35,6 +18,28 @@
   }
 }
 
-.title-edit {
-  width: 40%;
+@media (max-width: $screen-md) {
+  .view-container {
+    display: grid;
+    grid-template-columns: minmax(auto, 1fr) 1fr;
+    grid-template-areas: "messages textarea";
+    grid-column-gap: 2vw;
+    .chat-list {
+      grid-area: messages;
+      overflow-y: auto;
+      max-height: inherit;
+    }
+    textarea {
+      grid-area: textarea;
+    }
+  }
+}
+
+@media (min-width: calc(#{$screen-md} - 1px)) {
+  .view-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 3vh 25vw;
+  }
 }
