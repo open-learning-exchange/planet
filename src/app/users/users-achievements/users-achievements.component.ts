@@ -16,6 +16,13 @@ import { UsersAchievementsService } from './users-achievements.service';
     .achievements-container mat-list {
       text-align: left;
     }
+    .mat-list-item.mat-list-item-word-wrap {
+      height: initial !important;
+    }
+    .mat-list-item-word-wrap .mat-line {
+      word-wrap: break-word !important;
+      white-space: pre-wrap !important;
+    }
   ` ]
 })
 export class UsersAchievementsComponent implements OnInit {
