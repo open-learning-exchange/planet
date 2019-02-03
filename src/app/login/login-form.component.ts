@@ -146,6 +146,10 @@ export class LoginFormComponent {
       } else {
         this.errorHandler('Member ' + this.userForm.value.name + ' is not registered')();
       }
+    },  (error) => {
+      // Placeholder for error handling until we have popups for user notification.
+      console.log('Error!');
+      this.errorHandler('Username and/or password do not match')();
     });
   }
 
