@@ -1,8 +1,26 @@
 @import '../variables';
 
 .title-edit {
-  width: 40%;
+  width: 65%;
   padding-top: 1em;
+}
+
+.view-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3vh 8vw;
+}
+
+.chat-list {
+  overflow: scroll;
+  padding-right: 1em;
+}
+
+.chat-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .chat-list-user {
@@ -19,31 +37,11 @@
   }
 }
 
-@media (max-width: calc(#{$screen-md} - 1px)) {
-  .view-container {
-    display: grid;
-    grid-template-columns: minmax(auto, 1fr) 1fr;
-    grid-template-areas: "messages textarea";
-    grid-column-gap: 2vw;
-    .chat-list {
-      grid-area: messages;
-      overflow-y: auto;
-      max-height: inherit;
-    }
-    textarea {
-      grid-area: textarea;
-    }
-  }
-  .title-edit {
-    width: 65%;
-  }
-}
-
 @media (min-width: $screen-md) {
+  .title-edit {
+    width: 40%;
+  }
   .view-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
     padding: 3vh 25vw;
   }
 }
