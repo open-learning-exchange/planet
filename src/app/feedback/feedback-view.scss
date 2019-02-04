@@ -13,14 +13,14 @@
 }
 
 .chat-list {
-  overflow: scroll;
-  padding-right: 1em;
+  overflow-y: auto;
 }
 
 .chat-list-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-right: 1em;
 }
 
 .chat-list-user {
