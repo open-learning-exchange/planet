@@ -10,6 +10,9 @@
   flex-direction: column;
   justify-content: flex-start;
   padding: 3vh 8vw;
+  > div {
+    padding-right: 1em;
+  }
 }
 
 .chat-list {
@@ -20,7 +23,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-right: 1em;
 }
 
 .chat-list-user {
