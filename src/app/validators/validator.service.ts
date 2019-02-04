@@ -75,14 +75,18 @@ export class ValidatorService {
     ).pipe(debug('Checking availibility of ' + fieldName + ' in ' + dbName));
   }
 
-  public checkOldPassword$(ac: AbstractControl): Observable<boolean> {
+  public checkOldPassword$(ac: AbstractControl, warn: any): Observable<boolean> {
     return this.couchService.post('_session', { 'name': this.userService.get().name, 'password': ac.value }, { withCredentials: false })
     .pipe(
       map(data => {
         return null;
       }),
       catchError(err => {
-        return of({ invalidOldPassword: true });
+        if (warn === 'invalidOldPassword') {
+          return of({ invalidOldPassword: true });
+        }else {
+          return of({ invalidPassword: true });
+        }
       }));
   }
 

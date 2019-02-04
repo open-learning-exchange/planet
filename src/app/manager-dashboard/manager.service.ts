@@ -38,7 +38,7 @@ export class ManagerService {
   openPasswordConfirmation() {
     const title = 'Admin Confirmation';
     const formGroup = {
-      password: [ '', Validators.required, ac => this.validatorService.checkOldPassword$(ac) ]
+      password: [ '', Validators.required, ac => this.validatorService.checkOldPassword$(ac, 'invalidPassword') ]
     };
     return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup, true)
