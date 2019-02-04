@@ -84,7 +84,7 @@ export class ValidatorService {
       catchError(err => {
         if (warn === 'invalidOldPassword') {
           return of({ invalidOldPassword: true });
-        }else {
+        } else {
           return of({ invalidPassword: true });
         }
       }));
