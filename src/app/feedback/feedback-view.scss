@@ -10,40 +10,27 @@
   flex-direction: column;
   justify-content: flex-start;
   padding: 3vh 8vw;
-  > div {
-    padding-right: 1em;
+  .chat-list {
+    overflow-y: auto;
+    padding-bottom: 1em;
   }
-}
-
-.chat-list {
-  overflow-y: auto;
 }
 
 .chat-list-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-}
-
-.chat-list-user {
-  color: $primary;
-  margin-top: 1.5em;
-  span:first-child {
-    margin-right: 1vw;
+  .chat-list-user {
+    color: $primary;
+    margin-top: 1.5em;
+    span:first-child {
+      margin-right: 1vw;
+    }
   }
 }
 
 .chat-reply {
   mat-form-field {
     width: 100%;
-  }
-}
-
-@media (min-width: $screen-md) {
-  .title-edit {
-    width: 40%;
-  }
-  .view-container {
-    padding: 3vh 25vw;
   }
 }
