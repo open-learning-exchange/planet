@@ -8,11 +8,15 @@
   text-align: left;
 }
 
-.mat-list-item.mat-list-item-word-wrap {
-  height: initial !important;
-}
+.mat-list-item {
 
-.mat-list-item-word-wrap .mat-line {
-  word-wrap: break-word !important;
-  white-space: pre-wrap !important;
+  &.mat-list-item-word-wrap {
+    height: initial !important;
+  }
+
+  .mat-line {
+    word-wrap: break-word !important;
+    white-space: pre-wrap !important;
+  }
+
 }
