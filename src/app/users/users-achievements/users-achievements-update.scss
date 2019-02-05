@@ -1,17 +1,20 @@
 .planet-users-achievements-update {
   .view-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
   }
 
   .view-container form {
-    margin: 0 10px 10px 0;
-    width: 100%;
+    overflow-y: auto;
   }
 
   planet-step-list .mat-list-base .mat-list-item {
     height: inherit;
     padding: 0.25rem 0;
     white-space: pre-wrap;
+  }
+
+  .achievement-button button:not(:last-child) {
+    margin-right: 0.25rem;
   }
 }
