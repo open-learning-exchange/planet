@@ -81,8 +81,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((res) => {
-      this.team = res;
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
+      this.team = newTeam;
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team');
     });
