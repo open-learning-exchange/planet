@@ -88,7 +88,8 @@ export class UserService {
     this.userProperties = users.reduce((properties: string[], user: any) => {
       const { derived_key, iterations, password_scheme, salt, ...profile } = user;
       const newProperties = Object.keys(profile);
-      return properties.concat(newProperties).reduce(dedupeShelfReduce, []);
+      return properties.concat(newProperties).reduce(dedupeShelfReduce, [])
+        .filter((prop) => [ 'requestId', '_attachments' ].indexOf(prop) === -1);
     }, []);
   }
 
