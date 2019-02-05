@@ -45,7 +45,6 @@ export class UsersAchievementsComponent implements OnInit {
         )
       });
     }, (error) => {
-      console.log(error.status);
       if (error.status === 404) {
         this.achievementNotFound = true;
       } else {
