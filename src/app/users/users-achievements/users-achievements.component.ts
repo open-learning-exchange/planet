@@ -4,6 +4,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -23,7 +25,7 @@ export class UsersAchievementsComponent implements OnInit {
   user: any = {};
   achievements: any;
   infoTypes = this.usersAchievementsService.infoTypes;
-  // hasError = false;
+  achievementNotFound = false;
 
   constructor(
     private couchService: CouchService,
@@ -43,9 +45,12 @@ export class UsersAchievementsComponent implements OnInit {
         )
       });
     }, (error) => {
-      // this.planetMessageService.showAlert('There was an error getting achievements');
-      // this.hasError = true;
-      console.log(error);
+      console.log(error.status);
+      if (error.status === 404) {
+        this.achievementNotFound = true;
+      } else {
+        this.planetMessageService.showAlert('There was an error getting achievements');
+      }
     });
   }
 
