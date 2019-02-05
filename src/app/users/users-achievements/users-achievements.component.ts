@@ -7,16 +7,7 @@ import { UsersAchievementsService } from './users-achievements.service';
 
 @Component({
   templateUrl: './users-achievements.component.html',
-  styles: [ `
-    .achievements-container {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .achievements-container mat-list {
-      text-align: left;
-    }
-  ` ]
+  styleUrls: [ './users-achievements.scss' ]
 })
 export class UsersAchievementsComponent implements OnInit {
   private dbName = 'achievements';

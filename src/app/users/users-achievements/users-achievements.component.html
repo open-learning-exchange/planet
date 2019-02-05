@@ -25,7 +25,7 @@
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
         <mat-list>
-          <mat-list-item *ngFor="let achievement of achievements.achievements">
+          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let achievement of achievements.achievements">
             <mat-icon mat-list-icon>done_outline</mat-icon>
             <p mat-line>{{achievement}}</p>
           </mat-list-item>
@@ -34,7 +34,7 @@
       <div *ngFor="let infoType of infoTypes">
         <h4 *ngIf="achievements[infoType]">{{infoType}}</h4>
         <mat-list>
-          <mat-list-item *ngFor="let info of achievements[infoType]">
+          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let info of achievements[infoType]">
             <mat-icon mat-list-icon>done_outline</mat-icon>
             <p mat-line>{{info.description}}</p>
           </mat-list-item>
