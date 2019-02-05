@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -22,7 +22,13 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
       margin: 0 10px 10px 0;
       width: 100%;
     }
-  ` ]
+    planet-step-list .mat-list-base .mat-list-item {
+      height: inherit;
+      padding: 0.25rem 0;
+      white-space: pre-wrap;
+    }
+  ` ],
+  encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit {
 
