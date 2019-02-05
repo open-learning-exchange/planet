@@ -141,10 +141,12 @@ export class LoginFormComponent {
 
   loginError() {
     this.couchService.get('_users/org.couchdb.user:' + this.userForm.value.name).subscribe((data: any) => {
-      if ('_id' in data) {
-        this.errorHandler('Username and/or password do not match')();
-      } else {
+      this.errorHandler('Username and/or password do not match')();
+    }, (err) => {
+      if (err.error.reason === 'missing') {
         this.errorHandler('Member ' + this.userForm.value.name + ' is not registered')();
+      } else {
+        this.errorHandler('There was an error connecting to Planet')();
       }
     });
   }
