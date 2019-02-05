@@ -28,7 +28,6 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidEndDate {End date cannot be before start date}
       invalidEndTime {End time cannot be before start time}
       dateInPast {Cannot be before current date}
-      invalidOldPassword {Old password isn't valid}
       invalidPassword {Password is not valid}
       pattern {Invalid input. Hover for more info}
       invalidFirstCharacter {Must start with letter or number}
