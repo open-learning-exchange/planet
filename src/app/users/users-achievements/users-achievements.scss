@@ -1,0 +1,18 @@
+.achievements-container {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.achievements-container mat-list {
+  text-align: left;
+}
+
+.mat-list-item.mat-list-item-word-wrap {
+  height: initial !important;
+}
+
+.mat-list-item-word-wrap .mat-line {
+  word-wrap: break-word !important;
+  white-space: pre-wrap !important;
+}
