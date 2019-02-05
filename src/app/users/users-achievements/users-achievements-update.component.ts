@@ -13,21 +13,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
-  styles: [ `
-    .view-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .view-container form {
-      margin: 0 10px 10px 0;
-      width: 100%;
-    }
-    planet-step-list .mat-list-base .mat-list-item {
-      height: inherit;
-      padding: 0.25rem 0;
-      white-space: pre-wrap;
-    }
-  ` ],
+  styleUrls: [ 'users-achievements-update.scss' ],
   encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit {
