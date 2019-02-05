@@ -22,10 +22,9 @@
   align-items: flex-start;
   .chat-list-user {
     color: $primary;
-    margin-top: 1.5em;
-    span:first-child {
-      margin-right: 1vw;
-    }
+  }
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
   }
 }
 

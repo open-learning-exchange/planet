@@ -43,8 +43,7 @@
     <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
         <div class="chat-list-user">
-          <span>{{message.user + ','}}</span>
-          <span class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</span>
+          <span>{{message.user + ', '}}<span class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</span></span>
         </div>
         <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card>
       </div>
