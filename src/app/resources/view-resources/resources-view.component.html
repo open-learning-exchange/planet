@@ -26,18 +26,18 @@
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-rating [rating]="resource?.rating" [item]="resource" [parent]="parent" [ratingType]="'resource'"></planet-rating>
-      <p><b>Description:</b> <td-markdown [content]="resource?.description"></td-markdown></p>
-      <p><b>Author:</b><i> {{resource?.author}}</i></p>
-      <p><b>Published by:</b> {{resource?.publisher ? ' ' + resource?.publisher : ' N/A'}}
-        <ng-container *ngIf="resource?.year"> <span i18n>on</span>{{ ' ' + resource?.year}}</ng-container>
+      <p><span i18n>Description:</span><td-markdown [content]="resource?.description"></td-markdown></p>
+      <p *ngIf="resource?.author"><span i18n>Author:</span><i>{{' ' + resource?.author}}</i></p>
+      <p *ngIf="resource?.publisher"><span i18n>Published by:</span>{{' ' + resource?.publisher}}
+        <ng-container *ngIf="resource?.year"><span i18n>&nbsp;on</span>{{' ' + resource?.year}}</ng-container>
       </p>
-      <p><b>Level:</b> {{ resource?.level?.join(', ') }}</p>
-      <p><b>Media:</b> {{ resource?.medium }}</p>
-      <p><b>Language:</b> {{ resource?.language }}</p>
-      <p><b>Subject/s:</b> {{ resource?.subject?.join(', ') }}</p>
-      <p><b>to License:</b> <a href={{resource?.linkToLicense}} target="_blank"> {{resource?.linkToLicense}}</a></p>
-      <p><b>Resource:</b> {{ resource?.resourceFor?.join(', ') }}</p>
-      <p><b>Type:</b> {{ resource?.resourceType }}</p>
+      <p><span i18n>Level:</span>{{' ' + resource?.level?.join(', ')}}</p>
+      <p *ngIf="resource?.medium"><span i18n>Media:</span>{{' ' + resource?.medium}}</p>
+      <p *ngIf="resource?.language"><span i18n>Language:</span>{{' ' + resource?.language}}</p>
+      <p><span i18n>Subject/s:</span>{{' ' + resource?.subject?.join(', ')}}</p>
+      <p *ngIf="resource?.linkToLicense"><span i18n>to License:</span><a href={{resource?.linkToLicense}} target="_blank">{{' ' + resource?.linkToLicense}}</a></p>
+      <p *ngIf="resource?.resourceFor"><span i18n>Resource:</span>{{' ' + resource?.resourceFor?.join(', ')}}</p>
+      <p *ngIf="resource?.resourceType"><span i18n>Type:</span>{{' ' + resource?.resourceType}}</p>
     </div>
     <planet-resources-viewer
       *ngIf="resource?._attachments"

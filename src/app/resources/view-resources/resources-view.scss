@@ -23,6 +23,9 @@
     grid-area: detail;
     padding: 1rem;
     overflow-y: auto;
+    p > span {
+      font-weight: bold;
+    }
   }
 
   .resource-view {
