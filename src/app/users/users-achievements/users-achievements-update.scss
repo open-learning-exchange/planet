@@ -13,4 +13,8 @@
     padding: 0.25rem 0;
     white-space: pre-wrap;
   }
+
+  .achievement-button button:not(:last-child) {
+    margin-right: 0.25rem;
+  }
 }
