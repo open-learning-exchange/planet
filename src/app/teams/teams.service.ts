@@ -61,7 +61,7 @@ export class TeamsService {
 
   updateTeam(team: any) {
     return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
-      return of({ _rev: res.rev, _id: res.id, ...team });
+      return of({ ...team, _rev: res.rev, _id: res.id });
     }));
   }
 
