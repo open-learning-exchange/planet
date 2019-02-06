@@ -1,9 +1,15 @@
 @import '../../mixins';
+@import '../../variables';
 
 :host {
   .view-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "lt rt";
+  }
+  .left-tile {
+    a {
+      color: $primary;
+    }
   }
 }

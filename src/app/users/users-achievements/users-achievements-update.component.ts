@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -13,16 +13,8 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
-  styles: [ `
-    .view-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .view-container form {
-      margin: 0 10px 10px 0;
-      width: 100%;
-    }
-  ` ]
+  styleUrls: [ 'users-achievements-update.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit {
 
@@ -120,6 +112,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   onSubmit() {
+    this.editForm.updateValueAndValidity();
     if (this.editForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value);
     } else {

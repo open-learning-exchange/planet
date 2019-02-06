@@ -1,4 +1,4 @@
-<mat-nav-list *ngIf="listMode">
+<mat-nav-list *ngIf="listMode" [disableRipple]="ignoreClick" [ngClass]="{ 'no-pointer': ignoreClick }">
   <mat-list-item *ngFor="let stepListItem of stepListItems; index as i" (click)="stepClick(i)">
     <ng-template [ngTemplateOutlet]="stepListItem.template"></ng-template>
   </mat-list-item>

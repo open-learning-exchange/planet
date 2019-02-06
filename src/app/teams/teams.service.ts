@@ -61,7 +61,7 @@ export class TeamsService {
 
   updateTeam(team: any) {
     return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
-      return of({ _rev: res.rev, _id: res.id, ...team });
+      return of({ ...team, _rev: res.rev, _id: res.id });
     }));
   }
 
@@ -134,7 +134,7 @@ export class TeamsService {
   addedToTeamNotification(userId, { team, url }) {
     return {
       'user': userId,
-      'message': 'You have been added to ' + team.name + ' team.',
+      'message': `You have been added to <b>"${team.name}"</b> team.`,
       'link': url,
       'item': team._id,
       'type': 'team',
@@ -147,7 +147,7 @@ export class TeamsService {
   memberAddNotification(userId, { team, url, newMembersLength }) {
     return {
       'user': userId,
-      'message': newMembersLength + ' member(s) has been added to ' + team.name + ' team. ',
+      'message': `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`,
       'link': url,
       'item': team._id,
       'type': 'team',
@@ -160,7 +160,7 @@ export class TeamsService {
   requestNotification(userId, { team, url }) {
     return {
       'user': userId,
-      'message': this.userService.get().name + ' has requested to join ' + team.name + ' team. ',
+      'message': `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`,
       'link': url,
       'item': team._id,
       'type': 'team',

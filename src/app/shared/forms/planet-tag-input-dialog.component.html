@@ -34,7 +34,7 @@
           <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
           <span>
             {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
-            <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
+            <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
           </span>
         </mat-list-option>
       </ng-container>
@@ -53,7 +53,7 @@
           <mat-icon>subdirectory_arrow_right</mat-icon>
           {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
           <span class="toolbar-fill"></span>
-          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
         </a>
       </ng-container>
       <mat-divider></mat-divider>

@@ -43,15 +43,14 @@
     <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
         <div class="chat-list-user">
-          <p>{{message.user}}</p>
-          <p class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</p>
+          <span>{{message.user + ', '}}<span class="mat-caption">{{message.time | date:'MMM d, y h:mm a'}}</span></span>
         </div>
-        <div class="chat-list-message"><mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card></div>
+        <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card>
       </div>
     </div>
     <div class="chat-reply">
       <mat-form-field>
-        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMinRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
+        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
       </mat-form-field>
       <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()"><mat-icon>reply</mat-icon>Reply</button>
       <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="feedback.status !== 'Closed'">Close</button>

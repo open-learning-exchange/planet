@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { throwError, of, forkJoin } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { ValidatorService } from '../validators/validator.service';
+import { throwError, of, forkJoin, Observable } from 'rxjs';
+import { map, switchMap, catchError, takeWhile } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -30,28 +31,29 @@ export class ManagerService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
-    private activityService: ReportsService
+    private activityService: ReportsService,
+    private validatorService: ValidatorService,
   ) {}
 
   openPasswordConfirmation() {
     const title = 'Admin Confirmation';
-    let passwordInvalid = null;
     const formGroup = {
-      password: [ '', [ Validators.required, () => passwordInvalid ] ]
+      password: [ '', Validators.required, ac => this.validatorService.checkPassword$(ac) ]
     };
     return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup, true)
     .pipe(
       debug('Dialog confirm'),
-      switchMap((response: any) => {
+      switchMap((response: any): Observable<{ name, password, cancelled? }> => {
         if (response !== undefined) {
           return this.verifyPassword(response.password);
         }
-        return throwError('Invalid password');
+        return of({ name: undefined, password: undefined, cancelled: true });
       }),
+      takeWhile((value) => value.cancelled !== true),
       catchError((err) => {
-        passwordInvalid = { 'invalidPassword': true };
-        return throwError(err);
+        const errorMessage = err.error.reason;
+        return throwError(errorMessage === 'Name or password is incorrect.' ? 'Password is incorrect.' : errorMessage);
       })
     );
   }

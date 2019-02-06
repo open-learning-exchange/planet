@@ -1,31 +1,30 @@
+@import '../variables';
+
+.title-edit {
+  width: 65%;
+  padding-top: 1em;
+}
+
 .view-container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-areas: "messages textarea";
-  grid-column-gap: 10px;
-  textarea {
-    grid-area: textarea;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3vh 8vw;
   .chat-list {
-    grid-area: messages;
     overflow-y: auto;
-    max-height: inherit;
+    padding-bottom: 1em;
   }
 }
 
 .chat-list-item {
-  display: grid;
-  grid-template-columns: 75px 1fr;
-  grid-template-areas: "user message";
-  grid-column-gap: 5px;
-  width: 100%;
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   .chat-list-user {
-    grid-area: user;
+    color: $primary;
   }
-  .chat-list-message {
-    grid-area: message;
-    justify-self: end;
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -33,8 +32,4 @@
   mat-form-field {
     width: 100%;
   }
-}
-
-.title-edit {
-  width: 40%;
 }

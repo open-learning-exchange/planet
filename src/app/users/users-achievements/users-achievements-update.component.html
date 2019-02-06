@@ -3,12 +3,12 @@
   <span i18n>Edit Achievements</span>
 </mat-toolbar>
 
-<div class="space-container">
+<div class="planet-users-achievements-update space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{user.name}}</span>
   </mat-toolbar>
-  <div class="view-container">
-    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+  <div class="view-container view-full-height">
+    <form [formGroup]="editForm">
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" placeholder="My Purpose" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
       </mat-form-field>
@@ -20,29 +20,29 @@
       </mat-form-field>
       <div>
         <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
-        <mat-list>
-          <mat-list-item *ngFor="let achievement of achievements.controls; index as i">
-            <span mat-line>{{achievement.value}}</span>
-            <button mat-stroked-button type="button" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
-          </mat-list-item>
-        </mat-list>
+        <planet-step-list [steps]="achievements" [ignoreClick]="true">
+          <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
+            <span>{{achievement.value}}</span>
+            <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
+          </planet-step-list-item>
+        </planet-step-list>
       </div>
       <div>
         <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
-        <mat-list>
-          <mat-list-item *ngFor="let info of otherInfo.controls; index as i">
+        <planet-step-list [steps]="otherInfo" [ignoreClick]="true">
+          <planet-step-list-item *ngFor="let info of otherInfo.controls; index as i">
             <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
-            <button mat-stroked-button type="button" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
-          </mat-list-item>
-        </mat-list>
+            <button mat-stroked-button type="button" class="margin-lr-4" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
+          </planet-step-list-item>
+        </planet-step-list>
       </div>
       <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
         Allow your achievements to be shared with the nation
       </mat-checkbox>
-      <div>
-        <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
-        <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
-      </div>
     </form>
+    <div class="achievement-button">
+      <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+      <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
+    </div>
   </div>
 </div>

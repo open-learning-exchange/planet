@@ -54,7 +54,7 @@
         mat-menu-item
         *ngFor="let notification of notifications"
         (click)="readNotification(notification)">
-        <p><b>{{notification.message}}</b><p>
+        <p [innerHTML]="notification.message"><p>
         <p *ngIf="notification.time > 0" class="small">{{notification.time | date: 'mediumDate'}}</p>
         <mat-divider></mat-divider>
       </a>
