@@ -67,6 +67,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   addAchievement(index = -1, achievement = { description: '', resources: [] }) {
+    if (typeof achievement === 'string') {
+      achievement = { description: achievement, resources: [] };
+    }
     this.dialogsFormService.openDialogsForm(
       'Add Achievement',
       [
