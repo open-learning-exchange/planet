@@ -21,6 +21,7 @@ export class DashboardComponent implements OnInit {
   dateNow: any;
   visits = 0;
   surveysCount = 0;
+  exams = [];
 
   constructor(
     private userService: UserService,
@@ -37,6 +38,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     const userShelf = this.userService.shelf;
     this.getSurveys();
+    this.getExams();
 
     this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
@@ -101,6 +103,15 @@ export class DashboardComponent implements OnInit {
       this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
+    });
+  }
+
+  getExams() {
+    this.submissionsService.getSubmissions(findDocuments({
+      type: 'survey',
+      status: 'pending'
+    })).subscribe((exams) => {
+      this.exams = exams;
     });
   }
 }
