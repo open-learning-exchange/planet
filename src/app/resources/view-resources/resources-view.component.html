@@ -39,10 +39,14 @@
       <p *ngIf="resource?.resourceFor"><b i18n>Resource:</b>{{' ' + resource?.resourceFor?.join(', ')}}</p>
       <p *ngIf="resource?.resourceType"><b i18n>Type:</b>{{' ' + resource?.resourceType}}</p>
     </div>
-    <planet-resources-viewer
-      *ngIf="resource?._attachments"
-      [resourceId]="resourceId"
-      (resourceUrl)="setResourceUrl($event)">
-    </planet-resources-viewer>
-  </div>
+    <div>
+      <planet-resources-viewer
+        *ngIf="resource?._attachments; else noAttachment"
+        [resourceId]="resourceId"
+        (resourceUrl)="setResourceUrl($event)">
+      </planet-resources-viewer>
+      <ng-template #noAttachment> Attachments not available </ng-template>
+    </div>
+
+</div>
 </div>
