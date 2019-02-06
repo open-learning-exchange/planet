@@ -2,7 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  FormArray
+  FormArray,
+  FormControl
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -154,6 +155,10 @@ export class UsersAchievementsUpdateComponent implements OnInit {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
+  }
+
+  removeResource(achievement: FormControl, resource) {
+    achievement.setValue({ ...achievement.value, resources: achievement.value.resources.filter(({ _id }) => _id !== resource._id) });
   }
 
 }
