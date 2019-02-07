@@ -22,7 +22,18 @@
         <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-            <span>{{achievement.value}}</span>
+            <span>
+              {{achievement.value.description || achievement.value}}
+              <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
+                Attached resources:
+              </div>
+              <mat-chip-list mat-line>
+                <mat-chip *ngFor="let resource of (achievement.value.resources || [])">
+                  {{resource.title}}
+                  <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
+                </mat-chip>
+              </mat-chip-list>
+            </span>
             <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
           </planet-step-list-item>
         </planet-step-list>

@@ -27,7 +27,10 @@
         <mat-list>
           <mat-list-item class="mat-list-item-word-wrap" *ngFor="let achievement of achievements.achievements">
             <mat-icon mat-list-icon>done_outline</mat-icon>
-            <p mat-line>{{achievement}}</p>
+            <p mat-line [ngClass]="{ 'no-attachment': !achievement.resources?.length }">
+              <span class="achievement-text">{{achievement.description || achievement}}</span>
+              <span class="achievement-button"><planet-resources-menu [resources]="achievement.resources" i18n>View Attachment</planet-resources-menu></span>
+            </p>
           </mat-list-item>
         </mat-list>
       </div>

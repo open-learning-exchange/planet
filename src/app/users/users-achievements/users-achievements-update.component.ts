@@ -2,7 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  FormArray
+  FormArray,
+  FormControl
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -73,19 +74,28 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     });
   }
 
-  addAchievement(index = -1, achievement?) {
-    this.dialogsFormService.confirm('Add Achievement', [
-      {
-        'type': 'textarea',
-        'name': 'description',
-        'placeholder': 'Description'
-      },
-    ], this.fb.group({ description: achievement })).subscribe((newAchievement: any) => {
-      if (newAchievement === undefined) {
-        return;
-      }
-      this.updateFormArray(this.achievements, this.fb.control(newAchievement.description), index);
-    });
+  addAchievement(index = -1, achievement = { description: '', resources: [] }) {
+    if (typeof achievement === 'string') {
+      achievement = { description: achievement, resources: [] };
+    }
+    this.dialogsFormService.openDialogsForm(
+      'Add Achievement',
+      [
+        {
+          'type': 'textarea',
+          'name': 'description',
+          'placeholder': 'Description'
+        },
+        {
+          'type': 'dialog',
+          'name': 'resources',
+          'db': 'resources',
+          'text': 'Add Resources'
+        }
+      ],
+      this.fb.group({ ...achievement, resources: [ achievement.resources ] }),
+      { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
+    );
   }
 
   addOtherInfo(index = -1, info?: any) {
@@ -107,6 +117,15 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       }
       this.updateFormArray(this.otherInfo, this.fb.group(newInfo), index);
     });
+  }
+
+  onDialogSubmit(formArray, index) {
+    return (formValue, formGroup) => {
+      if (formValue === undefined) {
+        return;
+      }
+      this.updateFormArray(formArray, formGroup, index);
+    };
   }
 
   updateFormArray(formArray: FormArray, value, index = -1) {
@@ -144,6 +163,10 @@ export class UsersAchievementsUpdateComponent implements OnInit {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
+  }
+
+  removeResource(achievement: FormControl, resource) {
+    achievement.setValue({ ...achievement.value, resources: achievement.value.resources.filter(({ _id }) => _id !== resource._id) });
   }
 
 }

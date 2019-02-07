@@ -17,6 +17,22 @@
   .mat-line {
     word-wrap: break-word;
     white-space: pre-wrap;
+    display: grid;
+    grid-template-areas: "txt btn";
+    grid-template-columns: auto min-content;
+    align-items: center;
+
+    .achievement-text {
+      grid-area: txt;
+    }
+
+    .achievement-button {
+      grid-area: btn;
+    }
+
+    &.no-attachment {
+      grid-template-columns: auto 0;
+    }
   }
 
 }
