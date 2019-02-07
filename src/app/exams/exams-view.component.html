@@ -6,8 +6,10 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span>{{title ? title + ': ' : ''}}<ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions}}</span>
-    <span i18n *ngIf="mode === 'grade' || mode === 'view'">&nbsp;By{{' ' + submittedBy}}<span i18n *ngIf="!submittedBy">Unknown</span> on {{(updatedOn | date: 'short') || '--'}}</span>
+    <span>
+      <span>{{title ? title + ': ' : ''}}<ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}</span>
+      <span i18n *ngIf="mode === 'grade' || mode === 'view'"> By{{' ' + submittedBy}}<span i18n *ngIf="!submittedBy">Unknown</span> on {{(updatedOn | date: 'short') || '--'}}</span>
+    </span>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(true)"><mat-icon>navigate_next</mat-icon></button>
