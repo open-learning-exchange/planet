@@ -48,7 +48,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getAchievements(this.docInfo._id).pipe(catchError(() => this.getAchievements(this.user._id))).subscribe((achievements) => {
+    this.usersAchievementsService.getAchievements(this.docInfo._id)
+    .pipe(catchError(() => this.usersAchievementsService.getAchievements(this.user._id)))
+    .subscribe((achievements) => {
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
       this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
@@ -58,10 +60,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     }, (error) => {
       console.log(error);
     });
-  }
-
-  getAchievements(id) {
-    return this.couchService.get(this.dbName + '/' + id);
   }
 
   createForm() {
