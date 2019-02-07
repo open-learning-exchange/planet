@@ -11,6 +11,7 @@ import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { UsersAchievementsModule } from './users-achievements/users-achievements.module';
 
 @NgModule({
   imports: [
@@ -22,7 +23,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    UsersAchievementsModule
   ],
   declarations: [
     UsersComponent,
