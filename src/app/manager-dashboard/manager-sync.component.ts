@@ -60,8 +60,13 @@ export class ManagerSyncComponent implements OnInit {
       switchMap(data => {
         return this.sendStatsToParent();
       }),
-      switchMap(data => {
-        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList());
+      switchMap(() => {
+        return this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code }));
+      }),
+      switchMap(achievements => {
+        return this.syncService.confirmPasswordAndRunReplicators(
+          this.replicatorList().concat(this.achievementResourceReplicator(achievements))
+        );
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
     ).subscribe(data => {
@@ -79,7 +84,8 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'resource_activities' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
       { db: 'admin_activities' },
-      { db: 'submissions', selector: { source: this.planetConfiguration.code } }
+      { db: 'submissions', selector: { source: this.planetConfiguration.code } },
+      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } }
     ];
     const pullList = [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
@@ -135,6 +141,11 @@ export class ManagerSyncComponent implements OnInit {
       const { error, reason, docs, rows, ...statsDoc } = stats;
       return this.couchService.post('child_statistics', { _id: code, ...statsDoc, totalCourses, totalResources }, { domain });
     }));
+  }
+
+  achievementResourceReplicator(achievements) {
+    return this.syncService.createRepicatorsArray(achievements.map(a => ({ db: 'achievements', item: a })), 'push')
+      .filter(rep => rep.db !== 'achievements');
   }
 
 }

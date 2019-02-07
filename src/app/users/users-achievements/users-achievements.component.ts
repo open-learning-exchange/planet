@@ -13,7 +13,6 @@ import { StateService } from '../../shared/state.service';
   styleUrls: [ './users-achievements.scss' ]
 })
 export class UsersAchievementsComponent implements OnInit {
-  private dbName = 'achievements';
   user: any = {};
   achievements: any;
   infoTypes = this.usersAchievementsService.infoTypes;
@@ -49,8 +48,8 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   initAchievements(id) {
-    this.getAchievements(id).pipe(
-      catchError((err) => this.ownAchievements ? this.getAchievements(this.user._id) : throwError(err))
+    this.usersAchievementsService.getAchievements(id).pipe(
+      catchError((err) => this.ownAchievements ? this.usersAchievementsService.getAchievements(this.user._id) : throwError(err))
     ).subscribe((achievements) => {
       this.achievements = achievements._id && ({
         ...achievements,
@@ -72,10 +71,6 @@ export class UsersAchievementsComponent implements OnInit {
     const db = isLocal ? '_users' : 'child_users';
     const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
     this.couchService.get(db + '/' + id).subscribe((user) => this.user = user);
-  }
-
-  getAchievements(id) {
-    return this.couchService.get(this.dbName + '/' + id);
   }
 
   goBack() {

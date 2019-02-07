@@ -88,6 +88,8 @@ export class SyncService {
           return this.coursesItemsToSync(doc, type, newReplicators);
         case 'resources':
           return this.resourcesItemsToSync(doc, type, newReplicators);
+        case 'achievements':
+          return this.achievementsItemsToSync(doc, type, newReplicators);
         default:
           return newReplicators;
       }
@@ -111,6 +113,17 @@ export class SyncService {
       type,
       replicators
     );
+  }
+
+  achievementsItemsToSync(achievement, type, replicators) {
+    return this.createRepicatorsArray(
+      [].concat.apply([], achievement.achievements.map(({ resources }) =>
+        (resources || [] ).map(r => ({ item: r, db: 'resources' })))
+      ),
+      type,
+      replicators
+    );
+
   }
 
 }
