@@ -113,7 +113,7 @@ export class ChangePasswordDirective {
       if (isUserAdmin) {
         return forkJoin([ of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData) ]);
       }
-      return of(res);
+      return of([ res ]);
     }));
   }
 
