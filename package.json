@@ -1,5 +1,5 @@
 {
-  "name": "ang-bell-app",
+  "name": "planet-app",
   "version": "0.7.7",
   "license": "AGPL-3.0",
   "scripts": {
@@ -12,10 +12,10 @@
     "v-test": "vagrant ssh dev -- -t 'cd /vagrant;ng test'",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
-    "lint": "ng lint ang-bell-app --type-check",
-    "lint-all": "npm run sass-lint && ng lint ang-bell-app --type-check && npm run htmlhint",
+    "lint": "ng lint planet-app --type-check",
+    "lint-all": "npm run sass-lint && ng lint planet-app --type-check && npm run htmlhint",
     "v-lint": "vagrant ssh dev -- -t 'cd /vagrant;npm run lint -s'",
-    "v-lint-fix": "vagrant ssh dev -- -t 'cd /vagrant;ng lint ang-bell-app --fix --type-check'",
+    "v-lint-fix": "vagrant ssh dev -- -t 'cd /vagrant;ng lint planet-app --fix --type-check'",
     "e2e": "ng e2e --webdriver-update=false",
     "v-e2e": "vagrant ssh dev -- -t 'cd /vagrant;ng e2e --webdriver-update=false'",
     "install-hooks": "cp -a git-hooks/. .git/hooks/",
