@@ -17,8 +17,7 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { CommunityTableComponent } from '../community/community-table.component';
-import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
-import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
+import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
 
 @NgModule({
   imports: [
@@ -31,7 +30,8 @@ import { UsersAchievementsComponent } from '../users/users-achievements/users-ac
     HttpClientModule,
     HttpClientJsonpModule,
     PlanetDialogsModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    UsersAchievementsModule
   ],
   declarations: [
     HomeComponent,
@@ -41,9 +41,7 @@ import { UsersAchievementsComponent } from '../users/users-achievements/users-ac
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective,
-    UpgradeComponent,
-    UsersAchievementsComponent,
-    UsersAchievementsUpdateComponent
+    UpgradeComponent
   ]
 })
 export class HomeModule {}

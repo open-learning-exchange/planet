@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -17,18 +18,40 @@ export class UsersAchievementsComponent implements OnInit {
   achievements: any;
   infoTypes = this.usersAchievementsService.infoTypes;
   achievementNotFound = false;
+  ownAchievements = false;
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
     private router: Router,
+    private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
-    private usersAchievementsService: UsersAchievementsService
+    private usersAchievementsService: UsersAchievementsService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {
-    this.user = this.userService.get();
-    this.couchService.get(this.dbName + '/' + this.user._id).subscribe((achievements) => {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      const name = params.get('name');
+      const currentUser = this.userService.get();
+      if (name === null || name === undefined) {
+        this.user = currentUser;
+      } else {
+        this.initUser(name, params.get('planet'));
+      }
+      const id = (name === null || name === undefined) ?
+        (this.user._id + '@' + this.stateService.configuration.code) : ('org.couchdb.user:' + name + '@' + params.get('planet'));
+      if (id === (currentUser._id + '@' + currentUser.planetCode)) {
+        this.ownAchievements = true;
+      }
+      this.initAchievements(id);
+    });
+  }
+
+  initAchievements(id) {
+    this.getAchievements(id).pipe(
+      catchError((err) => this.ownAchievements ? this.getAchievements(this.user._id) : throwError(err))
+    ).subscribe((achievements) => {
       this.achievements = achievements._id && ({
         ...achievements,
         ...(achievements.otherInfo || []).reduce((otherInfoObj: any, info) =>
@@ -42,6 +65,17 @@ export class UsersAchievementsComponent implements OnInit {
         this.planetMessageService.showAlert('There was an error getting achievements');
       }
     });
+  }
+
+  initUser(name, planetCode) {
+    const isLocal = this.stateService.configuration.code === planetCode;
+    const db = isLocal ? '_users' : 'child_users';
+    const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
+    this.couchService.get(db + '/' + id).subscribe((user) => this.user = user);
+  }
+
+  getAchievements(id) {
+    return this.couchService.get(this.dbName + '/' + id);
   }
 
   goBack() {
