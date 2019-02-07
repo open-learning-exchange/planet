@@ -67,11 +67,7 @@
               </span>
             </ng-template>
             <mat-action-row *ngIf="!parent">
-              <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
-              <button *ngIf="step?.resources?.length > 1 && step?.resources?.length" mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
-              <mat-menu #resourceList="matMenu">
-                <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
-              </mat-menu>
+              <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
             </mat-action-row>
           </mat-expansion-panel>
