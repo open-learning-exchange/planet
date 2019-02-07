@@ -10,6 +10,8 @@ import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { StateService } from '../../shared/state.service';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -18,8 +20,9 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 })
 export class UsersAchievementsUpdateComponent implements OnInit {
 
-  user: any = {};
-  docInfo = { '_rev': undefined };
+  user = this.userService.get();
+  configuration = this.stateService.configuration;
+  docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   editForm: FormGroup;
   infoTypes = this.usersAchievementsService.infoTypes;
@@ -38,21 +41,27 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private usersAchievementsService: UsersAchievementsService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private stateService: StateService
   ) {
     this.createForm();
   }
 
   ngOnInit() {
-    this.user = this.userService.get();
-    this.couchService.get(this.dbName + '/' + this.user._id).subscribe((achievements) => {
+    this.getAchievements(this.docInfo._id).pipe(catchError(() => this.getAchievements(this.user._id))).subscribe((achievements) => {
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
       this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
-      this.docInfo._rev = achievements._rev;
+      if (this.docInfo._id === achievements._id) {
+        this.docInfo._rev = achievements._rev;
+      }
     }, (error) => {
       console.log(error);
     });
+  }
+
+  getAchievements(id) {
+    return this.couchService.get(this.dbName + '/' + id);
   }
 
   createForm() {
@@ -125,7 +134,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
 
   updateAchievements(docInfo, achievements) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...docInfo, ...achievements, '_id': this.user._id })
+    this.couchService.post(this.dbName, { ...docInfo, ...achievements,
+      'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode })
     .subscribe(() => {
       this.planetMessageService.showAlert('Achievements successfully updated');
       this.goBack();
