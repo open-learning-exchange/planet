@@ -46,7 +46,7 @@ export class TagsService {
   }
 
   fillSubTags(tag: any, index: number, tags: any[]) {
-    return { ...tag, subTags: tags.filter(({ attachedTo = [] }) => (attachedTo || []).indexOf(tag._id) > -1) };
+    return { ...tag, subTags: tags.filter(({ attachedTo }) => (attachedTo || []).indexOf(tag._id) > -1) };
   }
 
 }
