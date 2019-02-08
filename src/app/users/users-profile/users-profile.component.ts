@@ -4,8 +4,6 @@ import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -50,8 +48,8 @@ export class UsersProfileComponent implements OnInit {
   checkHasAchievments() {
     this.usersAchievementsService.getAchievements(this.user._id).subscribe((achievements) => {
       console.log(achievements);
-      console.log(achievements != undefined);
-      this.hasAchievement = achievements!= undefined;
+      // console.log(achievements != undefined);
+      this.hasAchievement = achievements !== undefined;
       console.log(this.hasAchievement);
     });
   }
