@@ -9,7 +9,7 @@ Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://mat
 
 ## To work on this
 
-The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
+The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up dev` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.  
 
 ## Project guidelines
 
