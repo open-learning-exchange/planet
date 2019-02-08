@@ -19,7 +19,6 @@
         <planet-markdown-textbox class="full-width" placeholder="Summary of Achievements" [formControl]="editForm.controls.achievementsHeader"></planet-markdown-textbox>
       </mat-form-field>
       <div>
-        <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
             <span>
@@ -37,15 +36,16 @@
             <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
           </planet-step-list-item>
         </planet-step-list>
+        <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
       </div>
       <div>
-        <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
         <planet-step-list [steps]="otherInfo" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let info of otherInfo.controls; index as i">
             <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
             <button mat-stroked-button type="button" class="margin-lr-4" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
           </planet-step-list-item>
         </planet-step-list>
+        <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
       </div>
       <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
         Allow your achievements to be shared with the nation
