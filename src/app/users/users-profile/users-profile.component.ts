@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
+import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -26,12 +27,14 @@ export class UsersProfileComponent implements OnInit {
   urlName = '';
   planetCode: string | null = null;
   editable = false;
+  hasAchievement = false;
 
   constructor(
     private couchService: CouchService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private usersAchievementsService: UsersAchievementsService
   ) { }
 
   ngOnInit() {
@@ -40,6 +43,16 @@ export class UsersProfileComponent implements OnInit {
       this.urlName = params.get('name');
       this.planetCode = params.get('planet');
       this.profileView();
+      this.checkHasAchievments();
+    });
+  }
+
+  checkHasAchievments() {
+    this.usersAchievementsService.getAchievements(this.user._id).subscribe((achievements) => {
+      console.log(achievements);
+      console.log(achievements != undefined);
+      this.hasAchievement = achievements!= undefined;
+      console.log(this.hasAchievement);
     });
   }
 
