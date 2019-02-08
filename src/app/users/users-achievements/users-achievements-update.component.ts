@@ -3,7 +3,8 @@ import {
   FormBuilder,
   FormGroup,
   FormArray,
-  FormControl
+  FormControl,
+  Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +14,7 @@ import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { catchError } from 'rxjs/operators';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -93,7 +95,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
           'text': 'Add Resources'
         }
       ],
-      this.fb.group({ ...achievement, resources: [ achievement.resources ] }),
+      this.fb.group({ description: new FormControl('', [Validators.required, CustomValidators.noWhiteSpaceValidator]), ...achievement, resources: [ achievement.resources ] }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
     );
   }
