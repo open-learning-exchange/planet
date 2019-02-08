@@ -10,13 +10,19 @@
   <div class="view-container view-full-height">
     <form [formGroup]="editForm">
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="My Purpose" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose" i18n-placeholder
+          placeholder="My Purpose - What are your educational and professional ambitions?"
+        ></planet-markdown-textbox>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="My Goals" [formControl]="editForm.controls.goals"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.goals" i18n-placeholder
+          placeholder="My Goals - What are your goals for the next 10 years?"
+        ></planet-markdown-textbox>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="Summary of Achievements" [formControl]="editForm.controls.achievementsHeader"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.achievementsHeader" i18n-placeholder
+          placeholder="Summary of Achievements - Briefly summarize your achievements and add related materials below"
+        ></planet-markdown-textbox>
       </mat-form-field>
       <div>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
@@ -39,6 +45,7 @@
         <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
       </div>
       <div>
+        <p class="mat-hint mat-caption">Add related educational and employment history below</p>
         <planet-step-list [steps]="otherInfo" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let info of otherInfo.controls; index as i">
             <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
