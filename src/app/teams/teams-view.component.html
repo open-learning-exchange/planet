@@ -10,9 +10,14 @@
       Add Members
     </button>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
-      <button mat-raised-button color="accent" *ngSwitchCase="'member'" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
-        Leave
-      </button>
+      <ng-container *ngSwitchCase="'member'">
+        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+          Link to Course
+        </button>
+        <button mat-raised-button color="accent" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
+          Leave
+        </button>
+      </ng-container>
       <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="requestToJoin()">
         <ng-container i18n>Request to Join</ng-container>
       </button>
@@ -41,6 +46,15 @@
             <li *ngFor="let user of team?.requests">
               {{user.replace('org.couchdb.user:','')}}
               <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
+            </li>
+          </ul>
+        </ng-template>
+        <p i18n><b>Courses: ({{team?.courses?.length || 0}})</b></p>
+        <p *ngIf="team?.courses?.length < 1; else requestedList" i18n>There are no courses associated with this team.</p>
+        <ng-template #requestedList>
+          <ul class="request-list">
+            <li *ngFor="let course of team?.courses">
+              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
             </li>
           </ul>
         </ng-template>
