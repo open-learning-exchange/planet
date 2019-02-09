@@ -67,9 +67,10 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   initUser(name, planetCode) {
+    const achievementName = name.indexOf('@') > -1 ? name : name + '@' + planetCode;
     const isLocal = this.stateService.configuration.code === planetCode;
     const db = isLocal ? '_users' : 'child_users';
-    const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
+    const id = isLocal ? 'org.couchdb.user:' + name : achievementName;
     this.couchService.get(db + '/' + id).subscribe((user) => this.user = user);
   }
 
