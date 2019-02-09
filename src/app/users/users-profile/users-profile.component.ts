@@ -40,17 +40,18 @@ export class UsersProfileComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.urlName = params.get('name');
       this.planetCode = params.get('planet');
-      this.profileView();
-      this.checkHasAchievments();
+      this.profileView();      
     });
   }
 
   checkHasAchievments() {
-    this.usersAchievementsService.getAchievements(this.user._id).subscribe((achievements) => {
-      console.log(achievements);
-      // console.log(achievements != undefined);
-      this.hasAchievement = achievements !== undefined;
-      console.log(this.hasAchievement);
+    const id = 'org.couchdb.user:' + this.userDetail.name + '@' + this.userDetail.planetCode;
+    console.log(id);
+    this.usersAchievementsService.getAchievements(id).subscribe((achievements) => {
+      this.hasAchievement = true;  
+    }, (error) => {
+      console.log(error);
+      this.hasAchievement = false;
     });
   }
 
@@ -65,6 +66,7 @@ export class UsersProfileComponent implements OnInit {
         const filename = Object.keys(response._attachments)[0];
         this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
       }
+      this.checkHasAchievments();
     }, (error) => {
       console.log(error);
     });
