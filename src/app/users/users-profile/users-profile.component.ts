@@ -40,7 +40,7 @@ export class UsersProfileComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.urlName = params.get('name');
       this.planetCode = params.get('planet');
-      this.profileView();      
+      this.profileView();
     });
   }
 
@@ -48,7 +48,7 @@ export class UsersProfileComponent implements OnInit {
     const id = 'org.couchdb.user:' + this.userDetail.name + '@' + this.userDetail.planetCode;
     console.log(id);
     this.usersAchievementsService.getAchievements(id).subscribe((achievements) => {
-      this.hasAchievement = true;  
+      this.hasAchievement = true;
     }, (error) => {
       console.log(error);
       this.hasAchievement = false;
