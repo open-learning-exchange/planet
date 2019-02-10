@@ -23,7 +23,7 @@ export class DialogsLoadingService {
   }
 
   stop() {
-    isSpinnerOn = false;
+    this.isSpinnerOn = false;
     this.spinnerDialog.close();
   }
 
