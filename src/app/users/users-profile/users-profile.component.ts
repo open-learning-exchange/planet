@@ -46,7 +46,7 @@ export class UsersProfileComponent implements OnInit {
 
   checkHasAchievments() {
     const id = 'org.couchdb.user:' + this.userDetail.name + '@' + this.userDetail.planetCode;
-    console.log(id);
+    // console.log(id);
     this.usersAchievementsService.getAchievements(id).subscribe((achievements) => {
       this.hasAchievement = true;
     }, (error) => {
