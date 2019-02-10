@@ -23,8 +23,10 @@ export class DialogsLoadingService {
   }
 
   stop() {
-    this.isSpinnerOn = false;
-    this.spinnerDialog.close();
+    if (this.spinnerDialog !== undefined) {
+      //console.log(this.spinnerDialog);
+      this.spinnerDialog.close();
+    } 
   }
 
 }
