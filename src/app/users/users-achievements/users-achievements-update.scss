@@ -12,6 +12,11 @@
     height: inherit;
     padding: 0.25rem 0;
     white-space: pre-wrap;
+    margin-bottom: 0.25rem;
+  }
+
+  planet-step-list .mat-list-base .mat-list-item:last-child {
+    padding: 0.25rem;
   }
 
   .achievement-button button:not(:last-child) {
