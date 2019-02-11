@@ -10,26 +10,30 @@
   <div class="view-container view-full-height">
     <form [formGroup]="editForm">
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="My Purpose" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose" i18n-placeholder
+          placeholder="My Purpose - What are your educational and professional ambitions?"
+        ></planet-markdown-textbox>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="My Goals" [formControl]="editForm.controls.goals"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.goals" i18n-placeholder
+          placeholder="My Goals - What are your goals for the next 10 years?"
+        ></planet-markdown-textbox>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="Summary of Achievements" [formControl]="editForm.controls.achievementsHeader"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.achievementsHeader" i18n-placeholder
+          placeholder="Summary of Achievements - Briefly summarize your achievements and add related materials below"
+        ></planet-markdown-textbox>
       </mat-form-field>
       <div>
-        <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Add Achievement</button>
+        <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-            <span>
-              {{achievement.value.description || achievement.value}}
+            <span>{{achievement.value.description || achievement.value}}
               <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
                 Attached resources:
               </div>
               <mat-chip-list mat-line>
-                <mat-chip *ngFor="let resource of (achievement.value.resources || [])">
-                  {{resource.title}}
+                <mat-chip *ngFor="let resource of (achievement.value.resources || [])">{{resource.title}}
                   <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
                 </mat-chip>
               </mat-chip-list>
@@ -37,15 +41,17 @@
             <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
           </planet-step-list-item>
         </planet-step-list>
+        <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
       </div>
       <div>
-        <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Other Information</button>
+        <p class="mat-hint mat-caption">Add related educational and employment history below</p>
         <planet-step-list [steps]="otherInfo" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let info of otherInfo.controls; index as i">
             <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
             <button mat-stroked-button type="button" class="margin-lr-4" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
           </planet-step-list-item>
         </planet-step-list>
+        <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Personal Information</button>
       </div>
       <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
         Allow your achievements to be shared with the nation
