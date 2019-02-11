@@ -85,7 +85,7 @@ export class UpgradeComponent {
   getDateTime() {
     const date = new Date();
     const d = ('0' + date.getDate()).slice(-2);
-    const M = ('0' + date.getMonth()).slice(-2);
+    const M = date.getMonth() + 1;
     const Y = date.getFullYear();
     const h = ('0' + date.getHours()).slice(-2);
     const m = ('0' + date.getMinutes()).slice(-2);
