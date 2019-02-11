@@ -25,6 +25,7 @@
         ></planet-markdown-textbox>
       </mat-form-field>
       <div>
+        <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
             <span>{{achievement.value.description || achievement.value}}
