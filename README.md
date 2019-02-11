@@ -24,7 +24,7 @@ The only prerequisite is Vagrant. If you don't know about it, please do some res
 
 ## Unit & end-to-end tests
 
-There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh` and `cd /vagrant`:
+There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh dev` and `cd /vagrant`:
 
 `npm run v-test` (from host) or `ng test` (from vagrant) - Unit tests
 Open `localhost:9876` once this is done compiling
