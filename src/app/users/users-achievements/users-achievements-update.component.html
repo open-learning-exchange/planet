@@ -27,14 +27,12 @@
       <div>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-            <span>
-              {{achievement.value.description || achievement.value}}
+            <span>{{achievement.value.description || achievement.value}}
               <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
                 Attached resources:
               </div>
               <mat-chip-list mat-line>
-                <mat-chip *ngFor="let resource of (achievement.value.resources || [])">
-                  {{resource.title}}
+                <mat-chip *ngFor="let resource of (achievement.value.resources || [])">{{resource.title}}
                   <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
                 </mat-chip>
               </mat-chip-list>
