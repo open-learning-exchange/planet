@@ -99,24 +99,23 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   addOtherInfo(index = -1, info?: any) {
-    this.dialogsFormService.confirm('Add Other Information', [
-      {
-        'type': 'selectbox',
-        'options': this.usersAchievementsService.infoTypes.map(type => ({ 'name': type, 'value': type })),
-        'name': 'type',
-        'placeholder': 'Type'
-      },
-      {
-        'type': 'textarea',
-        'name': 'description',
-        'placeholder': 'Description'
-      },
-    ], this.fb.group({ type: '', description: '', ...info })).subscribe((newInfo: any) => {
-      if (newInfo === undefined) {
-        return;
-      }
-      this.updateFormArray(this.otherInfo, this.fb.group(newInfo), index);
-    });
+    this.dialogsFormService.openDialogsForm('Add Other Information',
+      [
+        {
+          'type': 'selectbox',
+          'options': this.usersAchievementsService.infoTypes.map(type => ({ 'name': type, 'value': type })),
+          'name': 'type',
+          'placeholder': 'Type'
+        },
+        {
+          'type': 'textarea',
+          'name': 'description',
+          'placeholder': 'Description'
+        },
+      ],
+      this.fb.group({ type: '', description: '', ...info }),
+      { onSubmit: this.onDialogSubmit(this.otherInfo, index), closeOnSubmit: true }
+    );
   }
 
   onDialogSubmit(formArray, index) {
