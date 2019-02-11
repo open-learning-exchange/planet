@@ -31,15 +31,17 @@ export class UsersAchievementsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      const name = params.get('name');
+      let name = params.get('name'),
+        id;
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
+        id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
+        name = name.split('@')[0];
         this.initUser(name, params.get('planet'));
+        id = 'org.couchdb.user:' + name + '@' + params.get('planet');
       }
-      const id = (name === null || name === undefined) ?
-        (this.user._id + '@' + this.stateService.configuration.code) : ('org.couchdb.user:' + name + '@' + params.get('planet'));
       if (id === (currentUser._id + '@' + currentUser.planetCode)) {
         this.ownAchievements = true;
       }
@@ -67,10 +69,9 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   initUser(name, planetCode) {
-    const achievementName = name.indexOf('@') > -1 ? name : name + '@' + planetCode;
     const isLocal = this.stateService.configuration.code === planetCode;
     const db = isLocal ? '_users' : 'child_users';
-    const id = isLocal ? 'org.couchdb.user:' + name : achievementName;
+    const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
     this.couchService.get(db + '/' + id).subscribe((user) => this.user = user);
   }
 
