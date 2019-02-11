@@ -31,15 +31,17 @@ export class UsersAchievementsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      const name = params.get('name');
+      let name = params.get('name'),
+        id;
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
+        id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
+        name = name.split('@')[0];
         this.initUser(name, params.get('planet'));
+        id = 'org.couchdb.user:' + name + '@' + params.get('planet');
       }
-      const id = (name === null || name === undefined) ?
-        (this.user._id + '@' + this.stateService.configuration.code) : ('org.couchdb.user:' + name + '@' + params.get('planet'));
       if (id === (currentUser._id + '@' + currentUser.planetCode)) {
         this.ownAchievements = true;
       }
