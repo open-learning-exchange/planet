@@ -160,7 +160,7 @@ fi
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
 # Increase session timeout
-upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"1200"'
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"2400"'
 # Increse http request size for large attachments
 upsert_doc _node/nonode@nohost/_config httpd/max_http_request_size '"1073741824"'
 # Increse replication timeout
