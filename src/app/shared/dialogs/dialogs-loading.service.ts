@@ -23,7 +23,9 @@ export class DialogsLoadingService {
   }
 
   stop() {
-    this.spinnerDialog.close();
+    if (this.spinnerDialog !== undefined) {
+      this.spinnerDialog.close();
+    }
   }
 
 }
