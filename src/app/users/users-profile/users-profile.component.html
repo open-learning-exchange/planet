@@ -9,8 +9,8 @@
     <span>{{userDetail.name}}</span>
     <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender}}"></mat-icon>
     <span class="toolbar-fill"></span>
-    <button mat-stroked-button class="margin-lr-3" *ngIf="(user.isUserAdmin && hasAchievement)" i18n [routerLink]="['../../achievements/', urlName, { planet: userDetail.planetCode }]">View Achievements</button>
-    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="user.name === urlName || (user.isUserAdmin && editable)" i18n [routerLink]="['../../update/', urlName]"><mat-icon>mode_edit</mat-icon><span>Edit Profile</span></button>
+    <button mat-stroked-button class="margin-lr-3" *ngIf="(user.isUserAdmin && hasAchievement)" [routerLink]="['../../achievements/', urlName, { planet: userDetail.planetCode }]"><mat-icon class="margin-lr-3"s>visibility</mat-icon><span i18n>View Achievements</span></button>
+    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="user.name === urlName || (user.isUserAdmin && editable)" [routerLink]="['../../update/', urlName]"><mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span></button>
     <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="user.name === urlName" i18n [planetChangePassword]="userDetail">Change password</a>
   </mat-toolbar>
   <div class="view-container">
