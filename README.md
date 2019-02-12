@@ -9,7 +9,7 @@ Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://mat
 
 ## To work on this
 
-The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
+The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up dev` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
 
 ## Project guidelines
 
@@ -24,7 +24,7 @@ The only prerequisite is Vagrant. If you don't know about it, please do some res
 
 ## Unit & end-to-end tests
 
-There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh` and `cd /vagrant`:
+There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh dev` and `cd /vagrant`:
 
 `npm run v-test` (from host) or `ng test` (from vagrant) - Unit tests
 Open `localhost:9876` once this is done compiling
@@ -44,7 +44,7 @@ Similarly, we have a few other npm commands that work from the host machine to r
 
 `npm run v-lint-fix` = `ng lint --fix` This will fix any lint errors that TSLint can automatically fix
 
-Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh` and `cd /vagrant`) and runs in the format:
+Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh dev` and `cd /vagrant`) and runs in the format:
 
 `LNG=es npm start`
 
@@ -57,7 +57,7 @@ This would serve the app from the Spanish language files.
 The ideal solution would be to ssh into your vagrant and run npm install:
 
 ```
-vagrant ssh
+vagrant ssh dev
 cd /vagrant
 npm install
 ```
@@ -76,7 +76,7 @@ The trailing `/*` will remove all files & sub-directories of node_modules.  You 
 There are two things you can try for this.  First involves the node-sass module which can be problematic.  You will need to rebuild it from the VM:
 
 ```
-vagrant ssh
+vagrant ssh dev
 cd /vagrant
 npm rebuild node-sass
 ```
