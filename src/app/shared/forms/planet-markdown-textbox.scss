@@ -25,6 +25,10 @@ planet-markdown-textbox {
     min-height: 15vh;
   }
 
+  .CodeMirror.CodeMirror-fullscreen {
+    box-sizing: border-box;
+  }
+
   .CodeMirror.CodeMirror-fullscreen, .CodeMirror-fullscreen .CodeMirror-scroll {
     height: 100%;
   }
