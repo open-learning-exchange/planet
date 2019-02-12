@@ -1,10 +1,11 @@
 .achievements-container {
   max-width: 800px;
   margin: 0 auto;
+  text-align: justify;
 }
 
 .achievements-container mat-list {
-  text-align: left;
+  text-align: justify;
 }
 
 .mat-list-base .mat-list-item {
