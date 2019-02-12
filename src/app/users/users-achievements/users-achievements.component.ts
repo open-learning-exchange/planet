@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
@@ -10,7 +10,8 @@ import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './users-achievements.component.html',
-  styleUrls: [ './users-achievements.scss' ]
+  styleUrls: [ './users-achievements.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsComponent implements OnInit {
   user: any = {};

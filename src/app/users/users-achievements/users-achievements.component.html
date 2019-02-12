@@ -12,6 +12,7 @@
   </mat-toolbar>
   <div class="view-container">
     <div *ngIf="achievements !== undefined" class="achievements-container">
+      <h2>{{user.firstName}} {{user.lastName}}</h2>
       <div *ngIf="achievements.purpose">
         <h3 i18n>My Purpose</h3>
         <td-markdown [content]="achievements.purpose"></td-markdown>
