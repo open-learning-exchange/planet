@@ -1,9 +1,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/028682cc4cd969b05280/maintainability)](https://codeclimate.com/github/open-learning-exchange/planet/maintainability)
 [![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
 
-# **Planet** apps Angular
+# **Planet Learning**
 
-Project to create a prototype for a reboot of the BeLL apps using Angular2+ & CouchDB2.
+Planet Learning is a generic learning system built in Angular & CouchDB.
 
 Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://material.angular.io/).
 
