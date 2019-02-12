@@ -44,7 +44,7 @@ Similarly, we have a few other npm commands that work from the host machine to r
 
 `npm run v-lint-fix` = `ng lint --fix` This will fix any lint errors that TSLint can automatically fix
 
-Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh` and `cd /vagrant`) and runs in the format:
+Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh dev` and `cd /vagrant`) and runs in the format:
 
 `LNG=es npm start`
 
@@ -57,7 +57,7 @@ This would serve the app from the Spanish language files.
 The ideal solution would be to ssh into your vagrant and run npm install:
 
 ```
-vagrant ssh
+vagrant ssh dev
 cd /vagrant
 npm install
 ```
@@ -76,7 +76,7 @@ The trailing `/*` will remove all files & sub-directories of node_modules.  You 
 There are two things you can try for this.  First involves the node-sass module which can be problematic.  You will need to rebuild it from the VM:
 
 ```
-vagrant ssh
+vagrant ssh dev
 cd /vagrant
 npm rebuild node-sass
 ```
