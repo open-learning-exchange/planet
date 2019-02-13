@@ -56,6 +56,10 @@
 
       <!-- Dialog Button -->
       <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
+      <span *ngIf="field.type === 'dialog'" class="mat-caption margin-lr-3" [matTooltip]="tooltipText">
+        {{selectedItems.length + ' '}}
+        <span i18n>{field.name, select, resources {{selectedItems.length, plural, =0 {resources} =1 {resource} other {resources}}}} selected</span>
+      </span>
 
       <!-- Date Select -->
       <mat-form-field *ngIf="field.type === 'date'" class="full-width">

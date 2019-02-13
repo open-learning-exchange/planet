@@ -17,6 +17,8 @@ export class DialogsFormComponent {
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
+  selectedItems = [];
+  tooltipText = '';
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -80,6 +82,8 @@ export class DialogsFormComponent {
   dialogOkClick(field) {
     return (selection) => {
       this.modalForm.controls[field.name].setValue(selection);
+      this.selectedItems = selection.map(res => res.title);
+      this.tooltipText = this.selectedItems.join(', ');
       this.dialogListRef.close();
       this.modalForm.markAsDirty();
     };
