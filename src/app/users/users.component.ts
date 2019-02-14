@@ -102,7 +102,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.filterType = type;
     this.selectedChild = child;
     this.allUsers.filterPredicate = composeFilterFunctions([
-      filterDropdowns({ 'doc.planetCode': this.filterType === 'associated' ? '' : child.code || this.stateService.configuration.code }),
+      filterDropdowns(
+        this.filterType === 'associated' ? { 'doc.roles': [ 'leader', 'learner' ] }
+        : { 'doc.planetCode': child.code || this.stateService.configuration.code }
+      ),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
       filterSpecificFields([ 'doc.name' ])
     ]);
@@ -150,7 +153,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('child_users', { 'selector': {} }),
-      this.couchService.findAll('communityregistrationrequests', { 'selector': {} })
+      this.couchService.findAll('communityregistrationrequests', { 'selector': { 'registrationRequest': 'accepted' } })
     ]);
   }
 
