@@ -19,6 +19,7 @@ export class UsersAchievementsComponent implements OnInit {
   infoTypes = this.usersAchievementsService.infoTypes;
   achievementNotFound = false;
   ownAchievements = false;
+  redirectUrl = '/';
 
   constructor(
     private couchService: CouchService,
@@ -34,6 +35,9 @@ export class UsersAchievementsComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       let name = params.get('name'),
         id;
+      if (name) {
+        this.redirectUrl = '/users/profile/' + name;
+      }
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
@@ -77,7 +81,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    this.router.navigate([ this.redirectUrl ]);
   }
 
 }
