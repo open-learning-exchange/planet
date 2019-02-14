@@ -115,7 +115,7 @@ export class CouchService {
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
       map((response: any) => response.results
         .map((result: any) => result.docs[0].ok)
-        .filter((doc: any) => doc._deleted !== true)
+        .filter((doc: any) => doc !== undefined && doc._deleted !== true)
       )
     );
   }
