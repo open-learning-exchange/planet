@@ -6,6 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
+import { FormControl, AbstractControl } from '@angular/forms';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: './exams-view.component.html',
@@ -19,7 +21,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer: any = undefined;
+  answer = new FormControl(null, this.answerValidator);
   incorrectAnswer = false;
   spinnerOn = true;
   mode = 'take';
@@ -52,7 +54,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       const surveyId = params.get('surveyId');
       const mode = params.get('mode');
-      this.answer = undefined;
+      this.answer.setValue(null);
       this.spinnerOn = true;
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
@@ -78,7 +80,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
-        this.answer = undefined;
+        this.answer.setValue(null);
         this.spinnerOn = false;
       } else {
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
@@ -98,11 +100,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
     this.spinnerOn = false;
-  }
-
-  isMultiCorrect(correctChoice, answers) {
-    return correctChoice.every(choice => answers.find((a: any) => a.id === choice)) &&
-      answers.every((a: any) => correctChoice.find(choice => a.id === choice));
   }
 
   resetCheckboxes() {
@@ -164,7 +161,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
       } else if (this.mode !== 'take') {
-        this.answer = Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value;
+        this.answer.setValue(Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value);
       }
       this.isNewQuestion = false;
     });
@@ -177,19 +174,25 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswer(event, option) {
-    this.answer = this.answer === undefined ? [] : this.answer;
+    this.answer.setValue(this.answer.value === null ? [] : this.answer.value);
+    const value = this.answer.value;
     if (event.checked === true) {
-      this.answer.push(option);
+      value.push(option);
     } else if (event.checked === false) {
-      this.answer.splice(this.answer.indexOf(option), 1);
+      value.splice(value.indexOf(option), 1);
     }
     this.checkboxState[option.id] = event.checked;
   }
 
   calculateCorrect() {
-    const answers = this.answer instanceof Array ? this.answer : [ this.answer ];
+    const value = this.answer.value;
+    const answers = value instanceof Array ? value : [ value ];
+    const isMultiCorrect = (correctChoice, ans: any[]) => (
+      correctChoice.every(choice => ans.find((a: any) => a.id === choice)) &&
+      ans.every((a: any) => correctChoice.find(choice => a.id === choice))
+    );
     return this.question.correctChoice instanceof Array ?
-      this.isMultiCorrect(this.question.correctChoice, answers) :
+      isMultiCorrect(this.question.correctChoice, answers) :
       answers[0].id === this.question.correctChoice;
   }
 
@@ -199,7 +202,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         this.resetCheckboxes();
         return {
-          obs: this.submissionsService.submitAnswer(this.answer, correctAnswer, this.questionNum - 1),
+          obs: this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1),
           correctAnswer
         };
       case 'grade':
@@ -210,7 +213,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
-    this.answer = undefined;
+    this.answer.setValue(null);
     if (!answer.value) {
       return;
     }
@@ -219,10 +222,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.setSelectMultipleAnswer(answer.value);
         break;
       case 'select':
-        this.answer = this.question.choices.find((choice) => choice.text === answer.value.text);
+        this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
         break;
       default:
-        this.answer = answer.value;
+        this.answer.setValue(answer.value);
     }
   }
 
@@ -230,6 +233,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     answers.forEach(answer => {
       this.setAnswer({ checked: true }, answer);
     });
+  }
+
+  answerValidator(ac: AbstractControl) {
+    if (typeof ac.value === 'string') {
+      return CustomValidators.required(ac);
+    }
+    return ac.value !== null ? null : { required: true };
   }
 
 }
