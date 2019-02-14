@@ -19,6 +19,7 @@ export class UsersAchievementsComponent implements OnInit {
   infoTypes = this.usersAchievementsService.infoTypes;
   achievementNotFound = false;
   ownAchievements = false;
+  redirectUrl = '/';
 
   constructor(
     private couchService: CouchService,
@@ -39,6 +40,7 @@ export class UsersAchievementsComponent implements OnInit {
         this.user = currentUser;
         id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
+        this.redirectUrl = '/users/profile/' + name;
         name = name.split('@')[0];
         this.initUser(name, params.get('planet'));
         id = 'org.couchdb.user:' + name + '@' + params.get('planet');
@@ -77,7 +79,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ '/' ]);
+    this.router.navigate([ this.redirectUrl ]);
   }
 
 }
