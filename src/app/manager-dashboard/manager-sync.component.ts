@@ -85,7 +85,9 @@ export class ManagerSyncComponent implements OnInit {
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
       { db: 'admin_activities' },
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
-      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } }
+      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
+      { db: 'apk_logs' },
+      { db: 'myplanet_activities' }
     ];
     const pullList = [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
