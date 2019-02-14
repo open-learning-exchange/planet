@@ -35,14 +35,12 @@ export class UsersAchievementsComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       let name = params.get('name'),
         id;
-      if (name) {
-        this.redirectUrl = '/users/profile/' + name;
-      }
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
         id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
+        this.redirectUrl = '/users/profile/' + name;
         name = name.split('@')[0];
         this.initUser(name, params.get('planet'));
         id = 'org.couchdb.user:' + name + '@' + params.get('planet');
