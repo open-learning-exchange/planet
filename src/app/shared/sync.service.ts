@@ -90,10 +90,22 @@ export class SyncService {
           return this.resourcesItemsToSync(doc, type, newReplicators);
         case 'achievements':
           return this.achievementsItemsToSync(doc, type, newReplicators);
+        case 'apk_logs':
+          return this.apkLogItemsToSync(doc, type, newReplicators);
+        case 'myplanet_activites':
+          return this.myplanetActivitiesItemToSync(doc, type, newReplicators);
         default:
           return newReplicators;
       }
     }, replicators);
+  }
+
+  apkLogItemsToSync(apkLog, type, replicators) {
+
+  }
+
+  myplanetActivitiesItemToSync(activities, type, replicators) {
+
   }
 
   coursesItemsToSync(course, type, replicators) {

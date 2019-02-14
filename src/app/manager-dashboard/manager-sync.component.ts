@@ -82,6 +82,8 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'login_activities' },
       { db: 'ratings' },
       { db: 'resource_activities' },
+      { db: 'apk_logs' },
+      { db: 'myplanet_activites' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
       { db: 'admin_activities' },
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
