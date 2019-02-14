@@ -102,8 +102,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.filterType = type;
     this.selectedChild = child;
     this.allUsers.filterPredicate = composeFilterFunctions([
-      filterDropdowns({ 'doc.planetCode': this.filterType === 'associated' ? '' : child.code || this.stateService.configuration.code,
-        'doc.roles': this.filterType === 'local' ? '' : [ 'leader', 'learner' ] }),
+      filterDropdowns(
+        this.filterType === 'associated' ? { 'doc.roles': [ 'leader', 'learner' ] }
+        : { 'doc.planetCode': child.code || this.stateService.configuration.code }
+      ),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
       filterSpecificFields([ 'doc.name' ])
     ]);
