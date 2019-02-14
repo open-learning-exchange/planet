@@ -3,8 +3,7 @@ import {
   FormBuilder,
   FormGroup,
   FormArray,
-  FormControl,
-  Validators
+  FormControl
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -95,12 +94,16 @@ export class UsersAchievementsUpdateComponent implements OnInit {
           'text': 'Add Resources'
         }
       ],
-      this.fb.group({ description: new FormControl('', [Validators.required, CustomValidators.noWhiteSpaceValidator]), ...achievement, resources: [ achievement.resources ] }),
+      this.fb.group({
+        ...achievement,
+        resources: [ achievement.resources ],
+        description: [ achievement.description, CustomValidators.required ]
+      }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
     );
   }
 
-  addOtherInfo(index = -1, info?: any) {
+  addOtherInfo(index = -1, info = { type: '', description: '' }) {
     this.dialogsFormService.openDialogsForm('Add Other Information',
       [
         {
@@ -115,7 +118,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
           'placeholder': 'Description'
         },
       ],
-      this.fb.group({ type: '', description: '', ...info }),
+      this.fb.group({ ...info, description: [ info.description, CustomValidators.required ] }),
       { onSubmit: this.onDialogSubmit(this.otherInfo, index), closeOnSubmit: true }
     );
   }

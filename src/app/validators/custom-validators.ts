@@ -229,10 +229,4 @@ export class CustomValidators {
     return /\S/.test(ac.value) ? null : { 'required': true };
   }
 
-  static noWhiteSpaceValidator(ac: AbstractControl) {
-    let isWhitespace = (ac.value || '').trim().length === 0;
-    console.log(isWhitespace);
-    return !isWhitespace ? null : { 'required': true };
-  }
-
 }
