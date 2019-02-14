@@ -21,12 +21,12 @@
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question.type">
           <mat-form-field class="full-width" *ngSwitchCase="'input'">
-            <input matInput i18n-placeholder placeholder="Enter answer here" [(ngModel)]="answer">
+            <input matInput i18n-placeholder placeholder="Enter answer here" [formControl]="answer">
           </mat-form-field>
           <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
-            <planet-markdown-textbox [(ngModel)]="answer"></planet-markdown-textbox>
+            <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
           </mat-form-field>
-          <mat-radio-group *ngSwitchCase="'select'" class="question-list planet-radio-group" [(ngModel)]="answer">
+          <mat-radio-group *ngSwitchCase="'select'" class="question-list planet-radio-group" [formControl]="answer">
             <mat-radio-button *ngFor="let option of question.choices" [value]="option">
               {{option.text}}
             </mat-radio-button>
@@ -40,7 +40,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
         <p><b i18n>Submitted answer:</b></p>
-        <td-markdown [content]="answer?.text || answer"></td-markdown>
+        <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
         <mat-radio-group class="planet-radio-group" [(ngModel)]="grade">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
@@ -48,7 +48,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
-        <td-markdown [content]="answer?.text || answer"></td-markdown>
+        <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
       </ng-container>
     </ng-container>
     <div class="v-align-center">
@@ -58,7 +58,7 @@
         color="primary"
         (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
-        [disabled]="answer === undefined || answer === '' || grade === undefined || grade === null"
+        [disabled]="!answer.valid || grade === undefined || grade === null"
         i18n>
         Submit Answer
       </button>
