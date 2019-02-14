@@ -13,6 +13,7 @@ import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { catchError } from 'rxjs/operators';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -93,12 +94,16 @@ export class UsersAchievementsUpdateComponent implements OnInit {
           'text': 'Add Resources'
         }
       ],
-      this.fb.group({ ...achievement, resources: [ achievement.resources ] }),
+      this.fb.group({
+        ...achievement,
+        resources: [ achievement.resources ],
+        description: [ achievement.description, CustomValidators.required ]
+      }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
     );
   }
 
-  addOtherInfo(index = -1, info?: any) {
+  addOtherInfo(index = -1, info = { type: '', description: '' }) {
     this.dialogsFormService.openDialogsForm('Add Other Information',
       [
         {
@@ -113,7 +118,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
           'placeholder': 'Description'
         },
       ],
-      this.fb.group({ type: '', description: '', ...info }),
+      this.fb.group({ ...info, description: [ info.description, CustomValidators.required ] }),
       { onSubmit: this.onDialogSubmit(this.otherInfo, index), closeOnSubmit: true }
     );
   }
