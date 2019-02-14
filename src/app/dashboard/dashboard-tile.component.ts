@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
+import { TeamsService } from '../teams/teams.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -21,7 +22,8 @@ export class DashboardTileComponent implements OnInit {
 
   constructor(
     private planetMessageService: PlanetMessageService,
-    private userService: UserService
+    private userService: UserService,
+    private teamsService: TeamsService
   ) { }
 
   ngOnInit() {
@@ -33,9 +35,15 @@ export class DashboardTileComponent implements OnInit {
   removeFromShelf(event, item: any) {
     event.stopPropagation();
     const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
-    this.userService.updateShelf(newIds, this.shelfName).subscribe(() => {
-      this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
-    });
+    if (this.shelfName === 'myTeamIds') {
+      this.teamsService.toggleTeamMembership(item, true, this.userService.shelf).subscribe(() => {
+        this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+      });
+    } else {
+      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => {
+        this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+      });
+    }
   }
 
 }
