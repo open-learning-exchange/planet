@@ -87,7 +87,7 @@
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
             </a>
-            <a mat-menu-item (click)="updateResource(element)">
+            <a mat-menu-item *ngIf="element.canManage" (click)="updateResource(element)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>

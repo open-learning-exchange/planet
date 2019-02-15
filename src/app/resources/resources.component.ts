@@ -62,6 +62,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
+  user = this.userService.get();
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
@@ -137,6 +138,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       const myLibraryIndex = myLibrarys.findIndex(resourceId => {
         return resource._id === resourceId;
       });
+      resource.canManage = this.user.isUserAdmin ||
+        (resource.creator === this.user.name + '@' + this.planetConfiguration.code);
       return { ...resource, libraryInfo: myLibraryIndex > -1 };
     });
   }
