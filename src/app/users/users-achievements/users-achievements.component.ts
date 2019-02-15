@@ -56,7 +56,7 @@ export class UsersAchievementsComponent implements OnInit {
     this.usersAchievementsService.getAchievements(id).pipe(
       catchError((err) => this.ownAchievements ? this.usersAchievementsService.getAchievements(this.user._id) : throwError(err))
     ).subscribe((achievements) => {
-      if (achievements.purpose === '' && achievements.goals === '' && achievements.achievementsHeader === '' 
+      if (!achievements.purpose && !achievements.goals && !achievements.achievementsHeader
             && achievements.achievements.length === 0 && achievements.otherInfo.length === 0) {
           this.achievementNotFound = true;
       } else {
