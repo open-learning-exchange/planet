@@ -6,7 +6,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span>{{user.firstName.concat(' ', user.lastName).trim() || user.name}}</span>
+    <span> {{ ((user.firstName != undefined && user.lastName != undefined) ? (user.firstName + ' ' + user.lastName) : user.name) }}</span>
     <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['/myAchievements/update']" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon><span>Edit Achievements</span></a>
   </mat-toolbar>
