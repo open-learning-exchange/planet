@@ -152,7 +152,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       this.couchService.post(this.dbName, { ...docInfo, ...achievements,
         'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
       this.userService.updateUser(userInfo)
-    .subscribe(() => {
+    ]).subscribe(() => {
       this.planetMessageService.showAlert('Achievements successfully updated');
       this.goBack();
     },  (err) => {
