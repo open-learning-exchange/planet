@@ -15,6 +15,7 @@ import { StateService } from '../../shared/state.service';
 import { catchError } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -136,7 +137,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   onSubmit() {
     this.editForm.updateValueAndValidity();
     if (this.editForm.valid) {
-      this.updateAchievements(this.docInfo, this.editForm.value);
+      this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
     } else {
       Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
@@ -145,10 +146,12 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     }
   }
 
-  updateAchievements(docInfo, achievements) {
+  updateAchievements(docInfo, achievements, userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...docInfo, ...achievements,
-      'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode })
+    forkJoin([
+      this.couchService.post(this.dbName, { ...docInfo, ...achievements,
+        'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
+      this.userService.updateUser(userInfo)
     .subscribe(() => {
       this.planetMessageService.showAlert('Achievements successfully updated');
       this.goBack();
