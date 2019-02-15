@@ -28,6 +28,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   editForm: FormGroup;
+  profileForm: FormGroup;
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
@@ -45,9 +46,11 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private validatorService: ValidatorService
   ) {
     this.createForm();
+    this.createProfileForm();
   }
 
   ngOnInit() {
+    this.profileForm.patchValue(this.user);
     this.usersAchievementsService.getAchievements(this.docInfo._id)
     .pipe(catchError(() => this.usersAchievementsService.getAchievements(this.user._id)))
     .subscribe((achievements) => {
@@ -72,6 +75,20 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
       sendToNation: false
+    });
+  }
+
+  createProfileForm() {
+    this.profileForm = this.fb.group({
+      firstName: [ '', CustomValidators.required ],
+      middleName: '',
+      lastName: [ '', CustomValidators.required ],
+      birthDate: [
+        '',
+        [],
+        ac => this.validatorService.notDateInFuture$(ac)
+      ],
+      location: ''
     });
   }
 

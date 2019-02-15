@@ -8,45 +8,68 @@
     <span>{{user.name}}</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <form [formGroup]="editForm">
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose" i18n-placeholder
-          placeholder="My Purpose - What are your educational and professional ambitions?"
-        ></planet-markdown-textbox>
-      </mat-form-field>
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.goals" i18n-placeholder
-          placeholder="My Goals - What are your goals for the next 10 years?"
-        ></planet-markdown-textbox>
-      </mat-form-field>
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.achievementsHeader" i18n-placeholder
-          placeholder="Summary of Achievements - Briefly summarize your achievements and add related materials below"
-        ></planet-markdown-textbox>
-      </mat-form-field>
-      <div>
-        <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
-        <planet-step-list [steps]="achievements" [ignoreClick]="true">
-          <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-            <span>{{achievement.value.title || achievement.value}}
-              <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
-                Attached resources:
-              </div>
-              <mat-chip-list mat-line>
-                <mat-chip *ngFor="let resource of (achievement.value.resources || [])">{{resource.title}}
-                  <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
-                </mat-chip>
-              </mat-chip-list>
-            </span>
-            <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
-          </planet-step-list-item>
-        </planet-step-list>
-        <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
-      </div>
-      <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
-        Allow your achievements to be shared with the nation
-      </mat-checkbox>
-    </form>
+    <div class="achievements-forms-container">
+      <form [formGroup]="profileForm" class="form-spacing">
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.firstName"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.lastName"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Location" formControlName="location">
+        </mat-form-field>
+      </form>
+      <form [formGroup]="editForm">
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose" i18n-placeholder
+            placeholder="My Purpose - What are your educational and professional ambitions?"
+          ></planet-markdown-textbox>
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.goals" i18n-placeholder
+            placeholder="My Goals - What are your goals for the next 10 years?"
+          ></planet-markdown-textbox>
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.achievementsHeader" i18n-placeholder
+            placeholder="Summary of Achievements - Briefly summarize your achievements and add related materials below"
+          ></planet-markdown-textbox>
+        </mat-form-field>
+        <div>
+          <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
+          <planet-step-list [steps]="achievements" [ignoreClick]="true">
+            <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
+              <span>{{achievement.value.title || achievement.value}}
+                <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
+                  Attached resources:
+                </div>
+                <mat-chip-list mat-line>
+                  <mat-chip *ngFor="let resource of (achievement.value.resources || [])">{{resource.title}}
+                    <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </span>
+              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
+            </planet-step-list-item>
+          </planet-step-list>
+          <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
+        </div>
+        <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
+          Allow your achievements to be shared with the nation
+        </mat-checkbox>
+      </form>
+    </div>
     <div class="achievement-button">
       <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
       <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
