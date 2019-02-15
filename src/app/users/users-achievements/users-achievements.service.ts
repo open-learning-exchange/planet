@@ -17,4 +17,12 @@ export class UsersAchievementsService {
     return this.couchService.get(this.dbName + '/' + id);
   }
 
+  isEmpty(achievement) {
+    if (!achievement.purpose && !achievement.goals && !achievement.achievementsHeader
+        && achievement.achievements.length === 0 && achievement.otherInfo.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
