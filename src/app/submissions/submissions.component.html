@@ -40,8 +40,8 @@
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span *ngIf="element.submittedBy !== ''; else unknownLabel">{{element.submittedBy}}</span>
+        <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+          <span *ngIf="element.submittedBy !== ''; else unknownLabel" [routerLink]="['/users/profile/',element.submittedBy]">{{element.submittedBy}}</span>
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>
@@ -52,7 +52,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row> 
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
