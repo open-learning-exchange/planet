@@ -16,6 +16,7 @@ import { StateService } from './state.service';
 @Injectable()
 export class UserService {
   private user: any = { name: '' };
+  private usersDb = '_users';
   private logsDb = 'login_activities';
   private _shelf: any = { };
   get shelf(): any {
@@ -199,6 +200,34 @@ export class UserService {
         notInShelf: counts.notInShelf + Math.abs(added - 1)
       });
     }, { inShelf: 0, notInShelf: 0 });
+  }
+
+  updateUser(userInfo) {
+    const planetConfiguration = this.stateService.configuration;
+    // ...is the rest syntax for object destructuring
+    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...userInfo })
+    .pipe(
+      switchMap(res => {
+        userInfo._rev = res.rev;
+        if (userInfo.name === this.get().name) {
+          this.set(userInfo);
+        }
+        if (planetConfiguration.adminName === userInfo.name + '@' + planetConfiguration.code) {
+          return this.updateConfigurationContact(userInfo, planetConfiguration);
+        }
+        return of({ ok: true });
+      })
+    );
+  }
+
+  updateConfigurationContact(userInfo, planetConfiguration) {
+    const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
+    const newConfig = { ...planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
+    return this.couchService.put('configurations/' + planetConfiguration._id, newConfig)
+    .pipe(map((res) => {
+      this.stateService.requestData('configurations', 'local');
+      return res;
+    }));
   }
 
 }

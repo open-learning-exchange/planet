@@ -122,7 +122,12 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      this.updateUser(Object.assign({}, this.user, this.editForm.value, attachment));
+      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).subscribe(() => {
+        this.goBack();
+      }, (err) => {
+        // Connect to an error display component to show user that an error has occurred
+        console.log(err);
+      });
     }
   }
 
@@ -143,38 +148,6 @@ export class UsersUpdateComponent implements OnInit {
     };
 
     return { '_attachments': attachments };
-  }
-
-  updateUser(userInfo) {
-    // ...is the rest syntax for object destructuring
-    this.couchService.put(this.dbName + '/org.couchdb.user:' + this.user.name, { ...userInfo })
-    .pipe(
-      switchMap(res => {
-        userInfo._rev = res.rev;
-        if (this.user.name === this.userService.get().name) {
-          this.userService.set(userInfo);
-        }
-        if (this.planetConfiguration.adminName === this.user.name + '@' + this.planetConfiguration.code) {
-          return this.updateConfigurationContact(userInfo);
-        }
-        return of({ ok: true });
-      })
-    ).subscribe(() => {
-      this.goBack();
-    },  (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
-    });
-  }
-
-  updateConfigurationContact(userInfo) {
-    const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
-    const newConfig = { ...this.planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
-    return this.couchService.put('configurations/' + this.planetConfiguration._id, newConfig)
-    .pipe(map((res) => {
-      this.stateService.requestData('configurations', 'local');
-      return res;
-    }));
   }
 
   goBack() {
