@@ -18,11 +18,7 @@ export class UsersAchievementsService {
   }
 
   isEmpty(achievement) {
-    if (!achievement.purpose && !achievement.goals && !achievement.achievementsHeader
-        && achievement.achievements.length === 0 && achievement.otherInfo.length === 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return (!achievement.purpose && !achievement.goals && !achievement.achievementsHeader
+              && achievement.achievements.length === 0 && achievement.otherInfo.length === 0);
   }
 }
