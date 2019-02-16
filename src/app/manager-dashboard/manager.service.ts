@@ -94,11 +94,11 @@ export class ManagerService {
     }));
   }
 
-  getPushedList() {
+  getPushedList(child?: false) {
     return this.couchService.post(
       `send_items/_find`,
       findDocuments({ 'sendTo': this.configuration.code }),
-      { domain: this.configuration.parentDomain }
+      child ? { } : { domain: this.configuration.parentDomain }
     );
   }
 

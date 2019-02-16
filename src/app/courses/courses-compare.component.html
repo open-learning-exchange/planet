@@ -1,0 +1,50 @@
+<div class="course-detail bg-light-grey">
+  <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
+  <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
+  <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction}}</p>
+  <p i18n><b>Method:</b> {{courseDetail.method}}</p>
+  <p><b i18n>Description:</b></p>
+  <td-markdown [content]="courseDetail.description"></td-markdown>
+</div>
+<div class="course-view">
+  <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
+    <mat-expansion-panel hideToggle="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{step.stepTitle || 'Step ' + (stepNum + 1)}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
+          <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <td-markdown [content]="step.description"></td-markdown>
+      <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
+        There is no content for this step.
+      </div>
+      <ng-template #contentMessage>
+        <span *ngIf="step.description.length === 0" i18n>There is no description for this step.</span>
+        {{' '}}
+        <span *ngIf= "step?.resources?.length > 0">
+          <span i18n>{step.resources.length, plural, =1 {There is} other {There are}}</span>
+          {{ ' ' + step?.resources?.length + ' '}}
+          <span i18n>{step.resources.length, plural, =1 {resource} other {resources}}.</span>
+          {{' '}}
+        </span>
+        <span *ngIf= "step?.exam?.questions.length > 0">
+          <span i18n>The exam has</span>
+          {{ ' ' + step?.exam.questions?.length + ' '}}
+          <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
+        </span>
+      </ng-template>
+      <mat-action-row *ngIf="!parent">
+        <a *ngIf="step?.resources?.length === 1" mat-raised-button color="accent" class="margin-lr-10" [href]="resourceUrl(step.resources[0])" target="_blank" i18n>View Resource</a>
+        <button *ngIf="step?.resources?.length > 1 && step?.resources?.length" mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" i18n>View Resource</button>
+        <mat-menu #resourceList="matMenu">
+          <a *ngFor="let resource of step.resources;" mat-menu-item [href]="resourceUrl(resource)" target="_blank">{{resource.title}}</a>
+        </mat-menu>
+        <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </ng-container>
+</div>

@@ -6,7 +6,7 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button [disabled]="!selection.selected.length" (click)="getPushedItem()">
+    <button mat-button *ngIf="!child" [disabled]="!selection.selected.length" (click)="getPushedItem()">
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
   </mat-toolbar>
@@ -33,10 +33,11 @@
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.db === 'resources'">{{ element.item.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon></ng-container>
           <ng-container *ngIf="element.db === 'courses'">{{ element.item.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
+          <button *ngIf="child" [routerLink]="['/manager/compare', element._id]">View</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
     </mat-table>
 
     <mat-paginator #paginator

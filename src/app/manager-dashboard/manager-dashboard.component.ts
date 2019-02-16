@@ -40,6 +40,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
   pendingPushCount = 0;
+  hasSentItem = false;
 
   constructor(
     private userService: UserService,
@@ -77,9 +78,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     })).subscribe(logs => this.activityLogs = logs);
     this.countFetchItemAvailable();
     this.couchService.findAll('send_items').subscribe((items: any) => {
-      this.pendingPushCount = items.reduce(
+      const sendPlanets = items.reduce(
         (planets, item) => planets.concat(planets.indexOf(item.sendTo) > -1 ? [] : [ item.sendTo ]), []
-      ).length;
+      );
+      this.pendingPushCount = sendPlanets.length;
+      this.hasSentItem = sendPlanets.includes(this.planetConfiguration.code);
     });
   }
 

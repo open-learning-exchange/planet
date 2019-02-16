@@ -16,6 +16,10 @@ import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { PendingTableComponent } from './reports/pending-table.component';
+import { CompareComponent } from './compare.component';
+import { CoursesCompareComponent } from '../courses/courses-compare.component';
+import { ResourcesCompareComponent } from '../resources/resources-compare.component';
+import { ResourcesModule } from '../resources/resources.module';
 
 @NgModule({
   imports: [
@@ -28,7 +32,8 @@ import { PendingTableComponent } from './reports/pending-table.component';
     ManagerDashboardRouterModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    ConfigurationModule
+    ConfigurationModule,
+    ResourcesModule
   ],
   declarations: [
     ManagerDashboardComponent,
@@ -39,7 +44,10 @@ import { PendingTableComponent } from './reports/pending-table.component';
     ReportsTableComponent,
     ReportsDetailComponent,
     ReportsPendingComponent,
-    PendingTableComponent
+    PendingTableComponent,
+    CompareComponent,
+    CoursesCompareComponent,
+    ResourcesCompareComponent
   ]
 })
 export class ManagerDashboardModule {}

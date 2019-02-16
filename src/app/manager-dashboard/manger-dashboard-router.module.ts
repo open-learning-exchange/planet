@@ -7,11 +7,13 @@ import { ManagerDashboardConfigurationComponent } from './manager-dashboard-conf
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
+import { CompareComponent } from './compare.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
   { path: 'sync', component: ManagerSyncComponent },
-  { path: 'fetch', component: ManagerFetchComponent },
+  { path: 'fetch', component: ManagerFetchComponent, data: { child: false } },
+  { path: 'fetch/child', component: ManagerFetchComponent, data: { child: true } },
   { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule', data: { parent: true } },
   { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule', data: { parent: true } },
   { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule', data: { parent: true } },
@@ -19,7 +21,8 @@ const routes: Routes = [
   { path: 'users', loadChildren: '../users/users.module#UsersModule' },
   { path: 'reports', component: ReportsComponent },
   { path: 'reports/detail', component: ReportsDetailComponent },
-  { path: 'reports/pending', component: ReportsPendingComponent }
+  { path: 'reports/pending', component: ReportsPendingComponent },
+  { path: 'compare/:id', component: CompareComponent }
 ];
 
 @NgModule({
