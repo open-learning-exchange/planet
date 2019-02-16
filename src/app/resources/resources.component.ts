@@ -139,7 +139,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         return resource._id === resourceId;
       });
       resource.canManage = this.user.isUserAdmin ||
-        (resource.creator === this.user.name + '@' + this.planetConfiguration.code);
+        (resource.createdBy === this.user.name);
       return { ...resource, libraryInfo: myLibraryIndex > -1 };
     });
   }
