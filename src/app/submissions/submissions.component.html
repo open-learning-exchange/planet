@@ -36,6 +36,7 @@
           <mat-chip-list *ngIf="this.filter.type === 'survey' && element.status === 'complete'"><mat-chip selected il8n>complete</mat-chip></mat-chip-list>
           <mat-chip-list *ngIf="element.status ==='graded'"><mat-chip selected i18n>graded</mat-chip></mat-chip-list>
           <mat-chip-list *ngIf="element.status==='pending'"><mat-chip i18n>pending</mat-chip></mat-chip-list>
+          <mat-chip-list *ngIf="element.status==='requires grading'"><mat-chip selected color="accent" i18n>requires grading</mat-chip></mat-chip-list> 
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
