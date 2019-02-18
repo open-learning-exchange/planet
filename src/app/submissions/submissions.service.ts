@@ -125,7 +125,7 @@ export class SubmissionsService {
   updateStatus(submission: any) {
     if (submission.type === 'exam' && submission.status === 'pending') {
       return 'requires grading';
-	 }
+    }
     return 'complete';
   }
 
