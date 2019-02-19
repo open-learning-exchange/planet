@@ -73,7 +73,7 @@ export class SyncService {
     };
   }
 
-  createRepicatorsArray(items, type: 'pull' | 'push', replicators = []) {
+  createReplicatorsArray(items, type: 'pull' | 'push', replicators = []) {
     return items.reduce((newReplicators: any[], item: any) => {
       const doc = item.item;
       let syncObject = newReplicators.find((replicator: any) => replicator.db === item.db);
@@ -97,7 +97,7 @@ export class SyncService {
   }
 
   coursesItemsToSync(course, type, replicators) {
-    return this.createRepicatorsArray(
+    return this.createReplicatorsArray(
       [].concat.apply([], course.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : []))
@@ -108,7 +108,7 @@ export class SyncService {
   }
 
   resourcesItemsToSync(resource, type, replicators) {
-    return resource.tags === undefined ? replicators : this.createRepicatorsArray(
+    return resource.tags === undefined ? replicators : this.createReplicatorsArray(
       resource.tags.map(tag => ({ item: { _id: tag }, db: 'tags' })),
       type,
       replicators
@@ -116,7 +116,7 @@ export class SyncService {
   }
 
   achievementsItemsToSync(achievement, type, replicators) {
-    return this.createRepicatorsArray(
+    return this.createReplicatorsArray(
       [].concat.apply([], achievement.achievements.map(({ resources }) =>
         (resources || [] ).map(r => ({ item: r, db: 'resources' })))
       ),
