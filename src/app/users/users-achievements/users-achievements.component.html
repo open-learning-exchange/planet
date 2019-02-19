@@ -6,7 +6,8 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span>{{user.firstName.concat(' ', user.lastName).trim() || user.name}}</span>
+    <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName + ' ' + user.lastName }}</span>
+    <ng-template #elseBlock>{{ user.name }}</ng-template> 
     <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['/myAchievements/update']"><mat-icon>mode_edit</mat-icon>
       <span *ngIf="achievementNotFound">Add Achievements</span>
