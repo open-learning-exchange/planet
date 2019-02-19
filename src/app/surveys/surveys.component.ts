@@ -74,7 +74,30 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getSubmissions() {
     // get the no of submisson for each test from submisson table
-    return this.couchService.findAll('submissions', { 'selector': { 'type': 'survey' } });
+    return this.couchService.findAll('submissions', { 'selector': {
+      "type": "survey",
+      "$not": {
+         "$and": [
+            {
+               "$or": [
+                  {
+                     "user": {
+                        "$eq": {}
+                     }
+                  },
+                  {
+                     "user": {
+                        "$eq": ""
+                     }
+                  }
+               ]
+            },
+            {
+               "status": "pending"
+            }
+         ]
+      }
+   } });
   }
 
   goBack() {
