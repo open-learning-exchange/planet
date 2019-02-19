@@ -18,7 +18,7 @@
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="surveys" matSort>
+    <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Survey</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
@@ -26,6 +26,12 @@
       <ng-container matColumnDef="taken">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Number of Times Taken</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created/Updated on</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.createdDate | date: 'mediumDate'}}
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
