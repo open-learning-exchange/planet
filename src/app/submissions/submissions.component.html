@@ -41,7 +41,7 @@
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-          <span *ngIf="element.submittedBy !== ''; else unknownLabel" [routerLink]="['/users/profile/',element.submittedBy]">{{element.submittedBy}}</span>
+          <span *ngIf="element.submittedBy !== ''; else unknownLabel" [routerLink]="user !== '' ? ['/users/profile/',element.submittedBy]:[]">{{element.submittedBy}}</span>
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>
