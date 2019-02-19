@@ -91,7 +91,7 @@
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>
-            <button *ngIf="currentUser.isUserAdmin||element.addedBy === currentUser.name" mat-menu-item (click)="deleteClick(element)">
+            <button *ngIf="currentUser.isUserAdmin||element.canManage" mat-menu-item (click)="deleteClick(element)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
