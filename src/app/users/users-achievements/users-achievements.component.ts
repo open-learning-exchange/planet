@@ -56,12 +56,16 @@ export class UsersAchievementsComponent implements OnInit {
     this.usersAchievementsService.getAchievements(id).pipe(
       catchError((err) => this.ownAchievements ? this.usersAchievementsService.getAchievements(this.user._id) : throwError(err))
     ).subscribe((achievements) => {
-      this.achievements = achievements._id && ({
-        ...achievements,
-        ...(achievements.otherInfo || []).reduce((otherInfoObj: any, info) =>
-          ({ ...otherInfoObj, [info.type]: [ ...(otherInfoObj[info.type] || []), info ] }), {}
-        )
-      });
+      if (this.usersAchievementsService.isEmpty(achievements)) {
+        this.achievementNotFound = true;
+      } else {
+        this.achievements = achievements._id && ({
+          ...achievements,
+          ...(achievements.otherInfo || []).reduce((otherInfoObj: any, info) =>
+            ({ ...otherInfoObj, [info.type]: [ ...(otherInfoObj[info.type] || []), info ] }), {}
+          )
+        });
+      }
     }, (error) => {
       if (error.status === 404) {
         this.achievementNotFound = true;
