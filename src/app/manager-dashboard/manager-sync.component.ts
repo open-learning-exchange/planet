@@ -146,7 +146,7 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   achievementResourceReplicator(achievements) {
-    return this.syncService.createRepicatorsArray(achievements.map(a => ({ db: 'achievements', item: a })), 'push')
+    return this.syncService.createReplicatorsArray(achievements.map(a => ({ db: 'achievements', item: a })), 'push')
       .filter(rep => rep.db !== 'achievements');
   }
 
