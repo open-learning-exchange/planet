@@ -13,11 +13,11 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
-    <button *ngIf="!parent" mat-mini-fab routerLink="add">
-      <mat-icon>add</mat-icon>
-    </button>
-    <span class="toolbar-fill"></span>
-    <span *ngIf="!parent">
+    <ng-container *ngIf="!parent && isAuthorized">
+      <button mat-mini-fab routerLink="add">
+        <mat-icon>add</mat-icon>
+      </button>
+      <span class="toolbar-fill"></span>
       <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
         <span *ngIf="selectedNotJoined > 0"> ({{selectedNotJoined}})</span>
@@ -31,7 +31,7 @@
         <span i18n>Delete</span>
         <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
       </button>
-    </span>
+    </ng-container>
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">

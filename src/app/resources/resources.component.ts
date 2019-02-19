@@ -71,6 +71,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
+  isAuthorized = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -130,6 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedNotAdded(source.selected);
     });
+    this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   setupList(resourcesRes, myLibrarys) {

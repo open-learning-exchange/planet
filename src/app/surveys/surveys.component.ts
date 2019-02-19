@@ -25,6 +25,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  isAuthorized = false;
 
   constructor(
     private couchService: CouchService,
@@ -54,6 +55,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.emptyData = !this.surveys.data.length;
         this.dialogsLoadingService.stop();
       });
+    this.couchService.checkAuthorization('exams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   ngAfterViewInit() {

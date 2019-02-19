@@ -12,7 +12,7 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
-    <button mat-mini-fab (click)="routeToEditSurvey('add')">
+    <button mat-mini-fab (click)="routeToEditSurvey('add')" *ngIf="isAuthorized" >
       <mat-icon>add</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
