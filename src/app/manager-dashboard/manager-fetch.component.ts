@@ -76,7 +76,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   getPushedItem() {
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
-    const replicators = this.syncService.createRepicatorsArray(itemsToPull, 'pull', []);
+    const replicators = this.syncService.createReplicatorsArray(itemsToPull, 'pull', []);
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
     if (replicators.length > 0) {
       this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
