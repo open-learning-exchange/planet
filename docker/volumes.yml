@@ -6,4 +6,5 @@ services:
   planet:
     volumes:
       - "/srv/planet/pwd:/usr/share/nginx/html/credentials"
+      - "/srv/planet/fs:/usr/share/nginx/html/fs"
 version: "2"
