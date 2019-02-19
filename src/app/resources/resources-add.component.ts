@@ -108,7 +108,6 @@ export class ResourcesAddComponent implements OnInit {
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
-      creator: this.userService.get().name + '@' + this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
       updatedDate: this.couchService.datePlaceholder
     });
