@@ -9,9 +9,9 @@
     <span>{{user.firstName.concat(' ', user.lastName).trim() || user.name}}</span>
     <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['/myAchievements/update']"><mat-icon>mode_edit</mat-icon>
-	  <span *ngIf="achievementNotFound">Add Achievements</span>
-	  <span *ngIf="!achievementNotFound">Edit Achievements</span> 
-	</a>
+      <span *ngIf="achievementNotFound">Add Achievements</span>
+      <span *ngIf="!achievementNotFound">Edit Achievements</span>
+    </a>
   </mat-toolbar>
   <div class="view-container">
     <div *ngIf="achievements !== undefined" class="achievements-container">
