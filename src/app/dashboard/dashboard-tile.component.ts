@@ -35,15 +35,12 @@ export class DashboardTileComponent implements OnInit {
   removeFromShelf(event, item: any) {
     event.stopPropagation();
     const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
-    if (this.shelfName === 'myTeamIds') {
-      this.teamsService.toggleTeamMembership(item, true, this.userService.shelf).subscribe(() => {
-        this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
-      });
-    } else {
-      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => {
-        this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
-      });
-    }
+    const obs = this.shelfName === 'myTeamIds' ?
+      this.teamsService.toggleTeamMembership(item, true, this.userService.shelf) :
+      this.userService.updateShelf(newIds, this.shelfName);
+    obs.subscribe(() => {
+      this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+    });
   }
 
 }
