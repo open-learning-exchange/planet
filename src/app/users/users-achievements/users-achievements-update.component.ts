@@ -104,7 +104,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   addOtherInfo(index = -1, info = { type: '', description: '' }) {
-    this.dialogsFormService.openDialogsForm('Add Other Information',
+    this.dialogsFormService.openDialogsForm('Add Personal Information',
       [
         {
           'type': 'selectbox',
