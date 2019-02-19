@@ -413,11 +413,11 @@ body {
     .new-line {
       grid-column-start: 1;
     }
-  } 
-  
-  .mat-input-element[readonly]{ 
-     color: $grey; 
-  } 
+  }
+
+  .mat-input-element[readonly]{
+    color: $grey;
+  }
 
   @media only screen and (max-width: $screen-md) {
     .form-container {
