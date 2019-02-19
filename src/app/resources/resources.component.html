@@ -87,14 +87,16 @@
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
             </a>
-            <a mat-menu-item (click)="updateResource(element)">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
-            </a>
-            <button *ngIf="currentUser.isUserAdmin||element.addedBy === currentUser.name" mat-menu-item (click)="deleteClick(element)">
-              <mat-icon>delete_forever</mat-icon>
-              <span i18n>Delete</span>
-            </button>
+            <ng-container *ngIf="element.canManage">
+              <a mat-menu-item (click)="updateResource(element)">
+                <mat-icon>folder</mat-icon>
+                <span i18n>Manage</span>
+              </a>
+              <button mat-menu-item (click)="deleteClick(element)">
+                <mat-icon>delete_forever</mat-icon>
+                <span i18n>Delete</span>
+              </button>
+            </ng-container>
             <a href="{{urlPrefix + element._id + '/' + element.filename}}" mat-menu-item download [disabled]="!element.isDownloadable">
               <mat-icon>file_download</mat-icon>
               <span i18n>Download file</span>
