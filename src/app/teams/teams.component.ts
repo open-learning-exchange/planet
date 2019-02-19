@@ -24,6 +24,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
+  isAuthorized = false;
 
   constructor(
     private userService: UserService,
@@ -45,6 +46,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.getTeams();
     this.teams.filterPredicate = filterSpecificFields([ 'doc.name' ]);
     this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
+    this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   getTeams() {

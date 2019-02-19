@@ -21,14 +21,14 @@
 </mat-toolbar>
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
-    <button *ngIf="!parent && (user.isUserAdmin || user.roles.length)" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
-    <span class="toolbar-fill"></span>
-    <ng-container *ngIf="parent">
-      <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
-        <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
-      </button>
-    </ng-container>
-    <ng-container *ngIf="!parent && (user.isUserAdmin || user.roles.length)">
+    <ng-container *ngIf="isAuthorized">
+      <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+      <span class="toolbar-fill"></span>
+      <ng-container *ngIf="parent">
+        <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
+          <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
+        </button>
+      </ng-container>
       <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
         <span *ngIf="selectedNotEnrolled > 0"> ({{selectedNotEnrolled}})</span>

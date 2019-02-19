@@ -12,7 +12,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { UserService } from '../shared/user.service';
 
 @Component({
   'templateUrl': './surveys.component.html'
@@ -26,7 +25,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
-  user = this.userService.get();
+  isAuthorized = false;
 
   constructor(
     private couchService: CouchService,
@@ -37,7 +36,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private userService: UserService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dialogsLoadingService.start();
@@ -57,6 +55,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.emptyData = !this.surveys.data.length;
         this.dialogsLoadingService.stop();
       });
+    this.couchService.checkAuthorization('exams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   ngAfterViewInit() {

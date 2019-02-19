@@ -45,6 +45,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyData = false;
   selectedNotJoined = 0;
   selectedJoined = 0;
+  isAuthorized = false;
 
   constructor(
     private couchService: CouchService,
@@ -75,6 +76,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedShelf(source.selected);
     });
+    this.couchService.checkAuthorization('meetups').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   ngAfterViewInit() {

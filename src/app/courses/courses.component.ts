@@ -69,6 +69,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
   emptyData = false;
+  isAuthorized = false;
 
   constructor(
     private couchService: CouchService,
@@ -113,6 +114,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
+    this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   sortData(item, property) {

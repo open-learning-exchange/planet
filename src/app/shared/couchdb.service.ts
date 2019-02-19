@@ -172,4 +172,11 @@ export class CouchService {
     }
   }
 
+  checkAuthorization(db, opts?) {
+    return this.get(db, opts).pipe(
+      catchError((err) => err.error === 'forbidden' ? of(false) : throwError(err)),
+      map((res) => res !== false)
+    );
+  }
+
 }

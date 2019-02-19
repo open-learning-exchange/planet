@@ -10,11 +10,13 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <button mat-mini-fab *ngIf="user.isUserAdmin || user.roles.length" (click)="addTeam()"><mat-icon>add</mat-icon></button>
-    <span class="toolbar-fill"></span>
-    <div class="margin-lr-3">
-      <button mat-button routerLink='/teams/users' i18n>All Members</button>
-    </div>
+    <ng-container *ngIf="isAuthorized">
+      <button mat-mini-fab (click)="addTeam()"><mat-icon>add</mat-icon></button>
+      <span class="toolbar-fill"></span>
+      <div class="margin-lr-3">
+        <button mat-button routerLink='/teams/users' i18n>All Members</button>
+      </div>
+    </ng-container>
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table primary-link-hover" *ngIf="!emptyData; else notFoundMessage">
