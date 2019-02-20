@@ -7,7 +7,6 @@ import { CouchService } from '../../shared/couchdb.service';
 export class UsersAchievementsService {
 
   readonly dbName = 'achievements';
-  infoTypes = [ 'Languages', 'Education', 'Employment History', 'Badges', 'Certificates', 'Internships', 'Awards' ];
 
   constructor(
     private couchService: CouchService
@@ -19,6 +18,6 @@ export class UsersAchievementsService {
 
   isEmpty(achievement) {
     return (!achievement.purpose && !achievement.goals && !achievement.achievementsHeader
-             && achievement.achievements.length === 0 && achievement.otherInfo.length === 0);
+            && achievement.achievements.length === 0);
   }
 }

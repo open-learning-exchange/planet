@@ -7,7 +7,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName + ' ' + user.lastName }}</span>
-    <ng-template #elseBlock>{{ user.name }}</ng-template> 
+    <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['/myAchievements/update']"><mat-icon>mode_edit</mat-icon>
       <span *ngIf="achievementNotFound">Add Achievements</span>
@@ -35,15 +35,6 @@
               <span class="achievement-text">{{achievement.description || achievement}}</span>
               <span class="achievement-button"><planet-resources-menu [resources]="achievement.resources" i18n>View Attachment</planet-resources-menu></span>
             </p>
-          </mat-list-item>
-        </mat-list>
-      </div>
-      <div *ngFor="let infoType of infoTypes">
-        <h4 *ngIf="achievements[infoType]">{{infoType}}</h4>
-        <mat-list>
-          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let info of achievements[infoType]">
-            <mat-icon mat-list-icon>done_outline</mat-icon>
-            <p mat-line>{{info.description}}</p>
           </mat-list-item>
         </mat-list>
       </div>
