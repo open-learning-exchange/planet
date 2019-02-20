@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, throwError, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
@@ -138,10 +138,19 @@ export class ManagerSyncComponent implements OnInit {
     return forkJoin([
       this.reportsService.getDatabaseCount('resources'),
       this.reportsService.getDatabaseCount('courses'),
-      this.couchService.get('child_statistics/' + code, { domain })
+      this.getChildStats(code, domain)
     ]).pipe(switchMap(([ totalResources, totalCourses, stats ]) => {
       const { error, reason, docs, rows, ...statsDoc } = stats;
       return this.couchService.post('child_statistics', { _id: code, ...statsDoc, totalCourses, totalResources }, { domain });
+    }));
+  }
+
+  getChildStats(code, domain) {
+    return this.couchService.get('child_statistics/' + code, { domain }).pipe(catchError((err) => {
+      if (err.error.reason === 'missing') {
+        return of({});
+      }
+      return throwError(err);
     }));
   }
 
