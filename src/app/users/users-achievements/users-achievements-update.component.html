@@ -28,7 +28,7 @@
         <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
         <planet-step-list [steps]="achievements" [ignoreClick]="true">
           <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-            <span>{{achievement.value.description || achievement.value}}
+            <span>{{achievement.value.title || achievement.value}}
               <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
                 Attached resources:
               </div>
