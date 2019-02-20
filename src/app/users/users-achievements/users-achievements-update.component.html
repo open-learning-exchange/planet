@@ -43,16 +43,6 @@
         </planet-step-list>
         <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
       </div>
-      <div>
-        <p class="mat-hint mat-caption">Add related educational and employment history below</p>
-        <planet-step-list [steps]="otherInfo" [ignoreClick]="true">
-          <planet-step-list-item *ngFor="let info of otherInfo.controls; index as i">
-            <span mat-line>{{info.value.type}}: {{info.value.description}}</span>
-            <button mat-stroked-button type="button" class="margin-lr-4" (click)="addOtherInfo(i, info.value)" i18n>Edit</button>
-          </planet-step-list-item>
-        </planet-step-list>
-        <button type="button" (click)="addOtherInfo()" mat-stroked-button color="primary">Add Personal Information</button>
-      </div>
       <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
         Allow your achievements to be shared with the nation
       </mat-checkbox>
