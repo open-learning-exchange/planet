@@ -75,13 +75,18 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     });
   }
 
-  addAchievement(index = -1, achievement = { description: '', resources: [] }) {
+  addAchievement(index = -1, achievement = { title: '', description: '', resources: [] }) {
     if (typeof achievement === 'string') {
-      achievement = { description: achievement, resources: [] };
+      achievement = { title: '', description: achievement, resources: [] };
     }
     this.dialogsFormService.openDialogsForm(
       'Add Achievement',
       [
+        {
+          'type': 'textbox',
+          'name': 'title',
+          'placeholder': 'title'
+        },
         {
           'type': 'textarea',
           'name': 'description',
@@ -97,7 +102,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       this.fb.group({
         ...achievement,
         resources: [ achievement.resources ],
-        description: [ achievement.description, CustomValidators.required ]
+        title: [ achievement.title ],
+        description: [ achievement.description, CustomValidators.required ],
+        date: Date.now()
       }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
     );
@@ -124,6 +131,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   onDialogSubmit(formArray, index) {
+    console.log(formArray);
     return (formValue, formGroup) => {
       if (formValue === undefined) {
         return;
