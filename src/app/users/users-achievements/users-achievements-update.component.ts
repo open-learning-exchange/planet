@@ -14,6 +14,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { catchError } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -44,7 +45,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private usersAchievementsService: UsersAchievementsService,
     private dialogsFormService: DialogsFormService,
-    private stateService: StateService
+    private stateService: StateService,
+    private validatorService: ValidatorService
   ) {
     this.createForm();
   }
@@ -75,14 +77,15 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     });
   }
 
-  addAchievement(index = -1, achievement = { title: '', description: '', resources: [] }) {
+  addAchievement(index = -1, achievement = { title: '', description: '', resources: [], date: '' }) {
     if (typeof achievement === 'string') {
-      achievement = { title: '', description: achievement, resources: [] };
+      achievement = { title: '', description: achievement, resources: [], date: '' };
     }
     this.dialogsFormService.openDialogsForm(
       'Add Achievement',
       [
-        { 'type': 'textbox', 'name': 'title', 'placeholder': 'title' },
+        { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title' },
+        { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': 'Description', 'required': false },
         { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources' }
       ],
@@ -91,7 +94,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         resources: [ achievement.resources ],
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
-        date: Date.now()
+        date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
     );
