@@ -44,6 +44,7 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   runSyncClick() {
+    this.dialogsLoadingService.start();
     this.updateReplicatorUsers().subscribe(() => {
       this.syncPlanet();
     });
@@ -64,6 +65,7 @@ export class ManagerSyncComponent implements OnInit {
         return this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code }));
       }),
       switchMap(achievements => {
+        this.dialogsLoadingService.stop();
         return this.syncService.confirmPasswordAndRunReplicators(
           this.replicatorList().concat(this.achievementResourceReplicator(achievements))
         );
