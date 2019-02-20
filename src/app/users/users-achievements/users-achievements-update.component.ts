@@ -90,7 +90,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         {
           'type': 'textarea',
           'name': 'description',
-          'placeholder': 'Description'
+          'placeholder': 'Description',
+          'required': false
         },
         {
           'type': 'dialog',
@@ -103,7 +104,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         ...achievement,
         resources: [ achievement.resources ],
         title: [ achievement.title ],
-        description: [ achievement.description, CustomValidators.required ],
+        description: [ achievement.description ],
         date: Date.now()
       }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
