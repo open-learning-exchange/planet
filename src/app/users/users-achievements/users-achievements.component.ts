@@ -19,7 +19,6 @@ export class UsersAchievementsComponent implements OnInit {
   infoTypes = this.usersAchievementsService.infoTypes;
   achievementNotFound = false;
   ownAchievements = false;
-  canEdit = true;
   redirectUrl = '/';
 
   constructor(
@@ -66,8 +65,6 @@ export class UsersAchievementsComponent implements OnInit {
             ({ ...otherInfoObj, [info.type]: [ ...(otherInfoObj[info.type] || []), info ] }), {}
           )
         });
-        this.canEdit = this.user.isUserAdmin || this.user.name === achievements.username;
-        console.log(this.canEdit);
       }
     }, (error) => {
       if (error.status === 404) {
@@ -75,8 +72,6 @@ export class UsersAchievementsComponent implements OnInit {
       } else {
         this.planetMessageService.showAlert('There was an error getting achievements');
       }
-      this.canEdit = this.user.name === this.userService.get().name;
-      console.log(this.canEdit);
     });
   }
 
