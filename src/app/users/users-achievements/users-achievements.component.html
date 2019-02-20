@@ -9,7 +9,7 @@
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName + ' ' + user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template> 
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="accent" i18n [routerLink]="['/myAchievements/update']"><mat-icon>mode_edit</mat-icon>
+    <a mat-raised-button *ngIf="canEdit" color="accent" i18n [routerLink]="['/myAchievements/update']"><mat-icon>mode_edit</mat-icon>
       <span *ngIf="achievementNotFound">Add Achievements</span>
       <span *ngIf="!achievementNotFound">Edit Achievements</span>
     </a>
