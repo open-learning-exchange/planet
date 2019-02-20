@@ -82,28 +82,14 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     this.dialogsFormService.openDialogsForm(
       'Add Achievement',
       [
-        {
-          'type': 'textbox',
-          'name': 'title',
-          'placeholder': 'title'
-        },
-        {
-          'type': 'textarea',
-          'name': 'description',
-          'placeholder': 'Description',
-          'required': false
-        },
-        {
-          'type': 'dialog',
-          'name': 'resources',
-          'db': 'resources',
-          'text': 'Add Resources'
-        }
+        { 'type': 'textbox', 'name': 'title', 'placeholder': 'title' },
+        { 'type': 'textarea', 'name': 'description', 'placeholder': 'Description', 'required': false },
+        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources' }
       ],
       this.fb.group({
         ...achievement,
         resources: [ achievement.resources ],
-        title: [ achievement.title ],
+        title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
         date: Date.now()
       }),
@@ -132,7 +118,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   onDialogSubmit(formArray, index) {
-    console.log(formArray);
     return (formValue, formGroup) => {
       if (formValue === undefined) {
         return;
