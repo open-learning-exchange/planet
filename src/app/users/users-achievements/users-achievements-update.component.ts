@@ -27,12 +27,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   editForm: FormGroup;
-  infoTypes = this.usersAchievementsService.infoTypes;
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
-  }
-  get otherInfo(): FormArray {
-    return <FormArray>this.editForm.controls.otherInfo;
   }
 
   constructor(
@@ -55,7 +51,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     .subscribe((achievements) => {
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
-      this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
       if (this.docInfo._id === achievements._id) {
         this.docInfo._rev = achievements._rev;
       }
@@ -70,7 +65,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       goals: '',
       achievementsHeader: '',
       achievements: this.fb.array([]),
-      otherInfo: this.fb.array([]),
       sendToNation: false
     });
   }
@@ -100,26 +94,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         description: [ achievement.description, CustomValidators.required ]
       }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
-    );
-  }
-
-  addOtherInfo(index = -1, info = { type: '', description: '' }) {
-    this.dialogsFormService.openDialogsForm('Add Personal Information',
-      [
-        {
-          'type': 'selectbox',
-          'options': this.usersAchievementsService.infoTypes.map(type => ({ 'name': type, 'value': type })),
-          'name': 'type',
-          'placeholder': 'Type'
-        },
-        {
-          'type': 'textarea',
-          'name': 'description',
-          'placeholder': 'Description'
-        },
-      ],
-      this.fb.group({ ...info, description: [ info.description, CustomValidators.required ] }),
-      { onSubmit: this.onDialogSubmit(this.otherInfo, index), closeOnSubmit: true }
     );
   }
 

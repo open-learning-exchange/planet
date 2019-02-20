@@ -59,12 +59,7 @@ export class UsersAchievementsComponent implements OnInit {
       if (this.usersAchievementsService.isEmpty(achievements)) {
         this.achievementNotFound = true;
       } else {
-        this.achievements = achievements._id && ({
-          ...achievements,
-          ...(achievements.otherInfo || []).reduce((otherInfoObj: any, info) =>
-            ({ ...otherInfoObj, [info.type]: [ ...(otherInfoObj[info.type] || []), info ] }), {}
-          )
-        });
+        this.achievements = achievements._id && ({...achievements});
       }
     }, (error) => {
       if (error.status === 404) {
