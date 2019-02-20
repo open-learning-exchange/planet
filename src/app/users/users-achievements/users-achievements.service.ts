@@ -7,7 +7,6 @@ import { CouchService } from '../../shared/couchdb.service';
 export class UsersAchievementsService {
 
   readonly dbName = 'achievements';
-  infoTypes = [ 'Languages', 'Education', 'Employment History', 'Badges', 'Certificates', 'Internships', 'Awards' ];
 
   constructor(
     private couchService: CouchService
