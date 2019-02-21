@@ -81,7 +81,7 @@
       </form>
     </div>
     <div class="achievement-button">
-      <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+      <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid && profileForm.valid" color="primary" i18n>Update</button>
       <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
     </div>
   </div>
