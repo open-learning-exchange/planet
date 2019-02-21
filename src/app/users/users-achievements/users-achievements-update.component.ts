@@ -162,7 +162,6 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   onSubmit() {
     this.editForm.updateValueAndValidity();
     this.profileForm.updateValueAndValidity();
-    console.log(this.profileForm.valid);
     if (!this.editForm.valid) {
       this.markAsInvalid(this.editForm);
     }
