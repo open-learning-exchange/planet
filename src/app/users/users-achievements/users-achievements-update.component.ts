@@ -164,20 +164,21 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     this.profileForm.updateValueAndValidity();
     console.log(this.profileForm.valid);
     if (!this.editForm.valid) {
-      Object.keys(this.editForm.controls).forEach(field => {
-        const control = this.editForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      this.markAsInvalid(this.editForm);
     }
     if (!this.profileForm.valid) {
-      Object.keys(this.profileForm.controls).forEach(field => {
-        const control = this.profileForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      this.markAsInvalid(this.profileForm);
     }
     if (this.editForm.valid && this.profileForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
     }
+  }
+
+  markAsInvalid(userForm) {
+    Object.keys(userForm.controls).forEach(field => {
+      const control = userForm.get(field);
+      control.markAsTouched({ onlySelf: true });
+    });
   }
 
   updateAchievements(docInfo, achievements, userInfo) {
