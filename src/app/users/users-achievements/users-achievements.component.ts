@@ -19,6 +19,7 @@ export class UsersAchievementsComponent implements OnInit {
   achievementNotFound = false;
   ownAchievements = false;
   redirectUrl = '/';
+  openAchievementIndex = -1;
 
   constructor(
     private couchService: CouchService,
@@ -78,6 +79,10 @@ export class UsersAchievementsComponent implements OnInit {
 
   goBack() {
     this.router.navigate([ this.redirectUrl ]);
+  }
+
+  toggleOpenAchievementIndex(index) {
+    this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
 }

@@ -6,7 +6,7 @@ import { MatMenuTrigger } from '@angular/material';
 @Component({
   selector: 'planet-resources-menu',
   template: `
-    <button mat-raised-button color="accent" class="margin-lr-10" [matMenuTriggerFor]="resourceList" (click)="buttonClick(resources)">
+    <button mat-raised-button [color]="color" class="margin-lr-10" [matMenuTriggerFor]="resourceList" (click)="buttonClick(resources)">
       <ng-content></ng-content>
     </button>
     <mat-menu #resourceList="matMenu">
@@ -17,6 +17,7 @@ import { MatMenuTrigger } from '@angular/material';
 export class ResourcesMenuComponent {
 
   @Input() resources: any[] = [];
+  @Input() color = 'accent';
   @ViewChild(MatMenuTrigger) resourceButton: MatMenuTrigger;
 
   constructor() {}
