@@ -15,6 +15,7 @@ import { StateService } from '../../shared/state.service';
 import { catchError } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -28,6 +29,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   editForm: FormGroup;
+  profileForm: FormGroup;
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
@@ -45,9 +47,11 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private validatorService: ValidatorService
   ) {
     this.createForm();
+    this.createProfileForm();
   }
 
   ngOnInit() {
+    this.profileForm.patchValue(this.user);
     this.usersAchievementsService.getAchievements(this.docInfo._id)
     .pipe(catchError(() => this.usersAchievementsService.getAchievements(this.user._id)))
     .subscribe((achievements) => {
@@ -72,6 +76,20 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
       sendToNation: false
+    });
+  }
+
+  createProfileForm() {
+    this.profileForm = this.fb.group({
+      firstName: [ '', CustomValidators.required ],
+      middleName: '',
+      lastName: [ '', CustomValidators.required ],
+      birthDate: [
+        '',
+        [],
+        ac => this.validatorService.notDateInFuture$(ac)
+      ],
+      birthplace: ''
     });
   }
 
@@ -119,7 +137,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   onSubmit() {
     this.editForm.updateValueAndValidity();
     if (this.editForm.valid) {
-      this.updateAchievements(this.docInfo, this.editForm.value);
+      this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
     } else {
       Object.keys(this.editForm.controls).forEach(field => {
         const control = this.editForm.get(field);
@@ -128,11 +146,13 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     }
   }
 
-  updateAchievements(docInfo, achievements) {
+  updateAchievements(docInfo, achievements, userInfo) {
     // ...is the rest syntax for object destructuring
-    this.couchService.post(this.dbName, { ...docInfo, ...achievements,
-      'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode })
-    .subscribe(() => {
+    forkJoin([
+      this.couchService.post(this.dbName, { ...docInfo, ...achievements,
+        'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
+      this.userService.updateUser(userInfo)
+    ]).subscribe(() => {
       this.planetMessageService.showAlert('Achievements successfully updated');
       this.goBack();
     },  (err) => {
