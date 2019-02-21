@@ -50,7 +50,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       }))
       .subscribe((submissions: any) => {
         this.surveys.data = this.surveys.data.map(
-          (survey: any) => ({ ...survey, taken: submissions.filter(data => data.parentId === survey._id).length })
+          (survey: any) => ({
+            ...survey,
+            taken: submissions.filter(data => {
+                return data.parentId === survey._id && (data.status !== 'pending' || data.user);
+            }).length
+          })
         );
         this.emptyData = !this.surveys.data.length;
         this.dialogsLoadingService.stop();
