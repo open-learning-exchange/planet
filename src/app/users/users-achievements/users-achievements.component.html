@@ -29,12 +29,13 @@
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
         <mat-list>
-          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let achievement of achievements.achievements">
-            <mat-icon mat-list-icon>done_outline</mat-icon>
-            <p mat-line [ngClass]="{ 'no-attachment': !achievement.resources?.length }">
-              <span class="achievement-text">{{achievement.description || achievement}}</span>
-              <span class="achievement-button"><planet-resources-menu [resources]="achievement.resources" i18n>View Attachment</planet-resources-menu></span>
+          <mat-list-item class="mat-list-item-word-wrap cursor-pointer" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
+            <p mat-line>
+              <span class="achievement-text">{{achievement.title || achievement}}</span>
+              <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
+            <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
+            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"><planet-resources-menu [resources]="achievement.resources" i18n>View Attachment</planet-resources-menu></span>
           </mat-list-item>
         </mat-list>
       </div>

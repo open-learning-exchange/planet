@@ -11,28 +11,25 @@
 
     &.mat-list-item-word-wrap {
       height: initial;
+      margin: 0.75rem 0;
     }
 
     .mat-line {
       word-wrap: break-word;
       white-space: pre-wrap;
       display: grid;
-      grid-template-areas: "txt btn";
-      grid-template-columns: auto min-content;
+      grid-template-areas: "txt dt";
+      grid-template-columns: auto max-content;
       align-items: center;
 
       .achievement-text {
         grid-area: txt;
       }
 
-      .achievement-button {
-        grid-area: btn;
-        margin: 0.25rem 0;
+      .achievement-date {
+        grid-area: dt;
       }
 
-      &.no-attachment {
-        grid-template-columns: auto 0;
-      }
     }
 
   }
