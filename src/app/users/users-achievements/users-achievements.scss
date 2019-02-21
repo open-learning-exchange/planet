@@ -17,6 +17,9 @@
     .mat-line {
       word-wrap: break-word;
       white-space: pre-wrap;
+    }
+
+    .achievement-header {
       display: grid;
       grid-template-areas: "txt dt";
       grid-template-columns: auto max-content;
@@ -30,6 +33,14 @@
         grid-area: dt;
       }
 
+    }
+
+    .achievement-buttons button {
+      margin: 0.25rem 0.5rem 0.25rem 0;
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
 
   }

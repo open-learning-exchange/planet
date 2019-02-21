@@ -30,12 +30,16 @@
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
         <mat-list>
           <mat-list-item class="mat-list-item-word-wrap cursor-pointer" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
-            <p mat-line>
+            <p class="achievement-header" mat-line>
               <span class="achievement-text">{{achievement.title || achievement}}</span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
             <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
-            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"><planet-resources-menu [resources]="achievement.resources" i18n>View Attachment</planet-resources-menu></span>
+            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i">
+              <ng-container *ngFor="let resource of achievement.resources">
+                <planet-resources-menu [resources]="[ resource ]" color="primary" (click)="$event.stopPropagation()">{{resource.title}}</planet-resources-menu>
+              </ng-container>
+            </span>
           </mat-list-item>
         </mat-list>
       </div>
