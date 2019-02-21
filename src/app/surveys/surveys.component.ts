@@ -51,17 +51,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((submissions: any) => {
         this.surveys.data = this.surveys.data.map(
           (survey: any) => ({
-              ...survey,
-              taken: submissions.filter(data => {
-                  return data.parentId === survey._id && (data.status !== 'pending' || data.user);
-              }).length
-            })
+            ...survey,
+            taken: submissions.filter(data => {
+                return data.parentId === survey._id && (data.status !== 'pending' || data.user);
+            }).length
+          })
         );
         this.emptyData = !this.surveys.data.length;
         this.dialogsLoadingService.stop();
       });
     this.couchService.checkAuthorization('exams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
+
   ngAfterViewInit() {
     this.surveys.sort = this.sort;
     this.surveys.paginator = this.paginator;
