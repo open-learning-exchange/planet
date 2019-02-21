@@ -84,4 +84,8 @@ export class DialogsFormComponent {
     };
   }
 
+  isDirty() {
+    return this.modalForm.dirty;
+  }
+
 }
