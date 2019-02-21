@@ -33,6 +33,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
+  get references(): FormArray {
+    return <FormArray>this.editForm.controls.references;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +60,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     .subscribe((achievements) => {
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
+      this.editForm.controls.references = this.fb.array(achievements.references || []);
       // Keeping older otherInfo property so we don't lose this info on database
       this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
       if (this.docInfo._id === achievements._id) {
@@ -73,6 +77,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       goals: '',
       achievementsHeader: '',
       achievements: this.fb.array([]),
+      references: this.fb.array([]),
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
       sendToNation: false
@@ -113,6 +118,26 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
+    );
+  }
+
+  addReference(index = -1, reference: any = { name: '' }) {
+    this.dialogsFormService.openDialogsForm(
+      'Add Achievement',
+      [
+        { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name' },
+        { 'type': 'textbox', 'name': 'relationship', 'placeholder': 'Relationship', 'required': false },
+        { 'type': 'textbox', 'name': 'phone', 'placeholder': 'Phone #', 'required': false },
+        { 'type': 'textbox', 'name': 'email', 'placeholder': 'Email', 'required': false }
+      ],
+      this.fb.group({
+        relationship: '',
+        phone: '',
+        email: '',
+        ...reference,
+        name: [ reference.name, CustomValidators.required ],
+      }),
+      { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
     );
   }
 
