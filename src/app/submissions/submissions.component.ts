@@ -54,7 +54,9 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
-      submissions = submissions.reduce((sList, s1) => {
+      submissions = submissions.filter(data => {
+        return data.type !== 'survey' || data.status !== 'pending' || data.user;
+      }).reduce((sList, s1) => {
         const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
         if (sIndex === -1) {
           sList.push(s1);
