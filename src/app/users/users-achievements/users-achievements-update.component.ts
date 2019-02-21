@@ -89,7 +89,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         [],
         ac => this.validatorService.notDateInFuture$(ac)
       ],
-      location: ''
+      birthplace: ''
     });
   }
 
