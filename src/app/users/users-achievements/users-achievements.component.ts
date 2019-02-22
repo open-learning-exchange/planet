@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
@@ -83,6 +83,11 @@ export class UsersAchievementsComponent implements OnInit {
 
   toggleOpenAchievementIndex(index) {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
+  }
+
+  isClickable(achievement) {
+    return (achievement.resources.length > 0
+            && achievement.description.length > 0);
   }
 
 }
