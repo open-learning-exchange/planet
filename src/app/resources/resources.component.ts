@@ -20,25 +20,11 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import * as constants from './resources-constants';
 
 @Component({
   templateUrl: './resources.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-tags {
-      max-width: 125px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .mat-progress-bar {
-      height: 10px;
-      width: 120px;
-    }
-  ` ]
+  styleUrls: [ './resources.scss' ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
@@ -72,6 +58,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedNotAdded = 0;
   selectedAdded = 0;
   isAuthorized = false;
+  constants = constants;
+  showFilters = 'off';
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -312,6 +300,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
+  }
+
+  toggleFilters() {
+    this.showFilters = this.showFilters === 'off' ? 'on' : 'off';
   }
 
 }
