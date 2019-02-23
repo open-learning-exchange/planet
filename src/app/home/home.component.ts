@@ -109,7 +109,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   // Should remove when background is finalized.
   backgroundRoute() {
     const routesWithBackground = [
-      'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams'
+      'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams', 'surveys'
     ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
