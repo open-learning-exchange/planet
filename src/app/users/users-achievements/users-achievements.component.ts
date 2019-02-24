@@ -87,7 +87,7 @@ export class UsersAchievementsComponent implements OnInit {
 
   isClickable(achievement) {
     return (achievement.resources.length > 0
-            && achievement.description.length > 0);
+            || achievement.description.length > 0);
   }
 
 }
