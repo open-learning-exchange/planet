@@ -103,7 +103,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       achievement = { title: '', description: achievement, resources: [], date: '' };
     }
     this.dialogsFormService.openDialogsForm(
-      'Add Achievement',
+      achievement.title !== '' ? 'Edit Achievement' : 'Add Achievement',
       [
         { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title' },
         { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
@@ -123,7 +123,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
 
   addReference(index = -1, reference: any = { name: '' }) {
     this.dialogsFormService.openDialogsForm(
-      'Add Achievement',
+      reference.name !== '' ? 'Edit Reference' : 'Add Reference',
       [
         { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name' },
         { 'type': 'textbox', 'name': 'relationship', 'placeholder': 'Relationship', 'required': false },
