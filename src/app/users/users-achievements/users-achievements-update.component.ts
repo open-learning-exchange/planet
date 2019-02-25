@@ -178,7 +178,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
       this.userService.updateUser({ ...userInfo, ...this.userService.credentials })
     ]).subscribe(() => {
-      this.planetMessageService.showAlert('Achievements successfully updated');
+      this.planetMessageService.showMessage('Achievements successfully updated');
       this.goBack();
     },  (err) => {
       this.planetMessageService.showAlert('There was an error updating your achievements');
