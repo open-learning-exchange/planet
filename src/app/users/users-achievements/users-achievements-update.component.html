@@ -60,7 +60,7 @@
                   </mat-chip>
                 </mat-chip-list>
               </span>
-              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
+              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, labelOfDialogBox, achievement.value)" i18n>Edit</button>
             </planet-step-list-item>
           </planet-step-list>
           <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
@@ -70,7 +70,7 @@
           <planet-step-list [steps]="references" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let reference of references.controls; index as i">
               <span>{{reference.value.name}}</span>
-              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addReference(i, reference.value)" i18n>Edit</button>
+              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addReference(i, labelOfDialogBox, reference.value)" i18n>Edit</button>
             </planet-step-list-item>
           </planet-step-list>
           <button type="button" (click)="addReference()" mat-stroked-button color="primary">Enter a reference</button>
