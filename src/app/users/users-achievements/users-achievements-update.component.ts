@@ -98,12 +98,17 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     });
   }
 
-  addAchievement(index = -1, achievement = { title: '', description: '', resources: [], date: '' }) {
+  addAchievement(index = -1, labelOfDialogBox, achievement = { title: '', description: '', resources: [], date: '' }) {
     if (typeof achievement === 'string') {
       achievement = { title: '', description: achievement, resources: [], date: '' };
     }
+    if (achievement.title !== '') {
+      labelOfDialogBox = 'Edit Achievement';
+    } else {
+      labelOfDialogBox = 'Add Achievement';
+    }
     this.dialogsFormService.openDialogsForm(
-      'Add Achievement',
+      labelOfDialogBox,
       [
         { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title' },
         { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
@@ -121,9 +126,14 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     );
   }
 
-  addReference(index = -1, reference: any = { name: '' }) {
+  addReference(index = -1, labelOfDialogBox, reference: any = { name: '' }) {
+    if (reference.name !== '') {
+      labelOfDialogBox = 'Edit Reference';
+    } else {
+      labelOfDialogBox = 'Add Reference';
+    }
     this.dialogsFormService.openDialogsForm(
-      'Add Achievement',
+      labelOfDialogBox,
       [
         { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name' },
         { 'type': 'textbox', 'name': 'relationship', 'placeholder': 'Relationship', 'required': false },
