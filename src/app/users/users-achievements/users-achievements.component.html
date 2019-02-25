@@ -42,7 +42,7 @@
               </span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
-            <p class="achievement-header" mat-line *ngIf="!isClickable(achievement)">
+            <p class="achievement-header no-pointer" mat-line *ngIf="!isClickable(achievement)">
               <span class="achievement-text">{{achievement.title || achievement}}</span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
