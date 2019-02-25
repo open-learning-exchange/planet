@@ -16,7 +16,6 @@ import { catchError } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { forkJoin } from 'rxjs';
-import { bind } from '@angular/core/src/render3/instructions';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
