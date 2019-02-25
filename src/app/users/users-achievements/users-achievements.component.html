@@ -33,11 +33,14 @@
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
         <mat-list>
-          <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer': isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
+          <mat-list-item class="mat-list-item-word-wrap cursor-pointer" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
             <p class="achievement-header" mat-line>
-              <span class="achievement-text">{{achievement.title || achievement}}
-                <mat-icon *ngIf="achievement.resources?.length > 0">attach_file</mat-icon>
-                <mat-icon *ngIf="achievement.description?.length > 0">description</mat-icon>
+              <span class="achievement-text">
+                <span *ngIf="isClickable(achievement)">
+                  <mat-icon *ngIf="openAchievementIndex !== i" color="primary">add</mat-icon>
+                  <mat-icon *ngIf="openAchievementIndex === i" color="primary">remove</mat-icon>
+                </span>
+                {{achievement.title || achievement}}
               </span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>

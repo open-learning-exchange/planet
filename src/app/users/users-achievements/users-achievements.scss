@@ -27,6 +27,8 @@
 
       .achievement-text {
         grid-area: txt;
+        display: flex;
+        align-items: center;
       }
 
       .achievement-date {
