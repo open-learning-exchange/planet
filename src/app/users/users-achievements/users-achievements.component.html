@@ -33,15 +33,17 @@
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
         <mat-list>
-          <mat-list-item class="mat-list-item-word-wrap cursor-pointer" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
-            <p class="achievement-header" mat-line>
+          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let achievement of achievements.achievements; index as i">
+            <p class="achievement-header cursor-pointer" mat-line *ngIf="isClickable(achievement)" (click)="toggleOpenAchievementIndex(i)">
               <span class="achievement-text">
-                <span *ngIf="isClickable(achievement)">
-                  <mat-icon *ngIf="openAchievementIndex !== i" color="primary">add</mat-icon>
-                  <mat-icon *ngIf="openAchievementIndex === i" color="primary">remove</mat-icon>
-                </span>
+                <mat-icon *ngIf="openAchievementIndex !== i" color="primary">add</mat-icon>
+                <mat-icon *ngIf="openAchievementIndex === i" color="primary">remove</mat-icon> 
                 {{achievement.title || achievement}}
               </span>
+              <span class="achievement-date">{{achievement.date | date: medium}}</span>
+            </p>
+            <p class="achievement-header" mat-line *ngIf="!isClickable(achievement)">
+              <span class="achievement-text">{{achievement.title || achievement}}</span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
             <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
