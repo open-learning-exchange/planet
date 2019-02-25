@@ -16,6 +16,7 @@ import { catchError } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { forkJoin } from 'rxjs';
+import { bind } from '@angular/core/src/render3/instructions';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -91,7 +92,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       lastName: [ '', CustomValidators.required ],
       birthDate: [
         '',
-        [],
+        [ CustomValidators.dateValidRequired ],
         ac => this.validatorService.notDateInFuture$(ac)
       ],
       birthplace: ''
