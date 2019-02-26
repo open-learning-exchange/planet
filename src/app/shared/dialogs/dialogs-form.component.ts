@@ -81,6 +81,7 @@ export class DialogsFormComponent {
     return (selection) => {
       this.modalForm.controls[field.name].setValue(selection);
       this.dialogListRef.close();
+      this.modalForm.markAsDirty();
     };
   }
 
