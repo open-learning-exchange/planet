@@ -85,4 +85,9 @@ export class UsersAchievementsComponent implements OnInit {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
+  isClickable(achievement) {
+    return (achievement.resources.length > 0
+            || achievement.description.length > 0);
+  }
+
 }

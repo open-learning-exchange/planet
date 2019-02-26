@@ -8,7 +8,6 @@
   }
 
   .mat-list-base .mat-list-item {
-
     &.mat-list-item-word-wrap {
       height: initial;
       margin: 0.75rem 0;
@@ -27,12 +26,13 @@
 
       .achievement-text {
         grid-area: txt;
+        display: flex;
+        align-items: center;
       }
 
       .achievement-date {
         grid-area: dt;
       }
-
     }
 
     .achievement-buttons button {
@@ -44,5 +44,4 @@
     }
 
   }
-
 }
