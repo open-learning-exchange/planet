@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { Router, RoutesRecognized } from '@angular/router';
-import {filter, pairwise} from 'rxjs/operators';
+import { filter, pairwise } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-back',
+  selector: 'planet-back',
   templateUrl: './back.component.html',
-  styleUrls: ['./back.component.scss']
+  styleUrls: [ './back.component.scss' ]
 })
 export class BackComponent {
 
@@ -20,7 +20,7 @@ export class BackComponent {
     });
   }
 
-  goBack(){
-    this.router.navigate([this.previousRoute]);
+  goBack() {
+    this.router.navigate([ this.previousRoute ]);
   }
 }
