@@ -17,7 +17,6 @@ export class DialogsFormComponent {
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
-  clickDialog = false;
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -67,7 +66,6 @@ export class DialogsFormComponent {
   openDialog(field) {
     const initialSelection = this.modalForm.controls[field.name].value.map((value: any) => value._id);
     this.dialogsLoadingService.start();
-    this.clickDialog = true;
     this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection).subscribe((data) => {
       this.dialogsLoadingService.stop();
       this.dialogListRef = this.dialog.open(DialogsListComponent, {
@@ -83,11 +81,12 @@ export class DialogsFormComponent {
     return (selection) => {
       this.modalForm.controls[field.name].setValue(selection);
       this.dialogListRef.close();
+      this.modalForm.markAsDirty();
     };
   }
 
   isDirty() {
-    return (this.modalForm.dirty || this.clickDialog);
+    return this.modalForm.dirty;
   }
 
 }
