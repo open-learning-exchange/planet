@@ -40,8 +40,8 @@
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span *ngIf="element.submittedBy !== ''; else unknownLabel">{{element.submittedBy}}</span>
+        <mat-cell *matCellDef="let element" (click)="nameClick($event, element.user)">
+          <span *ngIf="element.submittedBy !== ''; else unknownLabel" [routerLink]="element.user.name !== undefined ? ['/users/profile/',element.submittedBy]:[]">{{element.submittedBy}}</span>
           <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
         </mat-cell>
       </ng-container>

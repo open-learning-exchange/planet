@@ -140,4 +140,10 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     return typeof value === 'number';
   }
 
+  nameClick(event, user) {
+    if (user.name) {
+      event.stopPropagation();
+    }
+  }
+
 }
