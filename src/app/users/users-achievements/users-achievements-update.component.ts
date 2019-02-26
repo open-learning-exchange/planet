@@ -91,7 +91,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       lastName: [ '', CustomValidators.required ],
       birthDate: [
         '',
-        [],
+        [ CustomValidators.dateValidRequired ],
         ac => this.validatorService.notDateInFuture$(ac)
       ],
       birthplace: ''
@@ -161,11 +161,19 @@ export class UsersAchievementsUpdateComponent implements OnInit {
 
   onSubmit() {
     this.editForm.updateValueAndValidity();
-    if (this.editForm.valid) {
+    this.profileForm.updateValueAndValidity();
+    if (this.editForm.valid && this.profileForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
     } else {
-      Object.keys(this.editForm.controls).forEach(field => {
-        const control = this.editForm.get(field);
+      this.markAsInvalid(this.editForm);
+      this.markAsInvalid(this.profileForm);
+    }
+  }
+
+  markAsInvalid(userForm) {
+    if (!userForm.valid) {
+      Object.keys(userForm.controls).forEach(field => {
+        const control = userForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
     }

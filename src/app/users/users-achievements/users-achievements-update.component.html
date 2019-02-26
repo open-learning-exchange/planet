@@ -22,9 +22,10 @@
           <mat-error><planet-form-error-messages [control]="profileForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
+          <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate" required>
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Birthplace" formControlName="birthplace">
@@ -81,7 +82,7 @@
       </form>
     </div>
     <div class="achievement-button">
-      <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+      <button type="button" (click)="onSubmit()" mat-raised-button [planetSubmit]="editForm.valid && profileForm.valid" color="primary" i18n>Update</button>
       <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
     </div>
   </div>
