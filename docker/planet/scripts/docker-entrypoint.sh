@@ -34,3 +34,6 @@ sed -i -e "s#planet-sync-address#$S_ADDRESS#g" /usr/share/nginx/html/**/main*
 
 spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 nginx -g "daemon off;"
+
+mkdir -p /usr/share/nginx/html/fs
+wget https://github.com/open-learning-exchange/myplanet/releases/download/v0.2.68/myPlanet.apk /usr/share/nginx/html/fs
