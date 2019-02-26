@@ -35,10 +35,9 @@
         <mat-list>
           <mat-list-item class="mat-list-item-word-wrap" *ngFor="let achievement of achievements.achievements; index as i">
             <p class="achievement-header cursor-pointer" mat-line *ngIf="isClickable(achievement)" (click)="toggleOpenAchievementIndex(i)">
-              <span class="achievement-text">
+              <span class="achievement-text">{{achievement.title || achievement}}
                 <mat-icon *ngIf="openAchievementIndex !== i" color="primary">expand_more</mat-icon>
-                <mat-icon *ngIf="openAchievementIndex === i" color="primary">expand_less</mat-icon> 
-                {{achievement.title || achievement}}
+                <mat-icon *ngIf="openAchievementIndex === i" color="primary">expand_less</mat-icon>
               </span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
