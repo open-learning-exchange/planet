@@ -146,6 +146,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       if (formValue === undefined) {
         return;
       }
+      if (formValue.resources) {
+        formValue.resources.sort((a, b) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1);
+      }
       this.updateFormArray(formArray, formGroup, index);
     };
   }
