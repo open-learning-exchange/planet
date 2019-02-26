@@ -30,7 +30,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     MaterialModule,
     ResourcesModule,
     ExamsModule,
-    SharedComponentsModule
+    SharedComponentsModule,
   ],
   declarations: [
     CoursesComponent,
