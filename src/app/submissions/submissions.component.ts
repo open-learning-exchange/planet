@@ -58,7 +58,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
         return data.type !== 'survey' || data.status !== 'pending' || data.user;
       }).reduce((sList, s1) => {
         const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-        if (sIndex === -1) {
+        if (!s1.user._id || sIndex === -1) {
           sList.push(s1);
         } else if (s1.parent.updatedDate > (sList[sIndex].parent.updatedDate || 0)) {
           sList[sIndex] = s1;
