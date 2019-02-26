@@ -52,9 +52,9 @@
         <mat-list>
           <mat-list-item class="mat-list-item-word-wrap" *ngFor="let reference of achievements.references">
             <h4 mat-line>{{reference.name}}</h4>
-            <p mat-line>Relationship: {{reference.relationship}}</p>
-            <p mat-line>Phone Number: {{reference.phone}}</p>
-            <p mat-line>Email: {{reference.email}}</p>
+            <p mat-line><ng-container i18n>Relationship:</ng-container> {{reference.relationship}}</p>
+            <p mat-line><ng-container i18n>Phone Number:</ng-container> {{reference.phone}}</p>
+            <p mat-line><ng-container i18n>Email:</ng-container> {{reference.email}}</p>
           </mat-list-item>
         </mat-list>
       </div>
