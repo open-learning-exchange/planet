@@ -6,7 +6,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName + ' ' + user.lastName }}</span>
+    <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName + ' ' + user.middleName + ' ' + user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['/myAchievements/update']" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
@@ -16,7 +16,7 @@
   </mat-toolbar>
   <div class="view-container">
     <div *ngIf="achievements !== undefined" class="achievements-container">
-      <h2>{{user.firstName}} {{user.lastName}}</h2>
+      <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
       <div>
         <ng-container *ngIf="user.birthDate"><span i18n>Birthdate:</span>{{' ' + (user.birthDate | date: medium) + ' '}}</ng-container>
         <span *ngIf="user.birthplace" i18n>Birthplace:</span>{{' ' + user.birthplace}}
