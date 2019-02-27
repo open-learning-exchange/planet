@@ -6,7 +6,6 @@ import { LoginRouterModule } from './login-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { LoginFormComponent } from './login-form.component';
-import { LowercaseDirective } from '../shared/lowercase.directive';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
@@ -23,7 +22,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     SharedComponentsModule
   ],
   declarations: [
-    LoginComponent, LoginFormComponent, LowercaseDirective
+    LoginComponent, LoginFormComponent
   ],
   providers: [ ConfigurationGuard ]
 })
