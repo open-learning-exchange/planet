@@ -20,6 +20,7 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   redirectUrl = '/';
   openAchievementIndex = -1;
+  sortOrder = 'desc';
 
   constructor(
     private couchService: CouchService,
@@ -60,12 +61,24 @@ export class UsersAchievementsComponent implements OnInit {
         this.achievementNotFound = true;
       } else {
         this.achievements = achievements;
+        this.sortAchievements();
       }
     }, (error) => {
       if (error.status === 404) {
         this.achievementNotFound = true;
       } else {
         this.planetMessageService.showAlert('There was an error getting achievements');
+      }
+    });
+  }
+
+  sortAchievements() {
+    this.sortOrder = this.sortOrder === 'desc' ? 'asc' : 'desc';
+    this.achievements.achievements = this.achievements.achievements.sort((a, b) => {
+      if (this.sortOrder === 'desc') {
+        return (a.date && a.date > b.date) ? -1 : 1;
+      } else {
+        return (a.date > b.date || !a.date) ? 1 : -1;
       }
     });
   }
