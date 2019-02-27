@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { ConfigurationComponent } from './configuration.component';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
     imports: [
@@ -12,6 +13,7 @@ import { ConfigurationComponent } from './configuration.component';
         ReactiveFormsModule,
         PlanetFormsModule,
         MaterialModule,
+        SharedComponentsModule
     ],
     declarations: [
         ConfigurationComponent
