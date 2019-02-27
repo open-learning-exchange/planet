@@ -31,6 +31,10 @@
       <p *ngIf="resource?.publisher"><b i18n>Published by:</b>{{' ' + resource?.publisher + ' '}}
         <ng-container *ngIf="resource?.year"><span i18n>on</span>{{' ' + resource?.year}}</ng-container>
       </p>
+      <p *ngIf="resource?.tags?.length > 0">
+        <b i18n>Collections:</b>
+        <span *ngFor="let tag of resource.tagObjects; last as isLast"> {{ tag.name }}<span *ngIf ="!isLast">,</span></span>
+      </p>
       <p><b i18n>Level:</b>{{' ' + resource?.level?.join(', ')}}</p>
       <p *ngIf="resource?.medium"><b i18n>Media:</b>{{' ' + resource?.medium}}</p>
       <p *ngIf="resource?.language"><b i18n>Language:</b>{{' ' + resource?.language}}</p>
