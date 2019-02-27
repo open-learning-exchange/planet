@@ -32,8 +32,9 @@
             </mat-radio-button>
           </mat-radio-group>
           <div *ngSwitchCase="'selectMultiple'" class="question-list">
-            <span *ngIf="examType=='surveys'; else elseBlock" i18n class="small"> You can select multiple options </span>
-            <ng-template #elseBlock> <span i18n class="small">There are one or more correct answers </span></ng-template>
+            <span class="small" i18n>
+              {examType, select, surveys {You can choose one or more answers.} courses {There are one or more correct answers. Please choose all correct answers.}}
+            </span>
             <mat-checkbox *ngFor="let option of question.choices" [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
               {{option.text}}
             </mat-checkbox>
