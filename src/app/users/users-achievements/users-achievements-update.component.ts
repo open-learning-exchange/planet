@@ -127,7 +127,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       [
         { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name' },
         { 'type': 'textbox', 'name': 'relationship', 'placeholder': 'Relationship', 'required': false },
-        { 'type': 'textbox', 'name': 'phone', 'placeholder': 'Phone #', 'required': false },
+        { 'type': 'textbox', 'name': 'phone', 'placeholder': 'Phone Number', 'required': false },
         { 'type': 'textbox', 'name': 'email', 'placeholder': 'Email', 'required': false }
       ],
       this.fb.group({
