@@ -176,8 +176,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   openCourseDialog() {
+    const initialCourses = this.team.courses || [];
     this.dialogsLoadingService.start();
-    this.dialogsListService.attachDocsData('courses', 'courseTitle', this.linkCourses.bind(this), this.team.courses.map(({ _id }) => _id))
+    this.dialogsListService.attachDocsData('courses', 'courseTitle', this.linkCourses.bind(this), initialCourses.map(({ _id }) => _id))
     .pipe(takeUntil(this.onDestroy$)).subscribe((data) => {
       if (this.dialogRef === undefined || this.dialogRef.componentInstance === null) {
         this.openDialog(data);
