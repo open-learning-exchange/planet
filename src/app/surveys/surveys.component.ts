@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } from '@angular/material';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
@@ -88,23 +88,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendSurveyDialog(survey) {
-    forkJoin([
-      this.dialogsListService.getListAndColumns('_users'),
-      this.dialogsListService.getListAndColumns('child_users'),
-      this.couchService.findAll('communityregistrationrequests')
-    ]).pipe(takeUntil(this.onDestroy$)).subscribe(([ users, childUsers, children ]: any[]) => {
-      const userData = ({
-        tableData: [
-          ...users.tableData,
-          ...childUsers.tableData.filter(
-            (user: any) => {
-              const planet = children.find((child: any) => user.planetCode === child.code);
-              return planet && planet.registrationRequest !== 'pending';
-            }
-          )
-        ],
-        columns: [ ...childUsers.columns ]
-      });
+    this.getUserData(this.requestUsers()).subscribe((userData: {tableData: [], columns: []}) => {
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: {
           ...userData,
@@ -122,6 +106,29 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         autoFocus: false
       });
     });
+  }
+
+  requestUsers() {
+    return forkJoin([
+      this.dialogsListService.getListAndColumns('_users'),
+      this.dialogsListService.getListAndColumns('child_users'),
+      this.couchService.findAll('communityregistrationrequests')
+    ]);
+  }
+
+  getUserData(obs: any) {
+    return obs.pipe(switchMap(([ users, childUsers, children ]) => {
+      return of({
+        tableData: [
+          ...users.tableData,
+          ...childUsers.tableData.filter((user: any) => {
+            const planet = children.find((child: any) => user.planetCode === child.code);
+            return planet && planet.registrationRequest !== 'pending';
+          })
+        ],
+        columns: [ ...childUsers.columns ]
+      });
+    }));
   }
 
   sendSurvey(survey: any) {
