@@ -20,17 +20,4 @@ export class UsersAchievementsService {
     return (!achievement.purpose && !achievement.goals && !achievement.achievementsHeader
             && achievement.achievements.length === 0 && achievement.references.length === 0);
   }
-
-  sortAchievement(achievements, sortOrder = 'asc') {
-    return achievements.sort((a, b) => {
-      if (!a.date) {
-        return 1;
-      }
-      if (sortOrder === 'desc') {
-        return (a.date > b.date) ? -1 : 1;
-      } else {
-        return (a.date < b.date || !b.date) ? -1 : 1;
-      }
-    });
-  }
 }

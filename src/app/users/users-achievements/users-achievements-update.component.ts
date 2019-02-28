@@ -80,7 +80,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       references: this.fb.array([]),
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
-      sendToNation: false
+      sendToNation: false,
+      dateSortOrder: 'none'
     });
   }
 
@@ -160,9 +161,31 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       formArray.setControl(index, value);
     }
     if (value.contains('date')) {
-      formArray.setValue(this.usersAchievementsService.sortAchievement(formArray.value));
+      formArray.setValue(this.sortDate(formArray.value, this.editForm.controls.dateSortOrder.value || 'none'));
     }
     this.editForm.updateValueAndValidity();
+  }
+
+  sortAchievements() {
+    const sort = { asc: 'desc', desc: 'none', none: 'asc' }[this.editForm.controls.dateSortOrder.value || 'none'];
+    this.editForm.controls.dateSortOrder.setValue(sort);
+    this.achievements.setValue(this.sortDate(this.achievements.value, sort));
+  }
+
+  sortDate(achievements, sortOrder = 'none') {
+    if (sortOrder === 'none') {
+      return achievements;
+    }
+    return achievements.sort((a, b) => {
+      if (!a.date) {
+        return 1;
+      }
+      if (sortOrder === 'desc') {
+        return (a.date > b.date) ? -1 : 1;
+      } else {
+        return (a.date < b.date || !b.date) ? -1 : 1;
+      }
+    });
   }
 
   onSubmit() {

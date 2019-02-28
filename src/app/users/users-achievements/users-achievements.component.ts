@@ -20,7 +20,6 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   redirectUrl = '/';
   openAchievementIndex = -1;
-  sortOrder = 'desc';
 
   constructor(
     private couchService: CouchService,
@@ -61,7 +60,6 @@ export class UsersAchievementsComponent implements OnInit {
         this.achievementNotFound = true;
       } else {
         this.achievements = achievements;
-        this.sortAchievements();
       }
     }, (error) => {
       if (error.status === 404) {
@@ -70,11 +68,6 @@ export class UsersAchievementsComponent implements OnInit {
         this.planetMessageService.showAlert('There was an error getting achievements');
       }
     });
-  }
-
-  sortAchievements() {
-    this.sortOrder = this.sortOrder === 'desc' ? 'asc' : 'desc';
-    this.achievements.achievements = this.usersAchievementsService.sortAchievement(this.achievements.achievements, this.sortOrder);
   }
 
   initUser(name, planetCode) {
