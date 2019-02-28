@@ -51,12 +51,7 @@ export class DialogsListService {
   getListAndColumns(db: string, selector?: any, planetField: string = 'local') {
     selector = selector || this.defaultSelectorFunctions()[db];
     if (db === '_users') {
-      return this.couchService.findAll('_users', findDocuments({
-        '$or': [
-          { 'isUserAdmin': true },
-          { 'roles': { '$in': [ 'learner', 'leader', 'manager' ] } }
-        ]
-      }, this.userService.userProperties))
+      return this.couchService.findAll('_users', findDocuments({}, this.userService.userProperties))
         .pipe(map((newData) => ({ tableData: this.filterResults(newData, selector), columns: listColumns[db] })));
     }
     return this.stateService.getCouchState(db, planetField).pipe(
