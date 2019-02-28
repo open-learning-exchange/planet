@@ -90,15 +90,21 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   openSendSurveyDialog(survey) {
     forkJoin([
       this.dialogsListService.getListAndColumns('_users'),
-      this.dialogsListService.getListAndColumns('child_users')
-    ]).pipe(takeUntil(this.onDestroy$)).subscribe(responses => {
-      const response = responses.reduce(
-        (fullArray, array) => ({ tableData: [ ...fullArray.tableData, ...array.tableData ], columns: [ ...array.columns ] }),
-        { tableData: [], columns: [] }
-      );
+      this.dialogsListService.getListAndColumns('child_users'),
+      this.couchService.findAll('communityregistrationrequests')
+    ]).pipe(takeUntil(this.onDestroy$)).subscribe(([ users, childUsers, children ]: any[]) => {
+      const userData = ({
+        tableData: [
+          ...users.tableData,
+          ...childUsers.tableData.filter(
+            (user: any) => children.find((child: any) => user.planetCode === child.code).registrationRequest !== 'pending'
+          )
+        ],
+        columns: [ ...childUsers.columns ]
+      });
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: {
-          ...response,
+          ...userData,
           allowMulti: true,
           itemDescription: 'members',
           nameProperty: 'name',
