@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import * as jsPDF from 'jspdf';
+import * as showdown from 'showdown';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -88,6 +90,24 @@ export class UsersAchievementsComponent implements OnInit {
   isClickable(achievement) {
     return (achievement.resources.length > 0
             || achievement.description.length > 0);
+  }
+
+  exportPdf() {
+    const pdf = new jsPDF();
+    const achievements = this.achievements;
+    const user = this.user;
+    this.markdownToHtml('#' + user.firstName + (' ' + user.middleName + ' ').replace(/\s+/g, ' ') + user.lastName);
+    pdf.fromHTML(
+      this.markdownToHtml('#' + user.firstName + (' ' + user.middleName + ' ').replace(/\s+/g, ' ') + user.lastName) +
+      this.markdownToHtml('## My Purpose') +
+      this.markdownToHtml(achievements.purpose)
+    );
+    pdf.save(user.firstName + '_' + user.lastName + '_achievements.pdf');
+  }
+
+  markdownToHtml(markdown) {
+    const converter = new showdown.Converter();
+    return converter.makeHtml(markdown);
   }
 
 }
