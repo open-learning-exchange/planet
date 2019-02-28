@@ -14,7 +14,7 @@ RUN apk add --update \
     python \
     build-base \
     jq
-RUN npm i --silent
+RUN npm i
 RUN ./compile_planet.sh
 RUN cat package.json | jq -r .version > dist/version
 RUN ./create_version_json.sh
