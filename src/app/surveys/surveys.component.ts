@@ -97,7 +97,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         tableData: [
           ...users.tableData,
           ...childUsers.tableData.filter(
-            (user: any) => children.find((child: any) => user.planetCode === child.code).registrationRequest !== 'pending'
+            (user: any) => {
+              const planet = children.find((child: any) => user.planetCode === child.code);
+              return planet && planet.registrationRequest !== 'pending';
+            }
           )
         ],
         columns: [ ...childUsers.columns ]
