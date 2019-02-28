@@ -159,6 +159,9 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     } else {
       formArray.setControl(index, value);
     }
+    if (value.contains('date')) {
+      formArray.setValue(this.usersAchievementsService.sortAchievement(formArray.value));
+    }
     this.editForm.updateValueAndValidity();
   }
 

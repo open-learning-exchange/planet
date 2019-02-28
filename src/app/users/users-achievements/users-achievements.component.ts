@@ -74,13 +74,7 @@ export class UsersAchievementsComponent implements OnInit {
 
   sortAchievements() {
     this.sortOrder = this.sortOrder === 'desc' ? 'asc' : 'desc';
-    this.achievements.achievements = this.achievements.achievements.sort((a, b) => {
-      if (this.sortOrder === 'desc') {
-        return (a.date && a.date > b.date) ? -1 : 1;
-      } else {
-        return (a.date > b.date || !a.date) ? 1 : -1;
-      }
-    });
+    this.achievements.achievements = this.usersAchievementsService.sortAchievement(this.achievements.achievements, this.sortOrder);
   }
 
   initUser(name, planetCode) {
