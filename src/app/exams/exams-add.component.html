@@ -9,7 +9,6 @@
     {{pageType}}
     <ng-container i18n>{examType, select, courses {Exam} surveys {Survey}}</ng-container>
     <span class="toolbar-fill"></span>
-    <button mat-raised-button color="accent" (click)="addQuestion()" i18n>Add Question</button>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
