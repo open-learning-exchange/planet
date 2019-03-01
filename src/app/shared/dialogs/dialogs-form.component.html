@@ -61,9 +61,13 @@
 
     </div>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions *ngIf="title !== 'Rating'">
     <span i18n class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
     <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isDirty()" i18n>Submit</button>
     <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
+  </mat-dialog-actions>
+
+  <mat-dialog-actions *ngIf="title === 'Rating'">
+    <button type="submit" [planetSubmit]="isSpinnerOk" color="primary" mat-raised-button i18n>OK</button>
   </mat-dialog-actions>
 </form>
