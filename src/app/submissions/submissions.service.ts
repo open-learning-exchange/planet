@@ -91,6 +91,9 @@ export class SubmissionsService {
     const oldAnswer = submission.answers[index];
     submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
     const nextQuestion = this.nextQuestion(submission, index, 'passed');
+    if (submission.answers.findIndex(submission.answer => submission.answer.grade === undefined) === -1) {
+      submission.status = 'graded';
+    }
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
