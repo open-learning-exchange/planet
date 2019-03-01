@@ -72,6 +72,7 @@ export class UserService {
           const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
           this.credentials = { derived_key, iterations, password_scheme, salt };
           this.user = profile;
+          this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
