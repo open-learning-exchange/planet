@@ -28,7 +28,9 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
+  displayedColumns = this.route.snapshot.data.mySurveys === true ?
+                    [ 'name', 'status', 'lastUpdateTime' ] :
+                    [ 'name', 'status', 'user', 'lastUpdateTime' ];
   mode = 'grade';
   emptyData = false;
   filter = {
