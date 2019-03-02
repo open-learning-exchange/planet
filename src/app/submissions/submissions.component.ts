@@ -28,9 +28,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns = this.route.snapshot.data.mySurveys === true ?
-                    [ 'name', 'status', 'lastUpdateTime' ] :
-                    [ 'name', 'status', 'user', 'lastUpdateTime' ];
+  displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
   mode = 'grade';
   emptyData = false;
   filter = {
@@ -53,6 +51,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.mode === 'survey') {
       this.filter['type'] = 'survey';
       query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
+      this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
