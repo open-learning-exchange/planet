@@ -16,7 +16,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
     .mat-column-name {
       max-width: 25vw;
     }
-    mat-row {
+    .mat-row-pointer {
       cursor: pointer;
     }
   ` ]

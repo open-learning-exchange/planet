@@ -52,7 +52,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'mat-row-pointer': row.status=='complete'}"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
