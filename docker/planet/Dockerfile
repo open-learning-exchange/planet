@@ -13,7 +13,8 @@ COPY . .
 RUN apk add --update \
     python \
     build-base \
-    jq
+    jq \
+    git
 RUN echo $PATH
 RUN npm i
 RUN ./compile_planet.sh
