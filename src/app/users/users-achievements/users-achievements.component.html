@@ -16,7 +16,7 @@
     </a>
   </mat-toolbar>
   <div class="view-container">
-    <div *ngIf="achievements !== undefined" class="achievements-container">
+    <div *ngIf="achievements !== undefined" class="achievements-container" #achievementBlock>
       <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
       <div>
         <ng-container *ngIf="user.birthDate"><span i18n>Birthdate:</span>{{' ' + (user.birthDate | date: medium) + ' '}}</ng-container>
