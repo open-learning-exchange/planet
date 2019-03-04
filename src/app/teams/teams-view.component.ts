@@ -12,6 +12,7 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { addToArray } from '../shared/utils';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -39,7 +40,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -118,6 +120,15 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  openDialog(data) {
+    this.dialogRef = this.dialog.open(DialogsListComponent, {
+      data,
+      height: '500px',
+      width: '600px',
+      autoFocus: false
+    });
+  }
+
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
       res.tableData = res.tableData.filter((user: any) => this.members.findIndex((member) => member.name === user.name) === -1);
@@ -129,12 +140,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         nameProperty: 'name',
         ...res
       };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        height: '500px',
-        width: '600px',
-        autoFocus: false
-      });
+      this.openDialog(data);
     });
   }
 
@@ -169,6 +175,25 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   sendNotifications(type, newMembersLength = 0) {
     return this.teamsService.sendNotifications(type, this.members, {
       newMembersLength, url: this.router.url, team: { ...this.team }
+    });
+  }
+
+  openCourseDialog() {
+    const initialCourses = this.team.courses || [];
+    this.dialogsLoadingService.start();
+    this.dialogsListService.attachDocsData('courses', 'courseTitle', this.linkCourses.bind(this), initialCourses.map(({ _id }) => _id))
+    .pipe(takeUntil(this.onDestroy$)).subscribe((data) => {
+      if (this.dialogRef === undefined || this.dialogRef.componentInstance === null) {
+        this.openDialog(data);
+      }
+      this.dialogsLoadingService.stop();
+    });
+  }
+
+  linkCourses(courses) {
+    this.teamsService.updateTeam({ ...this.team, courses }).subscribe((updatedTeam) => {
+      this.team = updatedTeam;
+      this.dialogRef.close();
     });
   }
 
