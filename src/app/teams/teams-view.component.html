@@ -54,7 +54,8 @@
         <ng-template #requestedList>
           <ul class="request-list">
             <li *ngFor="let course of team?.courses">
-              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
+              <a [routerLink]="'/courses/view/' + course._id">{{course.doc.courseTitle}}</a>
+              <p class="mat-caption"><ng-container i18n>Leader:</ng-container> {{course.leader.name}}</p>
             </li>
           </ul>
         </ng-template>

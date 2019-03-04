@@ -190,7 +190,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  linkCourses(courses) {
+  linkCourses(courseDocs) {
+    const courses = courseDocs.map(doc => ({ _id: doc._id, doc, leader: this.user }));
     this.teamsService.updateTeam({ ...this.team, courses }).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.dialogRef.close();
