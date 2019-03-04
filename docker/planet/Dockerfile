@@ -14,7 +14,6 @@ RUN apk add --update \
     python \
     build-base \
     jq
-RUN which git
 RUN echo $PATH
 RUN npm i
 RUN ./compile_planet.sh
