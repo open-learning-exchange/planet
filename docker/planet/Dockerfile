@@ -15,7 +15,6 @@ RUN apk add --update \
     build-base \
     jq \
     git
-RUN which git
 RUN npm i --silent
 RUN ./compile_planet.sh
 RUN cat package.json | jq -r .version > dist/version
