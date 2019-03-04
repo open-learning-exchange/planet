@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import * as jsPDF from 'jspdf';
 import * as showdown from 'showdown';
@@ -22,6 +22,7 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   redirectUrl = '/';
   openAchievementIndex = -1;
+  @ViewChild('achievementBlock') achievementBlockElem: ElementRef;
 
   constructor(
     private couchService: CouchService,
@@ -94,14 +95,10 @@ export class UsersAchievementsComponent implements OnInit {
 
   exportPdf() {
     const pdf = new jsPDF();
-    const achievements = this.achievements;
     const user = this.user;
-    this.markdownToHtml('#' + user.firstName + (' ' + user.middleName + ' ').replace(/\s+/g, ' ') + user.lastName);
     pdf.fromHTML(
-      this.markdownToHtml('#' + user.firstName + (' ' + user.middleName + ' ').replace(/\s+/g, ' ') + user.lastName) +
-      this.markdownToHtml('## My Purpose') +
-      this.markdownToHtml(achievements.purpose)
-    );
+      this.achievementBlockElem.nativeElement.innerHTML
+    ).setFont('Times');
     pdf.save(user.firstName + '_' + user.lastName + '_achievements.pdf');
   }
 
