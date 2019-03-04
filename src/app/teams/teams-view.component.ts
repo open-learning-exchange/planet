@@ -190,12 +190,36 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  linkCourses(courseDocs) {
-    const courses = courseDocs.map(doc => ({ _id: doc._id, doc, leader: this.user }));
+  updateTeamCourses(courses) {
     this.teamsService.updateTeam({ ...this.team, courses }).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.dialogRef.close();
     });
+  }
+
+  linkCourses(courseDocs) {
+    const courses = courseDocs.map(doc => ({ _id: doc._id, doc, leader: this.user }));
+    this.updateTeamCourses(courses);
+  }
+
+  changeCourseLeaderClick(course) {
+    this.openDialog({
+      okClick: this.changeCourseLeader(course),
+      itemDescription: '_users',
+      nameProperty: 'name',
+      selectionOptional: false,
+      allowMulti: false,
+      initialSelection: [ course.leader._id ],
+      tableData: this.members,
+      columns: [ 'name' ]
+    });
+  }
+
+  changeCourseLeader(course) {
+    return ([ user ]) => {
+      const courses = this.team.courses.map((crs: any) => crs._id === course._id ? { ...course, leader: user } : crs);
+      this.updateTeamCourses(courses);
+    };
   }
 
 }
