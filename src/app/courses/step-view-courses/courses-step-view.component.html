@@ -3,38 +3,40 @@
   <span i18n>Course</span>
 </mat-toolbar>
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-      <span class="margin-lr-3"><h3><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3></span>
+  <mat-toolbar class="primary-color font-size-1 title-header">
+    <span class="margin-lr-3 title"><h3><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3></span>
     <span class="toolbar-fill"></span>
-    <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
-    <a
-      mat-raised-button
-      color="accent"
-      class="margin-lr-10"
-      *ngIf="stepDetail?.exam?.questions.length && showExamButton"
-      (click)="goToExam()">
-      {{isExamInProgress ? "Take Exam" : "Continue Exam"}}
-    </a>
-    <a
-      mat-raised-button
-      color="accent"
-      class="margin-lr-10"
-      *ngIf="resource"
-      [href]="resourceUrl"
-      target="_blank"
-      i18n>
-      Open resource new tab
-    </a>
-    <mat-form-field *ngIf="stepDetail.resources.length > 1">
-      <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (selectionChange)="onResourceChange($event.value)">
-        <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail.resources; index as i" [value]="resource">
-          {{ resource.title }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <span i18n>{{stepNum}}/{{maxStep}}</span>
-    <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
+    <div>
+      <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
+      <a
+        mat-raised-button
+        color="accent"
+        class="margin-lr-10"
+        *ngIf="stepDetail?.exam?.questions.length && showExamButton"
+        (click)="goToExam()">
+        {{isExamInProgress ? "Take Exam" : "Continue Exam"}}
+      </a>
+      <a
+        mat-raised-button
+        color="accent"
+        class="margin-lr-10"
+        *ngIf="resource"
+        [href]="resourceUrl"
+        target="_blank"
+        i18n>
+        Open resource new tab
+      </a>
+      <mat-form-field *ngIf="stepDetail.resources.length > 1">
+        <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (selectionChange)="onResourceChange($event.value)">
+          <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail.resources; index as i" [value]="resource">
+            {{ resource.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <span i18n>{{stepNum}}/{{maxStep}}</span>
+      <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
+      <button mat-icon-button [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
+    </div>
   </mat-toolbar>
   <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
     <td-markdown *ngIf="stepDetail?.description" class="description" [content]="stepDetail.description"></td-markdown>

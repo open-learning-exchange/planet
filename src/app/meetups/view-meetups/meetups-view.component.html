@@ -3,18 +3,20 @@
   <span i18n>Meetup</span>
 </mat-toolbar>
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3"><h3>{{meetupDetail.title}}</h3></span>
+  <mat-toolbar class="primary-color font-size-1 title-header">
+    <span class="margin-lr-3 title"><h3>{{meetupDetail.title}}</h3></span>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="!parent">
-      <button mat-stroked-button class="margin-lr-3" (click)="openInviteMemberDialog()">
-        <span i18n>Invite Member</span>
-      </button>
-      <button mat-raised-button color="accent" class="margin-lr-3" (click)="joinMeetup()">
-        <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
-        <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
-      </button>
-    </ng-container>
+    <div>
+      <ng-container *ngIf="!parent">
+        <button mat-stroked-button class="margin-lr-3" (click)="openInviteMemberDialog()">
+          <span i18n>Invite Member</span>
+        </button>
+        <button mat-raised-button color="accent" class="margin-lr-3" (click)="joinMeetup()">
+          <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
+          <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
+        </button>
+      </ng-container>
+    </div>
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">

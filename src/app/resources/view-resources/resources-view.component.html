@@ -4,24 +4,26 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3">{{resource?.title}}</span>
+  <mat-toolbar class="primary-color font-size-1 title-header">
+    <span class="margin-lr-3 title">{{resource?.title}}</span>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="!parent">
-      <a mat-raised-button *ngIf="resource._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
-      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
-        Add to myLibrary
-      </button>
-      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
-        Remove from myLibrary
-      </button>
-    </ng-container>
-    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.isDownloadable">
-      <mat-icon>file_download</mat-icon>
-    </a>
+    <div>
+      <ng-container *ngIf="!parent">
+        <a mat-raised-button *ngIf="resource._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
+        <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
+          Add to myLibrary
+        </button>
+        <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
+          Remove from myLibrary
+        </button>
+      </ng-container>
+      <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.isDownloadable">
+        <mat-icon>file_download</mat-icon>
+      </a>
+    </div>
   </mat-toolbar>
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
