@@ -91,9 +91,6 @@ export class SubmissionsService {
     const oldAnswer = submission.answers[index];
     submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
     const nextQuestion = this.nextQuestion(submission, index, 'passed');
-    if (submission.answers.findIndex(ans => ans.grade === undefined) === -1) {
-      submission.status = 'graded';
-    }
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
@@ -127,7 +124,7 @@ export class SubmissionsService {
 
   updateStatus(submission: any) {
     if (submission.type === 'exam' && submission.status === 'pending') {
-      return 'requires grading';
+      return submission.answers.findIndex(ans => ans.grade === undefined) === -1 ? 'complete' : 'requires grading';
     }
     return 'complete';
   }
