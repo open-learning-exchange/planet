@@ -15,7 +15,7 @@ export class ExamsService {
     const choices = (initialValue && initialValue.choices) || [];
     return this.setInitalFormValue(this.fb.group(Object.assign(
       {
-        title: '',
+        title: [ '', CustomValidators.maxLength(70) ],
         body: [ '', CustomValidators.required ],
         type: 'input',
         correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
