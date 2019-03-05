@@ -31,12 +31,10 @@
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <mat-chip-list *ngIf="this.filter.type === 'exam' && element.status === 'complete'"><mat-chip selected color="accent" i18n>complete</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="this.filter.type === 'survey' && element.status === 'complete'"><mat-chip selected il8n>complete</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="element.status ==='graded'"><mat-chip selected i18n>graded</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="element.status==='pending'"><mat-chip i18n>pending</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="element.status==='requires grading'"><mat-chip selected color="accent" i18n>requires grading</mat-chip></mat-chip-list> 
+        <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
+          <mat-chip-list *ngSwitchCase="'pending'"><mat-chip i18n>pending</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchDefault><mat-chip selected color="primary" i18n>complete</mat-chip></mat-chip-list>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
