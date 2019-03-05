@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,17 +12,18 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
   styleUrls: [ 'users-achievements-update.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class UsersAchievementsUpdateComponent implements OnInit {
+export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   user = this.userService.get();
   configuration = this.stateService.configuration;
@@ -30,6 +31,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   readonly dbName = 'achievements';
   editForm: FormGroup;
   profileForm: FormGroup;
+  private onDestroy$ = new Subject<void>();
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
@@ -47,7 +49,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private usersAchievementsService: UsersAchievementsService,
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private planetStepListService: PlanetStepListService
   ) {
     this.createForm();
     this.createProfileForm();
@@ -69,6 +72,14 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     }, (error) => {
       console.log(error);
     });
+    this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
+      () => this.editForm.controls.dateSortOrder.setValue('none')
+    );
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   createForm() {
@@ -170,7 +181,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   }
 
   sortAchievements() {
-    const sort = { asc: 'desc', desc: 'none', none: 'asc' }[this.editForm.controls.dateSortOrder.value || 'none'];
+    const sort = this.editForm.controls.dateSortOrder.value === 'asc' ? 'desc' : 'asc';
     this.editForm.controls.dateSortOrder.setValue(sort);
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
   }
