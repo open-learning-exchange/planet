@@ -24,8 +24,6 @@ import { StateService } from '../shared/state.service';
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isUserAdmin = false;
-  displayDashboard = true;
-  message = '';
   planetConfiguration = this.stateService.configuration;
   planetType = this.planetConfiguration.planetType;
   showResendConfiguration = false;
@@ -60,11 +58,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.checkRequestStatus();
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    if (!this.isUserAdmin) {
-      // A non-admin user cannot receive all user docs
-      this.displayDashboard = false;
-      this.message = 'Access restricted to admins';
-    } else if (this.planetType !== 'center') {
+    if (this.planetType !== 'center') {
       const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
       this.getVersion({ domain: this.planetConfiguration.parentDomain, ...opts })
