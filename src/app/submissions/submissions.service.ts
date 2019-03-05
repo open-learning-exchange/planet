@@ -123,11 +123,10 @@ export class SubmissionsService {
   }
 
   updateStatus(submission: any) {
-    if (submission.type === 'survey' && submission.status === 'complete') {
-      return 'complete';
+    if (submission.type === 'exam' && submission.status === 'pending') {
+      return 'requires grading';
     }
-    const statusProgression = new Map([ [ 'pending', 'complete' ], [ 'complete', 'graded' ] ]);
-    return statusProgression.get(submission.status) || 'graded';
+    return 'complete';
   }
 
   calcTotalGrade(submission: any) {
