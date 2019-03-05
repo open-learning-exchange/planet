@@ -233,8 +233,8 @@ export class CustomValidators {
     return (ac: AbstractControl): ValidationErrors => {
       const length: number = ac.value ? ac.value.length : 0;
       return (
-        length > maxLength 
-        ? { 'maxLength': { 'requiredLength': maxLength, 'actualLength': length } } 
+        length > maxLength
+        ? { 'maxLength': { 'requiredLength': maxLength, 'actualLength': length } }
         : null);
     };
   }
