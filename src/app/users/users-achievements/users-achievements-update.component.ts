@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,17 +12,18 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
   styleUrls: [ 'users-achievements-update.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class UsersAchievementsUpdateComponent implements OnInit {
+export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   user = this.userService.get();
   configuration = this.stateService.configuration;
@@ -30,6 +31,7 @@ export class UsersAchievementsUpdateComponent implements OnInit {
   readonly dbName = 'achievements';
   editForm: FormGroup;
   profileForm: FormGroup;
+  private onDestroy$ = new Subject<void>();
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
@@ -47,7 +49,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     private usersAchievementsService: UsersAchievementsService,
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private planetStepListService: PlanetStepListService
   ) {
     this.createForm();
     this.createProfileForm();
@@ -69,6 +72,14 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     }, (error) => {
       console.log(error);
     });
+    this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
+      () => this.editForm.controls.dateSortOrder.setValue('none')
+    );
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   createForm() {
@@ -80,7 +91,8 @@ export class UsersAchievementsUpdateComponent implements OnInit {
       references: this.fb.array([]),
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
-      sendToNation: false
+      sendToNation: false,
+      dateSortOrder: 'none'
     });
   }
 
@@ -117,7 +129,10 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         description: [ achievement.description ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
-      { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
+      { onSubmit: (formValue, formGroup) => {
+        formGroup.controls.date.setValue(formGroup.controls.date.value && formGroup.controls.date.value.toJSON());
+        this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
+      }, closeOnSubmit: true }
     );
   }
 
@@ -159,7 +174,29 @@ export class UsersAchievementsUpdateComponent implements OnInit {
     } else {
       formArray.setControl(index, value);
     }
+    if (value.contains('date')) {
+      formArray.setValue(this.sortDate(formArray.value, this.editForm.controls.dateSortOrder.value || 'none'));
+    }
     this.editForm.updateValueAndValidity();
+  }
+
+  sortAchievements() {
+    const sort = this.editForm.controls.dateSortOrder.value === 'asc' ? 'desc' : 'asc';
+    this.editForm.controls.dateSortOrder.setValue(sort);
+    this.achievements.setValue(this.sortDate(this.achievements.value, sort));
+  }
+
+  sortDate(achievements, sortOrder = 'none') {
+    if (sortOrder === 'none') {
+      return achievements;
+    }
+    return achievements.sort((a, b) => {
+      if (!a.date) {
+        return 1;
+      }
+      const order = sortOrder === 'desc' ? 1 : -1;
+      return (a.date < b.date || !b.date) ? order * 1 : order * -1;
+    });
   }
 
   onSubmit() {
