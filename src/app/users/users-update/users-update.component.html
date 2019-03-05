@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <planet-back></planet-back>
   <ng-container [ngSwitch]="submissionMode">
     <span *ngSwitchCase="true" i18n>Survey Profile</span>
     <span *ngSwitchCase="false" i18n>Edit Member Profile</span>

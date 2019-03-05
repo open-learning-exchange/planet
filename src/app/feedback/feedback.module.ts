@@ -7,6 +7,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { FeedbackViewComponent } from './feedback-view.component';
 import { FeedbackComponent } from './feedback.component';
 import { FeedbackRouterModule } from './feedback-router.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { FeedbackRouterModule } from './feedback-router.module';
     FeedbackRouterModule,
     MaterialModule,
     HttpClientModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
+    SharedComponentsModule
   ],
   declarations: [ FeedbackComponent, FeedbackViewComponent ]
 })

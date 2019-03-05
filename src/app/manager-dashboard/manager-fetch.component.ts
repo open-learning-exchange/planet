@@ -70,10 +70,6 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
     }
   }
 
-  goBack() {
-    this.router.navigate([ '/manager' ]);
-  }
-
   getPushedItem() {
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
     const replicators = this.syncService.createReplicatorsArray(itemsToPull, 'pull', []);

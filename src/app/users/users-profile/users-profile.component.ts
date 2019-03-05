@@ -71,13 +71,4 @@ export class UsersProfileComponent implements OnInit {
     });
   }
 
-  goBack() {
-    const currentUser = this.userService.get();
-    if (currentUser.isUserAdmin) {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
-    } else {
-      this.router.navigate([ '/' ]);
-    }
-  }
-
 }

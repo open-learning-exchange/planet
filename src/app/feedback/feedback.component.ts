@@ -140,14 +140,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedbackService.openFeedback(feedback).subscribe(() => this.getFeedback());
   }
 
-  goBack() {
-    if (this.userService.get().isUserAdmin) {
-      this.router.navigate([ '/manager' ]);
-    } else {
-      this.router.navigate([ '/' ]);
-    }
-  }
-
   onFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty

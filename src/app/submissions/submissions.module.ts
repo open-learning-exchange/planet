@@ -9,6 +9,7 @@ import { MaterialModule } from '../shared/material.module';
 import { SubmissionsComponent } from './submissions.component';
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { ExamsModule } from '../exams/exams.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 const routes: Routes = [
   { path: '', component: SubmissionsComponent },
@@ -30,7 +31,8 @@ export class SubmissionsRouterModule {}
     PlanetDialogsModule,
     MaterialModule,
     ExamsModule,
-    SubmissionsRouterModule
+    SubmissionsRouterModule,
+    SharedComponentsModule
   ],
   declarations: [
     SubmissionsComponent

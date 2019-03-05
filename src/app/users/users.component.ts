@@ -300,13 +300,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.couchService.delete('tablet_users/' + user._id + '?rev=' + user._rev);
   }
 
-  back() {
-    // relative path for /users and /team/users based on depth
-    const userUrl = this.router.url.split('/');
-    const path = userUrl[1] === 'users' ? '../' : '../../';
-    this.router.navigate([ path ], { relativeTo: this.route });
-  }
-
   updateSelectedRoles(newSelection: string[]) {
     this.selectedRoles = newSelection;
   }

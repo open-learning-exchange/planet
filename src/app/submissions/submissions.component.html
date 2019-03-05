@@ -1,8 +1,6 @@
 
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
+  <planet-back></planet-back>
   <span i18n>{mode, select, survey {Surveys} grade {Submissions}}</span>
   <span class="toolbar-fill"></span>
   <mat-button-toggle-group *ngIf="this.mode !== 'survey'"

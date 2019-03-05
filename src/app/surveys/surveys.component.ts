@@ -82,10 +82,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.couchService.findAll('submissions', { 'selector': { 'type': 'survey' } });
   }
 
-  goBack() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
-  }
-
   routeToEditSurvey(route, id = '') {
     this.router.navigate([ route + '/' + id, { 'type': 'surveys' } ], { relativeTo: this.route });
   }

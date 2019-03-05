@@ -113,10 +113,6 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     return dropdownsFill(this.filter);
   }
 
-  goBack() {
-    this.router.navigate([ '/' ]);
-  }
-
   submissionAction(submission) {
     if (submission.status !== 'pending' || this.mode === 'survey') {
       this.router.navigate([

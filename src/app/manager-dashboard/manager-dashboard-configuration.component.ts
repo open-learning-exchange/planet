@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   template: `
     <mat-toolbar>
-      <a mat-icon-button i18n routerLink="/manager"><mat-icon>arrow_back</mat-icon></a>
+      <planet-back></planet-back>
       <span i18n>Planet Configuration</span>
     </mat-toolbar>
     <planet-configuration></planet-configuration>

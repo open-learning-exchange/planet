@@ -5,13 +5,15 @@ import { MaterialModule } from '../shared/material.module';
 import { TeamsComponent } from './teams.component';
 import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
     TeamsRouterModule,
     CommonModule,
     MaterialModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
+    SharedComponentsModule
   ],
   declarations: [
     TeamsComponent,

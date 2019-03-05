@@ -246,10 +246,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
-  }
-
   libraryToggle(resourceIds, type) {
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
       this.countSelectedNotAdded(this.selection.selected);

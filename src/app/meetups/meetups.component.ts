@@ -182,10 +182,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
-  }
-
   meetupsToggle(meetupIds, type) {
     this.meetupService.attendMeetups(meetupIds, type).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
