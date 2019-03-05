@@ -96,10 +96,6 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     return Math.max(...chartData.map(set => set.items.length));
   }
 
-  navigateBack() {
-    this.router.navigate([ '/courses' ]);
-  }
-
   changeData(event) {}
 
 }

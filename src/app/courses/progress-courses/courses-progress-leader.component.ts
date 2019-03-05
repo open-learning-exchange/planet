@@ -72,10 +72,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.submissionsService.updateSubmissions({ parentId: this.course._id });
   }
 
-  navigateBack() {
-    this.router.navigate([ '/courses' ]);
-  }
-
   arraySubmissionAnswers(submission: any) {
     return submission.answers.map(a => ({ number: this.answerErrorCount(a), fill: true })).reverse();
   }

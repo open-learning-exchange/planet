@@ -227,10 +227,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
-  }
-
   enrollLeaveToggle(courseIds, type) {
     this.coursesService.courseAdmissionMany(courseIds.filter(id => this.hasSteps(id)), type).subscribe((res) => {
       this.countSelectNotEnrolled(this.selection.selected);
