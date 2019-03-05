@@ -3,8 +3,7 @@ import { Location } from '@angular/common';
 
 @Component({
   selector: 'planet-back',
-  templateUrl: './back.component.html',
-  styleUrls: [ './back.component.scss' ],
+  template: `<a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>`,
 })
 
 export class BackComponent {
