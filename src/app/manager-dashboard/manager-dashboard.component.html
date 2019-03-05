@@ -5,26 +5,24 @@
   <span i18n>Manager Settings</span>
 </mat-toolbar>
 <div class="space-container">
-  <div *ngIf="displayDashboard">
-    <span *ngIf="planetType !== 'community'">
-      <a routerLink="/requests" i18n mat-raised-button *planetAuthorizedRoles="'manager'">{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
-      <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
-    </span>
-    <ng-container *planetAuthorizedRoles="'manager'">
-      <button *ngIf="planetType !== center && showResendConfiguration"
-        (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-      <button *ngIf="devMode"
-        (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
-      <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
-      <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
-      <a routerLink="fetch" mat-raised-button *ngIf="fetchItemCount > 0"><span i18n>Fetch Items</span>{{ ' (' + fetchItemCount + ')' }}</a>
-      <ng-container *ngIf="requestStatus === 'accepted'">
-        <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
-        <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
-      </ng-container>
+  <span *ngIf="planetType !== 'community'">
+    <a routerLink="/requests" i18n mat-raised-button *planetAuthorizedRoles="'manager'">{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
+    <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
+  </span>
+  <ng-container *planetAuthorizedRoles="'manager'">
+    <button *ngIf="planetType !== center && showResendConfiguration"
+      (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
+    <button *ngIf="devMode"
+      (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
+    <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
+    <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
+    <a routerLink="fetch" mat-raised-button *ngIf="fetchItemCount > 0"><span i18n>Fetch Items</span>{{ ' (' + fetchItemCount + ')' }}</a>
+    <ng-container *ngIf="requestStatus === 'accepted'">
+      <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
+      <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
-    <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
-  </div>
+  </ng-container>
+  <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
   <ng-container *planetAuthorizedRoles="'manager'">
     <div *ngIf="pendingPushCount > 0">
       <p>
