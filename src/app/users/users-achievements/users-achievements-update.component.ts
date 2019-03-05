@@ -130,7 +130,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
-        formGroup.controls.date.setValue(formGroup.controls.date.value.toJSON());
+        formGroup.controls.date.setValue(formGroup.controls.date.value && formGroup.controls.date.value.toJSON());
         this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
       }, closeOnSubmit: true }
     );
@@ -194,11 +194,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       if (!a.date) {
         return 1;
       }
-      if (sortOrder === 'desc') {
-        return (a.date > b.date) ? -1 : 1;
-      } else {
-        return (a.date < b.date || !b.date) ? -1 : 1;
-      }
+      const order = sortOrder === 'desc' ? 1 : -1;
+      return (a.date < b.date || !b.date) ? order * 1 : order * -1;
     });
   }
 
