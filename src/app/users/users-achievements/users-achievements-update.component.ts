@@ -118,7 +118,10 @@ export class UsersAchievementsUpdateComponent implements OnInit {
         description: [ achievement.description ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
-      { onSubmit: this.onDialogSubmit(this.achievements, index), closeOnSubmit: true }
+      { onSubmit: (formValue, formGroup) => {
+        formGroup.controls.date.setValue(formGroup.controls.date.value.toJSON());
+        this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
+      }, closeOnSubmit: true }
     );
   }
 
