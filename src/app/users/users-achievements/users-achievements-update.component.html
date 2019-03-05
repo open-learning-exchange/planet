@@ -50,7 +50,7 @@
         <div>
           <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
           <a mat-raised-button color="accent" class="margin-lr-3" i18n *ngIf="achievements.length" (click)="sortAchievements()">
-            Sort
+            <ng-container i18n>Sort by date</ng-container>
             <ng-container [ngSwitch]="editForm.controls.dateSortOrder.value">
               <mat-icon *ngSwitchCase="'desc'">keyboard_arrow_up</mat-icon>
               <mat-icon *ngSwitchCase="'asc'">keyboard_arrow_down</mat-icon>
