@@ -90,7 +90,9 @@ export class PlanetRatingComponent implements OnChanges {
       } else {
         this.rateForm.setValue({ rate: this.popupForm.controls.rate.value });
         this.isPopupOpen = false;
-        this.planetMessage.showMessage('Thank you for your additional comments');
+        if (this.popupForm.controls.comment.dirty && this.popupForm.controls.comment.value !== '') {
+          this.planetMessage.showMessage('Thank you for your additional comments');
+        }
       }
     }, (err) => {
       this.ratingError();
