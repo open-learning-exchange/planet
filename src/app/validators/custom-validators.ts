@@ -232,9 +232,10 @@ export class CustomValidators {
   static maxLength(maxLength: number): ValidatorFn {
     return (ac: AbstractControl): ValidationErrors => {
       const length: number = ac.value ? ac.value.length : 0;
-      return length > maxLength ?
-          {'maxLength': {'requiredLength': maxLength, 'actualLength': length}} :
-          null;
+      return (
+        length > maxLength 
+        ? { 'maxLength': { 'requiredLength': maxLength, 'actualLength': length } } 
+        : null);
     };
   }
 }
