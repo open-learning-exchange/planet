@@ -19,12 +19,12 @@
   <div class="view-container">
     <div class="left-tile">
       <p i18n><b>Created By:</b> <a [routerLink]="['/users/profile', meetupDetail.createdBy]">{{' ' + meetupDetail.createdBy}}</a></p>
-      <p i18n><b>Category:</b> {{meetupDetail.category}}</p>
+      <p *ngIf="meetupDetail.category" i18n><b>Category:</b> {{meetupDetail.category}}</p>
       <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate ? '-' : '' }} {{meetupDetail.endDate | date: 'fullDate'}}</p>
-      <p i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
-      <p i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
+      <p *ngIf="meetupDetail.startTime || meetupDetail.endTime" i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
+      <p *ngIf="meetupDetail.recurring" i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-      <p i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
+      <p *ngIf="meetupDetail.meetupLocation" i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
       <b i18n>Description:</b><td-markdown [content]="meetupDetail.description"></td-markdown>
     </div>
     <div class="right-tile">
