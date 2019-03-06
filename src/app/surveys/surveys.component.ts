@@ -14,7 +14,12 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
-  'templateUrl': './surveys.component.html'
+  'templateUrl': './surveys.component.html',
+  styles: [ `
+  .edit-survey-margin {
+    margin-bottom: 0.25rem;
+  }
+` ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
