@@ -21,6 +21,7 @@ export class DashboardComponent implements OnInit {
   dateNow: any;
   visits = 0;
   surveysCount = 0;
+  examsCount = 0;
 
   constructor(
     private userService: UserService,
@@ -35,8 +36,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    const userShelf = this.userService.shelf;
+
     this.getSurveys();
+    this.getExams();
+    this.initDashboard();
 
     this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
@@ -47,6 +50,11 @@ export class DashboardComponent implements OnInit {
         this.visits = res.docs.length;
       });
 
+  }
+
+  initDashboard() {
+
+    const userShelf = this.userService.shelf;
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
       return;
@@ -92,15 +100,25 @@ export class DashboardComponent implements OnInit {
       && shelf.resourceIds.length === 0;
   }
 
+  getSubmissions(type: string, status: string, username?: string) {
+    return this.submissionsService.getSubmissions(findDocuments({
+      type,
+      status,
+      'user.name': username || { '$gt': null }
+    }));
+  }
+
   getSurveys() {
-    this.submissionsService.getSubmissions(findDocuments({
-      'user.name': this.userService.get().name,
-      type: 'survey',
-      status: 'pending'
-    })).subscribe((surveys) => {
+    this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
       this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
+    });
+  }
+
+  getExams() {
+    this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
+      this.examsCount = exams.length;
     });
   }
 }
