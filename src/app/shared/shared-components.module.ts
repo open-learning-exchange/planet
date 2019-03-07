@@ -6,6 +6,7 @@ import { SubmitDirective } from './submit.directive';
 import { LowercaseDirective } from '../shared/lowercase.directive';
 import { PlanetLanguageComponent } from './planet-language.component';
 import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
+import { AuthorizedRolesDirective } from './authorized-roles.directive';
 
 @NgModule({
   imports: [
@@ -16,14 +17,16 @@ import { ResourcesMenuComponent } from '../resources/view-resources/resources-me
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
-    LowercaseDirective
+    LowercaseDirective,
+    AuthorizedRolesDirective
   ],
   declarations: [
     PlanetLocalStatusComponent,
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
-    LowercaseDirective
+    LowercaseDirective,
+    AuthorizedRolesDirective
   ]
 })
 export class SharedComponentsModule {}

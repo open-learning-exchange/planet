@@ -5,11 +5,11 @@
   <span i18n>Manager Settings</span>
 </mat-toolbar>
 <div class="space-container">
-  <div *ngIf="displayDashboard">
-    <span *ngIf="planetType !== 'community'">
-      <a routerLink="/requests" i18n mat-raised-button>{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
-      <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
-    </span>
+  <span *ngIf="planetType !== 'community'">
+    <a routerLink="/requests" i18n mat-raised-button *planetAuthorizedRoles="'manager'">{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
+    <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
+  </span>
+  <ng-container *planetAuthorizedRoles="'manager'">
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
     <button *ngIf="devMode"
@@ -21,43 +21,45 @@
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
     </ng-container>
-    <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
-  </div>
-  <div *ngIf="pendingPushCount > 0">
-    <p>
-      <span i18n>There {pendingPushCount, plural, =0 {are} =1 {is} other {are}}</span>
-      {{ ' ' + pendingPushCount + ' ' }}
-      <span i18n>{planetType, select,
-        nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}
-        center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}
-      } with pending courses and/or resources for download.
-        <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
-      </span>
-    </p>
-  </div>
-  <div class="view-container" *ngIf="planetType !== 'community'">
-    <h3 i18n>Send On Accept</h3><br />
-    <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
-    <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
-  </div>
-  <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
-    <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-    <p><b i18n>{planetType, select, community {Nation} nation {Center}} Version:</b> {{versionParent || 'N/A'}}</p>
-    <p><b i18n>Local Version:</b> {{versionLocal}}</p>
-    <ng-container [ngSwitch]="requestStatus">
-      <ng-container *ngSwitchCase="'accepted'">
-        <span><b i18n> List all from the {planetType, select, community {Nation} nation {Center}}</b>
-        <a class="margin-lr-8" routerLink="resources" i18n mat-raised-button>List Resources</a>
-        <a class="margin-lr-8" routerLink="courses" i18n mat-raised-button>List Courses</a></span>
+  </ng-container>
+  <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
+  <ng-container *planetAuthorizedRoles="'manager'">
+    <div *ngIf="pendingPushCount > 0">
+      <p>
+        <span i18n>There {pendingPushCount, plural, =0 {are} =1 {is} other {are}}</span>
+        {{ ' ' + pendingPushCount + ' ' }}
+        <span i18n>{planetType, select,
+          nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}
+          center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}
+        } with pending courses and/or resources for download.
+          <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
+        </span>
+      </p>
+    </div>
+    <div class="view-container" *ngIf="planetType !== 'community'">
+      <h3 i18n>Send On Accept</h3><br />
+      <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
+      <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
+    </div>
+    <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
+      <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
+      <p><b i18n>{planetType, select, community {Nation} nation {Center}} Version:</b> {{versionParent || 'N/A'}}</p>
+      <p><b i18n>Local Version:</b> {{versionLocal}}</p>
+      <ng-container [ngSwitch]="requestStatus">
+        <ng-container *ngSwitchCase="'accepted'">
+          <span><b i18n> List all from the {planetType, select, community {Nation} nation {Center}}</b>
+          <a class="margin-lr-8" routerLink="resources" i18n mat-raised-button>List Resources</a>
+          <a class="margin-lr-8" routerLink="courses" i18n mat-raised-button>List Courses</a></span>
+        </ng-container>
+        <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
+        <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by parent. You can retry or contact parent planet.</p>
+        <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
       </ng-container>
-      <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
-      <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by parent. You can retry or contact parent planet.</p>
-      <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
-    </ng-container>
-  </div>
-  <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> {{pin}}
-    <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
-  </div>
+    </div>
+    <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> {{pin}}
+      <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
+    </div>
+  </ng-container>
   <div>
     <p>
       <b i18n>Activity on</b>

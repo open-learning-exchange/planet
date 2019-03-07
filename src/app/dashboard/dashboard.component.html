@@ -7,7 +7,7 @@
   </div>
   <div class="lower-list">
     <mat-list>
-      <mat-list-item class="cursor-pointer" routerLink="/submissions">
+      <mat-list-item class="cursor-pointer" routerLink="/submissions" *planetAuthorizedRoles="'leader,manager'">
         <a i18n>Submissions</a>
         <mat-divider [inset]="true"></mat-divider>
       </mat-list-item>

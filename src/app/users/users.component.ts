@@ -48,7 +48,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'learner', 'leader' ];
+  roleList: string[] = [ 'learner', 'leader', 'monitor' ];
   selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
