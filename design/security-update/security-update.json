@@ -242,7 +242,7 @@
       },
       "members": {
         "names": [],
-        "roles": ["manager"]
+        "roles": ["manager", "monitor"]
       }
     }
   },
