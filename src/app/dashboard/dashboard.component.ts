@@ -96,9 +96,9 @@ export class DashboardComponent implements OnInit {
     this.submissionsService.getSubmissions(findDocuments({
       'user.name': this.userService.get().name,
       type: 'survey',
-       status: 'pending'
+      status: 'pending'
     })).subscribe((surveys) => {
-      this.surveys  = surveys.reduce((sList: any, s1: any) => {
+      this.surveys = surveys.reduce((sList: any, s1: any) => {
         const sIndex = sList.findIndex(s => (s.parentId === s1.parentId));
         if (sIndex === -1) {
           sList.push(s1);
