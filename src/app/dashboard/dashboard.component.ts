@@ -36,9 +36,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    const userShelf = this.userService.shelf;
+
     this.getSurveys();
     this.getExams();
+    this.initDashboard();
 
     this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
@@ -49,6 +50,11 @@ export class DashboardComponent implements OnInit {
         this.visits = res.docs.length;
       });
 
+  }
+
+  initDashboard() {
+
+    const userShelf = this.userService.shelf;
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
       return;
