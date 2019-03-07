@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
   dateNow: any;
   visits = 0;
   surveysCount = 0;
-  exams = [];
+  examsCount = 0;
 
   constructor(
     private userService: UserService,
@@ -94,12 +94,16 @@ export class DashboardComponent implements OnInit {
       && shelf.resourceIds.length === 0;
   }
 
+  getSubmissions(type: string, status: string, username?: string) {
+    return this.submissionsService.getSubmissions(findDocuments({
+      type,
+      status,
+      'user.name': username || { '$gt': null }
+    }));
+  }
+
   getSurveys() {
-    this.submissionsService.getSubmissions(findDocuments({
-      'user.name': this.userService.get().name,
-      type: 'survey',
-      status: 'pending'
-    })).subscribe((surveys) => {
+    this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
       this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
@@ -107,11 +111,8 @@ export class DashboardComponent implements OnInit {
   }
 
   getExams() {
-    this.submissionsService.getSubmissions(findDocuments({
-      type: 'survey',
-      status: 'pending'
-    })).subscribe((exams) => {
-      this.exams = exams;
+    this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
+      this.examsCount = exams.length;
     });
   }
 }

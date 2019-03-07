@@ -8,7 +8,7 @@
   <div class="lower-list">
     <mat-list>
       <mat-list-item class="cursor-pointer" routerLink="/submissions" *planetAuthorizedRoles="'leader,manager'">
-        <a [matBadge]="exams.length" matBadgeOverlap="false" [matBadgeHidden]="exams.length<1" i18n>Submissions</a>
+        <a [matBadge]="examsCount" matBadgeOverlap="false" [matBadgeHidden]="examsCount<1" i18n>Submissions</a>
         <mat-divider [inset]="true"></mat-divider>
       </mat-list-item>
       <mat-list-item class="cursor-pointer" routerLink="/mySurveys">
