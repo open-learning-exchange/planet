@@ -41,7 +41,7 @@
       <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
       <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
     </div>
-    <div class="view-container" *ngIf="displayDashboard && planetType !== 'center'">
+    <div class="view-container" *ngIf="planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
       <p><b i18n>{planetType, select, community {Nation} nation {Center}} Version:</b> {{versionParent || 'N/A'}}</p>
       <p><b i18n>Local Version:</b> {{versionLocal}}</p>
