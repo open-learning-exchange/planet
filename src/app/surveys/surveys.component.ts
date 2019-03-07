@@ -53,7 +53,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           (survey: any) => ({
             ...survey,
             taken: submissions.filter(data => {
-                return data.parentId === survey._id && (data.status !== 'pending' || data.user);
+                return data.parentId === survey._id && data.status !== 'pending';
             }).length
           })
         );
