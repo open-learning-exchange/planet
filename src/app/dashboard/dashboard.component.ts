@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   dateNow: any;
   visits = 0;
-  surveys = [];
+  surveysCount = 0;
 
   constructor(
     private userService: UserService,
@@ -98,15 +98,9 @@ export class DashboardComponent implements OnInit {
       type: 'survey',
       status: 'pending'
     })).subscribe((surveys) => {
-      this.surveys = surveys.reduce((sList: any, s1: any) => {
-        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId));
-        if (sIndex === -1) {
-          sList.push(s1);
-        } else if (s1.parent.updatedDate > (sList[sIndex].parent.updatedDate || 0)) {
-          sList[sIndex] = s1;
-        }
-        return sList;
-      }, []);
+      this.surveysCount = surveys.filter((survey: any, index: number) => {
+        return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
+      }).length;
     });
   }
 }
