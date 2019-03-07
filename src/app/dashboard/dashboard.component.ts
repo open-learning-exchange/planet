@@ -98,11 +98,9 @@ export class DashboardComponent implements OnInit {
       type: 'survey',
        status: 'pending'
     })).subscribe((surveys) => {
-     this.surveys  = surveys.filter((data: any) => {
-        return data.type !== 'survey' || data.status !== 'pending' || data.user;
-      }).reduce((sList: any, s1: any) => {
-        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-        if (!s1.user._id || sIndex === -1) {
+      this.surveys  = surveys.reduce((sList: any, s1: any) => {
+        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId));
+        if (sIndex === -1) {
           sList.push(s1);
         } else if (s1.parent.updatedDate > (sList[sIndex].parent.updatedDate || 0)) {
           sList[sIndex] = s1;
