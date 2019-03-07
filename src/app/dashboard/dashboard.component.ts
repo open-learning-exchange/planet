@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   dateNow: any;
   visits = 0;
-  surveys = [];
+  surveysCount = 0;
 
   constructor(
     private userService: UserService,
@@ -96,9 +96,11 @@ export class DashboardComponent implements OnInit {
     this.submissionsService.getSubmissions(findDocuments({
       'user.name': this.userService.get().name,
       type: 'survey',
-       status: 'pending'
+      status: 'pending'
     })).subscribe((surveys) => {
-      this.surveys = surveys;
+      this.surveysCount = surveys.filter((survey: any, index: number) => {
+        return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
+      }).length;
     });
   }
 }
