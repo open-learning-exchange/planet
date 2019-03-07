@@ -11,6 +11,7 @@
         *ngFor="let item of itemData;let odd=odd"
         [ngClass]="{'bg-grey': odd}"
         [routerLink]="item.link"
+        cdkDrag
       >
         <span>{{item.title}}</span>
         <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)">
