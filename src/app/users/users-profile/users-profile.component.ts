@@ -4,6 +4,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
+import { Location } from '@angular/common';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -32,7 +33,8 @@ export class UsersProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private router: Router,
-    private usersAchievementsService: UsersAchievementsService
+    private usersAchievementsService: UsersAchievementsService,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -72,12 +74,7 @@ export class UsersProfileComponent implements OnInit {
   }
 
   goBack() {
-    const currentUser = this.userService.get();
-    if (currentUser.isUserAdmin) {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
-    } else {
-      this.router.navigate([ '/' ]);
-    }
+    this.location.back();
   }
 
 }
