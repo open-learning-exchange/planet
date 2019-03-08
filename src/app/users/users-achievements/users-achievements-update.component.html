@@ -4,9 +4,9 @@
 </mat-toolbar>
 
 <div class="planet-users-achievements-update space-container">
-  <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
   <mat-toolbar class="primary-color font-size-1">
-    <span>{{user.name}}</span>
+    <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName + ' ' + user.middleName + ' ' + user.lastName }}</span>
+    <ng-template #elseBlock>{{ user.name }}</ng-template>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="achievements-forms-container">
