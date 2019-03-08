@@ -96,9 +96,10 @@ export class UsersAchievementsComponent implements OnInit {
   exportPdf() {
     const pdf = new jsPDF();
     const user = this.user;
+    pdf.setFont('helvetica');
     pdf.fromHTML(
       this.achievementBlockElem.nativeElement.innerHTML
-    ).setFont('Times');
+    );
     pdf.save(user.firstName + '_' + user.lastName + '_achievements.pdf');
   }
 
