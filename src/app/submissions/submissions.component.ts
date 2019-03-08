@@ -26,10 +26,12 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
+  statusOptions: any = [ { text: 'Pending', value: 'pending' }, { text: 'Not Graded', value: 'requires grading' }, { text: 'Completed', value: 'complete' } ];
   mode = 'grade';
   emptyData = false;
   filter = {
-    type: 'exam'
+    type: 'exam',
+    status: ''
   };
 
   constructor(
@@ -102,7 +104,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilterChange(filterValue: string, field: string) {
-    this.filter[field] = filterValue;
+    this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
   }
