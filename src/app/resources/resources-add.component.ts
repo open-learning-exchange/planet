@@ -192,14 +192,14 @@ export class ResourcesAddComponent implements OnInit {
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title +
           (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-        this.updateResource(newResource, file).subscribe((resourceRes) => {
-          if (this.isDialog) {
-            this.afterSubmit.next({ doc: resourceRes });
-          } else {
-            this.router.navigate([ '/resources' ]);
-          }
-          this.planetMessageService.showMessage(message);
-        }, (err) => this.planetMessageService.showAlert('There was an error with this resource'));
+        if (JSON.stringify(existingData) !== JSON.stringify(newResource)) {
+          this.updateResource(newResource, file).subscribe(
+            (resourceRes) => this.afterResourceUpdate(message, resourceRes),
+            (err) => this.planetMessageService.showAlert('There was an error with this resource')
+          );
+        } else {
+          this.afterResourceUpdate(message);
+        }
       });
     } else {
       this.dialogsLoadingService.stop();
@@ -245,6 +245,15 @@ export class ResourcesAddComponent implements OnInit {
       ),
       switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`))
     );
+  }
+
+  afterResourceUpdate(message, resourceRes?) {
+    if (this.isDialog) {
+      this.afterSubmit.next({ doc: resourceRes });
+    } else {
+      this.router.navigate([ '/resources' ]);
+    }
+    this.planetMessageService.showMessage(message);
   }
 
   deleteAttachmentToggle(event) {
