@@ -26,7 +26,11 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
-  statusOptions: any = [ { text: 'Pending', value: 'pending' }, { text: 'Not Graded', value: 'requires grading' }, { text: 'Completed', value: 'complete' } ];
+  statusOptions: any = [
+    { text: 'Pending', value: 'pending' },
+    { text: 'Not Graded', value: 'requires grading' },
+    { text: 'Completed', value: 'complete' }
+  ];
   mode = 'grade';
   emptyData = false;
   filter = {

@@ -16,10 +16,10 @@
       class="margin-lr-5 font-size-1"
       (change)="onFilterChange($event.value, 'type')"
       #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'">
+      <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
         Exams
       </mat-button-toggle>
-      <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'">
+      <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
         Surveys
       </mat-button-toggle>
     </mat-button-toggle-group>
