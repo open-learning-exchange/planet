@@ -50,8 +50,8 @@
           </ul>
         </ng-template>
         <p i18n><b>Courses: ({{team?.courses?.length || 0}})</b></p>
-        <p *ngIf="team?.courses?.length < 1; else requestedList" i18n>There are no courses associated with this team.</p>
-        <ng-template #requestedList>
+        <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
+        <ng-template #courseList>
           <ul class="request-list">
             <li *ngFor="let course of team?.courses">
               <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
