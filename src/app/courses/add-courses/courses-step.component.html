@@ -13,7 +13,6 @@
     <form [formGroup]="stepForm">
       <mat-form-field class="full-width">
         <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
-        <mat-error><planet-form-error-messages [control]="stepForm.controls.stepTitle"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="stepForm.controls.description"></planet-markdown-textbox>

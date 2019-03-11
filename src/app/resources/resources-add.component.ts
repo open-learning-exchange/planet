@@ -83,10 +83,7 @@ export class ResourcesAddComponent implements OnInit {
     this.resourceForm = this.fb.group({
       title: [
         '',
-        Validators.compose([
-          CustomValidators.required,
-          CustomValidators.maxLength(70)
-        ]),
+        CustomValidators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
         this.route.snapshot.url[0].path === 'update'
           ? ac => this.validatorService.isNameAvailible$(this.dbName, 'title', ac, this.route.snapshot.params.id)

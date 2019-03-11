@@ -8,7 +8,6 @@ import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { CoursesService } from '../courses.service';
-import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   selector: 'planet-courses-step',
@@ -38,7 +37,7 @@ export class CoursesStepComponent implements OnDestroy {
   ) {
     this.stepForm = this.fb.group({
       id: '',
-      stepTitle: [ '', CustomValidators.maxLength(70) ],
+      stepTitle: '',
       description: ''
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {

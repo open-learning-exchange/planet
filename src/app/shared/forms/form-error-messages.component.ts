@@ -16,7 +16,6 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       required {This field is required}
       min {The number cannot be below}
       max {The number cannot exceed}
-      maxLength {The text is too long}
       duplicate {Value already exists}
       email {Please enter a valid email}
       matchPassword {Passwords must match}
