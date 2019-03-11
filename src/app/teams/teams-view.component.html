@@ -34,7 +34,9 @@
       <ng-template #memberList>
         <ul>
           <li *ngFor="let member of members">
+            <a [routerLink]="['/users/profile', member.name]">
             {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>
+            </a>
           </li>
         </ul>
       </ng-template>
