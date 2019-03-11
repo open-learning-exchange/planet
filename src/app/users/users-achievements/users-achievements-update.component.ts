@@ -3,7 +3,8 @@ import {
   FormBuilder,
   FormGroup,
   FormArray,
-  FormControl
+  FormControl,
+  Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -148,7 +149,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.fb.group({
         relationship: '',
         phone: '',
-        email: '',
+        email: [ '', Validators.email ],
         ...reference,
         name: [ reference.name, CustomValidators.required ],
       }),
