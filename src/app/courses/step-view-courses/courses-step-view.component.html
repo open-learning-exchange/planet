@@ -3,8 +3,8 @@
   <span i18n>Course</span>
 </mat-toolbar>
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 title-header">
-    <span class="margin-lr-3 title"><h3><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3></span>
+  <mat-toolbar class="primary-color font-size-1">
+    <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
     <span class="toolbar-fill"></span>
     <div>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>

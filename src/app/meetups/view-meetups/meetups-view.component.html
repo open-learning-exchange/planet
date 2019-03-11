@@ -3,8 +3,8 @@
   <span i18n>Meetup</span>
 </mat-toolbar>
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 title-header">
-    <span class="margin-lr-3 title"><h3>{{meetupDetail.title}}</h3></span>
+  <mat-toolbar class="primary-color font-size-1">
+    <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail.title}}</h3>
     <span class="toolbar-fill"></span>
     <div>
       <ng-container *ngIf="!parent">

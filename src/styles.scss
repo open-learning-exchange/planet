@@ -459,16 +459,11 @@ body {
     justify-content: end;
   }
 
-  @media(max-width: $screen-md){
-    mat-toolbar.title-header {
-      flex-wrap: wrap;
-      align-items: flex-start;
-      height: auto;
-      padding: 1em;
-      .title {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+  .ellipsis-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    & + button{
+      min-width: auto;
     }
   }
 }
