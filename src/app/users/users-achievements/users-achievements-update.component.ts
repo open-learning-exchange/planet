@@ -149,9 +149,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.fb.group({
         relationship: '',
         phone: '',
-        email: [ '', Validators.email ],
         ...reference,
         name: [ reference.name, CustomValidators.required ],
+        email: [ reference.email, Validators.email ],
       }),
       { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
     );
