@@ -34,3 +34,5 @@ sed -i -e "s#planet-sync-address#$S_ADDRESS#g" /usr/share/nginx/html/**/main*
 
 spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 nginx -g "daemon off;"
+
+mkdir -p /usr/share/nginx/html/fs
