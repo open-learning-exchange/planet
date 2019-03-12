@@ -4,22 +4,23 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3"><h3>{{courseDetail.courseTitle}}</h3></span>
+    <h3 class="margin-lr-3 ellipsis-title">{{courseDetail.courseTitle}}</h3>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
-      {fullView, select, on {Show} off {Hide}} details
-    </button>
-    <span class="toolbar-fill"></span>
-    <ng-container *ngIf="!parent">
-      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
-        Join
+        {fullView, select, on {Show} off {Hide}} details
       </button>
-      <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled && courseDetail.steps.length">
-        Leave
-      </button>
-
-    </ng-container>
-    <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
-  </mat-toolbar>
+      <span class="toolbar-fill"></span>
+    <div>
+      <ng-container *ngIf="!parent">
+        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
+          Join
+        </button>
+        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled && courseDetail.steps.length">
+          Leave
+        </button>
+      </ng-container>
+      <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
+    </div>
+   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length">
       <span i18n>Your progress:</span>

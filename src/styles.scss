@@ -459,4 +459,11 @@ body {
     justify-content: end;
   }
 
+  .ellipsis-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    & + button{
+      min-width: auto;
+    }
+  }
 }
