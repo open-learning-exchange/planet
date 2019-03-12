@@ -50,7 +50,7 @@
         <div>
           <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
           <a mat-raised-button color="accent" class="margin-lr-3" i18n *ngIf="achievements.length" (click)="sortAchievements()">
-            <ng-container i18n>Sort by date</ng-container>
+            <ng-container i18n>Sort by Date</ng-container>
             <ng-container [ngSwitch]="editForm.controls.dateSortOrder.value">
               <mat-icon *ngSwitchCase="'desc'">keyboard_arrow_up</mat-icon>
               <mat-icon *ngSwitchCase="'asc'">keyboard_arrow_down</mat-icon>
@@ -81,7 +81,7 @@
               <button mat-stroked-button type="button" class="margin-lr-4" (click)="addReference(i, reference.value)" i18n>Edit</button>
             </planet-step-list-item>
           </planet-step-list>
-          <button type="button" (click)="addReference()" mat-stroked-button color="primary">Enter a reference</button>
+          <button type="button" (click)="addReference()" mat-stroked-button color="primary">Enter a Reference</button>
         </div>
         <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
           Allow your achievements to be shared with the nation
