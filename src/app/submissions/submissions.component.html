@@ -5,17 +5,25 @@
   </button>
   <span i18n>{mode, select, survey {Surveys} grade {Submissions}}</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group *ngIf="this.mode !== 'survey'"
-    class="margin-lr-5 font-size-1"
-    (change)="onFilterChange($event.value, 'type')"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'">
-      Exams
-    </mat-button-toggle>
-    <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'">
-      Surveys
-    </mat-button-toggle>
-  </mat-button-toggle-group>
+  <ng-container *ngIf="this.mode !== 'survey'">
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+        <mat-option i18n value="All">All</mat-option>
+        <mat-option *ngFor="let option of statusOptions" [value]="option.value">{{option.text}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-button-toggle-group
+      class="margin-lr-5 font-size-1"
+      (change)="onFilterChange($event.value, 'type')"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
+        Exams
+      </mat-button-toggle>
+      <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
+        Surveys
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </ng-container>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
