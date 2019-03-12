@@ -66,7 +66,7 @@
                 <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
               </span>
             </ng-template>
-            <mat-action-row *ngIf="!parent">
+            <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || (step?.exam?.questions.length && isUserEnrolled))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
             </mat-action-row>
