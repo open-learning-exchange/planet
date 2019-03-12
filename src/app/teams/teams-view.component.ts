@@ -191,6 +191,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   linkCourses(courses) {
+    courses.sort((a, b) => a.courseTitle.toLowerCase() > b.courseTitle.toLowerCase() ? 1 : -1);
     this.teamsService.updateTeam({ ...this.team, courses }).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.dialogRef.close();
