@@ -30,20 +30,20 @@ export class StateService {
     });
   }
 
-  requestData(db: string, planetField: string) {
+  requestData(db: string, planetField: string, fields?: any, sort?: any) {
     if (this.inProgress[planetField].get(db) !== true) {
       this.inProgress[planetField].set(db, true);
-      this.getCouchState(db, planetField).subscribe(() => {});
+      this.getCouchState(db, planetField, fields, sort).subscribe(() => {});
     }
   }
 
-  getCouchState(db: string, planetField: string) {
+  getCouchState(db: string, planetField: string, fields?: any, sort?: any) {
     const opts = this.optsFromPlanetField(planetField);
     this.state[planetField] = this.state[planetField] || {};
     this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
     const currentData = this.state[planetField][db].docs;
     const getData = currentData.length === 0 ?
-      this.getAll(db, opts) : this.getChanges(db, opts, planetField);
+      this.getAll(db, opts, fields, sort) : this.getChanges(db, opts, planetField);
     return getData.pipe(
       map((changes) => {
         const newData = this.combineChanges(this.state[planetField][db].docs, changes);
@@ -65,11 +65,11 @@ export class StateService {
         return { domain: planetField };
     }
   }
-
-  getAll(db: string, opts: any) {
+//  findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
+  getAll(db: string, opts: any, fields: any = 0, sort: any = 0) {
     return this.couchService.findAllStream(db, findDocuments({
       '_id': { '$gt': null }
-    }, [], [], 1000), opts);
+    }, fields, sort, 1000), opts);
   }
 
   getChanges(db: string, opts: any, planetField: string) {
