@@ -2,7 +2,7 @@
   <img [src]="profileImg">
   <div class="primary-color dashboard-name mat-typography">
     <h2>{{displayName}}</h2>
-    <span>{{displayRole.replace('_','')}}</span>
+    <span>{{displayRole}}</span>
     <p class="caption">{{dateNow | date:'longDate'}}</p>
     <p class="caption">{{visits | number}} <ng-container i18n>Visits</ng-container></p>
   </div>

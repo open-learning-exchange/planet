@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   displayName: string = this.userService.get().firstName !== undefined ?
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
-  displayRole: string = this.userService.get().roles.join(', ');
+  displayRole: string = this.userService.get().roles.join(', ').replace('_', '');
 
   dateNow: any;
   visits = 0;
