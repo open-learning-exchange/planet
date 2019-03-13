@@ -1,4 +1,4 @@
-<span [ngSwitch]="value.length" class="small margin-lr-5">
+<span [ngSwitch]="value.length" class="small margin-lr-5" *ngIf="helperText">
   <span *ngSwitchCase="0" i18n>No collections selected</span>
   <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
   <span *ngSwitchDefault [matTooltip]="tooltipLabels">Hover to see selected collections</span>

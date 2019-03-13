@@ -45,6 +45,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() mode = 'filter';
   @Input() parent = false;
   @Input() filteredData = [];
+  @Input() helperText = true;
 
   shouldLabelFloat = false;
   onTouched;
