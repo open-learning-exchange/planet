@@ -1,0 +1,20 @@
+.view-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  .new-post-form {
+    max-width: 640px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-items: flex-end;
+
+    mat-form-field {
+      width: 100%;
+    }
+
+  }
+
+}
