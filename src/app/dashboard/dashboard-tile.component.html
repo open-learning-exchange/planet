@@ -5,12 +5,13 @@
     <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="courses/myProgress">My Progress</a>
   </div>
   <div class="right-tile" #items>
-    <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}">
+    <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
       <div
         class="dashboard-item cursor-pointer"
         *ngFor="let item of itemData;let odd=odd"
         [ngClass]="{'bg-grey': odd}"
         [routerLink]="item.link"
+        cdkDrag
       >
         <span>{{item.title}}</span>
         <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)">
