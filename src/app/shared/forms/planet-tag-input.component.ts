@@ -47,6 +47,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() parent = false;
   @Input() filteredData = [];
   @Input() helperText = true;
+  @Input() selectedIds;
   @Output() finalTags = new EventEmitter<string[]>();
 
   shouldLabelFloat = false;
@@ -148,15 +149,31 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   dialogData() {
+    const startingTags = this.selectedIds !== undefined ?
+      this.tagsInSelection(this.selectedIds, this.filteredData) :
+      this.value;
+    console.log(startingTags);
     return ({
       tagUpdate: this.dialogTagUpdate.bind(this),
       initTags: this.initTags.bind(this),
       reset: this.resetDialogData.bind(this),
-      startingTags: this.value,
+      startingTags,
       tags: this.filterTags(this.tags, this.selectMany),
       mode: this.mode,
       initSelectMany: this.selectMany
     });
+  }
+
+  tagsInSelection(selectedIds, data) {
+    const selectedTagsObject = selectedIds
+      .reduce((selectedTags, id) => {
+        const tagIds = this.filteredData.find((item: any) => item._id === id).tags;
+        tagIds.forEach(tagId => {
+          selectedTags[tagId] = selectedTags[tagId] === undefined ? 1 : selectedTags[tagId] + 1;
+        });
+        return selectedTags;
+      }, {});
+    return Object.entries(selectedTagsObject).map(([ tagId, count ]) => ({ tagId, indeterminate: count !== selectedIds.length }));
   }
 
   resetDialogData(selectMany = this.selectMany) {

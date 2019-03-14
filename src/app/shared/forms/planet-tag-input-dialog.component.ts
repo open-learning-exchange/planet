@@ -21,6 +21,7 @@ export class PlanetTagInputDialogComponent {
 
   tags: any[] = [];
   selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
+  indeterminate = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   filterValue = '';
   mode = 'filter';
   _selectMany = false;
@@ -49,8 +50,11 @@ export class PlanetTagInputDialogComponent {
     this.dataInit();
     this.selectMany = this.mode === 'add' || this.data.initSelectMany;
     this.data.startingTags
-      .filter((tag: string) => tag)
-      .forEach(tag => this.tagChange({ value: [ tag ], selected: true }, !this.selectMany));
+      .filter((tag: any) => tag)
+      .forEach(tag => {
+        this.tagChange([ tag.tagId || tag ], !this.selectMany);
+        this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
+      });
     this.addTagForm = this.fb.group({
       name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
       attachedTo: [ [] ]
@@ -62,23 +66,24 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagId !== undefined) {
-      this.tagChange({ value: [ this.newTagId ], selected: true });
+      this.tagChange([ this.newTagId ]);
       this.newTagId = undefined;
     }
   }
 
-  tagChange(option, tagOne = false) {
-    const tags = option.value;
+  tagChange(tags, tagOne = false) {
+    const newState = !this.selected.get(tags[0]);
     tags.forEach((tag, index) => {
-      if (index === 0 || option.selected) {
-        this.selected.set(tag, option.selected);
+      if (index === 0 || newState) {
+        this.selected.set(tag, newState || this.indeterminate.get(tag));
+        this.indeterminate.set(tag, false);
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
   }
 
-  isSelected(tag: string) {
-    return this.selected.get(tag);
+  isInMap(tag: string, map: Map<string, boolean>) {
+    return map.get(tag);
   }
 
   updateFilter(value) {
