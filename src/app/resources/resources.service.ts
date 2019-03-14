@@ -6,6 +6,8 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
+import { dedupeShelfReduce } from '../shared/utils';
+import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()
 export class ResourcesService {
@@ -21,7 +23,8 @@ export class ResourcesService {
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private couchService: CouchService
   ) {
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       const planetField = res.parent ? 'parent' : 'local';
@@ -33,7 +36,7 @@ export class ResourcesService {
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
       if (response !== undefined) {
         this.isActiveResourceFetch = false;
-        this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
+        this.setResources(response.newData.map(r => ({ doc: r, ...r })), this.ratings[response.planetField], response.planetField);
       }
     });
     this.stateService.couchStateListener('tags').subscribe(response => {
@@ -91,4 +94,15 @@ export class ResourcesService {
       return shelf;
     }));
   }
+
+  updateResourceTags(resourceIds, tagIds) {
+    const newResources = resourceIds
+      .map(id => this.resources.local.find(resource => resource._id === id).doc)
+      .map(resource => ({ ...resource, tags: [ ...(resource.tags || []), ...tagIds ].reduce(dedupeShelfReduce, []) }));
+    return this.couchService.post(this.dbName + '/_bulk_docs', { docs: newResources }).pipe(map((res) => {
+      this.requestResourcesUpdate(false);
+      return res;
+    }));
+  }
+
 }

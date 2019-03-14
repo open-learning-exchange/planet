@@ -22,7 +22,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   @HostBinding() id = `planet-tag-input-${PlanetTagInputComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
-  @Input() _value: string[] = [];
+  _value: string[] = [];
+  @Input()
   get value() {
     return this._value;
   }
@@ -46,6 +47,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() parent = false;
   @Input() filteredData = [];
   @Input() helperText = true;
+  @Output() finalTags = new EventEmitter<string[]>();
 
   shouldLabelFloat = false;
   onTouched;
@@ -137,6 +139,11 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       maxHeight: '80vh',
       autoFocus: false,
       data: this.dialogData()
+    });
+    this.dialogRef.afterClosed().subscribe(wasOkClicked => {
+      if (wasOkClicked === true && this.value.length > 0) {
+        this.finalTags.emit(this.value);
+      }
     });
   }
 
