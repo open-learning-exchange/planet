@@ -43,7 +43,7 @@ export class DashboardTileComponent implements OnInit {
       this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
     });
   }
-  
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
     const ids = this.userService.shelf[this.shelfName];
