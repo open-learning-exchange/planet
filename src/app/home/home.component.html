@@ -47,7 +47,7 @@
       <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
     </mat-menu>
     <!--Notification dropdown menu-->
-    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notificationItem">
+    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
         <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
           class="menu-item-notification"
