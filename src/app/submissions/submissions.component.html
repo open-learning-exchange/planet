@@ -49,9 +49,9 @@
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
-        <mat-cell class="cursor-pointer" *matCellDef="let element" (click)="nameClick($event, element.user)">
-          <span *ngIf="element.submittedBy !== ''; else unknownLabel" [routerLink]="element.user.name !== undefined ? ['/users/profile/',element.submittedBy]:[]">{{element.submittedBy}}</span>
-          <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
+        <mat-cell *matCellDef="let element">
+          <span class="cursor-pointer" *ngIf="element?.user?.name; else noLink" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
+          <ng-template #noLink><span i18n>{{element?.submittedBy || 'Unknown'}}</span></ng-template>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="lastUpdateTime">
