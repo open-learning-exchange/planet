@@ -32,7 +32,7 @@ export class NewsComponent implements OnInit {
   getMessages() {
     this.couchService.findAll(this.dbName, findDocuments({ createdOn: this.configuration.code }, 0, [ { 'time': 'desc' } ]))
     .subscribe(newsItems => {
-      this.newsItems = newsItems.map(item => {
+      this.newsItems = newsItems.map((item: any) => {
         const filename = item.user._attachments && Object.keys(item.user._attachments)[0];
         return { ...item, avatar: filename ? this.imgUrlPrefix + item.user._id + '/' + filename : 'assets/image.png' };
       });
