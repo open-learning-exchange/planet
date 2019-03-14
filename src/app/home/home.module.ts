@@ -18,6 +18,7 @@ import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { CommunityTableComponent } from '../community/community-table.component';
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
+import { NewsComponent } from '../news/news.component';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import { UsersAchievementsModule } from '../users/users-achievements/users-achie
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective,
-    UpgradeComponent
+    UpgradeComponent,
+    NewsComponent
   ]
 })
 export class HomeModule {}
