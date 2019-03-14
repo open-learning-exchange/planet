@@ -47,17 +47,19 @@
       <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
     </mat-menu>
     <!--Notification dropdown menu-->
-    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false">
-      <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
-        class="menu-item-notification"
-        [ngClass]="{'primary-text-color':notification.status==='unread'}"
-        mat-menu-item
-        *ngFor="let notification of notifications"
-        (click)="readNotification(notification)">
-        <p [innerHTML]="notification.message"><p>
-        <p *ngIf="notification.time > 0" class="small">{{notification.time | date: 'mediumDate'}}</p>
-        <mat-divider></mat-divider>
-      </a>
+    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
+      <div class="notification-items">
+        <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
+          class="menu-item-notification"
+          [ngClass]="{'primary-text-color':notification.status==='unread'}"
+          mat-menu-item
+          *ngFor="let notification of notifications"
+          (click)="readNotification(notification)">
+          <p [innerHTML]="notification.message"><p>
+          <p *ngIf="notification.time > 0" class="small">{{notification.time | date: 'mediumDate'}}</p>
+          <mat-divider></mat-divider>
+        </a>
+      </div>
       <a routerLink="/notifications" mat-menu-item>See All</a>
     </mat-menu>
   </span>
