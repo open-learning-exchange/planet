@@ -30,10 +30,11 @@ export class NewsComponent implements OnInit {
   }
 
   getMessages() {
-    this.couchService.findAll(this.dbName, findDocuments({ createdOn: this.configuration.code }, 0, [ { 'time': 'desc' } ])).subscribe(newsItems => {
+    this.couchService.findAll(this.dbName, findDocuments({ createdOn: this.configuration.code }, 0, [ { 'time': 'desc' } ]))
+    .subscribe(newsItems => {
       this.newsItems = newsItems.map(item => {
         const filename = item.user._attachments && Object.keys(item.user._attachments)[0];
-        return { ...item, avatar: filename ? this.imgUrlPrefix + item.user._id + '/' + filename : 'assets/image.png' }
+        return { ...item, avatar: filename ? this.imgUrlPrefix + item.user._id + '/' + filename : 'assets/image.png' };
       });
     });
   }
@@ -47,7 +48,7 @@ export class NewsComponent implements OnInit {
       user: this.userService.get(),
       viewableBy: 'community'
     }).subscribe(() => {
-      this.planetMessageService.showMessage('Thank you for submitting your news')
+      this.planetMessageService.showMessage('Thank you for submitting your news');
       this.newMessage = '';
       this.getMessages();
     });
