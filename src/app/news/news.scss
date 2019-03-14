@@ -1,11 +1,14 @@
+$max-width: 640px;
+
 .view-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 'form' 'news';
+  justify-content: center;
+  grid-template-columns: minmax(auto, $max-width);
 
   .new-post-form {
-    max-width: 640px;
+    grid-area: form;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -15,6 +18,16 @@
       width: 100%;
     }
 
+  }
+
+  .news-container {
+    grid-area: news;
+    overflow-y: auto;
+    width: 100%;
+
+    mat-card {
+      margin: 0.25rem;
+    }
   }
 
 }

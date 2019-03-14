@@ -15,5 +15,19 @@
       </mat-form-field>
       <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">Post</button>
     </div>
+    <div class="news-container">
+      <mat-card *ngFor="let item of newsItems">
+        <img mat-card-avatar [src]="item.avatar">
+        <mat-card-title>
+          {{item.user.firstName ?
+            item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
+            item.user.name}}
+        </mat-card-title>
+        <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
+        <mat-card-content>
+          <p>{{item.message}}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>
