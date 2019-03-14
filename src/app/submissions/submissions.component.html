@@ -9,7 +9,9 @@
     <mat-form-field class="font-size-1 margin-lr-3">
       <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
         <mat-option i18n value="All">All</mat-option>
-        <mat-option *ngFor="let option of statusOptions" [value]="option.value">{{option.text}}</mat-option>
+        <ng-container *ngFor="let option of statusOptions">
+          <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
+        </ng-container>
       </mat-select>
     </mat-form-field>
     <mat-button-toggle-group
