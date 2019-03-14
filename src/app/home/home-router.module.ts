@@ -9,6 +9,7 @@ import { SubmissionsModule } from '../submissions/submissions.module';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
 import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
+import { NewsComponent } from '../news/news.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -28,7 +29,8 @@ const routes: Routes = [
       { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' },
       { path: 'surveys', loadChildren: '../surveys/surveys.module#SurveysModule' },
       { path: 'myAchievements', component: UsersAchievementsComponent },
-      { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent }
+      { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent },
+      { path: 'news', component: NewsComponent }
     ]
   }
 ];
