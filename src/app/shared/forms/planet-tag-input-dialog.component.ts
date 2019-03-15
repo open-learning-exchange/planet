@@ -20,7 +20,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 export class PlanetTagInputDialogComponent {
 
   tags: any[] = [];
-  selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
+  selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
   filterValue = '';
   mode = 'filter';
@@ -117,6 +117,10 @@ export class PlanetTagInputDialogComponent {
       this.data.tagUpdate(subTag, true);
     }
     this.dialogRef.close();
+  }
+
+  checkboxChange(event, tag) {
+    event.source.checked = this.isInMap(tag, this.selected);
   }
 
   addLabel() {

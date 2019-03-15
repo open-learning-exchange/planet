@@ -29,7 +29,7 @@
           <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)" class="margin-lr-5">Edit</button>
         </span>
         <span class="toolbar-fill"></span>
-        <mat-checkbox [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
+        <mat-checkbox (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="tagChange([ subTag._id || subTag.name, tag._id || tag.name ])" class="cursor-pointer">
@@ -39,7 +39,7 @@
             <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
           </span>
           <span class="toolbar-fill"></span>
-          <mat-checkbox [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)"></mat-checkbox>
+          <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)"></mat-checkbox>
         </mat-list-item>
       </ng-container>
       <mat-divider></mat-divider>
