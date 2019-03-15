@@ -1,0 +1,33 @@
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>ourNews</span>
+</mat-toolbar>
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <div class="new-post-form">
+      <mat-form-field>
+        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5" placeholder="What would you like to share?" i18n-placeholder></textarea>
+      </mat-form-field>
+      <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">Post</button>
+    </div>
+    <div class="news-container">
+      <mat-card *ngFor="let item of newsItems">
+        <img mat-card-avatar [src]="item.avatar">
+        <mat-card-title>
+          {{item.user.firstName ?
+            item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
+            item.user.name}}
+        </mat-card-title>
+        <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
+        <mat-card-content>
+          <p>{{item.message}}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

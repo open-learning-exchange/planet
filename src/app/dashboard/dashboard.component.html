@@ -2,8 +2,9 @@
   <img [src]="profileImg">
   <div class="primary-color dashboard-name mat-typography">
     <h2>{{displayName}}</h2>
-    <p class="caption">{{dateNow | date:'longDate'}}</p>
-    <p class="caption">{{visits | number}} <ng-container i18n>Visits</ng-container></p>
+    <p>{{displayRole}}</p>
+    <p>{{dateNow | date:'longDate'}}</p>
+    <p>{{visits | number}} <ng-container i18n>Visits</ng-container></p>
   </div>
   <div class="lower-list">
     <mat-list>
@@ -12,11 +13,15 @@
         <mat-divider [inset]="true"></mat-divider>
       </mat-list-item>
       <mat-list-item class="cursor-pointer" routerLink="/mySurveys">
-        <a [matBadge]="surveysCount" matBadgeOverlap="false" [matBadgeHidden]="surveysCount<1" i18n>Surveys</a>
+        <a [matBadge]="surveysCount" matBadgeOverlap="false" [matBadgeHidden]="surveysCount<1" i18n>mySurveys</a>
         <mat-divider [inset]="true"></mat-divider>
       </mat-list-item>
       <mat-list-item class="cursor-pointer" routerLink="/myAchievements">
         <a i18n>Achievements</a>
+        <mat-divider [inset]="true"></mat-divider>
+      </mat-list-item>
+      <mat-list-item class="cursor-pointer" routerLink="/news">
+        <a i18n>ourNews</a>
       </mat-list-item>
     </mat-list>
   </div>

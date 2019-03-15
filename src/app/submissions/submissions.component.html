@@ -3,13 +3,15 @@
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span i18n>{mode, select, survey {Surveys} grade {Submissions}}</span>
+  <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
   <span class="toolbar-fill"></span>
   <ng-container *ngIf="this.mode !== 'survey'">
     <mat-form-field class="font-size-1 margin-lr-3">
       <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
         <mat-option i18n value="All">All</mat-option>
-        <mat-option *ngFor="let option of statusOptions" [value]="option.value">{{option.text}}</mat-option>
+        <ng-container *ngFor="let option of statusOptions">
+          <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
+        </ng-container>
       </mat-select>
     </mat-form-field>
     <mat-button-toggle-group
@@ -47,9 +49,9 @@
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
-        <mat-cell class="cursor-pointer" *matCellDef="let element" (click)="nameClick($event, element.user)">
-          <span *ngIf="element.submittedBy !== ''; else unknownLabel" [routerLink]="element.user.name !== undefined ? ['/users/profile/',element.submittedBy]:[]">{{element.submittedBy}}</span>
-          <ng-template #unknownLabel><span i18n>Unknown</span></ng-template>
+        <mat-cell *matCellDef="let element">
+          <span class="cursor-pointer" *ngIf="element?.user?.name; else noLink" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
+          <ng-template #noLink><span i18n>{{element?.submittedBy || 'Unknown'}}</span></ng-template>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="lastUpdateTime">
