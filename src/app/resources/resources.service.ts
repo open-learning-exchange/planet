@@ -95,14 +95,22 @@ export class ResourcesService {
     }));
   }
 
-  updateResourceTags(resourceIds, tagIds) {
+  updateResourceTags(resourceIds, tagIds, indeterminateIds = []) {
+    const fullSelectedTags = tagIds.filter(tagId => indeterminateIds.indexOf(tagId) === -1);
     const newResources = resourceIds
       .map(id => this.resources.local.find(resource => resource._id === id).doc)
-      .map(resource => ({ ...resource, tags: [ ...(resource.tags || []), ...tagIds ].reduce(dedupeShelfReduce, []) }));
+      .map(resource => ({ ...resource, tags: this.newResourceTags(resource.tags, fullSelectedTags, indeterminateIds) }));
     return this.couchService.post(this.dbName + '/_bulk_docs', { docs: newResources }).pipe(map((res) => {
       this.requestResourcesUpdate(false);
       return res;
     }));
+  }
+
+  newResourceTags(currentTagIds = [], fullSelectedTagIds, indeterminateIds) {
+    return [
+      ...currentTagIds.filter(tagId => indeterminateIds.indexOf(tagId) > -1),
+      ...fullSelectedTagIds
+    ].reduce(dedupeShelfReduce, []);
   }
 
 }

@@ -21,7 +21,7 @@ export class PlanetTagInputDialogComponent {
 
   tags: any[] = [];
   selected = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
-  indeterminate = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
+  indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
   filterValue = '';
   mode = 'filter';
   _selectMany = false;
@@ -36,6 +36,9 @@ export class PlanetTagInputDialogComponent {
   newTagId: string;
   isUserAdmin = false;
   subcollectionIsOpen = new Map();
+  get okClickValue() {
+    return { wasOkClicked: true, indeterminate: this.indeterminate ? this.mapToArray(this.indeterminate, true) : [] };
+  }
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -77,6 +80,7 @@ export class PlanetTagInputDialogComponent {
       if (index === 0 || newState) {
         this.selected.set(tag, newState || this.indeterminate.get(tag));
         this.indeterminate.set(tag, false);
+
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
@@ -84,6 +88,18 @@ export class PlanetTagInputDialogComponent {
 
   isInMap(tag: string, map: Map<string, boolean>) {
     return map.get(tag);
+  }
+
+  mapToArray(map: Map<string, boolean>, equalValue?) {
+    const iterable = map.entries();
+    const keyToArray = ({ value, done }, array: string[]) => {
+      if (done) {
+        return array;
+      }
+      const [ key, val ] = value;
+      return keyToArray(iterable.next(), !equalValue || val === equalValue ? [ ...array, key ] : array);
+    };
+    return keyToArray(iterable.next(), []);
   }
 
   updateFilter(value) {

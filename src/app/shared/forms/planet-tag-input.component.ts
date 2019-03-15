@@ -48,7 +48,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() filteredData = [];
   @Input() helperText = true;
   @Input() selectedIds;
-  @Output() finalTags = new EventEmitter<string[]>();
+  @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
   onTouched;
@@ -141,9 +141,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       autoFocus: false,
       data: this.dialogData()
     });
-    this.dialogRef.afterClosed().subscribe(wasOkClicked => {
-      if (wasOkClicked === true && this.value.length > 0) {
-        this.finalTags.emit(this.value);
+    this.dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.wasOkClicked === true) {
+        this.finalTags.emit({ selected: this.value, indeterminate: result.indeterminate });
       }
     });
   }
@@ -167,7 +167,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   tagsInSelection(selectedIds, data) {
     const selectedTagsObject = selectedIds
       .reduce((selectedTags, id) => {
-        const tagIds = this.filteredData.find((item: any) => item._id === id).tags;
+        const tagIds = this.filteredData.find((item: any) => item._id === id).tags || [];
         tagIds.forEach(tagId => {
           selectedTags[tagId] = selectedTags[tagId] === undefined ? 1 : selectedTags[tagId] + 1;
         });

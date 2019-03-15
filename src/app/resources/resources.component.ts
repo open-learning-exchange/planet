@@ -264,8 +264,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
-  addTagsToSelected(tags) {
-    this.resourcesService.updateResourceTags(this.selection.selected, tags).subscribe(() => {
+  addTagsToSelected({ selected, indeterminate }) {
+    this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
       this.planetMessageService.showMessage('Collections updated');
     });
   }
