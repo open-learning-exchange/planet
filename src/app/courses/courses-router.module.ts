@@ -16,9 +16,11 @@ const routes: Routes = [
   { path: 'update/:id', component: CoursesAddComponent },
   { path: 'view/:id', component: CoursesViewComponent },
   { path: 'exam', component: ExamsAddComponent },
+  { path: 'survey', component: ExamsAddComponent },
   { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent, },
   { path: 'view/:id/step/:stepNum/exam', component: ExamsViewComponent },
   { path: 'update/exam/:id', component: ExamsAddComponent },
+  { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
   { path: 'myProgress', component: CoursesProgressLearnerComponent }
 ];

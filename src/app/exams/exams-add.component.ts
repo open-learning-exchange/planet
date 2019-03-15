@@ -29,7 +29,8 @@ export class ExamsAddComponent implements OnInit {
   successMessage = this.examType === 'surveys' ? 'New survey added' : 'New exam added';
   steps = [];
   showFormError = false;
-  returnUrl = this.examType === 'surveys' ? '/surveys' : this.coursesService.returnUrl || 'courses';
+  isCourseContent = this.router.url.match(/courses/);
+  returnUrl = (this.examType === 'surveys' && !this.isCourseContent) ? '/surveys' : this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
   private _question: FormGroup;
   get question(): FormGroup {
@@ -114,7 +115,7 @@ export class ExamsAddComponent implements OnInit {
     this.couchService.updateDocument(this.dbName, { createdDate: date, ...examInfo, updatedDate: date }).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       let routerParams = {};
-      if (this.examType === 'courses') {
+      if (this.examType === 'courses' || this.isCourseContent) {
         this.appendExamToCourse(examInfo);
         routerParams = { 'continue': true };
       }
