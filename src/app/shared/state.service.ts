@@ -65,7 +65,7 @@ export class StateService {
         return { domain: planetField };
     }
   }
-  
+
   getAll(db: string, opts: any, fields: any = 0, sort: any = 0) {
     return this.couchService.findAllStream(db, findDocuments({
       '_id': { '$gt': null }
