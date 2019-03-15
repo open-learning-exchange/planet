@@ -3,7 +3,7 @@
   <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
   <span *ngSwitchDefault [matTooltip]="tooltipLabels">Hover to see selected collections</span>
 </span>
-<button type="button" mat-stroked-button (click)="openPresetDialog()">
+<button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
   <ng-container [ngSwitch]="mode">
     <span i18n *ngSwitchCase="'filter'">Collections</span>
     <span i18n *ngSwitchCase="'add'">Add Collections</span>

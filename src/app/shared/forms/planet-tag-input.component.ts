@@ -4,6 +4,7 @@ import {
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
@@ -41,6 +42,16 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set placeholder(text: string) {
     this._placeholder = text;
+    this.stateChanges.next();
+  }
+
+  private _disabled = false;
+  @Input()
+  get disabled() {
+    return this._disabled;
+  }
+  set disabled(dis) {
+    this._disabled = coerceBooleanProperty(dis);
     this.stateChanges.next();
   }
   @Input() mode = 'filter';
