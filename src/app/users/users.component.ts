@@ -95,7 +95,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   changeFilter(type, child: any = {}) {
     if (type === 'local') {
-      this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
+      this.displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
+      if (this.isUserAdmin) {
+        this.displayedColumns.unshift('select');
+      }
     } else {
       this.displayedColumns = [ 'profile', 'name', 'joinDate', 'action' ];
     }
