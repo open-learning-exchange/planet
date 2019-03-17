@@ -27,7 +27,7 @@
         </mat-card-title>
         <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
         <mat-card-content>
-          <p>{{item.message}}</p>
+          <td-markdown [content]="item.message"></td-markdown>
         </mat-card-content>
       </mat-card>
     </div>
