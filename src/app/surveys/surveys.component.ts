@@ -14,7 +14,13 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
-  'templateUrl': './surveys.component.html'
+  'templateUrl': './surveys.component.html',
+  styles: [ `
+    /* Column Widths */
+    .mat-column-taken, .mat-column-createdDate {
+      max-width: 200px;
+    }
+  ` ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
