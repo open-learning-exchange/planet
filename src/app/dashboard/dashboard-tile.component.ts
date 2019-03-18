@@ -48,6 +48,12 @@ export class DashboardTileComponent implements OnInit {
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
     const ids = [ ...this.userService.shelf[this.shelfName] ];
     ids.splice(event.currentIndex, 0, ids.splice(event.previousIndex, 1)[0]);
-    this.userService.updateShelf(ids, this.shelfName).subscribe();
+    this.userService.updateShelf(ids, this.shelfName).subscribe(
+      () => {},
+      () => {
+        this.planetMessageService.showAlert('There was an error reordering ' + this.cardTitle);
+        moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
+      }
+    );
   }
 }
