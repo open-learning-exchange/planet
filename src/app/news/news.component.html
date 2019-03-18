@@ -29,8 +29,8 @@
         </mat-card-content>
         <mat-card-actions class="display-flex" *ngIf="item.user.name === currentUser.name">
           <span class="toolbar-fill"></span>
-          <mat-icon (click)="openDeleteDialog(item)">delete</mat-icon>
-          <mat-icon (click)="editNews(item)">edit</mat-icon>
+          <mat-icon class="cursor-pointer" (click)="openDeleteDialog(item)">delete</mat-icon>
+          <mat-icon class="cursor-pointer" (click)="editNews(item)">edit</mat-icon>
         </mat-card-actions>
       </mat-card>
     </div>
