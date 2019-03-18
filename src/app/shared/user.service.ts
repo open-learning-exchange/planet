@@ -211,7 +211,8 @@ export class UserService {
       switchMap(res => {
         userInfo._rev = res.rev;
         if (userInfo.name === this.get().name) {
-          this.set(userInfo);
+          const { derived_key, iterations, password_scheme, salt, ...profile } = userInfo;
+          this.set(profile);
         }
         if (planetConfiguration.adminName === userInfo.name + '@' + planetConfiguration.code) {
           return this.updateConfigurationContact(userInfo, planetConfiguration);
