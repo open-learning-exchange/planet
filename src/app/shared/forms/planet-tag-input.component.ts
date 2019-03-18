@@ -161,10 +161,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   dialogData() {
-    const startingTags = this.selectedIds !== undefined ?
-      this.tagsInSelection(this.selectedIds, this.filteredData) :
-      this.value;
-    console.log(startingTags);
+    let startingTags: any[];
+    if (this.selectedIds !== undefined) {
+      startingTags = this.tagsInSelection(this.selectedIds, this.filteredData);
+      this.writeValue(startingTags.map((tag: any) => tag.tagId));
+    } else {
+      startingTags = this.value;
+    }
     return ({
       tagUpdate: this.dialogTagUpdate.bind(this),
       initTags: this.initTags.bind(this),
