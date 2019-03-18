@@ -54,8 +54,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseId = params.get('id');
         this.coursesService.requestCourse(
         { courseId: this.courseId, forceLatest: true, parent: this.parent }
-      ), (error) => { console.log(error) }
-    });
+      )}
+    );
   }
 
   ngOnDestroy() {
