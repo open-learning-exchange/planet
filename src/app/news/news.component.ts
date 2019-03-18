@@ -16,6 +16,7 @@ import { environment } from '../../environments/environment';
   styleUrls: [ './news.scss' ]
 })
 export class NewsComponent implements OnInit {
+
   private dbName = 'news';
   configuration = this.stateService.configuration;
   newsItems: any[] = [];
