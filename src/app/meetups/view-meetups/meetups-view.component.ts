@@ -84,7 +84,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   joinMeetup() {
-    if(this.meetupDetail.endDate > Date.now() || this.meetupDetail.participate) {
+    if (this.meetupDetail.endDate > Date.now() || this.meetupDetail.participate) {
       this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
         const msg = res.participate ? 'left' : 'joined';
         this.meetupDetail.participate = !res.participate;
