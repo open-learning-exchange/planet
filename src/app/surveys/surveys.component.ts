@@ -17,8 +17,11 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
   'templateUrl': './surveys.component.html',
   styles: [ `
     /* Column Widths */
-    .mat-column-taken, .mat-column-createdDate {
-      max-width: 200px;
+    .mat-column-taken {
+      max-width: 150px;
+    }
+    .mat-column-createdDate {
+      max-width: 130px;
     }
   ` ]
 })
