@@ -4,9 +4,7 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar>
-    <mat-toolbar-row class="primary-color font-size-1">
-
-    </mat-toolbar-row>
+    <mat-toolbar-row class="primary-color font-size-1"></mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="new-post-form">
@@ -19,16 +17,24 @@
     </div>
     <div class="news-container">
       <mat-card *ngFor="let item of newsItems">
-        <img mat-card-avatar [src]="item.avatar">
-        <mat-card-title>
-          {{item.user.firstName ?
-            item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
-            item.user.name}}
-        </mat-card-title>
-        <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
+        <mat-card-header>
+          <img mat-card-avatar [src]="item.avatar">
+          <mat-card-title>
+            <a [routerLink]="['/users/profile', item.user.name]"> {{item.user.firstName ?
+              item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
+              item.user.name}}
+            </a>
+          </mat-card-title>
+          <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
           <td-markdown [content]="item.message"></td-markdown>
         </mat-card-content>
+        <mat-card-actions class="display-flex" *ngIf="item.user.name === currentUser.name">
+          <span class="toolbar-fill"></span>
+          <mat-icon class="cursor-pointer" (click)="openDeleteDialog(item)">delete</mat-icon>
+          <mat-icon class="cursor-pointer" (click)="editNews(item)">edit</mat-icon>
+        </mat-card-actions>
       </mat-card>
     </div>
   </div>
