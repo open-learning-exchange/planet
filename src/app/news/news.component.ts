@@ -10,9 +10,6 @@ import { MatDialog } from '@angular/material';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
-import { FormGroup, FormControl, Validators, FormBuilder, AbstractControl } from '@angular/forms';
-import { CustomValidators } from '../validators/custom-validators';
-import { ConnectedOverlayPositionChange } from '@angular/cdk/overlay';
 
 @Component({
   templateUrl: './news.component.html',
@@ -23,29 +20,19 @@ export class NewsComponent implements OnInit {
   configuration = this.stateService.configuration;
   newsItems: any[] = [];
   imgUrlPrefix = environment.couchAddress + '/' + '_users' + '/';
-  newsPost: FormGroup;
+  newMessage = '';
   currentUser: any;
   message = '';
   deleteDialog: any;
-  
+
   constructor(
-    private fb: FormBuilder,
     private couchService: CouchService,
     private stateService: StateService,
     private userService: UserService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
-    private planet,
-    Service: PlanetMessageService
-  ) {
-    this.createNewsForm();
-  }
-
-  createNewsForm() {
-    this.newsPost = this.fb.group({
-        newMessage: [ '', CustomValidators.required ],
-    });
-  }
+    private planetMessageService: PlanetMessageService
+  ) {}
 
   ngOnInit() {
     this.currentUser = this.userService.get();
@@ -63,29 +50,22 @@ export class NewsComponent implements OnInit {
   }
 
   postMessage() {
-    const news = {
-      message: this.newsPost.controls.newMessage.value,
+    this.postNews({
+      message: this.newMessage,
       time: this.couchService.datePlaceholder,
       createdOn: this.configuration.code,
       parentCode: this.configuration.parentCode,
       user: this.userService.get(),
       viewableBy: 'community'
-    };
-    this.postNews(news);
+    });
   }
 
   postNews(data) {
     this.couchService.updateDocument(this.dbName, data).subscribe(() => {
       this.planetMessageService.showMessage('Thank you for submitting your news');
-      this.resetNewsForm(this.newsPost.get('newMessage'));
+      this.newMessage = '';
       this.getMessages();
     });
-  }
-
-  resetNewsForm(control: AbstractControl) {
-    control.reset('');
-    control.markAsPristine();
-    control.markAsUntouched();
   }
 
   openDeleteDialog(news) {
