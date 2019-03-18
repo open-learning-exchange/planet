@@ -3,7 +3,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { MatDialog } from '@angular/material';
@@ -23,7 +22,6 @@ export class NewsComponent implements OnInit {
   newsItems: any[] = [];
   imgUrlPrefix = environment.couchAddress + '/' + '_users' + '/';
   currentUser: any;
-  message = '';
   deleteDialog: any;
 
   constructor(
@@ -77,10 +75,6 @@ export class NewsComponent implements OnInit {
         changeType: 'delete',
         type: 'news'
       }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
     });
   }
 
