@@ -22,6 +22,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   isUserEnrolled = false;
   progress = [ { stepNum: 1 } ];
   fullView = 'on';
+  courseId: string;
+  canManage: boolean;
+  currentUser = this.userService.get();
 
   constructor(
     private router: Router,
@@ -44,12 +47,15 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       });
       this.progress = progress;
       this.isUserEnrolled = this.checkMyCourses(course._id);
+      this.canManage = this.currentUser.isUserAdmin;
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (params: ParamMap) => this.coursesService.requestCourse(
-        { courseId: params.get('id'), forceLatest: true, parent: this.parent }
+      (params: ParamMap) => {
+        this.courseId = params.get('id');
+        this.coursesService.requestCourse(
+        { courseId: this.courseId, forceLatest: true, parent: this.parent }
       ), error => console.log(error)
-    );
+    });
   }
 
   ngOnDestroy() {
@@ -93,6 +99,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   toggleFullView() {
     this.fullView = this.fullView === 'on' ? 'off' : 'on';
+  }
+
+  updateCourse() {
+    this.router.navigate([ '/courses/update/' + this.courseId ]);
   }
 
 }

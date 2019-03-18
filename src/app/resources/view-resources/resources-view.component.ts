@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -22,12 +22,15 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private resourcesService: ResourcesService,
-    private stateService: StateService
+    private stateService: StateService,
+    private router: Router
   ) { }
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any = {};
+  canManage: boolean;
+  currentUser = this.userService.get();
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
@@ -58,6 +61,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
+        this.canManage = this.currentUser.isUserAdmin;
       });
   }
 
@@ -82,6 +86,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
+  }
+
+  updateResource() {
+    this.router.navigate([ '/resources/update/' + this.resourceId ]);
   }
 
 }
