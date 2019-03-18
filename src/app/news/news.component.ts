@@ -104,7 +104,6 @@ export class NewsComponent implements OnInit {
       message: [ news.message, CustomValidators.required ]
     };
     this.dialogsFormService.confirm(title, fields, formGroup)
-      .pipe(debug('Dialog confirm'))
       .subscribe((response: any) => {
         if (response !== undefined) {
           this.postNews({ ...news, ...response });
