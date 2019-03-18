@@ -99,7 +99,7 @@ export class NewsComponent implements OnInit {
   editNews(news) {
     const title = 'News';
     const fields = [ {
-      'type': 'textarea',
+      'type': 'markdown',
       'name': 'message',
       'placeholder': 'Your Story',
       'required': true
