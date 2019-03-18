@@ -46,7 +46,7 @@ export class DashboardTileComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
-    const ids = this.userService.shelf[this.shelfName];
+    const ids = [ ...this.userService.shelf[this.shelfName] ];
     ids.splice(event.currentIndex, 0, ids.splice(event.previousIndex, 1)[0]);
     this.userService.updateShelf(ids, this.shelfName).subscribe();
   }
