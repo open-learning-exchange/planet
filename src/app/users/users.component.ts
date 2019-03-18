@@ -94,11 +94,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeFilter(type, child: any = {}) {
-    if (type === 'local') {
-      this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
-    } else {
-      this.displayedColumns = [ 'profile', 'name', 'joinDate', 'action' ];
-    }
+    this.filterDisplayColumns(type);
     this.filterType = type;
     this.selectedChild = child;
     this.allUsers.filterPredicate = composeFilterFunctions([
@@ -113,6 +109,17 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
       this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
     });
+  }
+
+  filterDisplayColumns(type: string) {
+    if (type === 'local') {
+      this.displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
+      if (this.isUserAdmin) {
+        this.displayedColumns.unshift('select');
+      }
+    } else {
+      this.displayedColumns = [ 'profile', 'name', 'joinDate', 'action' ];
+    }
   }
 
   applyFilter(filterValue: string) {
