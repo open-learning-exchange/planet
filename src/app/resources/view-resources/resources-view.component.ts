@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
 
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
@@ -18,12 +17,11 @@ import { StateService } from '../../shared/state.service';
 export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   constructor(
-    private couchService: CouchService,
     private route: ActivatedRoute,
+    private router: Router,
     private userService: UserService,
-    private resourcesService: ResourcesService,
     private stateService: StateService,
-    private router: Router
+    private resourcesService: ResourcesService
   ) { }
 
   private dbName = 'resources';
