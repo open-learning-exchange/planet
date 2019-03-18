@@ -211,10 +211,8 @@ export class UserService {
       switchMap(res => {
         userInfo._rev = res.rev;
         if (userInfo.name === this.get().name) {
-         // Remove hashed password information from the data object
           const { derived_key, iterations, password_scheme, salt, ...profile } = userInfo;
-          userInfo = profile;
-          this.set(userInfo);
+          this.set(profile);
         }
         if (planetConfiguration.adminName === userInfo.name + '@' + planetConfiguration.code) {
           return this.updateConfigurationContact(userInfo, planetConfiguration);
