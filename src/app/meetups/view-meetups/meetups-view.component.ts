@@ -84,12 +84,16 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   joinMeetup() {
-    this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
-      const msg = res.participate ? 'left' : 'joined';
-      this.meetupDetail.participate = !res.participate;
-      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
-      this.fixEnrolledList(res.participate, this.userService.get().name);
-    });
+    if(this.meetupDetail.endDate > Date.now() || this.meetupDetail.participate) {
+      this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
+        const msg = res.participate ? 'left' : 'joined';
+        this.meetupDetail.participate = !res.participate;
+        this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+        this.fixEnrolledList(res.participate, this.userService.get().name);
+      });
+    } else {
+      this.planetMessageService.showMessage('You cannot join this meetup.');
+    }
   }
 
   openInviteMemberDialog() {
