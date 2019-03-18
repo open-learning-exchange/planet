@@ -18,9 +18,10 @@
         <mat-card-header>
           <img mat-card-avatar [src]="item.avatar">
           <mat-card-title>
-            {{item.user.firstName ?
+            <a [routerLink]="['/users/profile', item.user.name]"> {{item.user.firstName ?
               item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
               item.user.name}}
+            </a>
           </mat-card-title>
           <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
         </mat-card-header>
