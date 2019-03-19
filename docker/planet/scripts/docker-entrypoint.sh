@@ -41,7 +41,7 @@ check_file() {
 
 download_file() {
   URL=$1
-  wget -b -q -O myPlanet.apk $URL
+  wget -b -q -O /usr/share/nginx/html/fs/myPlanet.apk $URL
 }
 
 PROTOCOL=$(check_protocol $HOST_PROTOCOL "http")
