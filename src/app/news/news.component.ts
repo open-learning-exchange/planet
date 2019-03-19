@@ -17,10 +17,10 @@ import { environment } from '../../environments/environment';
 export class NewsComponent implements OnInit {
 
   private dbName = 'news';
-  newMessage = '';
   configuration = this.stateService.configuration;
   newsItems: any[] = [];
   imgUrlPrefix = environment.couchAddress + '/' + '_users' + '/';
+  newMessage = '';
   currentUser: any;
   deleteDialog: any;
 
@@ -49,15 +49,14 @@ export class NewsComponent implements OnInit {
   }
 
   postMessage() {
-    const news = {
+    this.postNews({
       message: this.newMessage,
       time: this.couchService.datePlaceholder,
       createdOn: this.configuration.code,
       parentCode: this.configuration.parentCode,
       user: this.userService.get(),
       viewableBy: 'community'
-    };
-    this.postNews(news);
+    });
   }
 
   postNews(data) {
@@ -95,7 +94,7 @@ export class NewsComponent implements OnInit {
   editNews(news) {
     const title = 'News';
     const fields = [ {
-      'type': 'textarea',
+      'type': 'markdown',
       'name': 'message',
       'placeholder': 'Your Story',
       'required': true

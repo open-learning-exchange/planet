@@ -8,10 +8,10 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="new-post-form">
-      <mat-form-field>
-        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5" placeholder="What would you like to share?" i18n-placeholder></textarea>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox class="full-width" [(ngModel)]="newMessage" i18n-placeholder placeholder="What would you like to share?"></planet-markdown-textbox>
       </mat-form-field>
-      <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">Post</button>
+      <button mat-raised-button color="accent" class="full-width" (click)="postMessage()" [disabled]="!newMessage.trim()">Post</button>
     </div>
     <div class="news-container">
       <mat-card *ngFor="let item of newsItems">
@@ -27,7 +27,7 @@
           <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <p>{{item.message}}</p>
+          <td-markdown [content]="item.message"></td-markdown>
         </mat-card-content>
         <mat-card-actions class="display-flex" *ngIf="item.user.name === currentUser.name">
           <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
