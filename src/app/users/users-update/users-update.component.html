@@ -77,7 +77,7 @@
     <div *ngIf="!submissionMode">
       <img class="profile-image-update" [src]="previewSrc">
       <div>
-        <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="{ crop: [ { ratio: 1 } ] }"></ngx-img>
+        <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="{ crop: [ { ratio: 1 } ], fileType: ['image/gif', 'image/jpeg', 'image/png'] }"></ngx-img>
       </div>
     </div>
   </div>
