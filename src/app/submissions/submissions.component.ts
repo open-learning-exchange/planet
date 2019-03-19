@@ -108,6 +108,9 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFilterChange(filterValue: string, field: string) {
+    if (field === 'type') {
+      this.filter.status = '';
+    }
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
