@@ -16,6 +16,34 @@ check_protocol() {
   echo "$PROTO"
 }
 
+check_file() {
+  meta=$(curl https://api.github.com/repos/open-learning-exchange/myplanet/releases/latest | jq -c '.assets[]');
+  for i in $meta
+  do
+    NM=$(echo $i | jq -r '.name')
+    if [ "$NM" = "myPlanet.apk" ]
+    then
+      URL=$(echo $i | jq -r '.browser_download_url')
+      if [ -f "myPlanet.apk" ]
+      then
+        DATE=$(echo $i | jq '.updated_at')
+        TIME=$(stat -c %Y myPlanet.apk | jq 'tonumber | gmtime | todate')
+        if [ "$TIME" != "$DATE" ]
+        then
+          download_file $URL
+        fi
+      else
+        download_file $URL
+      fi
+    fi
+  done
+}
+
+download_file() {
+  URL=$1
+  wget -b -q -O myPlanet.apk $URL
+}
+
 PROTOCOL=$(check_protocol $HOST_PROTOCOL "http")
 P_PROTOCOL=$(check_protocol $PARENT_PROTOCOL "https")
 S_ADDRESS=${SYNC_ADDRESS:-http://localhost:5984}
@@ -36,3 +64,4 @@ spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 nginx -g "daemon off;"
 
 mkdir -p /usr/share/nginx/html/fs
+check_file
