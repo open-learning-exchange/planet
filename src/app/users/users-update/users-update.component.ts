@@ -44,6 +44,7 @@ export class UsersUpdateComponent implements OnInit {
   languages = languages;
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
+  ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
 
   constructor(
     private fb: FormBuilder,
