@@ -20,7 +20,6 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import * as constants from './resources-constants';
 
 @Component({
   templateUrl: './resources.component.html',
@@ -58,7 +57,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedNotAdded = 0;
   selectedAdded = 0;
   isAuthorized = false;
-  constants = constants;
   showFilters = 'off';
 
   @ViewChild(PlanetTagInputComponent)

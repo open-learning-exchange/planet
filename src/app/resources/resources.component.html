@@ -15,24 +15,7 @@
     <button mat-button i18n (click)="resetFilter()"><span>Reset</span></button>
   </mat-toolbar-row>
   <mat-toolbar-row class="search-bar" *ngIf="showFilters==='on'">
-    <div>
-      <span class="mat-caption">Subject</span>
-      <mat-selection-list>
-        <mat-list-option *ngFor="let subject of constants.subjectList" [value]="subject">{{subject}}</mat-list-option>
-      </mat-selection-list>
-    </div>
-    <div>
-      <span class="mat-caption">Level</span>
-      <mat-selection-list>
-        <mat-list-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-list-option>
-      </mat-selection-list>
-    </div>
-    <div>
-      <span class="mat-caption">Medium</span>
-      <mat-selection-list>
-        <mat-list-option *ngFor="let medium of constants.media" [value]="medium">{{medium}}</mat-list-option>
-      </mat-selection-list>
-    </div>
+    <planet-resources-search [filteredData]="resources.filteredData"></planet-resources-search>
   </mat-toolbar-row>
 </mat-toolbar>
 
