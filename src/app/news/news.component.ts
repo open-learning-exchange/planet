@@ -105,6 +105,7 @@ export class NewsComponent implements OnInit {
     this.dialogsFormService.confirm(title, fields, formGroup)
       .subscribe((response: any) => {
         if (response !== undefined) {
+          news.updateDate = this.couchService.datePlaceholder;
           this.postNews({ ...news, ...response });
         }
       });
