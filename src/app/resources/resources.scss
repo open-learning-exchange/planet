@@ -1,3 +1,5 @@
+@import '../variables';
+
 /* Column Widths */
 .mat-column-select {
   max-width: 44px;
@@ -37,4 +39,8 @@ $label-height: 1rem;
     }
   }
 
+}
+
+.view-full-height.view-with-search {
+  height: calc(#{$view-container-height} - #{$toolbar-height});
 }

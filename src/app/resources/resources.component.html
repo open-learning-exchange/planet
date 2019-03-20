@@ -71,7 +71,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters==='on'}" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
