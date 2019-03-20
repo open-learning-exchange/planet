@@ -24,8 +24,10 @@
                 item.user.name}}
             </a>
           </mat-card-title>
-          <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
-          <mat-card-subtitle *ngIf="item.updateDate"><ng-container i18n>edited on</ng-container> {{item.updateDate | date: medium}}</mat-card-subtitle>
+          <mat-card-subtitle *ngIf="item.updateDate; else noEdit"><ng-container i18n>edited on</ng-container> {{item.updateDate | date: medium}}</mat-card-subtitle>
+          <ng-template #noEdit>
+            <mat-card-subtitle><ng-container i18n>wrote on</ng-container> {{item.time | date: medium }}</mat-card-subtitle>
+          </ng-template>
         </mat-card-header>
         <mat-card-content>
           <td-markdown [content]="item.message"></td-markdown>
