@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -9,14 +9,21 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { takeUntil } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { UserService } from '../shared/user.service';
+import { findByIdInArray } from '../shared/utils';
+import { debug } from '../debug-operator';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   'templateUrl': './surveys.component.html',
   styles: [ `
     /* Column Widths */
+    .mat-column-select {
+      max-width: 44px;
+    }
     .mat-column-taken {
       max-width: 150px;
     }
@@ -26,15 +33,19 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
   ` ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
-
+  selection = new SelectionModel(true, []);
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'taken', 'createdDate', 'action' ];
+  displayedColumns = [ 'select', 'name', 'taken', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
+  readonly dbName = 'exams';
   emptyData = false;
   isAuthorized = false;
+  user = this.userService.get();
+  deleteDialog: any;
+  message = '';
 
   constructor(
     private couchService: CouchService,
@@ -45,7 +56,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private userService: UserService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -77,6 +89,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.paginator = this.paginator;
   }
 
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -101,6 +117,78 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.surveys.filter = filterValue;
+  }
+
+  isAllSelected() {
+    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
+    return this.selection.selected.length === itemsShown;
+  }
+
+  masterToggle() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.surveys.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    }
+  }
+
+  deleteSelected() {
+    const selected = this.selection.selected.map(surveyId => findByIdInArray(this.surveys.data, surveyId));
+    let amount = 'many',
+      okClick = this.deleteSurveys(selected),
+      displayName = '';
+    if (selected.length === 1) {
+      const survey = selected[0];
+      amount = 'single';
+      okClick = this.deleteSurvey(survey);
+      displayName = survey.name;
+    }
+    this.openDeleteDialog(okClick, amount, displayName);
+  }
+
+  deleteSurveys(surveys) {
+    return () => {
+      const deleteArray = surveys.map((survey) => {
+        this.surveys.data = this.surveys.data.filter((c: any) => survey._id !== c._id);
+        return { _id: survey._id, _rev: survey._rev, _deleted: true };
+      });
+      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }).subscribe((data: any) => {
+        this.getSurveys();
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.');
+    };
+  }
+
+  deleteSurvey(survey) {
+    return () => {
+      const { _id: surveyId, _rev: surveyRev } = survey;
+      this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev)
+        .subscribe((data) => {
+          this.selection.deselect(survey._id);
+          this.surveys.data = this.surveys.data.filter((c: any) => data.id !== c._id);
+          this.deleteDialog.close();
+          this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
+        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.');
+    };
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '') {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'survey',
+        displayName
+      }
+    });
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+      this.message = '';
+    });
   }
 
   openSendSurveyDialog(survey) {
