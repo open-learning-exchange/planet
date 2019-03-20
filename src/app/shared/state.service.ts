@@ -25,7 +25,7 @@ export class StateService {
     const baseDbs = [ 'resources' ];
     baseDbs.forEach(db => {
       if (!this.state.local[db]) {
-        this.requestData(db, 'local');
+        this.requestData(db, 'local', [ { 'createdDate': 'desc' }] );
       }
     });
   }
