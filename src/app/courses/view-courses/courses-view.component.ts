@@ -47,7 +47,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       });
       this.progress = progress;
       this.isUserEnrolled = this.checkMyCourses(course._id);
-      this.canManage = this.currentUser.isUserAdmin;
+      let atIndex = this.courseDetail.creator.indexOf('@');
+      this.canManage = this.currentUser.isUserAdmin ||
+        (this.currentUser.name === this.courseDetail.creator.slice(0, atIndex));
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
       (params: ParamMap) => {

@@ -59,7 +59,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
-        this.canManage = this.currentUser.isUserAdmin;
+        this.canManage = this.currentUser.isUserAdmin ||
+          (this.currentUser.name === this.resource.addedBy);
       });
   }
 
