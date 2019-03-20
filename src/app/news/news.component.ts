@@ -55,7 +55,7 @@ export class NewsComponent implements OnInit {
       createdOn: this.configuration.code,
       parentCode: this.configuration.parentCode,
       user: this.userService.get(),
-      viewableBy: 'community'
+      viewableBy: 'community',
     };
     this.postNews(news);
   }
@@ -106,6 +106,7 @@ export class NewsComponent implements OnInit {
     this.dialogsFormService.confirm(title, fields, formGroup)
       .subscribe((response: any) => {
         if (response !== undefined) {
+          news.updateDate = this.couchService.datePlaceholder;
           this.postNews({ ...news, ...response });
         }
       });
