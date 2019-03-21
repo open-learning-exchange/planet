@@ -89,20 +89,11 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   addExam(type) {
-    if (type === 'exam') {
-      this.coursesService.stepIndex = this.activeStepIndex;
-      if (this.activeStep.exam) {
-        this.router.navigate([ '/courses/update/exam/', this.activeStep.exam._id ]);
-      } else {
-        this.router.navigate([ '/courses/exam/' ]);
-      }
-    } else if (type === 'survey') {
-      this.coursesService.stepIndex = this.activeStepIndex;
-      if (this.activeStep.exam) {
-        this.router.navigate([ '/courses/update/survey/', this.activeStep.exam._id, { 'type': 'surveys' } ]);
-      } else {
-        this.router.navigate([ '/courses/survey/', { 'type': 'surveys' } ]);
-      }
+    this.coursesService.stepIndex = this.activeStepIndex;
+    if (this.activeStep.exam) {
+      this.router.navigate([ '/courses/update/exam/', this.activeStep.exam._id, { type } ]);
+    } else {
+      this.router.navigate([ '/courses/exam/', { type } ]);
     }
   }
 

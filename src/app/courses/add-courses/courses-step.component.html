@@ -34,7 +34,7 @@
       {{ activeStep?.exam?.type === 'courses' ? 'Update' : 'Add' }} Exam
     </a>
     <button mat-raised-button color="primary" (click)="attachItem('resources')" [planetSubmit]="spinnerOn">Add Resource</button>
-    <button mat-raised-button color="primary" (click)="addExam('survey')" [planetSubmit]="spinnerOn">
+    <button mat-raised-button color="primary" (click)="addExam('surveys')" [planetSubmit]="spinnerOn">
       {{ activeStep?.exam?.type === 'surveys' ? 'Update' : 'Add' }} Survey
     </button>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
