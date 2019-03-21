@@ -1,0 +1,27 @@
+@import '../variables';
+
+$toolbar-height: 25vh;
+$label-height: 1rem;
+
+/* Column Widths */
+.mat-column-select {
+  max-width: 44px;
+}
+.mat-column-tags {
+  max-width: 125px;
+}
+.mat-column-rating {
+  max-width: 225px;
+}
+.mat-progress-bar {
+  height: 10px;
+  width: 120px;
+}
+
+.search-bar {
+  height: $toolbar-height;
+}
+
+.view-full-height.view-with-search {
+  height: calc(#{$view-container-height} - #{$toolbar-height});
+}

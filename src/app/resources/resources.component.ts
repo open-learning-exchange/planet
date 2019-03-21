@@ -8,7 +8,9 @@ import { takeUntil, map, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
-import { filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString } from '../shared/table-helpers';
+import {
+  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch
+} from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
 import { debug } from '../debug-operator';
@@ -20,31 +22,18 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 
 @Component({
   templateUrl: './resources.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-tags {
-      max-width: 125px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .mat-progress-bar {
-      height: 10px;
-      width: 120px;
-    }
-  ` ]
+  styleUrls: [ './resources.scss' ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
   dialogRef: MatDialogRef<DialogsListComponent>;
   readonly dbName = 'resources';
   message = '';
@@ -72,6 +61,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedNotAdded = 0;
   selectedAdded = 0;
   isAuthorized = false;
+  showFilters = 'off';
+  searchSelection: any = {};
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -109,7 +100,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = composeFilterFunctions(
-      [ filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
+      [ filterAdvancedSearch(this.searchSelection), filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
     );
     this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
@@ -268,16 +259,27 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilterValue = newTags;
   }
 
+  onSearchChange({ items, category }) {
+    this.searchSelection[category] = items;
+    this.titleSearch = this.titleSearch;
+  }
+
   resetFilter() {
     this.tagFilter.setValue([]);
     this.tagFilterValue = [];
+    Object.keys(this.searchSelection).forEach(key => this.searchSelection[key] = []);
+    if (this.searchComponent) {
+      this.searchComponent.reset();
+    }
     this.titleSearch = '';
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return this.tagFilter.value.length > 0 ? ' ' : '';
+    return this.tagFilter.value.length > 0 ||
+      Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ?
+      ' ' : '';
   }
 
   addTag(tag: string) {
@@ -312,6 +314,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
+  }
+
+  toggleFilters() {
+    this.showFilters = this.showFilters === 'off' ? 'on' : 'off';
   }
 
 }
