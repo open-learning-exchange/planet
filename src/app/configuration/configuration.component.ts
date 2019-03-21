@@ -106,7 +106,7 @@ export class ConfigurationComponent implements OnInit {
       ],
       createdDate: this.couchService.datePlaceholder,
       autoAccept: true,
-      betaEnabled: false
+      betaEnabled: 'off'
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],
