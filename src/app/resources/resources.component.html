@@ -15,7 +15,7 @@
     <button mat-button i18n (click)="resetFilter()"><span>Reset</span></button>
   </mat-toolbar-row>
   <mat-toolbar-row class="search-bar" *ngIf="showFilters==='on'">
-    <planet-resources-search [filteredData]="resources.filteredData" (searchChange)="onSearchChange($event)"></planet-resources-search>
+    <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
   </mat-toolbar-row>
 </mat-toolbar>
 

@@ -76,6 +76,7 @@ export class ResourcesSearchListComponent {
 export class ResourcesSearchComponent implements OnInit, OnChanges {
 
   @Input() filteredData: any[];
+  @Input() startingSelection: any;
   @Output() searchChange = new EventEmitter<any>();
   @ViewChildren(ResourcesSearchListComponent) searchListComponents: QueryList<ResourcesSearchListComponent>;
 
@@ -86,7 +87,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   constructor () {}
 
   ngOnInit() {
-    this.reset(true);
+    this.reset({ startingSelection: this.startingSelection, isInit: true });
   }
 
   ngOnChanges() {
@@ -95,8 +96,9 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
     }, []);
   }
 
-  reset(isInit = false) {
+  reset({ startingSelection = {}, isInit = false }) {
     this.selected = this.categories.reduce((select, category) => ({ ...select, [category]: [] }), {});
+    this.selected = { ...this.selected, ...startingSelection };
     if (!isInit) {
       this.searchListComponents.forEach((component) => component.reset());
     }
