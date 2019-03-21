@@ -96,7 +96,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
     }, []);
   }
 
-  reset({ startingSelection = {}, isInit = false }) {
+  reset({ startingSelection = {}, isInit = false } = {}) {
     this.selected = this.categories.reduce((select, category) => ({ ...select, [category]: [] }), {});
     this.selected = { ...this.selected, ...startingSelection };
     if (!isInit) {
