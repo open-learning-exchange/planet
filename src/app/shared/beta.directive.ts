@@ -7,6 +7,8 @@ import { UserService } from './user.service';
 })
 export class PlanetBetaDirective implements OnInit {
 
+  configuration = this.stateService.configuration;
+
   constructor(
     private stateService: StateService,
     private userService: UserService,
@@ -15,7 +17,7 @@ export class PlanetBetaDirective implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.userService.get().betaEnabled) {
+    if (this.configuration.betaEnabled === 'on' || this.configuration.betaEnabled === 'user' && this.userService.get().betaEnabled) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainer.clear();

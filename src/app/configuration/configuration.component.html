@@ -59,12 +59,17 @@
             <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
           </mat-form-field>
           <mat-slide-toggle formControlName="autoAccept" i18n>Auto accept Members</mat-slide-toggle>
-          <mat-slide-toggle
-            formControlName="betaEnabled"
-            i18n
-            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
-            Enable Beta features
-          </mat-slide-toggle>
+          <mat-form-field>
+            <mat-select
+              formControlName="betaEnabled"
+              i18n-placeholder
+              placeholder="Beta features"
+              matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+              <mat-option value="off" i18n>Always off</mat-option>
+              <mat-option value="on" i18n>Always on</mat-option>
+              <mat-option value="user" i18n>User preferences</mat-option>
+            </mat-select>
+          </mat-form-field>
         </ng-container>
       </div>
     </form>
