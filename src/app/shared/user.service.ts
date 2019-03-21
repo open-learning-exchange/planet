@@ -205,8 +205,9 @@ export class UserService {
 
   updateUser(userInfo) {
     const planetConfiguration = this.stateService.configuration;
+    const newUserInfo = { ...userInfo, roles: userInfo.roles.filter(role => role.indexOf('_') === -1) };
     // ...is the rest syntax for object destructuring
-    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...userInfo })
+    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo })
     .pipe(
       switchMap(res => {
         userInfo._rev = res.rev;
