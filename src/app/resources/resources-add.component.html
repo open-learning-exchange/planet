@@ -69,9 +69,6 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field>
-        <input matInput [value]="articleDate | date: 'longDate'" i18n-placeholder placeholder="Article Date" readonly>
-      </mat-form-field>
-      <mat-form-field>
         <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
           <mat-option *ngFor="let type of constants.resourceType" [value]="type">
           {{ type }}
@@ -80,9 +77,6 @@
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder [(ngModel)]="userDetail.name" placeholder="Added By" formControlName="addedBy" readonly>
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput  i18n-placeholder placeholder="Open URL" formControlName="openUrl" >
       </mat-form-field>
       <mat-form-field>
         <input matInput  i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
