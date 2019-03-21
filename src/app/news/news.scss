@@ -1,14 +1,12 @@
-$max-width: 640px;
+@import '../variables';
 
 .view-container {
   display: grid;
-  grid-template-rows: auto 1fr;
   grid-template-areas: 'form' 'news';
-  justify-content: center;
-  grid-template-columns: minmax(auto, $max-width);
+  grid-template-columns: 1fr 2fr;
 
   .new-post-form {
-    grid-area: form;
+    grid-area: 'form';
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -21,7 +19,7 @@ $max-width: 640px;
   }
 
   .news-container {
-    grid-area: news;
+    grid-area: 'news';
     overflow-y: auto;
     width: 100%;
 
