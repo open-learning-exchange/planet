@@ -43,23 +43,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'exams';
   emptyData = false;
   isAuthorized = false;
-  user = this.userService.get();
+  user = this.userSvc.get();
   deleteDialog: any;
   message = '';
 
   constructor(
-    private planetMessageService: PlanetMessageService,
-    private route: ActivatedRoute,
-    private dialog: MatDialog,
-    private stateService: StateService,
+    private planetMsgService: PlanetMessageService,
+    private activatedRoute: ActivatedRoute,
+    private matDialog: MatDialog,
+    private stateSvc: StateService,
     private router: Router,
-    private submissionsService: SubmissionsService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private couchService: CouchService,
-    private dialogsListService: DialogsListService,
-    private userService: UserService
+    private submissionsSvc: SubmissionsService,
+    private dialogsLoadingSvc: DialogsLoadingService,
+    private couchSvc: CouchService,
+    private dialogsListSvc: DialogsListService,
+    private userSvc: UserService
   ) {
-    this.dialogsLoadingService.start();
+    this.dialogsLoadingSvc.start();
   }
 
   ngOnInit() {
@@ -79,9 +79,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           })
         );
         this.emptyData = !this.surveys.data.length;
-        this.dialogsLoadingService.stop();
+        this.dialogsLoadingSvc.stop();
       });
-    this.couchService.checkAuthorization('exams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.couchSvc.checkAuthorization('exams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   ngAfterViewInit() {
@@ -99,15 +99,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   receiveData(dbName: string, type: string) {
-    return this.couchService.findAll(dbName, { 'selector': { 'type': type } });
+    return this.couchSvc.findAll(dbName, { 'selector': { 'type': type } });
   }
 
   goBack() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.router.navigate([ '../' ], { relativeTo: this.activatedRoute });
   }
 
-  routeToEditSurvey(route, id = '') {
-    this.router.navigate([ route + '/' + id, { 'type': 'surveys' } ], { relativeTo: this.route });
+  routeToEditSurvey(activatedRoute, id = '') {
+    this.router.navigate([ activatedRoute + '/' + id, { 'type': 'surveys' } ], { relativeTo: this.activatedRoute });
   }
 
   applyFilter(filterValue: string) {
@@ -144,12 +144,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = filterById(this.surveys.data, survey._id);
         return { _id: survey._id, _rev: survey._rev, _deleted: true };
       });
-      postToDeleteItems(this.couchService, this.dbName, deleteArray)
+      postToDeleteItems(this.couchSvc, this.dbName, deleteArray)
         .subscribe(() => {
           this.receiveData('exams', 'surveys');
           this.selection.clear();
           this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+          this.planetMsgService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
         }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.');
     };
   }
@@ -157,18 +157,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSurvey(survey) {
     return () => {
       const { _id: surveyId, _rev: surveyRev } = survey;
-      this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev)
+      this.couchSvc.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev)
         .subscribe(() => {
           this.selection.deselect(survey._id);
           this.surveys.data = filterById(this.surveys.data, survey._id);
           this.deleteDialog.close();
-          this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
+          this.planetMsgService.showMessage('Survey deleted: ' + survey.name);
         }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.');
     };
   }
 
   openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+    this.deleteDialog = this.matDialog.open(DialogsPromptComponent, {
       data: {
         okClick,
         amount,
@@ -184,7 +184,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyDialog(survey) {
     this.getUserData(this.requestUsers()).subscribe((userData: {tableData: [], columns: []}) => {
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
+      this.dialogRef = this.matDialog.open(DialogsListComponent, {
         data: {
           ...userData,
           allowMulti: true,
@@ -192,7 +192,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           nameProperty: 'name',
           okClick: this.sendSurvey(survey).bind(this),
           dropdownSettings: {
-            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' },
+            field: 'planetCode', startingValue: { value: this.stateSvc.configuration.code, text: 'Local' },
           },
           filterPredicate: filterSpecificFields([ 'name' ])
         },
@@ -205,9 +205,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   requestUsers() {
     return forkJoin([
-      this.dialogsListService.getListAndColumns('_users'),
-      this.dialogsListService.getListAndColumns('child_users'),
-      this.couchService.findAll('communityregistrationrequests')
+      this.dialogsListSvc.getListAndColumns('_users'),
+      this.dialogsListSvc.getListAndColumns('child_users'),
+      this.couchSvc.findAll('communityregistrationrequests')
     ]);
   }
 
@@ -228,21 +228,21 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendSurvey(survey: any) {
     return (selectedUsers: string[]) => {
-      this.submissionsService.sendSubmissionRequests(selectedUsers, {
+      this.submissionsSvc.sendSubmissionRequests(selectedUsers, {
         'parentId': survey._id, 'parent': survey }
       ).subscribe(() => {
-        this.planetMessageService.showMessage('Survey requests sent');
+        this.planetMsgService.showMessage('Survey requests sent');
         this.dialogRef.close();
       });
     };
   }
 
   recordSurvey(survey: any) {
-    this.submissionsService.createSubmission(survey, 'survey').subscribe((res: any) => {
+    this.submissionsSvc.createSubmission(survey, 'survey').subscribe((res: any) => {
       this.router.navigate([
         'dispense',
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
-      ], { relativeTo: this.route });
+      ], { relativeTo: this.activatedRoute });
     });
   }
 
