@@ -62,6 +62,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedAdded = 0;
   isAuthorized = false;
   showFilters = 'off';
+  myLibraryFilter = 'off';
   searchSelection: any = {};
 
   @ViewChild(PlanetTagInputComponent)
@@ -84,6 +85,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.myLibraryFilter = this.route.snapshot.data.myLibrary === true ? 'on' : 'off';
     this.resourcesService.resourcesListener(this.parent).pipe(
       takeUntil(this.onDestroy$),
       map((resources) => {
@@ -93,6 +95,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
+      resources = resources.filter(data => {
+        return this.myLibraryFilter === 'on' ? data.libraryInfo : !data.libraryInfo;
+      });
       this.resources.data = resources;
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
@@ -314,10 +319,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
+    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
   toggleFilters() {
     this.showFilters = this.showFilters === 'off' ? 'on' : 'off';
+  }
+
+  toggleMyLibrary() {
+    this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
+    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
 }
