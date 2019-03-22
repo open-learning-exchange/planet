@@ -28,3 +28,11 @@ export const styleVariables: any = (() => {
     return { ...styleObj, [prop.trim()]: value };
   }, {});
 })();
+
+export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
+
+export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);
+
+export const postToDeleteItems = (dbService: any, dbName: string, deleteArray: any) => {
+  return dbService.post(dbName + '/_bulk_docs', { docs: deleteArray });
+};

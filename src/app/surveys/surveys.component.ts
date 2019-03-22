@@ -13,7 +13,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
-import { findByIdInArray } from '../shared/utils';
+import { findByIdInArray, filterById, itemsShown, postToDeleteItems } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
@@ -48,15 +48,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
 
   constructor(
-    private couchService: CouchService,
-    private dialogsListService: DialogsListService,
-    private submissionsService: SubmissionsService,
     private planetMessageService: PlanetMessageService,
+    private dialogsListService: DialogsListService,
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
+    private submissionsService: SubmissionsService,
     private dialogsLoadingService: DialogsLoadingService,
+    private couchService: CouchService,
     private userService: UserService
   ) {
     this.dialogsLoadingService.start();
@@ -65,9 +65,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
-    this.getSurveys().pipe(switchMap(data => {
+    this.receiveData('exams', 'surveys').pipe(switchMap(data => {
         this.surveys.data = data;
-        return this.getSubmissions();
+        return this.receiveData('submissions', 'survey');
       }))
       .subscribe((submissions: any) => {
         this.surveys.data = this.surveys.data.map(
@@ -98,13 +98,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getSurveys() {
-    return this.couchService.findAll('exams', { 'selector': { 'type': 'surveys' } });
-  }
-
-  getSubmissions() {
-    // get the no of submisson for each test from submisson table
-    return this.couchService.findAll('submissions', { 'selector': { 'type': 'survey' } });
+  receiveData(dbName: string, type: string) {
+    return this.couchService.findAll(dbName, { 'selector': { 'type': type } });
   }
 
   goBack() {
@@ -120,8 +115,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   masterToggle() {
@@ -136,30 +130,27 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     const selected = this.selection.selected.map(surveyId => findByIdInArray(this.surveys.data, surveyId));
-    let amount = 'many',
-      okClick = this.deleteSurveys(selected),
-      displayName = '';
     if (selected.length === 1) {
       const survey = selected[0];
-      amount = 'single';
-      okClick = this.deleteSurvey(survey);
-      displayName = survey.name;
+      this.openDeleteDialog(this.deleteSurvey(survey), 'single', survey.name);
+    } else {
+      this.openDeleteDialog(this.deleteSurveys(selected), 'many', '');
     }
-    this.openDeleteDialog(okClick, amount, displayName);
   }
 
   deleteSurveys(surveys) {
     return () => {
-      const deleteArray = surveys.map((survey) => {
-        this.surveys.data = this.surveys.data.filter((c: any) => survey._id !== c._id);
+      const deleteArray = surveys.map(survey => {
+        this.surveys.data = filterById(this.surveys.data, survey._id);
         return { _id: survey._id, _rev: survey._rev, _deleted: true };
       });
-      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }).subscribe((data: any) => {
-        this.getSurveys();
-        this.selection.clear();
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
-      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.');
+      postToDeleteItems(this.couchService, this.dbName, deleteArray)
+        .subscribe(() => {
+          this.receiveData('exams', 'surveys');
+          this.selection.clear();
+          this.deleteDialog.close();
+          this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+        }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.');
     };
   }
 
@@ -167,12 +158,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     return () => {
       const { _id: surveyId, _rev: surveyRev } = survey;
       this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev)
-        .subscribe((data) => {
+        .subscribe(() => {
           this.selection.deselect(survey._id);
-          this.surveys.data = this.surveys.data.filter((c: any) => data.id !== c._id);
+          this.surveys.data = filterById(this.surveys.data, survey._id);
           this.deleteDialog.close();
           this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.');
+        }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.');
     };
   }
 
