@@ -49,14 +49,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private planetMessageService: PlanetMessageService,
-    private dialogsListService: DialogsListService,
-    private dialog: MatDialog,
-    private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private stateService: StateService,
+    private router: Router,
     private submissionsService: SubmissionsService,
     private dialogsLoadingService: DialogsLoadingService,
     private couchService: CouchService,
+    private dialogsListService: DialogsListService,
     private userService: UserService
   ) {
     this.dialogsLoadingService.start();
