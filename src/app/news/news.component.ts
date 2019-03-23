@@ -92,7 +92,7 @@ export class NewsComponent implements OnInit {
   }
 
   editNews(news) {
-    const title = 'News';
+    const title = 'New Post';
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
