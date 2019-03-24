@@ -44,7 +44,7 @@
               <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
                 Leave
               </button>
-              <button mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n>Manage</button>
+              <button mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n>Edit</button>
             </ng-container>
             <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
               <ng-container i18n>Request to Join</ng-container>
@@ -53,7 +53,7 @@
               Request pending
             </button>
           </ng-container>
-          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>View Team</button>
+          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>{{element.userStatus==='member' ? 'Manage Team' : 'View Team'}}</button>
           <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n>Feedback</button>
         </mat-cell>
       </ng-container>
