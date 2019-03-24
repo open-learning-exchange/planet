@@ -31,7 +31,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
-  isTeamMember = false;
 
   constructor(
     private couchService: CouchService,
@@ -73,7 +72,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.members = data.docs.map((mem) => {
         return { ...mem, name: mem._id.split(':')[1] };
       });
-      this.isTeamMember = this.members.filter((mem: any) => mem.name === this.currentUserName).length > 0;
       this.disableAddingMembers = this.members.length >= this.team.limit;
     });
   }
