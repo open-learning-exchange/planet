@@ -287,6 +287,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.searchComponent.reset();
     }
     this.titleSearch = '';
+    this.selection.clear();
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
