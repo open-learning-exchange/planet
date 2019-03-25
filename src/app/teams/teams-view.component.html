@@ -13,7 +13,7 @@
       <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
         <ng-container *ngSwitchCase="'member'">
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
-            Link to Course
+            Manage Courses
           </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
             Leave
