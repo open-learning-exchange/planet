@@ -2,7 +2,7 @@ services:
   couchdb:
     expose:
       - 5984
-    image: treehouses/couchdb:2.1.2
+    image: treehouses/couchdb:2.3.0
     ports:
       - "5984:5984"
   db-init:
@@ -23,7 +23,7 @@ services:
       - HOST_PROTOCOL=http
       - DB_HOST=127.0.0.1
       - DB_PORT=2200
-      - CENTER_ADDRESS=earth.ole.org:2200
+      - CENTER_ADDRESS=planet.earth.ole.org/db
     depends_on:
       - couchdb
 version: "2"
