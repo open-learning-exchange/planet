@@ -1,5 +1,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/028682cc4cd969b05280/maintainability)](https://codeclimate.com/github/open-learning-exchange/planet/maintainability)
 [![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
+[![Docker Stars](https://img.shields.io/docker/stars/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
+[![Docker Pulls](https://img.shields.io/docker/pulls/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/open-learning-exchange/chat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 # **Planet Learning**
 
