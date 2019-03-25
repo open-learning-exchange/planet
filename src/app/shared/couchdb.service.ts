@@ -120,8 +120,8 @@ export class CouchService {
     );
   }
 
-  bulkDocs(db: string, deleteArray: any) {
-    return this.post(db + '/_bulk_docs', { docs: deleteArray });
+  bulkDocs(db: string, docs: any[]) {
+    return this.post(db + '/_bulk_docs', { docs });
   }
 
   stream(method: string, db: string) {
