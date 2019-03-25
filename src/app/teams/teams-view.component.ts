@@ -129,6 +129,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateTeam() {
+    this.teamsService.addTeamDialog(this.userShelf, this.team).subscribe((updatedTeam) => {
+      this.team = updatedTeam;
+      this.planetMessageService.showMessage(this.team.name + ' updated successfully');
+    });
+  }
+
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
       res.tableData = res.tableData.filter((user: any) => this.members.findIndex((member) => member.name === user.name) === -1);
