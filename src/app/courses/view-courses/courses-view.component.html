@@ -6,9 +6,12 @@
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{courseDetail.courseTitle}}</h3>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
-        {fullView, select, on {Show} off {Hide}} details
-      </button>
-      <span class="toolbar-fill"></span>
+      {fullView, select, on {Show} off {Hide}} details
+    </button>
+    <button mat-stroked-button *ngIf="canManage" (click)="updateCourse()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <span class="toolbar-fill"></span>
     <div>
       <ng-container *ngIf="!parent">
         <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
 
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -18,16 +17,18 @@ import { StateService } from '../../shared/state.service';
 export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   constructor(
-    private couchService: CouchService,
     private route: ActivatedRoute,
+    private router: Router,
     private userService: UserService,
-    private resourcesService: ResourcesService,
-    private stateService: StateService
+    private stateService: StateService,
+    private resourcesService: ResourcesService
   ) { }
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any = {};
+  canManage: boolean;
+  currentUser = this.userService.get();
   mediaType = '';
   resourceSrc = '';
   pdfSrc: any;
@@ -58,6 +59,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
+        this.canManage = this.currentUser.isUserAdmin ||
+          (this.currentUser.name === this.resource.addedBy);
       });
   }
 
@@ -82,6 +85,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
+  }
+
+  updateResource() {
+    this.router.navigate([ '/resources/update/' + this.resourceId ]);
   }
 
 }
