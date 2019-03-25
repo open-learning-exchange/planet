@@ -43,21 +43,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'exams';
   emptyData = false;
   isAuthorized = false;
-  user = this.userService.get();
   deleteDialog: any;
   message = '';
 
   constructor(
-    private planetMessageService: PlanetMessageService,
+    private couchService: CouchService,
     private dialogsListService: DialogsListService,
+    private submissionsService: SubmissionsService,
+    private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private submissionsService: SubmissionsService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private couchService: CouchService,
-    private userService: UserService
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -81,7 +79,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.emptyData = !this.surveys.data.length;
         this.dialogsLoadingService.stop();
       });
-    this.couchService.checkAuthorization('exams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   ngAfterViewInit() {
