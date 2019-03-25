@@ -34,6 +34,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
   checkboxState: any = {};
   isNewQuestion = true;
+  answerCount = this.submissionsService.submission.answers.length;
 
   constructor(
     private router: Router,
@@ -60,11 +61,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.coursesService.requestCourse({ courseId });
         this.incorrectAnswer = false;
         this.grade = 0;
+        this.answerCount = this.submissionsService.submission.answers.length;
       } else if (submissionId) {
         this.fromSubmission = true;
         this.mode = mode || 'grade';
         this.grade = mode === 'take' ? 0 : undefined;
         this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
+        this.answerCount = this.submissionsService.submission.answers.length;
       }
     });
   }
