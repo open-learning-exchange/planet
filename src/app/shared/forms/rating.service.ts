@@ -52,7 +52,7 @@ export class RatingService {
 
   createItemList(itemsRes, ratings) {
     return itemsRes.map((res: any) => {
-      const item = res.doc || res;
+      const item = res;
       const ratingIndex = ratings.findIndex(rating => {
         return item._id === rating.item;
       });

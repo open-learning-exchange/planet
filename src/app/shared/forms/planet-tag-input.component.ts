@@ -4,6 +4,7 @@ import {
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
@@ -22,7 +23,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   @HostBinding() id = `planet-tag-input-${PlanetTagInputComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
-  @Input() _value: string[] = [];
+  _value: string[] = [];
+  @Input()
   get value() {
     return this._value;
   }
@@ -42,9 +44,23 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this._placeholder = text;
     this.stateChanges.next();
   }
+
+  private _disabled = false;
+  @Input()
+  get disabled() {
+    return this._disabled;
+  }
+  set disabled(dis) {
+    this._disabled = coerceBooleanProperty(dis);
+    this.stateChanges.next();
+  }
   @Input() mode = 'filter';
   @Input() parent = false;
   @Input() filteredData = [];
+  @Input() helperText = true;
+  @Input() selectedIds;
+  @Input() labelType = this.mode;
+  @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
   onTouched;
@@ -137,18 +153,42 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       autoFocus: false,
       data: this.dialogData()
     });
+    this.dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.wasOkClicked === true) {
+        this.finalTags.emit({ selected: this.value, indeterminate: result.indeterminate });
+      }
+    });
   }
 
   dialogData() {
+    let startingTags: any[];
+    if (this.selectedIds !== undefined) {
+      startingTags = this.tagsInSelection(this.selectedIds, this.filteredData);
+      this.writeValue(startingTags.map((tag: any) => tag.tagId));
+    } else {
+      startingTags = this.value;
+    }
     return ({
       tagUpdate: this.dialogTagUpdate.bind(this),
       initTags: this.initTags.bind(this),
       reset: this.resetDialogData.bind(this),
-      startingTags: this.value,
+      startingTags,
       tags: this.filterTags(this.tags, this.selectMany),
       mode: this.mode,
       initSelectMany: this.selectMany
     });
+  }
+
+  tagsInSelection(selectedIds, data) {
+    const selectedTagsObject = selectedIds
+      .reduce((selectedTags, id) => {
+        const tagIds = this.filteredData.find((item: any) => item._id === id).tags || [];
+        tagIds.forEach(tagId => {
+          selectedTags[tagId] = selectedTags[tagId] === undefined ? 1 : selectedTags[tagId] + 1;
+        });
+        return selectedTags;
+      }, {});
+    return Object.entries(selectedTagsObject).map(([ tagId, count ]) => ({ tagId, indeterminate: count !== selectedIds.length }));
   }
 
   resetDialogData(selectMany = this.selectMany) {

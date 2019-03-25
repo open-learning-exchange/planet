@@ -20,26 +20,31 @@
       <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
     </form>
   </mat-expansion-panel>
-  <mat-selection-list (selectionChange)="tagChange($event.option)" *ngIf="selectMany">
+  <mat-action-list *ngIf="selectMany">
     <ng-container *ngFor="let tag of tags">
-      <mat-list-option [selected]="isSelected(tag._id || tag.name)" [value]="[ tag._id || tag.name ]" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }">
+      <mat-list-item (click)="tagChange([ tag._id || tag.name ])" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }" class="cursor-pointer">
         <span>
           {{tag.name + ' (' + (tag.count || 0) + ')'}}
           <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" (click)="toggleSubcollection($event,tag._id)" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
           <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)" class="margin-lr-5">Edit</button>
         </span>
-      </mat-list-option>
+        <span class="toolbar-fill"></span>
+        <mat-checkbox (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
+      </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
-        <mat-list-option *ngFor="let subTag of tag.subTags" [value]="[ subTag._id || subTag.name, tag._id || tag.name ]" [selected]="isSelected(subTag._id || subTag.name)">
+        <mat-list-item *ngFor="let subTag of tag.subTags" (click)="tagChange([ subTag._id || subTag.name, tag._id || tag.name ])" class="cursor-pointer">
           <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
           <span>
             {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
             <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
           </span>
-        </mat-list-option>
+          <span class="toolbar-fill"></span>
+          <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)"></mat-checkbox>
+        </mat-list-item>
       </ng-container>
+      <mat-divider></mat-divider>
     </ng-container>
-  </mat-selection-list>
+  </mat-action-list>
   <mat-nav-list *ngIf="!selectMany">
     <ng-container *ngFor="let tag of tags">
       <a mat-list-item (click)="selectOne(tag._id || tag.name)" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }" mat-dialog-close>
@@ -61,5 +66,5 @@
   </mat-nav-list>
 </mat-dialog-content>
 <mat-dialog-actions *ngIf="selectMany">
-  <button type="button" mat-dialog-close i18n mat-raised-button color="primary">OK</button>
+  <button type="button" [mat-dialog-close]="okClickValue" i18n mat-raised-button color="primary">OK</button>
 </mat-dialog-actions>
