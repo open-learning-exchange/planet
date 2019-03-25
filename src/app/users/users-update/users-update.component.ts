@@ -99,7 +99,8 @@ export class UsersUpdateComponent implements OnInit {
         ac => this.validatorService.notDateInFuture$(ac)
       ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      level: [ '', this.conditionalValidator(Validators.required).bind(this) ]
+      level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      betaEnabled: false
     });
   }
 

@@ -105,7 +105,8 @@ export class ConfigurationComponent implements OnInit {
         this.parentUniqueValidator('code')
       ],
       createdDate: this.couchService.datePlaceholder,
-      autoAccept: true
+      autoAccept: true,
+      betaEnabled: 'off'
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],

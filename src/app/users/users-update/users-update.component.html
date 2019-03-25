@@ -66,6 +66,13 @@
               <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span i18n>Female</span>
             </div>
           </mat-radio-button>
+          <mat-slide-toggle
+            *ngIf="!submissionMode"
+            formControlName="betaEnabled"
+            i18n
+            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+            Enable Beta features
+          </mat-slide-toggle>
           <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
         </mat-radio-group>
         <div>

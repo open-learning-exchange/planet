@@ -7,6 +7,7 @@ import { LowercaseDirective } from '../shared/lowercase.directive';
 import { PlanetLanguageComponent } from './planet-language.component';
 import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
 import { AuthorizedRolesDirective } from './authorized-roles.directive';
+import { PlanetBetaDirective } from './beta.directive';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { AuthorizedRolesDirective } from './authorized-roles.directive';
     PlanetLanguageComponent,
     ResourcesMenuComponent,
     LowercaseDirective,
-    AuthorizedRolesDirective
+    AuthorizedRolesDirective,
+    PlanetBetaDirective
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -26,7 +28,8 @@ import { AuthorizedRolesDirective } from './authorized-roles.directive';
     PlanetLanguageComponent,
     ResourcesMenuComponent,
     LowercaseDirective,
-    AuthorizedRolesDirective
+    AuthorizedRolesDirective,
+    PlanetBetaDirective
   ]
 })
 export class SharedComponentsModule {}
