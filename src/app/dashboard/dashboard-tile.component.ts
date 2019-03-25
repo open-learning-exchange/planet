@@ -14,6 +14,7 @@ export class DashboardTileComponent implements OnInit {
   @Input() cardTitle: string;
   @Input() color: string;
   @Input() itemData;
+  @Input() link;
   @Input() emptyLink = '/';
   @Input() shelfName: string;
   @ViewChild('items') itemDiv: ElementRef;

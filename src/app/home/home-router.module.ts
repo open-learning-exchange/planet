@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'requests', component: CommunityComponent },
       { path: 'feedback', loadChildren: '../feedback/feedback.module#FeedbackModule' },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
+      { path: 'myLibrary', loadChildren: '../resources/resources.module#ResourcesModule', data: { myLibrary: true } },
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'submissions', loadChildren: '../submissions/submissions.module#SubmissionsModule' },
