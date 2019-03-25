@@ -13,7 +13,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
-import { findByIdInArray, filterById, itemsShown, postToDeleteItems } from '../shared/utils';
+import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
@@ -144,7 +144,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = filterById(this.surveys.data, survey._id);
         return { _id: survey._id, _rev: survey._rev, _deleted: true };
       });
-      postToDeleteItems(this.couchService, this.dbName, deleteArray)
+      this.couchService.bulkDocs(this.dbName, deleteArray)
         .subscribe(() => {
           this.receiveData('exams', 'surveys');
           this.selection.clear();
