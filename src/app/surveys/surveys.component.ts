@@ -12,7 +12,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { UserService } from '../shared/user.service';
 import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
