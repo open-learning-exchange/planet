@@ -53,7 +53,9 @@
               Request pending
             </button>
           </ng-container>
-          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>{{element.userStatus==='member' ? 'Manage Team' : 'View Team'}}</button>
+          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n>
+            { element.userStatus, select, member {Manage Team} unrelated {View Team} }
+          </button>
           <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n>Feedback</button>
         </mat-cell>
       </ng-container>
