@@ -28,10 +28,10 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">
-      <p *ngIf="team?.description; else emptyText"> {{team?.description}} </p>
+      <p *ngIf="team?.description; else emptyText">{{team?.description}}</p>
       <ng-template #emptyText>
-        <p i18n> The team has no description. </p>
-        <button mat-raised-button color="accent" *ngIf="userStatus === 'member'"  (click)="updateDescription()" i18n> Add Description</button>
+        <p i18n>The team has no description.</p>
+        <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Description</button>
       </ng-template>
     </div>
     <div class="right-tile">
