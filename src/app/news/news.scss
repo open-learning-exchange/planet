@@ -1,12 +1,10 @@
-@import '../variables';
-
 .view-container {
   display: grid;
-  grid-template-areas: 'form' 'news';
+  grid-template-areas: 'form news';
   grid-template-columns: 1fr 2fr;
 
   .new-post-form {
-    grid-area: 'form';
+    grid-area: form;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -19,7 +17,7 @@
   }
 
   .news-container {
-    grid-area: 'news';
+    grid-area: news;
     overflow-y: auto;
     width: 100%;
 
