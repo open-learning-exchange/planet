@@ -83,6 +83,13 @@ export const filterAdvancedSearch = (searchObj: any) => {
   };
 };
 
+// filterOnOff must be an object so it references a variable on component & changes with component changes
+export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: string) => {
+  return (data: any, filter: string) => {
+    return filterOnOff.value === 'off' || data[filterField] === true;
+  };
+};
+
 // Takes an array of the above filtering functions and returns true if all match
 export const composeFilterFunctions = (filterFunctions: any[]) => {
   return (data: any, filter: any) => {
