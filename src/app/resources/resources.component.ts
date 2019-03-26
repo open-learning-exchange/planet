@@ -56,6 +56,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+    this.updateSelection();
   }
   private _myLibraryFilter: { value: 'on' | 'off' } = { value: 'off' };
   get myLibraryFilter(): 'on' | 'off' { return this._myLibraryFilter.value; }
@@ -130,6 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || ' ';
+      this.updateSelection();
     });
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedNotAdded(source.selected);
@@ -146,6 +148,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         (resource.addedBy === this.currentUser.name && resource.sourcePlanet === this.planetConfiguration.code);
       return { ...resource, libraryInfo: myLibraryIndex > -1 };
     });
+  }
+
+  updateSelection() {
+    this.selection.selected.forEach((selectedId) => {
+      const containsSelection  = this.resources.filteredData.find((filtered: any) =>  filtered._id === selectedId ) !== undefined;
+      if (!containsSelection) {
+        this.selection.toggle(selectedId);
+      }
+  });
   }
 
   onPaginateChange(e: PageEvent) {
@@ -277,6 +288,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
     this.titleSearch = this.titleSearch;
+    this.updateSelection();
   }
 
   resetFilter() {
@@ -287,7 +299,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.searchComponent.reset();
     }
     this.titleSearch = '';
-    this.selection.clear();
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
