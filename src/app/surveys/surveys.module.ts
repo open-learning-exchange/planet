@@ -9,6 +9,7 @@ import { MaterialModule } from '../shared/material.module';
 import { SurveysComponent } from './surveys.component';
 import { ExamsModule } from '../exams/exams.module';
 import { SurveysRouterModule } from './surveys-router.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { SurveysRouterModule } from './surveys-router.module';
     PlanetDialogsModule,
     MaterialModule,
     ExamsModule,
-    SurveysRouterModule
+    SurveysRouterModule,
+    SharedComponentsModule
   ],
   declarations: [
     SurveysComponent

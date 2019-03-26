@@ -120,6 +120,10 @@ export class CouchService {
     );
   }
 
+  bulkDocs(db: string, docs: any[]) {
+    return this.post(db + '/_bulk_docs', { docs });
+  }
+
   stream(method: string, db: string) {
     const url = this.baseUrl + '/' + db;
     const req = new HttpRequest(method, url, {
