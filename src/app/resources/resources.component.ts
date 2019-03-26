@@ -267,6 +267,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   libraryToggle(resourceIds, type) {
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+      this.selection.clear();
       this.countSelectedNotAdded(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -350,6 +351,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleMyLibrary() {
+    this.selection.clear();
     this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
   }
 
