@@ -9,7 +9,7 @@ import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch
+  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch, filterShelf
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -57,13 +57,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
+  private _myLibraryFilter: { value: 'on' | 'off' } = { value: 'off' };
+  get myLibraryFilter(): 'on' | 'off' { return this._myLibraryFilter.value; }
+  set myLibraryFilter(value: 'on' | 'off') {
+    this._myLibraryFilter.value = value;
+    this.titleSearch = this.titleSearch;
+  }
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
   isAuthorized = false;
   showFilters = 'off';
-  myLibraryFilter = 'off';
   searchSelection: any = {};
+  filterPredicate = composeFilterFunctions(
+    [
+      filterAdvancedSearch(this.searchSelection),
+      filterTags('tags', this.tagFilter),
+      filterSpecificFields([ 'title' ]),
+      filterShelf(this._myLibraryFilter, 'libraryInfo')
+    ]
+  );
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -95,18 +108,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
-      resources = resources.filter(data => {
-        return this.myLibraryFilter === 'on' ? data.libraryInfo : !data.libraryInfo;
-      });
       this.resources.data = resources;
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
-    this.resources.filterPredicate = composeFilterFunctions(
-      [ filterAdvancedSearch(this.searchSelection), filterTags('tags', this.tagFilter), filterSpecificFields([ 'title' ]) ]
-    );
+    this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = (item: any, property: string) => {
       switch (property) {
         case 'rating':
@@ -285,7 +293,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
-      Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ?
+      Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
+      this.myLibraryFilter === 'on' ?
       ' ' : '';
   }
 
@@ -321,7 +330,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
-    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
   toggleFilters() {
@@ -330,7 +338,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleMyLibrary() {
     this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
-    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
 }
