@@ -116,3 +116,7 @@ export const dropdownsFill = (filterObj) => Object.entries(filterObj).reduce((em
   }
   return emptySpace;
 }, '');
+
+export const filteredItemsInPage = (filteredData: any[], pageIndex: number, pageSize: number) => {
+  return filteredData.slice(pageIndex * pageSize, (pageIndex * pageSize) + 5);
+};
