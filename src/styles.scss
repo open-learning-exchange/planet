@@ -1,6 +1,10 @@
 @import './app/variables';
 @import './planet-mat-theme.scss';
 
+html {
+  font-size: $base-font;
+}
+
 body {
   font-family: $font-family;
   margin: 0;

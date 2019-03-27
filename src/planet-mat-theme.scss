@@ -1,10 +1,30 @@
 @import '~@angular/material/theming';
 // Plus imports for other components in your app.
 
+// Typography settings
+
+$base-font: 14px;
+$planet-typography: mat-typography-config(
+  $font-family:   'Roboto, "Helvetica Neue", sans-serif',
+  $display-4:     mat-typography-level(96px, 96px, 300),
+  $display-3:     mat-typography-level(46px, 46px, 400),
+  $display-2:     mat-typography-level(38px, 40px, 400),
+  $display-1:     mat-typography-level(28px, 34px, 400),
+  $headline:      mat-typography-level(20px, 27px, 400),
+  $title:         mat-typography-level(20px, 27px, 500),
+  $subheading-2:  mat-typography-level(14px, 24px, 400),
+  $subheading-1:  mat-typography-level(13px, 20px, 400),
+  $body-2:        mat-typography-level(12px, 20px, 500),
+  $body-1:        mat-typography-level(12px, 16px, 400),
+  $caption:       mat-typography-level(10px, 16px, 400),
+  $button:        mat-typography-level(12px, 12px, 500),
+  $input:         mat-typography-level(inherit, 1.125, 400)
+);
+
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat-core($planet-typography);
 @import './app/_variables';
 
 @include angular-material-theme($planet-app-theme);
@@ -30,25 +50,7 @@ $accent-map: (
   }
 }
 
-// Typography settings
 
-$base-font: 14px;
-$planet-typography: mat-typography-config(
-  $font-family:   'Roboto, "Helvetica Neue", sans-serif',
-  $display-4:     mat-typography-level(96px, 96px, 300),
-  $display-3:     mat-typography-level(46px, 46px, 400),
-  $display-2:     mat-typography-level(38px, 40px, 400),
-  $display-1:     mat-typography-level(28px, 34px, 400),
-  $headline:      mat-typography-level(20px, 27px, 400),
-  $title:         mat-typography-level(20px, 27px, 500),
-  $subheading-2:  mat-typography-level(14px, 24px, 400),
-  $subheading-1:  mat-typography-level(13px, 20px, 400),
-  $body-2:        mat-typography-level(12px, 20px, 500),
-  $body-1:        mat-typography-level(12px, 16px, 400),
-  $caption:       mat-typography-level(10px, 16px, 400),
-  $button:        mat-typography-level(12px, 12px, 500),
-  $input:         mat-typography-level(inherit, 1.125, 400)
-);
 
 // Custom themed material styles below
 
