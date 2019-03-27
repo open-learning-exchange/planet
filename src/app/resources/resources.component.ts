@@ -9,7 +9,7 @@ import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch, filterShelf
+  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch, filterShelf, filteredItemsInPage
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -56,6 +56,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+    this.removeFilteredFromSelection();
   }
   private _myLibraryFilter: { value: 'on' | 'off' } = { value: 'off' };
   get myLibraryFilter(): 'on' | 'off' { return this._myLibraryFilter.value; }
@@ -130,6 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || ' ';
+      this.removeFilteredFromSelection();
     });
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedNotAdded(source.selected);
@@ -145,6 +147,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.addedBy === this.currentUser.name && resource.sourcePlanet === this.planetConfiguration.code);
       return { ...resource, libraryInfo: myLibraryIndex > -1 };
+    });
+  }
+
+  removeFilteredFromSelection() {
+    const itemsInPage = filteredItemsInPage(this.resources.filteredData, this.paginator.pageIndex, this.paginator.pageSize);
+    this.selection.selected.forEach((selectedId) => {
+      const notInSelection  = itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined;
+      if (notInSelection) {
+        this.selection.deselect(selectedId);
+      }
     });
   }
 
@@ -277,6 +289,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
     this.titleSearch = this.titleSearch;
+    this.removeFilteredFromSelection();
   }
 
   resetFilter() {
