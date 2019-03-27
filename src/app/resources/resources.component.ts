@@ -56,7 +56,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
-    this.updateSelection();
+    this.removeFilteredFromSelection();
   }
   private _myLibraryFilter: { value: 'on' | 'off' } = { value: 'off' };
   get myLibraryFilter(): 'on' | 'off' { return this._myLibraryFilter.value; }
@@ -131,7 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || ' ';
-      this.updateSelection();
+      this.removeFilteredFromSelection();
     });
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedNotAdded(source.selected);
@@ -150,13 +150,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  updateSelection() {
+  removeFilteredFromSelection() {
     this.selection.selected.forEach((selectedId) => {
-      const containsSelection  = this.resources.filteredData.find((filtered: any) =>  filtered._id === selectedId ) !== undefined;
-      if (!containsSelection) {
-        this.selection.toggle(selectedId);
+      const notInSelection  = this.resources.filteredData.find((filtered: any) =>  filtered._id === selectedId ) === undefined;
+      if (notInSelection) {
+        this.selection.deselect(selectedId);
       }
-  });
+    });
   }
 
   onPaginateChange(e: PageEvent) {
@@ -288,7 +288,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
     this.titleSearch = this.titleSearch;
-    this.updateSelection();
+    this.removeFilteredFromSelection();
   }
 
   resetFilter() {
