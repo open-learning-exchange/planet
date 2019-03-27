@@ -354,8 +354,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleMyLibrary() {
-    this.removeFilteredFromSelection();
     this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
+    this.removeFilteredFromSelection();
   }
 
 }
