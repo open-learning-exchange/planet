@@ -151,6 +151,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFilteredFromSelection() {
+    if (!this.paginator) {
+      return;
+    }
     const itemsInPage = filteredItemsInPage(this.resources.filteredData, this.paginator.pageIndex, this.paginator.pageSize);
     this.selection.selected.forEach((selectedId) => {
       const notInSelection  = itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined;
@@ -267,6 +270,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   libraryToggle(resourceIds, type) {
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+      this.removeFilteredFromSelection();
       this.countSelectedNotAdded(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -351,6 +355,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleMyLibrary() {
     this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
+    this.removeFilteredFromSelection();
   }
 
 }
