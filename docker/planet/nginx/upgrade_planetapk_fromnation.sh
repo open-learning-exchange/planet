@@ -7,7 +7,7 @@ echo ""
 nationUrl="$(curl -s http://couchdb:5984/configurations/$(curl http://couchdb:5984/configurations/_all_docs -s | jq .rows[0].id -r) | jq .parentDomain -r | rev | cut -c 3- | rev)fs"
 apkName="myPlanet.apk"
 localApkName="/usr/share/nginx/html/fs/myPlanet.apk"
-downUrl="$nationUrl/$apkName"
+downloadUrl="$nationUrl/$apkName"
 
 curl -s "$downloadUrl" -o "$localApkName.tmp" -L
 
