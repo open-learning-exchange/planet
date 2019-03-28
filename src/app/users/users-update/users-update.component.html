@@ -67,7 +67,7 @@
             </div>
           </mat-radio-button>
           <mat-slide-toggle
-            *ngIf="!submissionMode"
+            *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
             formControlName="betaEnabled"
             i18n
             matTooltip="Beta features may not work as intended. It's recommended to leave this off">
