@@ -87,7 +87,10 @@ export class NewsComponent implements OnInit {
           this.newsItems = this.newsItems.filter((n: any) => data.id !== n._id);
           this.deleteDialog.close();
           this.planetMessageService.showMessage('News deleted');
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this news.');
+        }, (error) => {
+          this.deleteDialog.componentInstance.message = 'There was a problem deleting this news.';
+          this.deleteDialog.componentInstance.spinnerOn = false;
+        });
     };
   }
 
