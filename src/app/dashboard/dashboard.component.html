@@ -70,55 +70,33 @@
       <p>{{dateNow | date:'longDate'}}</p>
     </div>
   </mat-card>
-  <div class="tiles">
-    <planet-dashboard-tile
-      [cardTitle]="'myLibrary'"
-      class="planet-library-theme"
-      [itemData]="data.resources"
-      [link]="'/myLibrary'"
-      [emptyLink]="'/resources'"
-      [shelfName]="'resourceIds'">
-    </planet-dashboard-tile>
-    <planet-dashboard-tile
-      [cardTitle]="'myCourses'"
-      class="planet-courses-theme"
-      [itemData]="data.courses"
-      [emptyLink]="'/courses'"
-      [shelfName]="'courseIds'">
-    </planet-dashboard-tile>
-    <planet-dashboard-tile
-      [cardTitle]="'myTeams'"
-      class="planet-teams-theme"
-      [itemData]="data.myTeams"
-      [emptyLink]="'/teams'"
-      [shelfName]="'myTeamIds'">
-    </planet-dashboard-tile>
-    <planet-dashboard-tile
-      [cardTitle]="'myMeetups'"
-      class="planet-meetups-theme"
-      [itemData]="data.meetups"
-      [emptyLink]="'/meetups'"
-      [shelfName]="'meetupIds'">
-    </planet-dashboard-tile>
-  </div>
+  <planet-dashboard-tile
+    [cardTitle]="'myLibrary'"
+    class="planet-library-theme"
+    [itemData]="data.resources"
+    [link]="'/myLibrary'"
+    [emptyLink]="'/resources'"
+    [shelfName]="'resourceIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myCourses'"
+    class="planet-courses-theme"
+    [itemData]="data.courses"
+    [emptyLink]="'/courses'"
+    [shelfName]="'courseIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myTeams'"
+    class="planet-teams-theme"
+    [itemData]="data.myTeams"
+    [emptyLink]="'/teams'"
+    [shelfName]="'myTeamIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myMeetups'"
+    class="planet-meetups-theme"
+    [itemData]="data.meetups"
+    [emptyLink]="'/meetups'"
+    [shelfName]="'meetupIds'">
+  </planet-dashboard-tile>
 </div>
-
-<!-- <div class="lower-list">
-  <mat-list>
-    <mat-list-item class="cursor-pointer" routerLink="/submissions" *planetAuthorizedRoles="'leader,manager'">
-      <a [matBadge]="examsCount" matBadgeOverlap="false" [matBadgeHidden]="examsCount<1" i18n>Submissions</a>
-      <mat-divider [inset]="true"></mat-divider>
-    </mat-list-item>
-    <mat-list-item class="cursor-pointer" routerLink="/mySurveys">
-      <a [matBadge]="surveysCount" matBadgeOverlap="false" [matBadgeHidden]="surveysCount<1" i18n>mySurveys</a>
-      <mat-divider [inset]="true"></mat-divider>
-    </mat-list-item>
-    <mat-list-item class="cursor-pointer" routerLink="/myAchievements">
-      <a i18n>Achievements</a>
-      <mat-divider [inset]="true"></mat-divider>
-    </mat-list-item>
-    <mat-list-item class="cursor-pointer" routerLink="/news">
-      <a i18n>ourNews</a>
-    </mat-list-item>
-  </mat-list>
-</div> -->

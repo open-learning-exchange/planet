@@ -30,6 +30,14 @@
         width: 30px;
       }
 
+      @media (max-width: $screen-md) {
+        font-size: 1rem;
+        mat-icon {
+          height: 1.25rem;
+          width: 1.25rem;
+        }
+      }
+
     }
 
     .right-tile {
