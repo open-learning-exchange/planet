@@ -11,8 +11,8 @@
     display: grid;
     grid-template-areas: "lt rt";
     grid-template-rows: 1fr;
-    grid-template-columns: 150px 1fr;
-    height: $dashboard-tile-height;
+    grid-template-columns: $dashboard-tile-width 1fr;
+    height: 100%;
     padding: 0;
 
     .left-tile {
@@ -43,7 +43,7 @@
 
       .dashboard-items {
         display: grid;
-        grid-auto-columns: 150px;
+        grid-auto-columns: $dashboard-tile-width;
         transition: transform 0.5s;
 
         .dashboard-item {
