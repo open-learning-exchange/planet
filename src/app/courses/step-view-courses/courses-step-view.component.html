@@ -20,7 +20,7 @@
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="resource"
+        *ngIf="stepDetail.resources.length !== 0"
         [href]="resourceUrl"
         target="_blank"
         i18n>
