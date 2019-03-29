@@ -4,7 +4,7 @@ echo "HTTP/1.0 200 OK"
 echo "Content-type: text/plain"
 echo ""
 
-nationUrl="$(curl -s http://couchdb:5984/configurations/$(curl http://couchdb:5984/configurations/_all_docs -s | jq .rows[0].id -r) | jq .parentDomain -r | rev | cut -c 3- | rev)fs"
+nationUrl="$(curl -s http://couchdb:5984/configurations/$(curl http://couchdb:5984/configurations/_all_docs -s | jq .rows[0].id -r) | jq .parentDomain -r | sed -e 's|^[^/]*//||' -e 's|/.*$||')/fs"
 apkName="myPlanet.apk"
 sha256File="$apkName.sha256"
 localApkName="/usr/share/nginx/html/fs/myPlanet.apk"
