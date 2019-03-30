@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -7,7 +6,6 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -31,8 +29,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private submissionsService: SubmissionsService,
-    private planetMessageService: PlanetMessageService
+    private submissionsService: SubmissionsService
   ) { }
 
   ngOnInit() {
@@ -47,9 +44,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       });
       this.progress = progress;
       this.isUserEnrolled = this.checkMyCourses(course._id);
-      const atIndex = this.courseDetail.creator.indexOf('@');
-      this.canManage = this.currentUser.isUserAdmin ||
-        (this.currentUser.name === this.courseDetail.creator.slice(0, atIndex));
+      this.canEditCourse();
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
       (params: ParamMap) => {
@@ -57,6 +52,17 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
       }
     );
+  }
+
+  canEditCourse() {
+    if (this.currentUser.isUserAdmin) {
+      this.canManage = true;
+    } else if (this.courseDetail.creator) {
+      const atIndex = this.courseDetail.creator.indexOf('@');
+      this.canManage = this.currentUser.name === this.courseDetail.creator.slice(0, atIndex);
+    } else {
+      this.canManage = false;
+    }
   }
 
   ngOnDestroy() {
