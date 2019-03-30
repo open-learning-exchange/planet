@@ -33,7 +33,7 @@ export class UsersAchievementsService {
       map((userAchievements: any) => {
         userAchievements.achievements.forEach((achievement: any) => {
           if (achievement.resources.length !== 0) {
-            achievement.resources = achievement.resources.filter((res: any) => this.resourceIds.indexOf(res._id) !== -1);
+            achievement.resources = achievement.resources.filter(res => this.resourceIds.indexOf(res._id) !== -1);
           }
         });
         return userAchievements;
