@@ -195,6 +195,35 @@ export class CustomValidators {
     };
   }
 
+  // Set this on both password and confirmation fields so it runs when either changes
+  // confirm should be false for the confirmation field validator
+  static unmatchPassword(unmatch: string, confirm: boolean): ValidatorFn {
+
+    return (ac: AbstractControl) => {
+      if (!ac.parent) {
+        return null;
+      }
+
+      const unmatchControl = ac.parent.get(unmatch),
+        val1 = ac.value,
+        val2 = unmatchControl.value,
+        confirmControl: AbstractControl = confirm ? ac : unmatchControl;
+
+      // If passwords match, set error for confirmation field
+      if (val1 === val2) {
+        confirmControl.setErrors({ unmatchPassword: false });
+        // If this is set on the confirmation field, also return unmatch password error
+        if (confirm) {
+          return { unmatchPassword: false };
+        }
+      } else {
+        // Remove error if passwords unmatch
+        confirmControl.setErrors(null);
+      }
+      return null;
+    };
+  }
+
   // matDatepicker returns null for date missing or invalid date
   // Use this validator for special date message
   static dateValidRequired(ac: AbstractControl): ValidationErrors {
