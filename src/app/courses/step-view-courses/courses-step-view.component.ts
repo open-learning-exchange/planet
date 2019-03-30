@@ -46,11 +46,26 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.course = course;
       this.initCourse(this.course, progress);
     });
+    this.getResources();
+    this.getSubmission();
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
+      this.parent = this.route.snapshot.data.parent;
+      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
+      this.courseId =  params.get('id');
+      this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
+    });
+    this.resourcesService.requestResourcesUpdate(this.parent);
+  }
+
+  getResources() {
     this.resourcesService.resourcesListener(this.parent).pipe(
       map((resources: any) => this.setupList(resources)))
     .subscribe((stepRes: any) => {
       this.course.steps = stepRes;
     });
+  }
+
+  getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
       this.examStart = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
@@ -64,13 +79,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         });
       }
     });
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.parent = this.route.snapshot.data.parent;
-      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.courseId =  params.get('id');
-      this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
-    });
-    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
   ngOnDestroy() {
@@ -128,7 +136,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     resourcesRes.forEach((res: any) => { this.resourceIds.push(res._id); });
     this.course.steps.map(step => {
       if (step.resources) {
-        step.resources = step.resources.filter((resource: any) => this.resourceIds.indexOf(resource._id) !== -1);
+        step.resources = step.resources.filter(resource => this.resourceIds.indexOf(resource._id) !== -1);
       }
     });
     return this.course.steps;
