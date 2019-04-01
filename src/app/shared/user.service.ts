@@ -213,6 +213,9 @@ export class UserService {
         userInfo._rev = res.rev;
         if (userInfo.name === this.get().name) {
           const { derived_key, iterations, password_scheme, salt, ...profile } = userInfo;
+          if (this.user.roles.indexOf('_admin') !== -1) {
+            profile.roles.splice(0, 0, '_admin');
+          }
           this.set(profile);
         }
         if (planetConfiguration.adminName === userInfo.name + '@' + planetConfiguration.code) {
