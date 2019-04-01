@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { map, first } from 'rxjs/operators';
 import { ResourcesService } from '../../resources/resources.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -10,28 +10,25 @@ import { ActivatedRoute } from '@angular/router';
 export class UsersAchievementsService {
 
   readonly dbName = 'achievements';
-  resourceIds = [];
-  parent = this.route.snapshot.data.parent;
+  parent = false;
 
   constructor(
     private couchService: CouchService,
-    private resourcesService: ResourcesService,
-    private route: ActivatedRoute
-  ) {
-    this.resourcesService.resourcesListener(this.parent)
-      .subscribe((resources: any) => {
-        this.resourceIds = resources.map((res: any) => res._id);
-    });
-  }
+    private resourcesService: ResourcesService
+  ) {}
 
 
   getAchievements(id) {
     this.resourcesService.requestResourcesUpdate(this.parent);
-    return this.couchService.get(this.dbName + '/' + id).pipe(
-      map((userAchievements: any) => {
+    return forkJoin([
+      this.couchService.get(this.dbName + '/' + id),
+      this.resourcesService.resourcesListener(this.parent).pipe(first())
+    ]).pipe(
+      map(([ userAchievements, resources ]: any[]) => {
+        const resourceIds = resources.map((res: any) => res._id);
         userAchievements.achievements.forEach((achievement: any) => {
           if (achievement.resources.length !== 0) {
-            achievement.resources = achievement.resources.filter(res => this.resourceIds.indexOf(res._id) !== -1);
+            achievement.resources = achievement.resources.filter(res => resourceIds.indexOf(res._id) !== -1);
           }
         });
         return userAchievements;
