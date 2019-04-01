@@ -18,17 +18,15 @@ export class UsersAchievementsService {
     private resourcesService: ResourcesService,
     private route: ActivatedRoute
   ) {
-    this.resourcesService.resourcesListener(this.parent).pipe(map((resources: any) => {
-      resources.map((res: any) => { this.resourceIds.push(res._id); });
-      return this.resourceIds;
-    })).subscribe((resIds: any) => {
-      this.resourceIds = resIds;
+    this.resourcesService.resourcesListener(this.parent)
+      .subscribe((resources: any) => {
+        this.resourceIds = resources.map((res: any) => res._id);
     });
-    this.resourcesService.requestResourcesUpdate(this.parent);
   }
 
 
   getAchievements(id) {
+    this.resourcesService.requestResourcesUpdate(this.parent);
     return this.couchService.get(this.dbName + '/' + id).pipe(
       map((userAchievements: any) => {
         userAchievements.achievements.forEach((achievement: any) => {
