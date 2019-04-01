@@ -131,7 +131,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
-        formGroup.controls.date.setValue(formGroup.controls.date.value);
+        const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
+         formGroup.controls.date.value;
+        formGroup.controls.date.setValue(achievedAt);
         this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
       }, closeOnSubmit: true }
     );
