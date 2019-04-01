@@ -3,8 +3,8 @@
 planet-resources-search {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-  grid-template-rows: $toolbar-height;
+  grid-template-columns: repeat(auto-fit, minmax(25px, 1fr));
+  grid-template-rows: minmax(auto, $toolbar-height);
   grid-auto-flow: column;
   align-items: start;
   grid-column-gap: 0.75rem;
@@ -13,10 +13,11 @@ planet-resources-search {
   &> planet-resources-search-list {
     height: inherit;
     display: grid;
-    grid-template-rows: $label-height calc(#{$toolbar-height} - #{$label-height});
+    grid-template-rows: $label-height minmax(auto, calc(#{$toolbar-height} - #{$label-height}));
 
     .mat-selection-list {
-      height: calc(#{$toolbar-height} - #{$label-height});
+      min-height: auto;
+      max-height: calc(#{$toolbar-height} - #{$label-height});
       padding: 0;
       overflow-y: auto;
     }
