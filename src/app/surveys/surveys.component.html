@@ -17,7 +17,7 @@
     </button>
     <span class="toolbar-fill"></span>
     <ng-container *planetAuthorizedRoles="'manager'">
-      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length" *ngIf="!emptyData">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
         <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
       </button>
