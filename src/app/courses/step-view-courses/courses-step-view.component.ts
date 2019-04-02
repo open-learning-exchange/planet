@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { Subject, combineLatest } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
@@ -20,8 +20,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   courseId: string;
   maxStep = 1;
   resourceUrl = '';
-  resourceIds = [];
-  course: any;
   examStart = 1;
   isExamInProgress = false;
   attempts = 0;
@@ -41,12 +39,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = [] }: { course: any, progress: any }) => {
-      this.course = course;
-      this.initCourse(this.course, progress);
+    combineLatest(
+      this.coursesService.courseUpdated$,
+      this.resourcesService.resourcesListener(this.parent)
+    ).pipe(takeUntil(this.onDestroy$))
+    .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
+      this.initCourse(course, progress, resources);
     });
-    this.getResources();
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.parent = this.route.snapshot.data.parent;
@@ -55,14 +54,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
-  }
-
-  getResources() {
-    this.resourcesService.resourcesListener(this.parent).pipe(
-      map((resources: any) => this.setupList(resources)))
-    .subscribe((stepRes: any) => {
-      this.course.steps = stepRes;
-    });
   }
 
   getSubmission() {
@@ -86,7 +77,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  initCourse(course, progress) {
+  initCourse(course, progress, resources) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.progress = progress.find((p: any) => p.stepNum === this.stepNum) || { passed: false };
@@ -104,6 +95,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         type: 'exam' });
     }
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
+    this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
   }
 
@@ -132,14 +124,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ 'exam', { questionNum: this.examStart } ], { relativeTo: this.route });
   }
 
-  setupList(resourcesRes) {
-    resourcesRes.forEach((res: any) => { this.resourceIds.push(res._id); });
-    this.course.steps.map(step => {
-      if (step.resources) {
-        step.resources = step.resources.filter(resource => this.resourceIds.indexOf(resource._id) !== -1);
-      }
-    });
-    return this.course.steps;
+  filterResources(step, resources) {
+    const resourceIds = resources.map((res: any) => res._id);
+    return step.resources ?
+      step.resources.filter(resource => resourceIds.indexOf(resource._id) !== -1) :
+      [];
   }
 
 }
