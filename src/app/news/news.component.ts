@@ -89,7 +89,6 @@ export class NewsComponent implements OnInit {
           this.planetMessageService.showMessage('News deleted');
         }, (error) => {
           this.deleteDialog.componentInstance.message = 'There was a problem deleting this news.';
-          this.deleteDialog.componentInstance.spinnerOn = false;
         });
     };
   }
