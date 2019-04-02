@@ -40,7 +40,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private dialogsListService: DialogsListService,
     private stateService: StateService
-  ) { 
+  ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
@@ -141,7 +141,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   isMeetupDisabled() {
     const meetupDate = this.meetupDetail.endDate ? this.meetupDetail.endDate : this.meetupDetail.startDate;
-    return (this.dateNow > meetupDate) && !this.meetupDetail.participate ? true: false;
+    return (this.dateNow > meetupDate) && !this.meetupDetail.participate ? true : false;
   }
 
 }
