@@ -208,7 +208,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this course.')
     };
   }
 
@@ -224,7 +224,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting courses.')
     };
   }
 

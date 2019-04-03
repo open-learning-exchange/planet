@@ -132,7 +132,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted Meetup ' + meetup.title);
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this meetup'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this meetup')
     };
   }
 
@@ -149,7 +149,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted selected meetups');
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting these meetups.'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting these meetups.')
     };
   }
 

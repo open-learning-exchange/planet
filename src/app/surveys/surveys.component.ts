@@ -147,7 +147,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
       },
-      onError: () => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.'
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting survey.')
     };
   }
 
@@ -161,7 +161,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
       },
-      onError: () => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.'
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this survey.')
     };
   }
 

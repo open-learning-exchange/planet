@@ -246,7 +246,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
     };
   }
 
@@ -262,7 +262,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
     };
   }
 

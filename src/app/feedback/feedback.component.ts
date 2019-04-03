@@ -128,7 +128,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted feedback.');
       },
-      onError: (error) => this.deleteDialog.componentInstance.message = 'There is a problem deleting this feedback.'
+      onError: (error) => this.planetMessageService.showAlert('There is a problem deleting this feedback.')
     };
   }
 

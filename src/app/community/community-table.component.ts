@@ -9,6 +9,7 @@ import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-community-table',
@@ -42,7 +43,8 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private stateService: StateService
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnChanges() {
@@ -90,7 +92,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
           this.requestUpdate.emit();
           this.editDialog.close();
           },
-          onError: (error) => this.editDialog.componentInstance.message = 'Planet was not accepted'
+          onError: (error) => this.planetMessageService.showAlert('Planet was not accepted')
         };
     }
   }
@@ -114,7 +116,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
         this.requestUpdate.emit();
         this.editDialog.close();
       },
-      onError: (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community'
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this community')
     };
   }
 

@@ -225,7 +225,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
       },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.');
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.')
     };
   }
 
