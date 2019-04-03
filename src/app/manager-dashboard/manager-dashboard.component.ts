@@ -238,7 +238,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.couchService.get('_users/' + userName)
     .pipe(switchMap((data) => {
       const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
-      satelliteProfile.password = this.userService.createPin();
+      satelliteProfile.password = this.managerService.createPin();
       return forkJoin([
         this.couchService.put('_users/' + userName, satelliteProfile),
         this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password)
