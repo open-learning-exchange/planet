@@ -138,15 +138,13 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     };
     this.userService.endSessionLog().pipe(
       catchError(errorCatch),
+      switchMap(() => this.pouchAuthService.logout()),
       switchMap(() => {
-        const obsArr = [ this.pouchAuthService.logout() ];
         const localAdminName = configuration.adminName.split('@')[0];
         if (localAdminName === this.userService.get().name) {
-          obsArr.push(
-            this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
-          );
+          return this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain });
         }
-        return forkJoin(obsArr);
+        return of({});
       }),
       catchError(errorCatch)
     ).subscribe((response: any) => {
