@@ -14,6 +14,7 @@ import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -54,7 +55,8 @@ export class ExamsAddComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private coursesService: CoursesService,
     private examsService: ExamsService,
-    private planetStepListService: PlanetStepListService
+    private planetStepListService: PlanetStepListService,
+    private userService: UserService
   ) {
     this.createForm();
   }
@@ -111,7 +113,7 @@ export class ExamsAddComponent implements OnInit {
 
   addExam(examInfo) {
     const date = this.couchService.datePlaceholder;
-    this.couchService.updateDocument(this.dbName, { createdDate: date, ...examInfo, updatedDate: date }).subscribe((res) => {
+    this.couchService.updateDocument(this.dbName, { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date }).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       let routerParams = {};
       if (this.examType === 'courses') {

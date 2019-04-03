@@ -45,6 +45,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    console.log("I am here");
     this.setCourseListener();
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {

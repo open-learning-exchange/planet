@@ -5,6 +5,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
+import { UserService } from '../shared/user.service';
 
 @Injectable()
 export class SubmissionsService {
@@ -22,7 +23,8 @@ export class SubmissionsService {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private courseService: CoursesService
+    private courseService: CoursesService,
+    private userService: UserService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -58,7 +60,7 @@ export class SubmissionsService {
     const date = this.couchService.datePlaceholder;
     const times = { startTime: date, lastUpdateTime: date };
     const configuration = this.stateService.configuration;
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', sender: this.userService.get().name,
       ...this.submissionSource(configuration, user), ...times };
   }
 
