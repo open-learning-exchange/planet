@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 import { switchMap, mergeMap, takeWhile, tap } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
@@ -18,6 +19,7 @@ export class ConfigurationService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
+    private managerService: ManagerService,
     private syncService: SyncService
   ) {}
 
@@ -123,7 +125,7 @@ export class ConfigurationService {
       'joinDate': this.couchService.datePlaceholder,
       'planetCode': configuration.code
     };
-    const pin = this.userService.createPin();
+    const pin = this.managerService.createPin();
     return forkJoin([
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
