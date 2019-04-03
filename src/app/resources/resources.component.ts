@@ -9,7 +9,8 @@ import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch, filterShelf, filteredItemsInPage
+  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
+  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -237,30 +238,30 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteResource(resource) {
-    return () => {
-      const { _id: resourceId, _rev: resourceRev } = resource;
-      this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev)
-        .subscribe((data) => {
-          this.selection.deselect(resourceId);
-          this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
+    const { _id: resourceId, _rev: resourceRev } = resource;
+    return {
+      request: this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev),
+      onNext: (data) => {
+        this.selection.deselect(resourceId);
+        this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
+      },
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
     };
   }
 
   deleteResources(resources) {
-    return () => {
-      const deleteArray = resources.map((resource) => {
-        return { _id: resource._id, _rev: resource._rev, _deleted: true };
-      });
-      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray })
-        .subscribe((data) => {
-          this.resourcesService.requestResourcesUpdate(this.parent);
-          this.selection.clear();
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this resource.');
+    const deleteArray = createDeleteArray(resources);
+    return {
+      request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
+      onNext: (data) => {
+        this.resourcesService.requestResourcesUpdate(this.parent);
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
+      },
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
     };
   }
 

@@ -10,7 +10,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
@@ -125,8 +125,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   deleteCommunity() {
-    return () => {
-      this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
+    return {
+      request: this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
         forkJoin([
           this.couchService.delete('_users/org.couchdb.user:satellite?rev=' + res._rev),
           this.couchService.delete('_node/nonode@nohost/_config/satellite/pin')
@@ -134,9 +134,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       ),
       switchMap(() => this.couchService.findAll('_replicator')),
       switchMap((docs: any) => {
-        const replicators = docs.map(doc => {
-          return { _id: doc._id, _rev: doc._rev, _deleted: true };
-        });
+        const replicators = createDeleteArray(docs);
         const configuration = this.planetConfiguration;
         return forkJoin([
           this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
@@ -145,10 +143,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
           this.couchService.post('_replicator/_bulk_docs', { 'docs': replicators })
         ]);
-      })).subscribe((res: any) => {
+      })),
+      onNext: (res: any) => {
         this.deleteCommunityDialog.close();
         this.router.navigate([ '/login/configuration' ]);
-      }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
+      },
+      onError: error => this.planetMessageService.showAlert('An error occurred please try again.')
     };
   }
 
