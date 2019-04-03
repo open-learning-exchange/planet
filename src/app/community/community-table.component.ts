@@ -89,8 +89,8 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
           ]),
           onNext: (data) => {
-          this.requestUpdate.emit();
-          this.editDialog.close();
+            this.requestUpdate.emit();
+            this.editDialog.close();
           },
           onError: (error) => this.planetMessageService.showAlert('Planet was not accepted')
         };
