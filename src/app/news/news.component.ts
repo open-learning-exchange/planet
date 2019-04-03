@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
+import { map, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   templateUrl: './news.component.html',
@@ -79,17 +81,18 @@ export class NewsComponent implements OnInit {
 
   deleteNews(news) {
     // Return a function with news on its scope to pass to delete dialog
-    return () => {
-      const { _id: newsId, _rev: newsRev } = news;
-      this.couchService.delete('news/' + newsId + '?rev=' + newsRev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.newsItems = this.newsItems.filter((n: any) => data.id !== n._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('News deleted');
-        }, (error) => {
-          this.deleteDialog.componentInstance.message = 'There was a problem deleting this news.';
-        });
+    const { _id: newsId, _rev: newsRev } = news;
+    return {
+      request: this.couchService.delete('news/' + newsId + '?rev=' + newsRev),
+      onNext: (data) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.newsItems = this.newsItems.filter((n: any) => data.id !== n._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('News deleted');
+      },
+      onError: (error) => {
+        this.planetMessageService.showAlert('There was a problem deleting this news.');
+      }
     };
   }
 
