@@ -62,10 +62,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    const authorized = this.userService.get().roles.findIndex(userRole =>
-      [ '_admin', 'manager' ].findIndex(authorizedRole => authorizedRole === userRole) > -1
-    ) > -1;
-    if (authorized) {
+    if (this.userService.doesUserHaveRole([ '_admin', 'manager' ])) {
       this.displayedColumns.unshift('select');
     }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
