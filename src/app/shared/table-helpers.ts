@@ -120,3 +120,5 @@ export const dropdownsFill = (filterObj) => Object.entries(filterObj).reduce((em
 export const filteredItemsInPage = (filteredData: any[], pageIndex: number, pageSize: number) => {
   return filteredData.slice(pageIndex * pageSize, (pageIndex * pageSize) + 5);
 };
+
+export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));

@@ -9,7 +9,8 @@ import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString, filterAdvancedSearch, filterShelf, filteredItemsInPage
+  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
+  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -251,9 +252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteResources(resources) {
-    const deleteArray = resources.map((resource) => {
-      return { _id: resource._id, _rev: resource._rev, _deleted: true };
-    });
+    const deleteArray = createDeleteArray(resources);
     return {
       request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
       onNext: (data) => {

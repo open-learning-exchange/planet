@@ -9,7 +9,9 @@ import { FormBuilder, FormGroup, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
-import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
+import {
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill, createDeleteArray
+} from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
@@ -213,9 +215,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteCourses(courses) {
-    const deleteArray = courses.map((course) => {
-      return { _id: course._id, _rev: course._rev, _deleted: true };
-    });
+    const deleteArray = createDeleteArray(courses);
     return {
       request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
       onNext: (data: any) => {

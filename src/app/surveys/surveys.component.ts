@@ -4,7 +4,7 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, Pag
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -136,9 +136,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSurveys(surveys) {
-    const deleteArray = surveys.map(survey => {
-      return { _id: survey._id, _rev: survey._rev, _deleted: true };
-    });
+    const deleteArray = createDeleteArray(surveys);
     return {
       request: this.couchService.bulkDocs(this.dbName, deleteArray),
       onNext: () => {
