@@ -112,7 +112,6 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     return {
       request: this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community),
       onNext: ([ data, userRes ]) => {
-        // It's safer to remove the item from the array based on its id than to splice based on the index
         this.requestUpdate.emit();
         this.editDialog.close();
       },
