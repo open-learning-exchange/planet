@@ -15,6 +15,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { UserService } from '../shared/user.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -36,7 +37,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'select', 'name', 'taken', 'createdDate', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -54,12 +55,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private userService: UserService
   ) {
     this.dialogsLoadingService.start();
   }
 
   ngOnInit() {
+    const authorized = this.userService.get().roles.findIndex(userRole =>
+      [ '_admin', 'manager' ].findIndex(authorizedRole => authorizedRole === userRole) > -1
+    ) > -1;
+    if (authorized) {
+      this.displayedColumns.unshift('select');
+    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.receiveData('exams', 'surveys').pipe(switchMap(data => {
