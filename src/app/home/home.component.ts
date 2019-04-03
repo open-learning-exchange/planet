@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { Subject, forkJoin, interval, of } from 'rxjs';
+import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
