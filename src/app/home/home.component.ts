@@ -132,11 +132,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   logoutClick() {
     const configuration = this.stateService.configuration;
+    const errorCatch = error => {
+      console.log(error);
+      return of({});
+    };
     this.userService.endSessionLog().pipe(
-      catchError (error => {
-        console.log(error);
-        return of({});
-      }),
+      catchError(errorCatch),
       switchMap(() => {
         const obsArr = [ this.pouchAuthService.logout() ];
         const localAdminName = configuration.adminName.split('@')[0];
@@ -146,12 +147,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
           );
         }
         return forkJoin(obsArr);
-      })
+      }),
+      catchError(errorCatch)
     ).subscribe((response: any) => {
       this.userService.unset();
-      this.router.navigate([ '/login' ], {});
-    }, err => {
-      console.log(err);
       this.router.navigate([ '/login' ], {});
     });
   }
