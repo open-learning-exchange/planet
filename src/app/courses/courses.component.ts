@@ -198,32 +198,33 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteCourse(course) {
-    // Return a function with course on its scope to pass to delete dialog
-    return () => {
-      const { _id: courseId, _rev: courseRev } = course;
-      this.couchService.delete('courses/' + courseId + '?rev=' + courseRev)
-        .subscribe((data) => {
-          this.selection.deselect(course._id);
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
-        }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.');
+    const { _id: courseId, _rev: courseRev } = course;
+    return {
+      request: this.couchService.delete('courses/' + courseId + '?rev=' + courseRev),
+      onNext: (data) => {
+        this.selection.deselect(course._id);
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
+      },
+      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting this course.'
     };
   }
 
   deleteCourses(courses) {
-    return () => {
-      // Delete many courses only allowed for admin, so no need to check if user is creator
-      const deleteArray = courses.map((course) => {
-        return { _id: course._id, _rev: course._rev, _deleted: true };
-      });
-      this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }).subscribe((data: any) => {
+    const deleteArray = courses.map((course) => {
+      return { _id: course._id, _rev: course._rev, _deleted: true };
+    });
+    return {
+      request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
+      onNext: (data: any) => {
         this.getCourses();
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
-      }, (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.');
+      },
+      onError: (error) => this.deleteDialog.componentInstance.message = 'There was a problem deleting courses.'
     };
   }
 

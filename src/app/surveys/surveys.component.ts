@@ -136,31 +136,32 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSurveys(surveys) {
-    return () => {
-      const deleteArray = surveys.map(survey => {
-        this.surveys.data = filterById(this.surveys.data, survey._id);
-        return { _id: survey._id, _rev: survey._rev, _deleted: true };
-      });
-      this.couchService.bulkDocs(this.dbName, deleteArray)
-        .subscribe(() => {
-          this.receiveData('exams', 'surveys');
-          this.selection.clear();
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
-        }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.');
+    const deleteArray = surveys.map(survey => {
+      return { _id: survey._id, _rev: survey._rev, _deleted: true };
+    });
+    return {
+      request: this.couchService.bulkDocs(this.dbName, deleteArray),
+      onNext: () => {
+        this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === -1);
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+      },
+      onError: () => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.'
     };
   }
 
   deleteSurvey(survey) {
-    return () => {
-      const { _id: surveyId, _rev: surveyRev } = survey;
-      this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev)
-        .subscribe(() => {
-          this.selection.deselect(survey._id);
-          this.surveys.data = filterById(this.surveys.data, survey._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
-        }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.');
+    const { _id: surveyId, _rev: surveyRev } = survey;
+    return {
+      request: this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
+      onNext: () => {
+        this.selection.deselect(survey._id);
+        this.surveys.data = filterById(this.surveys.data, survey._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
+      },
+      onError: () => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.'
     };
   }
 

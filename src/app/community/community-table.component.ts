@@ -72,27 +72,27 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   }
 
   updateCommunity(community, change) {
-    // Return a function with community on its scope to pass to delete dialog
-    return () => {
-      // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
-      // Split community object into id, rev, and all other props in communityInfo
-      const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
-      switch (change) {
-        case 'delete':
-          this.deleteCommunity(community);
-          break;
-        case 'accept':
-          forkJoin([
+    // With object destructuring colon means different variable name assigned, i.e. 'id' rather than '_id'
+    // Split community object into id, rev, and all other props in communityInfo
+    const { _id: communityId, _rev: communityRev, ...communityInfo } = community;
+    switch (change) {
+      case 'delete':
+        return this.deleteCommunity(community);
+      case 'accept':
+        return {
+          request: forkJoin([
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
             // update registration request to accepted
             this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
-          ]).subscribe((data) => {
-            this.requestUpdate.emit();
-            this.editDialog.close();
-          }, (error) => this.editDialog.componentInstance.message = 'Planet was not accepted');
-      }
-    };
+          ]),
+          onNext: (data) => {
+          this.requestUpdate.emit();
+          this.editDialog.close();
+          },
+          onError: (error) => this.editDialog.componentInstance.message = 'Planet was not accepted'
+        };
+    }
   }
 
   // Checks response and creates couch call if a doc was returned
@@ -107,12 +107,15 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   deleteCommunity(community) {
     // Return a function with community on its scope to pass to delete dialog
     const { _id: id, _rev: rev } = community;
-    return this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community)
-    .subscribe(([ data, userRes ]) => {
-      // It's safer to remove the item from the array based on its id than to splice based on the index
-      this.requestUpdate.emit();
-      this.editDialog.close();
-    }, (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community');
+    return {
+      request: this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community),
+      onNext: ([ data, userRes ]) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.requestUpdate.emit();
+        this.editDialog.close();
+      },
+      onError: (error) => this.editDialog.componentInstance.message = 'There was a problem deleting this community'
+    };
   }
 
   pipeRemovePlanetUser(obs: any, community) {

@@ -125,8 +125,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   deleteCommunity() {
-    return () => {
-      this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
+    return {
+      request: this.couchService.get('_users/org.couchdb.user:satellite').pipe(switchMap((res) =>
         forkJoin([
           this.couchService.delete('_users/org.couchdb.user:satellite?rev=' + res._rev),
           this.couchService.delete('_node/nonode@nohost/_config/satellite/pin')
@@ -145,10 +145,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
           this.couchService.post('_replicator/_bulk_docs', { 'docs': replicators })
         ]);
-      })).subscribe((res: any) => {
+      })),
+      onNext: (res: any) => {
         this.deleteCommunityDialog.close();
         this.router.navigate([ '/login/configuration' ]);
-      }, error => this.planetMessageService.showAlert('An error occurred please try again.'));
+      },
+      onError: error => this.planetMessageService.showAlert('An error occurred please try again.')
     };
   }
 

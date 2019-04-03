@@ -209,22 +209,23 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    // Return a function with user on its scope to pass to delete dialog
-    return () => {
-      this.couchService.get('shelf/' + userId).pipe(
+    return {
+      request: this.couchService.get('shelf/' + userId).pipe(
         switchMap(shelfUser => {
           return forkJoin([
             this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
             this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
           ]);
         })
-      ).subscribe((data) => {
+      ),
+      onNext: (data) => {
         this.selection.deselect(user._id);
         this.planetMessageService.showMessage('User deleted: ' + user.name);
         this.deleteDialog.close();
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
-      }, () => { this.planetMessageService.showAlert('There was a problem deleting this user.'); });
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.');
     };
   }
 
