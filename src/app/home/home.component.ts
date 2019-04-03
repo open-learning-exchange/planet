@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
-import { Subject, forkJoin, interval, of } from 'rxjs';
+import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
@@ -132,25 +132,25 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   logoutClick() {
     const configuration = this.stateService.configuration;
+    const errorCatch = error => {
+      console.log(error);
+      return of({});
+    };
     this.userService.endSessionLog().pipe(
-      catchError (error => {
-        console.log(error);
-        return of({});
-      }),
+      catchError(errorCatch),
+      switchMap(() => this.pouchAuthService.logout()),
       switchMap(() => {
-        const obsArr = [ this.pouchAuthService.logout() ];
         const localAdminName = configuration.adminName.split('@')[0];
         if (localAdminName === this.userService.get().name) {
-          obsArr.push(
-            this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain }),
-          );
+          return this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain });
         }
-        return forkJoin(obsArr);
-      })
+        return of({});
+      }),
+      catchError(errorCatch)
     ).subscribe((response: any) => {
       this.userService.unset();
       this.router.navigate([ '/login' ], {});
-    }, err => console.log(err));
+    });
   }
 
   getNotification() {
