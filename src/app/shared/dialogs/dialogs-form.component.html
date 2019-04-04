@@ -55,7 +55,9 @@
       </mat-form-field>
 
       <!-- Dialog Button -->
-      <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
+      <ng-container *planetAuthorizedRoles="field.authorizedRoles">
+        <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
+      </ng-container>
 
       <!-- Date Select -->
       <mat-form-field *ngIf="field.type === 'date'" class="full-width">

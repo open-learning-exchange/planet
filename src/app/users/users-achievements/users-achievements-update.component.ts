@@ -121,7 +121,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title' },
         { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': 'Description', 'required': false },
-        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources' }
+        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources', 'authorizedRoles': 'learner' }
       ],
       this.fb.group({
         ...achievement,
