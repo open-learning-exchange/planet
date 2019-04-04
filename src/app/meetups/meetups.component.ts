@@ -46,6 +46,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedNotJoined = 0;
   selectedJoined = 0;
   isAuthorized = false;
+  dateNow: any;
 
   constructor(
     private couchService: CouchService,
@@ -56,9 +57,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private meetupService: MeetupService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
   ) {
     this.dialogsLoadingService.start();
+    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
   ngOnInit() {
@@ -205,5 +207,15 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
     this.selectedJoined = inShelf;
     this.selectedNotJoined = notInShelf;
+  }
+
+  isMeetupDisabled() {
+    const index = this.meetups.data.findIndex(i => i._id === this.selection.selected[0]);
+    const meetupDate = this.meetups.data[index].endDate ? this.meetups.data[index].endDate : this.meetups.data[index].startDate;
+    if(this.dateNow > meetupDate) {
+      this.selectedNotJoined = 0;
+      return true;
+    }
+    return false;
   }
 }
