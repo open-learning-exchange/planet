@@ -17,8 +17,7 @@ export class DialogsFormComponent {
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
-  selectedItems = [];
-  tooltipText = '';
+  tooltipTexts = new Map();
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -43,6 +42,7 @@ export class DialogsFormComponent {
       this.fields = this.data.fields;
       this.isSpinnerOk = false;
     }
+    this.setTooltips(this.fields);
   }
 
   onSubmit(mForm, dialog) {
@@ -82,11 +82,20 @@ export class DialogsFormComponent {
   dialogOkClick(field) {
     return (selection) => {
       this.modalForm.controls[field.name].setValue(selection);
-      this.selectedItems = selection.map(res => res.title);
-      this.tooltipText = this.selectedItems.join(', ');
+      this.setTooltips([ field ]);
       this.dialogListRef.close();
       this.modalForm.markAsDirty();
     };
+  }
+
+  setTooltips(fields) {
+    fields.forEach((field: any) => {
+      if (field.type !== 'dialog') {
+        return;
+      }
+      const value = this.modalForm.controls[field.name].value;
+      this.tooltipTexts.set(field.name, value.map(res => res[field.toolboxField]).join(', '));
+    });
   }
 
   isDirty() {

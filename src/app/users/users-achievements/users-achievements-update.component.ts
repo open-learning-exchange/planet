@@ -121,7 +121,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title' },
         { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': 'Description', 'required': false },
-        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources' }
+        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources', 'toolboxField': 'title' }
       ],
       this.fb.group({
         ...achievement,
@@ -132,7 +132,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       }),
       { onSubmit: (formValue, formGroup) => {
         const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
-         formGroup.controls.date.value;
+          formGroup.controls.date.value;
         formGroup.controls.date.setValue(achievedAt);
         this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
       }, closeOnSubmit: true }
