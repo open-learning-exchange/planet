@@ -20,6 +20,14 @@
         mat-raised-button
         color="accent"
         class="margin-lr-10"
+        *ngIf="stepDetail?.survey?.questions.length && showExamButton"
+        (click)="goToExam('survey')">
+        Take Survey
+      </a>
+      <a
+        mat-raised-button
+        color="accent"
+        class="margin-lr-10"
         *ngIf="stepDetail.resources.length !== 0"
         [href]="resourceUrl"
         target="_blank"
