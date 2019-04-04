@@ -168,56 +168,35 @@ export class CustomValidators {
 
   // Set this on both password and confirmation fields so it runs when either changes
   // confirm should be true for the confirmation field validator
-  static matchPassword(match: string, confirm: boolean): ValidatorFn {
+  // match is true by default, for unmatching passwords, match should be false
+  static matchPassword(matchField: string, confirm: boolean, match: boolean = true): ValidatorFn {
 
     return (ac: AbstractControl) => {
       if (!ac.parent) {
         return null;
       }
 
-      const matchControl = ac.parent.get(match),
+      const matchControl = ac.parent.get(matchField),
         val1 = ac.value,
         val2 = matchControl.value,
         confirmControl: AbstractControl = confirm ? ac : matchControl;
 
       // If passwords do not match, set error for confirmation field
-      if (val1 !== val2) {
+      if (match && val1 !== val2) {
         confirmControl.setErrors({ matchPassword: false });
         // If this is set on the confirmation field, also return match password error
         if (confirm) {
           return { matchPassword: false };
         }
-      } else {
-        // Remove error if passwords match
-        confirmControl.setErrors(null);
-      }
-      return null;
-    };
-  }
-
-  // Set this on both password and confirmation fields so it runs when either changes
-  // confirm should be false for the confirmation field validator
-  static unmatchPassword(unmatch: string, confirm: boolean): ValidatorFn {
-
-    return (ac: AbstractControl) => {
-      if (!ac.parent) {
-        return null;
-      }
-
-      const unmatchControl = ac.parent.get(unmatch),
-        val1 = ac.value,
-        val2 = unmatchControl.value,
-        confirmControl: AbstractControl = confirm ? ac : unmatchControl;
-
-      // If passwords match, set error for confirmation field
-      if (val1 === val2) {
+      } else if (!match && val1 === val2) {
+        // If passwords match, set error for confirmation field
         confirmControl.setErrors({ unmatchPassword: false });
         // If this is set on the confirmation field, also return unmatch password error
         if (confirm) {
           return { unmatchPassword: false };
         }
       } else {
-        // Remove error if passwords unmatch
+        // Remove error if passwords match
         confirmControl.setErrors(null);
       }
       return null;
