@@ -94,10 +94,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   routeToNext (nextQuestion) {
     if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
-      if(this.examType === 'surveys') {
+      if (this.examType === 'surveys') {
        this.updateSubmissonNotifcation();
       }
-      this.examComplete();
     } else {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
     }
@@ -105,7 +104,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   updateSubmissonNotifcation () {
       const data = {
-        'user': 'org.couchdb.user:'+ this.creator,
         'message': `survey has been completed`,
         'link': '/mySurveys',
         'type': 'survey',
@@ -114,8 +112,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         'time': this.couchService.datePlaceholder
       };
       // todo fork join two notification send request
-      this.couchService.updateDocument('notifications', data)
-        .subscribe();
+      forkJoin([
+        this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.creator }),
+        this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.sender })
+      ]).subscribe(() => this.examComplete()),
+       err => {
+        console.log(err);
+        this.examComplete();
+      };
   }
 
   moveQuestion(direction: number) {
@@ -187,8 +191,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       }
       this.isNewQuestion = false;
       this.sender = submission.hasOwnProperty('sender') ? submission.sender : '';
-      this.creator = submission.parent.hasOwnProperty('createdBy') ? submission.parent.createdBy: '';
-      console.log(this.examType, submission);
+      this.creator = submission.parent.hasOwnProperty('createdBy') ? submission.parent.createdBy : '';
     });
   }
 
