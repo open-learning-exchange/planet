@@ -212,7 +212,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   isMeetupDisabled() {
     const index = this.meetups.data.findIndex(i => i._id === this.selection.selected[0]);
     const meetupDate = this.meetups.data[index].endDate ? this.meetups.data[index].endDate : this.meetups.data[index].startDate;
-    if(this.dateNow > meetupDate) {
+    if (this.dateNow > meetupDate) {
       this.selectedNotJoined = 0;
       return true;
     }
