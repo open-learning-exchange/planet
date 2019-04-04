@@ -25,12 +25,12 @@ export class ExamsAddComponent implements OnInit {
   documentInfo: any = {};
   pageType = 'Add';
   courseName = '';
-  examType = this.route.snapshot.paramMap.get('type') || 'courses';
-  successMessage = this.examType === 'surveys' ? 'New survey added' : 'New exam added';
+  examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
+  successMessage = this.examType === 'survey' ? 'New survey added' : 'New exam added';
   steps = [];
   showFormError = false;
   isCourseContent = this.router.url.match(/courses/);
-  returnUrl = (this.examType === 'surveys' && !this.isCourseContent) ? '/surveys' : this.coursesService.returnUrl || 'courses';
+  returnUrl = (this.examType === 'survey' && !this.isCourseContent) ? '/surveys' : this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
   private _question: FormGroup;
   get question(): FormGroup {
@@ -61,7 +61,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   createForm() {
-    const title = this.examType === 'courses' ? this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle : '';
+    const title = this.isCourseContent ? this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle : '';
     this.examForm = this.fb.group({
       name: [
         title,
@@ -73,13 +73,13 @@ export class ExamsAddComponent implements OnInit {
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
       questions: this.fb.array([]),
-      type: this.examType
+      type: { exam: 'courses', survey: 'surveys' }[this.examType]
     });
   }
 
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
-      this.successMessage = this.examType === 'surveys' ? 'Survey updated successfully' : 'Exam updated successfully';
+      this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Exam updated successfully';
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
@@ -114,10 +114,8 @@ export class ExamsAddComponent implements OnInit {
     const date = this.couchService.datePlaceholder;
     this.couchService.updateDocument(this.dbName, { createdDate: date, ...examInfo, updatedDate: date }).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
-      let routerParams = {};
-      if (this.examType === 'courses' || this.isCourseContent) {
-        this.appendExamToCourse(examInfo);
-        routerParams = { 'continue': true };
+      if (this.examType === 'exam' || this.isCourseContent) {
+        this.appendToCourse(examInfo, this.examType);
       }
       this.goBack();
       this.planetMessageService.showMessage(this.successMessage);
@@ -127,9 +125,10 @@ export class ExamsAddComponent implements OnInit {
     });
   }
 
-  appendExamToCourse(examInfo) {
-    const courseExam = { ...this.documentInfo, ...examInfo, totalMarks: this.totalMarks(examInfo) };
-    this.coursesService.course.steps[this.coursesService.stepIndex].exam = courseExam;
+  appendToCourse(info, type: 'exam' | 'survey') {
+    const courseExam = { ...this.documentInfo, ...info, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
+    const courseProp = { courses: 'exam', surveys: 'survey' }[type];
+    this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
   }
 
   totalMarks(examInfo) {
@@ -143,13 +142,13 @@ export class ExamsAddComponent implements OnInit {
 
   initializeQuestions(questions: any[]) {
     questions.forEach((question) => {
-      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'courses', question));
+      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'exam', question));
     });
   }
 
   addQuestion() {
     const questions = (<FormArray>this.examForm.get('questions'));
-    questions.push(this.examsService.newQuestionForm(this.examType === 'courses'));
+    questions.push(this.examsService.newQuestionForm(this.examType === 'exam'));
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
     this.stepClick(questions.length - 1);
