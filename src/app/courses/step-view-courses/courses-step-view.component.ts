@@ -120,8 +120,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resource = value;
   }
 
-  goToExam() {
-    this.router.navigate([ 'exam', { questionNum: this.examStart } ], { relativeTo: this.route });
+  goToExam(type = 'exam') {
+    this.router.navigate([ 'exam', { questionNum: type === 'survey' ? 1 : this.examStart, type } ], { relativeTo: this.route });
   }
 
   filterResources(step, resources) {

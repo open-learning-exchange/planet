@@ -88,12 +88,12 @@ export class CoursesStepComponent implements OnDestroy {
     this.steps[this.activeStepIndex].resources.splice(position, 1);
   }
 
-  addExam() {
+  addExam(type = 'exam') {
     this.coursesService.stepIndex = this.activeStepIndex;
-    if (this.activeStep.exam) {
-      this.router.navigate([ '/courses/update/exam/', this.activeStep.exam._id ]);
+    if (this.activeStep[type]) {
+      this.router.navigate([ '/courses/update/exam/', this.activeStep[type]._id, { type } ]);
     } else {
-      this.router.navigate([ '/courses/exam/' ]);
+      this.router.navigate([ '/courses/exam/', { type } ]);
     }
   }
 
