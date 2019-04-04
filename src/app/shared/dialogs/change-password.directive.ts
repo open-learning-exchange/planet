@@ -43,11 +43,19 @@ export class ChangePasswordDirective {
   @Input('planetChangePassword') userDetail: any;
   dbName = '_users';
   changePasswordFormGroup = {
-    oldPassword: [ '', Validators.required, ac => this.validatorService.checkPassword$(ac) ],
+    oldPassword: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('password', false, false)
+      ]),
+      ac => this.validatorService.checkPassword$(ac)
+    ],
     password: [
       '',
       Validators.compose([
         Validators.required,
+        CustomValidators.matchPassword('oldPassword', true, false),
         CustomValidators.matchPassword('confirmPassword', false)
       ])
     ],

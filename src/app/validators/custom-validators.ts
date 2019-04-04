@@ -168,27 +168,30 @@ export class CustomValidators {
 
   // Set this on both password and confirmation fields so it runs when either changes
   // confirm should be true for the confirmation field validator
-  static matchPassword(match: string, confirm: boolean): ValidatorFn {
+  // match is true by default, for unmatching passwords, match should be false
+  static matchPassword(matchField: string, confirm: boolean, match: boolean = true): ValidatorFn {
 
     return (ac: AbstractControl) => {
       if (!ac.parent) {
         return null;
       }
 
-      const matchControl = ac.parent.get(match),
+      const matchControl = ac.parent.get(matchField),
         val1 = ac.value,
         val2 = matchControl.value,
-        confirmControl: AbstractControl = confirm ? ac : matchControl;
+        confirmControl: AbstractControl = confirm ? ac : matchControl,
+        errorType = match ? 'matchPassword' : 'unmatchPassword';
 
-      // If passwords do not match, set error for confirmation field
-      if (val1 !== val2) {
-        confirmControl.setErrors({ matchPassword: false });
-        // If this is set on the confirmation field, also return match password error
+      // If passwords do not match when match=true, set error for confirmation field
+      // If passwords match when match=false, set error for confirmation field
+      if (match === (val1 !== val2)) {
+        confirmControl.setErrors({ [errorType]: false });
+        // If this is set on the confirmation field, also return error
         if (confirm) {
-          return { matchPassword: false };
+          return { [errorType]: false };
         }
       } else {
-        // Remove error if passwords match
+        // Remove error
         confirmControl.setErrors(null);
       }
       return null;

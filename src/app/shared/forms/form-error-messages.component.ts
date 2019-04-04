@@ -19,6 +19,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       duplicate {Value already exists}
       email {Please enter a valid email}
       matchPassword {Passwords must match}
+      unmatchPassword {Passwords must not match}
       invalidInt {Please enter a number}
       invalidPositive {The number cannot be negative}
       invalidHex {Hex is not valid}
