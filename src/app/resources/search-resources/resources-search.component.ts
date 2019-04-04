@@ -23,7 +23,7 @@ import { MatSelectionList } from '@angular/material';
     }
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
-      <mat-list-option *ngFor="let item of items" [value]="item" [selected]="isSelected(item)">{{item}}</mat-list-option>
+      <mat-list-option *ngFor="let item of items" [value]="item" [selected]="isSelected(item)" checkboxPosition="before">{{item}}</mat-list-option>
     </mat-selection-list>
   `,
   selector: 'planet-resources-search-list',
