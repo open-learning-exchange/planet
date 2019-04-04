@@ -179,15 +179,16 @@ export class CustomValidators {
       const matchControl = ac.parent.get(matchField),
         val1 = ac.value,
         val2 = matchControl.value,
-        confirmControl: AbstractControl = confirm ? ac : matchControl;
+        confirmControl: AbstractControl = confirm ? ac : matchControl,
+        errorType = match ? 'matchPassword' : 'unmatchPassword';
 
       // If passwords do not match when match=true, set error for confirmation field
       // If passwords match when match=false, set error for confirmation field
       if (match === (val1 !== val2)) {
-        confirmControl.setErrors(match ? { matchPassword: false } : { unmatchPassword: false });
+        confirmControl.setErrors({ [errorType]: false });
         // If this is set on the confirmation field, also return error
         if (confirm) {
-          return match ? { matchPassword: false } : { unmatchPassword: false };
+          return { [errorType]: false };
         }
       } else {
         // Remove error
