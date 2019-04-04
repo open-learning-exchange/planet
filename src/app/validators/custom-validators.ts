@@ -184,10 +184,10 @@ export class CustomValidators {
       // If passwords do not match when match=true, set error for confirmation field
       // If passwords match when match=false, set error for confirmation field
       if (match === (val1 !== val2)) {
-        confirmControl.setErrors(match ? {matchPassword: false} : {unmatchPassword: false});
+        confirmControl.setErrors(match ? { matchPassword: false } : { unmatchPassword: false });
         // If this is set on the confirmation field, also return error
         if (confirm) {
-          return match ? {matchPassword: false} : {unmatchPassword: false};
+          return match ? { matchPassword: false } : { unmatchPassword: false };
         }
       } else {
         // Remove error
