@@ -205,17 +205,17 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   countSelectedShelf(selected: any) {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
-    this.selectedJoined = inShelf;
     this.selectedNotJoined = notInShelf;
-  }
-
-  isMeetupDisabled() {
-    const index = this.meetups.data.findIndex(i => i._id === this.selection.selected[0]);
-    const meetupDate = this.meetups.data[index].endDate ? this.meetups.data[index].endDate : this.meetups.data[index].startDate;
-    if (this.dateNow > meetupDate) {
-      this.selectedNotJoined = 0;
-      return true;
+    this.selectedJoined = inShelf;
+    let index, meetupDate;
+    for (let i = 0; i < selected.length; i++) {
+      index = this.meetups.data.findIndex(x => x._id === selected[i]);
+      meetupDate = this.meetups.data[index].endDate ? this.meetups.data[index].endDate : this.meetups.data[index].startDate;
+      if (this.dateNow > meetupDate) {
+        this.selectedNotJoined--;
+        selected.splice(i, 1);
+      } 
     }
-    return false;
+    this.userService.changeShelf(selected, 'meetupIds', 'remove');
   }
 }

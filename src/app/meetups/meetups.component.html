@@ -18,7 +18,7 @@
         <mat-icon>add</mat-icon>
       </button>
       <span class="toolbar-fill"></span>
-      <button mat-button [disabled]="selectedNotJoined === 0 || isMeetupDisabled()" (click)="meetupsToggle(selection.selected, 'add')">
+      <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
         <span *ngIf="selectedNotJoined > 0"> ({{selectedNotJoined}})</span>
       </button>
