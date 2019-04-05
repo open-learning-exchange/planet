@@ -29,8 +29,9 @@ export class PlanetBetaDirective implements OnInit {
     }
   }
 
-  isBetaEnabled() {
-    return this.configuration.betaEnabled === 'on' || this.configuration.betaEnabled === 'user' && this.userService.get().betaEnabled;
+  isBetaEnabled(): boolean {
+    return this.configuration.betaEnabled === 'on' ||
+      this.configuration.betaEnabled === 'user' && this.userService.get().betaEnabled === true;
   }
 
 }
