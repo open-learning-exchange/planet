@@ -107,7 +107,7 @@ export class NewsComponent implements OnInit {
     const formGroup = {
       message: [ news.message, CustomValidators.required ]
     };
-    this.dialogsFormService.confirm(title, fields, formGroup)
+    this.dialogsFormService.confirm(title, fields, formGroup, true)
       .subscribe((response: any) => {
         if (response !== undefined) {
           news.updateDate = this.couchService.datePlaceholder;
