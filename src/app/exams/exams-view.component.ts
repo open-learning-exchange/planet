@@ -34,9 +34,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
   checkboxState: any = {};
   isNewQuestion = true;
-  status = '';
-  creator = '';
-  sender = '';
 
   constructor(
     private router: Router,
@@ -55,8 +52,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.stepNum = +params.get('stepNum');
       const courseId = params.get('id');
       const submissionId = params.get('submissionId');
-      const surveyId = params.get('surveyId');
-      this.status = params.get('status');
       const mode = params.get('mode');
       this.answer.setValue(null);
       this.spinnerOn = true;
@@ -68,7 +63,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.fromSubmission = true;
         this.mode = mode || 'grade';
         this.grade = mode === 'take' ? 0 : undefined;
-        this.submissionsService.openSubmission({ submissionId, 'status': this.status });
+        this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
       }
     });
   }
@@ -94,33 +89,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   routeToNext (nextQuestion) {
     if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
-      if (this.examType === 'surveys') {
-       this.updateSubmissonNotifcation();
-      }
+     this.examComplete();
+     this.submissionsService.updateSubmissonNotifcation();
     } else {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
     }
   }
 
-  updateSubmissonNotifcation () {
-      const data = {
-        'message': `survey has been completed`,
-        'link': '/mySurveys',
-        'type': 'survey',
-        'priority': 1,
-        'status': 'unread',
-        'time': this.couchService.datePlaceholder
-      };
-      // todo fork join two notification send request
-      forkJoin([
-        this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.creator }),
-        this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.sender })
-      ]).subscribe(() => this.examComplete()),
-       err => {
-        console.log(err);
-        this.examComplete();
-      };
-  }
+
 
   moveQuestion(direction: number) {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
@@ -190,8 +166,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.answer.setValue(Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value);
       }
       this.isNewQuestion = false;
-      this.sender = submission.hasOwnProperty('sender') ? submission.sender : '';
-      this.creator = submission.parent.hasOwnProperty('createdBy') ? submission.parent.createdBy : '';
     });
   }
 

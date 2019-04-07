@@ -52,6 +52,23 @@ export class SubmissionsService {
     });
   }
 
+  updateSubmissonNotifcation () {
+    const data = {
+      'message': this.userService.get().name + ' has complete the survey ' + this.submission.parent.name,
+      'link': '/surveys',
+      'type': 'survey',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    // todo fork join two notification send request
+    forkJoin([
+      this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.createdBy }),
+      this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.sender })
+    ]).subscribe(),
+    (err) => console.log(err);
+  }
+
   private newSubmission({ parentId, parent, user, type }) {
     this.submission = this.createNewSubmission({ parentId, parent, user, type });
   }

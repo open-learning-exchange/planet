@@ -114,7 +114,7 @@ export class ExamsAddComponent implements OnInit {
   addExam(examInfo) {
     const date = this.couchService.datePlaceholder;
     this.couchService.updateDocument(this.dbName, { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date })
-    .subscribe((res) => { 
+    .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       let routerParams = {};
       if (this.examType === 'courses') {
