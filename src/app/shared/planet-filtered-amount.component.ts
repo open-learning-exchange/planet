@@ -8,7 +8,7 @@ import { MatTableDataSource } from '@angular/material';
   selector: 'planet-filtered-amount',
   styles: [ `
     :host {
-      padding: 0 2vw;
+      padding: 0 0.5rem;
     }
   ` ]
 })
