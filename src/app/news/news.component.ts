@@ -63,6 +63,8 @@ export class NewsComponent implements OnInit {
 
   postNews(data) {
     this.couchService.updateDocument(this.dbName, data).subscribe(() => {
+      data.updateDate ? 
+      this.planetMessageService.showMessage('News has been updated successfully.') : 
       this.planetMessageService.showMessage('Thank you for submitting your news');
       this.newMessage = '';
       this.getMessages();
