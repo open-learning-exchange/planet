@@ -90,13 +90,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   routeToNext (nextQuestion) {
     if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
      this.examComplete();
-     this.submissionsService.updateSubmissonNotifcation();
+     if ( this.examType === 'surveys') {
+      this.submissionsService.sendSubmissionNotifcation();
+     }
     } else {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
     }
   }
-
-
 
   moveQuestion(direction: number) {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });

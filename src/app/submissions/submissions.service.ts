@@ -52,7 +52,7 @@ export class SubmissionsService {
     });
   }
 
-  updateSubmissonNotifcation () {
+  sendSubmissionNotifcation () {
     const data = {
       'message': this.userService.get().name + ' has complete the survey ' + this.submission.parent.name,
       'link': '/surveys',
@@ -62,10 +62,17 @@ export class SubmissionsService {
       'time': this.couchService.datePlaceholder
     };
     // todo fork join two notification send request
-    forkJoin([
-      this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.createdBy }),
-      this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.sender })
-    ]).subscribe(),
+    if (!this.submission.parent.createdBy && !this.submission.sender) {
+        return;
+    }
+    const observables = [ ];
+    if (this.submission.parent.createdBy) {
+      observables.push( this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.parent.createdBy }) );
+    }
+    if (this.submission.parent.createdBy !== this.submission.sender) {
+        observables.push( this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.sender }));
+    }
+    forkJoin(observables).subscribe(),
     (err) => console.log(err);
   }
 
@@ -222,5 +229,4 @@ export class SubmissionsService {
   validAnswer(field) {
     return field !== undefined && field !== false && field !== '';
   }
-
 }
