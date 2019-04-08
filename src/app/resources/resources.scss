@@ -25,3 +25,7 @@ $label-height: 1rem;
 .view-full-height.view-with-search {
   height: calc(#{$view-container-height} - #{$toolbar-height});
 }
+
+.mat-button, .mat-stroked-button {
+  min-width: auto;
+}
