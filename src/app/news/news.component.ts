@@ -61,9 +61,9 @@ export class NewsComponent implements OnInit {
     });
   }
 
-  postNews(data) {
+  postNews(data, successMessage = 'Thank you for submitting your news') {
     this.couchService.updateDocument(this.dbName, data).subscribe(() => {
-      this.planetMessageService.showMessage('Thank you for submitting your news');
+      this.planetMessageService.showMessage(successMessage);
       this.newMessage = '';
       this.getMessages();
     });
@@ -111,7 +111,7 @@ export class NewsComponent implements OnInit {
       .subscribe((response: any) => {
         if (response !== undefined) {
           news.updateDate = this.couchService.datePlaceholder;
-          this.postNews({ ...news, ...response });
+          this.postNews({ ...news, ...response }, 'News has been updated successfully.');
         }
       });
   }
