@@ -6,8 +6,9 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
+    <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
     <span>
-      <span>{{title ? title + ': ' : ''}}<ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}</span>
+      <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
       <span i18n *ngIf="mode === 'grade' || mode === 'view'"> By{{' ' + submittedBy}}<span i18n *ngIf="!submittedBy">Unknown</span> on {{(updatedOn | date: 'short') || '--'}}</span>
     </span>
     <span class="toolbar-fill"></span>
