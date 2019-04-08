@@ -55,7 +55,7 @@
       </mat-form-field>
 
       <!-- Dialog Button -->
-      <ng-container *planetAuthorizedRoles="field.authorizedRoles">
+      <ng-container *planetAuthorizedRoles="field.authorizedRoles === undefined ? 'learner' : field.authorizedRoles">
         <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
       </ng-container>
 
