@@ -121,7 +121,7 @@ export class ExamsAddComponent implements OnInit {
       if (this.examType === 'courses') {
         this.appendExamToCourse(examInfo);
         routerParams = { 'continue': true };
-      }
+}
       this.goBack();
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {

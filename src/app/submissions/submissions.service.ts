@@ -65,18 +65,14 @@ export class SubmissionsService {
     if (!this.submission.parent.createdBy && !this.submission.sender) {
         return;
     }
-    const observables = [];
+    const docs = [];
     if (this.submission.parent.createdBy) {
-      observables.push(
-        this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.parent.createdBy })
-        );
+      docs.push({ ...data, user: 'org.couchdb.user:' + this.submission.parent.createdBy });
     }
     if (this.submission.parent.createdBy !== this.submission.sender) {
-        observables.push(
-          this.couchService.updateDocument('notifications', { ...data, user: 'org.couchdb.user:' + this.submission.sender })
-          );
+      docs.push({ ...data, user: 'org.couchdb.user:' + this.submission.sender });
     }
-    forkJoin(observables).subscribe();
+    this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
   }
 
   private newSubmission({ parentId, parent, user, type }) {
