@@ -15,17 +15,11 @@ export class AuthorizedRolesDirective {
   @Input()
   set planetAuthorizedRoles(rolesString: string) {
     const authorizedRoles = (rolesString || '').split(',').map(val => val.trim());
-    const userRoles = this.userService.get().roles;
-    const authorized = userRoles.findIndex(userRole => this.isRoleAuthorized(userRole, authorizedRoles)) > -1;
-    if (authorized) {
+    if (this.userService.doesUserHaveRole([ '_admin', ...authorizedRoles ])) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainer.clear();
     }
-  }
-
-  isRoleAuthorized(userRole, authorizedRoles) {
-    return userRole === '_admin' || authorizedRoles.findIndex(authorizedRole => authorizedRole === userRole) > -1;
   }
 
 }

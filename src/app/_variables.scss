@@ -40,6 +40,7 @@ $view-container-height: calc(100vh - 216px);
 // Height of dashboard
 $dashboard-height: calc(100vh - 128px);
 $dashboard-tile-height: calc((#{$dashboard-height} - 3rem) / 4);
+$dashboard-tile-width: 125px;
 // Widths for forms fitting 1, 2, or 3 mat-input-fields horizontally
 $form-width-3: 550px;
 $form-width-2: 365px;

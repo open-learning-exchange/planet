@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { ResourcesService } from '../../resources/resources.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -33,15 +34,29 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private userService: UserService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private resourcesService: ResourcesService
   ) {}
 
   ngOnInit() {
-    this.coursesService.courseUpdated$
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = [] }: { course: any, progress: any }) => {
-      this.initCourse(course, progress);
+    combineLatest(
+      this.coursesService.courseUpdated$,
+      this.resourcesService.resourcesListener(this.parent)
+    ).pipe(takeUntil(this.onDestroy$))
+    .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
+      this.initCourse(course, progress, resources);
     });
+    this.getSubmission();
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
+      this.parent = this.route.snapshot.data.parent;
+      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
+      this.courseId = params.get('id');
+      this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
+    });
+    this.resourcesService.requestResourcesUpdate(this.parent);
+  }
+
+  getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
       this.examStart = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
@@ -55,12 +70,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         });
       }
     });
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.parent = this.route.snapshot.data.parent;
-      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.courseId =  params.get('id');
-      this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
-    });
   }
 
   ngOnDestroy() {
@@ -68,7 +77,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  initCourse(course, progress) {
+  initCourse(course, progress, resources) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.progress = progress.find((p: any) => p.stepNum === this.stepNum) || { passed: false };
@@ -86,6 +95,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         type: 'exam' });
     }
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
+    this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.stepDetail.resources ? this.stepDetail.resources[0] : undefined;
   }
 
@@ -110,8 +120,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resource = value;
   }
 
-  goToExam() {
-    this.router.navigate([ 'exam', { questionNum: this.examStart } ], { relativeTo: this.route });
+  goToExam(type = 'exam') {
+    this.router.navigate([ 'exam', { questionNum: type === 'survey' ? 1 : this.examStart, type } ], { relativeTo: this.route });
+  }
+
+  filterResources(step, resources) {
+    const resourceIds = resources.map((res: any) => res._id);
+    return step.resources ?
+      step.resources.filter(resource => resourceIds.indexOf(resource._id) !== -1) :
+      [];
   }
 
 }

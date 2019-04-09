@@ -119,16 +119,16 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteFeedback(feedback) {
-    // Return a function with feedback on its scope so it can be called from the dialog
-    return () => {
-      const { _id: feedbackId, _rev: feedbackRev } = feedback;
-      this.couchService.delete(this.dbName + '/' + feedbackId + '?rev=' + feedbackRev)
-        .subscribe((data) => {
-          // It's safer to remove the item from the array based on its id than to splice based on the index
-          this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted feedback.');
-        }, (error) => this.deleteDialog.componentInstance.message = 'There is a problem deleting this feedback.');
+    const { _id: feedbackId, _rev: feedbackRev } = feedback;
+    return {
+      request: this.couchService.delete(this.dbName + '/' + feedbackId + '?rev=' + feedbackRev),
+      onNext: (data) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted feedback.');
+      },
+      onError: (error) => this.planetMessageService.showAlert('There is a problem deleting this feedback.')
     };
   }
 

@@ -188,10 +188,6 @@ export class UserService {
     }));
   }
 
-  createPin() {
-    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
-  }
-
   countInShelf(ids: string[], shelfName: string) {
     return ids.reduce((counts: any, id) => {
       const added = this.shelf[shelfName].indexOf(id) > -1 ? 1 : 0;
@@ -210,13 +206,16 @@ export class UserService {
     return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo })
     .pipe(
       switchMap(res => {
-        userInfo._rev = res.rev;
-        if (userInfo.name === this.get().name) {
-          const { derived_key, iterations, password_scheme, salt, ...profile } = userInfo;
+        newUserInfo._rev = res.rev;
+        if (newUserInfo.name === this.get().name) {
+          const { derived_key, iterations, password_scheme, salt, ...profile } = newUserInfo;
+          if (this.user.roles.indexOf('_admin') !== -1) {
+            profile.roles.push('_admin');
+          }
           this.set(profile);
         }
-        if (planetConfiguration.adminName === userInfo.name + '@' + planetConfiguration.code) {
-          return this.updateConfigurationContact(userInfo, planetConfiguration);
+        if (planetConfiguration.adminName === newUserInfo.name + '@' + planetConfiguration.code) {
+          return this.updateConfigurationContact(newUserInfo, planetConfiguration);
         }
         return of({ ok: true });
       })
@@ -231,6 +230,10 @@ export class UserService {
       this.stateService.requestData('configurations', 'local');
       return res;
     }));
+  }
+
+  doesUserHaveRole(searchRoles: string[]) {
+    return this.user.roles.findIndex(userRole => searchRoles.findIndex(searchRole => searchRole === userRole) > -1) > -1;
   }
 
 }

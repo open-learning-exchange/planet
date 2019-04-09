@@ -2,7 +2,7 @@
 
 $card-width: calc(106px + 2rem);
 
-:host {
+.vertical-container {
   height: $dashboard-height;
   padding: 2rem;
   display: grid;
@@ -46,6 +46,70 @@ $card-width: calc(106px + 2rem);
       p {
         margin: 0;
       }
+    }
+
+  }
+
+}
+
+.horizontal-container {
+  height: $dashboard-height;
+  padding: 2rem;
+  display: grid;
+  grid-template-areas: "hcard";
+  grid-template-columns: 1fr;
+  grid-template-rows: auto repeat(4, minmax(90px, 1fr));
+  grid-auto-flow: row;
+  grid-row-gap: 0.5rem;
+  @media (max-width: $screen-md) {
+    grid-template-rows: auto repeat(4, minmax(70px, 1fr));
+  }
+
+  planet-dashboard-tile {
+    overflow: hidden;
+    padding: 0.25rem 2px;
+  }
+
+  mat-card {
+
+    grid-area: hcard;
+    display: grid;
+    grid-template-areas: "img info date";
+    grid-template-columns: calc(#{$dashboard-tile-width} - 0.5rem) auto max-content;
+    grid-column-gap: 1rem;
+    padding: 0.5rem;
+    margin: 0 2px;
+    img {
+      grid-area: img;
+      width: calc(#{$dashboard-tile-width} - 0.5rem);
+      max-width: 15vh;
+      border-radius: 50%;
+      justify-self: end;
+      align-self: center;
+    }
+    .dashboard-name {
+      grid-area: info;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      h1 {
+        display: flex;
+        align-items: center;
+      }
+      .mat-subheading-2 {
+        margin: 0;
+      }
+    }
+    .date {
+      grid-area: date;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+    }
+
+    p {
+      margin: 0;
     }
 
   }

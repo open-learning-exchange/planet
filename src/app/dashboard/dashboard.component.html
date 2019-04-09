@@ -1,57 +1,102 @@
-<mat-card>
-  <img [src]="profileImg">
-  <div class="primary-color dashboard-name mat-typography">
-    <h2>{{displayName}}</h2>
-    <p>{{displayRole}}</p>
-    <p>{{dateNow | date:'longDate'}}</p>
-    <p>{{visits | number}} <ng-container i18n>Visits</ng-container></p>
-  </div>
-  <div class="lower-list">
-    <mat-list>
-      <mat-list-item class="cursor-pointer" routerLink="/submissions" *planetAuthorizedRoles="'leader,manager'">
-        <a [matBadge]="examsCount" matBadgeOverlap="false" [matBadgeHidden]="examsCount<1" i18n>Submissions</a>
-        <mat-divider [inset]="true"></mat-divider>
-      </mat-list-item>
-      <mat-list-item class="cursor-pointer" routerLink="/mySurveys">
-        <a [matBadge]="surveysCount" matBadgeOverlap="false" [matBadgeHidden]="surveysCount<1" i18n>mySurveys</a>
-        <mat-divider [inset]="true"></mat-divider>
-      </mat-list-item>
-      <mat-list-item class="cursor-pointer" routerLink="/myAchievements">
-        <a i18n>Achievements</a>
-        <mat-divider [inset]="true"></mat-divider>
-      </mat-list-item>
-      <mat-list-item class="cursor-pointer" routerLink="/news">
-        <a i18n>ourNews</a>
-      </mat-list-item>
-    </mat-list>
-  </div>
-</mat-card>
-<planet-dashboard-tile
-  [cardTitle]="'myLibrary'"
-  class="planet-library-theme"
-  [itemData]="data.resources"
-  [link]="'/myLibrary'"
-  [emptyLink]="'/resources'"
-  [shelfName]="'resourceIds'">
-</planet-dashboard-tile>
-<planet-dashboard-tile
-  [cardTitle]="'myCourses'"
-  class="planet-courses-theme"
-  [itemData]="data.courses"
-  [emptyLink]="'/courses'"
-  [shelfName]="'courseIds'">
-</planet-dashboard-tile>
-<planet-dashboard-tile
-  [cardTitle]="'myTeams'"
-  class="planet-teams-theme"
-  [itemData]="data.myTeams"
-  [emptyLink]="'/teams'"
-  [shelfName]="'myTeamIds'">
-</planet-dashboard-tile>
-<planet-dashboard-tile
-  [cardTitle]="'myMeetups'"
-  class="planet-meetups-theme"
-  [itemData]="data.meetups"
-  [emptyLink]="'/meetups'"
-  [shelfName]="'meetupIds'">
-</planet-dashboard-tile>
+<div *planetBeta="false" class="vertical-container">
+  <mat-card>
+    <img [src]="profileImg">
+    <div class="primary-color dashboard-name mat-typography">
+      <h2>{{displayName}}</h2>
+      <p>{{displayRole}}</p>
+      <p>{{dateNow | date:'longDate'}}</p>
+      <p>{{visits | number}} <ng-container i18n>Visits</ng-container></p>
+    </div>
+    <div class="lower-list">
+      <mat-list>
+        <mat-list-item class="cursor-pointer" routerLink="/submissions" *planetAuthorizedRoles="'leader,manager'">
+          <a [matBadge]="examsCount" matBadgeOverlap="false" [matBadgeHidden]="examsCount<1" i18n>Submissions</a>
+          <mat-divider [inset]="true"></mat-divider>
+        </mat-list-item>
+        <mat-list-item class="cursor-pointer" routerLink="/mySurveys">
+          <a [matBadge]="surveysCount" matBadgeOverlap="false" [matBadgeHidden]="surveysCount<1" i18n>mySurveys</a>
+          <mat-divider [inset]="true"></mat-divider>
+        </mat-list-item>
+        <mat-list-item class="cursor-pointer" routerLink="/myAchievements">
+          <a i18n>Achievements</a>
+          <mat-divider [inset]="true"></mat-divider>
+        </mat-list-item>
+        <mat-list-item class="cursor-pointer" routerLink="/news">
+          <a i18n>ourNews</a>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card>
+  <planet-dashboard-tile
+    [cardTitle]="'myLibrary'"
+    class="planet-library-theme"
+    [itemData]="data.resources"
+    [link]="'/myLibrary'"
+    [emptyLink]="'/resources'"
+    [shelfName]="'resourceIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myCourses'"
+    class="planet-courses-theme"
+    [itemData]="data.courses"
+    [emptyLink]="'/courses'"
+    [shelfName]="'courseIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myTeams'"
+    class="planet-teams-theme"
+    [itemData]="data.myTeams"
+    [emptyLink]="'/teams'"
+    [shelfName]="'myTeamIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myMeetups'"
+    class="planet-meetups-theme"
+    [itemData]="data.meetups"
+    [emptyLink]="'/meetups'"
+    [shelfName]="'meetupIds'">
+  </planet-dashboard-tile>
+</div>
+
+<div class="horizontal-container" *planetBeta>
+  <mat-card class="horizontal">
+    <img [src]="profileImg">
+    <div class="dashboard-name">
+      <h1 class="mat-title">Kismayo Community College</h1>
+      <h1 class="mat-title">{{displayName}}<span class="mat-subheading-2"> - {{displayRole}}</span></h1>
+      <h1 class="mat-title">{{visits | number}} <ng-container i18n>Visits</ng-container></h1>
+    </div>
+    <div class="date">
+      <p>{{dateNow | date:'longDate'}}</p>
+    </div>
+  </mat-card>
+  <planet-dashboard-tile
+    [cardTitle]="'myLibrary'"
+    class="planet-library-theme"
+    [itemData]="data.resources"
+    [link]="'/myLibrary'"
+    [emptyLink]="'/resources'"
+    [shelfName]="'resourceIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myCourses'"
+    class="planet-courses-theme"
+    [itemData]="data.courses"
+    [emptyLink]="'/courses'"
+    [shelfName]="'courseIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myTeams'"
+    class="planet-teams-theme"
+    [itemData]="data.myTeams"
+    [emptyLink]="'/teams'"
+    [shelfName]="'myTeamIds'">
+  </planet-dashboard-tile>
+  <planet-dashboard-tile
+    [cardTitle]="'myMeetups'"
+    class="planet-meetups-theme"
+    [itemData]="data.meetups"
+    [emptyLink]="'/meetups'"
+    [shelfName]="'meetupIds'">
+  </planet-dashboard-tile>
+</div>

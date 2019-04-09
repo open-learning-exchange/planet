@@ -4,7 +4,7 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, Pag
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -15,6 +15,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { UserService } from '../shared/user.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -36,7 +37,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'select', 'name', 'taken', 'createdDate', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -54,12 +55,16 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private userService: UserService
   ) {
     this.dialogsLoadingService.start();
   }
 
   ngOnInit() {
+    if (this.userService.doesUserHaveRole([ '_admin', 'manager' ])) {
+      this.displayedColumns.unshift('select');
+    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.receiveData('exams', 'surveys').pipe(switchMap(data => {
@@ -104,7 +109,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   routeToEditSurvey(route, id = '') {
-    this.router.navigate([ route + '/' + id, { 'type': 'surveys' } ], { relativeTo: this.route });
+    this.router.navigate([ route + '/' + id, { 'type': 'survey' } ], { relativeTo: this.route });
   }
 
   applyFilter(filterValue: string) {
@@ -136,31 +141,30 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSurveys(surveys) {
-    return () => {
-      const deleteArray = surveys.map(survey => {
-        this.surveys.data = filterById(this.surveys.data, survey._id);
-        return { _id: survey._id, _rev: survey._rev, _deleted: true };
-      });
-      this.couchService.bulkDocs(this.dbName, deleteArray)
-        .subscribe(() => {
-          this.receiveData('exams', 'surveys');
-          this.selection.clear();
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
-        }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting survey.');
+    const deleteArray = createDeleteArray(surveys);
+    return {
+      request: this.couchService.bulkDocs(this.dbName, deleteArray),
+      onNext: () => {
+        this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === -1);
+        this.selection.clear();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting survey.')
     };
   }
 
   deleteSurvey(survey) {
-    return () => {
-      const { _id: surveyId, _rev: surveyRev } = survey;
-      this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev)
-        .subscribe(() => {
-          this.selection.deselect(survey._id);
-          this.surveys.data = filterById(this.surveys.data, survey._id);
-          this.deleteDialog.close();
-          this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
-        }, () => this.deleteDialog.componentInstance.message = 'There was a problem deleting this survey.');
+    const { _id: surveyId, _rev: surveyRev } = survey;
+    return {
+      request: this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
+      onNext: () => {
+        this.selection.deselect(survey._id);
+        this.surveys.data = filterById(this.surveys.data, survey._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this survey.')
     };
   }
 

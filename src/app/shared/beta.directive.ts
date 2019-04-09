@@ -1,4 +1,4 @@
-import { Directive, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
+import { Directive, TemplateRef, ViewContainerRef, OnInit, Input } from '@angular/core';
 import { StateService } from './state.service';
 import { UserService } from './user.service';
 
@@ -16,12 +16,22 @@ export class PlanetBetaDirective implements OnInit {
     private viewContainer: ViewContainerRef
   ) {}
 
+  _planetBeta = true;
+  @Input() set planetBeta(value: boolean) {
+    this._planetBeta = value === null ? true : value;
+  }
+
   ngOnInit() {
-    if (this.configuration.betaEnabled === 'on' || this.configuration.betaEnabled === 'user' && this.userService.get().betaEnabled) {
+    if (this._planetBeta === this.isBetaEnabled()) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainer.clear();
     }
+  }
+
+  isBetaEnabled(): boolean {
+    return this.configuration.betaEnabled === 'on' ||
+      this.configuration.betaEnabled === 'user' && this.userService.get().betaEnabled === true;
   }
 
 }

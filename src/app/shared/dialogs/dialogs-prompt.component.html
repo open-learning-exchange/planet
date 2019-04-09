@@ -22,12 +22,6 @@
   </p>
   <p>{{data.extraMessage}}</p>
   <b>{{data.displayName}}</b>
-  <div class="alert alert-danger" *ngIf="message">
-    {{message}}
-    <button type="button" class="close" (click)="closeAlert()" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button color="primary" mat-raised-button (click)="ok()" [planetSubmit]="spinnerOn" i18n>OK</button>

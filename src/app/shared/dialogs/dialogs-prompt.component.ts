@@ -12,6 +12,8 @@
  */
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { timer, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html'
@@ -36,15 +38,21 @@ export class DialogsPromptComponent {
   }
 
   ok() {
-    this.data.okClick();
+    this.data.okClick.request.pipe(catchError((error) => {
+      this.spinnerOn = false;
+      // Timer is used to wait for ngOnChanges to close spinner in SubmitDirective
+      return timer(100).pipe(switchMap(() => throwError(error)));
+    })).subscribe(
+      this.data.okClick.onNext,
+      (err) => {
+        this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
+        this.data.okClick.onError(err);
+      }
+    );
   }
 
   close() {
     this.dialogRef.close();
-  }
-
-  closeAlert() {
-    this.message = '';
   }
 
   setDefault(value, dfault) {

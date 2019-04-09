@@ -31,7 +31,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   submittedBy = '';
   updatedOn = '';
   fromSubmission = false;
-  examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'surveys' : 'courses';
+  examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
   checkboxState: any = {};
   isNewQuestion = true;
 
@@ -50,6 +50,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.questionNum = +params.get('questionNum'); // Leading + forces string to number
       this.stepNum = +params.get('stepNum');
+      this.examType = params.get('type') || this.examType;
       const courseId = params.get('id');
       const submissionId = params.get('submissionId');
       const mode = params.get('mode');
@@ -143,7 +144,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     .subscribe(({ course, progress }: { course: any, progress: any }) => {
       // To be readable by non-technical people stepNum & questionNum param will start at 1
       const step = course.steps[this.stepNum - 1];
-      this.setTakingExam(step.exam, step.exam._id + '@' + course._id, 'exam', step.stepTitle);
+      const type = this.examType;
+      this.setTakingExam(step[type], step[type]._id + '@' + course._id, type, step.stepTitle);
     });
   }
 
