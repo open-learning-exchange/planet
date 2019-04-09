@@ -22,7 +22,7 @@
     You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
   </div>
   <div class="question-choices"
-    [ngClass]="{'survey-question': examType === 'surveys'}">
+    [ngClass]="{'survey-question': examType === 'survey'}">
     <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
@@ -31,7 +31,7 @@
       <mat-checkbox
         (change)="setCorrect($event, choice)"
         [checked]="correctCheckboxes[choice.controls.id.value]"
-        *ngIf="examType !== 'surveys'">
+        *ngIf="examType === 'exam'">
       </mat-checkbox>
     </ng-container>
   </div>
