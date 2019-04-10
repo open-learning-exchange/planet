@@ -10,9 +10,7 @@ localApkName="myPlanet.apk"
 sha256File="myPlanet.apk.sha256"
 localShaFile="$repoApkName.sha256"
 
-latestReleaseUrl="$repoUrl/releases/latest"
-releaseUrl=$(curl -L "$latestReleaseUrl" -w "%{url_effective}" -o /dev/null -s)
-tag=$(echo "$releaseUrl" | sed -r 's/.*\/(.*)/\1/')
+tag=$(cat versions | jq .latestapk)
 echo "Last release version: $tag"
 downloadUrl="$repoUrl/releases/download/$tag/$repoApkName"
 
