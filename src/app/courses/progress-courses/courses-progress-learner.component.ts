@@ -74,13 +74,14 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   }
 
   courseBySteps(course, submissions) {
-    return course.steps.map((step: any) => {
+    return course.steps.map((step: any, index: number) => {
+      const fill = course.progress.findIndex((prog: any) => prog.stepNum === index + 1) > -1;
       if (!step.exam) {
-        return { number: '', fill: true };
+        return { number: '', fill };
       }
       return {
         number: this.bestSubmission(submissions.filter(submission => submission.parentId.indexOf(step.exam._id) > -1)),
-        fill: true
+        fill
       };
     });
   }
