@@ -115,7 +115,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '/submissions'], { queryParams: { type: this.mode !== 'grade' ? 'survey' : 'exam' } }, { relativeTo: this.route });
+    this.router.navigate([ '/submissions' ], { queryParams: { type: this.mode !== 'grade' ? 'survey' : 'exam' } },
+                          { relativeTo: this.route });
     this.isNewQuestion = true;
   }
 
