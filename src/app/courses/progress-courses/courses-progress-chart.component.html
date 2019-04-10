@@ -1,14 +1,16 @@
 <div class="errors errors-total">
-  <div i18n>Total Errors</div>
-  <div
-    class="accent-color border-bottom"
-    matTooltip="Click to see exam detail"
-    [matTooltipDisabled]="!total.clickable"
-    *ngFor="let total of horizTotals; index as i"
-    [ngClass]="{'cursor-pointer':total.clickable}"
-    (click)="dataClick($event, [], i)">
-    {{total.count}}
-  </div>
+  <ng-container *ngIf="showTotals">
+    <div i18n>Total Errors</div>
+    <div
+      class="accent-color border-bottom"
+      matTooltip="Click to see exam detail"
+      [matTooltipDisabled]="!total.clickable"
+      *ngFor="let total of horizTotals; index as i"
+      [ngClass]="{'cursor-pointer':total.clickable}"
+      (click)="dataClick($event, [], i)">
+      {{total.count}}
+    </div>
+  </ng-container>
 </div>
 <div class="errors errors-index">
   <div i18n>Steps</div>
@@ -33,5 +35,5 @@
     {{item.number}}
   </div>
   <div>{{set.total}}</div>
-  <div class="wrap-content" [matTooltip]="set.label?.length > 6 ? set.label : null "><p>{{set.label}}</p></div>
+  <div class="wrap-content" [matTooltip]="set.label?.length > 3 ? set.label : null "><p>{{set.label}}</p></div>
 </div>

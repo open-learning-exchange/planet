@@ -2,12 +2,12 @@
 
 :host {
 
-  $cell-size: 50px;
+  $cell-size: 45px;
   $column-gap: 4px;
 
   display: grid;
   grid-template-areas: "total index";
-  grid-template-columns: $cell-size;
+  grid-template-columns: fit-content($cell-size) $cell-size;
   grid-auto-columns: $cell-size;
   grid-auto-flow: column;
   grid-column-gap: $column-gap;

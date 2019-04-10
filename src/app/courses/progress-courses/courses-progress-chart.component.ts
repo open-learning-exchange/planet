@@ -16,6 +16,7 @@ export class CoursesProgressChartComponent implements OnChanges {
 
   @Input() inputs = [];
   @Input() height = 0;
+  @Input() showTotals = true;
   @Output() changeData = new EventEmitter<{ set, index }>();
   sets = [];
   horizTotals = [];
