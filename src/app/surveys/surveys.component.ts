@@ -16,6 +16,7 @@ import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -56,7 +57,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private userService: UserService
+    private userService: UserService,
   ) {
     this.dialogsLoadingService.start();
   }
@@ -75,15 +76,29 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = this.surveys.data.map(
           (survey: any) => ({
             ...survey,
+            courseid: '',
             taken: submissions.filter(data => {
                 return data.parentId === survey._id && data.status !== 'pending';
             }).length
           })
         );
         this.emptyData = !this.surveys.data.length;
+        this.assignCourseIdInsurvey();
         this.dialogsLoadingService.stop();
       });
+  }
+
+  assignCourseIdInsurvey() {
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.couchService.findAll('courses').subscribe((allCourses: any) => {
+      allCourses.forEach(course => {
+        const courseSurvey = course.steps.find((step) => step.hasOwnProperty('survey'));
+        if (courseSurvey !== undefined) {
+          const index = this.surveys.data.findIndex((survey: any) => survey._id === courseSurvey.survey._id);
+          this.surveys.data[index]['courseid'] = course._id;
+        }
+      });
+    });
   }
 
   ngAfterViewInit() {
@@ -236,6 +251,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dialogRef.close();
       });
     };
+  }
+
+  openCourse(survey: any) {
+    this.router.navigate([ '/courses/view/' + survey.courseid ]);
   }
 
   recordSurvey(survey: any) {
