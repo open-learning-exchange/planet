@@ -52,7 +52,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
       this.courseId = params.get('id');
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
-      console.log(this.parent);
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
   }
