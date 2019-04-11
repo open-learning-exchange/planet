@@ -100,7 +100,9 @@ export class SyncService {
     return this.createReplicatorsArray(
       [].concat.apply([], course.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
-        .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : []))
+        .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
+        .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
+        )
       ),
       type,
       replicators
