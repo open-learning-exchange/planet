@@ -61,10 +61,9 @@
         color="primary"
         (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
-        [disabled]="!answer.valid || grade === undefined || grade === null"
-        i18n>
-        <ng-container *ngIf="(maxQuestions-1) === answerCount">Complete</ng-container>
-        <ng-container *ngIf="(maxQuestions-1) !== answerCount">Submit Answer</ng-container>
+        [disabled]="!answer.valid || grade === undefined || grade === null">
+        <ng-container *ngIf="(maxQuestions-1) === answerCount" i18n>Complete</ng-container>
+        <ng-container *ngIf="(maxQuestions-1) !== answerCount" i18n>Submit Answer</ng-container>
       </button>
       <span class="small warn-text-color v-align-center" *ngIf="incorrectAnswer">
         <mat-icon class="margin-lr-3">error</mat-icon><span i18n>Incorrect answer, please try again</span>
