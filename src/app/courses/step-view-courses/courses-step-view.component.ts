@@ -96,6 +96,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
+    this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
   }
 
   // direction = -1 for previous, 1 for next
