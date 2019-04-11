@@ -46,6 +46,10 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Number of Times Taken</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
       </ng-container>
+      <ng-container matColumnDef="course">
+        <mat-header-cell *matHeaderCellDef i18n>Course Linked</mat-header-cell>
+        <mat-cell *matCellDef="let element"><span class="cursor-pointer" *ngIf="element.course.name!== ''" [routerLink]="['/courses/view', element.course.id]">{{element.course.name}}</span></mat-cell>
+      </ng-container>
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created/Updated on</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -58,7 +62,6 @@
           <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)">Edit Survey</button>
           <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)">Send Survey</button>
           <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)">Record Survey</button>
-          <button mat-raised-button color="primary" [disabled]="element.courseid===''" (click)="openCourse(element)">View Course</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
