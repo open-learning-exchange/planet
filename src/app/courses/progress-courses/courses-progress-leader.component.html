@@ -19,7 +19,7 @@
       </mat-select>
     </mat-form-field>
   </mat-toolbar>
-  <div class="view-container view-full-height">
+  <div class="view-container">
     <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [inputs]="chartData" [height]="yAxisLength" (changeData)="changeData($event)">
     </planet-courses-progress-chart>
     <ng-template #noProgress i18n>No Progress record available</ng-template>

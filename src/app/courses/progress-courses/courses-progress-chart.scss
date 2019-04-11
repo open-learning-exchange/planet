@@ -5,12 +5,17 @@
   $cell-size: 45px;
   $column-gap: 4px;
 
-  display: grid;
-  grid-template-areas: "total index";
-  grid-template-columns: fit-content($cell-size) $cell-size;
-  grid-auto-columns: $cell-size;
-  grid-auto-flow: column;
-  grid-column-gap: $column-gap;
+  grid-template-areas:
+    "total index user"
+    ". . usertotal";
+  grid-template-columns: fit-content($cell-size) $cell-size 1fr;
+  grid-template-rows: calc(#{$view-container-height} - 2rem - (#{$cell-size} * 2)) calc(#{$cell-size} * 2);
+
+  &, .errors-container {
+    display: grid;
+    grid-auto-columns: $cell-size;
+    grid-auto-flow: column;
+  }
 
   .errors {
     display: grid;
@@ -22,6 +27,10 @@
     }
   }
 
+  .errors-total, .errors-index, .errors-user-total {
+    overflow: hidden;
+  }
+
   .errors-total {
     grid-area: total;
   }
@@ -31,7 +40,13 @@
   }
 
   .errors-user {
+    grid-area: user;
     margin-top: $cell-size;
+    overflow: auto;
+  }
+
+  .errors-user-total {
+    grid-area: usertotal;
   }
 
   .border-bottom {
