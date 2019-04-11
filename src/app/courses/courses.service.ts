@@ -112,7 +112,7 @@ export class CoursesService {
     }, { resources: [], exams: [] });
   }
 
-  getCourses({ ids = [], addProgress = false, addRatings = false }, opts?) {
+  getCourses({ ids = [], addProgress = false, addRatings = false }, opts = {}) {
     this.currentParams = { ids, opts };
     const observables = [ this.findCourses(ids, opts) ];
     observables.push(addProgress ? this.findProgress(ids, opts) : of([]));
@@ -163,7 +163,7 @@ export class CoursesService {
     this.couchService.findAll('courses_progress', findDocuments({ 'userId': userId }, [ 'courseId' ])).subscribe(response => {
       // Added [ 0 ] as when no record it will return all records
       const courseIds = response.map((c: any) => c.courseId).concat([ '0' ]);
-      this.getCourses({ ids: courseIds });
+      this.getCourses({ ids: courseIds, addProgress: true });
     });
   }
 

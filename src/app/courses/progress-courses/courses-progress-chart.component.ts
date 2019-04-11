@@ -5,7 +5,7 @@
  *  }
  * ]
  */
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'planet-courses-progress-chart',
@@ -16,7 +16,11 @@ export class CoursesProgressChartComponent implements OnChanges {
 
   @Input() inputs = [];
   @Input() height = 0;
+  @Input() showTotals = true;
   @Output() changeData = new EventEmitter<{ set, index }>();
+  @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
+  @ViewChild('errorsUserTotal') xScrollElement;
+  @ViewChild('errorsUser') dataElement;
   sets = [];
   horizTotals = [];
 
@@ -34,6 +38,21 @@ export class CoursesProgressChartComponent implements OnChanges {
 
   dataClick(event, set, index) {
     this.changeData.emit({ set, index });
+  }
+
+  onDataScroll(event) {
+    this.yScrollElements.forEach((elem) => {
+      elem.nativeElement.scrollTo(0, event.srcElement.scrollTop);
+    });
+    this.xScrollElement.nativeElement.scrollTo(event.srcElement.scrollLeft, 0);
+  }
+
+  onDataMouseMove(event) {
+    if (event.buttons === 1) {
+      const element = this.dataElement.nativeElement;
+      element.scrollTo(element.scrollLeft - event.movementX, element.scrollTop - event.movementY);
+      event.preventDefault();
+    }
   }
 
 }
