@@ -42,7 +42,12 @@
   .errors-user {
     grid-area: user;
     margin-top: $cell-size;
-    overflow: auto;
+    overflow: scroll;
+  }
+
+  .errors-user::-webkit-scrollbar {
+    height: 0;
+    width: 0;
   }
 
   .errors-user-total {

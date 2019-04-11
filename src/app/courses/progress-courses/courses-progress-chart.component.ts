@@ -20,6 +20,7 @@ export class CoursesProgressChartComponent implements OnChanges {
   @Output() changeData = new EventEmitter<{ set, index }>();
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
   @ViewChild('errorsUserTotal') xScrollElement;
+  @ViewChild('errorsUser') dataElement;
   sets = [];
   horizTotals = [];
 
@@ -44,6 +45,14 @@ export class CoursesProgressChartComponent implements OnChanges {
       elem.nativeElement.scrollTo(0, event.srcElement.scrollTop);
     });
     this.xScrollElement.nativeElement.scrollTo(event.srcElement.scrollLeft, 0);
+  }
+
+  onDataMouseMove(event) {
+    if (event.buttons === 1) {
+      const element = this.dataElement.nativeElement;
+      element.scrollTo(element.scrollLeft - event.movementX, element.scrollTop - event.movementY);
+      event.preventDefault();
+    }
   }
 
 }

@@ -24,7 +24,7 @@
     {{height - i}}
   </div>
 </div>
-<div class="errors-container errors-user" (scroll)="onDataScroll($event)">
+<div class="errors-container errors-user" #errorsUser (scroll)="onDataScroll($event)" (mousemove)="onDataMouseMove($event)">
   <div class="errors" *ngFor="let set of sets">
     <div
       class="border-bottom"
