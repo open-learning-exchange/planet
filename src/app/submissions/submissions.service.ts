@@ -228,4 +228,5 @@ export class SubmissionsService {
   validAnswer(field) {
     return field !== undefined && field !== false && field !== '';
   }
+
 }
