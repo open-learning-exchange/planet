@@ -201,7 +201,7 @@ export class SubmissionsService {
   }
 
   validAnswer(field) {
-    return field !== undefined && field !== false && field !== '';
+    return field !== undefined && field !== false && field !== '' && field !== null;
   }
 
 }
