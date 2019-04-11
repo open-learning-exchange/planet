@@ -150,7 +150,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-      this.answerCount = this.submissionsService.submission.answers.length;
+      this.answerCount = this.submissionsService.submission.answers.filter(answer => answer.value).length;
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
