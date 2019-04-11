@@ -6,6 +6,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Injectable()
 export class SubmissionsService {
@@ -61,18 +62,11 @@ export class SubmissionsService {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     };
-    // todo fork join two notification send request
-    if (!this.submission.parent.createdBy && !this.submission.sender) {
-        return;
+    const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
+      .filter(name => name !== undefined).map(name => ({ ...data, user: 'org.couchdb.user:' + name }));
+    if (docs.length > 0) {
+      this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
     }
-    const docs = [];
-    if (this.submission.parent.createdBy) {
-      docs.push({ ...data, user: 'org.couchdb.user:' + this.submission.parent.createdBy });
-    }
-    if (this.submission.parent.createdBy !== this.submission.sender) {
-      docs.push({ ...data, user: 'org.couchdb.user:' + this.submission.sender });
-    }
-    this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
   }
 
   private newSubmission({ parentId, parent, user, type }) {
