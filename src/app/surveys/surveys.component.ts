@@ -16,7 +16,6 @@ import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
-import { CoursesService } from '../courses/courses.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
