@@ -20,6 +20,7 @@ export class CoursesProgressBarComponent implements OnChanges {
     this.steps = this.course.steps.map((step: any, index: number) => {
       const progress = this.courseProgress.find((p: any) => p.stepNum === (index + 1));
       const status = this.progressStatus(progress);
+      step.status = status;
       return { stepTitle: step.stepTitle, status };
     });
   }
