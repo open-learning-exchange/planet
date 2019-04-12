@@ -9,7 +9,7 @@
     "total index user"
     ". . usertotal";
   grid-template-columns: fit-content($cell-size) $cell-size 1fr;
-  grid-template-rows: calc(#{$view-container-height} - 2rem - (#{$cell-size} * 2)) calc(#{$cell-size} * 2);
+  grid-template-rows: fit-content(calc(#{$view-container-height} - 2rem - (#{$cell-size} * 2))) calc(#{$cell-size} * 2);
 
   &, .errors-container {
     display: grid;
