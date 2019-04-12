@@ -72,7 +72,7 @@ export class CoursesService {
     }
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
 
-    forkJoin(obs).subscribe(([ progress, course, ratings ]) => {
+    forkJoin(obs).subscribe(([ progress, course, ratings ]: [ any[], any, any ]) => {
       this.updateCourse({ progress: progress, course: this.createCourseList([ course ], ratings.docs)[0] });
     });
   }
@@ -89,8 +89,8 @@ export class CoursesService {
       userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
       updatedDate: this.couchService.datePlaceholder
     };
-    this.findOneCourseProgress(courseId).pipe(switchMap((progress = []) => {
-      const currentProgress = progress.length > 0 ? progress.find((p: any) => p.stepNum === stepNum) : undefined;
+    this.findOneCourseProgress(courseId).pipe(switchMap((progress: any[] = []) => {
+      const currentProgress: any = progress.length > 0 ? progress.find((p: any) => p.stepNum === stepNum) : undefined;
       if (currentProgress !== undefined && currentProgress.passed === newProgress.passed) {
         return of({});
       }
