@@ -34,6 +34,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
   checkboxState: any = {};
   isNewQuestion = true;
+  answerCount = 0;
 
   constructor(
     private router: Router,
@@ -150,7 +151,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-
+      this.answerCount = this.submissionsService.submission.answers.filter(answer => answer.value).length;
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
