@@ -43,10 +43,3 @@ else
     echo "Download error"
   fi
 fi
-if [ -f "$apkName" ] && [ -f "$sha256File" ] && sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
-  echo "The file hasn't changed."
-else
-  echo "Downloading new version"
-  echo "$(curl -# "$downloadUrl" -o "$apkName" -L)"
-  cp "$apkName" "$localApkName"
-fi
