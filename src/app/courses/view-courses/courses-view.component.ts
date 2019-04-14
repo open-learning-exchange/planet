@@ -68,6 +68,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
   }
 
+  goToSurvey() {
+    this.router.navigate([ 'exam', { questionNum: 1, type: 'survey' } ], { relativeTo: this.route });
+  }
+
   goToExam(stepDetail, stepNum) {
     this.submissionsService.openSubmission({
       parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
