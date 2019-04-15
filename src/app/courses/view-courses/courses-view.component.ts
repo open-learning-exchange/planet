@@ -87,7 +87,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   updateRating(itemId) {
-    console.log("update rating called");
     this.coursesService.requestCourse({ courseId: itemId, forceLatest: true });
   }
 

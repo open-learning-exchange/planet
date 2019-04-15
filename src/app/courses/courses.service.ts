@@ -51,12 +51,12 @@ export class CoursesService {
     this.courses = courses;
     this.coursesUpdated.next(courses);
   }
-  
+
   updateCourse({ course, progress }) {
     this.course = course;
     this.courseUpdated.next({ course, progress });
   }
-  
+
   // Components call this to get details of one course and associated progress.
   // If the id already matches what is stored on the service, return that.
   // Or will get new version if forceLatest set to true
