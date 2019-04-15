@@ -72,7 +72,7 @@ export class CoursesService {
     }
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
     forkJoin(obs).subscribe(([ progress, course, ratings ]: [ any[], any, any ]) => {
-      this.progress = progress.docs;
+      this.progress = progress;
       this.updateCourse({ progress: progress, course: this.createCourseList([ course ], ratings.docs)[0] });
     });
   }
