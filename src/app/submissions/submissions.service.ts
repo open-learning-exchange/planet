@@ -53,22 +53,6 @@ export class SubmissionsService {
     });
   }
 
-  sendSubmissionNotifcation () {
-    const data = {
-      'message': this.userService.get().name + ' has complete the survey ' + this.submission.parent.name,
-      'link': '/surveys',
-      'type': 'survey',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
-    const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
-      .filter(name => name !== undefined).map(name => ({ ...data, user: 'org.couchdb.user:' + name }));
-    if (docs.length > 0) {
-      this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
-    }
-  }
-
   private newSubmission({ parentId, parent, user, type }) {
     this.submission = this.createNewSubmission({ parentId, parent, user, type });
   }
@@ -222,6 +206,23 @@ export class SubmissionsService {
 
   validAnswer(field) {
     return field !== undefined && field !== false && field !== '';
+  }
+
+  sendSubmissionNotification() {
+    const data = {
+      'message': this.userService.get().name + ' has complete the survey ' + this.submission.parent.name,
+      'link': '/submissions/exam',
+      'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
+      'type': 'survey',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
+      .filter(name => name !== undefined).map(name => ({ ...data, user: 'org.couchdb.user:' + name }));
+    if (docs.length > 0) {
+      this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
+    }
   }
 
 }
