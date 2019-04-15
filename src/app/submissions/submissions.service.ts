@@ -208,9 +208,10 @@ export class SubmissionsService {
     return field !== undefined && field !== false && field !== '';
   }
 
-  sendSubmissionNotification() {
+  sendSubmissionNotification(isRecorded: boolean) {
     const data = {
-      'message': this.userService.get().name + ' has complete the survey ' + this.submission.parent.name,
+      'message': `<b>${this.userService.get().name}</b> has
+        ${isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
       'link': '/submissions/exam',
       'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
       'type': 'survey',

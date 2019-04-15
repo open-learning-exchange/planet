@@ -92,7 +92,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
       this.examComplete();
       if (this.examType === 'surveys') {
-        this.submissionsService.sendSubmissionNotification();
+        this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
       }
     } else {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
