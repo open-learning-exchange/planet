@@ -5,6 +5,8 @@ import { map, switchMap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
+import { UserService } from '../shared/user.service';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Injectable()
 export class SubmissionsService {
@@ -22,7 +24,8 @@ export class SubmissionsService {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private courseService: CoursesService
+    private courseService: CoursesService,
+    private userService: UserService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -54,11 +57,11 @@ export class SubmissionsService {
     this.submission = this.createNewSubmission({ parentId, parent, user, type });
   }
 
-  private createNewSubmission({ parentId, parent, user, type }) {
+  private createNewSubmission({ parentId, parent, user, type, sender }: { parentId, parent, user, type, sender? }) {
     const date = this.couchService.datePlaceholder;
     const times = { startTime: date, lastUpdateTime: date };
     const configuration = this.stateService.configuration;
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending',
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', sender,
       ...this.submissionSource(configuration, user), ...times };
   }
 
@@ -173,8 +176,9 @@ export class SubmissionsService {
         const newSubmissionUsers = users.filter((user: any) =>
           submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
+        const sender = this.userService.get().name;
         return this.couchService.updateDocument('submissions/_bulk_docs', {
-          'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey' }))
+          'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
         });
       })
     );
@@ -202,6 +206,24 @@ export class SubmissionsService {
 
   validAnswer(field) {
     return field !== undefined && field !== false && field !== '' && field !== null;
+  }
+
+  sendSubmissionNotification(isRecorded: boolean) {
+    const data = {
+      'message': `<b>${this.userService.get().name}</b> has
+        ${isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
+      'link': '/submissions/exam',
+      'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
+      'type': 'survey',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
+      .filter(name => name !== undefined).map(name => ({ ...data, user: 'org.couchdb.user:' + name }));
+    if (docs.length > 0) {
+      this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
+    }
   }
 
 }
