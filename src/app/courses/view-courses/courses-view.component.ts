@@ -36,6 +36,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
+      console.log(progress);
       this.courseDetail = course;
       this.courseDetail.steps = this.courseDetail.steps.map(step => {
         step.resources = step.resources.filter(res => res._attachments);
@@ -86,6 +87,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   updateRating(itemId) {
+    console.log("update rating called");
     this.coursesService.requestCourse({ courseId: itemId, forceLatest: true });
   }
 
