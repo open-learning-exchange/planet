@@ -23,7 +23,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   examStart = 1;
   isExamInProgress = false;
   attempts = 0;
-  showExamButton = false;
+  isUserEnrolled = false;
   resource: any;
   progress: any;
   examPassed = false;
@@ -86,8 +86,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.maxStep = course.steps.length;
     this.attempts = 0;
+    this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
     if (this.stepDetail.exam) {
-      this.showExamButton = !this.parent && this.checkMyCourses(course._id);
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
         parent: this.stepDetail.exam,
