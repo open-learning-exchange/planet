@@ -12,7 +12,7 @@
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="stepDetail?.exam?.questions.length && showExamButton"
+        *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
         (click)="goToExam()">
         {{isExamInProgress ? "Take Exam" : "Continue Exam"}}
       </a>
@@ -20,7 +20,7 @@
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="stepDetail?.survey?.questions.length && showExamButton"
+        *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
         (click)="goToExam('survey')">
         Take Survey
       </a>
