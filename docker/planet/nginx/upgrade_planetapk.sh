@@ -5,19 +5,43 @@ echo "Content-type: text/plain"
 echo ""
 
 repoUrl="https://github.com/open-learning-exchange/myplanet"
-repoApkName="myPlanet.apk"
-sha256File="$repoApkName.sha256"
-localApkName="/usr/share/nginx/html/fs/myPlanet.apk"
+apkName="myPlanet.apk"
+sha256File="$apkName.sha256"
 
-latestReleaseUrl="$repoUrl/releases/latest"
-releaseUrl=$(curl -L "$latestReleaseUrl" -w "%{url_effective}" -o /dev/null -s)
-tag=$(echo "$releaseUrl" | sed -r 's/.*\/(.*)/\1/')
+tag=$(cat versions | jq -r .latestapk)
+echo "Last release version: $tag"
+downloadUrl="$repoUrl/releases/download/$tag/$apkName"
 
-downloadUrl="$repoUrl/releases/download/$tag/$repoApkName"
+download_apk(){
+  echo "Downloading new version"
+  echo "$(curl -# "$downloadUrl" -o "$apkName" -L)"
+}
 
-if [ -f "$localApkName" ] && echo "$(curl -s "$repoUrl/releases/download/$tag/$sha256File" | head -c64) $localApkName" | sha256sum -s -c -; then
-  echo "The file hasn't changed."
+cd fs
+curl -s "$repoUrl/releases/download/$tag/$sha256File" -o "$sha256File" -L
+echo "Getting SHA256 file"
+if [ -f "$apkName" ] && [ -f "$sha256File" ]; then
+  if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
+    echo "Version up to date"
+  else
+    mv "$apkName" "$apkName.tmp"
+    download_apk
+    echo "Verifying apk"
+    if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
+      echo "Download successful"
+      rm -f "$apkName.tmp"
+    else
+      echo "Download error"
+      mv "$apkName.tmp" "$apkName"
+    fi
+  fi
 else
-  echo "New file found."
-  curl -s "$downloadUrl" -o "$localApkName" -L
+  download_apk
+  echo "Verifying apk"
+  if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
+    echo "Download successful"
+    rm -f "$apkName.tmp"
+  else
+    echo "Download error"
+  fi
 fi
