@@ -71,10 +71,9 @@ export class CoursesService {
       obs.push(this.couchService.get(this.dbName + '/' + courseId, opts));
     }
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
-
-    forkJoin(obs).subscribe(([ progress, course, ratings ]) => {
+    forkJoin(obs).subscribe(([ progress, course, ratings ]: [ any[], any, any ]) => {
       this.progress = progress.docs;
-      this.updateCourse({ progress: progress.docs, course: this.createCourseList([ course ], ratings.docs)[0] });
+      this.updateCourse({ progress: progress, course: this.createCourseList([ course ], ratings.docs)[0] });
     });
   }
 
@@ -90,8 +89,8 @@ export class CoursesService {
       userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
       updatedDate: this.couchService.datePlaceholder
     };
-    this.findOneCourseProgress(courseId).pipe(switchMap((progress = []) => {
-      const currentProgress = progress.docs.length > 0 ? progress.docs.find((p: any) => p.stepNum === stepNum) : undefined;
+    this.findOneCourseProgress(courseId).pipe(switchMap((progress: any[] = []) => {
+      const currentProgress: any = progress.length > 0 ? progress.find((p: any) => p.stepNum === stepNum) : undefined;
       if (currentProgress !== undefined && currentProgress.passed === newProgress.passed) {
         return of({});
       }
@@ -146,7 +145,7 @@ export class CoursesService {
   }
 
   findOneCourseProgress(courseId: string) {
-    return this.couchService.post(this.progressDb + '/_find', findDocuments({
+    return this.couchService.findAll(this.progressDb, findDocuments({
       'userId': this.userService.get()._id,
       courseId
     }));
