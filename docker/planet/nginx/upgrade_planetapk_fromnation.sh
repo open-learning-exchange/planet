@@ -21,7 +21,7 @@ curl -s "$nationUrl/fs/$sha256File" -o "$sha256File" -L
 echo "Getting SHA256 file"
 if [ -f "$apkName" ] && [ -f "$sha256File" ]; then
   if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
-    echo "Version upto date"
+    echo "Version up to date"
   else
     mv "$apkName" "$apkName.tmp"
     download_apk
