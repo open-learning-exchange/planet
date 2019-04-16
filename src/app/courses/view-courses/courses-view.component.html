@@ -73,7 +73,7 @@
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && isUserEnrolled))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey()" i18n>Take survey</a>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take survey</a>
             </mat-action-row>
           </mat-expansion-panel>
         </ng-container>
