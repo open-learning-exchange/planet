@@ -148,6 +148,11 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     this.stepClick(this.openIndex + direction);
   }
 
+  removeStep() {
+    this.moveStep({ index: this.openIndex, direction: 0, listId: this.listId });
+    this.toList();
+  }
+
 }
 
 @Directive({
