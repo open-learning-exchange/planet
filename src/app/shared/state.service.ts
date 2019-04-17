@@ -88,11 +88,13 @@ export class StateService {
   combineChanges(docs: any[], changesDocs: any[], sort) {
     const combinedDocs = docs.reduce((newDocs: any[], doc: any) => {
       const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
-      if (changesDoc && changesDoc._deleted === true) {
-        return newDocs;
-      }
-      newDocs.push(changesDoc !== undefined ? changesDoc : doc);
-      return newDocs;
+      return newDocs.concat(
+        changesDoc === undefined ?
+          doc :
+          changesDoc._deleted === true ?
+          [] :
+          changesDoc
+      );
     }, []).concat(
       changesDocs.filter((cDoc: any) =>
         cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
