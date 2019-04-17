@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, interval, forkJoin, of } from 'rxjs';
+import { takeUntil, debounceTime, switchMap, catchError } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -15,6 +15,7 @@ import { uniqueId } from '../../shared/utils';
 import { ConfigurationService } from '../../configuration/configuration.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
+import { PouchService } from '../../shared/database';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -26,6 +27,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
+  courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
   private onDestroy$ = new Subject<void>();
   private _steps = [];
@@ -34,6 +36,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
   set steps(value: any[]) {
     this._steps = value;
+    this.saveDraftLocally();
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
   }
 
@@ -53,7 +56,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private userService: UserService,
     private stateService: StateService,
-    private planetStepListService: PlanetStepListService
+    private planetStepListService: PlanetStepListService,
+    private pouchService: PouchService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -65,7 +69,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: [
         '',
         CustomValidators.required,
-        this.courseTitleValidator(this.route.snapshot.paramMap.get('id') || this.coursesService.course._id)
+        this.courseTitleValidator(this.courseId || this.coursesService.course._id)
       ],
       description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
@@ -92,21 +96,18 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.route.snapshot.url[0].path === 'update') {
-      this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
-      .subscribe((data) => {
-        data.steps.forEach(step => {
-          step['id'] = uniqueId();
-        });
-        this.pageType = 'Update';
-        this.documentInfo = { _rev: data._rev, _id: data._id };
-        if (this.route.snapshot.params.continue !== 'true') {
-          this.setFormAndSteps({ form: data, steps: data.steps });
-        }
-      }, (error) => {
-        console.log(error);
-      });
-    }
+    forkJoin([
+      this.pouchService.getDocEditing(this.dbName, this.courseId),
+      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error)))
+    ]).subscribe(([ draft, saved ]: [ any, any ]) => {
+      if (saved.error !== 'not_found') {
+        this.documentInfo = { _rev: saved._rev, _id: saved._id };
+      }
+      const doc = draft === undefined ? saved : draft;
+      if (this.route.snapshot.params.continue !== 'true') {
+        this.setFormAndSteps({ form: doc, steps: doc.steps });
+      }
+    });
     if (this.route.snapshot.params.continue === 'true') {
       this.documentInfo = { '_rev': this.coursesService.course._rev, '_id': this.coursesService.course._id };
       this.setFormAndSteps(this.coursesService.course);
@@ -141,9 +142,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.steps = course.steps || [];
   }
 
+  saveDraftLocally() {
+    this.pouchService.saveDocEditing({ ...this.courseForm.value, steps: this.steps }, this.dbName, this.courseId);
+  }
+
   onFormChanges() {
-    this.courseForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
+    this.courseForm.valueChanges.pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(value => {
       this.coursesService.course = { form: value, steps: this.steps };
+      this.saveDraftLocally();
     });
   }
 
@@ -196,6 +202,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       resources: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
+    this.saveDraftLocally();
   }
 
   navigateBack() {
