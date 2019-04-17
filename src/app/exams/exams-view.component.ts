@@ -35,6 +35,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   checkboxState: any = {};
   isNewQuestion = true;
   answerCount = 0;
+  isComplete = false;
 
   constructor(
     private router: Router,
@@ -98,6 +99,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     } else {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
     }
+    console.log("Answer Count " + this.answerCount);
+    console.log("MaxQ " + this.maxQuestions);
   }
 
   moveQuestion(direction: number) {
@@ -169,6 +172,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.answer.setValue(Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value);
       }
       this.isNewQuestion = false;
+      if (this.maxQuestions-1 === this.answerCount) {
+        this.isComplete = !this.answer.value ? true : false;
+      }
     });
   }
 
