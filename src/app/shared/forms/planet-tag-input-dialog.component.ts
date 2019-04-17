@@ -9,7 +9,6 @@ import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
 
-
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styles': [ `
