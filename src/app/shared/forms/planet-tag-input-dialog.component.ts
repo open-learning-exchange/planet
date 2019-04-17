@@ -8,6 +8,9 @@ import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
+import { truncate } from 'fs';
+import { truncate } from 'fs';
+import { truncate } from 'fs';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -29,8 +32,8 @@ export class PlanetTagInputDialogComponent {
     return this._selectMany;
   }
   set selectMany(value: boolean) {
-    this._selectMany = value;
-    this.data.reset(value);
+    this._selectMany = true;
+    this.data.reset(true);
   }
   addTagForm: FormGroup;
   newTagId: string;
