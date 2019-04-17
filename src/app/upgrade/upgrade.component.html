@@ -28,6 +28,7 @@
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" routerLink="/">OK</button>
+        <button mat-raised-button color="primary" (click)="upgrade()" *ngIf="enabled || done">Verfiy</button>
       </mat-card-actions>
   </mat-card>
 
