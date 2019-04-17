@@ -98,12 +98,16 @@ export class StateService {
         cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
     );
     if (sort !== undefined && docs.length > 0 && changesDocs.length > 0) {
-      const [ sortField, sortDirection ] = Object.entries(sort)[0];
-      const sortVal = (val: any) => typeof val === 'string' ? val.toLowerCase() : val;
-      const direction = sortDirection === 'asc' ? 1 : -1;
-      return combinedDocs.sort((a, b) => sortVal(a[sortField]) > sortVal(b[sortField]) ? direction : -1 * direction);
+      return this.sortDocs(combinedDocs, sort);
     }
     return combinedDocs;
+  }
+
+  sortDocs(docs, sort) {
+    const [ sortField, sortDirection ] = Object.entries(sort)[0];
+    const sortVal = (val: any) => typeof val === 'string' ? val.toLowerCase() : val;
+    const direction = sortDirection === 'asc' ? 1 : -1;
+    return docs.sort((a, b) => sortVal(a[sortField]) > sortVal(b[sortField]) ? direction : -1 * direction);
   }
 
 }
