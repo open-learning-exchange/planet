@@ -103,11 +103,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.myLibraryFilter = this.route.snapshot.data.myLibrary === true ? 'on' : 'off';
     this.resourcesService.resourcesListener(this.parent).pipe(
       takeUntil(this.onDestroy$),
-      map((resources) => {
-        // Sort in descending createdDate order, so the new resource can be shown on the top
-        resources.sort((a, b) => b.createdDate - a.createdDate);
-        return this.setupList(resources, this.userService.shelf.resourceIds);
-      }),
+      map((resources) => this.setupList(resources, this.userService.shelf.resourceIds)),
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources;
