@@ -55,7 +55,7 @@ export class ResourcesService {
 
   requestResourcesUpdate(parent: boolean, fetchRating: boolean = true) {
     this.isActiveResourceFetch = true;
-    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local', [ 'title' ]);
+    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local', { 'title': 'asc' });
     this.stateService.requestData('tags', parent ? 'parent' : 'local');
     if (fetchRating) {
       this.ratingService.newRatings(parent);
