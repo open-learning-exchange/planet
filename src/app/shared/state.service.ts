@@ -88,13 +88,7 @@ export class StateService {
   combineChanges(docs: any[], changesDocs: any[], sort) {
     const combinedDocs = docs.reduce((newDocs: any[], doc: any) => {
       const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
-      return newDocs.concat(
-        changesDoc === undefined ?
-          doc :
-          changesDoc._deleted === true ?
-          [] :
-          changesDoc
-      );
+      return newDocs.concat(this.newDoc(changesDoc, doc));
     }, []).concat(
       changesDocs.filter((cDoc: any) =>
         cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
@@ -103,6 +97,14 @@ export class StateService {
       return this.sortDocs(combinedDocs, sort);
     }
     return combinedDocs;
+  }
+
+  newDoc(changesDoc, oldDoc) {
+    return changesDoc === undefined ?
+      oldDoc :
+      changesDoc._deleted === true ?
+      [] :
+      changesDoc;
   }
 
   sortDocs(docs, sort) {
