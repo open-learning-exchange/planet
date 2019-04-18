@@ -15,7 +15,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   // Need to define this variable for template which is shared with CoursesProgressLeader
   course;
-  headingStart = this.user.firstName + ' ' + this.user.lastName;
+  headingStart = ((this.user.firstName || '') + ' ' + (this.user.lastName || '')).trim() || this.user.name;
   courses: any[] = [];
   submissions: any[] = [];
   chartData: any[];
