@@ -179,6 +179,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.navigateBack();
     }
     this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
+    this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
     this.coursesService.course = { ...this.documentInfo };
     this.planetMessageService.showMessage(message);
