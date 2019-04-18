@@ -36,8 +36,6 @@ export class UpgradeComponent {
     this.message = 'Upgrading';
     this.working = true;
     this.addLine('Server request started');
-    this.upgrade();
-
     this.timeoutTrials += 1;
   }
 
@@ -51,6 +49,7 @@ export class UpgradeComponent {
       switchMap(credentials => this.postAdminCredentials(credentials)),
       switchMap(() => this.managerService.addAdminLog('upgrade')),
       switchMap(() => {
+        this.start();
         const requestParams = new HttpParams().set('v', parentVersion.trim());
         return this.http.get(environment.upgradeAddress, { responseType: 'text', params: requestParams });
       })
