@@ -6,7 +6,7 @@
 </mat-toolbar>
 <div class="space-container">
   <div class="upgrade_buttons">
-      <button mat-stroked-button color="primary" (click)="start()" [disabled]="!enabled || done">{{ message }}</button>
+      <button mat-stroked-button color="primary" (click)="upgrade()" [disabled]="!enabled || done">{{ message }}</button>
   </div>
   <div style="height: 5px; padding: 5px;" *ngIf="!done">
       <mat-progress-bar mode="indeterminate" *ngIf="working"></mat-progress-bar>
