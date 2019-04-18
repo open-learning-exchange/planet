@@ -101,4 +101,8 @@ export class PouchService {
     });
   }
 
+  deleteDocEditing(db, id = 'new') {
+    this.docEditingDB(db, id).destroy();
+  }
+
 }

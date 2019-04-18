@@ -179,6 +179,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   courseChangeComplete(message, response: any, shouldNavigate) {
+    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     if (shouldNavigate) {
       this.navigateBack();
     }
@@ -203,6 +204,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
     this.planetStepListService.addStep(this.steps.length - 1);
     this.saveDraftLocally();
+  }
+
+  cancel() {
+    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
+    this.navigateBack();
   }
 
   navigateBack() {
