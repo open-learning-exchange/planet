@@ -2,7 +2,6 @@
   <mat-form-field>
     <input matInput i18n-placeholder placeholder="Filter Collections" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
-  <mat-slide-toggle i18n [(ngModel)]="selectMany" class="margin-lr-5" *ngIf="mode==='filter'">Select Many Collections</mat-slide-toggle>
   <mat-expansion-panel *ngIf="mode==='add'">
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Collection</mat-panel-title>
