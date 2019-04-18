@@ -101,6 +101,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     ]).subscribe(([ draft, saved ]: [ any, any ]) => {
       if (saved.error !== 'not_found') {
         this.documentInfo = { _rev: saved._rev, _id: saved._id };
+        this.pageType = 'Update';
       }
       const doc = draft === undefined ? saved : draft;
       if (this.route.snapshot.params.continue !== 'true') {
