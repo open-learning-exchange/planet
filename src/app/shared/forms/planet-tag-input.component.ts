@@ -151,7 +151,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       maxWidth: '80vw',
       maxHeight: '80vh',
       autoFocus: false,
-      data: this.dialogData()
+      data: this.dialogData(true)
     });
     this.dialogRef.afterClosed().subscribe((result) => {
       if (result && result.wasOkClicked === true) {
@@ -160,9 +160,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
-  dialogData() {
+  dialogData(isInit = false) {
     let startingTags: any[];
-    if (this.selectedIds !== undefined) {
+    if (this.selectedIds && isInit) {
       startingTags = this.tagsInSelection(this.selectedIds, this.filteredData);
       this.writeValue(startingTags.map((tag: any) => tag.tagId));
     } else {
