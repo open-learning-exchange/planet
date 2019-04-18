@@ -152,7 +152,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   updateCourse(courseInfo, shouldNavigate) {
-    this.deleteStepIdProperty();
     this.couchService.updateDocument(
       this.dbName,
       { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
@@ -187,15 +186,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.planetMessageService.showMessage(message);
   }
 
-  deleteStepIdProperty() {
-    this.steps.forEach(step => {
-      delete step.id;
-    });
-  }
-
   addStep() {
     this.steps.push({
-      id: uniqueId(),
       stepTitle: '',
       description: '',
       resources: []
