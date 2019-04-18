@@ -50,6 +50,8 @@
                 <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
                 <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
               </mat-panel-description>
+              <mat-icon *ngIf="step.progress && step.progress.passed">done</mat-icon>
+              <mat-icon *ngIf="step.progress && !step.progress.passed">rotate_right</mat-icon>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
             <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
