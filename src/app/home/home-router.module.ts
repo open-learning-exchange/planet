@@ -25,6 +25,7 @@ const routes: Routes = [
       { path: 'meetups', loadChildren: '../meetups/meetups.module#MeetupsModule' },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'submissions', loadChildren: '../submissions/submissions.module#SubmissionsModule' },
+      { path: 'submissions/:type', loadChildren: '../submissions/submissions.module#SubmissionsModule' },
       { path: 'mySurveys', loadChildren: '../submissions/submissions.module#SubmissionsModule', data: { mySurveys: true } },
       { path: 'upgrade', component: UpgradeComponent },
       { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' },
