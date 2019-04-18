@@ -48,7 +48,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'learner', 'leader', 'monitor' ];
+  roleList: string[] = [ 'leader', 'monitor' ];
   selectedRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
@@ -281,7 +281,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = { ...user, roles };
+        const tempUser = { ...user, roles: [ 'learner', ...roles ] };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
@@ -291,7 +291,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       users.map((user) => {
         if (user.isUserAdmin === false) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = [ ...roles ];
+          user.roles = [ 'learner', ...roles ];
           const res: any = responses.find((response: any) => response.id === user._id);
           user._rev = res.rev;
         }
