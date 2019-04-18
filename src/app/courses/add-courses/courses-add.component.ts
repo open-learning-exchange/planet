@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, interval, forkJoin, of, combineLatest } from 'rxjs';
-import { takeUntil, debounceTime, switchMap, catchError, throttleTime } from 'rxjs/operators';
+import { Subject, forkJoin, of, combineLatest } from 'rxjs';
+import { takeUntil, debounceTime, catchError } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -11,8 +11,6 @@ import * as constants from '../constants';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
-import { uniqueId } from '../../shared/utils';
-import { ConfigurationService } from '../../configuration/configuration.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { PouchService } from '../../shared/database';
