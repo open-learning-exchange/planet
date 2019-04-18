@@ -25,28 +25,28 @@ export class StateService {
     const baseDbs = [ 'resources' ];
     baseDbs.forEach(db => {
       if (!this.state.local[db]) {
-        this.requestData(db, 'local', [ { 'createdDate': 'desc' } ] );
+        this.requestData(db, 'local', { 'title': 'asc' });
       }
     });
   }
 
-  requestData(db: string, planetField: string, sort?: any) {
+  requestData(db: string, planetField: string, sort?: { [key: string]: 'asc' | 'desc' }) {
     if (this.inProgress[planetField].get(db) !== true) {
       this.inProgress[planetField].set(db, true);
       this.getCouchState(db, planetField, sort).subscribe(() => {});
     }
   }
 
-  getCouchState(db: string, planetField: string, sort?: any) {
+  getCouchState(db: string, planetField: string, sort?: { [key: string]: 'asc' | 'desc' }) {
     const opts = this.optsFromPlanetField(planetField);
     this.state[planetField] = this.state[planetField] || {};
     this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
     const currentData = this.state[planetField][db].docs;
     const getData = currentData.length === 0 ?
-      this.getAll(db, opts, sort) : this.getChanges(db, opts, planetField);
+      this.getAll(db, opts, sort && [ sort ]) : this.getChanges(db, opts, planetField);
     return getData.pipe(
       map((changes) => {
-        const newData = this.combineChanges(this.state[planetField][db].docs, changes);
+        const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
         this.state[planetField][db].docs = newData;
         this.stateUpdated.next({ newData, db, planetField });
         this.inProgress[planetField].set(db, false);
@@ -85,18 +85,33 @@ export class StateService {
     return this.stateUpdated.pipe(map((stateObj: { newData, db, planetField }) => db === stateObj.db ? stateObj : undefined));
   }
 
-  combineChanges(docs: any[], changesDocs: any[]) {
-    return docs.reduce((newDocs: any[], doc: any) => {
+  combineChanges(docs: any[], changesDocs: any[], sort) {
+    const combinedDocs = docs.reduce((newDocs: any[], doc: any) => {
       const changesDoc = changesDocs.find((cDoc: any) => doc._id === cDoc._id);
-      if (changesDoc && changesDoc._deleted === true) {
-        return newDocs;
-      }
-      newDocs.push(changesDoc !== undefined ? changesDoc : doc);
-      return newDocs;
+      return newDocs.concat(this.newDoc(changesDoc, doc));
     }, []).concat(
       changesDocs.filter((cDoc: any) =>
         cDoc._deleted !== true && docs.findIndex((doc: any) => doc._id === cDoc._id) === -1)
     );
+    if (sort !== undefined && docs.length > 0 && changesDocs.length > 0) {
+      return this.sortDocs(combinedDocs, sort);
+    }
+    return combinedDocs;
+  }
+
+  newDoc(changesDoc, oldDoc) {
+    return changesDoc === undefined ?
+      oldDoc :
+      changesDoc._deleted === true ?
+      [] :
+      changesDoc;
+  }
+
+  sortDocs(docs, sort) {
+    const [ sortField, sortDirection ] = Object.entries(sort)[0];
+    const sortVal = (val: any) => typeof val === 'string' ? val.toLowerCase() : val;
+    const direction = sortDirection === 'asc' ? 1 : -1;
+    return docs.sort((a, b) => sortVal(a[sortField]) > sortVal(b[sortField]) ? direction : -1 * direction);
   }
 
 }
