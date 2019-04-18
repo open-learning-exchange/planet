@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, interval, forkJoin, of } from 'rxjs';
-import { takeUntil, debounceTime, switchMap, catchError } from 'rxjs/operators';
+import { Subject, interval, forkJoin, of, combineLatest } from 'rxjs';
+import { takeUntil, debounceTime, switchMap, catchError, throttleTime } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -30,14 +30,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
   private onDestroy$ = new Subject<void>();
+  private stepsChange$ = new Subject<void>();
   private _steps = [];
   get steps() {
     return this._steps;
   }
   set steps(value: any[]) {
     this._steps = value;
-    this.saveDraftLocally();
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
+    this.stepsChange$.next();
   }
 
   // from the constants import
@@ -142,14 +143,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.steps = course.steps || [];
   }
 
-  saveDraftLocally() {
-    this.pouchService.saveDocEditing({ ...this.courseForm.value, steps: this.steps }, this.dbName, this.courseId);
-  }
-
   onFormChanges() {
-    this.courseForm.valueChanges.pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(value => {
+    combineLatest(this.courseForm.valueChanges, this.stepsChange$)
+    .pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(value => {
       this.coursesService.course = { form: value, steps: this.steps };
-      this.saveDraftLocally();
+      this.pouchService.saveDocEditing({ ...this.courseForm.value, steps: this.steps }, this.dbName, this.courseId);
     });
   }
 
@@ -203,7 +201,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       resources: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
-    this.saveDraftLocally();
   }
 
   cancel() {
