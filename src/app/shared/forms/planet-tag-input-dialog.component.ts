@@ -51,7 +51,7 @@ export class PlanetTagInputDialogComponent {
     private userService: UserService
   ) {
     this.dataInit();
-    // Removing selectMany toggle, but may revisit later
+    // April 17, 2019: Removing selectMany toggle, but may revisit later
     // this.selectMany = this.mode === 'add' || this.data.initSelectMany;
     this.data.startingTags
       .filter((tag: any) => tag)
