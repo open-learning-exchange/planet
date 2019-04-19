@@ -23,7 +23,7 @@
       <span i18n class="margin-lr-4">Attached Resources: </span>
       <mat-chip-list>
         <mat-chip *ngFor="let resource of activeStep.resources; let i = index">
-          <a [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
+          <a target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
           <mat-icon matChipRemove (click)="removeResource(i)">clear</mat-icon>
         </mat-chip>
       </mat-chip-list>
