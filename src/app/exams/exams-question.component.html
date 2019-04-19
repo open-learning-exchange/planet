@@ -21,9 +21,8 @@
   <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
     You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
   </div>
-  <div class="question-choices"
-    [ngClass]="{'survey-question': examType === 'survey'}">
-    <ng-container *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
+  <div class="question-choices">
+    <div *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
         <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
@@ -33,6 +32,6 @@
         [checked]="correctCheckboxes[choice.controls.id.value]"
         *ngIf="examType === 'exam'">
       </mat-checkbox>
-    </ng-container>
+    </div>
   </div>
 </form>
