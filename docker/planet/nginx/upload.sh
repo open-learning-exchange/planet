@@ -13,7 +13,7 @@ if [ "$REQUEST_METHOD" = "POST" ]; then
 
   read -r line
   filename=$(echo $line | sed 's/^.*filename=//' | sed 's/\"//g' | sed 's/.$//')
-  fileext=${filename##*.}
+  #fileext=${filename##*.}
 
   #$time=$(date + "%T")
   TMPOUT=/usr/share/nginx/html/fs/$filename
