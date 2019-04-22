@@ -30,6 +30,15 @@ import { UserService } from '../shared/user.service';
     .mat-column-createdDate {
       max-width: 130px;
     }
+    .course-title {
+      max-width: 200px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 15px;
+      position: relative;
+    }
   ` ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -37,7 +46,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'taken', 'createdDate', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'course', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -67,22 +76,24 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
-    this.receiveData('exams', 'surveys').pipe(switchMap(data => {
-        this.surveys.data = data;
-        return this.receiveData('submissions', 'survey');
-      }))
-      .subscribe((submissions: any) => {
-        this.surveys.data = this.surveys.data.map(
-          (survey: any) => ({
-            ...survey,
-            taken: submissions.filter(data => {
-                return data.parentId === survey._id && data.status !== 'pending';
-            }).length
-          })
-        );
-        this.emptyData = !this.surveys.data.length;
-        this.dialogsLoadingService.stop();
-      });
+    forkJoin([
+      this.receiveData('exams', 'surveys'),
+      this.receiveData('submissions', 'survey'),
+      this.couchService.findAll('courses')
+    ]).subscribe(([ surveys, submissions, courses ]: any) => {
+      const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
+      this.surveys.data = surveys.map(
+        (survey: any) => ({
+          ...survey,
+          course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
+          taken: submissions.filter(data => {
+            return data.parentId === survey._id && data.status !== 'pending';
+          }).length
+        })
+      );
+      this.emptyData = !this.surveys.data.length;
+      this.dialogsLoadingService.stop();
+    });
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
