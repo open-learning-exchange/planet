@@ -12,19 +12,7 @@ import { CustomValidators } from '../validators/custom-validators';
 @Component({
   selector: 'planet-exam-question',
   templateUrl: 'exams-question.component.html',
-  styles: [ `
-    .question-choices {
-      display: flex;
-      align-items: baseline;
-      flex-wrap: wrap;
-    }
-    .question-choices > div {
-      margin-right: 0.5rem;
-    }
-    .question-choices > div > mat-checkbox {
-      margin-left: 0.5rem;
-    }
-  ` ]
+  styleUrls: [ 'exams-question.scss' ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges {
 
