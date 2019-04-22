@@ -149,9 +149,9 @@ export class ExamsAddComponent implements OnInit {
     });
   }
 
-  addQuestion() {
+  addQuestion(type: string) {
     const questions = (<FormArray>this.examForm.get('questions'));
-    questions.push(this.examsService.newQuestionForm(this.examType === 'exam'));
+    questions.push(this.examsService.newQuestionForm(this.examType === 'exam', { type }));
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
     this.stepClick(questions.length - 1);
