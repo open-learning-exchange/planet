@@ -19,7 +19,10 @@ import { CustomValidators } from '../validators/custom-validators';
       flex-wrap: wrap;
     }
     .question-choices > div {
-      margin-right: 15px;
+      margin-right: 0.5rem;
+    }
+    .question-choices > div > mat-checkbox {
+      margin-left: 0.5rem;
     }
   ` ]
 })
