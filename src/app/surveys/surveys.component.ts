@@ -76,39 +76,25 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
-    this.receiveData('exams', 'surveys').pipe(switchMap(data => {
-        this.surveys.data = data;
-        return this.receiveData('submissions', 'survey');
-      }))
-      .subscribe((submissions: any) => {
-        this.surveys.data = this.surveys.data.map(
-          (survey: any) => ({
-            ...survey,
-            course: { 'name': '', 'id': '' },
-            taken: submissions.filter(data => {
-                return data.parentId === survey._id && data.status !== 'pending';
-            }).length
-          })
-        );
-        this.emptyData = !this.surveys.data.length;
-        this.assignCourseIdInsurvey();
-        this.dialogsLoadingService.stop();
-      });
-    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-  }
-
-  assignCourseIdInsurvey() {
-    this.couchService.findAll('courses').subscribe((allCourses: any) => {
-      allCourses.forEach(course => {
-        const courseSurveyList = course.steps.filter((step) => step.hasOwnProperty('survey'));
-        courseSurveyList.forEach((courseSurvey: any)  => {
-            const index = this.surveys.data.findIndex((survey: any) => survey._id === courseSurvey.survey._id);
-            if ( index > -1 ) {
-              this.surveys.data[index]['course'] = { 'name' : course.courseTitle, 'id': course._id };
-            }
-          });
-      });
+    forkJoin([
+      this.receiveData('exams', 'surveys'),
+      this.receiveData('submissions', 'survey'),
+      this.couchService.findAll('courses')
+    ]).subscribe(([ surveys, submissions, courses ]: any) => {
+      const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
+      this.surveys.data = surveys.map(
+        (survey: any) => ({
+          ...survey,
+          course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
+          taken: submissions.filter(data => {
+            return data.parentId === survey._id && data.status !== 'pending';
+          }).length
+        })
+      );
+      this.emptyData = !this.surveys.data.length;
+      this.dialogsLoadingService.stop();
     });
+    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
   ngAfterViewInit() {

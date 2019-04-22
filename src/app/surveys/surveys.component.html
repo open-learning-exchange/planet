@@ -48,7 +48,7 @@
       </ng-container>
       <ng-container matColumnDef="course">
         <mat-header-cell *matHeaderCellDef i18n>Course Linked</mat-header-cell>
-        <mat-cell *matCellDef="let element"><span class="cursor-pointer course-title" *ngIf="element.course" [routerLink]="['/courses/view', element.course.id]">{{element.course.name}}</span></mat-cell>
+        <mat-cell *matCellDef="let element"><span class="cursor-pointer course-title" *ngIf="element.course" [routerLink]="['/courses/view', element.course._id]">{{element.course.courseTitle}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created/Updated on</mat-header-cell>
