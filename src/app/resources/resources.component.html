@@ -72,7 +72,7 @@
           [indeterminate]="selection.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
-        <mat-cell *matCellDef="let row">
+        <mat-cell *matCellDef="let row" class="table-selection-top">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)">
           </mat-checkbox>
