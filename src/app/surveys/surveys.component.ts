@@ -30,6 +30,15 @@ import { UserService } from '../shared/user.service';
     .mat-column-createdDate {
       max-width: 130px;
     }
+    .course-title {
+      max-width: 200px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 15px;
+      position: relative;
+    }
   ` ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -91,11 +100,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   assignCourseIdInsurvey() {
     this.couchService.findAll('courses').subscribe((allCourses: any) => {
       allCourses.forEach(course => {
-        const courseSurvey = course.steps.find((step) => step.hasOwnProperty('survey'));
-        if (courseSurvey !== undefined) {
-          const index = this.surveys.data.findIndex((survey: any) => survey._id === courseSurvey.survey._id);
-          this.surveys.data[index]['course'] = { 'name' : course.courseTitle, 'id': course._id }
-;        }
+        const courseSurveyList = course.steps.filter((step) => step.hasOwnProperty('survey'));
+        courseSurveyList.forEach((courseSurvey: any)  => {
+            const index = this.surveys.data.findIndex((survey: any) => survey._id === courseSurvey.survey._id);
+            if ( index > -1 ) {
+              this.surveys.data[index]['course'] = { 'name' : course.courseTitle, 'id': course._id };
+            }
+          });
       });
     });
   }
