@@ -4,10 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
-import { filterSpecificFields } from '../../shared/table-helpers';
 import { CoursesService } from '../courses.service';
+import { CoursesAddResourcesComponent } from './courses-add-resources.component';
 
 @Component({
   selector: 'planet-courses-step',
@@ -22,16 +20,14 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() addStepEvent = new EventEmitter<void>();
 
   stepForm: FormGroup;
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<CoursesAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
-  spinnerOn = true;
   private onDestroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private dialogsListService: DialogsListService,
     private dialog: MatDialog,
     private coursesService: CoursesService,
   ) {
@@ -57,31 +53,15 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepForm.patchValue(this.steps[index]);
   }
 
-  attachItem(db: string) {
-    const initialSelection = this.activeStep.resources.map(resource => resource._id);
-    this.dialogsListService.attachDocsData(db, 'title', this.dialogOkClick(db).bind(this), initialSelection).subscribe((data) => {
-      this.openDialog(data);
-      this.spinnerOn = false;
-    });
+  addResources() {
+    this.dialogRef = this.dialog.open(CoursesAddResourcesComponent, { data: { okClick: this.resourcsDialogOkClick.bind(this) } });
   }
 
-  dialogOkClick(db: string) {
-    return (selected: any) => {
-      this.steps[this.activeStepIndex].resources = selected;
-      this.activeStep = this.steps[this.activeStepIndex];
-      this.stepsChange.emit(this.steps);
-      this.dialogRef.close();
-    };
-  }
-
-  openDialog(data) {
-    this.dialogRef = this.dialog.open(DialogsListComponent, {
-      data: data,
-      height: '500px',
-      width: '600px',
-      autoFocus: false
-    });
-    this.dialogRef.afterClosed().subscribe(() => this.spinnerOn = true);
+  resourcsDialogOkClick(selected: any) {
+    this.steps[this.activeStepIndex].resources = selected;
+    this.activeStep = this.steps[this.activeStepIndex];
+    this.stepsChange.emit(this.steps);
+    this.dialogRef.close();
   }
 
   removeResource(position: number) {

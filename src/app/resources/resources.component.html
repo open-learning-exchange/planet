@@ -1,8 +1,8 @@
 <mat-toolbar>
   <mat-toolbar-row>
-    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
     <span i18n>Library</span>
-    <button *ngIf="!parent" mat-stroked-button class="margin-lr-3" (click)="toggleMyLibrary()" i18n>
+    <button *ngIf="!parent && !isDialog" mat-stroked-button class="margin-lr-3" (click)="toggleMyLibrary()" i18n>
       {myLibraryFilter, select, on {Community} off {myLibrary}} resources
     </button>
     <span class="toolbar-fill margin-lr-10"></span>
@@ -22,7 +22,7 @@
 </mat-toolbar>
 
 <div class="space-container primary-link-hover">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <ng-container *ngIf="isAuthorized">
       <button *ngIf="!parent" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
       <planet-filtered-amount [table]="resources"></planet-filtered-amount>
