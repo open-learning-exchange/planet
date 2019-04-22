@@ -7,7 +7,7 @@
     </button>
     <span class="toolbar-fill margin-lr-10"></span>
     <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-    <button mat-button i18n (click)="toggleFilters()">Profile</button>
+    <button mat-stroked-button i18n (click)="toggleFilters()">Profile</button>
     <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
       <planet-tag-input [formControl]="tagFilter" [parent]="parent" [filteredData]="resources.filteredData"></planet-tag-input>
     </mat-form-field>
