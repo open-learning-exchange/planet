@@ -51,7 +51,7 @@
         </button>
         <button *ngIf="planetType !== 'community'" mat-button (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
           <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-          <span i18n>Push To Child</span>
+          <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
         </button>
         <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">

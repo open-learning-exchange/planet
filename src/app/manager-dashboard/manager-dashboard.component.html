@@ -52,8 +52,8 @@
           <a class="margin-lr-8" routerLink="courses" i18n mat-raised-button>List Courses</a></span>
         </ng-container>
         <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
-        <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by parent. You can retry or contact parent planet.</p>
-        <p *ngSwitchDefault i18n>Your request has not been accepted by parent</p>
+        <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by { planetType, select, community {nation} nation {center}}. You can retry or contact { planetType, select, community {nation} nation {center}} planet.</p>
+        <p *ngSwitchDefault i18n>Your request has not been accepted by { planetType, select, community {nation} nation {center}}</p>
       </ng-container>
     </div>
     <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> {{pin}}
