@@ -36,7 +36,7 @@ export class ExamsService {
 
   setInitalFormValue(formGroup, initialValue?) {
     if (initialValue !== undefined) {
-      formGroup.setValue(initialValue);
+      formGroup.patchValue(initialValue);
     }
     return formGroup;
   }
