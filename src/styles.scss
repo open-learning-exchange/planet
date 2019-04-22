@@ -109,14 +109,27 @@ body {
     margin: 0 3px;
   }
 
+  $list-title-height: 36px;
+
+  .list-content-menu, .table-selection-top {
+    align-self: start;
+  }
+
+  .table-selection-top {
+    height: $list-title-height;
+    min-height: $list-title-height;
+  }
+
   // Style which places menu icon in upper right corner of table cell
   .list-content-menu {
+
     display: grid;
     grid-template-areas:
       'hd mn'
       'cn .'
-      'tags tags';
+      'tags .';
     grid-template-columns: auto 50px;
+    grid-template-rows: $list-title-height 1fr min-content;
 
     .header {
       grid-area: hd;
@@ -135,9 +148,9 @@ body {
       grid-area: mn;
     }
 
-    .tags-list {
+    .tags-list, .course-progress {
       grid-area: tags;
-      margin-bottom: 0.5rem;
+      margin: 0.5rem 0;
     }
 
   }
