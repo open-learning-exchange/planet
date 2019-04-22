@@ -173,15 +173,16 @@ export class LoginFormComponent {
   }
 
   createSession(name, password) {
+    const msg = this.planetConfiguration.planetType === 'community' ? 'nation' : 'center';
     return () => {
       // Post new session info to login_activity
       const obsArr = this.loginObservables(name, password);
       return forkJoin(obsArr).pipe(catchError(error => {
         // 401 is for Unauthorized
         if (error.status === 401) {
-          this.planetMessageService.showMessage('Can not login to parent planet.');
+          this.planetMessageService.showMessage('Can not login to ' + msg + ' planet.');
         } else {
-          this.planetMessageService.showMessage('Error connecting to parent.');
+          this.planetMessageService.showMessage('Error connecting to ' + msg + '.');
         }
         return of(error);
       }));
