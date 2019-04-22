@@ -26,7 +26,7 @@ export class TagsService {
           count: tag.value,
           ...this.findTag(tag.key, dbTags)
         })).concat(unusedTags).sort((a, b) => {
-          return b.name > a.name ? -1 : 1;
+          return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
         }).map(this.fillSubTags);
       })
     );
