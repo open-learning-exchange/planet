@@ -14,13 +14,15 @@ import { CustomValidators } from '../validators/custom-validators';
   templateUrl: 'exams-question.component.html',
   styles: [ `
     .question-choices {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 180px 24px);
-      align-items: center;
-      grid-column-gap: 5px;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
     }
-    .survey-question {
-      grid-template-columns: repeat(auto-fill, 180px);
+    .question-choices > div {
+      margin-right: 0.5rem;
+    }
+    .question-choices > div > mat-checkbox {
+      margin-left: 0.5rem;
     }
   ` ]
 })
