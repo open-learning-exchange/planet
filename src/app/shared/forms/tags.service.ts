@@ -16,7 +16,7 @@ export class TagsService {
     const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
     return forkJoin([
       this.couchService.get('resources/_design/resources/_view/count_tags?group=true', opts),
-      this.stateService.getCouchState('tags', parent ? 'parent' : 'local')
+      this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' })
     ]).pipe(
       map(([ existingTags, dbTags ]: [ any, any ]) => {
         const unusedTags = dbTags.filter((dbTag: any) => {
@@ -25,7 +25,9 @@ export class TagsService {
         return existingTags.rows.sort((a, b) => b.value - a.value).map((tag: any) => ({
           count: tag.value,
           ...this.findTag(tag.key, dbTags)
-        })).concat(unusedTags).map(this.fillSubTags);
+        })).concat(unusedTags).sort((a, b) => {
+          return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
+        }).map(this.fillSubTags);
       })
     );
   }
