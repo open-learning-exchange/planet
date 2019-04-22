@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of, combineLatest } from 'rxjs';
+import { takeUntil, debounceTime, catchError } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -11,10 +11,9 @@ import * as constants from '../constants';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
-import { uniqueId } from '../../shared/utils';
-import { ConfigurationService } from '../../configuration/configuration.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
+import { PouchService } from '../../shared/database';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -26,8 +25,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
+  courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
   private onDestroy$ = new Subject<void>();
+  private stepsChange$ = new Subject<void>();
   private _steps = [];
   get steps() {
     return this._steps;
@@ -35,6 +36,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   set steps(value: any[]) {
     this._steps = value;
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
+    this.stepsChange$.next();
   }
 
   // from the constants import
@@ -53,7 +55,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private userService: UserService,
     private stateService: StateService,
-    private planetStepListService: PlanetStepListService
+    private planetStepListService: PlanetStepListService,
+    private pouchService: PouchService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -65,7 +68,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: [
         '',
         CustomValidators.required,
-        this.courseTitleValidator(this.route.snapshot.paramMap.get('id') || this.coursesService.course._id)
+        this.courseTitleValidator(this.courseId || this.coursesService.course._id)
       ],
       description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
@@ -92,21 +95,19 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.route.snapshot.url[0].path === 'update') {
-      this.couchService.get('courses/' + this.route.snapshot.paramMap.get('id'))
-      .subscribe((data) => {
-        data.steps.forEach(step => {
-          step['id'] = uniqueId();
-        });
+    forkJoin([
+      this.pouchService.getDocEditing(this.dbName, this.courseId),
+      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error)))
+    ]).subscribe(([ draft, saved ]: [ any, any ]) => {
+      if (saved.error !== 'not_found') {
+        this.documentInfo = { _rev: saved._rev, _id: saved._id };
         this.pageType = 'Update';
-        this.documentInfo = { _rev: data._rev, _id: data._id };
-        if (this.route.snapshot.params.continue !== 'true') {
-          this.setFormAndSteps({ form: data, steps: data.steps });
-        }
-      }, (error) => {
-        console.log(error);
-      });
-    }
+      }
+      const doc = draft === undefined ? saved : draft;
+      if (this.route.snapshot.params.continue !== 'true') {
+        this.setFormAndSteps({ form: doc, steps: doc.steps });
+      }
+    });
     if (this.route.snapshot.params.continue === 'true') {
       this.documentInfo = { '_rev': this.coursesService.course._rev, '_id': this.coursesService.course._id };
       this.setFormAndSteps(this.coursesService.course);
@@ -142,13 +143,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onFormChanges() {
-    this.courseForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
+    combineLatest(this.courseForm.valueChanges, this.stepsChange$)
+    .pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(value => {
       this.coursesService.course = { form: value, steps: this.steps };
+      this.pouchService.saveDocEditing({ ...this.courseForm.value, steps: this.steps }, this.dbName, this.courseId);
     });
   }
 
   updateCourse(courseInfo, shouldNavigate) {
-    this.deleteStepIdProperty();
     this.couchService.updateDocument(
       this.dbName,
       { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
@@ -173,29 +175,29 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   courseChangeComplete(message, response: any, shouldNavigate) {
+    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     if (shouldNavigate) {
       this.navigateBack();
     }
     this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
+    this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
     this.coursesService.course = { ...this.documentInfo };
     this.planetMessageService.showMessage(message);
   }
 
-  deleteStepIdProperty() {
-    this.steps.forEach(step => {
-      delete step.id;
-    });
-  }
-
   addStep() {
     this.steps.push({
-      id: uniqueId(),
       stepTitle: '',
       description: '',
       resources: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
+  }
+
+  cancel() {
+    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
+    this.navigateBack();
   }
 
   navigateBack() {

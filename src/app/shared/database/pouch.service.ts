@@ -3,7 +3,7 @@ import PouchDB from 'pouchdb';
 import PouchDBAuth from 'pouchdb-authentication';
 import PouchDBFind from 'pouchdb-find';
 import { throwError, from } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 PouchDB.plugin(PouchDBAuth);
@@ -12,7 +12,7 @@ PouchDB.plugin(PouchDBFind);
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
-  private localDBs;
+  private localDBs = {};
   private authDB;
   private databases = [];
 
@@ -81,4 +81,28 @@ export class PouchService {
     console.error('An error occurred in PouchDB', err);
     return throwError(err.message || err);
   }
+
+  private docEditingDB(db, id) {
+    const name = `${db}_${id}`;
+    return this.localDBs[name] !== undefined ? this.localDBs[name] : new PouchDB(name);
+  }
+
+  getDocEditing(db, id = 'new') {
+    return from(this.docEditingDB(db, id).allDocs({ include_docs: true }))
+      .pipe(map((res: any) => {
+        const row = res.rows.find((r: any) => r.id === id);
+        return row && row.doc;
+      }));
+  }
+
+  saveDocEditing(doc, db, id = 'new') {
+    this.getDocEditing(db, id).subscribe((oldDoc: any) => {
+      this.docEditingDB(db, id).put({ ...doc, '_id': id, '_rev': oldDoc && oldDoc._rev });
+    });
+  }
+
+  deleteDocEditing(db, id = 'new') {
+    this.docEditingDB(db, id).destroy();
+  }
+
 }
