@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
@@ -27,7 +27,8 @@ import { ResourcesSearchComponent } from './search-resources/resources-search.co
 
 @Component({
   templateUrl: './resources.component.html',
-  styleUrls: [ './resources.scss' ]
+  styleUrls: [ './resources.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
@@ -35,6 +36,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
+  @HostBinding('class') readonly hostClass = 'resources-list';
   dialogRef: MatDialogRef<DialogsListComponent>;
   readonly dbName = 'resources';
   message = '';
