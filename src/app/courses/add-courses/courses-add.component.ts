@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, forkJoin, of, combineLatest } from 'rxjs';
-import { takeUntil, debounceTime, catchError } from 'rxjs/operators';
+import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
+import { takeWhile, debounce, catchError } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -14,6 +14,7 @@ import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { PouchService } from '../../shared/database';
+import { debug } from '../../debug-operator';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -28,6 +29,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
   private onDestroy$ = new Subject<void>();
+  private isDestroyed = false;
   private stepsChange$ = new Subject<any[]>();
   private _steps = [];
   get steps() {
@@ -123,6 +125,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (this.coursesService.stepIndex === undefined) {
       this.coursesService.reset();
     }
+    this.isDestroyed = true;
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -143,8 +146,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onFormChanges() {
-    combineLatest(this.courseForm.valueChanges, this.stepsChange$)
-    .pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(([ value, steps ]) => {
+    combineLatest(this.courseForm.valueChanges, this.stepsChange$).pipe(
+      debounce(() => race(interval(2000), this.onDestroy$)),
+      takeWhile(() => this.isDestroyed === false, true)
+    ).subscribe(([ value, steps ]) => {
       this.coursesService.course = { form: value, steps };
       this.pouchService.saveDocEditing({ ...value, steps }, this.dbName, this.courseId);
     });
