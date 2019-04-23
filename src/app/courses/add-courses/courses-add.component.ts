@@ -146,7 +146,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     combineLatest(this.courseForm.valueChanges, this.stepsChange$)
     .pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(([ value, steps ]) => {
       this.coursesService.course = { form: value, steps };
-      this.pouchService.saveDocEditing({ ...this.courseForm.value, steps }, this.dbName, this.courseId);
+      this.pouchService.saveDocEditing({ ...value, steps }, this.dbName, this.courseId);
     });
   }
 
