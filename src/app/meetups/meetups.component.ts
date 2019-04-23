@@ -57,7 +57,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private meetupService: MeetupService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
@@ -204,18 +204,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedShelf(selected: any) {
-    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
+    const inShelf = this.userService.countInShelf(selected, 'meetupIds');
+    const notInShelf = this.userService.countInShelf(
+      selected.filter(id => this.meetups.data[this.meetups.data.findIndex(x => x._id === id)].endDate > this.dateNow), 'meetupIds');
     this.selectedNotJoined = notInShelf;
     this.selectedJoined = inShelf;
-    let index, meetupDate;
-    for (let i = 0; i < selected.length; i++) {
-      index = this.meetups.data.findIndex(x => x._id === selected[i]);
-      meetupDate = this.meetups.data[index].endDate ? this.meetups.data[index].endDate : this.meetups.data[index].startDate;
-      if (this.dateNow > meetupDate) {
-        this.selectedNotJoined--;
-        selected.splice(i, 1);
-      } 
-    }
-    this.userService.changeShelf(selected, 'meetupIds', 'remove');
   }
 }
