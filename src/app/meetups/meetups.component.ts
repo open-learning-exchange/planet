@@ -188,8 +188,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
+  upcomingMeetups(ids: any) {
+    return ids.filter(id => (this.meetups.data.find(item => item._id === id).endDate ?
+    this.meetups.data.find(item => item._id === id).endDate : this.meetups.data.find(item => item._id === id).startDate) > this.dateNow);
+  }
+
   meetupsToggle(meetupIds, type) {
-    this.meetupService.attendMeetups(meetupIds, type).subscribe((res) => {
+    this.meetupService.attendMeetups(type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds, type).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -204,9 +209,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedShelf(selected: any) {
-    const inShelf = this.userService.countInShelf(selected, 'meetupIds');
-    const notInShelf = this.userService.countInShelf(
-      selected.filter(id => this.meetups.data[this.meetups.data.findIndex(x => x._id === id)].endDate > this.dateNow), 'meetupIds');
+    const inShelf = this.userService.countInShelf(selected, 'meetupIds').inShelf;
+    const notInShelf = this.userService.countInShelf(this.upcomingMeetups(selected), 'meetupIds').notInShelf;
     this.selectedNotJoined = notInShelf;
     this.selectedJoined = inShelf;
   }
