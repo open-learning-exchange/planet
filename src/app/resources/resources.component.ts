@@ -9,6 +9,7 @@ import { Subject, of } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
+  filterSpecificFieldsArray,
   filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
   filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray
 } from '../shared/table-helpers';
@@ -77,7 +78,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     [
       filterAdvancedSearch(this.searchSelection),
       filterTags('tags', this.tagFilter),
-      filterSpecificFields([ 'title' ]),
+      filterSpecificFieldsArray([ 'title' ]),
       filterShelf(this._myLibraryFilter, 'libraryInfo')
     ]
   );

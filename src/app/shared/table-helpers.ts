@@ -122,3 +122,17 @@ export const filteredItemsInPage = (filteredData: any[], pageIndex: number, page
 };
 
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+
+export const filterSpecificFieldsArray = (filterFields: string[]): any => {
+  return (data: any, filter: string) => {
+    const dataArry = data.split(' ').map(str => str.toLowerCase());
+    for (let i = 0; i < filterFields.length; i++) {
+      if (filterArrayField(filterFields[i], dataArry)(data, filter)) {
+        return true;
+      }
+      /*if (getProperty(data, filterFields[i]).toLowerCase().indexOf(filter.trim().toLowerCase()) > -1) {
+        return true;
+      }*/
+    }
+  };
+};
