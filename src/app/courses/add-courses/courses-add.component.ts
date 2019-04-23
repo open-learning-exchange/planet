@@ -28,7 +28,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
   private onDestroy$ = new Subject<void>();
-  private stepsChange$ = new Subject<void>();
+  private stepsChange$ = new Subject<any[]>();
   private _steps = [];
   get steps() {
     return this._steps;
@@ -36,7 +36,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   set steps(value: any[]) {
     this._steps = value;
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
-    this.stepsChange$.next();
+    this.stepsChange$.next(value);
   }
 
   // from the constants import
@@ -144,9 +144,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   onFormChanges() {
     combineLatest(this.courseForm.valueChanges, this.stepsChange$)
-    .pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(value => {
-      this.coursesService.course = { form: value, steps: this.steps };
-      this.pouchService.saveDocEditing({ ...this.courseForm.value, steps: this.steps }, this.dbName, this.courseId);
+    .pipe(debounceTime(2000), takeUntil(this.onDestroy$)).subscribe(([ value, steps ]) => {
+      this.coursesService.course = { form: value, steps };
+      this.pouchService.saveDocEditing({ ...this.courseForm.value, steps }, this.dbName, this.courseId);
     });
   }
 
