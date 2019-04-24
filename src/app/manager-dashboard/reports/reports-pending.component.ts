@@ -4,6 +4,7 @@ import { forkJoin, Subject } from 'rxjs';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { ManagerService } from '../manager.service';
 
 @Component({
   templateUrl: './reports-pending.component.html'
@@ -21,7 +22,8 @@ export class ReportsPendingComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
@@ -30,8 +32,9 @@ export class ReportsPendingComponent implements OnInit {
 
   filterData() {
     this.planets = this.planets.map((planet: any) => ({
-        ...planet,
-        children: this.data.filter((item: any) => item.sendTo === planet.code)
+        ...planet.doc,
+        name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
+        children: this.data.filter((item: any) => item.sendTo === planet.doc.code)
       }));
   }
 
@@ -41,7 +44,7 @@ export class ReportsPendingComponent implements OnInit {
       this.couchService.findAll('communityregistrationrequests',
         findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
     ]).subscribe(([ data, planets ]) => {
-      this.planets = planets;
+      this.planets = this.managerService.attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
       this.data = data;
       this.filterData();
       console.log(this.data);
