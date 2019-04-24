@@ -81,11 +81,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.receiveData('submissions', 'survey'),
       this.couchService.findAll('courses')
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
-      const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
       this.surveys.data = surveys.map(
         (survey: any) => ({
           ...survey,
-          course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
+          course: courses.find((course: any) => this.findSurveyInSteps(course.steps, survey) > -1),
           taken: submissions.filter(data => {
             return data.parentId === survey._id && data.status !== 'pending';
           }).length
@@ -100,6 +99,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.surveys.sort = this.sort;
     this.surveys.paginator = this.paginator;
+  }
+
+  findSurveyInSteps(steps, survey) {
+    return steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
   }
 
   onPaginateChange(e: PageEvent) {
@@ -145,16 +148,33 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const selected = this.selection.selected.map(surveyId => findByIdInArray(this.surveys.data, surveyId));
     if (selected.length === 1) {
       const survey = selected[0];
-      this.openDeleteDialog(this.deleteSurvey(survey), 'single', survey.name);
+      this.openDeleteDialog(this.deleteSurvey(survey), 'single',
+       survey.name + ( survey.course ? ' will be deleted from ' + survey.course.courseTitle + ' aswell' : '' ));
     } else {
       this.openDeleteDialog(this.deleteSurveys(selected), 'many', '');
     }
   }
 
+  createCourseArray(surveys) {
+    const couresArr = [];
+    const surveyCourse = surveys.filter((survey) => survey.course);
+    surveyCourse.forEach((element: any) => {
+      const indexAtArr = couresArr.findIndex( (course) => course._id === element.course._id);
+      const course = indexAtArr > -1 ? couresArr[indexAtArr] :   element.course;
+      const index = this.findSurveyInSteps(course.steps, element);
+      if (index > -1) {
+        course.steps.splice(index, 1);
+      }
+      indexAtArr === -1 ? couresArr.splice( 0, 1, course) : couresArr[indexAtArr] = course;
+    });
+    return couresArr;
+  }
+
   deleteSurveys(surveys) {
     const deleteArray = createDeleteArray(surveys);
+    const courseArray = this.createCourseArray(surveys);
     return {
-      request: this.couchService.bulkDocs(this.dbName, deleteArray),
+      request: forkJoin([ this.couchService.bulkDocs(this.dbName, deleteArray), this.couchService.bulkDocs('courses', courseArray) ]),
       onNext: () => {
         this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === -1);
         this.selection.clear();
