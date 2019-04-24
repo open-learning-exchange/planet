@@ -62,7 +62,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   filterData(search = this.searchValue) {
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
-    this.filteredData = this.data.filter((item: any) => item.registrationRequest === this.shownStatus && filterFunction(item, search));
+    this.filteredData = this.data.filter(
+      ({ doc }: { doc: any }) => doc.registrationRequest === this.shownStatus && filterFunction(doc, search)
+    );
     const { hubs, sandboxPlanets } = this.managerService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets;
@@ -79,8 +81,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
         findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
+      const names = data.filter((d: any) => d.docType === 'parentName');
       this.hubs = hubs;
-      this.data = data;
+      this.data = data.map((d: any) => ({ doc: d, nameDoc: names.find((name: any) => name.planetId === d._id) }));
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }

@@ -213,23 +213,23 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
 
   openEditChildNameDialog(planet) {
     this.dialogsFormService.openDialogsForm(
-      `Edit ${this.planetTypeText(planet.planetType)} Name`,
+      `Edit ${this.planetTypeText(planet.doc.planetType)} Name`,
       [ { 'label': 'Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', 'required': true } ],
-      this.fb.group({ name: [ planet.name, CustomValidators.required ] }),
+      this.fb.group({ name: [ planet.nameDoc ? planet.nameDoc.name : planet.doc.name, CustomValidators.required ] }),
       { onSubmit: this.editChildName(planet).bind(this) }
     );
 
   }
 
-  editChildName(planet) {
+  editChildName({ doc, nameDoc }) {
     return (form) => {
-      this.couchService.post(this.dbName, { 'name': form.name, 'docType': 'parentName', 'planetId': planet._id }).pipe(
+      this.couchService.updateDocument(this.dbName, { ...nameDoc, 'name': form.name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage(`${this.planetTypeText(planet.planetType)} name updated.`);
+        this.planetMessageService.showMessage(`${this.planetTypeText(doc.planetType)} name updated.`);
         this.requestUpdate.emit();
-      }, () => { this.planetMessageService.showAlert(`There was an error updating ${this.planetTypeText(planet.planetType)} name`) });
+      }, () => { this.planetMessageService.showAlert(`There was an error updating ${this.planetTypeText(doc.planetType)} name`) });
     }
   }
 
