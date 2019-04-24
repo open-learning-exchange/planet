@@ -223,14 +223,17 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
 
   editChildName({ doc, nameDoc }) {
     return (form) => {
-      this.couchService.updateDocument(this.dbName, { ...nameDoc, 'name': form.name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }).pipe(
+      this.couchService.updateDocument(
+        this.dbName,
+        { ...nameDoc, 'name': form.name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
+      ).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage(`${this.planetTypeText(doc.planetType)} name updated.`);
         this.requestUpdate.emit();
-      }, () => { this.planetMessageService.showAlert(`There was an error updating ${this.planetTypeText(doc.planetType)} name`) });
-    }
+      }, () => { this.planetMessageService.showAlert(`There was an error updating ${this.planetTypeText(doc.planetType)} name`); });
+    };
   }
 
 }
