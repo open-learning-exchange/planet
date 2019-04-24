@@ -6,6 +6,7 @@ import { StateService } from '../state.service';
 import { ReplaySubject } from 'rxjs';
 import { CouchService } from '../couchdb.service';
 import { filterSpecificFields } from '../table-helpers';
+import { ReportsService } from '../../manager-dashboard/reports/reports.service';
 
 const listColumns = {
   'resources': [ 'title' ],
@@ -21,7 +22,8 @@ export class DialogsListService {
   constructor(
     private stateService: StateService,
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private reportsService: ReportsService
   ) {}
 
   defaultSelectorFunctions() {
@@ -56,6 +58,11 @@ export class DialogsListService {
     }
     return this.stateService.getCouchState(db, planetField).pipe(
       map((newData: any) => {
+        if (db === 'communityregistrationrequests') {
+          newData = this.reportsService.attachNamesToPlanets(newData).map(
+            ({ doc, nameDoc }) => ({ doc, nameDoc, ...doc, name: nameDoc ? nameDoc.name : doc.name })
+          );
+        }
         const tableData = selector ? this.filterResults(newData, selector) : newData;
         return { tableData, columns: listColumns[db] };
       })
