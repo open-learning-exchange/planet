@@ -25,6 +25,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   @Input() hubs = [];
   @Input() hub: any = 'sandbox';
   @Output() requestUpdate = new EventEmitter<void>();
+  dbName = 'communityregistrationrequests';
   communities = new MatTableDataSource();
   nations = [];
   displayedColumns = [
@@ -97,7 +98,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
             // When accepting a registration request, add learner role to user from that community/nation,
             this.unlockUser(community),
             // update registration request to accepted
-            this.couchService.put('communityregistrationrequests/' + communityId, { ...community, registrationRequest: 'accepted' })
+            this.couchService.put(`${this.dbName}/${communityId}`, { ...community, registrationRequest: 'accepted' })
           ]),
           onNext: (data) => {
             this.requestUpdate.emit();
@@ -121,7 +122,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     // Return a function with community on its scope to pass to delete dialog
     const { _id: id, _rev: rev } = community;
     return {
-      request: this.pipeRemovePlanetUser(this.couchService.delete('communityregistrationrequests/' + id + '?rev=' + rev), community),
+      request: this.pipeRemovePlanetUser(this.couchService.delete(`${this.dbName}/${id}?rev=${rev}`), community),
       onNext: ([ data, userRes ]) => {
         this.requestUpdate.emit();
         this.editDialog.close();
@@ -172,7 +173,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   }
 
   getChildPlanet(url: string) {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests',
+    this.dialogsListService.getListAndColumns(this.dbName,
     { 'registrationRequest': 'accepted' }, url)
     .pipe(takeUntil(this.onDestroy$))
     .subscribe((planets) => {
@@ -222,7 +223,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
 
   editChildName(planet) {
     return (form) => {
-      this.couchService.post('communityregistrationrequests', { 'name': form.name, 'docType': 'parentName', 'planetId': planet._id }).pipe(
+      this.couchService.post(this.dbName, { 'name': form.name, 'docType': 'parentName', 'planetId': planet._id }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
