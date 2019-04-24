@@ -70,13 +70,13 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     this.onDestroy$.complete();
   }
 
-  updateClick(community, change) {
+  updateClick(planet, change) {
     this.editDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: this.updateCommunity(community, change),
+        okClick: this.updateCommunity(planet.doc, change),
         changeType: change,
         type: 'community',
-        displayName: community.name
+        displayName: planet.nameDoc ? planet.nameDoc.name : planet.doc.name
       }
     });
   }

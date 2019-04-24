@@ -40,11 +40,11 @@
         </button>
       </ng-container>
       <ng-container *ngIf="element.doc.registrationRequest === 'pending'">
-        <button mat-raised-button color="primary" (click)="updateClick(element.doc, 'accept')" i18n>
+        <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>
           <mat-icon>link</mat-icon>Accept
         </button>
       </ng-container>
-      <button mat-raised-button color="warn" (click)="updateClick(element.doc, 'delete')" i18n>
+      <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')" i18n>
         <mat-icon>delete</mat-icon>Delete
       </button>
     </mat-cell>
