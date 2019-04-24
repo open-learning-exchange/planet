@@ -61,9 +61,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   filterData(search = this.searchValue) {
+    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) });
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
     this.filteredData = this.data.filter(
-      ({ doc }: { doc: any }) => doc.registrationRequest === this.shownStatus && filterFunction(doc, search)
+      (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
     );
     const { hubs, sandboxPlanets } = this.managerService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
