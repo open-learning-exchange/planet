@@ -102,23 +102,6 @@ export class ManagerService {
     );
   }
 
-  attachNamesToPlanets(planetDocs) {
-    const names = planetDocs.filter((d: any) => d.docType === 'parentName');
-    return planetDocs.map((d: any) => ({ doc: d, nameDoc: names.find((name: any) => name.planetId === d._id) }));
-  }
-
-  arrangePlanetsIntoHubs(planets, hubs) {
-    return ({
-      hubs: hubs.map((hub: any) => ({
-        ...hub,
-        children: hub.spokes.map(code => planets.find((planet: any) => planet.doc.code === code)).filter(child => child)
-      })),
-      sandboxPlanets: planets.filter(
-        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.doc.code) > -1) === undefined
-      )
-    });
-  }
-
   createPin() {
     return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }

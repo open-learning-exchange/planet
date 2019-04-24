@@ -5,7 +5,6 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { StateService } from '../../shared/state.service';
-import { ManagerService } from '../manager.service';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -19,8 +18,7 @@ export class ReportsComponent {
     private couchService: CouchService,
     private activityService: ReportsService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService,
-    private managerService: ManagerService
+    private stateService: StateService
   ) {
     this.getLogs();
   }
@@ -60,8 +58,8 @@ export class ReportsComponent {
   }
 
   arrangePlanetData(planetDocs, hubData) {
-    const { hubs, sandboxPlanets } = this.managerService.arrangePlanetsIntoHubs(
-      this.managerService.attachNamesToPlanets(planetDocs), hubData
+    const { hubs, sandboxPlanets } = this.activityService.arrangePlanetsIntoHubs(
+      this.activityService.attachNamesToPlanets(planetDocs), hubData
     );
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets;
