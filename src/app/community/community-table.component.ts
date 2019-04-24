@@ -2,7 +2,7 @@ import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Outpu
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
@@ -10,6 +10,10 @@ import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { FormBuilder } from '@angular/forms';
+import { CustomValidators } from '../validators/custom-validators';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-community-table',
@@ -43,8 +47,11 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
+    private fb: FormBuilder,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnChanges() {
@@ -71,6 +78,10 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
         displayName: community.name
       }
     });
+  }
+
+  planetTypeText(planetType) {
+    return planetType === 'nation' ? 'Nation' : 'Community';
   }
 
   updateCommunity(community, change) {
@@ -155,7 +166,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
       autoFocus: false,
       data: {
         allData: planet,
-        title: planet.planetType === 'nation' ? 'Nation Details' : 'Community Details'
+        title: `${this.planetTypeText(planet.planetType)} Details`
       }
     });
   }
@@ -197,6 +208,28 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
 
   removeFromHub(planetCode) {
     return this.couchService.post('hubs', { ...this.hub, spokes: this.hub.spokes.filter(code => code !== planetCode) });
+  }
+
+  openEditChildNameDialog(planet) {
+    this.dialogsFormService.openDialogsForm(
+      `Edit ${this.planetTypeText(planet.planetType)} Name`,
+      [ { 'label': 'Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', 'required': true } ],
+      this.fb.group({ name: [ planet.name, CustomValidators.required ] }),
+      { onSubmit: this.editChildName(planet).bind(this) }
+    );
+
+  }
+
+  editChildName(planet) {
+    return (form) => {
+      this.couchService.post('communityregistrationrequests', { 'name': form.name, 'docType': 'parentName', 'planetId': planet._id }).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage(`${this.planetTypeText(planet.planetType)} name updated.`);
+        this.requestUpdate.emit();
+      }, () => { this.planetMessageService.showAlert(`There was an error updating ${this.planetTypeText(planet.planetType)} name`) });
+    }
   }
 
 }

@@ -35,6 +35,9 @@
           </ng-container>
           <button (click)="removeHubClick(element.code)" *ngIf="hub!=='sandbox'" mat-menu-item>Sandbox</button>
         </mat-menu>
+        <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)" i18n>
+          Edit Name
+        </button>
       </ng-container>
       <ng-container *ngIf="element.registrationRequest === 'pending'">
         <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>
