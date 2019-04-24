@@ -82,9 +82,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
-      const names = data.filter((d: any) => d.docType === 'parentName');
       this.hubs = hubs;
-      this.data = data.map((d: any) => ({ doc: d, nameDoc: names.find((name: any) => name.planetId === d._id) }));
+      this.data = this.managerService.attachNamesToPlanets(data);
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
