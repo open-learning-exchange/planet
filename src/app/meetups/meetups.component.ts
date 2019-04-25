@@ -13,6 +13,7 @@ import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { findByIdInArray } from '../shared/utils';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -189,8 +190,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   upcomingMeetups(ids: any) {
-    return ids.filter(id => (this.meetups.data.find(item => item._id === id).endDate ?
-    this.meetups.data.find(item => item._id === id).endDate : this.meetups.data.find(item => item._id === id).startDate) > this.dateNow);
+    return ids.filter(id => {
+      const meetup = findByIdInArray(this.meetups.data, id);
+      return (meetup.endDate || meetup.startDate) > this.dateNow;
+    });
   }
 
   meetupsToggle(meetupIds, type) {
