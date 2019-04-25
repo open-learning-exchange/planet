@@ -6,7 +6,7 @@ import { ResourcesComponent } from '../../resources/resources.component';
   template: `
     <planet-resources [isDialog]="true"></planet-resources>
     <mat-dialog-actions>
-      <button color="primary" mat-raised-button (click)="ok()" [planetSubmit]="spinnerOn" i18n>OK</button>
+      <button color="primary" mat-raised-button (click)="ok()" i18n>OK</button>
       <button color="warn" mat-raised-button mat-dialog-close i18n>Cancel</button>
     </mat-dialog-actions>
   `
