@@ -33,6 +33,13 @@ export const filterSpecificFields = (filterFields: string[]): any => {
   };
 };
 
+export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
+  return (data: any, filter: string) => {
+    const words = filter.split(' ').map(value => value.toLowerCase());
+    return words.filter(word => word).find(word => !filterSpecificFields(filterFields)(data, word)) === undefined;
+  };
+};
+
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
 function getProperty(data: any, fields: string) {
@@ -122,12 +129,3 @@ export const filteredItemsInPage = (filteredData: any[], pageIndex: number, page
 };
 
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));
-
-export const filterSpecificFieldsArray = (filterFields: string[]): any => {
-  return (data: any, filter: string) => {
-    const filterArr = filter.split(' ').map(value => value.toLowerCase());
-    for (let i = 0; i < filterFields.length; i++) {
-      return filterArr.reduce((isMatch, value) => isMatch && getProperty(data, filterFields[i]).toLowerCase().indexOf(value) > -1, true);
-    }
-  };
-};
