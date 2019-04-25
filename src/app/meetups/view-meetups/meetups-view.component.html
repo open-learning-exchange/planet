@@ -6,12 +6,12 @@
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail.title}}</h3>
     <span class="toolbar-fill"></span>
-    <div>
+    <div> 
       <ng-container *ngIf="!parent">
         <button mat-stroked-button class="margin-lr-3" (click)="openInviteMemberDialog()">
           <span i18n>Invite Member</span>
         </button>
-        <button mat-raised-button color="accent" class="margin-lr-3" (click)="joinMeetup()">
+        <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="isMeetupDisabled() ? 'You cannot join old meetup' : ''" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
           <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
           <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
         </button>

@@ -13,6 +13,7 @@ import { MeetupService } from './meetups.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { findByIdInArray } from '../shared/utils';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -46,6 +47,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedNotJoined = 0;
   selectedJoined = 0;
   isAuthorized = false;
+  dateNow: any;
 
   constructor(
     private couchService: CouchService,
@@ -59,6 +61,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dialogsLoadingService.start();
+    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
   ngOnInit() {
@@ -186,8 +189,15 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
   }
 
+  upcomingMeetups(ids: any) {
+    return ids.filter(id => {
+      const meetup = findByIdInArray(this.meetups.data, id);
+      return (meetup.endDate || meetup.startDate) > this.dateNow;
+    });
+  }
+
   meetupsToggle(meetupIds, type) {
-    this.meetupService.attendMeetups(meetupIds, type).subscribe((res) => {
+    this.meetupService.attendMeetups(type !== 'remove' ? this.upcomingMeetups(meetupIds) : meetupIds, type).subscribe((res) => {
       this.countSelectedShelf(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -202,8 +212,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countSelectedShelf(selected: any) {
-    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'meetupIds');
-    this.selectedJoined = inShelf;
+    const inShelf = this.userService.countInShelf(selected, 'meetupIds').inShelf;
+    const notInShelf = this.userService.countInShelf(this.upcomingMeetups(selected), 'meetupIds').notInShelf;
     this.selectedNotJoined = notInShelf;
+    this.selectedJoined = inShelf;
   }
 }
