@@ -13,7 +13,7 @@
   <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="exam-buttons">
-        <button mat-raised-button color="primary" type="submit" [planetSubmit]="examForm.valid" i18n>{{pageType}} {examType, select, exam {Exam} survey {Survey}}</button>
+        <button mat-raised-button color="primary" type="submit" [planetSubmit]="examForm.valid" i18n>Save</button>
         <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n class="margin-lr-5">Add Question</button>
         <mat-menu #questionMenu>
           <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
