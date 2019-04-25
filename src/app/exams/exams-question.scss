@@ -16,6 +16,6 @@
 
 .type-title-container {
   display: grid;
-  grid-template-columns: 1fr $form-width-1;
+  grid-template-columns: 1fr $form-width-1 $dashboard-tile-width;
   grid-column-gap: 0.5rem;
 }
