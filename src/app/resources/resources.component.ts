@@ -10,7 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
-  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray
+  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray, filterSpecificFieldsByWord
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -77,7 +77,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     [
       filterAdvancedSearch(this.searchSelection),
       filterTags('tags', this.tagFilter),
-      filterSpecificFields([ 'title' ]),
+      filterSpecificFieldsByWord([ 'title' ]),
       filterShelf(this._myLibraryFilter, 'libraryInfo')
     ]
   );
