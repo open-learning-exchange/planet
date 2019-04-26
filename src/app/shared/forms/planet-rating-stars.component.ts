@@ -9,6 +9,9 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
   templateUrl: './planet-rating-stars.component.html',
   styles: [ `
     .stars mat-icon {
+      cursor: default;
+    }
+    .stars.stars-enabled mat-icon {
       cursor: pointer;
     }
   ` ],
@@ -101,7 +104,9 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   }
 
   mouseOverStar(starNumber: number): void {
-    this.starActiveWidth = starNumber * 20 + '%';
+    if (!this.disabled) {
+      this.starActiveWidth = starNumber * 20 + '%';
+    }
   }
 
   writeValue(nextVal: number) {
