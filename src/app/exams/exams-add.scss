@@ -26,4 +26,10 @@
     overflow-y: auto;
   }
 
+  .exam-question {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
 }

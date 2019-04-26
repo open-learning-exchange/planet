@@ -1,9 +1,5 @@
 <form class="vertical-form" [formGroup]="questionForm">
   <div class="type-title-container">
-    <mat-form-field class="full-width">
-      <input matInput class="full-width" placeholder="Question Title" [formControl]="questionForm.controls.title">
-      <mat-error><planet-form-error-messages [control]="questionForm.controls.title"></planet-form-error-messages></mat-error>
-    </mat-form-field>
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
         <mat-option value="input" i18n>Text - Short answer</mat-option>
