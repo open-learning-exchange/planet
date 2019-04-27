@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
-import { forkJoin, Subject, of } from 'rxjs';
+import { forkJoin, Subject, of, Observable, observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
@@ -168,18 +168,22 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       indexAtArr === -1 ? couresArr.splice( 0, 1, course) : couresArr[indexAtArr] = course;
     });
     return couresArr;
+
   }
 
   deleteSurveys(surveys) {
     const deleteArray = createDeleteArray(surveys);
     const courseArray = this.createCourseArray(surveys);
     return {
-      request: forkJoin([ this.couchService.bulkDocs(this.dbName, deleteArray), this.couchService.bulkDocs('courses', courseArray) ]),
+      request: this.couchService.bulkDocs(this.dbName, deleteArray),
       onNext: () => {
         this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === -1);
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+        if (courseArray.length > 0) {
+          this.couchService.bulkDocs('courses', courseArray);
+        }
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting survey.')
     };
@@ -187,6 +191,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSurvey(survey) {
     const { _id: surveyId, _rev: surveyRev } = survey;
+    if (survey.course) {
+      survey.course.steps.splice(this.findSurveyInSteps(survey.course.steps, survey), 1);
+    }
     return {
       request: this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
       onNext: () => {
@@ -194,6 +201,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = filterById(this.surveys.data, survey._id);
         this.deleteDialog.close();
         this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
+        if (survey.course) {
+          this.couchService.updateDocument('courses', survey.course);
+        }
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this survey.')
     };
