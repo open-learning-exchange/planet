@@ -156,19 +156,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createCourseArray(surveys) {
-    const couresArr = [];
+    const courseArr = [];
     const surveyCourse = surveys.filter((survey) => survey.course);
     surveyCourse.forEach((element: any) => {
-      const indexAtArr = couresArr.findIndex( (course) => course._id === element.course._id);
-      const course = indexAtArr > -1 ? couresArr[indexAtArr] :   element.course;
+      const indexAtArr = courseArr.findIndex( (course) => course._id === element.course._id);
+      const course = indexAtArr > -1 ? courseArr[indexAtArr] :   element.course;
       const index = this.findSurveyInSteps(course.steps, element);
       if (index > -1) {
         course.steps.splice(index, 1);
       }
-      indexAtArr === -1 ? couresArr.splice( 0, 1, course) : couresArr[indexAtArr] = course;
+      indexAtArr === -1 ? courseArr.splice( 0, 1, course) : courseArr[indexAtArr] = course;
     });
-    return couresArr;
-
+    return courseArr;
   }
 
   deleteSurveys(surveys) {
