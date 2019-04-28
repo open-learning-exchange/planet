@@ -11,14 +11,14 @@ export class ExamsService {
     private fb: FormBuilder
   ) {}
 
-  newQuestionForm(requireCorrect, initialValue?: any) {
+  newQuestionForm(examType, initialValue?: any) {
     const choices = (initialValue && initialValue.choices) || [];
     return this.setInitalFormValue(this.fb.group(Object.assign(
       {
         title: '',
         body: [ '', CustomValidators.required ],
         type: 'input',
-        correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
+        correctChoice: [ '', CustomValidators.choiceSelected(examType) ],
         marks: [ 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(
           choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice)),
