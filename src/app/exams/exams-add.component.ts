@@ -97,6 +97,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log(this.examForm);
     if (this.examForm.valid) {
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
     } else {
@@ -145,13 +146,13 @@ export class ExamsAddComponent implements OnInit {
 
   initializeQuestions(questions: any[]) {
     questions.forEach((question) => {
-      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'exam', question));
+      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType, question));
     });
   }
 
   addQuestion(type: string) {
     const questions = (<FormArray>this.examForm.get('questions'));
-    questions.push(this.examsService.newQuestionForm(this.examType === 'exam', { type }));
+    questions.push(this.examsService.newQuestionForm(this.examType, { type }));
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
     this.stepClick(questions.length - 1);

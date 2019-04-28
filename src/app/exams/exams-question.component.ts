@@ -21,7 +21,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   correctCheckboxes: any = {};
-  questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
+  questionForm: FormGroup = this.examsService.newQuestionForm(this.examType);
   initializing = true;
   private onDestroy$ = new Subject<void>();
   get choices(): FormArray {
@@ -33,7 +33,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    this.questionForm.controls.correctChoice.setValidators(CustomValidators.choiceSelected(this.examType === 'courses'));
+    this.questionForm.controls.correctChoice.setValidators(CustomValidators.choiceSelected(this.examType));
     const onFormChange = () => {
       if (!this.initializing) {
         this.questionChange.emit(this.questionForm);

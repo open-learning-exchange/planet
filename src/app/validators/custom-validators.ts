@@ -16,20 +16,21 @@ export class CustomValidators {
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
-  static choiceSelected(requireCorrect: boolean) {
+  static choiceSelected(examType: String) {
     return (ac: AbstractControl): ValidationErrors => {
-      if (!ac.parent || !requireCorrect) {
+      if (!ac.parent) {
         return null;
       }
-
       const inputtype = ac.parent.get('type');
-      if ((inputtype.value === 'select' || inputtype.value === 'selectMultiple') && ac.value.length === 0) {
-        return { required: true };
+      if (inputtype.value === 'select' || inputtype.value === 'selectMultiple') {
+        if ((examType === 'survey' && ac.parent.controls.choices.length === 0) || ( examType === 'exam' && ac.value.length === 0)) {
+          return { required: true };
+        } else { return null; }
       } else {
         return null;
       }
-    };
-  }
+  };
+}
 
   static hexValidator(ac: AbstractControl): ValidationErrors {
 
