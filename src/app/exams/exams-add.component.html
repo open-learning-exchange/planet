@@ -7,7 +7,7 @@
     {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
     {{examType === 'exam' && courseName ? courseName + ':' : ''}}
     {{pageType}}
-    <ng-container i18n>{examType, select, exam {Exam} survey {Survey}}</ng-container>
+    <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container view-full-height">

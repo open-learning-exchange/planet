@@ -14,7 +14,7 @@
         class="margin-lr-10"
         *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
         (click)="goToExam()">
-        {{isExamInProgress ? "Take Exam" : "Continue Exam"}}
+        {{isExamInProgress ? "Take Test" : "Continue Test"}}
       </a>
       <a
         mat-raised-button
