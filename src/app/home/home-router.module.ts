@@ -28,6 +28,7 @@ const routes: Routes = [
       { path: 'submissions/:type', loadChildren: '../submissions/submissions.module#SubmissionsModule' },
       { path: 'mySurveys', loadChildren: '../submissions/submissions.module#SubmissionsModule', data: { mySurveys: true } },
       { path: 'upgrade', component: UpgradeComponent },
+      { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: '../teams/teams.module#TeamsModule' },
       { path: 'surveys', loadChildren: '../surveys/surveys.module#SurveysModule' },
       { path: 'myAchievements', component: UsersAchievementsComponent },

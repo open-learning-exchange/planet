@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -13,6 +14,7 @@ import { StateService } from '../shared/state.service';
   encapsulation: ViewEncapsulation.None
 })
 export class UpgradeComponent {
+  mode = 'planet';
   enabled: Boolean = true;
   message = 'Start upgrade';
   output = '';
@@ -23,11 +25,13 @@ export class UpgradeComponent {
   timeoutTrials = 0;
 
   constructor(
+    private route: ActivatedRoute,
     private http: HttpClient,
     private couchService: CouchService,
     private stateService: StateService,
     private managerService: ManagerService
   ) {
+    this.mode = this.route.snapshot.data.myPlanet === true ? 'myPlanet' : 'planet';
     this.addLine('Not started');
   }
 
@@ -40,6 +44,14 @@ export class UpgradeComponent {
   }
 
   upgrade() {
+    if (this.mode === 'planet') {
+      this.upgradePlanet();
+    } else {
+      this.upgradeMyPlanet();
+    }
+  }
+
+  upgradePlanet() {
     let parentVersion: string;
     this.getParentVersion().pipe(
       switchMap((pVersion: string) => {
@@ -147,6 +159,13 @@ export class UpgradeComponent {
       headers: { 'Content-Type': 'text/plain' }
     };
     return this.couchService.getUrl('updateyml?u=' + name + ',' + password, opts);
+  }
+
+  upgradeMyPlanet() {
+    this.start();
+    const upgradeUrl = this.stateService.configuration.planetType === 'center' ? '/planetapk' : '/fromnation/planetapk';
+    this.http.get(environment.upgradeAddress + upgradeUrl, { responseType: 'text' })
+      .subscribe(result => this.handleResult(result), err => this.handleError(err));
   }
 
 }
