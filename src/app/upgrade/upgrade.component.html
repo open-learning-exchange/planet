@@ -17,34 +17,34 @@
   <mat-card class="upgrade_mat-card" *ngIf="done && !error">
       <mat-card-header>
         <div mat-card-avatar class="upgrade_mat-card-icon"></div>
-        <mat-card-title>Success!</mat-card-title>
-        <mat-card-subtitle>Reboot is required</mat-card-subtitle>
+        <mat-card-title i18n>Success!</mat-card-title>
+        <mat-card-subtitle i18n>Reboot is required</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>
+        <p i18n>
             The upgrade of the system has been done successfully.<br>
             Please restart your system to apply changes
         </p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary" routerLink="/">OK</button>
-        <button mat-raised-button color="primary" (click)="upgrade()" *ngIf="enabled || done">Verfiy</button>
+        <button mat-raised-button color="primary" routerLink="/" i18n>OK</button>
+        <button mat-raised-button color="primary" (click)="upgrade()" *ngIf="enabled || done" i18n>Verify</button>
       </mat-card-actions>
   </mat-card>
 
   <mat-card class="upgrade_mat-card" *ngIf="error && done">
       <mat-card-header>
         <div mat-card-avatar class="upgrade_mat-card-icon"></div>
-        <mat-card-title>Error :(</mat-card-title>
-        <mat-card-subtitle>Please let us know</mat-card-subtitle>
+        <mat-card-title i18n>Error :(</mat-card-title>
+        <mat-card-subtitle i18n>Please let us know</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>
+        <p i18n>
             There has been an error when trying to upgrade the system
         </p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary" planetFeedback [message]="cleanOutput" [type]="'Bug'" [priority]="'Yes'"><mat-icon>feedback</mat-icon> Send feedback</button>
+        <button mat-raised-button color="primary" planetFeedback [message]="cleanOutput" [type]="'Bug'" [priority]="'Yes'" i18n><mat-icon>feedback</mat-icon> Send feedback</button>
       </mat-card-actions>
   </mat-card>
 
