@@ -128,6 +128,19 @@ export const filteredItemsInPage = (filteredData: any[], pageIndex: number, page
   return filteredData.slice(pageIndex * pageSize, (pageIndex * pageSize) + pageSize);
 };
 
+export const removeFilteredFromSelection = (paginator: any, filteredData: any[], selection: any) => {
+  if (!paginator) {
+    return;
+  }
+  const itemsInPage = filteredItemsInPage(filteredData, paginator.pageIndex, paginator.pageSize);
+  selection.selected.forEach((selectedId) => {
+    const notInSelection  = itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined;
+    if (notInSelection) {
+      selection.deselect(selectedId);
+    }
+  });
+};
+
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));
 
 export const commonSortingDataAccessor = (item: any, property: string) => {
