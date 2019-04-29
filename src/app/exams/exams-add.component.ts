@@ -96,9 +96,9 @@ export class ExamsAddComponent implements OnInit {
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
   }
 
-  onSubmit() {
+  onSubmit(reRoute = false) {
     if (this.examForm.valid) {
-      this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
+      this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
       this.examsService.checkValidFormComponent(this.examForm);
       this.showFormError = true;
@@ -112,7 +112,7 @@ export class ExamsAddComponent implements OnInit {
     );
   }
 
-  addExam(examInfo) {
+  addExam(examInfo, reRoute) {
     const date = this.couchService.datePlaceholder;
     this.couchService.updateDocument(this.dbName,
       { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date })
@@ -121,7 +121,9 @@ export class ExamsAddComponent implements OnInit {
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
       }
-      this.goBack();
+      if (reRoute) {
+        this.goBack();
+      }
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
