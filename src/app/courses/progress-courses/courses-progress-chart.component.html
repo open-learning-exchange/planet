@@ -3,7 +3,7 @@
     <div class="anchor-label" i18n>Total Errors</div>
     <div
       class="accent-color border-bottom"
-      matTooltip="Click to see exam detail"
+      matTooltip="Click to see test detail"
       [matTooltipDisabled]="!total.clickable"
       *ngFor="let total of horizTotals; index as i"
       [ngClass]="{'cursor-pointer':total.clickable}"
@@ -16,7 +16,7 @@
   <div class="anchor-label" i18n>Steps</div>
   <div
     class="border-bottom"
-    matTooltip="Click to see exam detail"
+    matTooltip="Click to see test detail"
     [matTooltipDisabled]="!total.clickable"
     *ngFor="let total of horizTotals; index as i"
     [ngClass]="{'cursor-pointer':total.clickable}"
@@ -28,7 +28,7 @@
   <div class="errors" *ngFor="let set of sets">
     <div
       class="border-bottom"
-      matTooltip="Click to see exam detail"
+      matTooltip="Click to see test detail"
       [matTooltipDisabled]="!item.clickable"
       [ngClass]="{'primary-color':item.fill,'cursor-pointer':item.clickable}"
       *ngFor="let item of set?.items; index as i"

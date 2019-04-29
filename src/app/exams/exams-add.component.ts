@@ -27,7 +27,7 @@ export class ExamsAddComponent implements OnInit {
   pageType = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
-  successMessage = this.examType === 'survey' ? 'New survey added' : 'New exam added';
+  successMessage = this.examType === 'survey' ? 'New survey added' : 'New test added';
   steps = [];
   showFormError = false;
   isCourseContent = this.router.url.match(/courses/);
@@ -81,7 +81,7 @@ export class ExamsAddComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
-      this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Exam updated successfully';
+      this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Test updated successfully';
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
