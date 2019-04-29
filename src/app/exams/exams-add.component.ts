@@ -121,7 +121,6 @@ export class ExamsAddComponent implements OnInit {
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
       }
-      this.goBack();
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
