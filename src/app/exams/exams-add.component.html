@@ -7,14 +7,15 @@
     {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
     {{examType === 'exam' && courseName ? courseName + ':' : ''}}
     {{pageType}}
-    <ng-container i18n>{examType, select, exam {Exam} survey {Survey}}</ng-container>
+    <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="exam-buttons">
-        <button mat-raised-button color="primary" type="submit" [planetSubmit]="examForm.valid" i18n>Save</button>
-        <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n class="margin-lr-5">Add Question</button>
+        <button mat-raised-button color="primary" type="submit" i18n>Save</button>
+        <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n class="margin-lr-5">Return</button>
+        <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button>
         <mat-menu #questionMenu>
           <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
           <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
