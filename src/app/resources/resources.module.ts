@@ -34,6 +34,6 @@ import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search
     ResourcesSearchComponent,
     ResourcesSearchListComponent
   ],
-  exports: [ ResourcesViewerComponent ]
+  exports: [ ResourcesViewerComponent, ResourcesComponent ]
 })
 export class ResourcesModule {}

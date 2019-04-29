@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntil, map, switchMap } from 'rxjs/operators';
-import { Subject, of } from 'rxjs';
+import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { Subject, of, combineLatest } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
@@ -26,6 +26,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 
 @Component({
+  selector: 'planet-resources',
   templateUrl: './resources.component.html',
   styleUrls: [ './resources.scss' ],
   encapsulation: ViewEncapsulation.None
@@ -37,6 +38,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
   @HostBinding('class') readonly hostClass = 'resources-list';
+  @Input() isDialog = false;
+  @Input() excludeIds = [];
   dialogRef: MatDialogRef<DialogsListComponent>;
   readonly dbName = 'resources';
   message = '';
@@ -103,12 +106,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.myLibraryFilter = this.route.snapshot.data.myLibrary === true ? 'on' : 'off';
-    this.resourcesService.resourcesListener(this.parent).pipe(
-      takeUntil(this.onDestroy$),
-      map((resources) => this.setupList(resources, this.userService.shelf.resourceIds)),
+    combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
+      startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
+      map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
-      this.resources.data = resources;
+      this.resources.data = resources.filter((resource: any) => this.excludeIds.indexOf(resource._id) === -1);
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
@@ -123,10 +126,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           return sortNumberOrString(item, property);
       }
     };
-    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe((shelf: any) => {
-        this.resources.data = this.setupList(this.resources.data, shelf.resourceIds);
-      });
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || ' ';
