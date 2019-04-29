@@ -25,8 +25,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Language" formControlName="language">
-          <mat-option i18n value="English">English</mat-option>
-          <mat-option i18n value="Spanish">Español</mat-option>
+          <mat-option *ngFor="let lang of  languages" [value]="lang.name">{{lang.name}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>

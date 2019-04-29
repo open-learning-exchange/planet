@@ -19,6 +19,7 @@ import Mime from 'mime/Mime';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 const mime = new Mime(require('mime/types/standard.json'));
+import { languages } from '../shared/languages';
 
 @Component({
   templateUrl: './resources-add.component.html'
@@ -36,7 +37,7 @@ export class ResourcesAddComponent implements OnInit {
   disableDownload = true;
   disableDelete = true;
   resourceFilename = '';
-
+  languages = languages;
   constructor(
     private router: Router,
     private fb: FormBuilder,
