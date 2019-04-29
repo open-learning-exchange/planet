@@ -38,6 +38,7 @@ export class ResourcesAddComponent implements OnInit {
   disableDelete = true;
   resourceFilename = '';
   languages = languages;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
