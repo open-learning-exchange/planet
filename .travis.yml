@@ -31,7 +31,7 @@ _use_nodejs: &_use_nodejs
 sudo: required
 branches:
   except:
-  - l10n_master
+  - l10n_i18n
 addons:
   apt:
     update: true
