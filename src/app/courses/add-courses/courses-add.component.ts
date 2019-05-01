@@ -74,14 +74,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       ],
       description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
-      memberLimit: [
-        0, // need to compose validators if we use more than one
-        Validators.compose([
-          CustomValidators.integerValidator,
-          CustomValidators.positiveNumberValidator
-        ])
-      ],
-      method: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: this.couchService.datePlaceholder,
