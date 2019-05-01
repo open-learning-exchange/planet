@@ -9,7 +9,6 @@ import { ResourcesMenuComponent } from '../resources/view-resources/resources-me
 import { AuthorizedRolesDirective } from './authorized-roles.directive';
 import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
-import { PlainTextPipe } from './plaintext.pipe';
 
 @NgModule({
   imports: [
@@ -23,8 +22,7 @@ import { PlainTextPipe } from './plaintext.pipe';
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
-    PlainTextPipe
+    FilteredAmountComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -34,8 +32,7 @@ import { PlainTextPipe } from './plaintext.pipe';
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
-    FilteredAmountComponent,
-    PlainTextPipe
+    FilteredAmountComponent
   ]
 })
 export class SharedComponentsModule {}

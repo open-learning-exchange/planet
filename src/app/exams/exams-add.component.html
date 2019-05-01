@@ -31,7 +31,7 @@
       </div>
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
-          <span class="exam-question">{{ question.value.body | plaintext }}</span>
+          <span class="exam-question" [innerHTML]="plainText(this.question.value.body)"></span>
           <span i18n class="margin-lr-4 mat-caption warn-text-color" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
         </planet-step-list-item>
         <div planetStepListForm>

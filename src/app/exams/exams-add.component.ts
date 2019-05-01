@@ -16,6 +16,8 @@ import { ExamsService } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 import { UserService } from '../shared/user.service';
 
+const showdown = require('showdown');
+
 @Component({
   templateUrl: 'exams-add.component.html',
   styleUrls: [ 'exams-add.scss' ]
@@ -159,6 +161,13 @@ export class ExamsAddComponent implements OnInit {
 
   removeQuestion(index) {
     (<FormArray>this.examForm.get('questions')).removeAt(index);
+  }
+
+  plainText(value) {
+    const converter = new showdown.Converter();
+    const html = document.createElement('div');
+    html.innerHTML = converter.makeHtml(value);
+    return html.textContent || html.innerText || '';
   }
 
   goBack() {
