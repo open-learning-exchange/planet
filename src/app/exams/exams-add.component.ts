@@ -63,13 +63,9 @@ export class ExamsAddComponent implements OnInit {
   }
 
   createForm() {
-    const title = this.isCourseContent ? this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle : '';
+    const title = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
     this.examForm = this.fb.group({
-      name: [
-        title,
-        CustomValidators.required,
-        this.nameValidator()
-      ],
+      name: title,
       passingPercentage: [
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
