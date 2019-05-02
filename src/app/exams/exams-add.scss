@@ -9,6 +9,11 @@
 
   form {
     display: grid;
+    grid-template-areas: "buttons" "questions";
+    grid-template-rows: 48px calc(#{$view-container-height} - 48px - 2rem);
+  }
+
+  form.survey-form {
     grid-template-areas: "buttons" "inputs" "questions";
     grid-template-rows: 48px 72px calc(#{$view-container-height} - 120px - 2rem);
   }
