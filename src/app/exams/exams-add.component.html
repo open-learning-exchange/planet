@@ -11,7 +11,7 @@
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
+    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent}" novalidate>
       <div class="exam-buttons">
         <button mat-raised-button color="primary" type="submit" i18n>Save</button>
         <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n class="margin-lr-5">Return</button>
@@ -24,7 +24,7 @@
         </mat-menu>
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
       </div>
-      <div class="exam-inputs">
+      <div class="exam-inputs" *ngIf="!isCourseContent">
         <mat-form-field class="full-width">
           <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
