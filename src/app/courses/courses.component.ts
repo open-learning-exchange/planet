@@ -10,7 +10,8 @@ import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill, createDeleteArray
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
+  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -97,7 +98,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.getCourses();
     this.userShelf = this.userService.shelf;
-    this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'courseTitle' ]) ]);
+    this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFieldsByWord([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item: any, property: string) => this.sortData(item, property);
     this.coursesService.coursesUpdated$.pipe(
       takeUntil(this.onDestroy$),
