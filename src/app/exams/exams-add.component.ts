@@ -120,7 +120,7 @@ export class ExamsAddComponent implements OnInit {
     ).pipe(switchMap((exams) => {
       const name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.couchService.updateDocument(this.dbName,
-        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, name, updatedDate: date })
+        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, name, updatedDate: date });
     }))
     .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
