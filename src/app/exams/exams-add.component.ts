@@ -15,6 +15,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 import { UserService } from '../shared/user.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -63,9 +64,8 @@ export class ExamsAddComponent implements OnInit {
   }
 
   createForm() {
-    const title = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
     this.examForm = this.fb.group({
-      name: title,
+      name: '',
       passingPercentage: [
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
@@ -110,8 +110,14 @@ export class ExamsAddComponent implements OnInit {
 
   addExam(examInfo, reRoute) {
     const date = this.couchService.datePlaceholder;
-    this.couchService.updateDocument(this.dbName,
-      { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date })
+    const namePrefix = this.coursesService.course.courseTItle || { exam: 'Exam', survey: 'Survey' }[this.examType];
+    this.couchService.findAll(this.dbName,
+      { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
+    ).pipe(switchMap((exams) => {
+      const name = examInfo.name || this.newExamName(exams, namePrefix);
+      return this.couchService.updateDocument(this.dbName,
+        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, name, updatedDate: date })
+    }))
     .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       if (this.examType === 'exam' || this.isCourseContent) {
@@ -161,6 +167,15 @@ export class ExamsAddComponent implements OnInit {
 
   goBack() {
     this.router.navigateByUrl(this.returnUrl);
+  }
+
+  newExamName(existingExams: any[], namePrefix, nameNumber = 0) {
+    const tryNumber = nameNumber || existingExams.length;
+    const name = `${namePrefix} ${tryNumber + 1}`;
+    if (existingExams.findIndex((exam: any) => exam.name === name) === -1) {
+      return name;
+    }
+    return this.newExamName(existingExams, namePrefix, tryNumber + 1);
   }
 
 }
