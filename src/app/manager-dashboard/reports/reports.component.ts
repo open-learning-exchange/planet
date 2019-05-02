@@ -62,7 +62,7 @@ export class ReportsComponent {
       this.activityService.attachNamesToPlanets(planetDocs), hubData
     );
     this.hubs = hubs;
-    this.sandboxPlanets = sandboxPlanets;
+    this.sandboxPlanets = sandboxPlanets.filter((planet: any) => planet.doc.docType !== 'parentName');
   }
 
 }
