@@ -159,13 +159,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const courseArr = [];
     const surveyCourse = surveys.filter((survey) => survey.course);
     surveyCourse.forEach((element: any) => {
-      const indexAtArr = courseArr.findIndex( (course) => course._id === element.course._id);
-      const course = indexAtArr > -1 ? courseArr[indexAtArr] :   element.course;
+      const indexAtArr = courseArr.findIndex( (mCourse) => mCourse._id === element.course._id);
+      const course = indexAtArr > -1 ? courseArr[indexAtArr] : element.course;
       const index = this.findSurveyInSteps(course.steps, element);
       if (index > -1) {
         course.steps.splice(index, 1);
       }
-      indexAtArr === -1 ? courseArr.splice( 0, 1, course) : courseArr[indexAtArr] = course;
+      indexAtArr === -1 ? courseArr.push(course) : courseArr[indexAtArr] = course;
     });
     return courseArr;
   }
@@ -181,7 +181,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
         if (courseArray.length > 0) {
-          this.couchService.bulkDocs('courses', courseArray);
+          this.couchService.bulkDocs('courses', courseArray).subscribe(() => console.log('course removed'));
         }
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting survey.')
@@ -201,7 +201,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
         if (survey.course) {
-          this.couchService.updateDocument('courses', survey.course);
+          this.couchService.updateDocument('courses', survey.course).subscribe(() => console.log('Course removed'));
         }
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this survey.')
