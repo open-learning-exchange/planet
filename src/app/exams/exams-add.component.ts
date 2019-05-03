@@ -116,7 +116,7 @@ export class ExamsAddComponent implements OnInit {
 
   addExam(examInfo, reRoute) {
     const date = this.couchService.datePlaceholder;
-    const namePrefix = this.coursesService.course.form.courseTitle || { exam: 'Exam', survey: 'Survey' }[this.examType];
+    const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
     this.couchService.findAll(this.dbName,
       { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
     ).pipe(switchMap((exams) => {
