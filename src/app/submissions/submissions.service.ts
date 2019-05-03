@@ -217,7 +217,7 @@ export class SubmissionsService {
       'type': 'survey',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      'time': Date.now()
     };
     const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
       .filter(name => name !== undefined && name !== this.userService.get().name)
