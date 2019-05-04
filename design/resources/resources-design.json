@@ -1,1 +1,1 @@
-{"views":{"count_tags":{"map":"function (doc) {\n        for (var i = 0; i < doc.tags.length; i++) {\n          emit(doc.tags[i], 1);\n        }\n      }","reduce":"_count"}}}
+{"views":{"count_tags":{"map":"function (doc) {\r\n        for (var i = 0; i < doc.tags.length; i++) {\r\n          emit(doc.tags[i], 1);\r\n        }\r\n      }","reduce":"_count"}}}
