@@ -9,9 +9,8 @@ import { Subject, of, combineLatest } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
-  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray, filterSpecificFieldsByWord,
-  commonSortingDataAccessor, removeFilteredFromSelection
+  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, removeFilteredFromSelection
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
