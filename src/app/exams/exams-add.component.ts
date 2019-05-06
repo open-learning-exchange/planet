@@ -100,10 +100,11 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
+      this.showFormError = false;
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
-      this.examsService.checkValidFormComponent(this.examForm);
       this.showFormError = true;
+      this.examsService.checkValidFormComponent(this.examForm);
       this.stepClick(this.activeQuestionIndex);
     }
   }
