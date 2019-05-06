@@ -40,7 +40,7 @@ export class ReportsMyPlanetComponent implements OnInit {
       this.couchService.findAll('communityregistrationrequests',
         findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] ))
     ]).subscribe(([ myPlanets, planets ]) => {
-      this.planets = [this.stateService.configuration].concat(planets);
+      this.planets = [ this.stateService.configuration ].concat(planets);
       this.myPlanets = myPlanets;
       this.filterData();
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));

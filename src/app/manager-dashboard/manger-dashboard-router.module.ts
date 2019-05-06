@@ -7,7 +7,7 @@ import { ManagerDashboardConfigurationComponent } from './manager-dashboard-conf
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
-import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component'
+import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
