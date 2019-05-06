@@ -16,6 +16,8 @@ import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { PendingTableComponent } from './reports/pending-table.component';
+import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
+import { MyPlanetTableComponent } from './reports/myplanet-table.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
@@ -41,7 +43,9 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     ReportsTableComponent,
     ReportsDetailComponent,
     ReportsPendingComponent,
-    PendingTableComponent
+    PendingTableComponent,
+    ReportsMyPlanetComponent,
+    MyPlanetTableComponent
   ]
 })
 export class ManagerDashboardModule {}

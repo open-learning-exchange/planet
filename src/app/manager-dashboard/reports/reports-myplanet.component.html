@@ -1,0 +1,25 @@
+<!-- Request template -->
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/manager">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>myPlanet Report</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>myPlanet on { planetType, select, center {Nations} other {Communities} }</span>
+      <span class="toolbar-fill"></span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <mat-expansion-panel *ngFor="let planet of planets">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
+      </mat-expansion-panel-header>
+      <planet-myplanet-table [data]="planet.children"></planet-myplanet-table>
+    </mat-expansion-panel>
+  </div>
+</div>
