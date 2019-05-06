@@ -29,9 +29,9 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   filterData() {
     this.planets = this.planets.map((planet: any) => ({
-        ...planet,
-        children: this.myPlanets.filter((item: any) => item.createdOn === planet.code || item.parentCode === planet.code)
-      }));
+      ...planet,
+      children: this.myPlanets.filter((item: any) => item.createdOn === planet.code || item.parentCode === planet.code)
+    }));
   }
 
   getMyPlanetList() {
