@@ -120,9 +120,9 @@ export class ExamsAddComponent implements OnInit {
     this.couchService.findAll(this.dbName,
       { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
     ).pipe(switchMap((exams) => {
-      const name = examInfo.name || this.newExamName(exams, namePrefix);
+      examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.couchService.updateDocument(this.dbName,
-        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, name, updatedDate: date });
+        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date });
     }))
     .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };

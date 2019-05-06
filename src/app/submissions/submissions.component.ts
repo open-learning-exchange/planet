@@ -21,7 +21,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   submissions = new MatTableDataSource();
-  readonly dbName = 'meetups';
+  readonly dbName = 'submissions';
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
