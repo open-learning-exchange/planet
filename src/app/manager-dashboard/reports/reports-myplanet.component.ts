@@ -36,10 +36,10 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   getMyPlanetList() {
     forkJoin([
-      this.couchService.findAll('myplanet_activities'),
       this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ '_id': { '$gt': null } }, 0, [ { 'code': 'asc' } ] ))
-    ]).subscribe(([ myPlanets, planets ]) => {
+        findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
+      this.couchService.findAll('myplanet_activities')
+    ]).subscribe(([ planets, myPlanets ]) => {
       this.planets = [ this.stateService.configuration ].concat(planets);
       this.myPlanets = myPlanets;
       this.filterData();
