@@ -87,7 +87,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           ...survey,
           course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
           taken: submissions.filter(data => {
-            return data.parentId === survey._id && data.status !== 'pending';
+            return data.parentId.match(survey._id) && data.status !== 'pending';
           }).length
         })
       );
