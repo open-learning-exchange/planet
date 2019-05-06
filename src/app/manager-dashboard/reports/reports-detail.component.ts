@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
@@ -11,26 +12,44 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
   templateUrl: './reports-detail.component.html',
   styleUrls: [ 'reports-detail.scss' ]
 })
-export class ReportsDetailComponent {
+export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   parentCode = '';
   planetCode = '';
+  planetName = '';
   reports: any = {};
   charts: Chart[] = [];
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
     private dialogsLoadingService: DialogsLoadingService
-  ) {
+  ) {}
+
+  ngOnInit() {
+    const dbName = 'communityregistrationrequests';
     this.dialogsLoadingService.start();
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    combineLatest(this.route.paramMap, this.stateService.couchStateListener(dbName)).pipe(takeUntil(this.onDestroy$))
+    .subscribe(([ params, planetState ]: [ ParamMap, any ]) => {
+      if (planetState === undefined) {
+        return;
+      }
+      const planets = this.activityService.attachNamesToPlanets((planetState && planetState.newData) || []);
       const codeParam = params.get('code');
+      const planet = planets.find((p: any) => p.doc.code === codeParam);
       this.planetCode = codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
+      this.planetName = planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : this.stateService.configuration.name;
       this.initializeData(!codeParam);
     });
+    this.stateService.requestData(dbName, 'local');
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   initializeData(local: boolean) {

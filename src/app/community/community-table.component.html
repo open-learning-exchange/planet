@@ -1,26 +1,26 @@
 <mat-table #table [dataSource]="communities" matSort>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="code">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.code}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.doc.code}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="localDomain">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.localDomain}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.doc.localDomain}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="createdDate">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.createdDate | date: 'mediumDate'}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.doc.createdDate | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <button mat-raised-button color="primary" (click)="view(element)" i18n>View</button>
-      <ng-container *ngIf="element.registrationRequest === 'accepted'">
-        <button *ngIf="element.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.localDomain)" i18n>
+      <button mat-raised-button color="primary" (click)="view(element.doc)" i18n>View</button>
+      <ng-container *ngIf="element.doc.registrationRequest === 'accepted'">
+        <button *ngIf="element.doc.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.doc.localDomain)" i18n>
           Communities
         </button>
         <button mat-raised-button color="primary" i18n [matMenuTriggerFor]="hubMenu" *ngIf="(hub==='sandbox' && hubs.length > 0) || hubs.length > 1">
@@ -31,12 +31,15 @@
         </button>
         <mat-menu #hubMenu="matMenu">
           <ng-container *ngFor="let h of hubs">
-            <button *ngIf="h.name!==hub.name" (click)="addHubClick(element.code, h.name)" mat-menu-item>{{h.name}}</button>
+            <button *ngIf="h.name!==hub.name" (click)="addHubClick(element.doc.code, h.name)" mat-menu-item>{{h.name}}</button>
           </ng-container>
-          <button (click)="removeHubClick(element.code)" *ngIf="hub!=='sandbox'" mat-menu-item>Sandbox</button>
+          <button (click)="removeHubClick(element.doc.code)" *ngIf="hub!=='sandbox'" mat-menu-item>Sandbox</button>
         </mat-menu>
+        <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)" i18n>
+          Edit Name
+        </button>
       </ng-container>
-      <ng-container *ngIf="element.registrationRequest === 'pending'">
+      <ng-container *ngIf="element.doc.registrationRequest === 'pending'">
         <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n>
           <mat-icon>link</mat-icon>Accept
         </button>

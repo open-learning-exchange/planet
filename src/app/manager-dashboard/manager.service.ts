@@ -102,21 +102,8 @@ export class ManagerService {
     );
   }
 
-  arrangePlanetsIntoHubs(planets, hubs) {
-    return ({
-      hubs: hubs.map((hub: any) => ({
-        ...hub,
-        children: hub.spokes.map(code => planets.find((planet: any) => planet.code === code)).filter(child => child)
-      })),
-      sandboxPlanets: planets.filter(
-        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.code) > -1) === undefined
-      )
-    });
-  }
-
   createPin() {
     return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
-
 
 }
