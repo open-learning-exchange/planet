@@ -12,22 +12,17 @@ export class TagsService {
     private stateService: StateService
   ) {}
 
-  getTags(parent: boolean) {
-    const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
-    return forkJoin([
-      this.couchService.get('resources/_design/resources/_view/count_tags?group=true', opts),
-      this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' })
-    ]).pipe(
-      map(([ existingTags, dbTags ]: [ any, any ]) => {
-        const unusedTags = dbTags.filter((dbTag: any) => {
-          return existingTags.rows.find((tag: any) => tag.key === dbTag._id) === undefined;
-        });
-        return existingTags.rows.sort((a, b) => b.value - a.value).map((tag: any) => ({
-          count: tag.value,
-          ...this.findTag(tag.key, dbTags)
-        })).concat(unusedTags).sort((a, b) => {
-          return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
-        }).map(this.fillSubTags);
+  getTags(db: string, parent: boolean) {
+    return this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }).pipe(
+      map((tags: any[]) => {
+        const tagCounts = tags.reduce(
+          (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.linkId]: (counts[tag.linkId] || 0) + 1 },
+          {}
+        );
+        return tags
+          .map((tag: any) => ({ ...tag, count: tagCounts[tag._id] || 0 }))
+          .filter((tag: any) => tag.db === db && tag.docType === 'definition')
+          .map(this.fillSubTags);
       })
     );
   }

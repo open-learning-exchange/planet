@@ -9,7 +9,7 @@
     <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
     <button mat-stroked-button i18n (click)="toggleFilters()">Profile</button>
     <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
-      <planet-tag-input [formControl]="tagFilter" [parent]="parent" [filteredData]="resources.filteredData"></planet-tag-input>
+      <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData"></planet-tag-input>
     </mat-form-field>
     <mat-form-field class="font-size-1 margin-lr-4">
       <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
@@ -35,7 +35,7 @@
       <span *ngIf="!parent">
         <ng-container *planetAuthorizedRoles="'manager'">
           <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
-            <planet-tag-input [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
+            <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
           </mat-form-field>
           <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-button [disabled]="!selection.selected.length" (click)="shareResource('push', selection.selected)">
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon><span i18n>Send resource</span>

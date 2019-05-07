@@ -60,6 +60,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() helperText = true;
   @Input() selectedIds;
   @Input() labelType = this.mode;
+  @Input() db;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
@@ -102,7 +103,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   onChange(_: any) {}
 
   initTags() {
-    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
+    this.tagsService.getTags(this.db, this.parent).subscribe((tags: string[]) => {
       this.tags = tags;
       this.setLabels(this.value, tags);
       this.resetDialogData();
