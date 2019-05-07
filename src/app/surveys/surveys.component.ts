@@ -91,12 +91,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           }).length
         })
       );
-      // populate course title if course exists
-      for (let survey of this.surveys.data) {
-        if (survey.course !== undefined) {
-          survey.courseTitle = survey.course.courseTitle;
-        }
-      }
+      this.populateCourseTitleIfExist();
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
@@ -115,6 +110,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  populateCourseTitleIfExist() {
+    for (const survey of this.surveys.data) {
+      if (survey.course !== undefined) {
+        survey.courseTitle = survey.course.courseTitle;
+      }
+    }
   }
 
   receiveData(dbName: string, type: string) {
