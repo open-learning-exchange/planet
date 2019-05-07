@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { forkJoin, Subject } from 'rxjs';
-import { findDocuments } from '../../shared/mangoQueries';
+import { forkJoin } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { ManagerService } from '../manager.service';
+import { ReportsService } from './reports.service';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
@@ -20,7 +21,9 @@ export class ReportsMyPlanetComponent implements OnInit {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private managerService: ManagerService,
+    private reportsService: ReportsService
   ) {}
 
   ngOnInit() {
@@ -36,11 +39,10 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   getMyPlanetList() {
     forkJoin([
-      this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
+      this.managerService.getChildPlanets(),
       this.couchService.findAll('myplanet_activities')
     ]).subscribe(([ planets, myPlanets ]) => {
-      this.planets = [ this.stateService.configuration ].concat(planets);
+      this.planets = [ this.stateService.configuration ].concat(this.reportsService.attachNamesToPlanets(planets));
       this.myPlanets = myPlanets;
       this.filterData();
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));

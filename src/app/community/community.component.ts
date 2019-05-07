@@ -78,8 +78,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   getCommunityList(search = this.searchValue) {
     forkJoin([
-      this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
+      this.managerService.getChildPlanets(),
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
