@@ -91,7 +91,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           }).length
         })
       );
-      this.surveys.data = this.surveys.data.map((survey: any) => ({ ...survey, courseTitle: survey.course ? survey.course.courseTitle : '' }));
+      this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
