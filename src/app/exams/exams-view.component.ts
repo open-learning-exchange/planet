@@ -57,6 +57,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const submissionId = params.get('submissionId');
       const mode = params.get('mode');
       this.answer.setValue(null);
+      this.answer[params.get('preview') ? 'disable' : 'enable']();
       this.spinnerOn = true;
       if (courseId) {
         this.coursesService.requestCourse({ courseId });
