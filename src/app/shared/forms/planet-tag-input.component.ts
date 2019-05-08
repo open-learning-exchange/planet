@@ -184,9 +184,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   tagsInSelection(selectedIds, data) {
     const selectedTagsObject = selectedIds
       .reduce((selectedTags, id) => {
-        const tagIds = this.filteredData.find((item: any) => item._id === id).tags || [];
-        tagIds.forEach(tagId => {
-          selectedTags[tagId] = selectedTags[tagId] === undefined ? 1 : selectedTags[tagId] + 1;
+        const tags = this.filteredData.find((item: any) => item._id === id).tags || [];
+        tags.forEach((tag: any) => {
+          selectedTags[tag._id] = selectedTags[tag._id] === undefined ? 1 : selectedTags[tag._id] + 1;
         });
         return selectedTags;
       }, {});

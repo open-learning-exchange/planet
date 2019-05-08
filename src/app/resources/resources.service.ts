@@ -105,20 +105,17 @@ export class ResourcesService {
 
   updateResourceTags(resourceIds, tagIds, indeterminateIds = []) {
     const fullSelectedTags = tagIds.filter(tagId => indeterminateIds.indexOf(tagId) === -1);
-    const newResources = resourceIds
-      .map(id => this.resources.local.find(resource => resource._id === id).doc)
-      .map(resource => ({ ...resource, tags: this.newResourceTags(resource.tags, fullSelectedTags, indeterminateIds) }));
-    return this.couchService.post(this.dbName + '/_bulk_docs', { docs: newResources }).pipe(map((res) => {
+    const resources = resourceIds
+      .map(id => this.resources.local.find(resource => resource._id === id));
+    const newTags = resources.map((resource: any) =>
+      this.tagsService.tagBulkDocs(
+        resource._id, this.dbName, fullSelectedTags, resource.tags.filter((tag: any) => indeterminateIds.indexOf(tag._id) === -1)
+      )
+    ).flat();
+    return this.couchService.bulkDocs('tags', newTags).pipe(map((res) => {
       this.requestResourcesUpdate(false);
       return res;
     }));
-  }
-
-  newResourceTags(currentTagIds = [], fullSelectedTagIds, indeterminateIds) {
-    return [
-      ...currentTagIds.filter(tagId => indeterminateIds.indexOf(tagId) > -1),
-      ...fullSelectedTagIds
-    ].reduce(dedupeShelfReduce, []);
   }
 
 }
