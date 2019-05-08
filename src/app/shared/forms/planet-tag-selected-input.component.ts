@@ -33,7 +33,7 @@ export class PlanetTagSelectedInputComponent implements OnInit, OnChanges {
   }
 
   initTags() {
-    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
+    this.tagsService.getTags(this.parent).subscribe((tags: any[]) => {
       this.allTags = tags;
     });
   }
