@@ -31,4 +31,6 @@ export const styleVariables: any = (() => {
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 
+export const arraySubField = (array: any[], field: string) => array.map(item => item[field]);
+
 export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);

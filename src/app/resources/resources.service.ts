@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce, arraySubField } from '../shared/utils';
 import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()
@@ -30,19 +30,19 @@ export class ResourcesService {
       const planetField = res.parent ? 'parent' : 'local';
       this.ratings[planetField] = res.ratings.filter((rating: any) => rating.type === 'resource');
       if (!this.isActiveResourceFetch) {
-        this.setResources(this.resources[planetField], res.ratings, planetField);
+        this.setResources(arraySubField(this.resources[planetField], 'doc'), res.ratings, planetField);
       }
     });
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
       if (response !== undefined) {
         this.isActiveResourceFetch = false;
-        this.setResources(response.newData.map(r => ({ doc: r, ...r })), this.ratings[response.planetField], response.planetField);
+        this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
       }
     });
     this.stateService.couchStateListener('tags').subscribe(response => {
       if (response !== undefined) {
         this.tags[response.planetField] = response.newData;
-        this.setTags(this.resources[response.planetField], response.newData, response.planetField);
+        this.setTags(arraySubField(this.resources[response.planetField], 'doc'), response.newData, response.planetField);
       }
     });
   }
@@ -70,16 +70,16 @@ export class ResourcesService {
 
   setTags(resources, tags, planetField) {
     const tagsObj = tags.reduce((obj, tagLink: any) => {
-      if (tagLink.docType === 'definition') {
+      if (tagLink.docType !== 'link') {
         return obj;
       }
-      const tag = this.tagsService.findTag(tagLink.tagId, tags);
-      return ({ ...obj, [tag.linkId]: obj[tag.linkId] ? [ ...obj[tag.linkId], tag ] : [ tag ] });
+      const tag = { ...this.tagsService.findTag(tagLink.tagId, tags), tagLink };
+      return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
     }, {});
     this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
       doc: resource,
       _id: resource._id,
-      tags: tagsObj[resource._id]
+      tags: tagsObj[resource._id] || []
     }));
     this.updateResources(this.resources);
   }

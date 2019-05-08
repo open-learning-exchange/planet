@@ -46,4 +46,16 @@ export class TagsService {
     return { ...tag, subTags: tags.filter(({ attachedTo }) => (attachedTo || []).indexOf(tag._id) > -1) };
   }
 
+  tagBulkDocs(linkId: string, db: string, newTagIds: string[], currentTags: any[]) {
+    // name property is needed for tags database queries
+    const tagLinkDoc = (tagId) => ({ linkId, tagId, name: '', docType: 'link', db });
+    return [
+      ...newTagIds.filter(tagId => currentTags.findIndex((tag: any) => tag.tagId === tagId) === -1)
+        .map(tagId => tagLinkDoc(tagId)),
+      ...currentTags.filter((tag: any) => newTagIds.indexOf(tag.tagId) > -1),
+      ...currentTags.filter((tag: any) => newTagIds.indexOf(tag.tagId) === -1)
+        .map((tag: any) => ({ ...tag.tagLink, '_deleted': true }))
+    ];
+  }
+
 }
