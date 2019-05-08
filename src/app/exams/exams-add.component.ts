@@ -185,7 +185,7 @@ export class ExamsAddComponent implements OnInit {
 
   newExamName(existingExams: any[], namePrefix, nameNumber = 0) {
     const tryNumber = nameNumber || existingExams.length;
-    const name = `${namePrefix} ${tryNumber + 1}`;
+    const name = `${namePrefix} - ${tryNumber + 1}`;
     if (existingExams.findIndex((exam: any) => exam.name === name) === -1) {
       return name;
     }
