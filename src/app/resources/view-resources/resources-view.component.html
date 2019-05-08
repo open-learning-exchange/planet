@@ -15,7 +15,7 @@
     <span class="toolbar-fill"></span>
     <div>
       <ng-container *ngIf="!parent">
-        <a mat-raised-button *ngIf="resource._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
+        <a mat-raised-button *ngIf="resource.doc._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
         <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
           Add to myLibrary
         </button>
@@ -38,7 +38,7 @@
       </p>
       <p *ngIf="resource?.tags?.length > 0">
         <b i18n>Collections:</b>
-        <span *ngFor="let tag of resource.tagObjects; last as isLast"> {{ tag.name }}<span *ngIf ="!isLast">,</span></span>
+        <span *ngFor="let tag of resource.tags; last as isLast"> {{ tag.name }}<span *ngIf ="!isLast">,</span></span>
       </p>
       <p><b i18n>Level:</b>{{' ' + resource?.level?.join(', ')}}</p>
       <p *ngIf="resource?.medium"><b i18n>Media:</b>{{' ' + resource?.medium}}</p>
@@ -50,7 +50,7 @@
     </div>
     <div>
       <planet-resources-viewer
-        *ngIf="resource?._attachments; else noAttachment"
+        *ngIf="resource?.doc._attachments; else noAttachment"
         [resourceId]="resourceId"
         (resourceUrl)="setResourceUrl($event)">
       </planet-resources-viewer>

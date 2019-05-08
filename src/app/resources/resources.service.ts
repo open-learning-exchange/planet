@@ -69,9 +69,17 @@ export class ResourcesService {
   }
 
   setTags(resources, tags, planetField) {
+    const tagsObj = tags.reduce((obj, tagLink: any) => {
+      if (tagLink.docType === 'definition') {
+        return obj;
+      }
+      const tag = this.tagsService.findTag(tagLink.tagId, tags);
+      return ({ ...obj, [tag.linkId]: obj[tag.linkId] ? [ ...obj[tag.linkId], tag ] : [ tag ] });
+    }, {});
     this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
-      ...resource,
-      tagObjects: resource.tags.map(tag => ({ name: this.tagsService.findTag(tag, tags).name, _id: tag }))
+      doc: resource,
+      _id: resource._id,
+      tags: tagsObj[resource._id]
     }));
     this.updateResources(this.resources);
   }

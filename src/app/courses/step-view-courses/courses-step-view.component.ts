@@ -44,7 +44,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.resourcesService.resourcesListener(this.parent)
     ).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
-      this.initCourse(course, progress, resources);
+      this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
     });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {

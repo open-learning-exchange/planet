@@ -81,12 +81,12 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a [routerLink]="['view', element._id]">{{element.title}}</a>
+            <a [routerLink]="['view', element._id]">{{element.doc.title}}</a>
             <mat-icon class="margin-lr-3" i18n-title title="In Library" [inline]="true" *ngIf="element.libraryInfo">check</mat-icon>
           </h3>
-          <td-markdown class="content" [content]="element.description"></td-markdown>
+          <td-markdown class="content" [content]="element.doc.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
-            <mat-chip *ngFor="let tag of element.tagObjects" (click)="addTag(tag._id)">
+            <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag._id)">
               {{tag.name}}
             </mat-chip>
           </mat-chip-list>
@@ -115,7 +115,7 @@
                 <span i18n>Delete</span>
               </button>
             </ng-container>
-            <a href="{{urlPrefix + element._id + '/' + element.filename}}" mat-menu-item download [disabled]="!element.isDownloadable">
+            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!element.doc.isDownloadable">
               <mat-icon>file_download</mat-icon>
               <span i18n>Download file</span>
             </a>
