@@ -16,7 +16,7 @@ export class TagsService {
     return this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }).pipe(
       map((tags: any[]) => {
         const tagCounts = tags.reduce(
-          (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.linkId]: (counts[tag.linkId] || 0) + 1 },
+          (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
           {}
         );
         return tags

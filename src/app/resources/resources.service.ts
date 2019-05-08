@@ -77,7 +77,7 @@ export class ResourcesService {
       const tag = { ...this.tagsService.findTag(tagLink.tagId, tags), tagLink };
       return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
     }, {});
-    this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
+    this.resources[planetField] = resources.map((resource: any) => ({
       ...resource,
       tags: tagsObj[resource._id] || []
     }));
