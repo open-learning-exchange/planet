@@ -205,7 +205,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     return this.mode === 'add' ? tags : tags.map((tag) => {
       return !selectMany ? tag : ({
         ...tag,
-        count: this.filteredData.reduce((count, item: any) => count + ((item.tags || []).indexOf(tag._id) > -1 ? 1 : 0), 0)
+        count: this.filteredData.reduce(
+          (count, item: any) => count + ((item.tags || []).findIndex((itemTag: any) => itemTag._id === tag._id) > -1 ? 1 : 0),
+          0
+        )
       });
     }).filter((tag: any) => tag.count > 0);
   }

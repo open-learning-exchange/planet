@@ -79,7 +79,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
-      filterTags('tags', this.tagFilter),
+      filterTags(this.tagFilter),
       filterSpecificFieldsByWord([ 'title' ]),
       filterShelf(this._myLibraryFilter, 'libraryInfo')
     ]

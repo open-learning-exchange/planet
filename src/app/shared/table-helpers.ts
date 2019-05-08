@@ -75,9 +75,9 @@ export const filterArrayField = (filterField: string, filterItems: string[]) => 
   };
 };
 
-export const filterTags = (filterField, filterControl: FormControl) => {
+export const filterTags = (filterControl: FormControl) => {
   return (data: any, filter: string) => {
-    return filterArrayField(filterField, filterControl.value)(data, filter);
+    return filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter);
   };
 };
 
