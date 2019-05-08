@@ -1,4 +1,6 @@
-<planet-tag-selected-input [tags]="value" [tooltipLabels]="tooltipLabels" [helperText]="helperText"></planet-tag-selected-input>
+<ng-container *ngIf="helperText">
+  <planet-tag-selected-input [selectedTags]="value"></planet-tag-selected-input>
+</ng-container>
 
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
   <ng-container [ngSwitch]="labelType">
