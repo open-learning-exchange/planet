@@ -20,7 +20,7 @@
   <div>
     <button type="button" mat-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')">Add Choice</button>
   </div>
-  <div i18n class="mat-caption warn-text-color" *ngIf="examType==='exam' && !questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
+  <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
     You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
   </div>
   <div class="question-choices">
