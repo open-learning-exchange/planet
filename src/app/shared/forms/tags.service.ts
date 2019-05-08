@@ -52,7 +52,6 @@ export class TagsService {
     return [
       ...newTagIds.filter(tagId => currentTags.findIndex((tag: any) => tag.tagId === tagId) === -1)
         .map(tagId => tagLinkDoc(tagId)),
-      ...currentTags.filter((tag: any) => newTagIds.indexOf(tag.tagId) > -1),
       ...currentTags.filter((tag: any) => newTagIds.indexOf(tag.tagId) === -1)
         .map((tag: any) => ({ ...tag.tagLink, '_deleted': true }))
     ];

@@ -30,19 +30,20 @@ export class ResourcesService {
       const planetField = res.parent ? 'parent' : 'local';
       this.ratings[planetField] = res.ratings.filter((rating: any) => rating.type === 'resource');
       if (!this.isActiveResourceFetch) {
-        this.setResources(arraySubField(this.resources[planetField], 'doc'), res.ratings, planetField);
+        this.setResources(this.resources[planetField], res.ratings, planetField);
       }
     });
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
       if (response !== undefined) {
         this.isActiveResourceFetch = false;
-        this.setResources(response.newData, this.ratings[response.planetField], response.planetField);
+        const resources = response.newData.map((resource: any) => ({ doc: resource, _id: resource._id }));
+        this.setResources(resources, this.ratings[response.planetField], response.planetField);
       }
     });
     this.stateService.couchStateListener('tags').subscribe(response => {
       if (response !== undefined) {
         this.tags[response.planetField] = response.newData;
-        this.setTags(arraySubField(this.resources[response.planetField], 'doc'), response.newData, response.planetField);
+        this.setTags(this.resources[response.planetField], response.newData, response.planetField);
       }
     });
   }
@@ -77,8 +78,7 @@ export class ResourcesService {
       return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
     }, {});
     this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
-      doc: resource,
-      _id: resource._id,
+      ...resource,
       tags: tagsObj[resource._id] || []
     }));
     this.updateResources(this.resources);
