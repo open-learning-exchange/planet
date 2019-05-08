@@ -3,7 +3,7 @@ import { TagsService } from './tags.service';
 
 @Component({
   template: `
-    <span [ngSwitch]="selectedTags.length" class="small margin-lr-5">
+    <span [ngSwitch]="selectedIds.length" class="small margin-lr-5">
       <span *ngSwitchCase="0" i18n>No collections selected</span>
       <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
       <span *ngSwitchDefault [matTooltip]="tooltipLabels">Hover to see selected collections</span>
@@ -13,11 +13,11 @@ import { TagsService } from './tags.service';
 })
 export class PlanetTagSelectedInputComponent implements OnInit, OnChanges {
 
-  @Input() selectedTags: string[] = [];
+  @Input() selectedIds: string[] = [];
+  @Input() parent = false;
 
   tooltipLabels = '';
-  allTags: string[] = [];
-  parent = false;
+  allTags: any[] = [];
 
   constructor(
     private tagsService: TagsService
@@ -25,11 +25,11 @@ export class PlanetTagSelectedInputComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.initTags();
-    this.setTooltipLabels(this.selectedTags, this.allTags);
+    this.setTooltipLabels(this.selectedIds, this.allTags);
   }
 
   ngOnChanges() {
-    this.setTooltipLabels(this.selectedTags, this.allTags);
+    this.setTooltipLabels(this.selectedIds, this.allTags);
   }
 
   initTags() {
@@ -38,8 +38,8 @@ export class PlanetTagSelectedInputComponent implements OnInit, OnChanges {
     });
   }
 
-  setTooltipLabels(selectedTags, allTags) {
-    const tagsNames = selectedTags.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
+  setTooltipLabels(selectedIds, allTags) {
+    const tagsNames = selectedIds.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
     this.tooltipLabels = tagsNames.join(', ');
   }
 

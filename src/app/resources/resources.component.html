@@ -26,7 +26,7 @@
     <ng-container *ngIf="isAuthorized">
       <button *ngIf="!parent" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
       <planet-filtered-amount [table]="resources"></planet-filtered-amount>
-      <planet-tag-selected-input [selectedTags]="tag.value"></planet-tag-selected-input>
+      <planet-tag-selected-input [selectedIds]="tag.value" [parent]="parent"></planet-tag-selected-input>
       <span class="toolbar-fill"></span>
       <span *ngIf="parent">
         <button mat-button [disabled]="!selection.selected.length" (click)="shareResource('pull', selection.selected)">
