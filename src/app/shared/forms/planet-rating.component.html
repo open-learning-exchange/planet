@@ -14,7 +14,7 @@
 
   <div class="your-rating" *ngIf="!parent">
     <form [formGroup]="rateForm" novalidate>
-      <planet-rating-stars (click)="onStarClick()" formControlName="rate"></planet-rating-stars>
+      <planet-rating-stars (click)="onStarClick()" formControlName="rate" [disabled]="disabled"></planet-rating-stars>
     </form>
   </div>
 

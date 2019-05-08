@@ -1,8 +1,9 @@
 <planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
   <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
     <span>{{step.stepTitle || 'Step ' + (i+1)}}</span>
-    <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
     <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
+    <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
+    <mat-icon *ngIf="step?.survey?.questions.length">description</mat-icon>
     <span class="toolbar-fill"></span>
   </planet-step-list-item>
   <span class="mat-caption margin-lr-5" planetStepListNumber>
@@ -30,8 +31,8 @@
     </ng-container>
   </div>
   <div planetStepListActions>
-    <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Exam</a>
-    <button mat-raised-button color="primary" (click)="attachItem('resources')" [planetSubmit]="spinnerOn">Add Resource</button>
+    <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>
+    <button mat-raised-button color="primary" (click)="addResources()">Add Resource</button>
     <a mat-raised-button color="primary" (click)="addExam('survey')">{{ activeStep?.survey ? 'Update' : 'Add' }} Survey</a>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </div>

@@ -143,4 +143,21 @@ export class ReportsService {
     return time !== undefined ? { [field]: { '$gt': time } } : {};
   }
 
+  attachNamesToPlanets(planetDocs) {
+    const names = planetDocs.filter((d: any) => d.docType === 'parentName');
+    return planetDocs.map((d: any) => ({ doc: d, nameDoc: names.find((name: any) => name.planetId === d._id) }));
+  }
+
+  arrangePlanetsIntoHubs(planets, hubs) {
+    return ({
+      hubs: hubs.map((hub: any) => ({
+        ...hub,
+        children: hub.spokes.map(code => planets.find((planet: any) => planet.doc.code === code)).filter(child => child)
+      })),
+      sandboxPlanets: planets.filter(
+        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.doc.code) > -1) === undefined
+      )
+    });
+  }
+
 }

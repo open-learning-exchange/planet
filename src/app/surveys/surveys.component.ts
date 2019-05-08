@@ -87,7 +87,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           ...survey,
           course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
           taken: submissions.filter(data => {
-            return data.parentId === survey._id && data.status !== 'pending';
+            return data.parentId.match(survey._id) && data.status !== 'pending';
           }).length
         })
       );
@@ -156,7 +156,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     return {
       request: this.couchService.bulkDocs(this.dbName, deleteArray),
       onNext: () => {
-        this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === -1);
+        this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === undefined);
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');

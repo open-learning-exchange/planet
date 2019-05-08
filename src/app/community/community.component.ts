@@ -10,8 +10,8 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { ReportsService } from '../manager-dashboard/reports/reports.service';
 
 @Component({
   templateUrl: './community.component.html'
@@ -37,7 +37,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private managerService: ManagerService
+    private reportsService: ReportsService
   ) {}
 
   ngOnInit() {
@@ -61,9 +61,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   filterData(search = this.searchValue) {
+    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) });
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
-    this.filteredData = this.data.filter((item: any) => item.registrationRequest === this.shownStatus && filterFunction(item, search));
-    const { hubs, sandboxPlanets } = this.managerService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
+    this.filteredData = this.data.filter(
+      (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
+    );
+    const { hubs, sandboxPlanets } = this.reportsService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets;
   }
@@ -80,7 +83,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
-      this.data = data;
+      this.data = this.reportsService.attachNamesToPlanets(data);
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }

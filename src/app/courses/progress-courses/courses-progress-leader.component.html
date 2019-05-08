@@ -7,12 +7,12 @@
     <span>
       {{headingStart ? headingStart + ' ' : ''}}
       <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
-      <ng-container *ngIf="selectedStep !== undefined" i18n>Exam Progress</ng-container>
+      <ng-container *ngIf="selectedStep !== undefined" i18n>Test Progress</ng-container>
     </span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
     <mat-form-field *ngIf="submittedExamSteps?.length > 1">
-      <mat-select i18n-placeholder placeholder="View Exam Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
+      <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
         <mat-option *ngFor="let step of submittedExamSteps" [value]="step">
           {{ step.stepTitle || 'Step ' + (step.index + 1) }}
         </mat-option>

@@ -18,10 +18,6 @@
           <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Member Limit" type="number" formControlName="memberLimit">
-          <mat-error><planet-form-error-messages [control]="courseForm.controls.memberLimit"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
           <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
         </mat-form-field>
         <mat-form-field>
@@ -33,9 +29,6 @@
           <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel">
             <mat-option *ngFor="let sub of subjectLevels" [value]="sub">{{sub}}</mat-option>
           </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Method" formControlName="method">
         </mat-form-field>
       </form>
     </div>

@@ -1,6 +1,7 @@
 services:
   couchdb:
     volumes:
+      - "/srv/planet/conf:/opt/couchdb/etc/local.d"
       - "/srv/planet/data:/opt/couchdb/data"
       - "/srv/planet/log:/opt/couchdb/var/log"
   planet:
