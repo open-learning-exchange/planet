@@ -46,6 +46,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
       this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
+      this.canManage = this.userService.get().isUserAdmin ||
+        course.creator !== undefined &&
+        (this.userService.get().currentUser.name === course.creator.slice(0, course.creator.indexOf('@')));
     });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -88,9 +91,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.maxStep = course.steps.length;
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
-    this.canManage = this.userService.get().isUserAdmin ||
-      course.creator !== undefined &&
-      (this.userService.get().currentUser.name === course.creator.slice(0, course.creator.indexOf('@')));
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
