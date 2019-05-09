@@ -7,7 +7,6 @@ import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { dedupeShelfReduce } from '../shared/utils';
-//import { CoursesStepViewComponent } from '../courses/step-view-courses/courses-step-view.component';
 
 @Injectable()
 export class SubmissionsService {
@@ -27,7 +26,6 @@ export class SubmissionsService {
     private stateService: StateService,
     private courseService: CoursesService,
     private userService: UserService
-    // courseStepViewComponent: CoursesStepViewComponent
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -89,7 +87,6 @@ export class SubmissionsService {
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
     });
-    //console.log("OPEN SUBMISSION: " + this.submission.answers);
   }
 
   submitAnswer(answer, correct: boolean, index: number) {
@@ -150,7 +147,6 @@ export class SubmissionsService {
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
     submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
-    //console.log(this.submission.answers);
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
