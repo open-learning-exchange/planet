@@ -7,6 +7,7 @@ import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { dedupeShelfReduce } from '../shared/utils';
+//import { CoursesStepViewComponent } from '../courses/step-view-courses/courses-step-view.component';
 
 @Injectable()
 export class SubmissionsService {
@@ -26,6 +27,7 @@ export class SubmissionsService {
     private stateService: StateService,
     private courseService: CoursesService,
     private userService: UserService
+    // courseStepViewComponent: CoursesStepViewComponent
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -87,6 +89,7 @@ export class SubmissionsService {
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
     });
+    //console.log("OPEN SUBMISSION: " + this.submission.answers);
   }
 
   submitAnswer(answer, correct: boolean, index: number) {
@@ -112,6 +115,7 @@ export class SubmissionsService {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
     const nextQuestion = this.nextQuestion(submission, index, 'grade');
+    console.log(this.submission.answers);
     return this.updateSubmission(submission, false, nextQuestion);
   }
 
@@ -123,12 +127,19 @@ export class SubmissionsService {
   updateGrade(submission, grade, index) {
     submission.answers[index].grade = grade;
     submission.grade = this.calcTotalGrade(submission);
+    console.log(this.submission.answers);
   }
 
   updateStatus(submission: any) {
     if (submission.type === 'exam' && submission.status === 'pending') {
       return submission.answers.findIndex(ans => ans.grade === undefined) === -1 ? 'complete' : 'requires grading';
     }
+    const getCourseId = this.submission.parentId.split('@')[1];
+    this.courseService.updateProgress({
+      courseId: getCourseId, 
+      stepNum: this.couchService.get('courses').subscribe((res) => res._id === getCourseId), //in progress
+      passed: this.submission.answers.every(eachAnswer => eachAnswer.passed)
+    });
     return 'complete';
   }
 
@@ -139,6 +150,7 @@ export class SubmissionsService {
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
     submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
+    //console.log(this.submission.answers);
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
