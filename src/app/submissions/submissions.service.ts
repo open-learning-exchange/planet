@@ -130,11 +130,12 @@ export class SubmissionsService {
       return submission.answers.findIndex(ans => ans.grade === undefined) === -1 ? 'complete' : 'requires grading';
     }
     const getCourseId = this.submission.parentId.split('@')[1];
+    const examId = this.submission.parentId.split('@')[0];
     this.couchService.get('courses/' + getCourseId)
     .subscribe((res: any) => {
       this.courseService.updateProgress({
         courseId: res._id,
-        stepNum: res.steps.length,
+        stepNum: res.steps.findIndex((step: any) => step.exam._id === examId) + 1,
         passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
       });
     }, error => {
