@@ -78,20 +78,20 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
         <mat-cell  *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
+            <a [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
             <mat-icon class="margin-lr-3" i18n-title title="Joined Course" [inline]="true" *ngIf="element.admission">check</mat-icon>
           </h3>
-          <td-markdown class="content">{{ element.description }}</td-markdown>
+          <td-markdown class="content">{{ element.doc.description }}</td-markdown>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
-          <div class="course-progress" *ngIf="element.admission && element.steps.length && !parent">
+          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
             <span i18n>Your progress:</span>
-            <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
+            <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseToggle(element._id, 'admission')">
+            <a mat-menu-item *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>
               <span i18n>Join</span>
             </a>
@@ -103,7 +103,7 @@
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
             </a>
-            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
+            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>
@@ -115,7 +115,7 @@
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
-            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
+            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element.doc)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
@@ -126,8 +126,8 @@
         <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <p>{{ "Grade Level: " + element.gradeLevel}}</p>
-            <p>{{ "Subject Level: " + element.subjectLevel}}</p>
+            <p>{{ "Grade Level: " + element.doc.gradeLevel}}</p>
+            <p>{{ "Subject Level: " + element.doc.subjectLevel}}</p>
           </div>
         </mat-cell>
       </ng-container>

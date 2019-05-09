@@ -100,17 +100,20 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFieldsByWord([ 'courseTitle' ]) ]);
     this.courses.sortingDataAccessor = (item: any, property: string) => this.sortData(item, property);
-    this.coursesService.coursesUpdated$.pipe(
+    this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
-      map((courses: any) => {
-        // Sort in descending createdDate order, so the new courses can be shown on the top
-        courses.sort((a, b) => b.createdDate - a.createdDate);
-        this.userShelf = this.userService.shelf;
-        return this.setupList(courses, this.userShelf.courseIds);
-      }),
-      switchMap((courses: any) => this.parent ? this.couchService.localComparison(this.dbName, courses) : of(courses))
+      switchMap((courses: any) => this.parent && courses !== undefined ?
+        this.couchService.localComparison(this.dbName, courses) :
+        of(courses)
+      )
     ).subscribe((courses: any) => {
-      this.courses.data = courses;
+      if (courses === undefined) {
+        return;
+      }
+      // Sort in descending createdDate order, so the new courses can be shown on the top
+      courses.sort((a, b) => b.doc.createdDate - a.doc.createdDate);
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
       this.emptyData = !this.courses.data.length;
       this.dialogsLoadingService.stop();
     });
@@ -138,14 +141,14 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     return courseRes.map((course: any) => {
       const myCourseIndex = myCourses.findIndex(courseId => course._id === courseId);
       course.canManage = this.user.isUserAdmin ||
-        (course.creator === this.user.name + '@' + this.planetConfiguration.code);
+        (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
       course.admission = myCourseIndex > -1;
       return course;
     });
   }
 
   getCourses() {
-    this.coursesService.getCourses({ addProgress: true, addRatings: true }, this.getOpts);
+    this.coursesService.requestCourses(this.parent);
   }
 
   ngAfterViewInit() {

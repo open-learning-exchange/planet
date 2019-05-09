@@ -46,6 +46,20 @@ export class TagsService {
     return { ...tag, subTags: tags.filter(({ attachedTo }) => (attachedTo || []).indexOf(tag._id) > -1) };
   }
 
+  attachTagsToDocs(db: string, docs: any[], tags: any[]) {
+    const tagsObj = tags.reduce((obj, tagLink: any) => {
+      if (tagLink.docType !== 'link' || tagLink.db !== db) {
+        return obj;
+      }
+      const tag = { ...this.findTag(tagLink.tagId, tags), tagLink };
+      return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
+    }, {});
+    return docs.map((doc: any) => ({
+      ...doc,
+      tags: tagsObj[doc._id] || []
+    }));
+  }
+
   tagBulkDocs(linkId: string, db: string, newTagIds: string[], currentTags: any[]) {
     // name property is needed for tags database queries
     const tagLinkDoc = (tagId) => ({ linkId, tagId, name: '', docType: 'link', db });

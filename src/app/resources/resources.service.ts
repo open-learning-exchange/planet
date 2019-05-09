@@ -70,17 +70,7 @@ export class ResourcesService {
   }
 
   setTags(resources, tags, planetField) {
-    const tagsObj = tags.reduce((obj, tagLink: any) => {
-      if (tagLink.docType !== 'link') {
-        return obj;
-      }
-      const tag = { ...this.tagsService.findTag(tagLink.tagId, tags), tagLink };
-      return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
-    }, {});
-    this.resources[planetField] = resources.map((resource: any) => ({
-      ...resource,
-      tags: tagsObj[resource._id] || []
-    }));
+    this.resources[planetField] = this.tagsService.attachTagsToDocs(this.dbName, resources, tags);
     this.updateResources(this.resources);
   }
 

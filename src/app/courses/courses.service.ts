@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, forkJoin, of } from 'rxjs';
+import { Subject, forkJoin, of, combineLatest, zip } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, startWith, skip, debounceTime } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
+import { TagsService } from '../shared/forms/tags.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable()
@@ -24,32 +25,67 @@ export class CoursesService {
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
-  courses: any = [];
-  private coursesUpdated = new Subject<any[]>();
-  coursesUpdated$ = this.coursesUpdated.asObservable();
+  private coursesUpdated = new Subject<{ parent: boolean, courses: any[] }>();
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
+  local = { courses: [], ratings: [], tags: [], courses_progress: [] };
+  parent = { courses: [], ratings: [], tags: [], courses_progress: [] };
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
     private ratingService: RatingService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private stateService: StateService,
+    private tagsService: TagsService
   ) {
-    this.ratingService.ratingsUpdated$.pipe(switchMap(() => {
-      const { ids, opts } = this.currentParams || { ids: [], opts: {} };
-      return this.findRatings(ids, opts);
-    })).subscribe((ratings) => {
-      this.updateCourses(this.createCourseList(this.courses, ratings.docs));
-      this.updateCourse({ course: this.createCourseList([ this.course ], ratings.docs)[0], progress: this.progress });
+    const handleStateRes = (res: any, dataName: string) => {
+      if (res !== undefined) {
+        this[res.planetField][dataName] = res.newData;
+        this.mergeData(this[res.planetField], res.planetField === 'parent');
+      }
+    };
+    this.ratingService.ratingsUpdated$.subscribe((res: any) => {
+      if (res !== undefined) {
+        const planetField = res.parent ? 'parent' : 'local';
+        this[planetField].ratings = res.ratings;
+        this.mergeData(this[planetField], res.parent);
+      }
     });
+    this.stateService.couchStateListener('tags').subscribe((res: any) => handleStateRes(res, 'tags'));
+    this.stateService.couchStateListener(this.dbName).subscribe((res: any) => handleStateRes(res, this.dbName));
+    this.stateService.couchStateListener(this.progressDb).subscribe((res: any) => handleStateRes(res, this.progressDb));
   }
 
-  updateCourses(courses) {
-    this.courses = courses;
-    this.coursesUpdated.next(courses);
+  requestCourses(parent = false) {
+    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local');
+    this.stateService.requestData(this.progressDb, parent ? 'parent' : 'local');
+    this.stateService.requestData('tags', parent ? 'parent' : 'local');
+    this.ratingService.newRatings(parent);
+  }
+
+  mergeData({ courses, courses_progress, ratings, tags }, parent = false) {
+    const data = courses.map((course: any) => ({
+      doc: course,
+      _id: course._id,
+      progress: courses_progress.filter((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || [],
+      rating: this.ratingService.createItemList([ course ], ratings)[0].rating,
+      tags: this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags
+    }));
+    this.coursesUpdated.next({ courses: data, parent });
+  }
+
+  coursesListener$(parent = false) {
+    return this.coursesUpdated.pipe(
+      map((response) => response.parent === parent ? response.courses : undefined)
+    );
+  }
+
+  progressLearnerListener$(parent = false) {
+    return this.coursesListener$(parent).pipe(
+      map((response) => response ? response.filter((course: any) => course.progress.length > 0) : response)
+    );
   }
 
   updateCourse({ course, progress }) {
@@ -112,26 +148,6 @@ export class CoursesService {
     }, { resources: [], exams: [] });
   }
 
-  getCourses({ ids = [], addProgress = false, addRatings = false }, opts = {}) {
-    this.currentParams = { ids, opts };
-    const observables = [ this.findCourses(ids, opts) ];
-    observables.push(addProgress ? this.findProgress(ids, opts) : of([]));
-    observables.push(addRatings ? this.findRatings(ids, opts) : of([]));
-    forkJoin(observables).subscribe(([ courses, progress, ratings ]: any[]) => {
-      if (addRatings) {
-        courses = this.createCourseList(courses, ratings.docs);
-      }
-      if (addProgress) {
-        courses = courses.map(course => ({
-          ...course,
-          progress: progress.filter((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || []
-        }));
-      }
-      this.courses = courses;
-      this.coursesUpdated.next(courses);
-    });
-  }
-
   findCourses(ids, opts) {
     return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids) }), opts);
   }
@@ -159,14 +175,6 @@ export class CoursesService {
     return this.ratingService.createItemList(courses, ratings);
   }
 
-  getUsersCourses(userId) {
-    this.couchService.findAll('courses_progress', findDocuments({ 'userId': userId }, [ 'courseId' ])).subscribe(response => {
-      // Added [ 0 ] as when no record it will return all records
-      const courseIds = response.map((c: any) => c.courseId).concat([ '0' ]);
-      this.getCourses({ ids: courseIds, addProgress: true });
-    });
-  }
-
   courseResignAdmission(courseId, type) {
     const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
@@ -183,8 +191,8 @@ export class CoursesService {
     }));
   }
 
-  getCourseNameFromId(courseId) {
-    return (this.courses.find( (mCourse) => mCourse._id === courseId )).courseTitle;
+  getCourseNameFromId(courseId, parent = false) {
+    return (this[parent ? 'parent' : 'local'].courses.find( (mCourse) => mCourse._id === courseId )).courseTitle;
   }
 
   courseAdmissionMany(courseIds, type) {
