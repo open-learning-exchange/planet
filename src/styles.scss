@@ -126,9 +126,11 @@ body {
     grid-template-areas:
       'hd mn'
       'cn .'
-      'tags .';
+      'tags .'
+      'progress .';
     grid-template-columns: auto 50px;
-    grid-template-rows: $list-title-height 1fr min-content;
+    grid-template-rows: $list-title-height 1fr min-content min-content;
+    grid-row-gap: 0.5rem;
 
     .header {
       grid-area: hd;
@@ -147,9 +149,13 @@ body {
       grid-area: mn;
     }
 
-    .tags-list, .course-progress {
+    .tags-list {
       grid-area: tags;
-      margin: 0.5rem 0;
+    }
+
+    .course-progress {
+      grid-area: progress;
+      margin-bottom: 0.5rem;
     }
 
   }
