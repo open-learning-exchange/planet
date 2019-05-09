@@ -133,8 +133,8 @@ export class SubmissionsService {
     }
     const getCourseId = this.submission.parentId.split('@')[1];
     this.courseService.updateProgress({
-      courseId: getCourseId, 
-      stepNum: this.couchService.get('courses').subscribe((res) => res._id === getCourseId), //in progress
+      courseId: getCourseId,
+      stepNum: this.couchService.get('courses').subscribe((res) => res._id === getCourseId), // in progress
       passed: this.submission.answers.every(eachAnswer => eachAnswer.passed)
     });
     return 'complete';
