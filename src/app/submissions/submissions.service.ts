@@ -112,7 +112,6 @@ export class SubmissionsService {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
     const nextQuestion = this.nextQuestion(submission, index, 'grade');
-    console.log(this.submission.answers);
     return this.updateSubmission(submission, false, nextQuestion);
   }
 
@@ -124,7 +123,6 @@ export class SubmissionsService {
   updateGrade(submission, grade, index) {
     submission.answers[index].grade = grade;
     submission.grade = this.calcTotalGrade(submission);
-    console.log(this.submission.answers);
   }
 
   updateStatus(submission: any) {
@@ -132,11 +130,16 @@ export class SubmissionsService {
       return submission.answers.findIndex(ans => ans.grade === undefined) === -1 ? 'complete' : 'requires grading';
     }
     const getCourseId = this.submission.parentId.split('@')[1];
-    this.courseService.updateProgress({
-      courseId: getCourseId,
-      stepNum: this.couchService.get('courses').subscribe((res) => res._id === getCourseId), // in progress
-      passed: this.submission.answers.every(eachAnswer => eachAnswer.passed)
-    });
+    this.couchService.get('courses/' + getCourseId)
+    .subscribe((res: any) => {
+      this.courseService.updateProgress({
+        courseId: res._id,
+        stepNum: res.steps.length,
+        passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
+      })
+    }, error => {
+      console.log(error);
+    } );
     return 'complete';
   }
 
