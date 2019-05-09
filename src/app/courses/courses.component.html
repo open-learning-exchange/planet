@@ -2,6 +2,9 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Courses</span>
   <span class="toolbar-fill"></span>
+  <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+    <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData"></planet-tag-input>
+  </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
     <mat-select placeholder="Grade Level" [value]="filter.gradeLevel || 'All'" (selectionChange)="onFilterChange($event.value, 'gradeLevel')">
       <mat-option i18n value="All">All</mat-option>
@@ -39,6 +42,9 @@
           <span *ngIf="selectedEnrolled > 0"> ({{selectedEnrolled}})</span>
         </button>
         <ng-container *ngIf="user.isUserAdmin">
+          <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
+            <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
+          </mat-form-field>
           <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
           <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
             <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
@@ -86,6 +92,11 @@
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
+          <mat-chip-list #tagsList class="tags-list">
+            <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag._id)">
+              {{tag.name}}
+            </mat-chip>
+          </mat-chip-list>
           <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
             <span i18n>Your progress:</span>
             <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>

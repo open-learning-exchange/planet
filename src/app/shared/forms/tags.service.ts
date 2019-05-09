@@ -71,4 +71,15 @@ export class TagsService {
     ];
   }
 
+  updateManyTags(data, dbName, { selectedIds, tagIds, indeterminateIds }) {
+    const fullSelectedTags = tagIds.filter(tagId => indeterminateIds.indexOf(tagId) === -1);
+    const items = selectedIds.map(id => data.find((item: any) => item._id === id));
+    const newTags = items.map((item: any) =>
+      this.tagBulkDocs(
+        item._id, dbName, fullSelectedTags, item.tags.filter((tag: any) => indeterminateIds.indexOf(tag._id) === -1)
+      )
+    ).flat();
+    return this.couchService.bulkDocs('tags', newTags);
+  }
+
 }

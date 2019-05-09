@@ -5,13 +5,13 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, Pag
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
-import { FormBuilder, FormGroup, } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
-  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord
+  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -22,6 +22,7 @@ import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { TagsService } from '../shared/forms/tags.service';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -73,6 +74,12 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   planetType = this.planetConfiguration.planetType;
   emptyData = false;
   isAuthorized = false;
+  tagFilter = new FormControl([]);
+  filterPredicate = composeFilterFunctions([
+    filterDropdowns(this.filter),
+    filterTags(this.tagFilter),
+    filterSpecificFieldsByWord([ 'doc.courseTitle' ])
+  ]);
 
   constructor(
     private couchService: CouchService,
@@ -85,7 +92,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private syncService: SyncService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private tagsService: TagsService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -98,7 +106,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.getCourses();
     this.userShelf = this.userService.shelf;
-    this.courses.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFieldsByWord([ 'courseTitle' ]) ]);
+    this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = (item: any, property: string) => this.sortData(item, property);
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
@@ -121,6 +129,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.countSelectNotEnrolled(source.selected);
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.tagFilter.valueChanges.subscribe((tags) => this.courses.filter = this.courses.filter || ' ');
   }
 
   sortData(item, property) {
@@ -174,7 +183,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSelected() {
-    const selected = this.selection.selected.map(courseId => findByIdInArray(this.courses.data, courseId));
+    const selected = this.selection.selected.map(courseId => findByIdInArray(this.courses.data, courseId).doc);
     let amount = 'many',
       okClick = this.deleteCourses(selected),
       displayName = '';
@@ -267,11 +276,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   hasSteps(id: string) {
-    return this.courses.data.find((course: any) => course._id === id && course.steps.length > 0);
+    return this.courses.data.find((course: any) => course._id === id && course.doc.steps.length > 0);
   }
 
   isLocal(id: string) {
-    return this.courses.data.find((course: any) => course._id === id && course.sourcePlanet === this.planetConfiguration.code);
+    return this.courses.data.find((course: any) => course._id === id && course.doc.sourcePlanet === this.planetConfiguration.code);
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -281,6 +290,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetSearch() {
+    this.tagFilter.setValue([]);
     this.filter.gradeLevel = '';
     this.filter.subjectLevel = '';
     this.titleSearch = '';
@@ -289,7 +299,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return dropdownsFill(this.filter);
+    return dropdownsFill({ ...this.filter, tags: this.tagFilter });
   }
 
   updateShelf(newShelf, message: string) {
@@ -354,4 +364,14 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
     };
   }
+
+  addTagsToSelected({ selected, indeterminate }) {
+    this.tagsService.updateManyTags(
+      this.courses.data, this.dbName, { selectedIds: this.selection.selected, tagIds: selected, indeterminateIds: indeterminate }
+    ).subscribe(() => {
+      this.getCourses();
+      this.planetMessageService.showMessage('Collections updated');
+    });
+  }
+
 }
