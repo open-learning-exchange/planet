@@ -61,7 +61,7 @@
           </button>
           <mat-cell>
             <mat-menu #meetupMenu="matMenu">
-              <a mat-menu-item (click)="attendMeetup(element)">
+              <a mat-menu-item *ngIf="element.participate || ((element.endDate || element.startDate) > dateNow && !element.participate)" (click)="attendMeetup(element)">
                 <span *ngIf="element.participate; else joinMeetup" i18n><mat-icon>clear</mat-icon>Leave</span>
                 <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
               </a>
