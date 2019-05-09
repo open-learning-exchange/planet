@@ -21,11 +21,14 @@ export class ExamsService {
         marks: [ 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(
           choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice)),
-          (ac) => ac.parent && (ac.parent.get('type').value === 'select' || ac.parent.get('type').value === 'selectMultiple') ?
-            Validators.required(ac) : null
+          (ac) => this.isQuestionChoiceType(ac) ? Validators.required(ac) : null
         )
       }
     )), initialValue);
+  }
+
+  isQuestionChoiceType(ac) {
+    return ac.parent && (ac.parent.get('type').value === 'select' || ac.parent.get('type').value === 'selectMultiple');
   }
 
   newQuestionChoice(newId, intialValue?) {
