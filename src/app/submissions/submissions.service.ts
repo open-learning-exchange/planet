@@ -136,7 +136,7 @@ export class SubmissionsService {
         courseId: res._id,
         stepNum: res.steps.length,
         passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
-      })
+      });
     }, error => {
       console.log(error);
     } );
