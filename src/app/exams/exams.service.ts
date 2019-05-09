@@ -21,6 +21,7 @@ export class ExamsService {
         marks: [ 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(
           choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice)),
+          Validators.required
         )
       }
     )), initialValue);
