@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
   end
 
   BOX = "ole/stretch64"
-  BOX_VERSION = "0.7.9"
+  BOX_VERSION = "0.7.11"
 
   # production VM
   config.vm.define "prod" do |prod|
