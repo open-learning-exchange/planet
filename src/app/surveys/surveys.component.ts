@@ -46,7 +46,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'taken', 'course', 'createdDate', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -91,6 +91,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           }).length
         })
       );
+      this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
