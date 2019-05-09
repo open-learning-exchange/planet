@@ -16,24 +16,12 @@ export class CustomValidators {
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
-  static minLengthArray(min: number) {
-    return (ac: AbstractControl): {[key: string]: any} => {
-      if (!ac.parent) {
-        return null;
-      }
-      const inputtype = ac.parent.get('type');
-      if ((inputtype.value === 'select' || inputtype.value === 'selectMultiple') && ac.value.length < min) {
-        return { 'minLengthArray': { valid: false } };
-      }
-      return null;
-    };
-  }
-
   static choiceSelected(requireCorrect: boolean) {
     return (ac: AbstractControl): ValidationErrors => {
       if (!ac.parent || !requireCorrect) {
         return null;
       }
+
       const inputtype = ac.parent.get('type');
       if ((inputtype.value === 'select' || inputtype.value === 'selectMultiple') && ac.value.length === 0) {
         return { required: true };
