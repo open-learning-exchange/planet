@@ -99,7 +99,7 @@
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-        <mat-cell *matCellDef="let element" >
+        <mat-cell *matCellDef="let element" (click)="gotoProfileView(element.doc.name)">
           <span *ngIf="isUserAdmin && filterType === 'local'">
             <span *ngIf="!element.doc.isUserAdmin">
               <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
@@ -118,7 +118,7 @@
               mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
           <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
-            <mat-icon (click)="gotoProfileView(element.doc.name)">visibility</mat-icon> View Profile
+            <mat-icon>visibility</mat-icon> View Profile
           </a>
         </mat-cell>
       </ng-container>
