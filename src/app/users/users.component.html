@@ -87,9 +87,9 @@
       </ng-container>
       <ng-container matColumnDef="roles">
         <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
-        <mat-cell *matCellDef="let element" (click)="gotoProfileView(element.doc.name)">
+        <mat-cell *matCellDef="let element" >
           <mat-chip-list>
-            <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
+            <mat-chip (click)="gotoProfileView(element.doc.name)" *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
               {{role}}
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && role !== 'learner'">cancel</mat-icon>
             </mat-chip>
