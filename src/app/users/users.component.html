@@ -118,7 +118,7 @@
               mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
           <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
-            <mat-icon>visibility</mat-icon> View Profile
+            <mat-icon (click)="gotoProfileView(element.doc.name)">visibility</mat-icon> View Profile
           </a>
         </mat-cell>
       </ng-container>
