@@ -3,14 +3,9 @@ import { MatTableDataSource } from '@angular/material';
 
 @Component({
   template: `
-    <span>Showing {{table.filteredData.length}} of {{table.data.length}} resource(s)</span>
+    <span class="margin-lr-5">Showing {{table.filteredData.length}} of {{table.data.length}} resource(s)</span>
   `,
-  selector: 'planet-filtered-amount',
-  styles: [ `
-    :host {
-      padding: 0 0.5rem;
-    }
-  ` ]
+  selector: 'planet-filtered-amount'
 })
 export class FilteredAmountComponent {
 
