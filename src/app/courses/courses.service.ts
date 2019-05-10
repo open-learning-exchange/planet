@@ -167,10 +167,6 @@ export class CoursesService {
     }));
   }
 
-  findRatings(ids, opts) {
-    return this.ratingService.getRatings({ itemIds: ids, type: 'course' }, opts);
-  }
-
   createCourseList(courses, ratings) {
     return this.ratingService.createItemList(courses, ratings);
   }

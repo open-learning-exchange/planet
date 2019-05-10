@@ -146,13 +146,12 @@ export class ResourcesAddComponent implements OnInit {
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
         this.updateResource(newResource).pipe(switchMap(([ resourceRes, tagsRes ]) => {
-          if (file) {
-            const opts = { headers: { 'Content-Type': file.type } };
-            return this.couchService.putAttachment(
-              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file, opts
-              );
-          }
-          return of({});
+          return file ?
+            this.couchService.putAttachment(
+              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
+              { headers: { 'Content-Type': file.type } }
+            ) :
+            of({});
         })).subscribe(() => {
           this.router.navigate([ '/resources' ]);
           this.planetMessageService.showMessage(message);

@@ -101,11 +101,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         this.pageType = 'Update';
       }
       const doc = draft === undefined ? saved : draft;
-      this.setInitialTags(tags, this.documentInfo);
-      const initialTags = doc.initialTags || this.coursesService.course.initialTags;
-      this.tags.setValue(draft === undefined ? this.coursesService.course.initialTags.map((tag: any) => tag._id) : draft.tags);
+      this.setInitialTags(tags, this.documentInfo, draft);
       if (this.route.snapshot.params.continue !== 'true') {
-        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags });
+        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
       }
     });
     if (this.route.snapshot.params.continue === 'true') {
@@ -144,9 +142,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
   }
 
-  setInitialTags(tags, documentInfo) {
+  setInitialTags(tags, documentInfo, draft?) {
     const courseTags = this.tagsService.attachTagsToDocs(this.dbName, [ documentInfo ], tags)[0].tags;
     this.coursesService.course = { initialTags: courseTags };
+    this.tags.setValue(draft === undefined ? this.coursesService.course.initialTags.map((tag: any) => tag._id) : draft.tags);
   }
 
   onFormChanges() {
@@ -203,6 +202,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
     this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
+    this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
   }
 
