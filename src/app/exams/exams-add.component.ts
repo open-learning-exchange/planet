@@ -6,6 +6,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -16,6 +17,7 @@ import { ExamsService } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
+import { ExamsPreviewComponent } from './exams-preview.component';
 
 const showdown = require('showdown');
 
@@ -60,7 +62,8 @@ export class ExamsAddComponent implements OnInit {
     private coursesService: CoursesService,
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
-    private userService: UserService
+    private userService: UserService,
+    private dialog: MatDialog
   ) {
     this.createForm();
   }
@@ -190,6 +193,10 @@ export class ExamsAddComponent implements OnInit {
       return name;
     }
     return this.newExamName(existingExams, namePrefix, tryNumber + 1);
+  }
+
+  showPreviewDialog() {
+    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
   }
 
 }
