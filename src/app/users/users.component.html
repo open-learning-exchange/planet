@@ -87,7 +87,7 @@
       </ng-container>
       <ng-container matColumnDef="roles">
         <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" (click)="gotoProfileView(element.doc.name)">
           <mat-chip-list>
             <mat-chip *ngFor="let role of element.doc.roles; index as i" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
               {{role}}
@@ -99,7 +99,7 @@
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-        <mat-cell *matCellDef="let element" (click)="gotoProfileView(element.doc.name)">
+        <mat-cell *matCellDef="let element">
           <span *ngIf="isUserAdmin && filterType === 'local'">
             <span *ngIf="!element.doc.isUserAdmin">
               <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
