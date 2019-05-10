@@ -15,19 +15,20 @@ import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { PouchService } from '../../shared/database';
 import { debug } from '../../debug-operator';
+import { TagsService } from '../../shared/forms/tags.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
-  // needs member document to implement
-  members = [];
+
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
+  tags = this.fb.control([]);
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
   private stepsChange$ = new Subject<any[]>();
@@ -58,7 +59,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
-    private pouchService: PouchService
+    private pouchService: PouchService,
+    private tagsService: TagsService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -91,15 +93,19 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   ngOnInit() {
     forkJoin([
       this.pouchService.getDocEditing(this.dbName, this.courseId),
-      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error)))
-    ]).subscribe(([ draft, saved ]: [ any, any ]) => {
+      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
+      this.stateService.getCouchState('tags', 'local')
+    ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.documentInfo = { _rev: saved._rev, _id: saved._id };
         this.pageType = 'Update';
       }
       const doc = draft === undefined ? saved : draft;
+      this.setInitialTags(tags, this.documentInfo);
+      const initialTags = doc.initialTags || this.coursesService.course.initialTags;
+      this.tags.setValue(draft === undefined ? this.coursesService.course.initialTags.map((tag: any) => tag._id) : draft.tags);
       if (this.route.snapshot.params.continue !== 'true') {
-        this.setFormAndSteps({ form: doc, steps: doc.steps });
+        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags });
       }
     });
     if (this.route.snapshot.params.continue === 'true') {
@@ -135,25 +141,39 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   setFormAndSteps(course: any) {
     this.courseForm.patchValue(course.form);
     this.steps = course.steps || [];
+    this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
+  }
+
+  setInitialTags(tags, documentInfo) {
+    const courseTags = this.tagsService.attachTagsToDocs(this.dbName, [ documentInfo ], tags)[0].tags;
+    this.coursesService.course = { initialTags: courseTags };
   }
 
   onFormChanges() {
-    combineLatest(this.courseForm.valueChanges, this.stepsChange$).pipe(
+    combineLatest(this.courseForm.valueChanges, this.stepsChange$, this.tags.valueChanges).pipe(
       debounce(() => race(interval(2000), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
-    ).subscribe(([ value, steps ]) => {
-      this.coursesService.course = { form: value, steps };
-      this.pouchService.saveDocEditing({ ...value, steps }, this.dbName, this.courseId);
+    ).subscribe(([ value, steps, tags ]) => {
+      this.coursesService.course = { form: value, steps, tags };
+      this.pouchService.saveDocEditing(
+        { ...value, steps, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
+      );
     });
   }
 
   updateCourse(courseInfo, shouldNavigate) {
-    this.couchService.updateDocument(
-      this.dbName,
-      { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
-    ).subscribe((res) => {
+    forkJoin([
+      this.couchService.updateDocument(
+        this.dbName,
+        { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
+      ),
+      this.couchService.bulkDocs(
+        'tags',
+        this.tagsService.tagBulkDocs(this.documentInfo._id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
+      )
+    ]).subscribe(([ courseRes, tagsRes ]) => {
       const message = courseInfo.courseTitle + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
-      this.courseChangeComplete(message, res, shouldNavigate);
+      this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
