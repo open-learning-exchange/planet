@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
   end
 
   BOX = "ole/stretch64"
-  BOX_VERSION = "0.7.9"
+  BOX_VERSION = "0.7.11"
 
   # production VM
   config.vm.define "prod" do |prod|
@@ -81,7 +81,11 @@ Vagrant.configure(2) do |config|
 
     dev.vm.provision "shell", inline: <<-SHELL
       # Add CouchDB Docker
-      sudo docker run -d -p 5984:5984 --name planet -v /srv/data/bell:/opt/couchdb/data -v /srv/log/bell:/opt/couchdb/var/log/ treehouses/couchdb:2.2.0
+      sudo docker run -d -p 5984:5984 --name planet \
+        -v /srv/planet/conf:/opt/couchdb/etc/local.d \
+        -v /srv/planet/data:/opt/couchdb/data \
+        -v /srv/planet/log:/opt/couchdb/var/log/ \
+        treehouses/couchdb:2.3.0
 
       # Add CORS to CouchDB so app has access to databases
       #git clone https://github.com/pouchdb/add-cors-to-couchdb.git

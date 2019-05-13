@@ -6,12 +6,12 @@
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail.title}}</h3>
     <span class="toolbar-fill"></span>
-    <div>
+    <div> 
       <ng-container *ngIf="!parent">
         <button mat-stroked-button class="margin-lr-3" (click)="openInviteMemberDialog()">
           <span i18n>Invite Member</span>
         </button>
-        <button mat-raised-button color="accent" class="margin-lr-3" (click)="joinMeetup()">
+        <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="isMeetupDisabled() ? 'You cannot join old meetup' : ''" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
           <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
           <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
         </button>
@@ -20,7 +20,10 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">
-      <p i18n><b>Created By:</b> <a [routerLink]="['/users/profile', meetupDetail.createdBy]">{{' ' + meetupDetail.createdBy}}</a></p>
+      <p><b i18n>Created By:</b>
+        <a *ngIf="meetupDetail.createdBy !== undefined; else na" [routerLink]="['/users/profile', meetupDetail.createdBy]">{{' ' + meetupDetail.createdBy}}</a>
+        <ng-template #na i18n> N/A </ng-template>
+      </p>
       <p *ngIf="meetupDetail.category" i18n><b>Category:</b> {{meetupDetail.category}}</p>
       <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate ? '-' : '' }} {{meetupDetail.endDate | date: 'fullDate'}}</p>
       <p *ngIf="meetupDetail.startTime || meetupDetail.endTime" i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>

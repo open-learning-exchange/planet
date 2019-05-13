@@ -46,7 +46,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'taken', 'course', 'createdDate', 'action' ];
+  displayedColumns = [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';

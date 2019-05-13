@@ -7,14 +7,15 @@
     {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
     {{examType === 'exam' && courseName ? courseName + ':' : ''}}
     {{pageType}}
-    <ng-container i18n>{examType, select, exam {Exam} survey {Survey}}</ng-container>
+    <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
     <span class="toolbar-fill"></span>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" novalidate>
+    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent}" novalidate>
       <div class="exam-buttons">
-        <button mat-raised-button color="primary" type="submit" [planetSubmit]="examForm.valid" i18n>{{pageType}} {examType, select, exam {Exam} survey {Survey}}</button>
-        <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n class="margin-lr-5">Add Question</button>
+        <button mat-raised-button color="primary" type="submit" i18n>Save</button>
+        <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n class="margin-lr-5">Return</button>
+        <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button>
         <mat-menu #questionMenu>
           <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
           <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
@@ -23,7 +24,7 @@
         </mat-menu>
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
       </div>
-      <div class="exam-inputs">
+      <div class="exam-inputs" *ngIf="!isCourseContent">
         <mat-form-field class="full-width">
           <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
@@ -31,7 +32,7 @@
       </div>
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
-          <span>{{question.value.title || 'Question ' + (i+1)}}</span>
+          <span class="exam-question">{{ plainText(question.value.body) || 'Question ' + (i+1) }}</span>
           <span i18n class="margin-lr-4 mat-caption warn-text-color" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
         </planet-step-list-item>
         <div planetStepListForm>

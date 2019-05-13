@@ -27,6 +27,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
   currentUserName = this.userService.get().name;
+  dateNow: any;
 
   constructor(
     public dialog: MatDialog,
@@ -39,7 +40,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private dialogsListService: DialogsListService,
     private stateService: StateService
-  ) { }
+  ) {
+    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+  }
 
   ngOnInit() {
     this.getEnrolledUsers();
@@ -134,6 +137,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     };
+  }
+
+  isMeetupDisabled() {
+    const meetupDate = this.meetupDetail.endDate ? this.meetupDetail.endDate : this.meetupDetail.startDate;
+    return (this.dateNow > meetupDate) && !this.meetupDetail.participate ? true : false;
   }
 
 }

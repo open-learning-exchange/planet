@@ -220,7 +220,8 @@ export class SubmissionsService {
       'time': this.couchService.datePlaceholder
     };
     const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
-      .filter(name => name !== undefined).map(name => ({ ...data, user: 'org.couchdb.user:' + name }));
+      .filter(name => name !== undefined && name !== this.userService.get().name)
+      .map(name => ({ ...data, user: 'org.couchdb.user:' + name }));
     if (docs.length > 0) {
       this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
     }
