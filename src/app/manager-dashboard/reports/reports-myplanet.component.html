@@ -17,7 +17,7 @@
   <div class="view-container view-full-height">
     <mat-expansion-panel *ngFor="let planet of planets">
       <mat-expansion-panel-header>
-        <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
+        <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
       </mat-expansion-panel-header>
       <planet-myplanet-table [data]="planet.children"></planet-myplanet-table>
     </mat-expansion-panel>

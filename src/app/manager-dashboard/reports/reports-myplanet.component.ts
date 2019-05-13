@@ -42,7 +42,9 @@ export class ReportsMyPlanetComponent implements OnInit {
       this.managerService.getChildPlanets(),
       this.couchService.findAll('myplanet_activities')
     ]).subscribe(([ planets, myPlanets ]) => {
-      this.planets = [ this.stateService.configuration ].concat(this.reportsService.attachNamesToPlanets(planets));
+      this.planets = [ { doc: this.stateService.configuration } ]
+        .concat(this.reportsService.attachNamesToPlanets(planets))
+        .filter((planet: any) => planet.doc.docType !== 'parentName');
       this.myPlanets = myPlanets;
       this.filterData();
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
