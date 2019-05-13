@@ -20,15 +20,18 @@ export class ExamsService {
         correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
         marks: [ 1, CustomValidators.positiveNumberValidator ],
         choices: this.fb.array(
-          choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice)),
-          (ac) => this.isQuestionChoiceType(ac) ? Validators.required(ac) : null
+          choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
         )
       }
-    )), initialValue);
+    ),
+      {
+        validators: (ac) => this.isQuestionChoiceType(ac) ? Validators.required(ac.get('choices')) && { noChoices: true } : null
+      }
+    ), initialValue);
   }
 
   isQuestionChoiceType(ac) {
-    return ac.parent && (ac.parent.get('type').value === 'select' || ac.parent.get('type').value === 'selectMultiple');
+    return ac.get('type').value === 'select' || ac.get('type').value === 'selectMultiple';
   }
 
   newQuestionChoice(newId, intialValue?) {
