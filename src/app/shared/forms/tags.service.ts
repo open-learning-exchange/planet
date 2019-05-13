@@ -60,7 +60,7 @@ export class TagsService {
     }));
   }
 
-  tagBulkDocs(linkId: string, db: string, newTagIds: string[], currentTags: any[]) {
+  tagBulkDocs(linkId: string, db: string, newTagIds: string[], currentTags: any[] = []) {
     // name property is needed for tags database queries
     const tagLinkDoc = (tagId) => ({ linkId, tagId, name: '', docType: 'link', db });
     return [

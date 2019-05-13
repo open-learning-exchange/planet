@@ -36,7 +36,7 @@ export class ResourcesService {
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
       if (response !== undefined) {
         this.isActiveResourceFetch = false;
-        const resources = response.newData.map((resource: any) => ({ doc: resource, _id: resource._id }));
+        const resources = response.newData.map((resource: any) => ({ doc: resource, _id: resource._id, _rev: resource._rev }));
         this.setResources(resources, this.ratings[response.planetField], response.planetField);
       }
     });

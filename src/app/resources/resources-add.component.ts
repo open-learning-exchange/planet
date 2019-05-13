@@ -139,20 +139,13 @@ export class ResourcesAddComponent implements OnInit {
     if (this.resourceForm.valid) {
       const fileObs: Observable<any> = this.createFileObs();
       fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
-        const { _id, _rev } = this.existingResource.doc;
+        const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
-        this.updateResource(newResource).pipe(switchMap(([ resourceRes, tagsRes ]) => {
-          return file ?
-            this.couchService.putAttachment(
-              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
-              { headers: { 'Content-Type': file.type } }
-            ) :
-            of({});
-        })).subscribe(() => {
+        this.updateResource(newResource, file).subscribe(() => {
           this.router.navigate([ '/resources' ]);
           this.planetMessageService.showMessage(message);
         }, (err) => this.planetMessageService.showAlert('There was an error with this resource'));
@@ -179,14 +172,21 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  updateResource(resourceInfo) {
-    return forkJoin([
-      this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder }),
-      this.couchService.bulkDocs(
-        'tags',
-        this.tagsService.tagBulkDocs(this.existingResource._id, this.dbName, this.tags.value, this.existingResource.tags)
-      )
-    ]);
+  updateResource(resourceInfo, file) {
+    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder })
+    .pipe(switchMap((resourceRes) =>
+      forkJoin([ file ?
+        this.couchService.putAttachment(
+          this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
+          { headers: { 'Content-Type': file.type } }
+        ) :
+        of({}),
+        this.couchService.bulkDocs(
+          'tags',
+          this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, this.tags.value, this.existingResource.tags)
+        )
+      ])
+    ));
   }
 
   deleteAttachmentToggle(event) {
