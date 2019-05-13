@@ -35,7 +35,6 @@
         <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
         <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
         <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction | 'N/A'}}</p>
-        <p i18n><b>Method:</b> {{courseDetail.method}}</p>
         <p><b i18n>Description:</b></p>
         <td-markdown [content]="courseDetail.description"></td-markdown>
       </div>
@@ -47,8 +46,9 @@
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
-                <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
                 <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
+                <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
+                <mat-icon *ngIf="step?.survey?.questions.length">description</mat-icon>
               </mat-panel-description>
               <mat-icon *ngIf="step.progress && step.progress.passed">done</mat-icon>
               <mat-icon *ngIf="step.progress && !step.progress.passed">rotate_right</mat-icon>
@@ -67,15 +67,15 @@
                 {{' '}}
               </span>
               <span *ngIf= "step?.exam?.questions.length > 0">
-                <span i18n>The exam has</span>
+                <span i18n>The test has</span>
                 {{ ' ' + step?.exam.questions?.length + ' '}}
                 <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
               </span>
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && isUserEnrolled))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take exam</a>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take survey</a>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take Test</a>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
             </mat-action-row>
           </mat-expansion-panel>
         </ng-container>

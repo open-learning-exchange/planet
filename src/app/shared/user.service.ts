@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
 import { catchError, switchMap, map } from 'rxjs/operators';
-import { of, Observable, Subject, forkJoin } from 'rxjs';
+import { of, Observable, Subject, BehaviorSubject } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
@@ -31,11 +31,12 @@ export class UserService {
   currentSession: any;
   userProperties: string[] = [];
   credentials: any;
+  emptyShelf = { meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] };
 
   // Create an observable for components that need to react to user changes can subscribe to
   private userChange = new Subject<void>();
   userChange$ = this.userChange.asObservable();
-  private shelfChange = new Subject<void>();
+  private shelfChange = new BehaviorSubject<any>(this.emptyShelf);
   shelfChange$ = this.shelfChange.asObservable();
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
@@ -106,7 +107,7 @@ export class UserService {
         }),
         // Combine with empty shelf in case all fields are not present
         map(data => {
-          return Object.assign({ meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] }, data.docs[0]);
+          return Object.assign(this.emptyShelf, data.docs[0]);
         })
       );
   }

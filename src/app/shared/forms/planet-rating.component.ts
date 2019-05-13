@@ -39,6 +39,7 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() item: any;
   @Input() parent;
   @Input() ratingType = '';
+  @Input() disabled = false;
 
   rateForm: FormGroup;
   popupForm: FormGroup;
@@ -83,6 +84,9 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   onStarClick(form = this.rateForm) {
+    if (this.disabled) {
+      return;
+    }
     this.updateRating(form).subscribe(res => {
       if (!this.isPopupOpen) {
         this.openDialog();

@@ -17,7 +17,7 @@ import { MatSelectionList } from '@angular/material';
   template: `
     <span class="mat-caption" i18n>{category, select,
       subject {Subject}
-      languages {Language}
+      language {Language}
       mediaType {Medium}
       level {Level}
     }
@@ -82,7 +82,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   @Output() searchChange = new EventEmitter<any>();
   @ViewChildren(ResourcesSearchListComponent) searchListComponents: QueryList<ResourcesSearchListComponent>;
 
-  categories = [ 'subject', 'languages', 'mediaType', 'level' ];
+  categories = [ 'subject', 'language', 'mediaType', 'level' ];
   searchLists = [];
   selected: any = {};
 

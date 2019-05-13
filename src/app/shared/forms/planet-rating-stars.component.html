@@ -1,4 +1,4 @@
-<span class="stars">
+<span class="stars" [ngClass]="{'stars-enabled':!disabled}">
   <mat-icon
     *ngFor="let i of [1,2,3,4,5]"
     (mouseenter)="mouseOverStar(i)">star</mat-icon>

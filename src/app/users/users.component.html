@@ -16,8 +16,8 @@
     </mat-button-toggle-group>
     <mat-form-field>
       <mat-select i18n-placeholder placeholder="Children" [value]="selectedChild" (selectionChange)="changeFilter('child', $event.value)">
-        <mat-option *ngFor="let child of children" [value]="child">
-          {{ child.name }}
+        <mat-option *ngFor="let child of children" [value]="child.doc">
+          {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>

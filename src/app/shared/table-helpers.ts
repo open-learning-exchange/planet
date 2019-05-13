@@ -33,6 +33,13 @@ export const filterSpecificFields = (filterFields: string[]): any => {
   };
 };
 
+export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
+  return (data: any, filter: string) => {
+    const words = filter.split(' ').map(value => value.toLowerCase());
+    return words.filter(word => word).find(word => !filterSpecificFields(filterFields)(data, word)) === undefined;
+  };
+};
+
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
 function getProperty(data: any, fields: string) {

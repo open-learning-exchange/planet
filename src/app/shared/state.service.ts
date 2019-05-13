@@ -43,7 +43,7 @@ export class StateService {
     this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
     const currentData = this.state[planetField][db].docs;
     const getData = currentData.length === 0 ?
-      this.getAll(db, opts, sort && [ sort ]) : this.getChanges(db, opts, planetField);
+      this.getAll(db, opts, planetField, sort && [ sort ]) : this.getChanges(db, opts, planetField);
     return getData.pipe(
       map((changes) => {
         const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
@@ -66,10 +66,12 @@ export class StateService {
     }
   }
 
-  getAll(db: string, opts: any, sort: any = 0) {
-    return this.couchService.findAllStream(db, findDocuments({
-      '_id': { '$gt': null }
-    }, 0, sort, 1000), opts);
+  getAll(db: string, opts: any, planetField: string, sort: any = 0) {
+    return this.getChanges(db, opts, planetField).pipe(switchMap(() =>
+      this.couchService.findAllStream(db, findDocuments({
+        '_id': { '$gt': null }
+      }, 0, sort, 1000), opts)
+    ));
   }
 
   getChanges(db: string, opts: any, planetField: string) {

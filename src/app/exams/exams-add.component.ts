@@ -15,6 +15,9 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 import { UserService } from '../shared/user.service';
+import { switchMap } from 'rxjs/operators';
+
+const showdown = require('showdown');
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -27,7 +30,7 @@ export class ExamsAddComponent implements OnInit {
   pageType = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
-  successMessage = this.examType === 'survey' ? 'New survey added' : 'New exam added';
+  successMessage = this.examType === 'survey' ? 'New survey added' : 'New test added';
   steps = [];
   showFormError = false;
   isCourseContent = this.router.url.match(/courses/);
@@ -63,10 +66,9 @@ export class ExamsAddComponent implements OnInit {
   }
 
   createForm() {
-    const title = this.isCourseContent ? this.coursesService.course.steps[this.coursesService.stepIndex].stepTitle : '';
     this.examForm = this.fb.group({
-      name: [
-        title,
+      name: this.isCourseContent ? '' : [
+        '',
         CustomValidators.required,
         this.nameValidator()
       ],
@@ -81,7 +83,7 @@ export class ExamsAddComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
-      this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Exam updated successfully';
+      this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Test updated successfully';
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
@@ -96,12 +98,13 @@ export class ExamsAddComponent implements OnInit {
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
   }
 
-  onSubmit() {
+  onSubmit(reRoute = false) {
     if (this.examForm.valid) {
-      this.addExam(Object.assign({}, this.examForm.value, this.documentInfo));
+      this.showFormError = false;
+      this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
-      this.examsService.checkValidFormComponent(this.examForm);
       this.showFormError = true;
+      this.examsService.checkValidFormComponent(this.examForm);
       this.stepClick(this.activeQuestionIndex);
     }
   }
@@ -112,16 +115,24 @@ export class ExamsAddComponent implements OnInit {
     );
   }
 
-  addExam(examInfo) {
+  addExam(examInfo, reRoute) {
     const date = this.couchService.datePlaceholder;
-    this.couchService.updateDocument(this.dbName,
-      { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date })
+    const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
+    this.couchService.findAll(this.dbName,
+      { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
+    ).pipe(switchMap((exams) => {
+      examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
+      return this.couchService.updateDocument(this.dbName,
+        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date });
+    }))
     .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
       }
-      this.goBack();
+      if (reRoute) {
+        this.goBack();
+      }
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -161,8 +172,24 @@ export class ExamsAddComponent implements OnInit {
     (<FormArray>this.examForm.get('questions')).removeAt(index);
   }
 
+  plainText(value) {
+    const converter = new showdown.Converter();
+    const html = document.createElement('div');
+    html.innerHTML = converter.makeHtml(value);
+    return html.textContent || html.innerText || '';
+  }
+
   goBack() {
     this.router.navigateByUrl(this.returnUrl);
+  }
+
+  newExamName(existingExams: any[], namePrefix, nameNumber = 0) {
+    const tryNumber = nameNumber || existingExams.length;
+    const name = `${namePrefix} - ${tryNumber + 1}`;
+    if (existingExams.findIndex((exam: any) => exam.name === name) === -1) {
+      return name;
+    }
+    return this.newExamName(existingExams, namePrefix, tryNumber + 1);
   }
 
 }
