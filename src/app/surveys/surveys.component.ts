@@ -16,6 +16,7 @@ import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
+import { ReportsService } from '../manager-dashboard/reports/reports.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -65,7 +66,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private userService: UserService
+    private userService: UserService,
+    private reportsService: ReportsService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -205,7 +207,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           nameProperty: 'name',
           okClick: this.sendSurvey(survey).bind(this),
           dropdownSettings: {
-            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' },
+            field: 'planetName', startingValue: { value: this.stateService.configuration.code, text: 'Local' }
           },
           filterPredicate: filterSpecificFields([ 'name' ])
         },
@@ -226,14 +228,20 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getUserData(obs: any) {
     return obs.pipe(switchMap(([ users, childUsers, children ]) => {
+      children = this.reportsService.attachNamesToPlanets(children)
+                  .map(planet => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) }));
+      const tableData = [
+        ...users.tableData,
+        ...childUsers.tableData.filter((user: any) => {
+          const planet = children.find((child: any) => user.planetCode === child.code);
+          return planet && planet.registrationRequest !== 'pending';
+        })
+      ].map((user: any) => {
+        const planet = children.find((child: any) => user.planetCode === child.code);
+        return { ...user, ...(planet ? { 'planetName': planet.name } : { 'planetName': user.planetCode }) };
+      });
       return of({
-        tableData: [
-          ...users.tableData,
-          ...childUsers.tableData.filter((user: any) => {
-            const planet = children.find((child: any) => user.planetCode === child.code);
-            return planet && planet.registrationRequest !== 'pending';
-          })
-        ],
+        tableData,
         columns: [ ...childUsers.columns ]
       });
     }));
