@@ -69,7 +69,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   goToSurvey(stepNum, preview = false) {
-    this.router.navigate([ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey', preview } ], { relativeTo: this.route });
+    this.router.navigate(
+      [ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey', preview, examId: this.courseDetail.steps[stepNum].exam._id } ],
+      { relativeTo: this.route }
+    );
   }
 
   goToExam(stepDetail, stepNum, preview = false) {
@@ -81,7 +84,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       const questionNum = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
-        { questionNum, preview } ], { relativeTo: this.route });
+        { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
     });
   }
 

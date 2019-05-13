@@ -19,7 +19,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   @Input() previewMode = false;
   @Input() isDialog = false;
-  @Input() exam: any = {};
+  @Input() exam: any;
   onDestroy$ = new Subject<void>();
   question: any = { header: '', body: '', type: '', choices: [] };
   @Input() questionNum = 0;
@@ -55,8 +55,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.previewMode = params.get('preview') === 'true' || this.previewMode;
+      this.questionNum = +params.get('questionNum') || this.questionNum;
       if (this.previewMode) {
-        this.setExamPreview();
+        (this.exam ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
+          this.exam = this.exam || res;
+          this.setExamPreview();
+        });
         return;
       }
       this.setExam(params);
@@ -69,7 +73,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setExam(params) {
-    this.questionNum = +params.get('questionNum'); // Leading + forces string to number
     this.stepNum = +params.get('stepNum');
     this.examType = params.get('type') || this.examType;
     const courseId = params.get('id');
