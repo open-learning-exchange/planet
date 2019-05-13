@@ -23,15 +23,14 @@ export class ExamsService {
           choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
         )
       }
-    ),
-      {
-        validators: (ac) => this.isQuestionChoiceType(ac) ? Validators.required(ac.get('choices')) && { noChoices: true } : null
-      }
+    ), { validators: this.choiceRequiredValidator }
     ), initialValue);
   }
 
-  isQuestionChoiceType(ac) {
-    return ac.get('type').value === 'select' || ac.get('type').value === 'selectMultiple';
+  choiceRequiredValidator(ac) {
+    return ac.get('type').value === 'select' || ac.get('type').value === 'selectMultiple' ?
+      Validators.required(ac.get('choices')) && { noChoices: true } :
+      null;
   }
 
   newQuestionChoice(newId, intialValue?) {
