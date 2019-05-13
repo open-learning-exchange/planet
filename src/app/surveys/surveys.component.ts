@@ -82,14 +82,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.couchService.findAll('courses')
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
       this.surveys.data = surveys.map(
-        (survey: any) => ({
-          ...survey,
-          course: courses.find((course: any) => this.findSurveyInSteps(course.steps, survey) > -1),
-          taken: submissions.filter(data => {
-            return data.parentId === survey._id && data.status !== 'pending';
-          }).length
-        })
-      );
+        (survey: any) => {
+          const course = courses.find((course: any) => this.findSurveyInSteps(course.steps, survey) > -1);
+          const stepNum = course === undefined ? -1 : this.findSurveyInSteps(course.steps, survey);
+          return ({
+            ...survey,
+            course,
+            stepNum,
+            taken: submissions.filter(data => {
+              return data.parentId === survey._id && data.status !== 'pending';
+            }).length
+          });
+        });
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
@@ -161,9 +165,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     surveyCourse.forEach((element: any) => {
       const indexAtArr = courseArr.findIndex((mCourse) => mCourse._id === element.course._id);
       const course = indexAtArr > -1 ? courseArr[indexAtArr] : element.course;
-      const index = this.findSurveyInSteps(course.steps, element);
-      if (index > -1) {
-        course.steps.splice(index, 1);
+      if (element.stepNum > -1) {
+        delete course.steps[element.stepNum]['survey'];
       }
       indexAtArr === -1 ? courseArr.push(course) : courseArr[indexAtArr] = course;
     });
@@ -191,7 +194,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSurvey(survey) {
     const { _id: surveyId, _rev: surveyRev } = survey;
     if (survey.course) {
-      survey.course.steps.splice(this.findSurveyInSteps(survey.course.steps, survey), 1);
+      delete survey.course.steps[this.findSurveyInSteps(survey.course.steps, survey)]['survey'];
     }
     return {
       request: this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
