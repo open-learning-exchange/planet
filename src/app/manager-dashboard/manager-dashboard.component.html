@@ -9,6 +9,7 @@
     <a routerLink="/requests" i18n mat-raised-button *planetAuthorizedRoles="'manager'">{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
     <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
   </span>
+  <a [routerLink]="['reports', 'myplanet']" i18n mat-raised-button>myPlanet Reports</a>
   <ng-container *planetAuthorizedRoles="'manager'">
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>

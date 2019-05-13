@@ -12,6 +12,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './community.component.html'
@@ -37,7 +38,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
@@ -78,8 +80,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   getCommunityList(search = this.searchValue) {
     forkJoin([
-      this.couchService.findAll('communityregistrationrequests',
-        findDocuments({ '_id': { '$gt': null } }, 0, [ { 'createdDate': 'desc' } ] )),
+      this.managerService.getChildPlanets(),
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;

@@ -18,6 +18,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -68,7 +69,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private reportsService: ReportsService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private managerService: ManagerService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -162,9 +164,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('child_users', { 'selector': {} }),
-      this.stateService.getCouchState('communityregistrationrequests', 'local').pipe(map(
-        (state) => this.reportsService.attachNamesToPlanets(state).filter((planet: any) => planet.doc.registrationRequest === 'accepted')
+      this.managerService.getChildPlanets(true).pipe(map(
+        (state) => this.reportsService.attachNamesToPlanets(state)
       ))
+
     ]);
   }
 
