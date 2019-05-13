@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
-import { forkJoin, Subject, of, Observable, observable } from 'rxjs';
+import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
@@ -147,8 +147,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSelected() {
     const selected = this.selection.selected.map(surveyId => findByIdInArray(this.surveys.data, surveyId));
     if (selected.length === 1) {
-      const survey = selected[0];
-      this.openDeleteDialog(this.deleteSurvey(survey), 'single',
+       const survey = selected[0];
+       this.openDeleteDialog(this.deleteSurvey(survey), 'single',
        survey.name + ( survey.course ? ' will be deleted from ' + survey.course.courseTitle + ' aswell' : '' ));
     } else {
       this.openDeleteDialog(this.deleteSurveys(selected), 'many', '');
@@ -159,7 +159,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const courseArr = [];
     const surveyCourse = surveys.filter((survey) => survey.course);
     surveyCourse.forEach((element: any) => {
-      const indexAtArr = courseArr.findIndex( (mCourse) => mCourse._id === element.course._id);
+      const indexAtArr = courseArr.findIndex((mCourse) => mCourse._id === element.course._id);
       const course = indexAtArr > -1 ? courseArr[indexAtArr] : element.course;
       const index = this.findSurveyInSteps(course.steps, element);
       if (index > -1) {
