@@ -60,7 +60,7 @@
         *ngIf="mode !== 'view'"
         mat-raised-button
         color="primary"
-        (click)="submit()"
+        (click)="examComplete()"
         [planetSubmit]="spinnerOn"
         [disabled]="!answer.valid || grade === undefined || grade === null">
         <ng-container *ngIf="isComplete" i18n>Complete</ng-container>

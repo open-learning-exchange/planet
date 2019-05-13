@@ -90,9 +90,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  submit() {
+  examComplete() {
     this.nextQuestion();
-    this.examComplete();
+    if (this.route.snapshot.data.newUser === true) {
+      this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
+    } else {
+      this.goBack();
+    }
     if (this.examType === 'surveys') {
       this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
     }
@@ -119,14 +123,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   resetCheckboxes() {
     this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
-  }
-
-  examComplete() {
-    if (this.route.snapshot.data.newUser === true) {
-      this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
-    } else {
-      this.goBack();
-    }
   }
 
   goBack() {
