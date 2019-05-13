@@ -5,7 +5,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3 ellipsis-title">{{resource?.title}}</span>
+    <span class="margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
         {fullView, select, on {Show} off {Hide}} details
     </button>
@@ -15,7 +15,7 @@
     <span class="toolbar-fill"></span>
     <div>
       <ng-container *ngIf="!parent">
-        <a mat-raised-button *ngIf="resource.doc._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
+        <a mat-raised-button *ngIf="resource.doc?._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
         <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
           Add to myLibrary
         </button>
@@ -23,7 +23,7 @@
           Remove from myLibrary
         </button>
       </ng-container>
-      <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.isDownloadable">
+      <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
         <mat-icon>file_download</mat-icon>
       </a>
     </div>
@@ -31,26 +31,26 @@
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-rating [rating]="resource?.rating" [item]="resource" [parent]="parent" [ratingType]="'resource'"></planet-rating>
-      <p><b i18n>Description:</b><td-markdown [content]="resource?.description"></td-markdown></p>
-      <p *ngIf="resource?.author"><b i18n>Author:</b><i>{{' ' + resource?.author}}</i></p>
-      <p *ngIf="resource?.publisher"><b i18n>Published by:</b>{{' ' + resource?.publisher + ' '}}
-        <ng-container *ngIf="resource?.year"><span i18n>on</span>{{' ' + resource?.year}}</ng-container>
+      <p><b i18n>Description:</b><td-markdown [content]="resource?.doc?.description"></td-markdown></p>
+      <p *ngIf="resource?.doc?.author"><b i18n>Author:</b><i>{{' ' + resource?.doc?.author}}</i></p>
+      <p *ngIf="resource?.doc?.publisher"><b i18n>Published by:</b>{{' ' + resource?.doc?.publisher + ' '}}
+        <ng-container *ngIf="resource?.doc?.year"><span i18n>on</span>{{' ' + resource?.doc?.year}}</ng-container>
       </p>
       <p *ngIf="resource?.tags?.length > 0">
         <b i18n>Collections:</b>
         <span *ngFor="let tag of resource.tags; last as isLast"> {{ tag.name }}<span *ngIf ="!isLast">,</span></span>
       </p>
-      <p><b i18n>Level:</b>{{' ' + resource?.level?.join(', ')}}</p>
-      <p *ngIf="resource?.medium"><b i18n>Media:</b>{{' ' + resource?.medium}}</p>
-      <p *ngIf="resource?.language"><b i18n>Language:</b>{{' ' + resource?.language}}</p>
-      <p><b i18n>Subject/s:</b>{{' ' + resource?.subject?.join(', ')}}</p>
-      <p *ngIf="resource?.linkToLicense"><b i18n>to License:</b><a href={{resource?.linkToLicense}} target="_blank">{{' ' + resource?.linkToLicense}}</a></p>
-      <p *ngIf="resource?.resourceFor"><b i18n>Resource:</b>{{' ' + resource?.resourceFor?.join(', ')}}</p>
-      <p *ngIf="resource?.resourceType"><b i18n>Type:</b>{{' ' + resource?.resourceType}}</p>
+      <p><b i18n>Level:</b>{{' ' + resource?.doc?.level?.join(', ')}}</p>
+      <p *ngIf="resource?.doc?.medium"><b i18n>Media:</b>{{' ' + resource?.doc?.medium}}</p>
+      <p *ngIf="resource?.doc?.language"><b i18n>Language:</b>{{' ' + resource?.doc?.language}}</p>
+      <p><b i18n>Subject/s:</b>{{' ' + resource?.doc?.subject?.join(', ')}}</p>
+      <p *ngIf="resource?.doc?.linkToLicense"><b i18n>to License:</b><a href={{resource?.doc?.linkToLicense}} target="_blank">{{' ' + resource?.doc?.linkToLicense}}</a></p>
+      <p *ngIf="resource?.doc?.resourceFor"><b i18n>Resource:</b>{{' ' + resource?.doc?.resourceFor?.join(', ')}}</p>
+      <p *ngIf="resource?.doc?.resourceType"><b i18n>Type:</b>{{' ' + resource?.doc?.resourceType}}</p>
     </div>
     <div>
       <planet-resources-viewer
-        *ngIf="resource?.doc._attachments; else noAttachment"
+        *ngIf="resource?.doc?._attachments; else noAttachment"
         [resourceId]="resourceId"
         (resourceUrl)="setResourceUrl($event)">
       </planet-resources-viewer>
