@@ -89,7 +89,7 @@ export class SubmissionsService {
     });
   }
 
-  submitAnswer(answer, correct: boolean, index: number) {
+  submitAnswer(answer, correct: boolean, index: number, nextClicked?: boolean) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
@@ -97,7 +97,7 @@ export class SubmissionsService {
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
-    return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion);
+    return this.updateSubmission(submission, this.submission.type === 'exam', nextQuestion, nextClicked);
   }
 
   newAnswer(answer, oldAnswer, correct) {
@@ -108,11 +108,11 @@ export class SubmissionsService {
     });
   }
 
-  submitGrade(grade, index: number) {
+  submitGrade(grade, index: number, nextClicked?: boolean) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
     this.updateGrade(submission, grade, index);
     const nextQuestion = this.nextQuestion(submission, index, 'grade');
-    return this.updateSubmission(submission, false, nextQuestion);
+    return this.updateSubmission(submission, false, nextQuestion, nextClicked);
   }
 
   nextQuestion(submission, index, field) {
@@ -137,8 +137,8 @@ export class SubmissionsService {
       total + (submission.parent.questions[index].marks * (answer.grade || 0)), 0);
   }
 
-  updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
-    submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
+  updateSubmission(submission: any, takingExam: boolean, nextQuestion: number, nextClicked?: boolean) {
+    submission.status = nextClicked === false ? this.updateStatus(submission) : submission.status;
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {

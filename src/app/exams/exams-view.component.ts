@@ -77,7 +77,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion(nextClicked: boolean = false) {
-    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable();
+    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable(nextClicked);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
@@ -90,19 +90,29 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  submit() {
+    this.nextQuestion();
+    this.examComplete();
+    if (this.examType === 'surveys') {
+      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
+    }
+  }
+
   routeToNext (nextQuestion) {
-    if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
-      this.examComplete();
-      if (this.examType === 'surveys') {
-        this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
-      }
+    if (this.questionNum === this.maxQuestions) {
+      return;
     } else {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
     }
   }
 
   moveQuestion(direction: number) {
-    this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    if (this.questionNum === this.maxQuestions) {
+      this.nextQuestion(true);
+      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum - 2 } ], { relativeTo: this.route });
+    } else {
+      this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    }
     this.isNewQuestion = true;
     this.spinnerOn = false;
   }
@@ -208,17 +218,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers[0].id === this.question.correctChoice;
   }
 
-  createAnswerObservable() {
+  createAnswerObservable(nextClicked: boolean) {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         this.resetCheckboxes();
         return {
-          obs: this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1),
+          obs: this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, nextClicked),
           correctAnswer
         };
       case 'grade':
-        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1), correctAnswer };
+        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, nextClicked), correctAnswer };
       default:
         return { obs: of({ nextQuestion: this.questionNum + 1 }), correctAnswer };
     }
@@ -242,7 +252,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setSelectMultipleAnswer(answers: any[]) {
-    answers.forEach(answer => {
+    Array.from(answers).forEach(answer => {
       this.setAnswer({ checked: true }, answer);
     });
   }
