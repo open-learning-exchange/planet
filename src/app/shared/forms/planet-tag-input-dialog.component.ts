@@ -60,7 +60,7 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
-      name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
+      name: [ '', CustomValidators.required, ac => this.tagNameValidator(ac) ],
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -128,7 +128,7 @@ export class PlanetTagInputDialogComponent {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
       this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
-        this.newTagId = res.id;
+        this.newTagId = res[0].id;
         this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
@@ -163,10 +163,17 @@ export class PlanetTagInputDialogComponent {
       name: [
         tag.name || '',
         CustomValidators.required,
-        ac => this.validatorService.isUnique$('tags', 'name', ac, { exceptions: [ tag.name ] })
+        ac => this.tagNameValidator(ac, tag._id)
       ],
       attachedTo: [ tag.attachedTo || [] ]
     });
+  }
+
+  tagNameValidator(ac, exception = '') {
+    return this.validatorService.isUnique$(
+      'tags', '_id', ac,
+      { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
+    );
   }
 
   toggleSubcollection(event, tagId) {

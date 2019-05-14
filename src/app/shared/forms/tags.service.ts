@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
-import { forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
+import { findDocuments } from '../mangoQueries';
 
 @Injectable()
 export class TagsService {
@@ -34,7 +35,17 @@ export class TagsService {
 
   updateTag(tag) {
     const { count, subTags, ...tagData } = tag;
-    return this.couchService.post('tags', tagData);
+    const newId = `${tagData.db}_${tagData.name.toLowerCase()}`;
+    return (tag._id ? this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })) : of([])).pipe(
+      switchMap((oldLinks: any[]) => {
+        const newLinks = oldLinks.map(t => ({ ...t, tagId: newId }));
+        return this.couchService.bulkDocs('tags', [
+          { ...tagData, _rev: undefined, _id: newId },
+          { ...tagData, _deleted: true },
+          ...newLinks
+        ]);
+      })
+    );
   }
 
   findTag(tagKey: any, fullTags: any[]) {
