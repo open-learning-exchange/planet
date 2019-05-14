@@ -2,12 +2,12 @@ import { Component, Inject, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TagsService } from './tags.service';
-import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
+import { mapToArray, isInMap } from '../utils';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -37,7 +37,7 @@ export class PlanetTagInputDialogComponent {
   isUserAdmin = false;
   subcollectionIsOpen = new Map();
   get okClickValue() {
-    return { wasOkClicked: true, indeterminate: this.indeterminate ? this.mapToArray(this.indeterminate, true) : [] };
+    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
   }
 
   constructor(
@@ -60,7 +60,7 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
-      name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('tags', 'name', ac) ],
+      name: [ '', this.tagNameSyncValidator(), ac => this.tagNameAsyncValidator(ac) ],
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -87,22 +87,6 @@ export class PlanetTagInputDialogComponent {
     });
   }
 
-  isInMap(tag: string, map: Map<string, boolean>) {
-    return map.get(tag);
-  }
-
-  mapToArray(map: Map<string, boolean>, equalValue?) {
-    const iterable = map.entries();
-    const keyToArray = ({ value, done }, array: string[]) => {
-      if (done) {
-        return array;
-      }
-      const [ key, val ] = value;
-      return keyToArray(iterable.next(), !equalValue || val === equalValue ? [ ...array, key ] : array);
-    };
-    return keyToArray(iterable.next(), []);
-  }
-
   updateFilter(value) {
     this.filterValue = value;
     this.tags = this.filterTags(value);
@@ -121,14 +105,14 @@ export class PlanetTagInputDialogComponent {
   }
 
   checkboxChange(event, tag) {
-    event.source.checked = this.isInMap(tag, this.selected);
+    event.source.checked = isInMap(tag, this.selected);
   }
 
   addLabel() {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
-      this.tagsService.updateTag(this.addTagForm.value).subscribe((res) => {
-        this.newTagId = res.id;
+      this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
+        this.newTagId = res[0].id;
         this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
@@ -147,26 +131,44 @@ export class PlanetTagInputDialogComponent {
   }
 
   editTagClick(event, tag) {
+    const onSubmit = ((newTag) => {
+      this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
+        const newTagId = res[0].id;
+        this.planetMessageService.showMessage('Collection updated');
+        this.selected.set(newTagId, this.selected.get(tag._id));
+        this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
+        this.data.initTags(newTagId);
+        this.dialogsFormService.closeDialogsForm();
+      });
+    }).bind(this);
     event.stopPropagation();
     const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
-    this.dialogsFormService.confirm('Edit Collection', [
+    this.dialogsFormService.openDialogsForm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
       { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
-    ], this.tagForm(tag), false).pipe(switchMap((newTag: any) => this.tagsService.updateTag({ ...tag, ...newTag }))).subscribe(() => {
-      this.planetMessageService.showMessage('Collection updated');
-      this.data.initTags();
-    });
+    ], this.tagForm(tag), { onSubmit });
   }
 
   tagForm(tag: any = {}) {
     return this.fb.group({
       name: [
         tag.name || '',
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$('tags', 'name', ac, { exceptions: [ tag.name ] })
+        this.tagNameSyncValidator(),
+        ac => this.tagNameAsyncValidator(ac, tag._id)
       ],
       attachedTo: [ tag.attachedTo || [] ]
     });
+  }
+
+  tagNameSyncValidator() {
+    return [ CustomValidators.required, ac => ac.value.match('_') ? { noUnderscore: true } : null ];
+  }
+
+  tagNameAsyncValidator(ac, exception = '') {
+    return this.validatorService.isUnique$(
+      'tags', '_id', ac,
+      { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
+    );
   }
 
   toggleSubcollection(event, tagId) {

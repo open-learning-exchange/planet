@@ -31,7 +31,10 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.coursesService.coursesUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((courses: any[]) => {
+    this.coursesService.progressLearnerListener$().pipe(takeUntil(this.onDestroy$)).subscribe((courses: any[]) => {
+      if (courses === undefined) {
+        return;
+      }
       this.courses = courses;
       this.createChart(courses, this.submissions);
     });
@@ -40,7 +43,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       this.createChart(this.courses, submissions);
     });
     this.submissionsService.updateSubmissions({ query: { 'selector': { 'user.name': this.user.name } } });
-    this.coursesService.getUsersCourses(this.user._id);
+    this.coursesService.requestCourses();
   }
 
   ngOnDestroy() {
@@ -56,9 +59,9 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     this.yAxisLength = this.calculateChartHeight(this.chartData);
   }
 
-  createChartData(courses, submissions) {
+  createChartData(courses = [], submissions) {
     return courses.map((course: any) => ({
-      label: course.courseTitle,
+      label: course.doc.courseTitle,
       items: this.courseBySteps(
         course,
         submissions.filter(submission => submission.parentId.indexOf(course._id) > -1)
@@ -73,9 +76,9 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     }));
   }
 
-  courseBySteps(course, submissions) {
-    return course.steps.map((step: any, index: number) => {
-      const fill = course.progress.findIndex((prog: any) => prog.stepNum === index + 1) > -1;
+  courseBySteps({ doc, progress }, submissions) {
+    return doc.steps.map((step: any, index: number) => {
+      const fill = progress.findIndex((prog: any) => prog.stepNum === index + 1) > -1;
       if (!step.exam) {
         return { number: '', fill };
       }

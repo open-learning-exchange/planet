@@ -34,6 +34,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidFirstCharacter {Must start with letter or number}
       invalidFutureDate {Cannot be after current date}
       dateRequired {This field is required as valid date}
+      noUnderscore {Cannot include an underscore}
     }</span>{{number === undefined ? '' : ' ' + number}}
   `
 })

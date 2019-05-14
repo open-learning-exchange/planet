@@ -43,7 +43,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
           this.shownResourceId = this.resourceId;
           this.resource = resources.find((r: any) => r._id === this.resourceId);
           if (this.resource) {
-            this.setResource(this.resource);
+            this.setResource(this.resource.doc);
           }
         }
       });

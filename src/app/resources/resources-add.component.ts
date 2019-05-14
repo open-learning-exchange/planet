@@ -11,7 +11,7 @@ import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 import * as JSZip from 'jszip/dist/jszip.min';
 import { Observable, of, forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, first } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
@@ -20,6 +20,8 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 const mime = new Mime(require('mime/types/standard.json'));
 import { languages } from '../shared/languages';
+import { ResourcesService } from './resources.service';
+import { TagsService } from '../shared/forms/tags.service';
 
 @Component({
   templateUrl: './resources-add.component.html'
@@ -38,6 +40,7 @@ export class ResourcesAddComponent implements OnInit {
   disableDelete = true;
   resourceFilename = '';
   languages = languages;
+  tags = this.fb.control([]);
 
   constructor(
     private router: Router,
@@ -47,7 +50,9 @@ export class ResourcesAddComponent implements OnInit {
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private route: ActivatedRoute,
-    private stateService: StateService
+    private stateService: StateService,
+    private resourcesService: ResourcesService,
+    private tagsService: TagsService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -63,16 +68,19 @@ export class ResourcesAddComponent implements OnInit {
 
   ngOnInit() {
     this.userDetail = this.userService.get();
+    this.resourcesService.requestResourcesUpdate(false, false);
     if (this.route.snapshot.url[0].path === 'update') {
-      this.couchService.get('resources/' + this.route.snapshot.paramMap.get('id'))
-        .subscribe((data) => {
+      this.resourcesService.resourcesListener(false).pipe(first())
+        .subscribe((resources: any[]) => {
           this.pageType = 'Update';
-          this.existingResource = data;
+          const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
+          this.existingResource = resource;
           // If the resource does not have an attachment, disable file downloadable toggle
-          this.disableDownload = !this.existingResource._attachments;
-          this.disableDelete = !this.existingResource._attachments;
-          this.resourceFilename = this.existingResource._attachments ? Object.keys(this.existingResource._attachments)[0] : '';
-          this.resourceForm.patchValue(data);
+          this.disableDownload = !resource.doc._attachments;
+          this.disableDelete = !resource.doc._attachments;
+          this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments)[0] : '';
+          this.resourceForm.patchValue(resource.doc);
+          this.tags.setValue(resource.tags.map((tag: any) => tag._id));
         }, (error) => {
           console.log(error);
         });
@@ -92,7 +100,6 @@ export class ResourcesAddComponent implements OnInit {
       author: '',
       year: '',
       description: [ '', CustomValidators.required ],
-      tags: [ [] ],
       language: '',
       publisher: '',
       linkToLicense: '',
@@ -134,17 +141,11 @@ export class ResourcesAddComponent implements OnInit {
       fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
         const { _id, _rev } = this.existingResource;
         // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
-        const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource;
+        const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
-        this.updateResource(newResource).pipe(switchMap((res) => {
-          if (file) {
-            const opts = { headers: { 'Content-Type': file.type } };
-            return this.couchService.putAttachment(this.dbName + '/' + res.id + '/' + file.name + '?rev=' + res.rev, file, opts);
-          }
-          return of({});
-        })).subscribe(() => {
+        this.updateResource(newResource, file).subscribe(() => {
           this.router.navigate([ '/resources' ]);
           this.planetMessageService.showMessage(message);
         }, (err) => this.planetMessageService.showAlert('There was an error with this resource'));
@@ -171,8 +172,21 @@ export class ResourcesAddComponent implements OnInit {
     }
   }
 
-  updateResource(resourceInfo) {
-    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder });
+  updateResource(resourceInfo, file) {
+    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder })
+    .pipe(switchMap((resourceRes) =>
+      forkJoin([ file ?
+        this.couchService.putAttachment(
+          this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
+          { headers: { 'Content-Type': file.type } }
+        ) :
+        of({}),
+        this.couchService.bulkDocs(
+          'tags',
+          this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, this.tags.value, this.existingResource.tags)
+        )
+      ])
+    ));
   }
 
   deleteAttachmentToggle(event) {
