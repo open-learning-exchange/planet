@@ -60,7 +60,7 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
-      name: [ '', CustomValidators.required, ac => this.tagNameValidator(ac) ],
+      name: [ '', this.tagNameSyncValidator(), ac => this.tagNameAsyncValidator(ac) ],
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -162,14 +162,18 @@ export class PlanetTagInputDialogComponent {
     return this.fb.group({
       name: [
         tag.name || '',
-        CustomValidators.required,
-        ac => this.tagNameValidator(ac, tag._id)
+        this.tagNameSyncValidator(),
+        ac => this.tagNameAsyncValidator(ac, tag._id)
       ],
       attachedTo: [ tag.attachedTo || [] ]
     });
   }
 
-  tagNameValidator(ac, exception = '') {
+  tagNameSyncValidator() {
+    return [ CustomValidators.required, ac => ac.value.match('_') ? { noUnderscore: true } : null ];
+  }
+
+  tagNameAsyncValidator(ac, exception = '') {
     return this.validatorService.isUnique$(
       'tags', '_id', ac,
       { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
