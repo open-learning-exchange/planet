@@ -34,3 +34,17 @@ export const filterById = (array = [], id: string) => array.filter(item => item.
 export const arraySubField = (array: any[], field: string) => array.map(item => item[field]);
 
 export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);
+
+export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
+
+export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
+  const iterable = map.entries();
+  const keyToArray = ({ value, done }, array: string[]) => {
+    if (done) {
+      return array;
+    }
+    const [ key, val ] = value;
+    return keyToArray(iterable.next(), !equalValue || val === equalValue ? [ ...array, key ] : array);
+  };
+  return keyToArray(iterable.next(), []);
+};

@@ -2,12 +2,12 @@ import { Component, Inject, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TagsService } from './tags.service';
-import { switchMap } from 'rxjs/operators';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
+import { mapToArray, isInMap } from '../utils';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -37,7 +37,7 @@ export class PlanetTagInputDialogComponent {
   isUserAdmin = false;
   subcollectionIsOpen = new Map();
   get okClickValue() {
-    return { wasOkClicked: true, indeterminate: this.indeterminate ? this.mapToArray(this.indeterminate, true) : [] };
+    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
   }
 
   constructor(
@@ -87,22 +87,6 @@ export class PlanetTagInputDialogComponent {
     });
   }
 
-  isInMap(tag: string, map: Map<string, boolean>) {
-    return map.get(tag);
-  }
-
-  mapToArray(map: Map<string, boolean>, equalValue?) {
-    const iterable = map.entries();
-    const keyToArray = ({ value, done }, array: string[]) => {
-      if (done) {
-        return array;
-      }
-      const [ key, val ] = value;
-      return keyToArray(iterable.next(), !equalValue || val === equalValue ? [ ...array, key ] : array);
-    };
-    return keyToArray(iterable.next(), []);
-  }
-
   updateFilter(value) {
     this.filterValue = value;
     this.tags = this.filterTags(value);
@@ -121,7 +105,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   checkboxChange(event, tag) {
-    event.source.checked = this.isInMap(tag, this.selected);
+    event.source.checked = isInMap(tag, this.selected);
   }
 
   addLabel() {
@@ -147,16 +131,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   editTagClick(event, tag) {
-    event.stopPropagation();
-    const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
-    this.dialogsFormService.openDialogsForm('Edit Collection', [
-      { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
-      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
-    ], this.tagForm(tag), { onSubmit: this.dialogOkClick(tag).bind(this) });
-  }
-
-  dialogOkClick(tag) {
-    return (newTag) => {
+    const onSubmit = ((newTag) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
         this.planetMessageService.showMessage('Collection updated');
@@ -165,7 +140,13 @@ export class PlanetTagInputDialogComponent {
         this.data.initTags(newTagId);
         this.dialogsFormService.closeDialogsForm();
       });
-    };
+    }).bind(this);
+    event.stopPropagation();
+    const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
+    this.dialogsFormService.openDialogsForm('Edit Collection', [
+      { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
+      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
+    ], this.tagForm(tag), { onSubmit });
   }
 
   tagForm(tag: any = {}) {
