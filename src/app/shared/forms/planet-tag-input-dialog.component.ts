@@ -158,11 +158,14 @@ export class PlanetTagInputDialogComponent {
   dialogOkClick(tag) {
     return (newTag) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
+        const newTagId = res[0].id;
         this.planetMessageService.showMessage('Collection updated');
-        this.data.initTags(res[0].id);
+        this.selected.set(newTagId, this.selected.get(tag._id));
+        this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
+        this.data.initTags(newTagId);
         this.dialogsFormService.closeDialogsForm();
       });
-    }
+    };
   }
 
   tagForm(tag: any = {}) {

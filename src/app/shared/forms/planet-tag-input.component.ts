@@ -102,9 +102,11 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   onChange(_: any) {}
 
-  initTags() {
-    this.tagsService.getTags(this.db, this.parent).subscribe((tags: string[]) => {
+  initTags(editedId?: string) {
+    this.tagsService.getTags(this.db, this.parent).subscribe((tags: any[]) => {
       this.tags = tags;
+      const newValue = this.value.concat(editedId).filter(tagId => tags.some(tag => tag._id === tagId));
+      this.value = newValue;
       this.setLabels(this.value, tags);
       this.resetDialogData();
     });
