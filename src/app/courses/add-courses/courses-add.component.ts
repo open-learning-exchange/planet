@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
-import { takeWhile, debounce, catchError } from 'rxjs/operators';
+import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -164,16 +164,18 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   updateCourse(courseInfo, shouldNavigate) {
-    forkJoin([
-      this.couchService.updateDocument(
-        this.dbName,
-        { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
-      ),
-      this.couchService.bulkDocs(
-        'tags',
-        this.tagsService.tagBulkDocs(this.documentInfo._id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
-      )
-    ]).subscribe(([ courseRes, tagsRes ]) => {
+    this.couchService.updateDocument(
+      this.dbName,
+      { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
+    ).pipe(switchMap((res: any) =>
+      forkJoin([
+        of(res),
+        this.couchService.bulkDocs(
+          'tags',
+          this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
+        )
+      ])
+    )).subscribe(([ courseRes, tagsRes ]) => {
       const message = courseInfo.courseTitle + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
