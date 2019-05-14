@@ -289,7 +289,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/forms/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field is required as valid date} }</target>
+        <target state="translated">{VAR_SELECT, select, required {This field is required} min {Tirada kama badnaan karto <x id="INTERPOLATION" equiv-text="{{number}}"/>} max {Lambarka kama badan karo <x id="INTERPOLATION" equiv-text="{{number}}"/>} duplicate {Fadlan horey u jirtaa] email {Fadlan gali email sax ah} matchPassword {Passwords waa qasab} invalidInt {Fadlan gali lambar} InvalidPositive {kuxiran xun} invalidHex {Hex ma shaqeynayo} invalidTime {Waqtiguu shaqeyn waayey} invalidDateFormat {Date is in format incorrect}} invalidDate {Date is invalid} invalidEndDate {Taariikhda dhammaadku ma noqon karo kahor intaan bilaabmin} invalidEndTime {Waqtiga dambe ma noqon karo ka hor inta aan la bilaabin} dateInPast {Ma noqon karo kahor taariikhda hadda} invalidOldPassword {erayga hore maaha mid sax ah} pattern {qaab Hover for info dheeraad ah} invalidFirstCharacter {Waa inay bilaabaan warqad ama lambar}}</target>
       </trans-unit>
       <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html" approved="yes">
         <source>Average</source>
@@ -428,9 +428,10 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
               
-              <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Ogol
+          
             
             </target>
       </trans-unit>
@@ -441,9 +442,10 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
             
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
+          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Tirtir
+         
           
           </target>
       </trans-unit>
