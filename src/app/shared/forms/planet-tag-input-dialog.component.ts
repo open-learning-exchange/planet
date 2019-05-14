@@ -149,13 +149,20 @@ export class PlanetTagInputDialogComponent {
   editTagClick(event, tag) {
     event.stopPropagation();
     const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
-    this.dialogsFormService.confirm('Edit Collection', [
+    this.dialogsFormService.openDialogsForm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
       { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
-    ], this.tagForm(tag), false).pipe(switchMap((newTag: any) => this.tagsService.updateTag({ ...tag, ...newTag }))).subscribe(() => {
-      this.planetMessageService.showMessage('Collection updated');
-      this.data.initTags();
-    });
+    ], this.tagForm(tag), { onSubmit: this.dialogOkClick(tag).bind(this) });
+  }
+
+  dialogOkClick(tag) {
+    return (newTag) => {
+      this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
+        this.planetMessageService.showMessage('Collection updated');
+        this.data.initTags(res[0].id);
+        this.dialogsFormService.closeDialogsForm();
+      });
+    }
   }
 
   tagForm(tag: any = {}) {
