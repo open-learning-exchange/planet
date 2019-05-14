@@ -505,7 +505,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuration</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Qaabeynta</target>
       </trans-unit>
       <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html" approved="yes">
         <source>Nation</source>
