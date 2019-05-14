@@ -143,8 +143,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   setInitialTags(tags, documentInfo, draft?) {
-    const courseTags = this.tagsService.attachTagsToDocs(this.dbName, [ documentInfo ], tags)[0].tags;
-    this.coursesService.course = { initialTags: courseTags };
+    if (this.isDestroyed) {
+      return;
+    }
+    const courseTags = documentInfo._id ? this.tagsService.attachTagsToDocs(this.dbName, [ documentInfo ], tags)[0].tags : [];
+    this.coursesService.course = { initialTags: courseTags || [] };
     this.tags.setValue(draft === undefined ? this.coursesService.course.initialTags.map((tag: any) => tag._id) : draft.tags);
   }
 
