@@ -305,9 +305,9 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Upto date</target>
+        <target state="translated">Ilaa taariikhda</target>
       </trans-unit>
-      <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html">
+      <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html" approved="yes">
         <source>Newer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
@@ -315,13 +315,16 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
         </context-group>
         <target state="translated">Cusub</target>
       </trans-unit>
-      <trans-unit id="a5eb07587a845a6e31ac6faee94ba465ed733e06" datatype="html">
+      <trans-unit id="a5eb07587a845a6e31ac6faee94ba465ed733e06" datatype="html" approved="yes">
         <source>Older</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Ka ween</target>
+        <target state="translated">Ka weyn</target>
+        <alt-trans>
+          <target>Ka ween</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="84bbbe38f927eaeddf081648c8783d06b4348b24" datatype="html">
         <source>Does not match</source>
@@ -329,7 +332,10 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Iskuma aadana</target>
+        <target state="translated">Ma ciyaarin</target>
+        <alt-trans>
+          <target>Iskuma aadana</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="7c2fe53d437c5c9915174de6a0ed5aea0f83467a" datatype="html" approved="yes">
         <source>Requests List</source>
@@ -403,7 +409,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
 </target>
         </alt-trans>
       </trans-unit>
-      <trans-unit id="61e83c6fe4e946889a5768f38d3cf3c212b9291c" datatype="html">
+      <trans-unit id="61e83c6fe4e946889a5768f38d3cf3c212b9291c" datatype="html" approved="yes">
         <source>
               Communities
             </source>
