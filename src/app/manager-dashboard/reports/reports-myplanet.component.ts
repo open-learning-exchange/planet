@@ -5,12 +5,14 @@ import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
+import { filterSpecificFields } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
 })
 export class ReportsMyPlanetComponent implements OnInit {
 
+  searchValue = '';
   myPlanets = [];
   planets = [];
   planetType = this.stateService.configuration.planetType;
@@ -30,10 +32,17 @@ export class ReportsMyPlanetComponent implements OnInit {
     this.getMyPlanetList();
   }
 
+  requestListFilter(filterValue: string) {
+    this.searchValue = filterValue;
+    this.filterData();
+  }
+
   filterData() {
+    const filterFunction = filterSpecificFields([ 'createdOn', 'parentCode' ]);
     this.planets = this.planets.map((planet: any) => ({
       ...planet,
-      children: this.myPlanets.filter((item: any) => item.createdOn === planet.code || item.parentCode === planet.code)
+      children: this.myPlanets.filter((item: any) => (item.createdOn === planet.doc.code || item.parentCode === planet.doc.code)
+                  && filterFunction(item, this.searchValue))
     }));
   }
 
