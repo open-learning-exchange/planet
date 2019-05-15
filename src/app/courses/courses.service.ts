@@ -83,13 +83,13 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, passed = true }) {
+  updateProgress({ courseId, stepNum, passed = true }, userId?) {
     const configuration = this.stateService.configuration;
     const newProgress = { stepNum, courseId, passed,
-      userId: this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
+      userId: userId || this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
       updatedDate: this.couchService.datePlaceholder
     };
-    this.findOneCourseProgress(courseId).pipe(switchMap((progress: any[] = []) => {
+    this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
       const currentProgress: any = progress.length > 0 ? progress.find((p: any) => p.stepNum === stepNum) : undefined;
       if (currentProgress !== undefined && currentProgress.passed === newProgress.passed) {
         return of({});
@@ -144,9 +144,9 @@ export class CoursesService {
     );
   }
 
-  findOneCourseProgress(courseId: string) {
+  findOneCourseProgress(courseId: string, userId?) {
     return this.couchService.findAll(this.progressDb, findDocuments({
-      'userId': this.userService.get()._id,
+      'userId': userId || this.userService.get()._id,
       courseId
     }));
   }
