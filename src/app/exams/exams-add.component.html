@@ -1,37 +1,36 @@
 <mat-toolbar>
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
+  {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
+  {{examType === 'exam' && courseName ? courseName + ':' : ''}}
+  {{pageType}}
+  <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
-    {{examType === 'exam' && courseName ? courseName + ':' : ''}}
-    {{pageType}}
-    <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
-    <span class="toolbar-fill"></span>
-  </mat-toolbar>
   <div class="view-container view-full-height">
-    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent}" novalidate>
-      <div class="exam-buttons">
-        <button mat-raised-button color="primary" type="submit" i18n>Save</button>
-        <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n class="margin-lr-5">Return</button>
-        <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button>
-        <mat-menu #questionMenu>
-          <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
-          <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
-          <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
-          <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
-        </mat-menu>
-        <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" class="margin-lr-5" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
-        <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
-        <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
-      </div>
-      <div class="exam-inputs" *ngIf="!isCourseContent">
-        <mat-form-field class="full-width">
-          <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>
-          <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
+    <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent,'question-view':activeQuestionIndex>-1}" novalidate>
+      <ng-container *ngIf="activeQuestionIndex===-1">
+        <div class="exam-buttons">
+          <button mat-raised-button color="primary" type="submit" i18n>Save</button>
+          <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n class="margin-lr-5">Return</button>
+          <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button>
+          <mat-menu #questionMenu>
+            <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
+            <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
+            <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
+            <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
+          </mat-menu>
+          <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" class="margin-lr-5" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
+          <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
+          <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
+        </div>
+        <div class="exam-inputs" *ngIf="!isCourseContent">
+          <mat-form-field class="full-width">
+            <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>
+            <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        </div>
+      </ng-container>
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
           <span class="exam-question">{{ plainText(question.value.body) || 'Question ' + (i+1) }}</span>

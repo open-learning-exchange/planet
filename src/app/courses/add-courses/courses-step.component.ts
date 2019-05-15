@@ -48,9 +48,11 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   stepClick(index: number) {
-    this.activeStep = this.steps[index];
     this.activeStepIndex = index;
-    this.stepForm.patchValue(this.steps[index]);
+    if (index > -1) {
+      this.activeStep = this.steps[index];
+      this.stepForm.patchValue(this.steps[index]);
+    }
   }
 
   addResources() {
