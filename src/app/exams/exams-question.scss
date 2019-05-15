@@ -1,21 +1,31 @@
 @import '../variables';
 
-.question-choices {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-}
+:host {
 
-.question-choices > div {
-  margin-right: 0.5rem;
-}
+  form {
+    display: grid;
+    grid-template-rows: 56px auto 56px;
+  }
 
-.question-choices > div > mat-checkbox {
-  margin-left: 0.5rem;
-}
+  .question-choices {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
 
-.type-title-container {
-  display: grid;
-  grid-template-columns: 1fr $form-width-1;
-  grid-column-gap: 0.5rem;
+  .question-choices > div {
+    margin-right: 0.5rem;
+    max-height: 56px;
+  }
+
+  .question-choices > div > mat-checkbox {
+    margin-left: 0.5rem;
+  }
+
+  .type-title-container {
+    display: grid;
+    grid-template-columns: 1fr $form-width-1;
+    grid-column-gap: 0.5rem;
+  }
+
 }

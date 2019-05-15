@@ -26,7 +26,8 @@ $exam-view-height: calc(#{$view-container-height} + 64px);
   }
 
   form.question-view {
-    display: block;
+    grid-template-areas: "questions";
+    grid-template-rows: calc(#{$exam-view-height} - 2rem);
   }
 
   .exam-buttons {

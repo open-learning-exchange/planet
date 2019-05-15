@@ -8,7 +8,7 @@
 
 .planet-step-list-form-container {
   display: grid;
-  grid-template-rows: min-content minmax(auto, min-content) min-content;
+  grid-template-rows: min-content auto min-content;
   height: 100%;
 
   .action-buttons {
