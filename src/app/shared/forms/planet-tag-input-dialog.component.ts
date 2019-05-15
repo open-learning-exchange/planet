@@ -35,6 +35,7 @@ export class PlanetTagInputDialogComponent {
   addTagForm: FormGroup;
   newTagId: string;
   isUserAdmin = false;
+  isInMap = isInMap;
   subcollectionIsOpen = new Map();
   get okClickValue() {
     return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
