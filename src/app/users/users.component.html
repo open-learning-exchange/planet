@@ -66,10 +66,10 @@
         <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div *ngIf="element.imageSrc; else noImage">
-            <img class="profile-image cursor-pointer" [src]="element.imageSrc" >
+            <img class="profile-image cursor-pointer" [src]="element.imageSrc">
           </div>
           <ng-template #noImage>
-            <img class="profile-image cursor-pointer" src="assets/avatar.png" >
+            <img class="profile-image cursor-pointer" src="assets/avatar.png">
           </ng-template>
         </mat-cell>
       </ng-container>
