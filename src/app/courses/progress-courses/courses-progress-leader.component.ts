@@ -16,7 +16,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   course: any;
   // Need to define this variable for template which is shared with CoursesProgressLearner
   headingStart = '';
-  chartLabel = '';
+  chartLabel = 'Steps';
   selectedStep: any;
   chartData: any[];
   submissions: any[] = [];
@@ -49,7 +49,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.filterSubmittedExamSteps(submissions);
       this.dialogsLoadingService.stop();
     });
-    this.chartLabel = 'Steps';
   }
 
   ngOnDestroy() {
@@ -144,7 +143,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.selectedStep = this.course.steps[courseIndex];
       this.setSingleStep(this.submissions);
     }
-    this.chartLabel = 'Questions';
+    this.chartLabel = 'Quest.';
   }
 
   resetToFullCourse() {
