@@ -20,7 +20,7 @@
   <mat-form-field class="font-size-1 margin-lr-3">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
-  <button mat-raised-button color="primary" i18n (click)="resetSearch()" [disabled]="courses.filteredData.length === courses.data.length"><span>Reset</span></button>
+  <button mat-raised-button color="primary" i18n (click)="resetSearch()" [disabled]="courses.filter === ''"><span>Reset</span></button>
 </mat-toolbar>
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
