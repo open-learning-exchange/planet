@@ -79,7 +79,7 @@ export class SubmissionsService {
       let attempts = res.docs.length - 1;
       const bestAttempt = res.docs.reduce((best: any, submission: any) =>
         submission.grade > best.grade ? submission : best, res.docs[0]);
-      this.submission = res.docs.find(submission => submission.status === status);
+      this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
       if (this.submission === undefined) {
         attempts += 1;
         this.newSubmission({ parentId, parent, user, type });
