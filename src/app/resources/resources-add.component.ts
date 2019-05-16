@@ -15,10 +15,9 @@ import { switchMap, first } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
-import Mime from 'mime/Mime';
+import * as mime from 'mime';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-const mime = new Mime(require('mime/types/standard.js'));
 import { languages } from '../shared/languages';
 import { ResourcesService } from './resources.service';
 import { TagsService } from '../shared/forms/tags.service';
