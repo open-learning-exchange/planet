@@ -203,12 +203,17 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   attendMeetup(meetup) {
-    this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
-      const msg = res.participate ? 'left' : 'joined';
-      meetup.participate = !res.participate;
-      this.countSelectedShelf(this.selection.selected);
-      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
-    });
+    const meetupDate = (meetup.endDate || meetup.startDate);
+    if ((meetupDate < this.dateNow && meetup.participate) || (meetupDate > this.dateNow)) {
+      this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
+        const msg = res.participate ? 'left' : 'joined';
+        meetup.participate = !res.participate;
+        this.countSelectedShelf(this.selection.selected);
+        this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+      });
+    } else {
+      this.planetMessageService.showMessage('You cannot join an old meetup.');
+    }
   }
 
   countSelectedShelf(selected: any) {

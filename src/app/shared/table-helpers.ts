@@ -75,16 +75,16 @@ export const filterArrayField = (filterField: string, filterItems: string[]) => 
   };
 };
 
-export const filterTags = (filterField, filterControl: FormControl) => {
+export const filterTags = (filterControl: FormControl) => {
   return (data: any, filter: string) => {
-    return filterArrayField(filterField, filterControl.value)(data, filter);
+    return filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter);
   };
 };
 
 export const filterAdvancedSearch = (searchObj: any) => {
   return (data: any, filter: string) => {
     return Object.entries(searchObj).reduce(
-      (isMatch, [ field, val ]: any[]) => isMatch && filterArrayField(field, val)(data, filter),
+      (isMatch, [ field, val ]: any[]) => isMatch && (field.indexOf('_') > -1 || filterArrayField(field, val)(data.doc, filter)),
       true
     );
   };

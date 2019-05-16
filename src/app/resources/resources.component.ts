@@ -75,12 +75,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedAdded = 0;
   isAuthorized = false;
   showFilters = 'off';
-  searchSelection: any = {};
+  searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
-      filterTags('tags', this.tagFilter),
-      filterSpecificFieldsByWord([ 'title' ]),
+      filterTags(this.tagFilter),
+      filterSpecificFieldsByWord([ 'doc.title' ]),
       filterShelf(this._myLibraryFilter, 'libraryInfo')
     ]
   );
@@ -128,7 +128,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
-      this.resources.filter = this.resources.filter || ' ';
+      this.resources.filter = this.resources.filter || tags.length > 0 ? ' ' : '';
       this.removeFilteredFromSelection();
     });
     this.selection.onChange.subscribe(({ source }) => {
@@ -290,6 +290,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
+    this.searchSelection._empty = Object.entries(this.searchSelection).every(([ field, val ]: any[]) => val.length === 0);
     this.titleSearch = this.titleSearch;
     this.removeFilteredFromSelection();
   }

@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce, arraySubField } from '../shared/utils';
 import { CouchService } from '../shared/couchdb.service';
 
 @Injectable()
@@ -36,7 +36,8 @@ export class ResourcesService {
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
       if (response !== undefined) {
         this.isActiveResourceFetch = false;
-        this.setResources(response.newData.map(r => ({ doc: r, ...r })), this.ratings[response.planetField], response.planetField);
+        const resources = response.newData.map((resource: any) => ({ doc: resource, _id: resource._id, _rev: resource._rev }));
+        this.setResources(resources, this.ratings[response.planetField], response.planetField);
       }
     });
     this.stateService.couchStateListener('tags').subscribe(response => {
@@ -69,10 +70,7 @@ export class ResourcesService {
   }
 
   setTags(resources, tags, planetField) {
-    this.resources[planetField] = resources.map((resource: any) => resource.tags === undefined ? resource : ({
-      ...resource,
-      tagObjects: resource.tags.map(tag => ({ name: this.tagsService.findTag(tag, tags).name, _id: tag }))
-    }));
+    this.resources[planetField] = this.tagsService.attachTagsToDocs(this.dbName, resources, tags);
     this.updateResources(this.resources);
   }
 
@@ -96,21 +94,12 @@ export class ResourcesService {
   }
 
   updateResourceTags(resourceIds, tagIds, indeterminateIds = []) {
-    const fullSelectedTags = tagIds.filter(tagId => indeterminateIds.indexOf(tagId) === -1);
-    const newResources = resourceIds
-      .map(id => this.resources.local.find(resource => resource._id === id).doc)
-      .map(resource => ({ ...resource, tags: this.newResourceTags(resource.tags, fullSelectedTags, indeterminateIds) }));
-    return this.couchService.post(this.dbName + '/_bulk_docs', { docs: newResources }).pipe(map((res) => {
+    return this.tagsService.updateManyTags(
+      this.resources.local, this.dbName, { selectedIds: resourceIds, tagIds, indeterminateIds }
+    ).pipe(map((res) => {
       this.requestResourcesUpdate(false);
       return res;
     }));
-  }
-
-  newResourceTags(currentTagIds = [], fullSelectedTagIds, indeterminateIds) {
-    return [
-      ...currentTagIds.filter(tagId => indeterminateIds.indexOf(tagId) > -1),
-      ...fullSelectedTagIds
-    ].reduce(dedupeShelfReduce, []);
   }
 
 }

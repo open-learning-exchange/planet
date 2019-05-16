@@ -1,6 +1,6 @@
 {
   "name": "planet-app",
-  "version": "0.7.34",
+  "version": "0.7.39",
   "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -46,7 +46,7 @@
     "jszip": "^3.1.5",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.1.0",
-    "mime": "^2.3.1",
+    "mime": "^2.4.3",
     "ngx-img": "^10.15.0",
     "pouchdb": "^7.0.0",
     "pouchdb-authentication": "^1.1.3",

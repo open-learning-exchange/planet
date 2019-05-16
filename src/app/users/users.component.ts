@@ -8,7 +8,7 @@ import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from 
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, takeUntil, debounceTime } from 'rxjs/operators';
+import { switchMap, takeUntil, debounceTime, map } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
 } from '../shared/table-helpers';
@@ -17,6 +17,8 @@ import { debug } from '../debug-operator';
 import { dedupeShelfReduce } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -66,7 +68,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private reportsService: ReportsService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private managerService: ManagerService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -160,7 +164,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 }),
       this.couchService.findAll('child_users', { 'selector': {} }),
-      this.couchService.findAll('communityregistrationrequests', { 'selector': { 'registrationRequest': 'accepted' } })
+      this.managerService.getChildPlanets(true).pipe(map(
+        (state) => this.reportsService.attachNamesToPlanets(state)
+      ))
+
     ]);
   }
 

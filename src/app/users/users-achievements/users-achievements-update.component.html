@@ -64,7 +64,8 @@
                   Attached resources:
                 </div>
                 <mat-chip-list mat-line>
-                  <mat-chip *ngFor="let resource of (achievement.value.resources || [])">{{resource.title}}
+                  <mat-chip *ngFor="let resource of (achievement.value.resources || [])">
+                    <a target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
                     <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
                   </mat-chip>
                 </mat-chip-list>

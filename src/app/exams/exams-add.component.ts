@@ -100,10 +100,11 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
+      this.showFormError = false;
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
-      this.examsService.checkValidFormComponent(this.examForm);
       this.showFormError = true;
+      this.examsService.checkValidFormComponent(this.examForm);
       this.stepClick(this.activeQuestionIndex);
     }
   }
@@ -120,9 +121,9 @@ export class ExamsAddComponent implements OnInit {
     this.couchService.findAll(this.dbName,
       { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
     ).pipe(switchMap((exams) => {
-      const name = examInfo.name || this.newExamName(exams, namePrefix);
+      examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.couchService.updateDocument(this.dbName,
-        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, name, updatedDate: date });
+        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date });
     }))
     .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
@@ -184,7 +185,7 @@ export class ExamsAddComponent implements OnInit {
 
   newExamName(existingExams: any[], namePrefix, nameNumber = 0) {
     const tryNumber = nameNumber || existingExams.length;
-    const name = `${namePrefix} ${tryNumber + 1}`;
+    const name = `${namePrefix} - ${tryNumber + 1}`;
     if (existingExams.findIndex((exam: any) => exam.name === name) === -1) {
       return name;
     }

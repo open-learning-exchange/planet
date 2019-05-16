@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
-import { forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
+import { findDocuments } from '../mangoQueries';
 
 @Injectable()
 export class TagsService {
@@ -12,22 +13,17 @@ export class TagsService {
     private stateService: StateService
   ) {}
 
-  getTags(parent: boolean) {
-    const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
-    return forkJoin([
-      this.couchService.get('resources/_design/resources/_view/count_tags?group=true', opts),
-      this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' })
-    ]).pipe(
-      map(([ existingTags, dbTags ]: [ any, any ]) => {
-        const unusedTags = dbTags.filter((dbTag: any) => {
-          return existingTags.rows.find((tag: any) => tag.key === dbTag._id) === undefined;
-        });
-        return existingTags.rows.sort((a, b) => b.value - a.value).map((tag: any) => ({
-          count: tag.value,
-          ...this.findTag(tag.key, dbTags)
-        })).concat(unusedTags).sort((a, b) => {
-          return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
-        }).map(this.fillSubTags);
+  getTags(db: string, parent: boolean) {
+    return this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }).pipe(
+      map((tags: any[]) => {
+        const tagCounts = tags.reduce(
+          (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
+          {}
+        );
+        return tags
+          .map((tag: any) => ({ ...tag, count: tagCounts[tag._id] || 0 }))
+          .filter((tag: any) => tag.db === db && tag.docType === 'definition')
+          .map(this.fillSubTags);
       })
     );
   }
@@ -39,7 +35,17 @@ export class TagsService {
 
   updateTag(tag) {
     const { count, subTags, ...tagData } = tag;
-    return this.couchService.post('tags', tagData);
+    const newId = `${tagData.db}_${tagData.name.toLowerCase()}`;
+    return (tag._id ? this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })) : of([])).pipe(
+      switchMap((oldLinks: any[]) => {
+        const newLinks = oldLinks.map(t => ({ ...t, tagId: newId }));
+        return this.couchService.bulkDocs('tags', [
+          { ...tagData, _rev: undefined, _id: newId },
+          { ...tagData, _deleted: true },
+          ...newLinks
+        ]);
+      })
+    );
   }
 
   findTag(tagKey: any, fullTags: any[]) {
@@ -49,6 +55,42 @@ export class TagsService {
 
   fillSubTags(tag: any, index: number, tags: any[]) {
     return { ...tag, subTags: tags.filter(({ attachedTo }) => (attachedTo || []).indexOf(tag._id) > -1) };
+  }
+
+  attachTagsToDocs(db: string, docs: any[], tags: any[]) {
+    const tagsObj = tags.reduce((obj, tagLink: any) => {
+      if (tagLink.docType !== 'link' || tagLink.db !== db) {
+        return obj;
+      }
+      const tag = { ...this.findTag(tagLink.tagId, tags), tagLink };
+      return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
+    }, {});
+    return docs.map((doc: any) => ({
+      ...doc,
+      tags: tagsObj[doc._id] || []
+    }));
+  }
+
+  tagBulkDocs(linkId: string, db: string, newTagIds: string[], currentTags: any[] = []) {
+    // name property is needed for tags database queries
+    const tagLinkDoc = (tagId) => ({ linkId, tagId, name: '', docType: 'link', db });
+    return [
+      ...newTagIds.filter(tagId => currentTags.findIndex((tag: any) => tag.tagId === tagId) === -1)
+        .map(tagId => tagLinkDoc(tagId)),
+      ...currentTags.filter((tag: any) => newTagIds.indexOf(tag.tagId) === -1)
+        .map((tag: any) => ({ ...tag.tagLink, '_deleted': true }))
+    ];
+  }
+
+  updateManyTags(data, dbName, { selectedIds, tagIds, indeterminateIds }) {
+    const fullSelectedTags = tagIds.filter(tagId => indeterminateIds.indexOf(tagId) === -1);
+    const items = selectedIds.map(id => data.find((item: any) => item._id === id));
+    const newTags = items.map((item: any) =>
+      this.tagBulkDocs(
+        item._id, dbName, fullSelectedTags, item.tags.filter((tag: any) => indeterminateIds.indexOf(tag._id) === -1)
+      )
+    ).flat();
+    return this.couchService.bulkDocs('tags', newTags);
   }
 
 }

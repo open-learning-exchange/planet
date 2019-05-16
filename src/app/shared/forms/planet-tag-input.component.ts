@@ -60,6 +60,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() helperText = true;
   @Input() selectedIds;
   @Input() labelType = this.mode;
+  @Input() db;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
@@ -101,9 +102,11 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   onChange(_: any) {}
 
-  initTags() {
-    this.tagsService.getTags(this.parent).subscribe((tags: string[]) => {
+  initTags(editedId?: string) {
+    this.tagsService.getTags(this.db, this.parent).subscribe((tags: any[]) => {
       this.tags = tags;
+      const newValue = this.value.concat(editedId).filter(tagId => tags.some(tag => tag._id === tagId));
+      this.value = newValue;
       this.setLabels(this.value, tags);
       this.resetDialogData();
     });
@@ -147,6 +150,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   openPresetDialog() {
+    this.initTags();
     this.dialogRef = this.dialog.open(PlanetTagInputDialogComponent, {
       maxWidth: '80vw',
       maxHeight: '80vh',
@@ -175,16 +179,17 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       startingTags,
       tags: this.filterTags(this.tags, this.selectMany),
       mode: this.mode,
-      initSelectMany: this.selectMany
+      initSelectMany: this.selectMany,
+      db: this.db
     });
   }
 
   tagsInSelection(selectedIds, data) {
     const selectedTagsObject = selectedIds
       .reduce((selectedTags, id) => {
-        const tagIds = this.filteredData.find((item: any) => item._id === id).tags || [];
-        tagIds.forEach(tagId => {
-          selectedTags[tagId] = selectedTags[tagId] === undefined ? 1 : selectedTags[tagId] + 1;
+        const tags = this.filteredData.find((item: any) => item._id === id).tags || [];
+        tags.forEach((tag: any) => {
+          selectedTags[tag._id] = selectedTags[tag._id] === undefined ? 1 : selectedTags[tag._id] + 1;
         });
         return selectedTags;
       }, {});
@@ -203,7 +208,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     return this.mode === 'add' ? tags : tags.map((tag) => {
       return !selectMany ? tag : ({
         ...tag,
-        count: this.filteredData.reduce((count, item: any) => count + ((item.tags || []).indexOf(tag._id) > -1 ? 1 : 0), 0)
+        count: this.filteredData.reduce(
+          (count, item: any) => count + ((item.tags || []).findIndex((itemTag: any) => itemTag._id === tag._id) > -1 ? 1 : 0),
+          0
+        )
       });
     }).filter((tag: any) => tag.count > 0);
   }

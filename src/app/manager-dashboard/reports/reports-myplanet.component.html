@@ -1,0 +1,31 @@
+<!-- Request template -->
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/manager">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>myPlanet Report</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="requestListFilter($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>myPlanet on { planetType, select, center {Nations} other {Communities} }</span>
+      <span class="toolbar-fill"></span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <ng-container *ngFor="let planet of planets">
+      <mat-expansion-panel *ngIf="planet.children.length">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-myplanet-table [data]="planet.children"></planet-myplanet-table>
+      </mat-expansion-panel>
+    </ng-container>
+  </div>
+</div>

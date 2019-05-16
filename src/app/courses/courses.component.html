@@ -2,14 +2,17 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Courses</span>
   <span class="toolbar-fill"></span>
+  <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+    <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData"></planet-tag-input>
+  </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select placeholder="Grade Level" [value]="filter.gradeLevel || 'All'" (selectionChange)="onFilterChange($event.value, 'gradeLevel')">
+    <mat-select placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of gradeOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select placeholder="Subject Level" [value]="filter.subjectLevel || 'All'" (selectionChange)="onFilterChange($event.value, 'subjectLevel')">
+    <mat-select placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of subjectOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>
@@ -17,7 +20,7 @@
   <mat-form-field class="font-size-1 margin-lr-3">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
-  <button mat-button i18n (click)="resetSearch()"><span>Reset</span></button>
+  <button mat-raised-button color="primary" i18n (click)="resetSearch()" [disabled]="courses.filter === ''"><span>Reset</span></button>
 </mat-toolbar>
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
@@ -26,7 +29,7 @@
       <span class="toolbar-fill"></span>
       <ng-container *ngIf="parent">
         <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
-          <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get course</span>
+          <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
         </button>
       </ng-container>
       <ng-container *ngIf="!parent">
@@ -39,6 +42,9 @@
           <span *ngIf="selectedEnrolled > 0"> ({{selectedEnrolled}})</span>
         </button>
         <ng-container *ngIf="user.isUserAdmin">
+          <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
+            <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
+          </mat-form-field>
           <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
           <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
             <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
@@ -78,20 +84,25 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
         <mat-cell  *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a [routerLink]="['view', element._id]">{{element.courseTitle}}</a>
+            <a [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
             <mat-icon class="margin-lr-3" i18n-title title="Joined Course" [inline]="true" *ngIf="element.admission">check</mat-icon>
           </h3>
-          <td-markdown class="content">{{ element.description }}</td-markdown>
+          <td-markdown class="content">{{ element.doc.description }}</td-markdown>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
-          <div class="course-progress" *ngIf="element.admission && element.steps.length && !parent">
+          <mat-chip-list #tagsList class="tags-list">
+            <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag._id)">
+              {{tag.name}}
+            </mat-chip>
+          </mat-chip-list>
+          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
             <span i18n>Your progress:</span>
-            <planet-courses-progress-bar [course]="element" [courseProgress]="element.progress"></planet-courses-progress-bar>
+            <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
           <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission && element.steps.length" (click)="courseToggle(element._id, 'admission')">
+            <a mat-menu-item *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>
               <span i18n>Join</span>
             </a>
@@ -103,7 +114,7 @@
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
             </a>
-            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element)">
+            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
               <mat-icon>folder</mat-icon>
               <span i18n>Manage</span>
             </a>
@@ -115,7 +126,7 @@
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
-            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element)">
+            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element.doc)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
@@ -126,8 +137,8 @@
         <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <p>{{ "Grade Level: " + element.gradeLevel}}</p>
-            <p>{{ "Subject Level: " + element.subjectLevel}}</p>
+            <p>{{ "Grade Level: " + element.doc.gradeLevel}}</p>
+            <p>{{ "Subject Level: " + element.doc.subjectLevel}}</p>
           </div>
         </mat-cell>
       </ng-container>

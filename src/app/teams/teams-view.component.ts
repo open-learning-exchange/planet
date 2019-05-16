@@ -78,8 +78,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   setStatus(team, user, shelf) {
     this.userStatus = 'unrelated';
-    this.userStatus = team.requests.findIndex(id => id === user._id) > -1 ? 'requesting' : this.userStatus;
-    this.userStatus = shelf.myTeamIds.findIndex(id => id === team._id) > -1 ? 'member' : this.userStatus;
+    if (team) {
+      this.userStatus = team.requests.findIndex(id => id === user._id) > -1 ? 'requesting' : this.userStatus;
+      this.userStatus = shelf.myTeamIds.findIndex(id => id === team._id) > -1 ? 'member' : this.userStatus;
+    }
   }
 
   toggleMembership(team, leaveTeam) {

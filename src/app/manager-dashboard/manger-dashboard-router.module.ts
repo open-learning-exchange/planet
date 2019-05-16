@@ -7,6 +7,7 @@ import { ManagerDashboardConfigurationComponent } from './manager-dashboard-conf
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
+import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
@@ -19,7 +20,8 @@ const routes: Routes = [
   { path: 'users', loadChildren: '../users/users.module#UsersModule' },
   { path: 'reports', component: ReportsComponent },
   { path: 'reports/detail', component: ReportsDetailComponent },
-  { path: 'reports/pending', component: ReportsPendingComponent }
+  { path: 'reports/pending', component: ReportsPendingComponent },
+  { path: 'reports/myplanet', component: ReportsMyPlanetComponent }
 ];
 
 @NgModule({

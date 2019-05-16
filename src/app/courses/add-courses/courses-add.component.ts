@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
-import { takeWhile, debounce, catchError } from 'rxjs/operators';
+import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -15,19 +15,20 @@ import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { PouchService } from '../../shared/database';
 import { debug } from '../../debug-operator';
+import { TagsService } from '../../shared/forms/tags.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
-  // needs member document to implement
-  members = [];
+
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType = 'Add new';
+  tags = this.fb.control([]);
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
   private stepsChange$ = new Subject<any[]>();
@@ -58,7 +59,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
-    private pouchService: PouchService
+    private pouchService: PouchService,
+    private tagsService: TagsService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -91,15 +93,17 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   ngOnInit() {
     forkJoin([
       this.pouchService.getDocEditing(this.dbName, this.courseId),
-      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error)))
-    ]).subscribe(([ draft, saved ]: [ any, any ]) => {
+      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
+      this.stateService.getCouchState('tags', 'local')
+    ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.documentInfo = { _rev: saved._rev, _id: saved._id };
         this.pageType = 'Update';
       }
       const doc = draft === undefined ? saved : draft;
+      this.setInitialTags(tags, this.documentInfo, draft);
       if (this.route.snapshot.params.continue !== 'true') {
-        this.setFormAndSteps({ form: doc, steps: doc.steps });
+        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
       }
     });
     if (this.route.snapshot.params.continue === 'true') {
@@ -135,15 +139,27 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   setFormAndSteps(course: any) {
     this.courseForm.patchValue(course.form);
     this.steps = course.steps || [];
+    this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
+  }
+
+  setInitialTags(tags, documentInfo, draft?) {
+    if (this.isDestroyed) {
+      return;
+    }
+    const courseTags = documentInfo._id ? this.tagsService.attachTagsToDocs(this.dbName, [ documentInfo ], tags)[0].tags : [];
+    this.coursesService.course = { initialTags: courseTags || [] };
+    this.tags.setValue(draft === undefined ? this.coursesService.course.initialTags.map((tag: any) => tag._id) : draft.tags);
   }
 
   onFormChanges() {
-    combineLatest(this.courseForm.valueChanges, this.stepsChange$).pipe(
+    combineLatest(this.courseForm.valueChanges, this.stepsChange$, this.tags.valueChanges).pipe(
       debounce(() => race(interval(2000), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
-    ).subscribe(([ value, steps ]) => {
-      this.coursesService.course = { form: value, steps };
-      this.pouchService.saveDocEditing({ ...value, steps }, this.dbName, this.courseId);
+    ).subscribe(([ value, steps, tags ]) => {
+      this.coursesService.course = { form: value, steps, tags };
+      this.pouchService.saveDocEditing(
+        { ...value, steps, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
+      );
     });
   }
 
@@ -151,9 +167,17 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.couchService.updateDocument(
       this.dbName,
       { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
-    ).subscribe((res) => {
+    ).pipe(switchMap((res: any) =>
+      forkJoin([
+        of(res),
+        this.couchService.bulkDocs(
+          'tags',
+          this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
+        )
+      ])
+    )).subscribe(([ courseRes, tagsRes ]) => {
       const message = courseInfo.courseTitle + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
-      this.courseChangeComplete(message, res, shouldNavigate);
+      this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -176,11 +200,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (shouldNavigate) {
       this.navigateBack();
     }
+    this.planetMessageService.showMessage(message);
+    if (this.isDestroyed) {
+      return;
+    }
     this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
     this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
+    this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
-    this.planetMessageService.showMessage(message);
   }
 
   addStep() {
