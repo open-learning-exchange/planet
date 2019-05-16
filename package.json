@@ -1,6 +1,6 @@
 {
   "name": "planet-app",
-  "version": "0.7.38",
+  "version": "0.7.39",
   "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
