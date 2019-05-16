@@ -2078,7 +2078,10 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">तपाईंको उत्तर यहाँ टाइप गर्नुहोस्</target>
+        <target state="translated">तपाईंको जवाफ यहाँ लेख्नुहोस्</target>
+        <alt-trans>
+          <target>तपाईंको उत्तर यहाँ टाइप गर्नुहोस्</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html" approved="yes">
         <source>Planet Learning</source>
