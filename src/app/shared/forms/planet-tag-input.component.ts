@@ -29,7 +29,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     return this._value;
   }
   set value(tags: string[]) {
-    this._value = tags;
+    this._value = tags || [];
     this.onChange(tags);
     this.stateChanges.next();
   }
