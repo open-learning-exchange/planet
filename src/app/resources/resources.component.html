@@ -14,7 +14,7 @@
     <mat-form-field class="font-size-1 margin-lr-4">
       <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
     </mat-form-field>
-    <button mat-button i18n (click)="resetFilter()"><span>Clear</span></button>
+    <button mat-raised-button color="primary" i18n (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span>Clear</span></button>
   </mat-toolbar-row>
   <mat-toolbar-row class="search-bar" *ngIf="showFilters==='on'">
     <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
