@@ -84,7 +84,7 @@ export const filterTags = (filterControl: FormControl) => {
 export const filterAdvancedSearch = (searchObj: any) => {
   return (data: any, filter: string) => {
     return Object.entries(searchObj).reduce(
-      (isMatch, [ field, val ]: any[]) => isMatch && filterArrayField(field, val)(data, filter),
+      (isMatch, [ field, val ]: any[]) => isMatch && filterArrayField(field, val)(data.doc, filter),
       true
     );
   };

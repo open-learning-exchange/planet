@@ -6,13 +6,13 @@
     <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData"></planet-tag-input>
   </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select placeholder="Grade Level" [value]="filter.gradeLevel || 'All'" (selectionChange)="onFilterChange($event.value, 'gradeLevel')">
+    <mat-select placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of gradeOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select placeholder="Subject Level" [value]="filter.subjectLevel || 'All'" (selectionChange)="onFilterChange($event.value, 'subjectLevel')">
+    <mat-select placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let option of subjectOptions" value={{option}}>{{option}}</mat-option>
     </mat-select>

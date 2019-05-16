@@ -109,7 +109,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   createSearchList(category, data) {
     return ({
       category,
-      items: data.reduce((list, item) => list.concat(item[category]), []).reduce(dedupeShelfReduce, []).filter(item => item)
+      items: data.reduce((list, { doc }) => list.concat(doc[category]), []).reduce(dedupeShelfReduce, []).filter(item => item)
     });
   }
 

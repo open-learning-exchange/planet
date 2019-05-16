@@ -58,8 +58,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
-    'gradeLevel': '',
-    'subjectLevel': ''
+    'doc.gradeLevel': '',
+    'doc.subjectLevel': ''
   };
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
@@ -291,8 +291,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetSearch() {
     this.tagFilter.setValue([]);
-    this.filter.gradeLevel = '';
-    this.filter.subjectLevel = '';
+    this.filter['doc.gradeLevel'] = '';
+    this.filter['doc.subjectLevel'] = '';
     this.titleSearch = '';
   }
 

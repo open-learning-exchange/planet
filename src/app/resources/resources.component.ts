@@ -80,7 +80,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     [
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
-      filterSpecificFieldsByWord([ 'title' ]),
+      filterSpecificFieldsByWord([ 'doc.title' ]),
       filterShelf(this._myLibraryFilter, 'libraryInfo')
     ]
   );
