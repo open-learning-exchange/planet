@@ -37,9 +37,6 @@
           <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
             <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
           </mat-form-field>
-          <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-button [disabled]="!selection.selected.length" (click)="shareResource('push', selection.selected)">
-            <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon><span i18n>Send resource</span>
-          </button>
         </ng-container>
         <button mat-button [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
           <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
@@ -49,15 +46,23 @@
           <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
           <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
         </button>
-        <button *ngIf="planetType !== 'community'" mat-button (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
-          <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-          <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
-          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
-        </button>
-        <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-          <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-          <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
-        </button>
+        <button mat-button [matMenuTriggerFor]="managerMenu">Manager Actions</button>
+        <mat-menu #managerMenu="matMenu">
+          <ng-container *planetAuthorizedRoles="'manager'">
+            <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-button [disabled]="!selection.selected.length" (click)="shareResource('push', selection.selected)">
+              <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon><span i18n>Send resource</span>
+            </button>
+          </ng-container>
+          <button *ngIf="planetType !== 'community'" mat-button (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
+            <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+            <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+            <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+          </button>
+          <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+            <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+            <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+          </button>
+        </mat-menu>
       </span>
     </ng-container>
   </mat-toolbar>
