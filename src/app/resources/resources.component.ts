@@ -275,7 +275,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shareResource(type, resources) {
     const msg = (type === 'pull' ? 'fetch' : 'send'),
-      items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+      items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource.doc._id === id).doc, db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
     .subscribe((response: any) => {
       this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
@@ -334,7 +334,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendResource() {
     return (selectedPlanet: any) => {
-      const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
+      const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id).doc);
       this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code).subscribe(() => {
         const msg = this.planetType === 'center' ? 'nation' : 'community';
         this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');

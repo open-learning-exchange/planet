@@ -333,7 +333,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   shareCourse(type, courseIds) {
-    const courses = courseIds.map(courseId => ({ item: findByIdInArray(this.courses.data, courseId), db: this.dbName }));
+    const courses = courseIds.map(courseId => ({ item: findByIdInArray(this.courses.data, courseId).doc, db: this.dbName }));
     const msg = (type === 'pull' ? 'fetch' : 'send');
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(courses, type)).subscribe(() => {
       this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
@@ -356,7 +356,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendCourse(db: string) {
     return (selected: any) => {
-      const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
+      const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id).doc);
       this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
         const childType = this.planetType === 'center' ? 'nation' : 'community';
         this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
