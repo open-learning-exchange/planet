@@ -76,12 +76,11 @@ export class SyncService {
   createReplicatorsArray(items, type: 'pull' | 'push', replicators = []) {
     return items.reduce((newReplicators: any[], item: any) => {
       const doc = item.item;
-      let syncObject = newReplicators.find((replicator: any) => replicator.db === item.db);
-      if (!syncObject) {
-        syncObject = { db: item.db, type, date: true, items: [ doc ] };
-        newReplicators.push(syncObject);
+      const syncObjectIndex = newReplicators.findIndex((replicator: any) => replicator.db === item.db);
+      if (syncObjectIndex === -1) {
+        newReplicators.push(this.newReplicatorObject(item, type, doc));
       } else {
-        syncObject.items.push(doc);
+        newReplicators[syncObjectIndex] = this.combineReplicatorObject(item, doc, newReplicators[syncObjectIndex]);
       }
       switch (item.db) {
         case 'courses':
@@ -96,13 +95,27 @@ export class SyncService {
     }, replicators);
   }
 
+  newReplicatorObject(item, type, doc) {
+    if (item.selector) {
+      return item;
+    }
+    return { db: item.db, type, date: true, items: [ doc ] };
+  }
+
+  combineReplicatorObject(item, doc, syncObject) {
+    if (item.selector) {
+      return { ...syncObject, selector: { '$or': [ ...syncObject.selector.$or, ...item.selector.$or ] } };
+    }
+    return { ...syncObject, items: [ ...syncObject.items, doc ] };
+  }
+
   coursesItemsToSync(course, type, replicators) {
     return this.createReplicatorsArray(
       [].concat.apply([], course.doc.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
         .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
-        )
+        ).concat(course.tags ? [ this.tagsSync(course.tags, type) ] : [])
       ),
       type,
       replicators
@@ -110,11 +123,10 @@ export class SyncService {
   }
 
   resourcesItemsToSync(resource, type, replicators) {
-    return resource.tags === undefined ? replicators : this.createReplicatorsArray(
-      resource.tags.map(tag => ({ item: { _id: tag }, db: 'tags' })),
-      type,
-      replicators
-    );
+    // Resources attached to courses will not have correct tag information
+    // TODO: Pull correct tag information for resources attached to course
+    return resource.tags === undefined || resource.doc === undefined ? replicators :
+      this.createReplicatorsArray([ this.tagsSync(resource.tags, type) ], type, replicators);
   }
 
   achievementsItemsToSync(achievement, type, replicators) {
@@ -126,6 +138,16 @@ export class SyncService {
       replicators
     );
 
+  }
+
+  tagsSync(tags: any[], type: string) {
+    const tagIds = tags.map(tag => ({ _id: tag._id }));
+    return ({
+      db: 'tags',
+      type,
+      date: true,
+      selector: { '$or': [ ...tagIds, { linkId: tags[0].tagLink.linkId, db: tags[0].tagLink.db } ] }
+    });
   }
 
 }
