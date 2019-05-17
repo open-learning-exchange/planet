@@ -1388,7 +1388,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-learner.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + ' ' : ''}}"/>Course Progress</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + ' ' : ''}}"/>Meeshaa Mareesid</target>
       </trans-unit>
       <trans-unit id="5ecdccf5d5df853a083a359920f18a563ef13276" datatype="html">
         <source>List of Steps</source>
