@@ -335,7 +335,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   shareCourse(type, courseIds) {
     const courses = courseIds.map(courseId => {
       const { doc, tags } = findByIdInArray(this.courses.data, courseId);
-      return ({ item: { doc, tags }, db: this.dbName });
+      return { item: { doc, tags }, db: this.dbName };
     });
     const msg = (type === 'pull' ? 'fetch' : 'send');
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(courses, type)).subscribe(() => {
@@ -359,9 +359,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendCourse(db: string) {
     return (selected: any) => {
-      const coursesToSend = this.selection.selected.map(id => {
-        const { doc, tags } = findByIdInArray(this.courses.data, id);
-        return ({ doc, tags });
+      const coursesToSend = this.selection.selected.map(courseId => {
+        const { doc, tags } = findByIdInArray(this.courses.data, courseId);
+        return { doc, tags };
       });
       this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
         const childType = this.planetType === 'center' ? 'nation' : 'community';
