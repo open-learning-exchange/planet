@@ -69,6 +69,7 @@ export class CoursesService {
     const data = courses.map((course: any) => ({
       doc: course,
       _id: course._id,
+      _rev: course._rev,
       progress: courses_progress.filter((p: any) => p.courseId === course._id && p.userId === this.userService.get()._id) || [],
       rating: this.ratingService.createItemList([ course ], ratings)[0].rating,
       tags: this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags
