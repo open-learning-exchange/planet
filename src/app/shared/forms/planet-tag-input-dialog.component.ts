@@ -155,7 +155,7 @@ export class PlanetTagInputDialogComponent {
       name: [
         tag.name || '',
         this.tagNameSyncValidator(),
-        ac => this.tagNameAsyncValidator(ac, tag._id)
+        ac => this.tagNameAsyncValidator(ac, `${this.data.db}_${ac.value.toLowerCase()}` === tag._id ? ac.value : tag._id)
       ],
       attachedTo: [ tag.attachedTo || [] ]
     });
