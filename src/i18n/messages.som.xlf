@@ -903,7 +903,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Enroll in Selected</target>
+        <target state="translated">Kudarso Midka Doorsan</target>
       </trans-unit>
       <trans-unit id="690085933308238b02e1e97d16a54a227d5e39c6" datatype="html">
         <source>Push To Child</source>
@@ -1129,8 +1129,8 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">
-        Resign
+        <target state="translated">
+        Kabax
       </target>
       </trans-unit>
       <trans-unit id="d282ccaf17e3d27860505b3068eaab460fc64d81" datatype="html" approved="yes">
