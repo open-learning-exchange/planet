@@ -310,7 +310,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Upto date</target>
+        <target state="translated">Wax cusub majiro</target>
       </trans-unit>
       <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html">
         <source>Newer</source>
@@ -500,7 +500,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuration</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> التكوين</target>
       </trans-unit>
       <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html">
         <source>Nation</source>
