@@ -123,7 +123,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row  class = "cursor-pointer" *matRowDef="let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:selection.isSelected(row.doc._id)}"></mat-row>
+      <mat-row class="cursor-pointer" *matRowDef="let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:selection.isSelected(row.doc._id)}"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
