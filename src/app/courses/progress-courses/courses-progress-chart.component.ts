@@ -15,6 +15,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewCh
 export class CoursesProgressChartComponent implements OnChanges {
 
   @Input() inputs = [];
+  @Input() label = '';
   @Input() height = 0;
   @Input() showTotals = true;
   @Output() changeData = new EventEmitter<{ set, index }>();
