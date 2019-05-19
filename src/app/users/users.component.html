@@ -58,6 +58,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
+            (click)="$event.stopPropagation()"
             [checked]="selection.isSelected(row.doc._id)">
           </mat-checkbox>
         </mat-cell>
