@@ -95,8 +95,8 @@ export class ManagerService {
   }
 
   getPushedList() {
-    return this.couchService.post(
-      `send_items/_find`,
+    return this.couchService.findAll(
+      'send_items',
       findDocuments({ 'sendTo': this.configuration.code }),
       { domain: this.configuration.parentDomain }
     );
