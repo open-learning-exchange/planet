@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from './state.service';
+import { TagsService } from './forms/tags.service';
 
 @Injectable()
 export class SyncService {
@@ -15,7 +16,8 @@ export class SyncService {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private tagsService: TagsService
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
@@ -73,59 +75,86 @@ export class SyncService {
     };
   }
 
-  createReplicatorsArray(items, type: 'pull' | 'push', replicators = []) {
+  replicatorsArrayWithTags(items, type: 'pull' | 'push', planetField: 'local' | 'parent') {
+    return this.stateService.getCouchState('tags', planetField).pipe(map(tags => this.createReplicatorsArray(items, type, tags)));
+  }
+
+  createReplicatorsArray(items, type: 'pull' | 'push', allTags: any[] = [], replicators = []) {
     return items.reduce((newReplicators: any[], item: any) => {
       const doc = item.item;
-      let syncObject = newReplicators.find((replicator: any) => replicator.db === item.db);
-      if (!syncObject) {
-        syncObject = { db: item.db, type, date: true, items: [ doc ] };
-        newReplicators.push(syncObject);
+      const syncObjectIndex = newReplicators.findIndex((replicator: any) => replicator.db === item.db);
+      if (syncObjectIndex === -1) {
+        newReplicators.push(this.newReplicatorObject(item, type, doc));
       } else {
-        syncObject.items.push(doc);
+        newReplicators[syncObjectIndex] = this.combineReplicatorObject(item, doc, newReplicators[syncObjectIndex]);
       }
       switch (item.db) {
         case 'courses':
-          return this.coursesItemsToSync(doc, type, newReplicators);
+          return this.coursesItemsToSync(doc, type, newReplicators, allTags);
         case 'resources':
-          return this.resourcesItemsToSync(doc, type, newReplicators);
+          return this.resourcesItemsToSync(doc, type, newReplicators, allTags);
         case 'achievements':
-          return this.achievementsItemsToSync(doc, type, newReplicators);
+          return this.achievementsItemsToSync(doc, type, newReplicators, allTags);
         default:
           return newReplicators;
       }
     }, replicators);
   }
 
-  coursesItemsToSync(course, type, replicators) {
+  newReplicatorObject(item, type, doc) {
+    if (item.selector) {
+      return item;
+    }
+    return { db: item.db, type, date: true, items: [ doc ] };
+  }
+
+  combineReplicatorObject(item, doc, syncObject) {
+    if (item.selector) {
+      return { ...syncObject, selector: { '$or': [ ...syncObject.selector.$or, ...item.selector.$or ] } };
+    }
+    return { ...syncObject, items: [ ...syncObject.items, doc ] };
+  }
+
+  coursesItemsToSync(course, type, replicators, allTags) {
     return this.createReplicatorsArray(
       [].concat.apply([], course.doc.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
         .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
-        )
+        ).concat(course.tags ? [ this.tagsSync(course.tags, type) ] : [])
       ),
       type,
+      allTags,
       replicators
     );
   }
 
-  resourcesItemsToSync(resource, type, replicators) {
-    return resource.tags === undefined ? replicators : this.createReplicatorsArray(
-      resource.tags.map(tag => ({ item: { _id: tag }, db: 'tags' })),
-      type,
-      replicators
-    );
+  resourcesItemsToSync(resource, type, replicators, allTags) {
+    resource = allTags.length > 0 ? this.tagsService.attachTagsToDocs('resources', [ resource ], allTags)[0] : resource;
+    return resource.tags === undefined || resource.tags.length === 0 ? replicators :
+      this.createReplicatorsArray([ this.tagsSync(resource.tags, type) ], type, allTags, replicators);
   }
 
-  achievementsItemsToSync(achievement, type, replicators) {
+  achievementsItemsToSync(achievement, type, replicators, allTags) {
     return this.createReplicatorsArray(
       [].concat.apply([], achievement.achievements.map(({ resources }) =>
         (resources || [] ).map(r => ({ item: r, db: 'resources' })))
       ),
       type,
+      allTags,
       replicators
     );
 
+  }
+
+  tagsSync(tags: any[], type: string) {
+    const tagIds = tags.map(tag => ({ _id: tag._id }));
+    return ({
+      db: 'tags',
+      type,
+      date: true,
+      selector: { '$or': [ ...tagIds, { linkId: tags[0].tagLink.linkId, db: tags[0].tagLink.db } ] }
+    });
   }
 
 }
