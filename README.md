@@ -69,8 +69,8 @@ npm install
 This doesn't always work.  If you're having trouble or need to revert to the exact dependencies listed on the package.json, you need to remove all packages then install (after cd /vagrant above, run the commands):
 
 ```
-rm -rf node_modules/*
-npm install
+sudo rm -rf node_modules/*
+sudo npm install --unsafe-perm
 ```
 
 The trailing `/*` will remove all files & sub-directories of node_modules.  You won't be able to remove node_modules because of the link between the vagrant VM and your host.
