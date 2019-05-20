@@ -48,17 +48,17 @@
           <button mat-button [matMenuTriggerFor]="managerMenu">Manager Actions</button>
           <mat-menu #managerMenu="matMenu">
             <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
-            <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-button (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
+            <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
               <mat-icon aria-hidden="true" class="margin-lr-3" >cloud_upload</mat-icon>
               <span i18n>Send Courses</span>
               <span *ngIf="selectedLocal > 0"> ({{selectedLocal}})</span>
             </button>
-            <button *ngIf="planetType !== 'community'" mat-button (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
+            <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
               <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
               <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
               <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
             </button>
-            <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+            <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
               <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
               <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
             </button>
