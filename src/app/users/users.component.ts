@@ -197,7 +197,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  deleteClick(user) {
+  deleteClick(user, event) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteUser(user),
@@ -212,6 +212,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
       this.message = '';
     });
+    event.stopPropagation();
   }
 
   deleteUser(user) {
@@ -236,7 +237,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  setRoles(user, roles) {
+  setRoles(user, roles, event) {
     const tempUser = {
       ...user,
       roles,
@@ -254,6 +255,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     }, (error) => {
       console.log(error);
     });
+    event.stopPropagation();
   }
 
   deleteRole(user: any, index: number) {

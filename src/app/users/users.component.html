@@ -58,6 +58,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
           <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
+            (click)="$event.stopPropagation()"
             [checked]="selection.isSelected(row.doc._id)">
           </mat-checkbox>
         </mat-cell>
@@ -66,10 +67,10 @@
         <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div *ngIf="element.imageSrc; else noImage">
-            <img class="profile-image cursor-pointer" [src]="element.imageSrc" (click)="gotoProfileView(element.doc.name)">
+            <img class="profile-image cursor-pointer" [src]="element.imageSrc">
           </div>
           <ng-template #noImage>
-            <img class="profile-image cursor-pointer" src="assets/avatar.png" (click)="gotoProfileView(element.doc.name)">
+            <img class="profile-image cursor-pointer" src="assets/avatar.png">
           </ng-template>
         </mat-cell>
       </ng-container>
@@ -102,19 +103,19 @@
         <mat-cell *matCellDef="let element">
           <span *ngIf="isUserAdmin && filterType === 'local'">
             <span *ngIf="!element.doc.isUserAdmin">
-              <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'])">
+              <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
                 <mat-icon>lock</mat-icon>
               </button>
-              <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [])">
+              <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
                 <mat-icon>lock_open</mat-icon>
               </button>
             </span>
-            <button mat-raised-button color="primary" (click)="deleteClick(element.doc)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
+            <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
               <mat-icon>delete</mat-icon>Delete
             </button>
             <a
               *ngIf="element.doc.roles.length > 0 && filterType === 'local'"
-              (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'])"
+              (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'], $event)"
               mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
           </span>
           <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
@@ -123,7 +124,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row.doc._id)}" ></mat-row>
+      <mat-row class="cursor-pointer" *matRowDef="let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:selection.isSelected(row.doc._id)}"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
