@@ -46,7 +46,7 @@
           <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
           <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
         </button>
-        <button mat-button [matMenuTriggerFor]="managerMenu">Manager Actions</button>
+        <button *ngIf="currentUser.isUserAdmin" mat-button [matMenuTriggerFor]="managerMenu">Manager Actions</button>
         <mat-menu #managerMenu="matMenu">
           <ng-container *planetAuthorizedRoles="'manager'">
             <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-button [disabled]="!selection.selected.length" (click)="shareResource('push', selection.selected)">
