@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
@@ -76,15 +77,17 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   getPushedItem() {
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
-    const replicators = this.syncService.createReplicatorsArray(itemsToPull, 'pull', []);
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
-    if (replicators.length > 0) {
-      this.syncService.confirmPasswordAndRunReplicators(replicators).pipe(
-        switchMap(() => {
-          return this.couchService.post('send_items/_bulk_docs', { docs: deleteItems }, { domain: this.planetConfiguration.parentDomain });
-        })
-      ).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
-    }
+    this.syncService.replicatorsArrayWithTags(itemsToPull, 'pull', 'parent').pipe(switchMap((replicators) =>
+      replicators.length > 0 ?
+        this.syncService.confirmPasswordAndRunReplicators(replicators) :
+        of('no replicators')
+    ), switchMap((res) =>
+      res !== 'no replicators' ?
+        this.couchService.post('send_items/_bulk_docs', { docs: deleteItems }, { domain: this.planetConfiguration.parentDomain }) :
+        of({})
+    )).subscribe(() => this.planetMessageService.showMessage('Resources/Courses are being fetched'));
+
   }
 
 }

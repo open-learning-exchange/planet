@@ -335,7 +335,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   shareCourse(type, courseIds) {
     const courses = courseIds.map(courseId => ({ item: findByIdInArray(this.courses.data, courseId), db: this.dbName }));
     const msg = (type === 'pull' ? 'fetch' : 'send');
-    this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(courses, type)).subscribe(() => {
+    const parentType = type === 'pull' ? 'parent' : 'local';
+    this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(switchMap(replicators =>
+      this.syncService.confirmPasswordAndRunReplicators(replicators)
+    )).subscribe(() => {
       this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
     }, () => error => this.planetMessageService.showMessage(error));
   }

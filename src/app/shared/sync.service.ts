@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from './state.service';
+import { TagsService } from './forms/tags.service';
 
 @Injectable()
 export class SyncService {
@@ -15,7 +16,8 @@ export class SyncService {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private tagsService: TagsService
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
@@ -73,7 +75,11 @@ export class SyncService {
     };
   }
 
-  createReplicatorsArray(items, type: 'pull' | 'push', replicators = []) {
+  replicatorsArrayWithTags(items, type: 'pull' | 'push', planetField: 'local' | 'parent') {
+    return this.stateService.getCouchState('tags', planetField).pipe(map(tags => this.createReplicatorsArray(items, type, tags)));
+  }
+
+  createReplicatorsArray(items, type: 'pull' | 'push', allTags: any[] = [], replicators = []) {
     return items.reduce((newReplicators: any[], item: any) => {
       const doc = item.item;
       const syncObjectIndex = newReplicators.findIndex((replicator: any) => replicator.db === item.db);
@@ -84,11 +90,11 @@ export class SyncService {
       }
       switch (item.db) {
         case 'courses':
-          return this.coursesItemsToSync(doc, type, newReplicators);
+          return this.coursesItemsToSync(doc, type, newReplicators, allTags);
         case 'resources':
-          return this.resourcesItemsToSync(doc, type, newReplicators);
+          return this.resourcesItemsToSync(doc, type, newReplicators, allTags);
         case 'achievements':
-          return this.achievementsItemsToSync(doc, type, newReplicators);
+          return this.achievementsItemsToSync(doc, type, newReplicators, allTags);
         default:
           return newReplicators;
       }
@@ -109,7 +115,7 @@ export class SyncService {
     return { ...syncObject, items: [ ...syncObject.items, doc ] };
   }
 
-  coursesItemsToSync(course, type, replicators) {
+  coursesItemsToSync(course, type, replicators, allTags) {
     return this.createReplicatorsArray(
       [].concat.apply([], course.doc.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
@@ -118,23 +124,24 @@ export class SyncService {
         ).concat(course.tags ? [ this.tagsSync(course.tags, type) ] : [])
       ),
       type,
+      allTags,
       replicators
     );
   }
 
-  resourcesItemsToSync(resource, type, replicators) {
-    // Resources attached to courses will not have correct tag information
-    // TODO: Pull correct tag information for resources attached to course
-    return resource.tags === undefined || resource.doc === undefined ? replicators :
-      this.createReplicatorsArray([ this.tagsSync(resource.tags, type) ], type, replicators);
+  resourcesItemsToSync(resource, type, replicators, allTags) {
+    resource = allTags.length > 0 ? this.tagsService.attachTagsToDocs('resources', [ resource ], allTags)[0] : resource;
+    return resource.tags === undefined || resource.tags.length === 0 ? replicators :
+      this.createReplicatorsArray([ this.tagsSync(resource.tags, type) ], type, allTags, replicators);
   }
 
-  achievementsItemsToSync(achievement, type, replicators) {
+  achievementsItemsToSync(achievement, type, replicators, allTags) {
     return this.createReplicatorsArray(
       [].concat.apply([], achievement.achievements.map(({ resources }) =>
         (resources || [] ).map(r => ({ item: r, db: 'resources' })))
       ),
       type,
+      allTags,
       replicators
     );
 
