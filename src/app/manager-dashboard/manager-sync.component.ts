@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, throwError, of } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { SyncService } from '../shared/sync.service';
@@ -64,11 +64,10 @@ export class ManagerSyncComponent implements OnInit {
       switchMap(() => {
         return this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code }));
       }),
-      switchMap(achievements => {
+      switchMap(achievements => this.achievementResourceReplicator(achievements)),
+      switchMap(replicators => {
         this.dialogsLoadingService.stop();
-        return this.syncService.confirmPasswordAndRunReplicators(
-          this.replicatorList().concat(this.achievementResourceReplicator(achievements))
-        );
+        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators));
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
     ).subscribe(data => {
@@ -156,9 +155,10 @@ export class ManagerSyncComponent implements OnInit {
     }));
   }
 
-  achievementResourceReplicator(achievements) {
-    return this.syncService.createReplicatorsArray(achievements.map(a => ({ db: 'achievements', item: a })), 'push')
-      .filter(rep => rep.db !== 'achievements');
+  achievementResourceReplicator(achievements: any[]) {
+    return this.syncService.replicatorsArrayWithTags(
+      achievements.filter(a => a.sendToNation === true).map(a => ({ db: 'achievements', item: a })), 'push', 'local'
+    ).pipe(map(replicators => replicators.filter(rep => rep.db !== 'achievements')));
   }
 
 }
