@@ -73,6 +73,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
+  selectedLocal = 0;
   isAuthorized = false;
   showFilters = 'off';
   searchSelection: any = { _empty: true };
@@ -347,10 +348,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
+    this.selectedLocal = selected.filter(id => this.isLocal(id)).length;
   }
 
   toggleFilters() {
     this.showFilters = this.showFilters === 'off' ? 'on' : 'off';
+  }
+
+  isLocal(id: string) {
+    return this.resources.data.find((resource: any) => resource._id === id && resource.doc.sourcePlanet === this.planetConfiguration.code);
   }
 
   toggleMyLibrary() {
