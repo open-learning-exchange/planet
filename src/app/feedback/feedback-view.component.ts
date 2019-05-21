@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -31,7 +31,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
-    private feedbackServive: FeedbackService
+    private feedbackServive: FeedbackService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -109,7 +110,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   closeFeedback(feedback) {
-    this.feedbackServive.closeFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
+    this.feedbackServive.closeFeedback(feedback).subscribe(
+      () => this.getFeedback(feedback.id),
+      () => this.planetMessageService.showAlert('There was an error closing this feedback.'),
+      () => this.router.navigate([ '/feedback' ])
+    );
   }
 
   openFeedback(feedback) {
