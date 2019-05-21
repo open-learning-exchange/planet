@@ -121,7 +121,7 @@ export class SyncService {
         step.resources.map(r => ({ item: r, db: 'resources' }))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
         .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
-        ).concat(course.tags ? [ this.tagsSync(course.tags, type) ] : [])
+        ).concat(course.tags && course.tags.length > 0 ? [ this.tagsSync(course.tags, type) ] : [])
       ),
       type,
       allTags,
