@@ -23,6 +23,7 @@ import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
+import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 
 @Component({
   templateUrl: './courses.component.html',
@@ -80,6 +81,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     filterTags(this.tagFilter),
     filterSpecificFieldsByWord([ 'doc.courseTitle' ])
   ]);
+
+  @ViewChild(PlanetTagInputComponent)
+  private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
     private couchService: CouchService,
@@ -377,4 +381,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  addTag(tag: string) {
+    this.tagInputComponent.addTag(tag);
+  }
+  
 }
