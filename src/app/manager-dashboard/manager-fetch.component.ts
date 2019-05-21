@@ -40,7 +40,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.managerService.getPushedList().subscribe((pushedList: any) => {
-      this.pushedItems.data = pushedList.docs;
+      this.pushedItems.data = pushedList;
       this.emptyData = !this.pushedItems.data.length;
     });
   }
