@@ -37,7 +37,9 @@ export class TagsService {
     const { count, subTags, ...tagData } = tag;
     const newId = `${tagData.db}_${tagData.name.toLowerCase()}`;
     if (newId === tag._id) {
-      return of([ { id: newId } ]);
+      return this.couchService.updateDocument('tags', { ...tagData, _id: newId }).pipe(
+        switchMap(res => of([ res ]))
+      );
     }
     return (tag._id ? this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })) : of([])).pipe(
       switchMap((oldLinks: any[]) => {
