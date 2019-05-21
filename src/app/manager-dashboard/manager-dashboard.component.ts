@@ -100,7 +100,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   countFetchItemAvailable() {
     this.managerService.getPushedList().subscribe((pushedList: any) => {
-      this.fetchItemCount = pushedList.docs.length;
+      this.fetchItemCount = pushedList.length;
     });
   }
 
