@@ -19,7 +19,7 @@ export class SyncService {
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
-    const itemsToSend = items.map(item => ({ db, sendTo: planetCode, item: { doc: item.doc, tags: item.tags } }));
+    const itemsToSend = items.map(item => ({ db, sendTo: planetCode, item }));
     return this.couchService.post('send_items/_bulk_docs', { 'docs': itemsToSend });
   }
 
