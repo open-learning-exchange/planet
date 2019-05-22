@@ -164,6 +164,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   updateCourse(courseInfo, shouldNavigate) {
+    if ((courseInfo.createdDate).constructor === Object) {
+      courseInfo.createdDate = this.couchService.datePlaceholder;
+    }
     this.couchService.updateDocument(
       this.dbName,
       { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
