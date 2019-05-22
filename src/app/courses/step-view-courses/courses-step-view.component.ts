@@ -128,7 +128,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   filterResources(step, resources) {
     const resourceIds = resources.map((res: any) => res._id);
     return step.resources ?
-      step.resources.filter(resource => resourceIds.indexOf(resource._id) !== -1) :
+      step.resources.filter((resource) => resourceIds.indexOf(resource._id) !== -1 && resource._attachments) :
       [];
   }
 
