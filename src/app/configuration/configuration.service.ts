@@ -140,6 +140,8 @@ export class ConfigurationService {
           this.createUser(credentials.name, userDetail),
           // then add a shelf for that user
           this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
+          // and add credentials.yml for that user
+          this.managerService.updateCredentialsYml(credentials),
           // then post configuration to parent planet's registration requests
           this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
         ]);

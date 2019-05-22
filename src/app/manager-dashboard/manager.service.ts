@@ -10,6 +10,7 @@ import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { environment } from '../../environments/environment.test';
 
 const passwordFormFields = [
   {
@@ -115,6 +116,18 @@ export class ManagerService {
       { '_id': { '$gt': null } };
     return this.couchService.findAll('communityregistrationrequests',
       findDocuments(selector, 0, [ { 'createdDate': 'desc' } ] ));
+  }
+
+  updateCredentialsYml({ name, password }) {
+    if (environment.production === true) {
+      const opts = {
+        responseType: 'text',
+        withCredentials: false,
+        headers: { 'Content-Type': 'text/plain' }
+      };
+      return this.couchService.getUrl('updateyml?u=' + name + ',' + password, opts);
+    }
+    return of({});
   }
 
 }

@@ -58,7 +58,7 @@ export class UpgradeComponent {
         parentVersion = pVersion;
         return this.managerService.openPasswordConfirmation();
       }),
-      switchMap(credentials => this.postAdminCredentials(credentials)),
+      switchMap(credentials => this.managerService.updateCredentialsYml(credentials)),
       switchMap(() => this.managerService.addAdminLog('upgrade')),
       switchMap(() => {
         this.start();
@@ -150,15 +150,6 @@ export class UpgradeComponent {
       headers: { 'Content-Type': 'text/plain' }
     };
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
-  }
-
-  postAdminCredentials({ name, password }) {
-    const opts = {
-      responseType: 'text',
-      withCredentials: false,
-      headers: { 'Content-Type': 'text/plain' }
-    };
-    return this.couchService.getUrl('updateyml?u=' + name + ',' + password, opts);
   }
 
   upgradeMyPlanet() {
