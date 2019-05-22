@@ -493,7 +493,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuration</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuración</target>
       </trans-unit>
       <trans-unit id="f66fe3bcc76564ffc59ee9e10eb365b2d7da6405" datatype="html">
         <source>Nation</source>
@@ -585,7 +585,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">Auto accept Members</target>
+        <target state="translated">Auto aceptar miembros</target>
       </trans-unit>
       <trans-unit id="a158c27700fb4b55974f72418e1e17f45662d3f6" datatype="html">
         <source>Show Advanced Options</source>
@@ -629,7 +629,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Contact Details</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Detalles de contacto</target>
       </trans-unit>
       <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
         <source>First Name</source>
@@ -693,7 +693,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Phone Number</target>
+        <target state="translated">Número de Teléfono</target>
       </trans-unit>
       <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</source>
@@ -701,7 +701,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Curso</target>
       </trans-unit>
       <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html">
         <source>Add Step</source>
