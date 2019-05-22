@@ -50,6 +50,8 @@ Vagrant.configure(2) do |config|
         docker-compose -f planet.yml -f volumes.yml -f /srv/planet/pwd/credentials.yml -p planet up -d
       else
         docker-compose -f planet.yml -f volumes.yml -p planet up -d
+        docker wait planet_db-init_1
+        docker start planet_db-init_1
       fi
     SHELL
   end
