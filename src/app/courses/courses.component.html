@@ -26,7 +26,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <ng-container *ngIf="isAuthorized">
       <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
-      <planet-filtered-amount [table]="courses"></planet-filtered-amount>
+      <planet-filtered-amount [table]="courses" labelFor="courses"></planet-filtered-amount>
       <span class="toolbar-fill"></span>
       <ng-container *ngIf="parent">
         <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">

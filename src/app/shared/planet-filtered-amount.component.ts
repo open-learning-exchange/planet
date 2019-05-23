@@ -3,7 +3,12 @@ import { MatTableDataSource } from '@angular/material';
 
 @Component({
   template: `
-    <span>Showing {{table.filteredData.length}} of {{table.data.length}} resource(s)</span>
+    <span>Showing {{table.filteredData.length}} of {{table.data.length}}
+      <ng-container i18n>{labelFor, select,
+        resources {{table.data.length, plural, =0 {resources} =1 {resource} other {resources}}}
+        courses {{table.data.length, plural, =0 {courses} =1 {course} other {courses}}}
+      }</ng-container>
+    </span>
   `,
   selector: 'planet-filtered-amount',
   styles: [ `
@@ -15,5 +20,6 @@ import { MatTableDataSource } from '@angular/material';
 export class FilteredAmountComponent {
 
   @Input() table = new MatTableDataSource();
+  @Input() labelFor = 'resources';
 
 }
