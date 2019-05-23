@@ -113,16 +113,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   routeToNext (nextQuestion) {
-    if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
-      if (this.isDialog) {
-        return;
-      }
-      this.examComplete();
-      if (this.examType === 'surveys' && !this.previewMode) {
-        this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
-      }
-    } else {
+    if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
+      return;
+    }
+    if (this.isDialog) {
+      return;
+    }
+    this.examComplete();
+    if (this.examType === 'surveys' && !this.previewMode) {
+      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
     }
   }
 
@@ -137,10 +137,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
     this.spinnerOn = false;
-  }
-
-  resetCheckboxes() {
-    this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
   }
 
   examComplete() {
@@ -211,12 +207,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  getSurvey(surveyId: string) {
-    this.couchService.get('exams/' + surveyId).subscribe((survey) => {
-      this.setTakingExam(survey, survey._id, 'survey', survey.name);
-    });
-  }
-
   setAnswer(event, option) {
     this.answer.setValue(this.answer.value === null ? [] : this.answer.value);
     const value = this.answer.value;
@@ -247,7 +237,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const obs = this.previewMode ?
           of({ nextQuestion: this.questionNum }) :
           this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1);
-        this.resetCheckboxes();
+        this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
         return { obs, correctAnswer };
       case 'grade':
         return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1), correctAnswer };
