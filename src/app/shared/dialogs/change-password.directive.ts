@@ -10,6 +10,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { StateService } from '../state.service';
 import { DialogsLoadingService } from './dialogs-loading.service';
+import { ManagerService } from '../../manager-dashboard/manager.service';
 
 const changePasswordFields = [
   {
@@ -76,7 +77,8 @@ export class ChangePasswordDirective {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private managerService: ManagerService
   ) {}
 
   @HostListener('click')
@@ -119,7 +121,10 @@ export class ChangePasswordDirective {
     const isUserAdmin = (this.userService.get().isUserAdmin && !this.userService.get().roles.length);
     return this.couchService.put(this.dbName + '/' + userData._id, userData).pipe(switchMap((res) => {
       if (isUserAdmin) {
-        return forkJoin([ of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData) ]);
+        return forkJoin([
+          of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData),
+          this.managerService.updateCredentialsYml(userData)
+        ]);
       }
       return of([ res ]);
     }));
