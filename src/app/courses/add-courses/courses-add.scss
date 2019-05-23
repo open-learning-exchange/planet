@@ -4,6 +4,7 @@
   .view-container {
     display: grid;
     grid-template-columns: min-content auto;
+    grid-template-rows: auto 42px;
     grid-column-gap: 0.25rem;
     > * {
       overflow-y: auto;
@@ -12,5 +13,9 @@
 
   .steps-container {
     grid-row: span 2;
+  }
+
+  .actions-container {
+    align-self: center;
   }
 }
