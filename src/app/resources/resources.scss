@@ -38,4 +38,13 @@ $label-height: 1rem;
       border: 0;
     }
   }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    > * {
+      line-height: normal;
+    }
+  }
+  
 }

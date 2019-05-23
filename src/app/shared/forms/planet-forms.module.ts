@@ -9,6 +9,7 @@ import { PlanetRatingComponent } from './planet-rating.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
 import { PlanetTagInputComponent } from './planet-tag-input.component';
+import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 import { PlanetStepListComponent, PlanetStepListFormDirective, PlanetStepListItemComponent,
   PlanetStepListActionsDirective, PlanetStepListNumberDirective } from './planet-step-list.component';
 import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.component';
@@ -28,6 +29,7 @@ import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from
     PlanetRatingStarsComponent,
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
+    PlanetTagSelectedInputComponent,
     CovalentTextEditorModule,
     CovalentMarkdownModule,
     PlanetStepListComponent,
@@ -43,6 +45,7 @@ import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from
     PlanetRatingStarsComponent,
     PlanetStackedBarComponent,
     PlanetTagInputComponent,
+    PlanetTagSelectedInputComponent,
     PlanetTagInputDialogComponent,
     PlanetTagInputToggleIconComponent,
     PlanetStackedBarComponent,

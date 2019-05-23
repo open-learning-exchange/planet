@@ -1,8 +1,7 @@
-<span [ngSwitch]="value.length" class="small margin-lr-5" *ngIf="helperText">
-  <span *ngSwitchCase="0" i18n>No collections selected</span>
-  <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
-  <span *ngSwitchDefault [matTooltip]="tooltipLabels">Hover to see selected collections</span>
-</span>
+<ng-container *ngIf="helperText">
+  <planet-tag-selected-input [selectedIds]="value" [allTags]="tags"></planet-tag-selected-input>
+</ng-container>
+
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
   <ng-container [ngSwitch]="labelType">
     <span i18n *ngSwitchCase="'filter'">Collections</span>

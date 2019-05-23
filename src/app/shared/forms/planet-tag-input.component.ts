@@ -69,7 +69,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   tags: string[] = [];
   inputControl = new FormControl();
   focused = false;
-  tooltipLabels = '';
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
   selectMany = false;
 
@@ -107,7 +106,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       this.tags = tags;
       const newValue = this.value.concat(editedId).filter(tagId => tags.some(tag => tag._id === tagId));
       this.value = newValue;
-      this.setLabels(this.value, tags);
       this.resetDialogData();
     });
   }
@@ -127,14 +125,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   writeValue(tags) {
     this.value = tags;
-    if (this.tags.length > 0) {
-      this.setLabels(tags, this.tags);
-    }
-  }
-
-  setLabels(selectedTags, allTags) {
-    const tagsNames = selectedTags.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
-    this.tooltipLabels = tagsNames.join(', ');
   }
 
   registerOnChange(fn: (_: any) => void) {
