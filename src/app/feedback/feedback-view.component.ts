@@ -111,9 +111,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   closeFeedback(feedback) {
     this.feedbackServive.closeFeedback(feedback).subscribe(
-      () => this.getFeedback(feedback.id),
-      () => this.planetMessageService.showAlert('There was an error closing this feedback.'),
-      () => this.router.navigate([ '/feedback' ])
+      () => this.router.navigate([ '/feedback' ]),
+      () => this.planetMessageService.showAlert('There was an error closing this feedback.')
     );
   }
 
