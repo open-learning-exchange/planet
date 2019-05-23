@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { TagsService } from './tags.service';
 
 @Component({
@@ -11,31 +11,19 @@ import { TagsService } from './tags.service';
   `,
   selector: 'planet-tag-selected-input'
 })
-export class PlanetTagSelectedInputComponent implements OnInit, OnChanges {
+export class PlanetTagSelectedInputComponent implements OnChanges {
 
   @Input() selectedIds: string[] = [];
-  @Input() parent = false;
+  @Input() allTags: any[] = [];
 
   tooltipLabels = '';
-  allTags: any[] = [];
 
   constructor(
     private tagsService: TagsService
-  ) { }
-
-  ngOnInit() {
-    this.initTags();
-    this.setTooltipLabels(this.selectedIds, this.allTags);
-  }
+  ) {}
 
   ngOnChanges() {
     this.setTooltipLabels(this.selectedIds, this.allTags);
-  }
-
-  initTags() {
-    this.tagsService.getTags(this.parent).subscribe((tags: any[]) => {
-      this.allTags = tags;
-    });
   }
 
   setTooltipLabels(selectedIds, allTags) {
