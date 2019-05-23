@@ -114,11 +114,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   routeToNext (nextQuestion) {
     if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
-      if (this.previewMode) {
+      if (this.isDialog) {
         return;
       }
       this.examComplete();
-      if (this.examType === 'surveys') {
+      if (this.examType === 'surveys' && !this.previewMode) {
         this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
       }
     } else {
