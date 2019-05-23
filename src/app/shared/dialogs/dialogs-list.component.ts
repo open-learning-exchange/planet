@@ -60,6 +60,7 @@ export class DialogsListComponent implements AfterViewInit {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
     this.setDropdownFilter(this.data.dropdownSettings);
+    this.selectRows();
   }
 
   ngAfterViewInit() {
@@ -113,6 +114,13 @@ export class DialogsListComponent implements AfterViewInit {
     return this.selection.selected.map(id => this.tableData.data.find((row: any) => {
       return this.selectIdentifier(row) === id;
     }));
+  }
+
+  selectRows() {
+    this.selectedRows().map((row: any) => {
+      const selectIdentifier = this.selectIdentifier(row);
+      this.setSelectedNames(row[this.data.nameProperty], selectIdentifier);
+    });
   }
 
   selectIdentifier(row: any) {
