@@ -107,7 +107,7 @@ export class UserService {
         }),
         // Combine with empty shelf in case all fields are not present
         map(data => {
-          return Object.assign(this.emptyShelf, data.docs[0]);
+          return Object.assign({}, this.emptyShelf, data.docs[0]);
         })
       );
   }
