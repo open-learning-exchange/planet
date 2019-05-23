@@ -72,10 +72,25 @@
                 <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
               </span>
             </ng-template>
-            <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && isUserEnrolled))">
+            <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take Test</a>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
+              <button *ngIf="canManage" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu">
+                Preview
+              </button>
+              <mat-menu #previewMenu="matMenu">
+                <a mat-menu-item
+                  *ngIf="step?.exam?.questions.length"
+                  (click)="goToExam(step, stepNum, true)">
+                  Preview Test
+                </a>
+                <a mat-menu-item
+                  *ngIf="step?.survey?.questions.length"
+                  (click)="goToSurvey(stepNum, true)">
+                  Preview Survey
+                </a>
+              </mat-menu>
             </mat-action-row>
           </mat-expansion-panel>
         </ng-container>

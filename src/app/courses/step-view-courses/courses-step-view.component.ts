@@ -28,6 +28,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   progress: any;
   examPassed = false;
   parent = false;
+  canManage = false;
 
   constructor(
     private router: Router,
@@ -45,6 +46,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
       this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
+      this.canManage = this.userService.get().isUserAdmin ||
+        course.creator !== undefined &&
+        (this.userService.get().currentUser.name === course.creator.slice(0, course.creator.indexOf('@')));
     });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -121,8 +125,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resource = value;
   }
 
-  goToExam(type = 'exam') {
-    this.router.navigate([ 'exam', { questionNum: type === 'survey' ? 1 : this.examStart, type } ], { relativeTo: this.route });
+  goToExam(type = 'exam', preview = false) {
+    this.router.navigate(
+      [ 'exam', { questionNum: type === 'survey' ? 1 : this.examStart, type, preview: true, examId: this.stepDetail.exam._id } ],
+      { relativeTo: this.route }
+    );
   }
 
   filterResources(step, resources) {

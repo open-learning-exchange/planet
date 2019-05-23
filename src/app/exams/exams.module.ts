@@ -9,6 +9,7 @@ import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { ExamsPreviewComponent } from './exams-preview.component';
 
 @NgModule({
   imports: [
@@ -23,10 +24,12 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
   declarations: [
     ExamsAddComponent,
     ExamsQuestionComponent,
-    ExamsViewComponent
+    ExamsViewComponent,
+    ExamsPreviewComponent
   ],
   exports: [
     ExamsAddComponent
-  ]
+  ],
+  entryComponents: [ ExamsPreviewComponent ]
 })
 export class ExamsModule {}

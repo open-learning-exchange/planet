@@ -68,11 +68,14 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
   }
 
-  goToSurvey(stepNum) {
-    this.router.navigate([ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey' } ], { relativeTo: this.route });
+  goToSurvey(stepNum, preview = false) {
+    this.router.navigate(
+      [ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey', preview, examId: this.courseDetail.steps[stepNum].exam._id } ],
+      { relativeTo: this.route }
+    );
   }
 
-  goToExam(stepDetail, stepNum) {
+  goToExam(stepDetail, stepNum, preview = false) {
     this.submissionsService.openSubmission({
       parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
       parent: stepDetail.exam,
@@ -81,7 +84,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       const questionNum = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
       this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
-        { questionNum } ], { relativeTo: this.route });
+        { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
     });
   }
 

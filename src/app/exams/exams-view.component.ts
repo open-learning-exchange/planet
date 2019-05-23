@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
@@ -10,15 +10,19 @@ import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
+  selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
   styleUrls: [ './exams-view.scss' ]
 })
 
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
+  @Input() previewMode = false;
+  @Input() isDialog = false;
+  @Input() exam: any;
   onDestroy$ = new Subject<void>();
   question: any = { header: '', body: '', type: '', choices: [] };
-  questionNum = 0;
+  @Input() questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
   answer = new FormControl(null, this.answerValidator);
@@ -50,30 +54,48 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.setCourseListener();
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.questionNum = +params.get('questionNum'); // Leading + forces string to number
-      this.stepNum = +params.get('stepNum');
-      this.examType = params.get('type') || this.examType;
-      const courseId = params.get('id');
-      const submissionId = params.get('submissionId');
-      const mode = params.get('mode');
-      this.answer.setValue(null);
-      this.spinnerOn = true;
-      if (courseId) {
-        this.coursesService.requestCourse({ courseId });
-        this.incorrectAnswer = false;
-        this.grade = 0;
-      } else if (submissionId) {
-        this.fromSubmission = true;
-        this.mode = mode || 'grade';
-        this.grade = mode === 'take' ? 0 : undefined;
-        this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
+      this.previewMode = params.get('preview') === 'true' || this.previewMode;
+      this.questionNum = +params.get('questionNum') || this.questionNum;
+      if (this.previewMode) {
+        (this.exam ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
+          this.exam = this.exam || res;
+          this.setExamPreview();
+        });
+        return;
       }
+      this.setExam(params);
     });
   }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setExam(params) {
+    this.stepNum = +params.get('stepNum');
+    this.examType = params.get('type') || this.examType;
+    const courseId = params.get('id');
+    const submissionId = params.get('submissionId');
+    const mode = params.get('mode');
+    this.answer.setValue(null);
+    this.spinnerOn = true;
+    if (courseId) {
+      this.coursesService.requestCourse({ courseId });
+      this.incorrectAnswer = false;
+      this.grade = 0;
+    } else if (submissionId) {
+      this.fromSubmission = true;
+      this.mode = mode || 'grade';
+      this.grade = mode === 'take' ? 0 : undefined;
+      this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
+    }
+  }
+
+  setExamPreview() {
+    this.grade = 0;
+    this.incorrectAnswer = false;
+    this.setQuestion(this.exam.questions);
   }
 
   nextQuestion(nextClicked: boolean = false) {
@@ -91,24 +113,30 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   routeToNext (nextQuestion) {
-    if (nextQuestion === -1 || nextQuestion > (this.maxQuestions - 1)) {
-      this.examComplete();
-      if (this.examType === 'surveys') {
-        this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
-      }
-    } else {
+    if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
+      return;
+    }
+    if (this.isDialog) {
+      return;
+    }
+    this.examComplete();
+    if (this.examType === 'surveys' && !this.previewMode) {
+      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
     }
   }
 
   moveQuestion(direction: number) {
+    if (this.previewMode) {
+      this.questionNum = this.questionNum + direction;
+      this.setExamPreview();
+      this.answer.setValue(null);
+      this.spinnerOn = false;
+      return;
+    }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
     this.spinnerOn = false;
-  }
-
-  resetCheckboxes() {
-    this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
   }
 
   examComplete() {
@@ -179,12 +207,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  getSurvey(surveyId: string) {
-    this.couchService.get('exams/' + surveyId).subscribe((survey) => {
-      this.setTakingExam(survey, survey._id, 'survey', survey.name);
-    });
-  }
-
   setAnswer(event, option) {
     this.answer.setValue(this.answer.value === null ? [] : this.answer.value);
     const value = this.answer.value;
@@ -212,11 +234,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
-        this.resetCheckboxes();
-        return {
-          obs: this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1),
-          correctAnswer
-        };
+        const obs = this.previewMode ?
+          of({ nextQuestion: this.questionNum }) :
+          this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1);
+        this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
+        return { obs, correctAnswer };
       case 'grade':
         return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1), correctAnswer };
       default:

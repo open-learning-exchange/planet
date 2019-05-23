@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!isDialog">
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>{examType, select, survey {Survey} exam {Test}}</span>
   <span class="toolbar-fill"></span>
