@@ -55,6 +55,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   deleteDialog: any;
   message = '';
+  communities = [];
 
   constructor(
     private couchService: CouchService,
@@ -207,7 +208,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           nameProperty: 'name',
           okClick: this.sendSurvey(survey).bind(this),
           dropdownSettings: {
-            field: 'planetName', startingValue: { value: this.stateService.configuration.code, text: 'Local' }
+            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' },
+            labels: this.communities
           },
           filterPredicate: filterSpecificFields([ 'name' ])
         },
@@ -230,18 +232,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     return obs.pipe(switchMap(([ users, childUsers, children ]) => {
       children = this.reportsService.attachNamesToPlanets(children)
                   .map(planet => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) }));
-      const tableData = [
-        ...users.tableData,
-        ...childUsers.tableData.filter((user: any) => {
-          const planet = children.find((child: any) => user.planetCode === child.code);
-          return planet && planet.registrationRequest !== 'pending';
-        })
-      ].map((user: any) => {
-        const planet = children.find((child: any) => user.planetCode === child.code);
-        return { ...user, ...(planet ? { 'planetName': planet.name } : { 'planetName': user.planetCode }) };
-      });
+      children.filter(planet => planet.docType !== 'parentName').forEach(planet => this.communities[planet.code] = planet.name);
       return of({
-        tableData,
+        tableData: [
+          ...users.tableData,
+          ...childUsers.tableData.filter((user: any) => {
+            const planet = children.find((child: any) => user.planetCode === child.code);
+            return planet && planet.registrationRequest !== 'pending';
+          })
+        ],
         columns: [ ...childUsers.columns ]
       });
     }));
