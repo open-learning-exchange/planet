@@ -196,7 +196,9 @@ export class ExamsAddComponent implements OnInit {
   }
 
   showPreviewDialog() {
-    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
+    if (this.examForm.valid && this.examForm.value.questions.length > 0) {
+      this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
+    }
   }
 
 }
