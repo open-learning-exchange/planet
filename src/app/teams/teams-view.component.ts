@@ -7,12 +7,14 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject, forkJoin } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
 import { addToArray } from '../shared/utils';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -31,17 +33,21 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
+  news: any[] = [];
+  showDescription = false;
 
   constructor(
     private couchService: CouchService,
     private userService: UserService,
+    private stateService: StateService,
     private router: Router,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
     private dialogsListService: DialogsListService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialogsFormService: DialogsFormService,
   ) {}
 
   ngOnInit() {
@@ -51,6 +57,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.getMembers();
         this.setStatus(this.team, this.userService.get(), this.userService.shelf);
         this.userShelf = this.userService.shelf;
+      });
+    this.couchService.findAll('news', findDocuments({ relatedTo: 'teams', relatedId: this.teamId }, 0, [ { 'time': 'desc' } ]))
+      .subscribe(news => {
+        this.news = news;
       });
     this.userService.shelfChange$
       .pipe(takeUntil(this.onDestroy$))
@@ -205,6 +215,27 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.team = updatedTeam;
       this.dialogRef.close();
     });
+  }
+
+  openAddMessageDialog(message = '') {
+    this.dialogsFormService.openDialogsForm(
+      'Add message', [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true } ], { message },
+      { autoFocus: true, onSubmit: this.postMessage.bind(this) }
+    );
+  }
+
+  postMessage(message) {
+    const configuration = this.stateService.configuration;
+    this.couchService.updateDocument('news', {
+      docType: 'message',
+      time: this.couchService.datePlaceholder,
+      createdOn: configuration.code,
+      parentCode: configuration.parentCode,
+      user: this.user,
+      relatedTo: 'teams',
+      relatedId: this.teamId,
+      ...message
+    }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
   }
 
 }

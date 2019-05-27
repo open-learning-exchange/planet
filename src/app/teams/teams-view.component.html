@@ -28,11 +28,17 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="left-tile">
-      <p *ngIf="team?.description; else emptyText">{{team?.description}}</p>
-      <ng-template #emptyText>
-        <p i18n>The team has no description.</p>
-        <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Description</button>
-      </ng-template>
+      <ng-container *ngIf="showDescription===true">
+        <p *ngIf="team?.description; else emptyText">{{team?.description}}</p>
+        <ng-template #emptyText>
+          <p i18n>The team has no description.</p>
+          <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Description</button>
+        </ng-template>
+      </ng-container>
+      <ng-container *ngIf="showDescription===false">
+        <button mat-stroked-button (click)="openAddMessageDialog()">Add message</button>
+        <div *ngFor="let post of news">{{post.message}}</div>
+      </ng-container>
     </div>
     <div class="right-tile">
       <p i18n><b>Joined Members: ({{members.length}})</b></p>
