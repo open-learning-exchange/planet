@@ -73,7 +73,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
-  selectedSync = 0;
+  selectedSync = [];
   isAuthorized = false;
   showFilters = 'off';
   searchSelection: any = { _empty: true };
@@ -132,9 +132,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.filter = this.resources.filter || tags.length > 0 ? ' ' : '';
       this.removeFilteredFromSelection();
     });
-    this.selection.onChange.subscribe(({ source }) => {
-      this.countSelectedNotAdded(source.selected);
-    });
+    this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
@@ -270,7 +268,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   libraryToggle(resourceIds, type) {
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
       this.removeFilteredFromSelection();
-      this.countSelectedNotAdded(this.selection.selected);
+      this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
 
@@ -344,7 +342,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  countSelectedNotAdded(selected: any) {
+  onSelectionChange(selected) {
     const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
