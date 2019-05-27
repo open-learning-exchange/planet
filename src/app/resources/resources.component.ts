@@ -242,7 +242,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted resource: ' + resource.title);
+        this.planetMessageService.showMessage('You have deleted resource: ' + resource.doc.title);
       },
       onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
     };
