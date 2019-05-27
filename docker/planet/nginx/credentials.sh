@@ -13,10 +13,12 @@ fi
 
 if [ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_USER" ]; then
   rm credentials/credentials.yml
-  echo "services:
-    db-init:
-      environment:
-        - COUCHDB_USER=$PLANET_USER
-        - COUCHDB_PASS=$PLANET_PASS
-  version: \"2\"" >> $YML_PATH
+  {
+    echo "services:"
+    echo "  db-init:"
+    echo "  environment:"
+    echo "    - COUCHDB_USER=$PLANET_USER"
+    echo "    - COUCHDB_PASS=$PLANET_PASS"
+    echo "version: \"2\""
+  } >> $YML_PATH
 fi
