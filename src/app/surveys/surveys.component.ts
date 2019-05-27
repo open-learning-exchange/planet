@@ -55,7 +55,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   deleteDialog: any;
   message = '';
-  communities = [];
 
   constructor(
     private couchService: CouchService,
@@ -208,8 +207,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           nameProperty: 'name',
           okClick: this.sendSurvey(survey).bind(this),
           dropdownSettings: {
-            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' },
-            labels: this.communities
+            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' }
           },
           filterPredicate: filterSpecificFields([ 'name' ])
         },
@@ -230,9 +228,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getUserData(obs: any) {
     return obs.pipe(switchMap(([ users, childUsers, children ]) => {
-      children = this.reportsService.attachNamesToPlanets(children)
-                  .map(planet => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) }));
-      children.filter(planet => planet.docType !== 'parentName').forEach(planet => this.communities[planet.code] = planet.name);
+      children = this.reportsService.attachNamesToPlanets(children);
       return of({
         tableData: [
           ...users.tableData,
@@ -241,7 +237,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             return planet && planet.registrationRequest !== 'pending';
           })
         ],
-        columns: [ ...childUsers.columns ]
+        columns: [ ...childUsers.columns ],
+        labels: children.reduce((labelObj, child) => ({ ...labelObj, [child.code]: child.nameDoc ? child.nameDoc.name : child.name }), {})
       });
     }));
   }
