@@ -10,7 +10,7 @@ import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { environment } from '../../environments/environment.test';
+import { environment } from '../../environments/environment';
 
 const passwordFormFields = [
   {
