@@ -158,9 +158,8 @@ export class DialogsListComponent implements AfterViewInit {
   reduceDropDown(dropdownSettings) {
     return this.tableData.data.reduce((values: any[], item: any) => {
       const value = item[dropdownSettings.field];
-      const text = dropdownSettings.labels[value] || value;
       if (value && values.findIndex(v => v.value === value) === -1) {
-        values.push({ value, text });
+        values.push({ value, text: dropdownSettings.labels[value] || value });
       }
       return values;
     }, dropdownSettings.startingValue ? [ dropdownSettings.startingValue ] : []);
