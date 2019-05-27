@@ -35,6 +35,7 @@ export class ExamsAddComponent implements OnInit {
   successMessage = this.examType === 'survey' ? 'New survey added' : 'New test added';
   steps = [];
   showFormError = false;
+  showPreviewError = false;
   isCourseContent = this.router.url.match(/courses/);
   returnUrl = (this.examType === 'survey' && !this.isCourseContent) ? '/surveys' : this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
@@ -106,9 +107,7 @@ export class ExamsAddComponent implements OnInit {
       this.showFormError = false;
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
-      this.showFormError = true;
-      this.examsService.checkValidFormComponent(this.examForm);
-      this.stepClick(this.activeQuestionIndex);
+      this.showErrorMessage();
     }
   }
 
@@ -116,6 +115,12 @@ export class ExamsAddComponent implements OnInit {
     return ac => this.validatorService.isUnique$(
       this.dbName, 'name', ac, { exceptions: [ exception ], selectors: { type: this.examType } }
     );
+  }
+
+  showErrorMessage() {
+    this.showFormError = true;
+    this.examsService.checkValidFormComponent(this.examForm);
+    this.stepClick(this.activeQuestionIndex);
   }
 
   addExam(examInfo, reRoute) {
@@ -169,6 +174,7 @@ export class ExamsAddComponent implements OnInit {
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
     this.stepClick(questions.length - 1);
+    this.showPreviewError = false;
   }
 
   removeQuestion(index) {
@@ -196,9 +202,15 @@ export class ExamsAddComponent implements OnInit {
   }
 
   showPreviewDialog() {
-    if (this.examForm.valid && this.examForm.value.questions.length > 0) {
-      this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
+    if (this.examForm.value.questions.length === 0) {
+      this.showPreviewError = true;
+      return;
     }
+    if (!this.examForm.valid) {
+      this.showErrorMessage();
+      return;
+    }
+    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
   }
 
 }

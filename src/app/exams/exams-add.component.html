@@ -24,6 +24,7 @@
         </mat-menu>
         <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" class="margin-lr-5" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
+        <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
       </div>
       <div class="exam-inputs" *ngIf="!isCourseContent">
         <mat-form-field class="full-width">
