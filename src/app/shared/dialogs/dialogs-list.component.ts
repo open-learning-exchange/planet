@@ -49,7 +49,8 @@ export class DialogsListComponent implements AfterViewInit {
     allowMulti?: boolean,
     initialSelection?: any[],
     disableSelection?: boolean,
-    selectionOptional?: boolean
+    selectionOptional?: boolean,
+    labels?: any
   }) {
     this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
     this.tableData.data = this.data.tableData;
@@ -59,7 +60,7 @@ export class DialogsListComponent implements AfterViewInit {
     if (this.data.filterPredicate) {
       this.tableData.filterPredicate = this.data.filterPredicate;
     }
-    this.setDropdownFilter(this.data.dropdownSettings);
+    this.setDropdownFilter(this.data.dropdownSettings, this.data.labels);
     this.initializeTooltip();
   }
 
@@ -147,12 +148,12 @@ export class DialogsListComponent implements AfterViewInit {
     return this.emptySubmit || this.selection.hasValue();
   }
 
-  setDropdownFilter(dropdownSettings: any) {
+  setDropdownFilter(dropdownSettings: any, labels: any) {
     if (dropdownSettings === undefined) {
       return;
     }
     this.dropdownField = dropdownSettings.field;
-    this.dropdownOptions = this.reduceDropDown(dropdownSettings);
+    this.dropdownOptions = this.reduceDropDown(dropdownSettings, labels);
     const otherFilterPredicates = this.tableData.filterPredicate;
     this.dropdownFilter = dropdownSettings.startingValue.value ?
       { [dropdownSettings.field]: dropdownSettings.startingValue.value } : { [dropdownSettings.field]: '' };
@@ -160,11 +161,11 @@ export class DialogsListComponent implements AfterViewInit {
     this.tableData.filter = ' ';
   }
 
-  reduceDropDown(dropdownSettings) {
+  reduceDropDown(dropdownSettings, labels) {
     return this.tableData.data.reduce((values: any[], item: any) => {
       const value = item[dropdownSettings.field];
       if (value && values.findIndex(v => v.value === value) === -1) {
-        values.push({ value, text: value });
+        values.push({ value, text: labels[value] || value });
       }
       return values;
     }, dropdownSettings.startingValue ? [ dropdownSettings.startingValue ] : []);
