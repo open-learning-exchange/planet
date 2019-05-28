@@ -137,10 +137,11 @@ export class PlanetTagInputDialogComponent {
       });
     }).bind(this);
     event.stopPropagation();
-    const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
+    const options = this.tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
     this.dialogsFormService.openDialogsForm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
-      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
+      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, reset: true }
     ], this.tagForm(tag), { onSubmit });
   }
 
