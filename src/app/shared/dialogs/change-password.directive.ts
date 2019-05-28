@@ -117,10 +117,8 @@ export class ChangePasswordDirective {
   }
 
   changePasswordRequest(userData) {
-    // Manager role also has isUserAdmin true so check role to be empty
-    const isUserAdmin = (this.userService.get().isUserAdmin && !this.userService.get().roles.length);
-    return this.couchService.put(this.dbName + '/' + userData._id, userData).pipe(switchMap((res) => {
-      if (isUserAdmin) {
+    return this.userService.updateUser(userData).pipe(switchMap((res) => {
+      if (this.userService.get().roles.indexOf('_admin') > -1) {
         return forkJoin([
           of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData),
           this.managerService.updateCredentialsYml(userData)
