@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -102,8 +103,11 @@ export class ReportsService {
   }
 
   getDatabaseCount(db: string) {
-    return this.couchService.get(db + '/_design_docs').pipe(map((res: any) => {
-      return res.total_rows - res.rows.length;
+    return forkJoin([
+      this.couchService.get(db),
+      this.couchService.get(db + '/_design_docs')
+    ]).pipe(map(([ schema, ddocs ]) => {
+      return schema.doc_count - ddocs.total_rows;
     }));
   }
 
