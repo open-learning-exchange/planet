@@ -70,10 +70,10 @@ export class PlanetTagInputDialogComponent {
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
-    if (this.newTagId !== undefined) {
+    if (this.newTagId !== undefined && this.mode === 'add') {
       this.tagChange([ this.newTagId ]);
-      this.newTagId = undefined;
     }
+    this.newTagId = undefined;
   }
 
   tagChange(tags, tagOne = false) {
@@ -168,7 +168,9 @@ export class PlanetTagInputDialogComponent {
 
   toggleSubcollection(event, tagId) {
     event.stopPropagation();
-    this.subcollectionIsOpen.set(tagId, !this.subcollectionIsOpen.get(tagId));
+    const newState = !this.subcollectionIsOpen.get(tagId)
+    this.subcollectionIsOpen.clear();
+    this.subcollectionIsOpen.set(tagId, newState);
   }
 
 }

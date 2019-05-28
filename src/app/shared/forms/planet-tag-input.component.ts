@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
+import { UserService } from '../user.service';
 
 @Component({
   'selector': 'planet-tag-input',
@@ -78,7 +79,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
     private tagsService: TagsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private userService: UserService
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -143,8 +145,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   openPresetDialog() {
     this.initTags();
     this.dialogRef = this.dialog.open(PlanetTagInputDialogComponent, {
-      maxWidth: '80vw',
-      maxHeight: '80vh',
+      width: '80vw',
+      height: '80vh',
       autoFocus: false,
       data: this.dialogData(true)
     });
@@ -204,7 +206,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
           0
         )
       });
-    }).filter((tag: any) => tag.count > 0);
+    }).filter((tag: any) => tag.count > 0 || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
   }
 
   dialogTagUpdate(tag, isSelected, tagOne = false) {

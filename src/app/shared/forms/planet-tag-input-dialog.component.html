@@ -1,8 +1,9 @@
+<h3>Collections</h3>
 <mat-dialog-content>
-  <mat-form-field>
+  <mat-form-field class="full-width">
     <input matInput i18n-placeholder placeholder="Filter Collections" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
-  <mat-expansion-panel *ngIf="mode==='add'">
+  <mat-expansion-panel *planetAuthorizedRoles>
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Collection</mat-panel-title>
     </mat-expansion-panel-header>
