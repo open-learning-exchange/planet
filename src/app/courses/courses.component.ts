@@ -141,7 +141,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'rating':
         return item.rating.rateSum / item.rating.totalRating || 0;
       default:
-        return sortNumberOrString(item, property);
+        return sortNumberOrString(item.doc, property);
     }
   }
 
