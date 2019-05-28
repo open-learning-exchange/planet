@@ -16,9 +16,9 @@ if [ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_USER" ]; then
   {
     echo "services:"
     echo "  db-init:"
-    echo "  environment:"
-    echo "    - COUCHDB_USER=$PLANET_USER"
-    echo "    - COUCHDB_PASS=$PLANET_PASS"
+    echo "    environment:"
+    echo "      - COUCHDB_USER=$PLANET_USER"
+    echo "      - COUCHDB_PASS=$PLANET_PASS"
     echo "version: \"2\""
   } >> $YML_PATH
 fi
