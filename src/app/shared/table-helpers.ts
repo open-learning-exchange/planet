@@ -129,3 +129,12 @@ export const filteredItemsInPage = (filteredData: any[], pageIndex: number, page
 };
 
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));
+
+export const commonSortingDataAccessor = (item: any, property: string) => {
+  switch (property) {
+    case 'rating':
+      return item.rating.rateSum / item.rating.totalRating || 0;
+    default:
+      return item[property] ? sortNumberOrString(item, property) : sortNumberOrString(item.doc, property);
+  }
+};

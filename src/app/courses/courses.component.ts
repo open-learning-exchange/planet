@@ -11,7 +11,7 @@ import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
-  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags
+  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -111,7 +111,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
-    this.courses.sortingDataAccessor = (item: any, property: string) => this.sortData(item, property);
+    this.courses.sortingDataAccessor = commonSortingDataAccessor;
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
@@ -134,15 +134,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.tagFilter.valueChanges.subscribe((tags) => this.courses.filter = this.courses.filter || tags.length > 0 ? ' ' : '');
-  }
-
-  sortData(item, property) {
-    switch (property) {
-      case 'rating':
-        return item.rating.rateSum / item.rating.totalRating || 0;
-      default:
-        return sortNumberOrString(item.doc, property);
-    }
   }
 
   ngOnDestroy() {
