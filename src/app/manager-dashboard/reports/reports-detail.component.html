@@ -50,7 +50,7 @@
         <mat-grid-tile colspan="2" i18n>No resources have been visited</mat-grid-tile>
       </ng-container>
       <ng-container *ngFor="let resource of reports?.resources">
-        <mat-grid-tile><a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.max?.title || resource?.title}}</a></mat-grid-tile>
+        <mat-grid-tile><a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.max?.title}}</a></mat-grid-tile>
         <mat-grid-tile>{{resource.count}}</mat-grid-tile>
       </ng-container>
     </mat-grid-list>
