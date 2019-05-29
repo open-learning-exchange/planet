@@ -16,7 +16,7 @@ export class ReportsService {
     private couchService: CouchService
   ) {}
 
-  groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
+  groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', additionalFields = [] } = {}) {
     return array.reduce((group, item) => {
       const currentValue = group.find((groupItem) => fields.every(field => groupItem[field] === item[field]));
       if (currentValue) {
@@ -27,7 +27,7 @@ export class ReportsService {
           {};
         currentValue.unique = uniqueField ? currentValue.unique.concat([ item[uniqueField] ]).reduce(dedupeShelfReduce, []) : [];
       } else {
-        const newEntry = fields.reduce((newObj, field) => {
+        const newEntry = fields.concat(additionalFields).reduce((newObj, field) => {
           newObj[field] = item[field];
           return newObj;
         }, {});
@@ -92,10 +92,11 @@ export class ReportsService {
   }
 
   getResourceVisits(planetCode?: string, tillDate?: number) {
+    const opts = { additionalFields: [ 'title' ], maxField: 'time' };
     return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time' }))
     .pipe(map((resourceActivites) => {
       return ({
-        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
+        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], opts)
           .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
         byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
       });
