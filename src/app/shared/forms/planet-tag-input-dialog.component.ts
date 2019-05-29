@@ -126,7 +126,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   resetFormControl(control: AbstractControl) {
-    control.reset();
+    control.setValue('');
     control.markAsPristine();
     control.markAsUntouched();
   }
