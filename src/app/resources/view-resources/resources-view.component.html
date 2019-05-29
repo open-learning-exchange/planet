@@ -30,7 +30,7 @@
   </mat-toolbar>
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-      <planet-rating [rating]="resource?.rating" [item]="resource" [parent]="parent" [ratingType]="'resource'"></planet-rating>
+      <planet-rating [rating]="resource?.rating" [item]="resource.doc" [parent]="parent" [ratingType]="'resource'"></planet-rating>
       <p><b i18n>Description:</b><td-markdown [content]="resource?.doc?.description"></td-markdown></p>
       <p *ngIf="resource?.doc?.author"><b i18n>Author:</b><i>{{' ' + resource?.doc?.author}}</i></p>
       <p *ngIf="resource?.doc?.publisher"><b i18n>Published by:</b>{{' ' + resource?.doc?.publisher + ' '}}
