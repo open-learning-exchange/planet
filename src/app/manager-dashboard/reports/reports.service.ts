@@ -95,7 +95,7 @@ export class ReportsService {
     return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time' }))
     .pipe(map((resourceActivites) => {
       return ({
-        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId', 'title' ])
+        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
           .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
         byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
       });
