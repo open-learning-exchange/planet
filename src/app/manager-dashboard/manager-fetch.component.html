@@ -35,6 +35,10 @@
           <ng-container *ngIf="element.db === 'courses'">{{ element.item.doc.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef i18n>Date Sent</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
     </mat-table>

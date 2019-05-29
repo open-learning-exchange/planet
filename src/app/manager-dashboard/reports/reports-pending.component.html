@@ -19,7 +19,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
       </mat-expansion-panel-header>
-      <planet-pending-table [data]="planet.children"></planet-pending-table>
+      <planet-pending-table [data]="planet.children" (requestUpdate)="getCommunityList()"></planet-pending-table>
     </mat-expansion-panel>
   </div>
 </div>

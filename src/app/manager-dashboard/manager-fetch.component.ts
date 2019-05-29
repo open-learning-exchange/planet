@@ -17,6 +17,9 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     .mat-column-select {
       max-width: 44px;
     }
+    .mat-column-date {
+      max-width: 150px;
+    }
   ` ]
 })
 
@@ -25,7 +28,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   planetConfiguration = this.stateService.configuration;
-  displayedColumns = [ 'select', 'item' ];
+  displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();
   emptyData = false;
 

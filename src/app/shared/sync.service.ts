@@ -21,8 +21,8 @@ export class SyncService {
   ) {}
 
   createChildPullDoc(items: any[], db, planetCode) {
-    const itemsToSend = items.map(item => ({ db, sendTo: planetCode, item }));
-    return this.couchService.post('send_items/_bulk_docs', { 'docs': itemsToSend });
+    const itemsToSend = items.map(item => ({ db, sendTo: planetCode, item, time: this.couchService.datePlaceholder }));
+    return this.couchService.bulkDocs('send_items', itemsToSend);
   }
 
   confirmPasswordAndRunReplicators(replicators) {
