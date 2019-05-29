@@ -134,7 +134,7 @@
       <ng-container matColumnDef="rating">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <planet-rating [rating]="element.rating" [item]="element" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
+          <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
