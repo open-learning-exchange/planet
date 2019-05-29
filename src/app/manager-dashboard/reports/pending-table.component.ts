@@ -5,14 +5,22 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   selector: 'planet-pending-table',
-  templateUrl: './pending-table.component.html'
+  templateUrl: './pending-table.component.html',
+  styles: [ `
+    .mat-column-date {
+      max-width: 150px;
+    }
+    .mat-column-actions {
+      max-width: 100px;
+    }
+  ` ]
 })
 export class PendingTableComponent implements OnChanges, AfterViewInit {
 
   @Input() data = [];
   @Output() requestUpdate = new EventEmitter<void>();
   items = new MatTableDataSource();
-  displayedColumns = [ 'item' ];
+  displayedColumns = [ 'item', 'date', 'actions' ];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
