@@ -10,7 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
-  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray, filterSpecificFieldsByWord
+  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -119,14 +119,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
-    this.resources.sortingDataAccessor = (item: any, property: string) => {
-      switch (property) {
-        case 'rating':
-          return item.rating.rateSum / item.rating.totalRating || 0;
-        default:
-          return sortNumberOrString(item, property);
-      }
-    };
+    this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || tags.length > 0 ? ' ' : '';
