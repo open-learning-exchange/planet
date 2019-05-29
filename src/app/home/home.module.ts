@@ -18,7 +18,7 @@ import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { CommunityTableComponent } from '../community/community-table.component';
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
-import { NewsComponent } from '../news/news.component';
+import { NewsModule } from '../news/news.module';
 
 @NgModule({
   imports: [
@@ -32,7 +32,8 @@ import { NewsComponent } from '../news/news.component';
     HttpClientJsonpModule,
     PlanetDialogsModule,
     SharedComponentsModule,
-    UsersAchievementsModule
+    UsersAchievementsModule,
+    NewsModule
   ],
   declarations: [
     HomeComponent,
@@ -42,8 +43,7 @@ import { NewsComponent } from '../news/news.component';
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective,
-    UpgradeComponent,
-    NewsComponent
+    UpgradeComponent
   ]
 })
 export class HomeModule {}

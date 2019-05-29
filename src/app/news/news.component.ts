@@ -23,7 +23,6 @@ export class NewsComponent implements OnInit {
   newsItems: any[] = [];
   imgUrlPrefix = environment.couchAddress + '/' + '_users' + '/';
   newMessage = '';
-  currentUser: any;
   deleteDialog: any;
 
   constructor(
@@ -36,7 +35,6 @@ export class NewsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.userService.get();
     this.getMessages();
   }
 

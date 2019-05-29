@@ -1,0 +1,23 @@
+<mat-card *ngFor="let item of items">
+  <mat-card-header>
+    <img mat-card-avatar [src]="item.avatar">
+    <mat-card-title>
+      <a [routerLink]="['/users/profile', item.user.name]">
+        {{item.user.firstName ?
+          item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
+          item.user.name}}
+      </a>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <ng-container i18n>wrote on</ng-container> {{item.time | date: 'mediumDate' }}
+      <ng-container *ngIf="item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'mediumDate'}}</ng-container>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <td-markdown [content]="item.message"></td-markdown>
+  </mat-card-content>
+  <mat-card-actions class="display-flex" *ngIf="item.user.name === currentUser.name">
+    <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
+    <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
+  </mat-card-actions>
+</mat-card>

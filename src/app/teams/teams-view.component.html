@@ -37,7 +37,7 @@
       </ng-container>
       <ng-container *ngIf="showDescription===false">
         <button mat-stroked-button (click)="openAddMessageDialog()">Add message</button>
-        <div *ngFor="let post of news">{{post.message}}</div>
+        <planet-news-list [items]="news"></planet-news-list>
       </ng-container>
     </div>
     <div class="right-tile">
