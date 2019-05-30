@@ -117,18 +117,12 @@ export class PlanetTagInputDialogComponent {
         this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
-        this.resetFormControl(this.addTagForm.get('name'));
-        this.resetFormControl(this.addTagForm.get('attachedTo'));
+        this.addTagForm.get('name').reset('');
+        this.addTagForm.get('attachedTo').reset([]);
       });
     } else {
       onAllFormControls(([ key, value ]) => value.markAsTouched({ onlySelf: true }));
     }
-  }
-
-  resetFormControl(control: AbstractControl) {
-    control.reset();
-    control.markAsPristine();
-    control.markAsUntouched();
   }
 
   editTagClick(event, tag) {
