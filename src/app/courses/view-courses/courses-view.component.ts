@@ -70,7 +70,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   goToSurvey(stepNum, preview = false) {
     this.router.navigate(
-      [ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey', preview, examId: this.courseDetail.steps[stepNum].exam._id } ],
+      [ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey', preview, examId: this.courseDetail.steps[stepNum].survey._id } ],
       { relativeTo: this.route }
     );
   }
