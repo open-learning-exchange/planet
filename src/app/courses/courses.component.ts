@@ -122,8 +122,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
-        this.couchService.localComparison(this.dbName, courses) :
-        of(courses)
+        this.couchService.localComparison(this.dbName, courses) : of(courses)
       )
     ).subscribe((courses: any) => {
       if (courses === undefined) {
