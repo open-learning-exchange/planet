@@ -32,7 +32,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
   news: any[] = [];
-  showDescription = false;
+  leftTileContent: 'description' | 'news' = 'news';
 
   constructor(
     private couchService: CouchService,
@@ -226,6 +226,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       viewableId: this.teamId,
       ...message
     }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+  }
+
+  changeLeftTile() {
+    this.leftTileContent = this.leftTileContent === 'news' ? 'description' : 'news';
   }
 
 }

@@ -5,6 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{team?.name}}</h3>
+    <button class="margin-lr-5" mat-stroked-button i18n (click)="changeLeftTile()">Show { leftTileContent, select, description {News} news {Description} }</button>
     <span class="toolbar-fill"></span>
     <div>
       <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
@@ -27,15 +28,15 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="left-tile">
-      <ng-container *ngIf="showDescription===true">
+    <div class="left-tile" [ngSwitch]="leftTileContent">
+      <ng-container *ngSwitchCase="'description'">
         <p *ngIf="team?.description; else emptyText">{{team?.description}}</p>
         <ng-template #emptyText>
           <p i18n>The team has no description.</p>
           <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Description</button>
         </ng-template>
       </ng-container>
-      <ng-container *ngIf="showDescription===false">
+      <ng-container *ngSwitchCase="'news'">
         <button mat-stroked-button (click)="openAddMessageDialog()">Add message</button>
         <planet-news-list [items]="news"></planet-news-list>
       </ng-container>

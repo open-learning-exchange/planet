@@ -8,6 +8,7 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-areas: "lt rt";
+    grid-column-gap: 0.5rem;
   }
 
   .left-tile, .right-tile {
