@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
@@ -11,10 +10,9 @@ import { takeUntil, switchMap, finalize } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { addToArray } from '../shared/utils';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { StateService } from '../shared/state.service';
+import { NewsService } from '../news/news.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -39,7 +37,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private stateService: StateService,
     private router: Router,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
@@ -48,6 +45,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     private dialogsListService: DialogsListService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
+    private newsService: NewsService
   ) {}
 
   ngOnInit() {
@@ -58,10 +56,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.setStatus(this.team, this.userService.get(), this.userService.shelf);
         this.userShelf = this.userService.shelf;
       });
-    this.couchService.findAll('news', findDocuments({ relatedTo: 'teams', relatedId: this.teamId }, 0, [ { 'time': 'desc' } ]))
-      .subscribe(news => {
-        this.news = news;
-      });
+    this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
     this.userService.shelfChange$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(shelf => {
@@ -225,15 +221,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   postMessage(message) {
-    const configuration = this.stateService.configuration;
-    this.couchService.updateDocument('news', {
-      docType: 'message',
-      time: this.couchService.datePlaceholder,
-      createdOn: configuration.code,
-      parentCode: configuration.parentCode,
-      user: this.user,
-      relatedTo: 'teams',
-      relatedId: this.teamId,
+    this.newsService.postNews({
+      viewableBy: 'teams',
+      viewableId: this.teamId,
       ...message
     }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
   }

@@ -1,115 +1,50 @@
-import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StateService } from '../shared/state.service';
-import { UserService } from '../shared/user.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { MatDialog } from '@angular/material';
-import { CustomValidators } from '../validators/custom-validators';
-import { findDocuments } from '../shared/mangoQueries';
-import { environment } from '../../environments/environment';
-import { map, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { NewsService } from './news.service';
 
 @Component({
   templateUrl: './news.component.html',
   styleUrls: [ './news.scss' ]
 })
-export class NewsComponent implements OnInit {
+export class NewsComponent implements OnInit, OnDestroy {
 
-  private dbName = 'news';
   configuration = this.stateService.configuration;
   newsItems: any[] = [];
-  imgUrlPrefix = environment.couchAddress + '/' + '_users' + '/';
   newMessage = '';
-  deleteDialog: any;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
-    private couchService: CouchService,
     private stateService: StateService,
-    private userService: UserService,
-    private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
-    private planetMessageService: PlanetMessageService
+    private newsService: NewsService
   ) {}
 
   ngOnInit() {
     this.getMessages();
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.newsItems = news);
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getMessages() {
-    this.couchService.findAll(this.dbName, findDocuments({ createdOn: this.configuration.code }, 0, [ { 'time': 'desc' } ]))
-    .subscribe(newsItems => {
-      this.newsItems = newsItems.map((item: any) => {
-        const filename = item.user._attachments && Object.keys(item.user._attachments)[0];
-        return { ...item, avatar: filename ? this.imgUrlPrefix + item.user._id + '/' + filename : 'assets/image.png' };
-      });
-    });
+    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
   }
 
   postMessage() {
     this.postNews({
       message: this.newMessage,
-      time: this.couchService.datePlaceholder,
-      createdOn: this.configuration.code,
-      parentCode: this.configuration.parentCode,
-      user: this.userService.get(),
       viewableBy: 'community'
     });
   }
 
-  postNews(data, successMessage = 'Thank you for submitting your news') {
-    this.couchService.updateDocument(this.dbName, data).subscribe(() => {
-      this.planetMessageService.showMessage(successMessage);
+  postNews(data, successMessage?) {
+    this.newsService.postNews(data, successMessage).subscribe(() => {
       this.newMessage = '';
-      this.getMessages();
     });
   }
 
-  openDeleteDialog(news) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.deleteNews(news),
-        changeType: 'delete',
-        type: 'news'
-      }
-    });
-  }
-
-  deleteNews(news) {
-    // Return a function with news on its scope to pass to delete dialog
-    const { _id: newsId, _rev: newsRev } = news;
-    return {
-      request: this.couchService.delete('news/' + newsId + '?rev=' + newsRev),
-      onNext: (data) => {
-        // It's safer to remove the item from the array based on its id than to splice based on the index
-        this.newsItems = this.newsItems.filter((n: any) => data.id !== n._id);
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage('News deleted');
-      },
-      onError: (error) => {
-        this.planetMessageService.showAlert('There was a problem deleting this news.');
-      }
-    };
-  }
-
-  editNews(news) {
-    const title = 'Edit Post';
-    const fields = [ {
-      'type': 'markdown',
-      'name': 'message',
-      'placeholder': 'Your Story',
-      'required': true
-    } ];
-    const formGroup = {
-      message: [ news.message, CustomValidators.required ]
-    };
-    this.dialogsFormService.confirm(title, fields, formGroup, true)
-      .subscribe((response: any) => {
-        if (response) {
-          this.postNews({ ...news, updatedDate: this.couchService.datePlaceholder, ...response }, 'News has been updated successfully.');
-        }
-      });
-  }
 }

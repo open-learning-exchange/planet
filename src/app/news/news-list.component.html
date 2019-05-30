@@ -10,7 +10,7 @@
     </mat-card-title>
     <mat-card-subtitle>
       <ng-container i18n>wrote on</ng-container> {{item.time | date: 'mediumDate' }}
-      <ng-container *ngIf="item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'mediumDate'}}</ng-container>
+      <ng-container *ngIf="item.updatedDate !== item.time && item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'mediumDate'}}</ng-container>
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>

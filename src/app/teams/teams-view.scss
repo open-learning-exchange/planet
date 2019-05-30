@@ -8,7 +8,6 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-areas: "lt rt";
-    height: calc(100vh - 382px);
   }
 
   .left-tile, .right-tile {
