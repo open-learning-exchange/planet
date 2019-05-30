@@ -35,6 +35,13 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
     .mat-column-info, .mat-column-rating {
       max-width: 225px;
     }
+    .column {
+      display: flex;
+      flex-direction: column;
+    }
+    .column > * {
+      line-height: normal;
+    }
   ` ]
 })
 
