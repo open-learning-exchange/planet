@@ -331,6 +331,10 @@ body {
     padding: 1rem;
     mat-radio-group {
       margin-left: 10px;
+      mat-radio-button {
+        padding-left: 10px;
+        margin-bottom: 10px;
+      }
     }
   }
 
