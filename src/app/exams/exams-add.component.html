@@ -1,15 +1,12 @@
 <mat-toolbar>
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
+  {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
+  {{examType === 'exam' && courseName ? courseName + ':' : ''}}
+  {{pageType}}
+  <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
-    {{examType === 'exam' && courseName ? courseName + ':' : ''}}
-    {{pageType}}
-    <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
-    <span class="toolbar-fill"></span>
-  </mat-toolbar>
   <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent}" novalidate>
       <div class="exam-buttons">

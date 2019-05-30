@@ -159,7 +159,9 @@ export class ExamsAddComponent implements OnInit {
 
   stepClick(index: number) {
     this.activeQuestionIndex = index;
-    this.question = (<FormGroup>(<FormArray>this.examForm.get('questions')).at(index));
+    if (index > -1) {
+      this.question = (<FormGroup>(<FormArray>this.examForm.get('questions')).at(index));
+    }
   }
 
   initializeQuestions(questions: any[]) {

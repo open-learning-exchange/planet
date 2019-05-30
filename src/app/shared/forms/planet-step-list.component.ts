@@ -116,6 +116,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   toList() {
     this.listMode = true;
+    this.stepClicked.emit(-1);
   }
 
   moveStep({ index, direction, listId }) {

@@ -21,8 +21,9 @@
 
 planet-markdown-textbox {
   .CodeMirror, .CodeMirror-scroll {
-    height: 15vh;
-    min-height: 15vh;
+    height: inherit;
+    min-height: inherit;
+    max-height: 15vh;
   }
 
   .CodeMirror.CodeMirror-fullscreen {
