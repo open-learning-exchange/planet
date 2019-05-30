@@ -329,6 +329,9 @@ body {
   .view-container {
     background-color: $white;
     padding: 1rem;
+    mat-radio-group {
+      margin-left: 10px;
+    }
   }
 
   // Style to make the view-container fill the available screen space
