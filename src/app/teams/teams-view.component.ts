@@ -88,6 +88,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.userStatus = team.requests.findIndex(id => id === user._id) > -1 ? 'requesting' : this.userStatus;
       this.userStatus = shelf.myTeamIds.findIndex(id => id === team._id) > -1 ? 'member' : this.userStatus;
     }
+    this.leftTileContent = this.userStatus !== 'member' ? 'description' : 'news';
   }
 
   toggleMembership(team, leaveTeam) {
