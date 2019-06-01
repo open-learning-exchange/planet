@@ -76,7 +76,7 @@
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>Take Test</a>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
-              <button *ngIf="canManage" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu">
+              <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu">
                 Preview
               </button>
               <mat-menu #previewMenu="matMenu">
