@@ -1,17 +1,33 @@
 @import '../../variables';
 
-.label{
-  font-size: 1.2em;
-  font-weight: bold;
+.label {
+  font-size: 1.25rem;
+  position: absolute;
+  left: 0;
 }
 
-mat-grid-list {
-  margin-top: 0.5rem;
+.sublabel {
+  position: absolute;
+  left: 1.25em;
+  top: 0;
+  &::before {
+    content: "•";
+    display: inline-block; 
+    width: 0.5em;
+    margin-left: -1em;
+  }
 }
 
-mat-grid-list:not(:last-child) {
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid $light-grey;
+.reports-table-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-column-gap: 1vw;
+  margin: 4vh 0;
+  h1 {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: $primary;
+  }
 }
 
 canvas {
