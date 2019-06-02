@@ -1,7 +1,6 @@
 @import '../../variables';
 
 .label {
-  font-size: 1.25rem;
   position: absolute;
   left: 0;
 }
@@ -22,7 +21,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   grid-column-gap: 1vw;
-  margin: 4vh 0;
+  margin: 5vh 0;
   h1 {
     display: block;
     margin-bottom: 0.4rem;

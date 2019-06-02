@@ -17,20 +17,20 @@
     <canvas id="uniqueVisitChart"></canvas>
     <div class="reports-table-container">
       <div>
-        <h1>Members</h1>
+        <h1 class="mat-title" i18n>Members</h1>
         <mat-grid-list cols="2" rowHeight="2rem">
-          <mat-grid-tile><div class="label">Total Members</div></mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Total Members</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
-          <mat-grid-tile><div class="sublabel">Male</div></mat-grid-tile>
+          <mat-grid-tile><div class="sublabel" i18n>Male</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.usersByGender?.male || 0}}</mat-grid-tile>
-          <mat-grid-tile><div class="sublabel">Female</div></mat-grid-tile>
+          <mat-grid-tile><div class="sublabel" i18n>Female</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.usersByGender?.female || 0}}</mat-grid-tile>
-          <mat-grid-tile><div class="sublabel">Did not specify</div></mat-grid-tile>
+          <mat-grid-tile><div class="sublabel" i18n>Did not specify</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.usersByGender?.didNotSpecify || 0}}</mat-grid-tile>
-          <mat-grid-tile><div class="label">Total Visits</div></mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Total Visits</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
-          <mat-grid-tile><div class="label">Members by Visits</div></mat-grid-tile>
-          <mat-grid-tile>Total Visits by Member</mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Members by Visits</div></mat-grid-tile>
+          <mat-grid-tile i18n>Total Visits by Member</mat-grid-tile>
           <ng-container *ngIf="!reports?.visits || reports?.visits.length === 0">
             <mat-grid-tile colspan="2" i18n>There are no visits</mat-grid-tile>
           </ng-container>
@@ -41,14 +41,14 @@
         </mat-grid-list>
       </div>
       <div>
-        <h1>Resources</h1>
+        <h1 class="mat-title" i18n>Resources</h1>
         <mat-grid-list cols="2" rowHeight="2rem">
-          <mat-grid-tile><div class="label">Total Resources</div></mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Total Resources</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile>
-          <mat-grid-tile><div class="label">Total Views</div></mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Total Views</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.totalResourceViews}}</mat-grid-tile>
-          <mat-grid-tile><div class="label">Most Visited</div></mat-grid-tile>
-          <mat-grid-tile>Total Visits by Resource</mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Most Visited</div></mat-grid-tile>
+          <mat-grid-tile i18n>Total Visits by Resource</mat-grid-tile>
           <ng-container *ngIf="!reports?.resources || reports?.resources.length === 0">
             <mat-grid-tile colspan="2" i18n>No resources have been visited</mat-grid-tile>
           </ng-container>
@@ -56,8 +56,8 @@
             <mat-grid-tile><a [routerLink]="['/resources/view', resource.resourceId]"><div class="sublabel">{{resource?.max?.title}}</div></a></mat-grid-tile>
             <mat-grid-tile>{{resource.count}}</mat-grid-tile>
           </ng-container>
-          <mat-grid-tile><div class="label">Highest Rated</div></mat-grid-tile>
-          <mat-grid-tile>Average Rating</mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Highest Rated</div></mat-grid-tile>
+          <mat-grid-tile i18n>Average Rating</mat-grid-tile>
           <ng-container *ngIf="!reports?.resourceRatings || reports?.resourceRatings.length === 0">
             <mat-grid-tile colspan="2" i18n>There are no resource ratings</mat-grid-tile>
           </ng-container>
@@ -67,12 +67,12 @@
         </mat-grid-list>
       </div>
       <div>
-        <h1>Courses</h1>
+        <h1 class="mat-title" i18n>Courses</h1>
         <mat-grid-list cols="2" rowHeight="2rem">
-          <mat-grid-tile><div class="label">Total Courses</div></mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Total Courses</div></mat-grid-tile>
           <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
-          <mat-grid-tile><div class="label">Highest Rated</div></mat-grid-tile>
-          <mat-grid-tile>Average Rating</mat-grid-tile>
+          <mat-grid-tile><div class="label" i18n>Highest Rated</div></mat-grid-tile>
+          <mat-grid-tile i18n>Average Rating</mat-grid-tile>
           <ng-container *ngIf="!reports?.courseRatings || reports?.courseRatings.length === 0">
             <mat-grid-tile colspan="2" i18n>There are no course ratings</mat-grid-tile>
           </ng-container>
