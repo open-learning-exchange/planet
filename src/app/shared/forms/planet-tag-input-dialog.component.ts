@@ -132,7 +132,7 @@ export class PlanetTagInputDialogComponent {
         this.planetMessageService.showMessage('Collection updated');
         this.selected.set(newTagId, this.selected.get(tag._id));
         this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
-        this.data.initTags(newTagId);
+        this.data.initTags(this.mode === 'add' ? newTagId : undefined);
         this.dialogsFormService.closeDialogsForm();
       });
     }).bind(this);
