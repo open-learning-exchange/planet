@@ -5,7 +5,7 @@ import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import {
-  filterSpecificFields, sortNumberOrString, createDeleteArray, removeFilteredFromSelection
+  filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
 } from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -130,7 +130,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.surveys.filter = filterValue;
-    removeFilteredFromSelection(this.paginator, this.surveys.filteredData, this.selection);
+    this.selection.deselect(...selectedOutOfFilter(this.surveys.filteredData, this.selection, this.paginator));
   }
 
   isAllSelected() {

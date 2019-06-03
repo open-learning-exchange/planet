@@ -125,20 +125,12 @@ export const dropdownsFill = (filterObj) => Object.entries(filterObj).reduce((em
 }, '');
 
 export const filteredItemsInPage = (filteredData: any[], pageIndex: number, pageSize: number) => {
-  return filteredData.slice(pageIndex * pageSize, (pageIndex * pageSize) + pageSize);
+  return pageIndex === undefined ? filteredData : filteredData.slice(pageIndex * pageSize, (pageIndex * pageSize) + pageSize);
 };
 
-export const removeFilteredFromSelection = (paginator: any, filteredData: any[], selection: any) => {
-  if (!paginator) {
-    return;
-  }
+export const selectedOutOfFilter = (filteredData: any[], selection: any, paginator: any = {}) => {
   const itemsInPage = filteredItemsInPage(filteredData, paginator.pageIndex, paginator.pageSize);
-  selection.selected.forEach((selectedId) => {
-    const notInSelection  = itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined;
-    if (notInSelection) {
-      selection.deselect(selectedId);
-    }
-  });
+  return selection.selected.filter((selectedId) => itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined);
 };
 
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));

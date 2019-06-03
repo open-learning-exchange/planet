@@ -10,7 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, removeFilteredFromSelection
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -62,7 +62,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
-    removeFilteredFromSelection(this.paginator, this.resources.filteredData, this.selection);
+    this.removeFilteredFromSelection();
   }
   private _myLibraryFilter: { value: 'on' | 'off' } = { value: 'off' };
   get myLibraryFilter(): 'on' | 'off' { return this._myLibraryFilter.value; }
@@ -123,6 +123,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.resources.filter = this.resources.filter || tags.length > 0 ? ' ' : '';
+      this.removeFilteredFromSelection();
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
@@ -138,6 +139,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return { ...resource, libraryInfo: myLibraryIndex > -1 };
     });
   }
+
+  removeFilteredFromSelection() {
+    this.selection.deselect(...selectedOutOfFilter(this.resources.filteredData, this.selection, this.paginator));
+  }
+
 
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -246,6 +252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   libraryToggle(resourceIds, type) {
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
+      this.removeFilteredFromSelection();
       this.onSelectionChange(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -269,6 +276,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.searchSelection[category] = items;
     this.searchSelection._empty = Object.entries(this.searchSelection).every(([ field, val ]: any[]) => val.length === 0);
     this.titleSearch = this.titleSearch;
+    this.removeFilteredFromSelection();
   }
 
   resetFilter() {
@@ -336,6 +344,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleMyLibrary() {
     this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
+    this.removeFilteredFromSelection();
   }
 
 }

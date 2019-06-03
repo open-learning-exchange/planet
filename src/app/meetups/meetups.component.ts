@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, removeFilteredFromSelection } from '../shared/table-helpers';
+import { filterSpecificFields, selectedOutOfFilter } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -106,7 +106,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    removeFilteredFromSelection(this.paginator, this.meetups.filteredData, this.selection);
+    this.selection.deselect(...selectedOutOfFilter(this.meetups.filteredData, this.selection, this.paginator));
   }
 
   ngOnDestroy() {
