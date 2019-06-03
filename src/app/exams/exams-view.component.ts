@@ -27,6 +27,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   maxQuestions = 0;
   answer = new FormControl(null, this.answerValidator);
   incorrectAnswer = false;
+  examPreviewStatus = '';
   spinnerOn = true;
   mode = 'take';
   title = '';
@@ -95,6 +96,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setExamPreview() {
     this.grade = 0;
     this.incorrectAnswer = false;
+    this.examPreviewStatus = '';
     this.setQuestion(this.exam.questions);
   }
 
@@ -104,6 +106,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.incorrectAnswer = true;
+        this.examPreviewStatus = 'incomplete';
         this.answer.setValue(null);
         this.spinnerOn = false;
       } else {
@@ -118,6 +121,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.isDialog) {
+      if (nextQuestion > this.maxQuestions - 1) {
+        this.examPreviewStatus = 'complete';
+      }
       return;
     }
     this.examComplete();
