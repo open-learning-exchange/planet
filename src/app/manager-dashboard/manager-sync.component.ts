@@ -58,9 +58,8 @@ export class ManagerSyncComponent implements OnInit {
       return { ...rep, _deleted: true };
     });
     this.syncService.deleteReplicators(deleteArray).pipe(
-      switchMap(data => {
-        return this.sendStatsToParent();
-      }),
+      switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
+      map(([ res, users ]) => this.updateParentUsers(users)),
       switchMap(() => {
         return this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code }));
       }),
@@ -159,6 +158,28 @@ export class ManagerSyncComponent implements OnInit {
     return this.syncService.replicatorsArrayWithTags(
       achievements.filter(a => a.sendToNation === true).map(a => ({ db: 'achievements', item: a })), 'push', 'local'
     ).pipe(map(replicators => replicators.filter(rep => rep.db !== 'achievements')));
+  }
+
+  getParentUsers() {
+    return this.couchService.findAll(
+      '_users',
+      findDocuments({ planetCode: this.planetConfiguration.parentCode }),
+      { domain: this.planetConfiguration.parentDomain }
+    );
+  }
+
+  updateParentUsers(newUsers: any[]) {
+    this.couchService.findAll('parent_users').pipe(switchMap((oldUsers: any[]) => {
+      const deleteArray = oldUsers
+        .filter(oldUser => !newUsers.some(newUser => newUser._id === oldUser._id))
+        .map(oldUser => ({ ...oldUser, _deleted: true }));
+      const updateArray = newUsers.map(newUser => {
+        const oldUser = oldUsers.find(old => newUser._id === old._id);
+        return { ...newUser, _rev: oldUser ? oldUser._rev : undefined };
+      });
+      const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
+      return this.couchService.bulkDocs('parent_users', docs);
+    })).subscribe((res) => console.log(res));
   }
 
 }
