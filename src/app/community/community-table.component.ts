@@ -14,6 +14,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { FormBuilder } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { ValidatorService } from '../validators/validator.service';
 
 @Component({
   selector: 'planet-community-table',
@@ -52,7 +53,8 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private validatorService: ValidatorService
   ) {}
 
   ngOnChanges() {
@@ -212,10 +214,15 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   }
 
   openEditChildNameDialog(planet) {
+    const exceptions = [ planet.nameDoc ? planet.nameDoc.name : planet.doc.name ];
     this.dialogsFormService.openDialogsForm(
       `Edit ${this.planetTypeText(planet.doc.planetType)} Name`,
       [ { 'label': 'Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', 'required': true } ],
-      this.fb.group({ name: [ planet.nameDoc ? planet.nameDoc.name : planet.doc.name, CustomValidators.required ] }),
+      this.fb.group({ name: [
+        planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
+        CustomValidators.required,
+        ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { exceptions })
+      ] }),
       { onSubmit: this.editChildName(planet).bind(this) }
     );
 
