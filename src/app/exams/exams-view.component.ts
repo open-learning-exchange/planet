@@ -121,7 +121,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.examComplete();
-    if (this.examType === 'surveys' && !this.previewMode) {
+    if (this.examType === 'survey' && !this.previewMode) {
       this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
     }
   }
