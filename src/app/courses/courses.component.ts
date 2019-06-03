@@ -133,7 +133,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds);
       this.emptyData = !this.courses.data.length;
-      this.courses.paginator = this.paginator;
       this.dialogsLoadingService.stop();
     });
     this.selection.changed.subscribe(({ source }) => {

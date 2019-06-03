@@ -25,12 +25,13 @@ export class CoursesService {
   submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
-  private coursesUpdated = new Subject<{ parent: boolean, courses: any[] }>();
+  private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
   local = { courses: [], ratings: [], tags: [], courses_progress: [] };
   parent = { courses: [], ratings: [], tags: [], courses_progress: [] };
+  isReady = { local: false, parent: false };
 
   constructor(
     private couchService: CouchService,
@@ -42,15 +43,16 @@ export class CoursesService {
   ) {
     const handleStateRes = (res: any, dataName: string) => {
       if (res !== undefined) {
+        this.isReady[res.planetField] = dataName === this.dbName ? true : this.isReady[res.planetField];
         this[res.planetField][dataName] = res.newData;
-        this.mergeData(this[res.planetField], res.planetField === 'parent');
+        this.mergeData(this[res.planetField], res.planetField, res.planetField === 'parent');
       }
     };
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       if (res !== undefined) {
         const planetField = res.parent ? 'parent' : 'local';
         this[planetField].ratings = res.ratings;
-        this.mergeData(this[planetField], res.parent);
+        this.mergeData(this[planetField], planetField, res.parent);
       }
     });
     this.stateService.couchStateListener('tags').subscribe((res: any) => handleStateRes(res, 'tags'));
@@ -65,7 +67,7 @@ export class CoursesService {
     this.ratingService.newRatings(parent);
   }
 
-  mergeData({ courses, courses_progress, ratings, tags }, parent = false) {
+  mergeData({ courses, courses_progress, ratings, tags }, planetField = 'local', parent = false) {
     const data = courses.map((course: any) => ({
       doc: course,
       _id: course._id,
@@ -74,12 +76,12 @@ export class CoursesService {
       rating: this.ratingService.createItemList([ course ], ratings)[0].rating,
       tags: this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags
     }));
-    this.coursesUpdated.next({ courses: data, parent });
+    this.coursesUpdated.next({ courses: data, planetField, parent });
   }
 
-  coursesListener$(parent = false) {
+  coursesListener$(reqParent = false) {
     return this.coursesUpdated.pipe(
-      map((response) => response.parent === parent ? response.courses : undefined)
+      map(({ parent, planetField, courses }) => parent === reqParent && this.isReady[planetField] ? courses : undefined)
     );
   }
 
