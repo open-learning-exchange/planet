@@ -8,6 +8,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
+import { dedupeShelfReduce } from '../utils';
 
 @Component({
   'selector': 'planet-tag-input',
@@ -104,9 +105,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   initTags(editedId?: string) {
     this.tagsService.getTags(this.db, this.parent).subscribe((tags: any[]) => {
       this.tags = tags;
-      const newValue = this.value.concat(editedId).filter((tagId, index, self) => {
-        return tags.some(tag => tag._id === tagId) && self.indexOf(tagId) === index;
-      });
+      const newValue = this.value.concat(editedId).filter(tagId => tags.some(tag => tag._id === tagId)).reduce(dedupeShelfReduce, []);
       this.value = newValue;
       this.resetDialogData();
     });
