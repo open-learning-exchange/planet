@@ -9,8 +9,8 @@ import { Subject, of, combineLatest } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
-  filterSpecificFields, composeFilterFunctions, filterTags, sortNumberOrString,
-  filterAdvancedSearch, filterShelf, filteredItemsInPage, createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor
+  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -141,17 +141,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFilteredFromSelection() {
-    if (!this.paginator) {
-      return;
-    }
-    const itemsInPage = filteredItemsInPage(this.resources.filteredData, this.paginator.pageIndex, this.paginator.pageSize);
-    this.selection.selected.forEach((selectedId) => {
-      const notInSelection  = itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined;
-      if (notInSelection) {
-        this.selection.deselect(selectedId);
-      }
-    });
+    this.selection.deselect(...selectedOutOfFilter(this.resources.filteredData, this.selection, this.paginator));
   }
+
 
   onPaginateChange(e: PageEvent) {
     this.selection.clear();

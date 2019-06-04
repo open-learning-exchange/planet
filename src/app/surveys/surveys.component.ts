@@ -4,7 +4,9 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, Pag
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
+import {
+  filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
+} from '../shared/table-helpers';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -128,6 +130,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.surveys.filter = filterValue;
+    this.selection.deselect(...selectedOutOfFilter(this.surveys.filteredData, this.selection, this.paginator));
   }
 
   isAllSelected() {

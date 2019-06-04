@@ -11,7 +11,8 @@ import { Subject, of, forkJoin } from 'rxjs';
 import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
-  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor
+  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
+  selectedOutOfFilter
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -75,6 +76,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+    this.removeFilteredFromSelection();
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -288,6 +290,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.courses.filter = this.courses.filter ? this.courses.filter : ' ';
+    this.removeFilteredFromSelection();
+  }
+
+  removeFilteredFromSelection() {
+    this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
   }
 
   resetSearch() {
