@@ -141,7 +141,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.countSelectNotEnrolled(source.selected);
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.tagFilter.valueChanges.subscribe((tags) => this.courses.filter = this.courses.filter || tags.length > 0 ? ' ' : '');
+    this.tagFilter.valueChanges.subscribe((tags) => {
+      this.courses.filter = this.courses.filter || tags.length > 0 ? ' ' : '';
+      this.removeFilteredFromSelection();
+    });
   }
 
   ngOnDestroy() {
