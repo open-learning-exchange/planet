@@ -37,9 +37,9 @@
       <div>
         <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">
-          <mat-radio-button value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
-          <mat-radio-button value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
-          <mat-radio-button value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
+          <mat-radio-button class="margin-lr" value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
+          <mat-radio-button class="margin-lr" value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
+          <mat-radio-button class="margin-lr" value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
       </div>
