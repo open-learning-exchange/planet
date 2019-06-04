@@ -79,7 +79,11 @@
           <input matInput i18n-placeholder [(ngModel)]="userDetail.name" placeholder="Added By" formControlName="addedBy" readonly>
         </mat-form-field>
         <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
+          <mat-select i18n-placeholder placeholder="Open Which File" formControlName="openWhichFile">
+            <mat-option *ngFor="let file of attachedZipFiles" [value]="file" >
+              {{file}}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
         <div class="inner-gaps by-column full-width">
           <label i18n>File Upload:</label>
