@@ -20,7 +20,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 export class NewsListComponent {
 
   @Input() items: any[] = [];
-  @Input() editSuccessMessage: string = 'News has been updated successfully.';
+  @Input() editSuccessMessage: 'News has been updated successfully.';
   currentUser = this.userService.get();
   deleteDialog: any;
 
