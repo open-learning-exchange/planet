@@ -1,7 +1,10 @@
-<h3>Collections</h3>
+<ng-container [ngSwitch]="mode">
+  <span mat-dialog-title i18n *ngSwitchCase="'filter'">Collections</span>
+  <span mat-dialog-title i18n *ngSwitchCase="'add'">Change Collections</span>
+</ng-container>
 <mat-dialog-content>
   <mat-form-field class="full-width">
-    <input matInput i18n-placeholder placeholder="Filter Collections" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
+    <input matInput i18n-placeholder placeholder="Filter by Collection Name" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
   <mat-expansion-panel *planetAuthorizedRoles>
     <mat-expansion-panel-header>
@@ -23,12 +26,12 @@
   </mat-expansion-panel>
   <mat-action-list *ngIf="selectMany">
     <ng-container *ngFor="let tag of tags">
-      <mat-list-item (click)="tagChange([ tag._id || tag.name ])" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }" class="cursor-pointer">
-        <p mat-line>
+      <mat-list-item (click)="tagChange([ tag._id || tag.name ])" class="cursor-pointer">
+        <p matLine>
           <mat-checkbox (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
-          {{tag.name + ' (' + (tag.count || 0) + ')'}}
+          <span [ngClass]="{ 'mat-body-2': tag.subTags.length > 0, 'mat-body-1': tag.subTags.length === 0 }">{{tag.name + ' (' + (tag.count || 0) + ')'}}</span>
           <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" (click)="toggleSubcollection($event,tag._id)" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
-          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)" class="margin-lr-5">Edit</button>
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
         </p>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
@@ -36,7 +39,7 @@
           <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
           <p matLine>
             <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)"></mat-checkbox>
-            {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+            <span class="mat-body-1">{{subTag.name + ' (' + (subTag.count || 0) + ')'}}</span>
             <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
           </p>
         </mat-list-item>

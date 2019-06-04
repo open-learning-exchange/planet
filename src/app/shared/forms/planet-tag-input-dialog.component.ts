@@ -15,6 +15,12 @@ import { mapToArray, isInMap } from '../utils';
     :host .mat-list-option span {
       font-weight: inherit;
     }
+    :host p[matLine] * {
+      margin-right: 0.25rem;
+    }
+    :host p[matLine] *:last-child {
+      margin-right: 0;
+    }
   ` ]
 })
 export class PlanetTagInputDialogComponent {
