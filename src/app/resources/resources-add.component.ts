@@ -314,6 +314,9 @@ export class ResourcesAddComponent implements OnInit {
       err => {
         console.log('error:', err.message);
       });
+    } else {
+      // a non-zip file is uploaded
+      this.resourceForm.controls.openWhichFile.disable();
     }
   }
 
