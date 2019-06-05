@@ -105,4 +105,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
+  deleteHub(hub) {
+    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev)
+   .subscribe(() => this.getCommunityList());
+  }
+
 }
