@@ -1474,7 +1474,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-chart.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Total Errors</target>
+        <target state="translated">कुल त्रुटिहरू</target>
       </trans-unit>
       <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html">
         <source>Steps</source>
@@ -1482,7 +1482,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-chart.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Steps</target>
+        <target state="translated">चरणहरू</target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html" approved="yes">
         <source>Library</source>
@@ -1651,7 +1651,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Labels</target>
+        <target state="translated">लेबल</target>
       </trans-unit>
       <trans-unit id="a0843de0a64adcc7ee6a946408b6876cd8abdcae" datatype="html" approved="yes">
         <source>English</source>
@@ -1808,7 +1808,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="needs-translation">File Upload:</target>
+        <target state="translated">फाइल अपलोड:</target>
       </trans-unit>
       <trans-unit id="2295cec19ae4dc9478249809afc1902d3b940d46" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -2026,7 +2026,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="needs-translation">Close Date</target>
+        <target state="translated">बन्द मिति</target>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html" approved="yes">
         <source>Source</source>
@@ -2165,8 +2165,8 @@
           <context context-type="sourcefile">app/home/home-classic.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">
-      Surveys
+        <target state="translated">
+      र्वेक्षण
     </target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html" approved="yes">
@@ -2234,7 +2234,7 @@
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">View Profile</target>
+        <target state="translated">प्रोफाइल खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="d3781ad331fdd0bc9055c45a41664ac467de63af" datatype="html">
         <source>Edit Profile</source>
