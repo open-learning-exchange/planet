@@ -20,6 +20,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 export class NewsListComponent {
 
   @Input() items: any[] = [];
+  @Input() editSuccessMessage = 'News has been updated successfully.';
   currentUser = this.userService.get();
   deleteDialog: any;
 
@@ -46,7 +47,7 @@ export class NewsListComponent {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (response: any) => {
         if (response) {
-          this.newsService.postNews({ ...news, ...response }, 'News has been updated successfully.').subscribe(() => {
+          this.newsService.postNews({ ...news, ...response }, this.editSuccessMessage).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
             this.dialogsLoadingService.stop();
           });

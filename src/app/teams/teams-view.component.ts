@@ -227,7 +227,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       viewableBy: 'teams',
       viewableId: this.teamId,
       ...message
-    }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+    }, 'Message has been posted successfully')
+    .pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
   }
 
   changeLeftTile() {
