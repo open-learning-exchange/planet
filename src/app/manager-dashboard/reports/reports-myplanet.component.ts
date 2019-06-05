@@ -45,11 +45,11 @@ export class ReportsMyPlanetComponent implements OnInit {
                   && filterFunction(item, this.searchValue))
                   .sort((a, b) => b.time - a.time)
                   .reduce((myplanetArr, item) => {
-                      const exist = myplanetArr.findIndex(myplanet => item.androidId === myplanet.androidId);
-                      if (exist === -1) {
-                        myplanetArr.push(item);
-                      }
-                      return myplanetArr;
+                    const exist = myplanetArr.findIndex(myplanet => item.androidId === myplanet.androidId);
+                    if (exist === -1) {
+                      myplanetArr.push(item);
+                    }
+                    return myplanetArr;
                   }, [])
     }));
   }
