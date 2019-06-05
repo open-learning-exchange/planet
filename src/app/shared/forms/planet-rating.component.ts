@@ -72,7 +72,7 @@ export class PlanetRatingComponent implements OnChanges {
     this.rating = Object.assign({ rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} }, this.rating);
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
-      { class: 'primary-light-color',
+      { class: 'secondary-light-color',
         amount: this.rating.totalRating === 0 ? 1
           : this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
         noLabel: true

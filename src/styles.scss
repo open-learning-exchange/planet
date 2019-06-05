@@ -272,6 +272,10 @@ body {
     background-color: $primary-light;
   }
 
+  mat-table, .secondary-light-color {
+    background-color: $secondary-light;
+  }
+
   // Fix for checkboxes changing vertical alignment in cells when clicked as of Dec 28, 2017
   // See https://github.com/angular/material2/issues/8600 & the 'Include Overflow Styling' section of
   // https://material.angular.io/components/table/overview#selection
