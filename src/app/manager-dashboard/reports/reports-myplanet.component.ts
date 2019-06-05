@@ -40,15 +40,12 @@ export class ReportsMyPlanetComponent implements OnInit {
   setAllPlanets(planets: any[], myPlanets: any[]) {
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: myPlanets.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
-        .sort((a, b) => b.time - a.time)
-        .reduce((myplanetArr, item) => {
-          const exist = myplanetArr.findIndex(myplanet => item.androidId === myplanet.androidId);
-          if (exist === -1) {
-            myplanetArr.push(item);
-          }
-          return myplanetArr;
-        }, [])
+      children:
+        this.reportsService.groupBy(
+          myPlanets.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code),
+          [ 'androidId' ],
+          { maxField: 'time' }
+        ).map((child: any) => child.max)
       })
     );
   }
