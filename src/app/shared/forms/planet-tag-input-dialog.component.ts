@@ -63,7 +63,7 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: any) => tag)
       .forEach(tag => {
-        this.tagChange([ tag.tagId || tag ], !this.selectMany);
+        this.tagChange([ tag.tagId || tag ], { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
@@ -82,16 +82,21 @@ export class PlanetTagInputDialogComponent {
     this.newTagId = undefined;
   }
 
-  tagChange(tags, tagOne = false) {
+  tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
     const newState = !this.selected.get(tags[0]);
+    const setAllTags = newState !== deselectSubs;
     tags.forEach((tag, index) => {
-      if (index === 0 || newState) {
+      if (index === 0 || setAllTags) {
         this.selected.set(tag, newState || this.indeterminate.get(tag));
         this.indeterminate.set(tag, false);
 
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
+  }
+
+  subTagIds(subTags: any[]) {
+    return subTags.map(subTag => subTag._id || subTag.name);
   }
 
   updateFilter(value) {
