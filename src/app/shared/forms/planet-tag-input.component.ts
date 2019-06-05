@@ -171,7 +171,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       initTags: this.initTags.bind(this),
       reset: this.resetDialogData.bind(this),
       startingTags,
-      tags: this.filterTags(this.tags, this.selectMany),
+      tags: this.filterTags(this.tags.filter((tag: any) => tag.attachedTo === undefined || tag.attachedTo.length === 0), this.selectMany),
       mode: this.mode,
       initSelectMany: this.selectMany,
       db: this.db

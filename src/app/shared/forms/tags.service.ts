@@ -23,8 +23,7 @@ export class TagsService {
         return tags
           .map((tag: any) => ({ ...tag, count: tagCounts[tag._id] || 0 }))
           .filter((tag: any) => tag.db === db && tag.docType === 'definition')
-          .map(this.fillSubTags)
-          .filter(tag => tag.attachedTo === undefined || tag.attachedTo.length === 0);
+          .map(this.fillSubTags);
       })
     );
   }
