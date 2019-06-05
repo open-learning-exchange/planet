@@ -15,7 +15,12 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
-  templateUrl: './community.component.html'
+  templateUrl: './community.component.html',
+  styles: [ `
+    mat-panel-title {
+      align-items: center;
+    }
+  ` ]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
