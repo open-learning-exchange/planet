@@ -190,7 +190,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
-        this.examType = submission.parent.type;
+        this.examType = submission.parent.type === 'surveys' ? 'survey' : 'exam';
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
         this.grade = ans ? ans.grade || this.grade : this.grade;
