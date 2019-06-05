@@ -12,9 +12,9 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 })
 export class ReportsMyPlanetComponent implements OnInit {
 
+  private allPlanets: any[] = [];
   searchValue = '';
-  myPlanets = [];
-  planets = [];
+  planets: any[] = [];
   planetType = this.stateService.configuration.planetType;
   get childType() {
     return this.planetType === 'center' ? 'Community' : 'Nation';
@@ -32,26 +32,25 @@ export class ReportsMyPlanetComponent implements OnInit {
     this.getMyPlanetList();
   }
 
-  requestListFilter(filterValue: string) {
+  filterData(filterValue: string) {
     this.searchValue = filterValue;
-    this.filterData();
+    this.planets = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, filterValue));
   }
 
-  filterData() {
-    const filterFunction = filterSpecificFields([ 'createdOn', 'parentCode' ]);
-    this.planets = this.planets.map((planet: any) => ({
+  setAllPlanets(planets: any[], myPlanets: any[]) {
+    this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: this.myPlanets.filter((item: any) => (item.createdOn === planet.doc.code || item.parentCode === planet.doc.code)
-                  && filterFunction(item, this.searchValue))
-                  .sort((a, b) => b.time - a.time)
-                  .reduce((myplanetArr, item) => {
-                    const exist = myplanetArr.findIndex(myplanet => item.androidId === myplanet.androidId);
-                    if (exist === -1) {
-                      myplanetArr.push(item);
-                    }
-                    return myplanetArr;
-                  }, [])
-    }));
+      children: myPlanets.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
+        .sort((a, b) => b.time - a.time)
+        .reduce((myplanetArr, item) => {
+          const exist = myplanetArr.findIndex(myplanet => item.androidId === myplanet.androidId);
+          if (exist === -1) {
+            myplanetArr.push(item);
+          }
+          return myplanetArr;
+        }, [])
+      })
+    );
   }
 
   getMyPlanetList() {
@@ -59,11 +58,13 @@ export class ReportsMyPlanetComponent implements OnInit {
       this.managerService.getChildPlanets(),
       this.couchService.findAll('myplanet_activities')
     ]).subscribe(([ planets, myPlanets ]) => {
-      this.planets = [ { doc: this.stateService.configuration } ]
-        .concat(this.reportsService.attachNamesToPlanets(planets))
-        .filter((planet: any) => planet.doc.docType !== 'parentName');
-      this.myPlanets = myPlanets;
-      this.filterData();
+      this.setAllPlanets(
+        [ { doc: this.stateService.configuration } ].concat(this.reportsService.attachNamesToPlanets(planets))
+          .filter((planet: any) => planet.doc.docType !== 'parentName')
+          .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
+        myPlanets
+      );
+      this.planets = this.allPlanets;
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
