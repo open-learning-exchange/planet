@@ -379,7 +379,10 @@ body {
   mat-toolbar:first-child > mat-form-field,
   mat-toolbar form mat-form-field,
   .input-icon {
-      margin-top: 10px;
+    margin-top: 10px;
+    &.mat-form-field-type-no-underline {
+      margin-top: inherit;
+    }
   }
 
   mat-dialog-actions {
@@ -402,6 +405,15 @@ body {
     planet-courses-progress-bar {
       height: 1rem;
       width: 100%;
+    }
+  }
+
+  .collections-search {
+    .mat-form-field-wrapper {
+      padding: 0;
+    }
+    .mat-form-field-infix {
+      border: 0;
     }
   }
 
