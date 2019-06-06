@@ -73,6 +73,18 @@ body {
     margin: 0 5px;
   }
 
+  // Use to give elements vertical space
+  .margin-tb {
+    margin: 5px 0;
+  }
+
+  // Use to give elements horizontal and vertical space
+  .margin-tblr {
+    margin: 5px 5px;
+  }
+
+
+
   // Use for text in all caps.  It avoids problems for screen readers to use this rather than all caps in HTML
   // See https://webaim.org/techniques/fonts/#caps
   .uppercase {

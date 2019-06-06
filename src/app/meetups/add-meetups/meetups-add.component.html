@@ -37,16 +37,16 @@
       <div>
         <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">
-          <mat-radio-button class="margin-lr" value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
-          <mat-radio-button class="margin-lr" value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
-          <mat-radio-button class="margin-lr" value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
+          <mat-radio-button class="margin-tblr" value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
+          <mat-radio-button class="margin-tblr" value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
+          <mat-radio-button class="margin-tblr" value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
       </div>
       <div *ngIf="meetupForm.controls.recurring.value==='weekly'">
         <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
-      <div>
+      <div class="margin-tb">
         <mat-form-field>
           <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
