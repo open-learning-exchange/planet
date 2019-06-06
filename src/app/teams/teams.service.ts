@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { dedupeShelfReduce } from '../shared/utils';
 import { UserService } from '../shared/user.service';
-import { of, empty } from 'rxjs';
+import { of, empty, config } from 'rxjs';
 import { switchMap, map, takeWhile } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
+import { StateService } from '../shared/state.service';
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -31,22 +32,29 @@ export class TeamsService {
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
+    private stateService: StateService
   ) {}
 
   addTeamDialog(shelf, team?) {
+    const configuration = this.stateService.configuration;
     const title = team ? 'Update Team' : 'Create Team';
     const formGroup = {
       name: [ team ? team.name : '', CustomValidators.required ],
       description: team ? team.description : '',
-      requests: [ team ? team.requests : [] ]
+      requests: [ team ? team.requests : [] ],
+      teamType: [ team ? { value: team.teamType || 'local', disabled: true } : 'local' ]
     };
+    debugger;
     return this.dialogsFormService
-      .confirm(title, addTeamDialogFields, formGroup)
+      .confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup)
       .pipe(
         debug('Dialog confirm'),
         switchMap((response: any) => {
           if (response !== undefined) {
-            return this.updateTeam({ limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, ...team, ...response });
+            return this.updateTeam(
+              { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, createdOn: configuration.code,
+                parentCode: configuration.parentCode, ...team, ...response }
+            );
           }
           return empty();
         }),
@@ -57,6 +65,18 @@ export class TeamsService {
           return of(response);
         })
       );
+  }
+
+  typeFormField(configuration) {
+    return {
+      'type': 'selectbox',
+      'name': 'teamType',
+      'placeholder': 'Team Type',
+      'options': [
+        { 'value': 'sync', 'name': configuration.planetType === 'community' ? 'Sync with nation' : 'Sync with earth' },
+        { 'value': 'local', 'name': 'Local team' }
+      ]
+    };
   }
 
   updateTeam(team: any) {
