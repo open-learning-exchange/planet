@@ -30,15 +30,6 @@ $label-height: 1rem;
     min-width: auto;
   }
 
-  .collections-search {
-    .mat-form-field-wrapper {
-      padding: 0;
-    }
-    .mat-form-field-infix {
-      border: 0;
-    }
-  }
-
   .column {
     display: flex;
     flex-direction: column;
@@ -46,5 +37,5 @@ $label-height: 1rem;
       line-height: normal;
     }
   }
-  
+
 }
