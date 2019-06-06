@@ -24,8 +24,8 @@ $primary-text: mat-contrast($planet-primary, $primary-hue);
 $accent-text: mat-contrast($planet-accent, $accent-hue);
 $light-grey: mat-color($mat-grey, 100);
 $grey: mat-color($mat-grey, 400);
-$primary-light: mat-color($planet-app-primary, 100);
-$secondary-light: mat-color($planet-app-primary, 300);
+$primary-lighter: mat-color($planet-app-primary, 100);
+$primary-light: mat-color($planet-app-primary, 300);
 $accent-light: mat-color($planet-app-accent, 100);
 
 $white: rgba(255, 255, 255, 1);

@@ -268,12 +268,12 @@ body {
     font-size: 0.75rem;
   }
 
-  mat-table .highlight, .primary-light-color {
-    background-color: $primary-light;
+  mat-table .highlight, .primary-lighter-color {
+    background-color: $primary-lighter;
   }
 
-  mat-table, .secondary-light-color {
-    background-color: $secondary-light;
+  mat-table, .primary-light-color {
+    background-color: $primary-light;
   }
 
   // Fix for checkboxes changing vertical alignment in cells when clicked as of Dec 28, 2017
