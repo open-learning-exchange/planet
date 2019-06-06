@@ -15,7 +15,12 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
-  templateUrl: './community.component.html'
+  templateUrl: './community.component.html',
+  styles: [ `
+    mat-panel-title {
+      align-items: center;
+    }
+  ` ]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
@@ -103,6 +108,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       },
       () => this.planetMessageService.showAlert('There was an error adding ' + type)
     );
+  }
+
+  deleteHub(hub) {
+    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).subscribe(() => this.getCommunityList());
   }
 
 }
