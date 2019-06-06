@@ -35,7 +35,7 @@ export class TagsService {
 
   updateTag(tag) {
     const { count, subTags, ...tagData } = tag;
-    const newId = `${tagData.db}_${tagData.name.toLowerCase()}`;
+    const newId = `${tagData.attachedTo.length === 0 ? tagData.db : tagData.attachedTo}_${tagData.name.toLowerCase()}`;
     if (newId === tag._id) {
       return this.couchService.updateDocument('tags', tagData).pipe(
         switchMap(res => of([ res ]))
@@ -70,10 +70,17 @@ export class TagsService {
       const tag = { ...this.findTag(tagLink.tagId, tags), tagLink };
       return ({ ...obj, [tagLink.linkId]: obj[tagLink.linkId] ? [ ...obj[tagLink.linkId], tag ] : [ tag ] });
     }, {});
-    return docs.map((doc: any) => ({
-      ...doc,
-      tags: tagsObj[doc._id] || []
-    }));
+    return docs.map((doc: any) => {
+      const docTags = tagsObj[doc._id] || [];
+      return {
+        ...doc,
+        tags: docTags.map(tag => ({
+          ...tag,
+          subTags: tag.subTags.filter(subTag => docTags.some(docTag => docTag._id === subTag._id)),
+          isMainTag: this.filterOutSubTags(tag)
+        }))
+      };
+    });
   }
 
   tagBulkDocs(linkId: string, db: string, newTagIds: string[], currentTags: any[] = []) {
@@ -96,6 +103,10 @@ export class TagsService {
       )
     ).flat();
     return this.couchService.bulkDocs('tags', newTags);
+  }
+
+  filterOutSubTags(tag: any) {
+    return tag.attachedTo === undefined || tag.attachedTo.length === 0;
   }
 
 }

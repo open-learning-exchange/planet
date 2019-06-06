@@ -14,6 +14,7 @@ import { PlanetStepListComponent, PlanetStepListFormDirective, PlanetStepListIte
   PlanetStepListActionsDirective, PlanetStepListNumberDirective } from './planet-step-list.component';
 import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.component';
 import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from './planet-tag-input-dialog.component';
+import { SharedComponentsModule } from '../shared-components.module';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    CovalentTextEditorModule
+    CovalentTextEditorModule,
+    SharedComponentsModule
   ],
   exports: [
     FormErrorMessagesComponent,

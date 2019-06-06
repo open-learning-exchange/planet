@@ -15,6 +15,12 @@ import { mapToArray, isInMap } from '../utils';
     :host .mat-list-option span {
       font-weight: inherit;
     }
+    :host p[matLine] * {
+      margin-right: 0.25rem;
+    }
+    :host p[matLine] *:last-child {
+      margin-right: 0;
+    }
   ` ]
 })
 export class PlanetTagInputDialogComponent {
@@ -57,7 +63,7 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: any) => tag)
       .forEach(tag => {
-        this.tagChange([ tag.tagId || tag ], !this.selectMany);
+        this.tagChange([ tag.tagId || tag ], { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
@@ -70,22 +76,27 @@ export class PlanetTagInputDialogComponent {
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
-    if (this.newTagId !== undefined) {
+    if (this.newTagId !== undefined && this.mode === 'add') {
       this.tagChange([ this.newTagId ]);
-      this.newTagId = undefined;
     }
+    this.newTagId = undefined;
   }
 
-  tagChange(tags, tagOne = false) {
+  tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
     const newState = !this.selected.get(tags[0]);
+    const setAllTags = newState !== deselectSubs;
     tags.forEach((tag, index) => {
-      if (index === 0 || newState) {
+      if (index === 0 || setAllTags) {
         this.selected.set(tag, newState || this.indeterminate.get(tag));
         this.indeterminate.set(tag, false);
 
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
+  }
+
+  subTagIds(subTags: any[]) {
+    return subTags.map(subTag => subTag._id || subTag.name);
   }
 
   updateFilter(value) {
@@ -137,10 +148,11 @@ export class PlanetTagInputDialogComponent {
       });
     }).bind(this);
     event.stopPropagation();
-    const options = this.tags.map((t: any) => ({ name: t.name, value: t._id || t.name })).filter((t: any) => t.name !== tag.name);
+    const options = this.tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
     this.dialogsFormService.openDialogsForm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
-      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, multiple: true }
+      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, reset: true }
     ], this.tagForm(tag), { onSubmit });
   }
 
@@ -168,7 +180,9 @@ export class PlanetTagInputDialogComponent {
 
   toggleSubcollection(event, tagId) {
     event.stopPropagation();
-    this.subcollectionIsOpen.set(tagId, !this.subcollectionIsOpen.get(tagId));
+    const newState = !this.subcollectionIsOpen.get(tagId);
+    this.subcollectionIsOpen.clear();
+    this.subcollectionIsOpen.set(tagId, newState);
   }
 
 }

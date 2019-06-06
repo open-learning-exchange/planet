@@ -100,9 +100,14 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-chip-list #tagsList class="tags-list">
-            <mat-chip *ngFor="let tag of element.tags" (click)="addTag(tag._id)">
-              {{tag.name}}
-            </mat-chip>
+            <ng-container *ngFor="let tag of element.tags">
+              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
+                {{tag.name}}
+              </mat-chip>
+              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
+                {{subTag.name}}
+              </mat-chip>
+            </ng-container>
           </mat-chip-list>
           <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
             <span i18n>Your progress:</span>
