@@ -57,7 +57,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   removeChoice(index: number) {
     const correctCh = this.questionForm.controls.correctChoice.value;
     const correctChoiceIndex = correctCh.indexOf(this.choices.value[index].id);
-    if (correctCh[correctChoiceIndex] === this.choices.value[index].id) {
+    if (correctChoiceIndex > -1) {
       correctCh.splice(correctChoiceIndex);
     }
     this.choices.removeAt(index);
