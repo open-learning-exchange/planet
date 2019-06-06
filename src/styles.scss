@@ -489,6 +489,7 @@ body {
   }
 
   .ellipsis-title {
+    white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
     & + button{
