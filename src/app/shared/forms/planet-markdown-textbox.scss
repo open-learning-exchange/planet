@@ -32,5 +32,6 @@ planet-markdown-textbox {
 
   .CodeMirror.CodeMirror-fullscreen, .CodeMirror-fullscreen .CodeMirror-scroll {
     height: 100%;
+    max-height: 100%;
   }
 }
