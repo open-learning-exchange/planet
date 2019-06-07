@@ -94,7 +94,7 @@ jobs:
       script:
         - set -e
         - echo  "Waiting for couchdb to start"; WAIT_TIME=0; until curl http://127.0.0.1:5984/_all_dbs || [ $WAIT_TIME -eq 180 ]; do echo "..."; sleep 5; WAIT_TIME=$(expr $WAIT_TIME + 5); done
-        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 32 ]; then exit 1; fi
+        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 33 ]; then exit 1; fi
         - ng e2e
     - stage: docker-release
       <<: *_prepare_deploy
