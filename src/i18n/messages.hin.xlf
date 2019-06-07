@@ -20,7 +20,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">103</context>
         </context-group>
-        <target state="needs-translation">Submit</target>
+        <target state="translated">जमा करें</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
@@ -189,8 +189,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">
-    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target state="translated">
+    <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> सब
   </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
