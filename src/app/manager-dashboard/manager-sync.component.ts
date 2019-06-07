@@ -87,12 +87,14 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
-      { db: 'myplanet_activities' }
+      { db: 'myplanet_activities' },
+      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
     ];
     const pullList = [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
       { db: 'notifications', selector: { target: this.planetConfiguration.code } },
-      { db: 'submissions', selector: { source: this.planetConfiguration.code } }
+      { db: 'submissions', selector: { source: this.planetConfiguration.code } },
+      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
     ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }

@@ -44,7 +44,6 @@ export class TeamsService {
       requests: [ team ? team.requests : [] ],
       teamType: [ team ? { value: team.teamType || 'local', disabled: true } : 'local' ]
     };
-    debugger;
     return this.dialogsFormService
       .confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup)
       .pipe(
@@ -52,7 +51,7 @@ export class TeamsService {
         switchMap((response: any) => {
           if (response !== undefined) {
             return this.updateTeam(
-              { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, createdOn: configuration.code,
+              { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
                 parentCode: configuration.parentCode, ...team, ...response }
             );
           }
@@ -117,14 +116,18 @@ export class TeamsService {
     const deleted = leaveTeam ? { _deleted: true } : {};
     const membershipProps = this.membershipProps(team, shelf._id, 'membership');
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
-      catchError((err) => of([{}])),
-      switchMap(([ membershipDoc ]) => this.couchService.post(this.dbName, { ...membershipDoc, ...membershipProps, ...deleted }))
+      map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
+      switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
+        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...deleted }))
+      ))
     );
   }
 
   membershipProps(team, userId, docType) {
     const configuration = this.stateService.configuration;
-    return { teamId: team._id, userId, teamPlanetCode: team.createdOn, userPlanetCode: configuration.code, docType };
+    return {
+      teamId: team._id, userId, teamPlanetCode: team.createdOn, teamType: team.teamType, userPlanetCode: configuration.code, docType
+    };
   }
 
   getTeamMembers(team, withRequests = false) {
