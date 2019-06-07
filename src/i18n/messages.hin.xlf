@@ -231,7 +231,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Loading</target>
+        <target state="translated">खुल रहा है।</target>
       </trans-unit>
       <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
         <source>ltr</source>
@@ -295,7 +295,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Average</target>
+        <target state="translated">औसत</target>
       </trans-unit>
       <trans-unit id="1e1b81bc44eb078f50afc06365f530ca2677d91c" datatype="html">
         <source>Upto date</source>
@@ -303,7 +303,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Upto date</target>
+        <target state="translated">एकदम नया</target>
       </trans-unit>
       <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html">
         <source>Newer</source>
@@ -311,7 +311,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Newer</target>
+        <target state="translated">नए</target>
       </trans-unit>
       <trans-unit id="a5eb07587a845a6e31ac6faee94ba465ed733e06" datatype="html">
         <source>Older</source>
@@ -319,7 +319,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">Older</target>
+        <target state="translated">पुराना</target>
       </trans-unit>
       <trans-unit id="84bbbe38f927eaeddf081648c8783d06b4348b24" datatype="html">
         <source>Does not match</source>
