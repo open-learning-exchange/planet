@@ -76,7 +76,7 @@ export class TagsService {
         ...doc,
         tags: docTags.map(tag => ({
           ...tag,
-          subTags: tag.subTags.filter(subTag => docTags.some(docTag => docTag._id === subTag._id)),
+          subTags: tag.subTags ? tag.subTags.filter(subTag => docTags.some(docTag => docTag._id === subTag._id)) : [],
           isMainTag: this.filterOutSubTags(tag)
         }))
       };
