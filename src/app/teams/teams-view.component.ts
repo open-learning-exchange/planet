@@ -26,7 +26,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   requests = [];
   disableAddingMembers = false;
   displayedColumns = [ 'name' ];
-  userShelf: any = [];
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
@@ -54,18 +53,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       .subscribe(data => {
         this.team = data;
         this.getMembers();
-        this.setStatus(this.team, this.userService.get(), this.userService.shelf);
-        this.userShelf = this.userService.shelf;
+        this.setStatus(this.team, this.userService.get());
       });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
-    this.userService.shelfChange$
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(shelf => {
-        this.userShelf = shelf;
-        this.setStatus(this.team, this.userService.get(), this.userService.shelf);
-        this.getMembers();
-      });
   }
 
   ngOnDestroy() {
@@ -82,11 +73,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.members = docsWithName.filter(mem => mem.docType === 'membership');
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
-      this.setStatus(this.team, this.userService.get(), this.userService.shelf);
+      this.setStatus(this.team, this.userService.get());
     });
   }
 
-  setStatus(team, user, shelf) {
+  setStatus(team, user) {
     this.userStatus = 'unrelated';
     if (team === undefined) {
       return;
@@ -97,7 +88,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.user._id).subscribe((newTeam) => {
       this.getMembers();
       this.team = newTeam;
       const msg = leaveTeam ? 'left' : 'joined';
@@ -109,25 +100,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   requestToJoin() {
-    this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).pipe(
+    this.teamsService.requestToJoinTeam(this.team, this.user._id).pipe(
       switchMap(() => {
         this.getMembers();
         return this.sendNotifications('request');
       })
     ).subscribe((newTeam) => {
-      this.setStatus(this.team, this.userService.get(), this.userService.shelf);
+      this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage('Request to join team sent');
     });
   }
 
   acceptRequest({ userId }) {
-    this.couchService.get('shelf/' + userId).pipe(
-      switchMap((res) => {
-        return this.teamsService.toggleTeamMembership(this.team, false, res);
-      }),
-      switchMap(() => {
-        return this.teamsService.removeFromRequests(this.team, userId);
-      })
+    this.teamsService.toggleTeamMembership(this.team, false, userId).pipe(
+      switchMap(() => this.teamsService.removeFromRequests(this.team, userId))
     ).subscribe(() => this.getMembers());
   }
 
@@ -141,7 +127,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.userShelf, this.team).subscribe((updatedTeam) => {
+    this.teamsService.addTeamDialog(this.user._id, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.planetMessageService.showMessage(this.team.name + ' updated successfully');
     });
@@ -162,28 +148,18 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  addMembers(selected: string[]) {
-    const selectedIds = selected.map((s: any) => s._id);
-    this.couchService.findAll('shelf', { selector: { '_id': { '$in': selectedIds } } }).pipe(
-      switchMap((shelves) => {
-        const newShelves = shelves.map((shelf: any) => ({
-          ...shelf,
-          'myTeamIds': [].concat(shelf.myTeamIds, [ this.teamId ])
-        }));
-        return this.couchService.post('shelf/_bulk_docs', { docs: newShelves });
-      }),
-      switchMap((notifyShelf) => {
-        const newTeam = { ...this.team, requests: this.team.requests.filter(reqId => selectedIds.indexOf(reqId) === -1) };
+  addMembers(selected: any[]) {
+    const newMembershipDocs = selected.map(user => this.teamsService.membershipProps(this.team, user._id, 'membership'));
+    this.couchService.bulkDocs('teams', newMembershipDocs).pipe(
+      switchMap(() => {
         return forkJoin([
-          this.teamsService.updateTeam(newTeam),
           this.teamsService.sendNotifications('added', selected, {
-            url: this.router.url, team: { ...newTeam }
+            url: this.router.url, team: { ...this.team }
           }),
           this.sendNotifications('addMember', selected.length)
         ]);
       })
-    ).subscribe(([ updatedTeam, notificationRes1, notificationRes2 ]) => {
-      this.team = updatedTeam;
+    ).subscribe(([ notificationRes1, notificationRes2 ]) => {
       this.getMembers();
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');

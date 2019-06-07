@@ -19,8 +19,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   teams = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  userShelf: any = [];
-  userRequests: any[] = [];
+  userMembership: any[] = [];
   displayedColumns = [ 'name', 'createdDate', 'action' ];
   dbName = 'teams';
   emptyData = false;
@@ -35,11 +34,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
-      .subscribe((shelf: any) => {
-        this.userShelf = this.userService.shelf;
-        this.teams.data = this.teamList(this.teams.data, shelf.myTeamIds);
-      });
     this.dialogsLoadingService.start();
   }
 
@@ -53,18 +47,17 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   getTeams() {
     forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
-      this.getRequests()
+      this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]) => {
-      this.userShelf = this.userService.shelf;
-      this.teams.data = this.teamList(teams, this.userService.shelf.myTeamIds);
+      this.teams.data = this.teamList(teams);
       this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
     }, (error) => console.log(error));
   }
 
-  getRequests() {
-    return this.couchService.findAll(this.dbName, { 'selector': { 'docType': 'request', 'userId': this.user._id } }).pipe(
-      map(requests => this.userRequests = requests)
+  getMembershipStatus() {
+    return this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id } }).pipe(
+      map(membership => this.userMembership = membership)
     );
   }
 
@@ -73,17 +66,23 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teams.paginator = this.paginator;
   }
 
-  teamList(teamRes, userTeamRes) {
+  teamList(teamRes) {
     return teamRes.map((res: any) => {
-      const team = { doc: res.doc || res, userStatus: 'unrelated' };
-      team.userStatus = userTeamRes.indexOf(team.doc._id) > -1 ? 'member' : team.userStatus;
-      team.userStatus = this.userRequests.some(req => req.teamId === team.doc._id) ? 'requesting' : team.userStatus;
-      return team;
+      const team = { doc: res.doc || res };
+      const membershipDoc = this.userMembership.find(req => req.teamId === team.doc._id) || {};
+      switch (membershipDoc.docType) {
+        case 'membership':
+          return { ...team, userStatus: 'member' };
+        case 'request':
+          return { ...team, userStatus: 'requesting' };
+        default:
+          return { ...team, userStatus: 'unrelated' };
+      }
     });
   }
 
   addTeam(team?) {
-    this.teamsService.addTeamDialog(this.userShelf, team).subscribe(() => {
+    this.teamsService.addTeamDialog(this.user._id, team).subscribe(() => {
       this.getTeams();
       const msg = team ? 'Team updated successfully' : 'Team created successfully';
       this.planetMessageService.showMessage(msg);
@@ -103,7 +102,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   requestToJoin(team) {
     this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
       switchMap((newTeam) => {
-        this.getRequests().subscribe(() => this.teams.data = this.teamList(this.teams.data, this.userService.shelf.myTeamIds));
+        this.getMembershipStatus().subscribe(() => this.teams.data = this.teamList(this.teams.data));
         return this.teamsService.getTeamMembers(newTeam);
       }),
       switchMap((docs) => {
