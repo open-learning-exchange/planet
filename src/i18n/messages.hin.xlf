@@ -525,7 +525,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">Nation(s)</target>
+        <target state="translated">एक या अनेक राष्ट्र</target>
       </trans-unit>
       <trans-unit id="fc60c6126b9d7048411532b9bd15a83228a27f77" datatype="html">
         <source>Center</source>
@@ -533,7 +533,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="needs-translation">Center</target>
+        <target state="translated">केंद्र</target>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html">
         <source>Name</source>
@@ -549,7 +549,7 @@
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Name</target>
+        <target state="translated">नाम</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html">
         <source>Language</source>
@@ -569,7 +569,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">Language</target>
+        <target state="translated">भाषा </target>
       </trans-unit>
       <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html">
         <source>Local URL</source>
@@ -577,7 +577,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">Local URL</target>
+        <target state="translated">स्थानीय URL</target>
       </trans-unit>
       <trans-unit id="29190bf0dba7ad1e01166a60083f5676b3d174b8" datatype="html">
         <source>Auto accept Members</source>
@@ -585,7 +585,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">Auto accept Members</target>
+        <target state="translated">स्वचालित सदस्य स्वीकार करना</target>
       </trans-unit>
       <trans-unit id="a158c27700fb4b55974f72418e1e17f45662d3f6" datatype="html">
         <source>Show Advanced Options</source>
@@ -593,7 +593,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target state="needs-translation">Show Advanced Options</target>
+        <target state="translated">उच्च विकल्प दिखाना</target>
       </trans-unit>
       <trans-unit id="5625ca84c68ea5de3d37a188acc4a555b2263164" datatype="html">
         <source>You have changed the advanced option. Please confirm that you wanted to change it.</source>
@@ -601,7 +601,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="needs-translation">You have changed the advanced option. Please confirm that you wanted to change it.</target>
+        <target state="translated">आपने उच्च विकल्प को बदल दिया है | कृपया पुष्टि करें कि आप इसे बदलना चाहते थे।</target>
       </trans-unit>
       <trans-unit id="d09710672702802c0988db004ce798ec31cb3666" datatype="html">
         <source>I confirm the changes.</source>
@@ -609,7 +609,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="needs-translation">I confirm the changes.</target>
+        <target state="translated">मैं परिवर्तनों की पुष्टि करता हूं।</target>
       </trans-unit>
       <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html">
         <source>Back</source>
@@ -621,7 +621,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">105</context>
         </context-group>
-        <target state="needs-translation">Back</target>
+        <target state="translated">पिछला</target>
       </trans-unit>
       <trans-unit id="7245654afd5dd28a03f82283972e701bfe78bce1" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Contact Details</source>
@@ -641,7 +641,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">First Name</target>
+        <target state="translated">प्रथम नाम</target>
       </trans-unit>
       <trans-unit id="e82f6e4c34cdbb18b0d9a753ebcfe8b3e9f43e4c" datatype="html">
         <source>Middle Name</source>
@@ -653,7 +653,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Middle Name</target>
+        <target state="translated">मध्य नाम</target>
       </trans-unit>
       <trans-unit id="166b2cc65003221ff5f3ec05d5baca41e6821396" datatype="html">
         <source>Last Name</source>
