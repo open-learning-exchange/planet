@@ -90,7 +90,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.user._id).subscribe((newTeam) => {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
       if (newTeam.status === 'archived') {
@@ -109,14 +109,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         return this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id });
       })
     ).subscribe(() => this.planetMessageService.showMessage('Request to join team sent'));
-  }
-
-  // If multiple team is added then need to check
-  dedupeShelfReduce(ids, id) {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
   }
 
   applyFilter(filterValue: string) {
