@@ -3,18 +3,9 @@
 .label {
   position: absolute;
   left: 0;
-}
-
-.sublabel {
-  font-size: 0.9rem;
-  position: absolute;
-  left: 1.25em;
-  top: 0;
-  &::before {
-    content: "•";
-    display: inline-block; 
-    width: 0.5em;
-    margin-left: -1em;
+  div {
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -22,10 +13,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   grid-column-gap: 1vw;
-  margin: 5vh 0;
+  margin: 3vh 0;
   h1 {
     display: block;
-    margin-bottom: 0.4rem;
+    margin: 0.4rem 0 0;
     color: $primary;
   }
 }
