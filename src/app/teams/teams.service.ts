@@ -59,7 +59,7 @@ export class TeamsService {
         }),
         switchMap((response) => {
           if (!team) {
-            return this.toggleTeamMembership({ _id: response._id }, false, userId);
+            return this.toggleTeamMembership(response, false, userId);
           }
           return of(response);
         })
@@ -116,14 +116,15 @@ export class TeamsService {
 
   membershipProps(team, userId, docType) {
     const configuration = this.stateService.configuration;
+    const { _id: teamId, teamPlanetCode, teamType } = team;
     return {
-      teamId: team._id, userId, teamPlanetCode: team.createdOn, teamType: team.teamType, userPlanetCode: configuration.code, docType
+      teamId, userId, teamPlanetCode, teamType, userPlanetCode: configuration.code, docType
     };
   }
 
   getTeamMembers(team, withRequests = false) {
     const typeObj = withRequests ? {} : { docType: 'membership' };
-    return this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.createdOn, ...typeObj }));
+    return this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj }));
   }
 
   isTeamEmpty(team) {

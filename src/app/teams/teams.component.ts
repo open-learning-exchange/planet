@@ -90,7 +90,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(team, leaveTeam, this.user._id).subscribe((newTeam) => {
+    this.teamsService.toggleTeamMembership(team, leaveTeam, this.user._id).pipe(
+      switchMap(() => this.getMembershipStatus())
+    ).subscribe((newTeam) => {
+      this.teams.data = this.teamList(this.teams.data);
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
       if (newTeam.status === 'archived') {
