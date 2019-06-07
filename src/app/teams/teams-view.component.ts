@@ -23,6 +23,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
   members = [];
+  requests = [];
   disableAddingMembers = false;
   displayedColumns = [ 'name' ];
   userShelf: any = [];
@@ -73,12 +74,15 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   getMembers() {
-    // find teamId on User shelf
-    this.teamsService.getTeamMembers(this.teamId).subscribe((data) => {
-      this.members = data.docs.map((mem) => {
-        return { ...mem, name: mem._id.split(':')[1] };
-      });
+    if (this.team === undefined) {
+      return;
+    }
+    this.teamsService.getTeamMembers(this.team, true).subscribe((docs: any[]) => {
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
+      this.members = docsWithName.filter(mem => mem.docType === 'membership');
+      this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
+      this.setStatus(this.team, this.userService.get(), this.userService.shelf);
     });
   }
 
@@ -87,13 +91,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     if (team === undefined) {
       return;
     }
-    this.userStatus = team.requests.findIndex(id => id === user._id) > -1 ? 'requesting' : this.userStatus;
+    this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = shelf.myTeamIds.findIndex(id => id === team._id) > -1 ? 'member' : this.userStatus;
     this.leftTileContent = this.userStatus !== 'member' ? 'description' : 'news';
   }
 
   toggleMembership(team, leaveTeam) {
     this.teamsService.toggleTeamMembership(team, leaveTeam, this.userShelf).subscribe((newTeam) => {
+      this.getMembers();
       this.team = newTeam;
       const msg = leaveTeam ? 'left' : 'joined';
       if (newTeam.status === 'archived') {
@@ -105,8 +110,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   requestToJoin() {
     this.teamsService.requestToJoinTeam(this.team, this.userShelf._id).pipe(
-      switchMap((newTeam) => {
-        this.team = newTeam;
+      switchMap(() => {
+        this.getMembers();
         return this.sendNotifications('request');
       })
     ).subscribe((newTeam) => {
@@ -115,7 +120,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  acceptRequest(userId) {
+  acceptRequest({ userId }) {
     this.couchService.get('shelf/' + userId).pipe(
       switchMap((res) => {
         return this.teamsService.toggleTeamMembership(this.team, false, res);
@@ -123,11 +128,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       switchMap(() => {
         return this.teamsService.removeFromRequests(this.team, userId);
       })
-    ).subscribe((newTeam) => {
-      this.team = newTeam;
-      this.getMembers();
-      this.setStatus(this.team, this.userService.get(), this.userService.shelf);
-    });
+    ).subscribe(() => this.getMembers());
   }
 
   openDialog(data) {

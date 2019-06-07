@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { takeUntil, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil, switchMap, map } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -20,6 +20,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   userShelf: any = [];
+  userRequests: any[] = [];
   displayedColumns = [ 'name', 'createdDate', 'action' ];
   dbName = 'teams';
   emptyData = false;
@@ -50,12 +51,21 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
-    this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((data: any) => {
+    forkJoin([
+      this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
+      this.getRequests()
+    ]).subscribe(([ teams, requests ]) => {
       this.userShelf = this.userService.shelf;
-      this.teams.data = this.teamList(data, this.userService.shelf.myTeamIds);
+      this.teams.data = this.teamList(teams, this.userService.shelf.myTeamIds);
       this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
     }, (error) => console.log(error));
+  }
+
+  getRequests() {
+    return this.couchService.findAll(this.dbName, { 'selector': { 'docType': 'request', 'userId': this.user._id } }).pipe(
+      map(requests => this.userRequests = requests)
+    );
   }
 
   ngAfterViewInit() {
@@ -67,7 +77,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     return teamRes.map((res: any) => {
       const team = { doc: res.doc || res, userStatus: 'unrelated' };
       team.userStatus = userTeamRes.indexOf(team.doc._id) > -1 ? 'member' : team.userStatus;
-      team.userStatus = team.doc.requests.indexOf(this.userService.get()._id) > -1 ? 'requesting' : team.userStatus;
+      team.userStatus = this.userRequests.some(req => req.teamId === team.doc._id) ? 'requesting' : team.userStatus;
       return team;
     });
   }
@@ -93,11 +103,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   requestToJoin(team) {
     this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
       switchMap((newTeam) => {
-        this.teams.data = this.teamList(this.teams.data.map((t: any) => t.doc._id === newTeam._id ? newTeam : t), this.userShelf.myTeamIds);
-        return this.teamsService.getTeamMembers(newTeam._id);
+        this.getRequests().subscribe(() => this.teams.data = this.teamList(this.teams.data, this.userService.shelf.myTeamIds));
+        return this.teamsService.getTeamMembers(newTeam);
       }),
-      switchMap((response) => {
-        return this.teamsService.sendNotifications('request', response.docs, { team, url: this.router.url + '/view/' + team._id });
+      switchMap((docs) => {
+        return this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id });
       })
     ).subscribe(() => this.planetMessageService.showMessage('Request to join team sent'));
   }

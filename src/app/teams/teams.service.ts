@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { dedupeShelfReduce } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { of, empty, config } from 'rxjs';
-import { switchMap, map, takeWhile } from 'rxjs/operators';
+import { switchMap, map, takeWhile, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Validators } from '@angular/forms';
@@ -86,16 +86,13 @@ export class TeamsService {
   }
 
   requestToJoinTeam(team, userId) {
-    team = {
-      ...team,
-      requests: team.requests.concat([ userId ]).reduce(dedupeShelfReduce, [])
-    };
-    return this.updateTeam(team);
+    return this.couchService.post(this.dbName, this.membershipProps(team, userId, 'request'));
   }
 
   removeFromRequests(team, userId) {
-    const newRequestArray = team.requests.filter(id => id !== userId);
-    return this.updateTeam({ ...team, requests: newRequestArray });
+    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, userId, 'request'))).pipe(
+      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
+    );
   }
 
   toggleTeamMembership(team, leaveTeam, shelf) {
@@ -109,16 +106,30 @@ export class TeamsService {
         }
         return of(team);
       }),
-      switchMap(() => leaveTeam ? this.isTeamEmpty(teamId) : of(team)),
+      switchMap(() => this.updateMembershipDoc(team, leaveTeam, shelf)),
+      switchMap(() => leaveTeam ? this.isTeamEmpty(team) : of(team)),
       switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
       switchMap((newTeam) => of({ ...team, ...newTeam }))
     );
   }
 
-  getTeamMembers(teamId) {
-    return this.couchService.post('shelf/_find', findDocuments({
-      'myTeamIds': { '$in': [ teamId ] }
-    }, 0));
+  updateMembershipDoc(team, leaveTeam, shelf) {
+    const deleted = leaveTeam ? { _deleted: true } : {};
+    const membershipProps = this.membershipProps(team, shelf._id, 'membership');
+    return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
+      catchError((err) => of([{}])),
+      switchMap(([ membershipDoc ]) => this.couchService.post(this.dbName, { ...membershipDoc, ...membershipProps, ...deleted }))
+    );
+  }
+
+  membershipProps(team, userId, docType) {
+    const configuration = this.stateService.configuration;
+    return { teamId: team._id, userId, teamPlanetCode: team.createdOn, userPlanetCode: configuration.code, docType };
+  }
+
+  getTeamMembers(team, withRequests = false) {
+    const typeObj = withRequests ? {} : { docType: 'membership' };
+    return this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.createdOn, ...typeObj }));
   }
 
   updateTeamShelf(teamId, leaveTeam, shelf) {
@@ -131,8 +142,8 @@ export class TeamsService {
     return { ...shelf, myTeamIds };
   }
 
-  isTeamEmpty(teamId) {
-    return this.getTeamMembers(teamId).pipe(map((data) => data.docs.length === 0));
+  isTeamEmpty(team) {
+    return this.getTeamMembers(team).pipe(map((docs) => docs.length === 0));
   }
 
   sendNotifications(type, members, notificationParams) {

@@ -54,15 +54,13 @@
         </ul>
       </ng-template>
       <ng-container *ngIf="userStatus === 'member'">
-        <p i18n><b>Requested Members: ({{team?.requests.length}})</b></p>
-        <p *ngIf="team?.requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
+        <p i18n><b>Requested Members: ({{requests.length}})</b></p>
+        <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
         <ng-template #requestedList>
           <ul class="request-list">
-            <li *ngFor="let user of team?.requests">
-              <a [routerLink]="['/users/profile', user.replace('org.couchdb.user:','')]">
-                {{user.replace('org.couchdb.user:','')}}
-              </a>
-              <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(user)" [disabled]="disableAddingMembers">Accept</button>
+            <li *ngFor="let request of requests">
+              <a [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
+              <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(request)" [disabled]="disableAddingMembers">Accept</button>
             </li>
           </ul>
         </ng-template>
