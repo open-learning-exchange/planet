@@ -78,4 +78,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       }, (err) => console.log(err));
     }
   }
+  readAllNotification() {
+    if (!this.emptyData) {
+      this.notifications.data.forEach(element => {
+        this.readNotification(element);
+      });
+    }
+  }
 }
