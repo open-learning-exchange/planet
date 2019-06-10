@@ -169,6 +169,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setQuestion(questions: any[]) {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
+    this.answer.markAsUntouched();
   }
 
   setCourseListener() {
