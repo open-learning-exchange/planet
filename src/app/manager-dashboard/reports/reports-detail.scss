@@ -3,6 +3,11 @@
 .manager-reports-detail {
   mat-grid-tile.label figure {
     justify-content: start;
+    span, a {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
   }
 
   .reports-table-container {
