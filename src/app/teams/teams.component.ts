@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { takeUntil, switchMap, map } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { Subject, forkJoin } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';

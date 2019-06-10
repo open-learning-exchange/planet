@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { dedupeShelfReduce } from '../shared/utils';
 import { UserService } from '../shared/user.service';
-import { of, empty, config } from 'rxjs';
-import { switchMap, map, takeWhile, catchError } from 'rxjs/operators';
+import { of, empty } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { Validators } from '@angular/forms';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
