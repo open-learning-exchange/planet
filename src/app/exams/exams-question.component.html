@@ -27,7 +27,7 @@
       <mat-checkbox
         (change)="setCorrect($event, choice)"
         [checked]="correctCheckboxes[choice.controls.id.value]"
-        *ngIf="examType === 'exam'" class="margin-lr">
+        *ngIf="examType === 'exam'">
       </mat-checkbox>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text">
