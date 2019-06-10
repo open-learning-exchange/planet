@@ -88,7 +88,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(team, leaveTeam, this.user._id).subscribe((newTeam) => {
+    this.teamsService.toggleTeamMembership(
+      team, leaveTeam, { userId: this.user._id, userPlanetCode: this.user.planetCode }
+    ).subscribe((newTeam) => {
       this.getMembers();
       this.team = newTeam;
       const msg = leaveTeam ? 'left' : 'joined';
@@ -111,9 +113,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  acceptRequest({ userId }) {
-    this.teamsService.toggleTeamMembership(this.team, false, userId).pipe(
-      switchMap(() => this.teamsService.removeFromRequests(this.team, userId))
+  acceptRequest(request) {
+    this.teamsService.toggleTeamMembership(this.team, false, request).pipe(
+      switchMap(() => this.teamsService.removeFromRequests(this.team, request))
     ).subscribe(() => this.getMembers());
   }
 

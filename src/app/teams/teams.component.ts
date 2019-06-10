@@ -90,7 +90,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(team, leaveTeam, this.user._id).pipe(
+    this.teamsService.toggleTeamMembership(
+      team, leaveTeam, { userId: this.user._id, userPlanetCode: this.user.planetCode }
+    ).pipe(
       switchMap(() => this.getMembershipStatus())
     ).subscribe((newTeam: any) => {
       this.teams.data = this.teamList(this.teams.data);

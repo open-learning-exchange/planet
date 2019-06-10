@@ -59,7 +59,7 @@ export class TeamsService {
         }),
         switchMap((response) => {
           if (!team) {
-            return this.toggleTeamMembership(response, false, userId);
+            return this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code });
           }
           return of(response);
         })
@@ -85,27 +85,27 @@ export class TeamsService {
   }
 
   requestToJoinTeam(team, userId) {
-    return this.couchService.post(this.dbName, this.membershipProps(team, userId, 'request'));
+    const userPlanetCode = this.stateService.configuration.code;
+    return this.couchService.post(this.dbName, this.membershipProps(team, { userId, userPlanetCode }, 'request'));
   }
 
-  removeFromRequests(team, userId) {
-    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, userId, 'request'))).pipe(
+  removeFromRequests(team, memberInfo) {
+    return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
     );
   }
 
-  toggleTeamMembership(team, leaveTeam, userId) {
-    const teamId = team._id;
-    return this.updateMembershipDoc(team, leaveTeam, userId).pipe(
+  toggleTeamMembership(team, leaveTeam, memberInfo) {
+    return this.updateMembershipDoc(team, leaveTeam, memberInfo).pipe(
       switchMap(() => leaveTeam ? this.isTeamEmpty(team) : of(team)),
       switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
       switchMap((newTeam) => of({ ...team, ...newTeam }))
     );
   }
 
-  updateMembershipDoc(team, leaveTeam, userId) {
+  updateMembershipDoc(team, leaveTeam, memberInfo) {
     const deleted = leaveTeam ? { _deleted: true } : {};
-    const membershipProps = this.membershipProps(team, userId, 'membership');
+    const membershipProps = this.membershipProps(team, memberInfo, 'membership');
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
@@ -114,11 +114,11 @@ export class TeamsService {
     );
   }
 
-  membershipProps(team, userId, docType) {
-    const configuration = this.stateService.configuration;
+  membershipProps(team, memberInfo, docType) {
+    const { userId, userPlanetCode } = memberInfo;
     const { _id: teamId, teamPlanetCode, teamType } = team;
     return {
-      teamId, userId, teamPlanetCode, teamType, userPlanetCode: configuration.code, docType
+      teamId, userId, teamPlanetCode, teamType, userPlanetCode, docType
     };
   }
 
