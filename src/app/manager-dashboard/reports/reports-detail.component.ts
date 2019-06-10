@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -10,10 +10,12 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 
 @Component({
   templateUrl: './reports-detail.component.html',
-  styleUrls: [ 'reports-detail.scss' ]
+  styleUrls: [ 'reports-detail.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
+  @HostBinding('class') readonly hostClass = 'manager-reports-detail';
   parentCode = '';
   planetCode = '';
   planetName = '';
