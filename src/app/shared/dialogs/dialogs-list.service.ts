@@ -13,7 +13,8 @@ const listColumns = {
   'courses': [ 'courseTitle' ],
   '_users': [ 'name' ],
   'child_users': [ 'name' ],
-  'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
+  'communityregistrationrequests': [ 'name', 'code', 'localDomain' ],
+  'exams': [ 'name' ]
 };
 
 @Injectable()
