@@ -41,7 +41,7 @@
       <mat-expansion-panel *ngFor="let hub of hubs">
         <mat-expansion-panel-header>
           <mat-panel-title>{{hub.name}}</mat-panel-title>
-          <a mat-button class="margin-lr-10" (click)="deleteHub(hub)" i18n>
+          <a mat-button class="margin-lr-10" (click)="deleteHub(hub, $event)" i18n>
             <mat-icon>delete</mat-icon>Delete Network
           </a>
         </mat-expansion-panel-header>
