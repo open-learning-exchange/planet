@@ -19,42 +19,34 @@
       <div>
         <h1 class="mat-title" i18n>Members</h1>
         <mat-grid-list cols="2" rowHeight="2rem">
-          <mat-grid-tile><div class="label" i18n>Total Members</div></mat-grid-tile>
+          <mat-grid-tile class="label">Total Members</mat-grid-tile>
           <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
-          <mat-grid-tile>
-            <div class="label" i18n><div>
-              <mat-icon>chevron_right</mat-icon>
-              <div>Male</div>
-            </div></div>
+          <mat-grid-tile class="label">
+            <mat-icon>chevron_right</mat-icon>
+            <span i18n>Male</span>
           </mat-grid-tile>
           <mat-grid-tile>{{reports?.usersByGender?.male || 0}}</mat-grid-tile>
-          <mat-grid-tile>
-            <div class="label" i18n><div>
-              <mat-icon>chevron_right</mat-icon>
-              <div>Female</div>
-            </div></div>
+          <mat-grid-tile class="label" >
+            <mat-icon>chevron_right</mat-icon>
+            <span i18n>Female</span>
           </mat-grid-tile>
           <mat-grid-tile>{{reports?.usersByGender?.female || 0}}</mat-grid-tile>
-          <mat-grid-tile>
-            <div class="label" i18n><div>
-              <mat-icon>chevron_right</mat-icon>
-              <div>Did not specify</div>
-            </div></div>
+          <mat-grid-tile class="label">
+            <mat-icon>chevron_right</mat-icon>
+            <span i18n>Did not specify</span>
           </mat-grid-tile>
           <mat-grid-tile>{{reports?.usersByGender?.didNotSpecify || 0}}</mat-grid-tile>
-          <mat-grid-tile><div class="label" i18n>Total Visits</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Total Visits</mat-grid-tile>
           <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
-          <mat-grid-tile><div class="label" i18n>Members by Visits</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Members by Visits</mat-grid-tile>
           <mat-grid-tile i18n>Total Visits by Member</mat-grid-tile>
           <ng-container *ngIf="!reports?.visits || reports?.visits.length === 0">
             <mat-grid-tile colspan="2" i18n>There are no visits</mat-grid-tile>
           </ng-container>
           <ng-container *ngFor="let visit of reports?.visits">
-            <mat-grid-tile>
-              <div class="label"><div>
-                <mat-icon>chevron_right</mat-icon>
-                <div><a [routerLink]="['/users/profile', visit.user]">{{visit.user}}</a></div>
-              </div></div>
+            <mat-grid-tile class="label">
+              <mat-icon>chevron_right</mat-icon>
+              <a [routerLink]="['/users/profile', visit.user]">{{visit.user}}</a>
             </mat-grid-tile>
             <mat-grid-tile>{{visit.count}}</mat-grid-tile>
           </ng-container>
@@ -63,35 +55,31 @@
       <div>
         <h1 class="mat-title" i18n>Resources</h1>
         <mat-grid-list cols="2" rowHeight="2rem">
-          <mat-grid-tile><div class="label" i18n>Total Resources</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Total Resources</mat-grid-tile>
           <mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile>
-          <mat-grid-tile><div class="label" i18n>Total Views</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Total Views</mat-grid-tile>
           <mat-grid-tile>{{reports?.totalResourceViews}}</mat-grid-tile>
-          <mat-grid-tile><div class="label" i18n>Most Visited</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Most Visited</mat-grid-tile>
           <mat-grid-tile i18n>Total Visits by Resource</mat-grid-tile>
           <ng-container *ngIf="!reports?.resources || reports?.resources.length === 0">
             <mat-grid-tile colspan="2" i18n>No resources have been visited</mat-grid-tile>
           </ng-container>
           <ng-container *ngFor="let resource of reports?.resources">
-            <mat-grid-tile>
-              <div class="label"><div>
-                <mat-icon>chevron_right</mat-icon>
-                <div><a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.max?.title}}</a></div>
-              </div></div>
+            <mat-grid-tile class="label">
+              <mat-icon>chevron_right</mat-icon>
+              <a [routerLink]="['/resources/view', resource.resourceId]">{{resource?.max?.title}}</a>
             </mat-grid-tile>
             <mat-grid-tile>{{resource.count}}</mat-grid-tile>
           </ng-container>
-          <mat-grid-tile><div class="label" i18n>Highest Rated</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Highest Rated</mat-grid-tile>
           <mat-grid-tile i18n>Average Rating</mat-grid-tile>
           <ng-container *ngIf="!reports?.resourceRatings || reports?.resourceRatings.length === 0">
             <mat-grid-tile colspan="2" i18n>There are no resource ratings</mat-grid-tile>
           </ng-container>
           <ng-container *ngFor="let rating of reports?.resourceRatings">
-            <mat-grid-tile>
-              <div class="label"><div>
-                <mat-icon>chevron_right</mat-icon>
-                <div><a [routerLink]="['/resources/view', rating.item]">{{rating?.title}}</a></div>
-              </div></div>  
+            <mat-grid-tile class="label">
+              <mat-icon>chevron_right</mat-icon>
+              <a [routerLink]="['/resources/view', rating.item]">{{rating?.title}}</a>
             </mat-grid-tile>
             <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
           </ng-container>
@@ -100,19 +88,17 @@
       <div>
         <h1 class="mat-title" i18n>Courses</h1>
         <mat-grid-list cols="2" rowHeight="2rem">
-          <mat-grid-tile><div class="label" i18n>Total Courses</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Total Courses</mat-grid-tile>
           <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
-          <mat-grid-tile><div class="label" i18n>Highest Rated</div></mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Highest Rated</mat-grid-tile>
           <mat-grid-tile i18n>Average Rating</mat-grid-tile>
           <ng-container *ngIf="!reports?.courseRatings || reports?.courseRatings.length === 0">
             <mat-grid-tile colspan="2" i18n>There are no course ratings</mat-grid-tile>
           </ng-container>
           <ng-container *ngFor="let rating of reports?.courseRatings">
-            <mat-grid-tile>
-              <div class="label"><div>
-                <mat-icon>chevron_right</mat-icon>
-                <div><a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a></div>
-              </div></div>
+            <mat-grid-tile class="label">
+              <mat-icon>chevron_right</mat-icon>
+              <a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a>
             </mat-grid-tile>
             <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
           </ng-container>

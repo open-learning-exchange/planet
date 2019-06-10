@@ -1,26 +1,23 @@
 @import '../../variables';
 
-.label {
-  position: absolute;
-  left: 0;
-  div {
-    display: flex;
-    align-items: center;
+.manager-reports-detail {
+  mat-grid-tile.label figure {
+    justify-content: start;
   }
-}
 
-.reports-table-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  grid-column-gap: 1vw;
-  margin: 3vh 0;
-  h1 {
-    display: block;
-    margin: 0.4rem 0 0;
-    color: $primary;
+  .reports-table-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-column-gap: 1vw;
+    margin: 3vh 0;
+    h1 {
+      display: block;
+      margin: 0.4rem 0 0;
+      color: $primary;
+    }
   }
-}
 
-canvas {
-  max-height: 30vh;
+  canvas {
+    max-height: 30vh;
+  }
 }
