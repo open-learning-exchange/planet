@@ -1,7 +1,7 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>Library</span>
+    <span i18n class="margin-lr">Library</span>
     <button *ngIf="!parent && !isDialog" mat-stroked-button class="margin-lr-3" (click)="toggleMyLibrary()" i18n>
       {myLibraryFilter, select, on {Community} off {myLibrary}} resources
     </button>
