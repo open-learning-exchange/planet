@@ -18,7 +18,7 @@ const addTeamDialogFields = [ {
 }, {
   'type': 'textarea',
   'name': 'description',
-  'placeholder': 'Detail',
+  'placeholder': 'Description',
   'required': false
 } ];
 
@@ -41,7 +41,7 @@ export class TeamsService {
       requests: [ team ? team.requests : [] ]
     };
     return this.dialogsFormService
-      .confirm(title, addTeamDialogFields, formGroup)
+      .confirm(title, addTeamDialogFields, formGroup, true)
       .pipe(
         debug('Dialog confirm'),
         switchMap((response: any) => {
