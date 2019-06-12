@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -17,10 +17,15 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
     }
   ` ]
 })
-export class NewsListComponent {
+export class NewsListComponent implements OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = 'News has been updated successfully.';
+  @Input() viewableBy = 'community';
+  @Input() viewableId: string;
+  displayedItems: any[] = [];
+  replyObject: any = {};
+  replyViewing = 'root';
   currentUser = this.userService.get();
   deleteDialog: any;
 
@@ -33,17 +38,43 @@ export class NewsListComponent {
     private planetMessageService: PlanetMessageService
   ) {}
 
+  ngOnChanges() {
+    this.replyObject = {};
+    this.items.forEach(item => {
+      this.replyObject[item.replyTo || 'root'] = [ ...(this.replyObject[item.replyTo || 'root'] || []), item ];
+    });
+    this.displayedItems = this.replyObject[this.replyViewing];
+  }
+
+  addReply(news) {
+    this.openUpdateDialog({
+      title: 'Reply to Post',
+      placeholder: 'Your Story',
+      initialValue: ''
+    }, { replyTo: news._id, viewableBy: this.viewableBy, viewableId: this.viewableId });
+  }
+
   editNews(news) {
-    const title = 'Edit Post';
+    this.openUpdateDialog({
+      title: 'Edit Post',
+      placeholder: 'Your Story',
+      initialValue: news.message
+    }, news);
+  }
+
+  showReplies(newsId) {
+    this.replyViewing = newsId;
+    this.displayedItems = this.replyObject[newsId];
+  }
+
+  openUpdateDialog({ title, placeholder, initialValue = '' }, news = {}) {
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
-      'placeholder': 'Your Story',
+      placeholder,
       'required': true
     } ];
-    const formGroup = {
-      message: [ news.message, CustomValidators.required ]
-    };
+    const formGroup = { message: [ initialValue, CustomValidators.required ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (response: any) => {
         if (response) {

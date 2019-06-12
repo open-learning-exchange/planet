@@ -1,4 +1,4 @@
-<mat-card *ngFor="let item of items">
+<mat-card *ngFor="let item of displayedItems">
   <mat-card-header>
     <img mat-card-avatar [src]="item.avatar">
     <mat-card-title>
@@ -16,8 +16,14 @@
   <mat-card-content>
     <td-markdown [content]="item.message"></td-markdown>
   </mat-card-content>
-  <mat-card-actions class="display-flex" *ngIf="item.user.name === currentUser.name">
-    <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
-    <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
+  <mat-card-actions class="display-flex">
+    <button mat-button type="button" (click)="addReply(item)" i18n>Reply</button>
+    <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0" (click)="showReplies(item._id)">
+      <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
+    </button>
+    <ng-container *ngIf="item.user.name === currentUser.name">
+      <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
+    </ng-container>
   </mat-card-actions>
 </mat-card>
