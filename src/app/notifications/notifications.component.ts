@@ -78,6 +78,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       }, (err) => console.log(err));
     }
   }
+
   readAllNotification() {
     let unreadArray: any[];
     unreadArray = this.notifications.data.filter(notification => notification.status === 'unread')
@@ -85,6 +86,9 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       notification.status = 'read';
       return notification;
      });
-    this.couchService.bulkDocs('notifications', unreadArray);
+    this.couchService.bulkDocs('notifications', unreadArray)
+    .subscribe((data) => {
+      this.userService.setNotificationStateChange();
+    }, (err) => console.log(err));
   }
 }
