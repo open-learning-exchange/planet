@@ -1,3 +1,4 @@
+<button mat-stroked-button type="button" (click)="showReplies('root')" *ngIf="replyViewing!=='root'" i18n>Show main conversation</button>
 <mat-card *ngFor="let item of displayedItems">
   <mat-card-header>
     <img mat-card-avatar [src]="item.avatar">
