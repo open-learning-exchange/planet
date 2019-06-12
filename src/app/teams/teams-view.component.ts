@@ -228,6 +228,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       viewableId: this.teamId,
       ...message
     }, 'Message has been posted successfully')
+    .pipe(switchMap(() => this.sendNotifications('message')))
     .pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
   }
 

@@ -120,6 +120,8 @@ export class TeamsService {
       return this.userService.get().name !== user.name && user.name !== 'satellite';
     }).map((user: any) => {
       switch (type) {
+        case 'message':
+          return this.messageNotification(user._id, notificationParams);
         case 'request':
           return this.requestNotification(user._id, notificationParams);
         case 'added':
@@ -161,6 +163,19 @@ export class TeamsService {
     return {
       'user': userId,
       'message': `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`,
+      'link': url,
+      'item': team._id,
+      'type': 'team',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+  }
+
+  messageNotification(userId, { team, url }) {
+    return {
+      'user': userId,
+      'message': `<b>${this.userService.get().name}</b> has post message on <b>"${team.name}"</b> team.`,
       'link': url,
       'item': team._id,
       'type': 'team',
