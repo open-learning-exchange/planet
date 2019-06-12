@@ -40,8 +40,9 @@ export class DashboardTileComponent implements OnInit {
     event.stopPropagation();
     const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
+    const teamDoc = { userId, userPlanetCode, teamId: item._id, fromShelf: item.fromShelf };
     const obs = this.shelfName === 'myTeamIds' ?
-      this.teamsService.toggleTeamMembership(item, true, { userId, userPlanetCode }).pipe(tap(() => this.teamRemoved.emit(item))) :
+      this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))) :
       this.userService.updateShelf(newIds, this.shelfName);
     obs.subscribe(() => {
       this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);

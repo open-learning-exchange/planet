@@ -56,8 +56,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getMembershipStatus() {
-    return this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id } }).pipe(
-      map(membership => this.userMembership = membership)
+    return forkJoin([
+      this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id } }),
+      this.couchService.get('shelf/' + this.user._id)
+    ]).pipe(
+      map(([ membershipDocs, shelf ]) => this.userMembership = [
+        ...membershipDocs,
+        ...(shelf.myTeamIds || []).map(id => ({ teamId: id, fromShelf: true, docType: 'membership', userId: this.user._id }))
+      ])
     );
   }
 
@@ -68,8 +74,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamList(teamRes) {
     return teamRes.map((res: any) => {
-      const team = { doc: res.doc || res };
-      const membershipDoc = this.userMembership.find(req => req.teamId === team.doc._id) || {};
+      const doc = res.doc || res;
+      const membershipDoc = this.userMembership.find(req => req.teamId === doc._id) || {};
+      const team = { doc, membershipDoc };
       switch (membershipDoc.docType) {
         case 'membership':
           return { ...team, userStatus: 'member' };
@@ -89,9 +96,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleMembership(team, leaveTeam) {
+  toggleMembership(team, leaveTeam, membershipDoc) {
     this.teamsService.toggleTeamMembership(
-      team, leaveTeam, { userId: this.user._id, userPlanetCode: this.user.planetCode }
+      team, leaveTeam, membershipDoc
     ).pipe(
       switchMap(() => this.getMembershipStatus())
     ).subscribe((newTeam: any) => {

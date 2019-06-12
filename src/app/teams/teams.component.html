@@ -41,7 +41,7 @@
         <mat-cell *matCellDef="let element">
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
-              <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true)">
+              <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true, element.membershipDoc)">
                 Leave
               </button>
               <button mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n>Edit</button>

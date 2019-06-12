@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of, empty } from 'rxjs';
+import { of, empty, forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -94,7 +94,10 @@ export class TeamsService {
   }
 
   toggleTeamMembership(team, leaveTeam, memberInfo) {
-    return this.updateMembershipDoc(team, leaveTeam, memberInfo).pipe(
+    return (memberInfo.fromShelf === true && leaveTeam === true ?
+      this.updateShelf(memberInfo) :
+      this.updateMembershipDoc(team, leaveTeam, memberInfo)
+    ).pipe(
       switchMap(() => leaveTeam ? this.isTeamEmpty(team) : of(team)),
       switchMap((isEmpty) => isEmpty === true ? this.updateTeam({ ...team, status: 'archived' }) : of(team)),
       switchMap((newTeam) => of({ ...team, ...newTeam }))
@@ -112,6 +115,14 @@ export class TeamsService {
     );
   }
 
+  // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
+  updateShelf(membershipDoc) {
+    const { userId, teamId } = membershipDoc;
+    return this.couchService.get('shelf/' + userId).pipe(switchMap(shelf =>
+      this.userService.updateShelf(shelf.myTeamIds.filter(myTeamId => myTeamId !== teamId), 'myTeamIds')
+    ));
+  }
+
   membershipProps(team, memberInfo, docType) {
     const { userId, userPlanetCode } = memberInfo;
     const { _id: teamId, teamPlanetCode, teamType } = team;
@@ -122,7 +133,13 @@ export class TeamsService {
 
   getTeamMembers(team, withRequests = false) {
     const typeObj = withRequests ? {} : { docType: 'membership' };
-    return this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj }));
+    return forkJoin([
+      this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
+      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0))
+    ]).pipe(map(([ membershipDocs, shelves ]) => [
+      ...membershipDocs,
+      ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
+    ]));
   }
 
   isTeamEmpty(team) {
