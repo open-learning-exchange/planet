@@ -79,10 +79,12 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     }
   }
   readAllNotification() {
-    if (!this.emptyData) {
-      this.notifications.data.forEach(element => {
-        this.readNotification(element);
-      });
-    }
+    let unreadArray: any[];
+    unreadArray = this.notifications.data.filter(notification => notification.status === 'unread')
+    .map<any[]>(notification => {
+      notification.status = 'read';
+      return notification;
+     });
+    this.couchService.bulkDocs('notifications', unreadArray);
   }
 }
