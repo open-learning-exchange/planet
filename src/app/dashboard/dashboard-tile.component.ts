@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
@@ -17,6 +18,7 @@ export class DashboardTileComponent implements OnInit {
   @Input() link;
   @Input() emptyLink = '/';
   @Input() shelfName: string;
+  @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items') itemDiv: ElementRef;
   mockItems = Array(100).fill(0).map((val, ind, arr) => {
     return { title: 'Item ' + ind, link: '/' };
@@ -37,8 +39,9 @@ export class DashboardTileComponent implements OnInit {
   removeFromShelf(event, item: any) {
     event.stopPropagation();
     const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
+    const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     const obs = this.shelfName === 'myTeamIds' ?
-      this.teamsService.toggleTeamMembership(item, true, this.userService.shelf) :
+      this.teamsService.toggleTeamMembership(item, true, { userId, userPlanetCode }).pipe(tap(() => this.teamRemoved.emit(item))) :
       this.userService.updateShelf(newIds, this.shelfName);
     obs.subscribe(() => {
       this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);

@@ -134,4 +134,9 @@ export class DashboardComponent implements OnInit {
       this.examsCount = exams.length;
     });
   }
+
+  teamRemoved(team: any) {
+    this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
+  }
+
 }
