@@ -134,48 +134,29 @@ export class TeamsService {
   }
 
   addedToTeamNotification(userId, { team, url }) {
-    return {
-      'user': userId,
-      'message': `You have been added to <b>"${team.name}"</b> team.`,
-      'link': url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
+    return this.teamNotification(`You have been added to <b>"${team.name}"</b> team.`, userId, { team, url });
   }
 
   memberAddNotification(userId, { team, url, newMembersLength }) {
-    return {
-      'user': userId,
-      'message': `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`,
-      'link': url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
+    return this.teamNotification(`${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`, userId, { team, url });
   }
 
   requestNotification(userId, { team, url }) {
-    return {
-      'user': userId,
-      'message': `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`,
-      'link': url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
+    return this.teamNotification(
+      `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`, userId, { team, url }
+    );
   }
 
   messageNotification(userId, { team, url }) {
+    return this.teamNotification(
+      `<b>${this.userService.get().name}</b> has post message on <b>"${team.name}"</b> team.`, userId, { team, url }
+    );
+  }
+
+  teamNotification(message, userId, { team, url }) {
     return {
       'user': userId,
-      'message': `<b>${this.userService.get().name}</b> has post message on <b>"${team.name}"</b> team.`,
+      message,
       'link': url,
       'item': team._id,
       'type': 'team',
