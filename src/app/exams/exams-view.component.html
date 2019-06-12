@@ -66,15 +66,14 @@
         <ng-container *ngIf="isComplete" i18n>Complete</ng-container>
         <ng-container *ngIf="!isComplete" i18n>Submit Answer</ng-container>
       </button>
-      <span class="v-align-center small warn-text-color" [ngSwitch]="examPreviewStatus">
-        <div *ngSwitchCase="'incomplete'">
+      <span class="v-align-center small" [ngSwitch]="statusMessage">
+        <div *ngSwitchCase="'incorrect'" class="warn-text-color">
           <mat-icon class="margin-lr-3">error</mat-icon><span i18n>Incorrect answer, please try again</span>
         </div>
-        <div *ngSwitchCase="'complete'">
-          <mat-icon class="margin-lr-3">error</mat-icon><span i18n>Exam complete, you can close the preview</span>
+        <div *ngSwitchCase="'complete'" class="primary-text-color">
+          <mat-icon class="margin-lr-3">check_circle</mat-icon><span i18n>Exam complete, you can close the preview</span>
         </div>
       </span>
-
     </div>
   </div>
 </div>
