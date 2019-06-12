@@ -5,7 +5,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map } from 'rxjs/operators';
-import { Subject, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -15,7 +15,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
-  private onDestroy$ = new Subject<void>();
   teams = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -113,14 +112,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   requestToJoin(team) {
     this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
-      switchMap((newTeam) => {
-        this.getMembershipStatus().subscribe(() => this.teams.data = this.teamList(this.teams.data));
-        return this.teamsService.getTeamMembers(newTeam);
-      }),
-      switchMap((docs) => {
-        return this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id });
-      })
-    ).subscribe(() => this.planetMessageService.showMessage('Request to join team sent'));
+      switchMap((newTeam) => this.teamsService.getTeamMembers(newTeam)),
+      switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
+      switchMap(() => this.getMembershipStatus())
+    ).subscribe(() => {
+      this.teams.data = this.teamList(this.teams.data);
+      this.planetMessageService.showMessage('Request to join team sent');
+    });
   }
 
   applyFilter(filterValue: string) {
