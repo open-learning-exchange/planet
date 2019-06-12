@@ -55,6 +55,30 @@
                   "with": "src/environments/environment.test.ts"
                 }
               ]
+            },
+            "somali": {
+              "aot": true,
+              "i18nFile": "src/i18n/messages.som.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "so"
+            },
+            "french": {
+              "aot": true,
+              "i18nFile": "src/i18n/messages.fra.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "fr"
+            },
+            "nepali": {
+              "aot": true,
+              "i18nFile": "src/i18n/messages.nep.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "ne"
+            },
+            "arabic": {
+              "aot": true,
+              "i18nFile": "src/i18n/messages.ara.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "ar"
             }
           }
         },
@@ -71,6 +95,18 @@
             },
             "test": {
               "browserTarget": "planet-app:build:test"
+            },
+            "somali": {
+              "browserTarget": "planet-app:build:somali"
+            },
+            "french": {
+              "browserTarget": "planet-app:build:french"
+            },
+            "nepali": {
+              "browserTarget": "planet-app:build:nepali"
+            },
+            "arabic": {
+              "browserTarget": "planet-app:build:arabic"
             }
           }
         },
