@@ -13,7 +13,7 @@ import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  notifications = new MatTableDataSource();
+  notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
   emptyData = false;
@@ -80,14 +80,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readAllNotification() {
-    let unreadArray: any[];
-    unreadArray = this.notifications.data.filter(notification => notification.status === 'unread')
-    .map<any[]>(notification => {
-      notification.status = 'read';
-      return notification;
-     });
+    const unreadArray = this.notifications.data.filter(notification => notification.status === 'unread')
+      .map(notification => ({ ...notification, status: 'read' }));
     this.couchService.bulkDocs('notifications', unreadArray)
-    .subscribe((data) => {
+    .subscribe(() => {
       this.userService.setNotificationStateChange();
     }, (err) => console.log(err));
   }
