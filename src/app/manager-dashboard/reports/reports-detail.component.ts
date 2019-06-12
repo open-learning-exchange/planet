@@ -139,8 +139,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLight),
-          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLight),
+          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
+          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
           this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey),
           this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
         ]
