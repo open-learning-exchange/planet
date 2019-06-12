@@ -33,34 +33,28 @@ export class TeamsService {
     private stateService: StateService
   ) {}
 
-  addTeamDialog(userId: string, team?) {
+  addTeamDialog(userId: string, team: any = {}) {
     const configuration = this.stateService.configuration;
-    const title = team ? 'Update Team' : 'Create Team';
+    const title = team._id ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ team ? team.name : '', CustomValidators.required ],
-      description: team ? team.description : '',
-      requests: [ team ? team.requests : [] ],
-      teamType: [ team ? { value: team.teamType || 'local', disabled: true } : 'local' ]
+      name: [ team.name || '', CustomValidators.required ],
+      description: team.description || '',
+      requests: [ team.requests || [] ],
+      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
     };
-    return this.dialogsFormService
-      .confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup)
+    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup)
       .pipe(
-        debug('Dialog confirm'),
-        switchMap((response: any) => {
-          if (response !== undefined) {
-            return this.updateTeam(
-              { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-                parentCode: configuration.parentCode, ...team, ...response }
-            );
-          }
-          return empty();
-        }),
-        switchMap((response) => {
-          if (!team) {
-            return this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code });
-          }
-          return of(response);
-        })
+        switchMap((response: any) => response !== undefined ?
+          this.updateTeam(
+            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
+              parentCode: configuration.parentCode, ...team, ...response }
+          ) :
+          empty()
+        ),
+        switchMap((response) => !team._id ?
+          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code }) :
+          of(response)
+        )
       );
   }
 
