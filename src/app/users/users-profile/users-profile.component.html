@@ -41,6 +41,11 @@
           <p matLine><b>{{userDetail.language || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>Number of Visits</h4>
+          <p matLine><b>{{totalLogins || ''}}</b></p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
       </mat-list>
       <mat-list>
         <mat-list-item>
@@ -56,6 +61,11 @@
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Level</h4>
           <p matLine><b>{{userDetail.level || 'N/A'}}</b></p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>Last Login</h4>
+          <p matLine><b>{{(lastLogin || '') | date: 'mediumDate'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
