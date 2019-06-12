@@ -149,7 +149,7 @@ export class TeamsService {
 
   messageNotification(userId, { team, url }) {
     return this.teamNotification(
-      `<b>${this.userService.get().name}</b> has post message on <b>"${team.name}"</b> team.`, userId, { team, url }
+      `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> team.`, userId, { team, url }
     );
   }
 
