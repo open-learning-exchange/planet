@@ -148,8 +148,12 @@ export class TeamsService {
 
   sendNotifications(type, members, notificationParams) {
     const notifications = members.filter((user: any) => {
-      return this.userService.get().name !== user.name && user.name !== 'satellite';
-    }).map((user: any) => this.teamNotification(this.teamNotificationMessage(type, notificationParams), user._id, notificationParams));
+      const userId = user.userId || user._id;
+      return this.userService.get()._id !== userId && user.name !== 'satellite';
+    }).map((user: any) => {
+      const userId = user.userId || user._id;
+      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), userId, notificationParams);
+    });
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 

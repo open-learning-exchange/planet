@@ -152,7 +152,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   addMembers(selected: any[]) {
-    const newMembershipDocs = selected.map(user => this.teamsService.membershipProps(this.team, user._id, 'membership'));
+    const newMembershipDocs = selected.map(
+      user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
+    );
     this.couchService.bulkDocs('teams', newMembershipDocs).pipe(
       switchMap(() => {
         return forkJoin([
