@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -22,8 +23,9 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private couchService: CouchService,
-    private userService: UserService
-    ) {
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
+  ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
     });
@@ -85,6 +87,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.couchService.bulkDocs('notifications', unreadArray)
     .subscribe(() => {
       this.userService.setNotificationStateChange();
-    }, (err) => console.log(err));
+    }, (err) => this.planetMessageService.showAlert('There was a problem marking all as read'));
   }
 }
