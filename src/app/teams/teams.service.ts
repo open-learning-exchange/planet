@@ -118,49 +118,27 @@ export class TeamsService {
   sendNotifications(type, members, notificationParams) {
     const notifications = members.filter((user: any) => {
       return this.userService.get().name !== user.name && user.name !== 'satellite';
-    }).map((user: any) => {
-      switch (type) {
-        case 'request':
-          return this.requestNotification(user._id, notificationParams);
-        case 'added':
-          return this.addedToTeamNotification(user._id, notificationParams);
-        default:
-          return this.memberAddNotification(user._id, notificationParams);
-      }
-    });
+    }).map((user: any) => this.teamNotification(this.teamNotificationMessage(type, notificationParams), user._id, notificationParams));
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 
-  addedToTeamNotification(userId, { team, url }) {
-    return {
-      'user': userId,
-      'message': `You have been added to <b>"${team.name}"</b> team.`,
-      'link': url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
+  teamNotificationMessage(type, { team, newMembersLength = '' }) {
+    switch (type) {
+      case 'message':
+        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> team.`;
+      case 'request':
+        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`;
+      case 'added':
+        return `You have been added to <b>"${team.name}"</b> team.`;
+      default:
+        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`;
+    }
   }
 
-  memberAddNotification(userId, { team, url, newMembersLength }) {
+  teamNotification(message, userId, { team, url }) {
     return {
       'user': userId,
-      'message': `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`,
-      'link': url,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
-  }
-
-  requestNotification(userId, { team, url }) {
-    return {
-      'user': userId,
-      'message': `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`,
+      message,
       'link': url,
       'item': team._id,
       'type': 'team',
