@@ -7,6 +7,7 @@ import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'planet-news-list',
@@ -100,7 +101,9 @@ export class NewsListComponent implements OnChanges {
 
   deleteNews(news) {
     return {
-      request: this.newsService.deleteNews(news),
+      request: forkJoin([
+        this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], this.replyViewing)
+      ]),
       onNext: (data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.deleteDialog.close();

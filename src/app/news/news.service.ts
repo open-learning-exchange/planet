@@ -56,4 +56,8 @@ export class NewsService {
     return this.postNews({ ...post, _deleted: true }, 'Post deleted');
   }
 
+  rearrangeRepliesForDelete(replies: any[], newReplyToId: string) {
+    return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply, replyTo: newReplyToId })));
+  }
+
 }
