@@ -59,7 +59,7 @@ export class CoursesStepComponent implements OnDestroy {
     this.dialogRef = this.dialog.open(
       CoursesAddResourcesComponent,
       { width: '80vw',
-        data:  
+        data:
         { okClick: this.resourcsDialogOkClick.bind(this),
           excludeIds: this.steps[this.activeStepIndex].resources.map((resource: any) => resource._id)
     } });
