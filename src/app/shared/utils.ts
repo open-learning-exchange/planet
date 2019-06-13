@@ -67,4 +67,4 @@ export const parseToObject = (url: string) => {
     }
   }
   return obj;
-}
+};
