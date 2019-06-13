@@ -46,7 +46,6 @@ export class UsersProfileComponent implements OnInit {
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
-
   }
 
   getLoginInfo(name) {
