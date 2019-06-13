@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -9,6 +9,8 @@ import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { debug } from '../../debug-operator';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -26,6 +28,8 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 })
 export class PlanetTagInputDialogComponent {
 
+  deleteDialog: any;
+  message = '';
   tags: any[] = [];
   selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
@@ -57,7 +61,8 @@ export class PlanetTagInputDialogComponent {
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog,
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -95,6 +100,13 @@ export class PlanetTagInputDialogComponent {
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
+  }
+
+  deleteTag(event, tag) {
+    let amount = 'single',
+      okClick = this.tagsService.deleteTag(tag),
+      displayName = tag.name;
+    this.tagsService.openDeleteDialog(okClick, amount, displayName);
   }
 
   subTagIds(subTags: any[]) {
