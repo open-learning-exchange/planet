@@ -208,6 +208,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.newsService.postNews({
       viewableBy: 'teams',
       viewableId: this.teamId,
+      messageType: this.team.teamType,
+      messagePlanetCode: this.team.teamPlanetCode,
       ...message
     }, 'Message has been posted successfully')
     .pipe(switchMap(() => this.sendNotifications('message')))
