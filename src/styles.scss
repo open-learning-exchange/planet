@@ -524,4 +524,16 @@ body {
       min-width: auto;
     }
   }
+
+  .action-buttons {
+    margin: 0 0 0.5rem 0;
+    & > * {
+      margin: 0 0 0 0.25rem;
+    }
+
+    & > *:first-child {
+      margin: 0;
+    }
+  }
+
 }
