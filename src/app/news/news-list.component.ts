@@ -49,6 +49,10 @@ export class NewsListComponent implements OnChanges {
     this.displayedItems = this.replyObject[news._id];
   }
 
+  showPreviousReplies() {
+    this.showReplies(this.items.find(item => item._id === this.replyViewing.replyTo));
+  }
+
   openUpdateDialog({ title, placeholder, initialValue = '', news = {} }) {
     const fields = [ {
       'type': 'markdown',
