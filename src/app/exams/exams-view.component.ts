@@ -115,11 +115,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   routeToNext (nextQuestion) {
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
+      return;
     }
     if (this.isDialog) {
-      if (nextQuestion > this.maxQuestions - 1) {
-        this.statusMessage = 'complete';
-      }
+      this.statusMessage = 'complete';
       return;
     }
     this.examComplete();
