@@ -1,31 +1,34 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
   styles: [ `
-    :host mat-card {
-      margin: 0.25rem;
+    mat-divider {
+      margin: 1rem 0;
     }
   ` ]
 })
-export class NewsListComponent {
+export class NewsListComponent implements OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = 'News has been updated successfully.';
-  currentUser = this.userService.get();
+  @Input() viewableBy = 'community';
+  @Input() viewableId: string;
+  displayedItems: any[] = [];
+  replyObject: any = {};
+  replyViewing: any = { _id: 'root' };
   deleteDialog: any;
 
   constructor(
-    private userService: UserService,
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
@@ -33,21 +36,37 @@ export class NewsListComponent {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  editNews(news) {
-    const title = 'Edit Post';
+  ngOnChanges() {
+    this.replyObject = {};
+    this.items.forEach(item => {
+      this.replyObject[item.replyTo || 'root'] = [ ...(this.replyObject[item.replyTo || 'root'] || []), item ];
+    });
+    this.displayedItems = this.replyObject[this.replyViewing._id];
+  }
+
+  showReplies(news) {
+    this.replyViewing = news;
+    this.displayedItems = this.replyObject[news._id];
+  }
+
+  showPreviousReplies() {
+    this.showReplies(this.items.find(item => item._id === this.replyViewing.replyTo));
+  }
+
+  openUpdateDialog({ title, placeholder, initialValue = '', news = {} }) {
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
-      'placeholder': 'Your Story',
+      placeholder,
       'required': true
     } ];
-    const formGroup = {
-      message: [ news.message, CustomValidators.required ]
-    };
+    const formGroup = { message: [ initialValue, CustomValidators.required ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (response: any) => {
         if (response) {
-          this.newsService.postNews({ ...news, ...response }, this.editSuccessMessage).subscribe(() => {
+          this.newsService.postNews(
+            { ...news, ...response, viewableBy: this.viewableBy, viewableId: this.viewableId }, this.editSuccessMessage
+          ).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
             this.dialogsLoadingService.stop();
           });
@@ -69,7 +88,9 @@ export class NewsListComponent {
 
   deleteNews(news) {
     return {
-      request: this.newsService.deleteNews(news),
+      request: forkJoin([
+        this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], this.replyViewing._id)
+      ]),
       onNext: (data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.deleteDialog.close();

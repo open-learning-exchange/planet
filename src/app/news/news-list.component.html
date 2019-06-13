@@ -1,23 +1,23 @@
-<mat-card *ngFor="let item of items">
-  <mat-card-header>
-    <img mat-card-avatar [src]="item.avatar">
-    <mat-card-title>
-      <a [routerLink]="['/users/profile', item.user.name]">
-        {{item.user.firstName ?
-          item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
-          item.user.name}}
-      </a>
-    </mat-card-title>
-    <mat-card-subtitle>
-      <ng-container i18n>wrote on</ng-container> {{item.time | date: 'medium' }}
-      <ng-container *ngIf="item.updatedDate !== item.time && item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'medium'}}</ng-container>
-    </mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <td-markdown [content]="item.message"></td-markdown>
-  </mat-card-content>
-  <mat-card-actions class="display-flex" *ngIf="item.user.name === currentUser.name">
-    <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
-    <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
-  </mat-card-actions>
-</mat-card>
+<ng-container *ngIf="replyViewing._id!=='root'">
+  <div class="action-buttons">
+    <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
+    <button mat-stroked-button type="button" *ngIf="replyViewing.replyTo && replyViewing.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
+  </div>
+  <p i18n>Viewing replies for:</p>
+  <planet-news-list-item
+    [item]="replyViewing"
+    [replyObject]="replyObject"
+    [showRepliesButton]="false"
+    (changeReplyViewing)="showReplies($event)"
+    (updateNews)="openUpdateDialog($event)"
+    (deleteNews)="openDeleteDialog($event)">
+  </planet-news-list-item>
+  <mat-divider></mat-divider>
+</ng-container>
+<planet-news-list-item *ngFor="let item of displayedItems"
+  [item]="item"
+  [replyObject]="replyObject"
+  (changeReplyViewing)="showReplies($event)"
+  (updateNews)="openUpdateDialog($event)"
+  (deleteNews)="openDeleteDialog($event)">
+</planet-news-list-item>
