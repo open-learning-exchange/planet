@@ -24,6 +24,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   stepForm: FormGroup;
   dialogRef: MatDialogRef<CoursesAddResourcesComponent>;
+  dialogSurveyRef: MatDialogRef<DialogsListComponent>;
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
@@ -99,7 +100,7 @@ export class CoursesStepComponent implements OnDestroy {
           filterPredicate: filterSpecificFields([ 'name' ]),
           initialSelection,
           ...surveys };
-        this.dialogRef = this.dialog.open(DialogsListComponent, {
+        this.dialogSurveyRef = this.dialog.open(DialogsListComponent, {
           data, height: '500px', width: '600px', autoFocus: false
         });
       });
@@ -109,7 +110,7 @@ export class CoursesStepComponent implements OnDestroy {
     this.steps[this.activeStepIndex].survey = selected[0];
     this.activeStep = this.steps[this.activeStepIndex];
     this.stepsChange.emit(this.steps);
-    this.dialogRef.close();
+    this.dialogSurveyRef.close();
   }
 
   stepsMoved(steps) {
