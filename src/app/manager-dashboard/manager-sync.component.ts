@@ -58,9 +58,8 @@ export class ManagerSyncComponent implements OnInit {
       return { ...rep, _deleted: true };
     });
     this.syncService.deleteReplicators(deleteArray).pipe(
-      switchMap(data => {
-        return this.sendStatsToParent();
-      }),
+      switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
+      map(([ res, users ]) => this.updateParentUsers(users)),
       switchMap(() => {
         return this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code }));
       }),
@@ -77,7 +76,21 @@ export class ManagerSyncComponent implements OnInit {
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
-    const pushList = [
+    const bothList = [
+      { db: 'submissions', selector: { source: this.planetConfiguration.code } },
+      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
+      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } }
+    ];
+    const pushList = [ ...this.pushList(), ...bothList ];
+    const pullList = [ ...this.pullList(), ...bothList ];
+    const internalList = [
+      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
+    ];
+    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
+  }
+
+  pushList() {
+    return [
       { db: 'courses_progress' },
       { db: 'feedback' },
       { db: 'login_activities' },
@@ -85,20 +98,17 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'resource_activities' },
       { dbSource: 'replicator_users', dbTarget: 'child_users' },
       { db: 'admin_activities' },
-      { db: 'submissions', selector: { source: this.planetConfiguration.code } },
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
       { db: 'myplanet_activities' }
     ];
-    const pullList = [
+  }
+
+  pullList() {
+    return [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { target: this.planetConfiguration.code } },
-      { db: 'submissions', selector: { source: this.planetConfiguration.code } }
+      { db: 'notifications', selector: { target: this.planetConfiguration.code } }
     ];
-    const internalList = [
-      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
-    ];
-    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
   updateReplicatorUsers() {
@@ -159,6 +169,28 @@ export class ManagerSyncComponent implements OnInit {
     return this.syncService.replicatorsArrayWithTags(
       achievements.filter(a => a.sendToNation === true).map(a => ({ db: 'achievements', item: a })), 'push', 'local'
     ).pipe(map(replicators => replicators.filter(rep => rep.db !== 'achievements')));
+  }
+
+  getParentUsers() {
+    return this.couchService.findAll(
+      '_users',
+      findDocuments({ planetCode: this.planetConfiguration.parentCode }),
+      { domain: this.planetConfiguration.parentDomain }
+    );
+  }
+
+  updateParentUsers(newUsers: any[]) {
+    this.couchService.findAll('parent_users').pipe(switchMap((oldUsers: any[]) => {
+      const deleteArray = oldUsers
+        .filter(oldUser => !newUsers.some(newUser => newUser._id === oldUser._id))
+        .map(oldUser => ({ ...oldUser, _deleted: true }));
+      const updateArray = newUsers.map(newUser => {
+        const oldUser = oldUsers.find(old => newUser._id === old._id);
+        return { ...newUser, _rev: oldUser ? oldUser._rev : undefined };
+      });
+      const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
+      return this.couchService.bulkDocs('parent_users', docs);
+    })).subscribe((res) => console.log(res));
   }
 
 }

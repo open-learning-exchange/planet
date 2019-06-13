@@ -3,11 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -28,7 +29,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private stateService: StateService
   ) {
     this.userService.shelfChange$.pipe()
       .subscribe(() => {
@@ -66,12 +68,15 @@ export class DashboardComponent implements OnInit {
       this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name' , linkPrefix: 'teams/view/', addId: true })
+      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }),
+      this.getTeamMembership().pipe(
+        switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }))
+      )
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
-      this.data.myTeams = dashboardItems[3];
+      this.data.myTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
     });
   }
 
@@ -85,6 +90,13 @@ export class DashboardComponent implements OnInit {
           return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
         })
       );
+  }
+
+  getTeamMembership() {
+    const configuration = this.stateService.configuration;
+    return this.couchService.findAll(
+      'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.userService.get()._id, docType: 'membership' })
+    ).pipe(map(docs => docs.map((doc: any) => doc.teamId)));
   }
 
   get profileImg() {
@@ -123,4 +135,9 @@ export class DashboardComponent implements OnInit {
       this.examsCount = exams.length;
     });
   }
+
+  teamRemoved(team: any) {
+    this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
+  }
+
 }
