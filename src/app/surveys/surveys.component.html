@@ -59,15 +59,9 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-           <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)"><mat-icon>
-            edit
-          </mat-icon> Edit Survey</button>
-          <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)"><mat-icon>
-            send
-          </mat-icon> Send Survey</button>
-          <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)"><mat-icon>
-            fiber_manual_record
-          </mat-icon> Record Survey</button>
+          <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)"><mat-icon>edit</mat-icon> Edit Survey</button>
+          <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)"><mat-icon>send</mat-icon> Send Survey</button>
+          <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)"><mat-icon>fiber_manual_record</mat-icon> Record Survey</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
