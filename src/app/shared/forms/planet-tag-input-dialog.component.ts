@@ -103,7 +103,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   deleteTag(event, tag) {
-    let amount = 'single',
+    const amount = 'single',
       okClick = this.tagsService.deleteTag(tag),
       displayName = tag.name;
     this.tagsService.openDeleteDialog(okClick, amount, displayName);

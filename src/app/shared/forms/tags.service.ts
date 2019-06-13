@@ -65,7 +65,7 @@ export class TagsService {
         ]);
       })
     );
-  } 
+  }
 
   openDeleteDialog(okClick, amount, displayName = '') {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
@@ -88,8 +88,8 @@ export class TagsService {
       request: this.couchService.delete('tags/' + tag._id + '?rev=' + tag._rev),
       onNext: (data) => {
         this.selection.deselect(tag._id);
-        //this.tags.data = this.tags.data.filter((t: any) => data.id !== t._id);
-        //this.tags = this.couchService.findAll('tags').subscribe((t: any) => t._id !== data._id);
+        // this.tags.data = this.tags.data.filter((t: any) => data.id !== t._id);
+        // this.tags = this.couchService.findAll('tags').subscribe((t: any) => t._id !== data._id);
         this.deleteDialog.close();
         this.planetMessageService.showMessage('Tag deleted: ' + tag.name);
       },
