@@ -81,7 +81,16 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } }
     ];
-    const pushList = [
+    const pushList = [ ...this.pushList(), ...bothList ];
+    const pullList = [ ...this.pullList(), ...bothList ];
+    const internalList = [
+      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
+    ];
+    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
+  }
+
+  pushList() {
+    return [
       { db: 'courses_progress' },
       { db: 'feedback' },
       { db: 'login_activities' },
@@ -91,18 +100,15 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'admin_activities' },
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
-      { db: 'myplanet_activities' },
-      ...bothList
+      { db: 'myplanet_activities' }
     ];
-    const pullList = [
+  }
+
+  pullList() {
+    return [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { target: this.planetConfiguration.code } },
-      ...bothList
+      { db: 'notifications', selector: { target: this.planetConfiguration.code } }
     ];
-    const internalList = [
-      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
-    ];
-    return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
   updateReplicatorUsers() {
