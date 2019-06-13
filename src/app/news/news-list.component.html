@@ -1,30 +1,20 @@
-<button mat-stroked-button type="button" (click)="showReplies('root')" *ngIf="replyViewing!=='root'" i18n>Show main conversation</button>
-<mat-card *ngFor="let item of displayedItems">
-  <mat-card-header>
-    <img mat-card-avatar [src]="item.avatar">
-    <mat-card-title>
-      <a [routerLink]="['/users/profile', item.user.name]">
-        {{item.user.firstName ?
-          item.user.firstName + ((' ' + item.user.middleName) || '') + ' ' + item.user.lastName :
-          item.user.name}}
-      </a>
-    </mat-card-title>
-    <mat-card-subtitle>
-      <ng-container i18n>wrote on</ng-container> {{item.time | date: 'medium' }}
-      <ng-container *ngIf="item.updatedDate !== item.time && item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'medium'}}</ng-container>
-    </mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <td-markdown [content]="item.message"></td-markdown>
-  </mat-card-content>
-  <mat-card-actions class="display-flex">
-    <button mat-button type="button" (click)="addReply(item)" i18n>Reply</button>
-    <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0" (click)="showReplies(item._id)">
-      <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
-    </button>
-    <ng-container *ngIf="item.user.name === currentUser.name">
-      <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
-    </ng-container>
-  </mat-card-actions>
-</mat-card>
+<ng-container *ngIf="replyViewing._id!=='root'">
+  <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
+  <p i18n>Viewing replies for:</p>
+  <planet-news-list-item
+    [item]="replyViewing"
+    [replyObject]="replyObject"
+    [showRepliesButton]="false"
+    (changeReplyViewing)="showReplies($event)"
+    (updateNews)="openUpdateDialog($event)"
+    (deleteNews)="openDeleteDialog($event)">
+  </planet-news-list-item>
+  <mat-divider></mat-divider>
+</ng-container>
+<planet-news-list-item *ngFor="let item of displayedItems"
+  [item]="item"
+  [replyObject]="replyObject"
+  (changeReplyViewing)="showReplies($event)"
+  (updateNews)="openUpdateDialog($event)"
+  (deleteNews)="openDeleteDialog($event)">
+</planet-news-list-item>
