@@ -64,7 +64,7 @@ export class TeamsService {
       'name': 'teamType',
       'placeholder': 'Team Type',
       'options': [
-        { 'value': 'sync', 'name': configuration.planetType === 'community' ? 'Sync with nation' : 'Sync with earth' },
+        { 'value': 'sync', 'name': configuration.planetType === 'community' ? 'Connect with nation' : 'Connect with earth' },
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
