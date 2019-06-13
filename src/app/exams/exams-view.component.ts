@@ -118,6 +118,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.isDialog) {
+      this.spinnerOn = false;
       this.statusMessage = 'complete';
       return;
     }
