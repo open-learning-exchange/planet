@@ -54,3 +54,17 @@ export const twoDigitNumber = (number: number) => `${number.toString().length < 
 export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
 
 export const getClockTime = (time: Date) => `${twoDigitNumber(time.getHours())}:${twoDigitNumber(time.getMinutes())}`;
+
+export const parseToObject = (url: string) => {
+  const frags = url.split(';');
+  const obj = {};
+  if (frags.length > 1) {
+    const props = [];
+    const value = [];
+    for (i = 1; i < frags.length; i++) {
+      const split = frags[i].split('=');
+      obj[split[0]] = split[1];
+    }
+  }
+  return obj;
+}
