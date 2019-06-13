@@ -14,16 +14,9 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 @Injectable()
 export class TagsService {
 
-  selection = new SelectionModel(true, []);
-  tags = new MatTableDataSource();
-  deleteDialog: any;
-  message = '';
-
   constructor(
     private couchService: CouchService,
-    private stateService: StateService,
-    private planetMessageService: PlanetMessageService,
-    private dialog: MatDialog
+    private stateService: StateService
   ) {}
 
   getTags(db: string, parent: boolean) {
@@ -67,34 +60,8 @@ export class TagsService {
     );
   }
 
-  openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'tag',
-        displayName
-      }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
-    });
-  }
-
   deleteTag(tag) {
-    return {
-      request: this.couchService.delete('tags/' + tag._id + '?rev=' + tag._rev),
-      onNext: (data) => {
-        this.selection.deselect(tag._id);
-        // this.tags.data = this.tags.data.filter((t: any) => data.id !== t._id);
-        // this.tags = this.couchService.findAll('tags').subscribe((t: any) => t._id !== data._id);
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage('Tag deleted: ' + tag.name);
-      },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this tag.')
-    };
+    return this.couchService.delete('tags/' + tag._id + '?rev=' + tag._rev);
   }
 
   findTag(tagKey: any, fullTags: any[]) {

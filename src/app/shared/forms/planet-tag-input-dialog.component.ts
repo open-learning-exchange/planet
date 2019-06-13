@@ -62,7 +62,7 @@ export class PlanetTagInputDialogComponent {
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -100,13 +100,6 @@ export class PlanetTagInputDialogComponent {
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
-  }
-
-  deleteTag(event, tag) {
-    const amount = 'single',
-      okClick = this.tagsService.deleteTag(tag),
-      displayName = tag.name;
-    this.tagsService.openDeleteDialog(okClick, amount, displayName);
   }
 
   subTagIds(subTags: any[]) {
@@ -178,6 +171,43 @@ export class PlanetTagInputDialogComponent {
   subcollectionOfOptions(tag, tags) {
     return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
       .map((t: any) => ({ name: t.name, value: t._id || t.name }));
+  }
+
+  deleteTag(event, tag) {
+    event.stopPropagation();
+    const amount = 'single',
+      okClick = this.deleteSelectedTag(tag),
+      displayName = tag.name;
+    this.openDeleteDialog(okClick, amount, displayName);
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '') {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'tag',
+        displayName
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+      this.message = '';
+    });
+  }
+
+  deleteSelectedTag(tag) {
+    return {
+      request: this.tagsService.deleteTag(tag),
+      onNext: (data) => {
+        // this.selection.deselect(tag._id);
+        this.tags = this.tags.filter((t: any) => data.id !== t._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('Tag deleted: ' + tag.name);
+      },
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this tag.')
+    };
   }
 
   tagForm(tag: any = {}) {
