@@ -9,6 +9,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { NewsComponent } from './news.component';
 import { NewsListComponent } from './news-list.component';
+import { NewsListItemComponent } from './news-list-item.component';
 
 @NgModule({
   exports: [ NewsListComponent ],
@@ -23,7 +24,8 @@ import { NewsListComponent } from './news-list.component';
   ],
   declarations: [
     NewsComponent,
-    NewsListComponent
+    NewsListComponent,
+    NewsListItemComponent
   ]
 })
 export class NewsModule {}

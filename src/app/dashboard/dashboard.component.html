@@ -47,7 +47,8 @@
     class="planet-teams-theme"
     [itemData]="data.myTeams"
     [emptyLink]="'/teams'"
-    [shelfName]="'myTeamIds'">
+    [shelfName]="'myTeamIds'"
+    (teamRemoved)="teamRemoved($event)">
   </planet-dashboard-tile>
   <planet-dashboard-tile
     [cardTitle]="'myMeetups'"

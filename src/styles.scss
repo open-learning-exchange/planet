@@ -280,7 +280,11 @@ body {
     font-size: 0.75rem;
   }
 
-  mat-table .highlight, .primary-light-color {
+  mat-table .highlight, .primary-lighter-color {
+    background-color: $primary-lighter;
+  }
+
+  mat-table, .primary-light-color {
     background-color: $primary-light;
   }
 
@@ -520,4 +524,16 @@ body {
       min-width: auto;
     }
   }
+
+  .action-buttons {
+    margin: 0 0 0.5rem 0;
+    & > * {
+      margin: 0 0 0 0.25rem;
+    }
+
+    & > *:first-child {
+      margin: 0;
+    }
+  }
+
 }

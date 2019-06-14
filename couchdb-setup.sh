@@ -128,6 +128,7 @@ curl -X PUT $COUCHURL/hubs
 curl -X PUT $COUCHURL/achievements
 curl -X PUT $COUCHURL/myplanet_activities
 curl -X PUT $COUCHURL/news
+curl -X PUT $COUCHURL/parent_users
 
 # Create design documents
 node ./design/create-design-docs.js
