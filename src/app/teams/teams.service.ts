@@ -42,7 +42,7 @@ export class TeamsService {
       requests: [ team.requests || [] ],
       teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
     };
-    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup)
+    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup, true)
       .pipe(
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
