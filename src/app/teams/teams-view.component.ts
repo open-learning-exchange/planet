@@ -52,7 +52,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.couchService.get('teams/' + this.teamId)
       .subscribe(data => {
         this.team = data;
-        this.getMembers();
+        this.getMembers(true);
         this.setStatus(this.team, this.userService.get());
       });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
@@ -64,7 +64,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getMembers() {
+  getMembers(initial = false) {
     if (this.team === undefined) {
       return;
     }
@@ -74,6 +74,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
+      if (initial && this.userStatus === 'member') {
+        this.teamsService.teamActivity(this.team, 'teamVisit');
+      }
     });
   }
 

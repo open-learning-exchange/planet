@@ -129,6 +129,7 @@ curl -X PUT $COUCHURL/achievements
 curl -X PUT $COUCHURL/myplanet_activities
 curl -X PUT $COUCHURL/news
 curl -X PUT $COUCHURL/parent_users
+curl -X PUT $COUCHURL/team_activities
 
 # Create design documents
 node ./design/create-design-docs.js
@@ -147,6 +148,7 @@ upsert_doc activity_logs _index '{"index":{"fields":[{"createdTime":"desc"}]},"n
 upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-index"}' POST
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
+upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 # Only insert dummy data and update security on install
 # _users security is set in app and auto accept will be overwritten if set here
 if (($ISINSTALL))

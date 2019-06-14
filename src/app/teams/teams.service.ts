@@ -177,4 +177,22 @@ export class TeamsService {
     };
   }
 
+  teamActivity(team: any, activity = 'teamVisit') {
+    const data = {
+      'teamId': team._id,
+      'title': team.title,
+      'user': this.userService.get().name,
+      'type': activity,
+      'teamType': team.teamType,
+      'teamPlanetCode': team.teamPlanetCode,
+      'time': this.couchService.datePlaceholder,
+      'createdOn': this.stateService.configuration.code,
+      'parentCode': this.stateService.configuration.parentCode
+    };
+    this.couchService.updateDocument('team_activities', data)
+      .subscribe((response) => {
+        console.log(response);
+      }, (error) => console.log('Error'));
+  }
+
 }
