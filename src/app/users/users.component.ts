@@ -45,7 +45,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   filter: any;
   planetType = '';
   displayTable = true;
-  displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
+  displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   isUserAdmin = false;
   deleteDialog: any;
   children: any;
@@ -117,12 +117,12 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   filterDisplayColumns(type: string) {
     if (type === 'local') {
-      this.displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'roles', 'action' ];
+      this.displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
       if (this.isUserAdmin) {
         this.displayedColumns.unshift('select');
       }
     } else {
-      this.displayedColumns = [ 'profile', 'name', 'joinDate', 'action' ];
+      this.displayedColumns = [ 'profile', 'name', 'joinDate', 'lastLogin', 'action' ];
     }
   }
 
@@ -182,7 +182,12 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         return currentLoginUser !== user.name && user.name !== 'satellite';
       }).concat(childUsers)
       .map((user: any) => {
-        const userInfo = { doc: user, imageSrc: '', visitCount: this.userLoginCount(user, loginActivities) };
+        const userInfo = {
+          doc: user,
+          imageSrc: '',
+          visitCount: this.userLoginCount(user, loginActivities),
+          lastLogin: this.userLastLogin(user, loginActivities)
+        };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
         }
@@ -330,6 +335,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   userLoginCount(user: any, loginActivities: any[]) {
     return loginActivities.filter((logItem: any) => logItem.user === user.name).length;
+  }
+
+  userLastLogin(user: any, loginActivities: any[]) {
+    return loginActivities.filter((logItem: any) => logItem.user === user.name)
+      .reduce((max: number, log: any) => log.loginTime > max ? log.loginTime : max, '');
   }
 
   gotoProfileView(userName: string) {

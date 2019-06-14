@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -10,10 +10,12 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 
 @Component({
   templateUrl: './reports-detail.component.html',
-  styleUrls: [ 'reports-detail.scss' ]
+  styleUrls: [ 'reports-detail.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
+  @HostBinding('class') readonly hostClass = 'manager-reports-detail';
   parentCode = '';
   planetCode = '';
   planetName = '';
@@ -137,8 +139,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLight),
-          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLight),
+          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
+          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
           this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey),
           this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
         ]

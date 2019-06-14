@@ -4,6 +4,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -26,6 +27,8 @@ export class UsersProfileComponent implements OnInit {
   planetCode: string | null = null;
   editable = false;
   hasAchievement = false;
+  totalLogins = 0;
+  lastLogin = 0;
 
   constructor(
     private couchService: CouchService,
@@ -41,6 +44,15 @@ export class UsersProfileComponent implements OnInit {
       this.urlName = params.get('name');
       this.planetCode = params.get('planet');
       this.profileView();
+      this.getLoginInfo(this.urlName);
+    });
+  }
+
+  getLoginInfo(name) {
+    this.couchService.findAll('login_activities', findDocuments({ 'user': name }, 0, [ { 'loginTime': 'desc' } ]))
+    .subscribe((logins: any) => {
+      this.totalLogins = logins.length;
+      this.lastLogin = logins[0].loginTime;
     });
   }
 

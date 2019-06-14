@@ -73,6 +73,18 @@ body {
     margin: 0 5px;
   }
 
+  // Use to give elements vertical space
+  .margin-tb {
+    margin: 5px 0;
+  }
+
+  // Use to give elements horizontal and vertical space
+  .margin-tblr {
+    margin: 5px 5px;
+  }
+
+
+
   // Use for text in all caps.  It avoids problems for screen readers to use this rather than all caps in HTML
   // See https://webaim.org/techniques/fonts/#caps
   .uppercase {
@@ -268,7 +280,11 @@ body {
     font-size: 0.75rem;
   }
 
-  mat-table .highlight, .primary-light-color {
+  mat-table .highlight, .primary-lighter-color {
+    background-color: $primary-lighter;
+  }
+
+  mat-table, .primary-light-color {
     background-color: $primary-light;
   }
 
@@ -508,4 +524,16 @@ body {
       min-width: auto;
     }
   }
+
+  .action-buttons {
+    margin: 0 0 0.5rem 0;
+    & > * {
+      margin: 0 0 0 0.25rem;
+    }
+
+    & > *:first-child {
+      margin: 0;
+    }
+  }
+
 }

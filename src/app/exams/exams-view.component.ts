@@ -26,7 +26,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   stepNum = 0;
   maxQuestions = 0;
   answer = new FormControl(null, this.answerValidator);
-  incorrectAnswer = false;
+  statusMessage = '';
   spinnerOn = true;
   mode = 'take';
   title = '';
@@ -82,7 +82,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.spinnerOn = true;
     if (courseId) {
       this.coursesService.requestCourse({ courseId });
-      this.incorrectAnswer = false;
+      this.statusMessage = '';
       this.grade = 0;
     } else if (submissionId) {
       this.fromSubmission = true;
@@ -94,7 +94,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setExamPreview() {
     this.grade = 0;
-    this.incorrectAnswer = false;
+    this.statusMessage = '';
     this.setQuestion(this.exam.questions);
   }
 
@@ -103,7 +103,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
-        this.incorrectAnswer = true;
+        this.statusMessage = 'incorrect';
         this.answer.setValue(null);
         this.spinnerOn = false;
       } else {
@@ -118,6 +118,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.isDialog) {
+      this.spinnerOn = false;
+      this.statusMessage = 'complete';
       return;
     }
     this.examComplete();
@@ -169,6 +171,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setQuestion(questions: any[]) {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
+    this.answer.markAsUntouched();
   }
 
   setCourseListener() {

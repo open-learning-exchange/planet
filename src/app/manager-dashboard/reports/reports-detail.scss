@@ -1,19 +1,34 @@
 @import '../../variables';
 
-.label{
-  font-size: 1.2em;
-  font-weight: bold;
-}
+.manager-reports-detail {
+  mat-grid-tile.label figure {
+    justify-content: start;
+    span, a {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
 
-mat-grid-list {
-  margin-top: 0.5rem;
-}
+  .reports-table-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 1vw;
+    margin: 3vh 0;
+    h1 {
+      display: block;
+      margin: 0.4rem 0 0;
+      color: $primary;
+    }
+  }
 
-mat-grid-list:not(:last-child) {
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid $light-grey;
-}
+  @media(max-width:1000px) {
+    .reports-table-container {
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    }
+  }
 
-canvas {
-  max-height: 30vh;
+  canvas {
+    max-height: 30vh;
+  }
 }

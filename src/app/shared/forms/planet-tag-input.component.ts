@@ -171,7 +171,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       initTags: this.initTags.bind(this),
       reset: this.resetDialogData.bind(this),
       startingTags,
-      tags: this.filterTags(this.tags.filter(this.tagsService.filterOutSubTags), this.selectMany),
+      tags: this.addTagCount(this.tags.filter(this.tagsService.filterOutSubTags), this.selectMany),
       mode: this.mode,
       initSelectMany: this.selectMany,
       db: this.db
@@ -198,7 +198,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     }
   }
 
-  filterTags(tags, selectMany = false) {
+  addTagCount(tags, selectMany = false) {
     return this.mode === 'add' ? tags : tags.map((tag) => {
       return !selectMany ? tag : ({
         ...tag,
@@ -207,7 +207,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
           0
         )
       });
-    }).filter((tag: any) => tag.count > 0 || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
+    });
   }
 
   dialogTagUpdate(tag, isSelected, tagOne = false) {

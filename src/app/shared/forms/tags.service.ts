@@ -35,6 +35,7 @@ export class TagsService {
 
   updateTag(tag) {
     const { count, subTags, ...tagData } = tag;
+    tagData.attachedTo = tagData.attachedTo || [];
     const newId = `${tagData.attachedTo.length === 0 ? tagData.db : tagData.attachedTo}_${tagData.name.toLowerCase()}`;
     if (newId === tag._id) {
       return this.couchService.updateDocument('tags', tagData).pipe(
@@ -76,7 +77,7 @@ export class TagsService {
         ...doc,
         tags: docTags.map(tag => ({
           ...tag,
-          subTags: tag.subTags.filter(subTag => docTags.some(docTag => docTag._id === subTag._id)),
+          subTags: tag.subTags ? tag.subTags.filter(subTag => docTags.some(docTag => docTag._id === subTag._id)) : [],
           isMainTag: this.filterOutSubTags(tag)
         }))
       };
