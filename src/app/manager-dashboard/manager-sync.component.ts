@@ -100,7 +100,8 @@ export class ManagerSyncComponent implements OnInit {
       { db: 'admin_activities' },
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
-      { db: 'myplanet_activities' }
+      { db: 'myplanet_activities' },
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
     ];
   }
 
