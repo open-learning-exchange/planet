@@ -148,7 +148,7 @@ export class PlanetTagInputDialogComponent {
       });
     }).bind(this);
     event.stopPropagation();
-    const options = this.tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0) 
+    const options = this.tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0)
       && t.subTags.length === 0).map((t: any) => ({ name: t.name, value: t._id || t.name }));
     this.dialogsFormService.openDialogsForm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
