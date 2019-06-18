@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { parseToObject } from '../shared/utils';
 
 export class Message {
   message: string;
@@ -25,7 +26,7 @@ export class Feedback {
   source: string;
   url: string;
   messages: Array<Message>;
-  params: Object;
+  params: string;
 }
 
 const dialogFieldOptions = [
@@ -95,6 +96,7 @@ export class FeedbackDirective {
       };
     this.couchService.updateDocument('feedback', {
       ...newFeedback,
+      params: JSON.stringify(parseToObject(newFeedback.url)),
       title: newFeedback.type + ' regarding ' + newFeedback.url.substring(0, newFeedback.url.indexOf(';')) })
     .subscribe((data) => {
       this.feedbackService.setfeedback();

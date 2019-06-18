@@ -61,7 +61,7 @@ export const parseToObject = (url: string) => {
   if (frags.length > 1) {
     const props = [];
     const value = [];
-    for (i = 1; i < frags.length; i++) {
+    for (let i = 1; i < frags.length; i++) {
       const split = frags[i].split('=');
       obj[split[0]] = split[1];
     }
