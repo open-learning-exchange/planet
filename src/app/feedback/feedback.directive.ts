@@ -26,7 +26,7 @@ export class Feedback {
   source: string;
   url: string;
   messages: Array<Message>;
-  params: string;
+  params: Object;
 }
 
 const dialogFieldOptions = [
@@ -90,13 +90,13 @@ export class FeedbackDirective {
         status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
+        params: parseToObject(this.router.url),
         source: this.stateService.configuration.code,
         parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
       };
     this.couchService.updateDocument('feedback', {
       ...newFeedback,
-      params: JSON.stringify(parseToObject(newFeedback.url)),
       title: newFeedback.type + ' regarding ' + newFeedback.url.substring(0, newFeedback.url.indexOf(';')) })
     .subscribe((data) => {
       this.feedbackService.setfeedback();

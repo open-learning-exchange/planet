@@ -40,7 +40,7 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="feedback-params">{{feedback.params}}</div>
+    <div class="feedback-params" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
     <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
         <div class="chat-list-user">
