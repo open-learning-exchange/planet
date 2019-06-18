@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   ));
   // For disposable returned by observer to unsubscribe
   animDisp: any;
+  onlineStatus = 'offline';
 
   private onDestroy$ = new Subject<void>();
 
@@ -63,6 +64,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         this.onUserUpdate();
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
+    this.onlineStatus = this.stateService.configuration.registrationRequest;
   }
 
   ngOnInit() {

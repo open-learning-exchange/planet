@@ -5,7 +5,7 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button (click)="runSyncClick()" i18n><mat-icon>sync</mat-icon>Run Sync</button>
+    <button mat-button planetSync (syncComplete)="getReplicators($event)" i18n><mat-icon>sync</mat-icon>Run Sync</button>
     <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
   </mat-toolbar>
   <mat-list>
