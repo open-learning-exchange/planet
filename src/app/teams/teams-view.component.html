@@ -61,6 +61,7 @@
             <li *ngFor="let request of requests">
               <a [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
               <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(request)" [disabled]="disableAddingMembers">Accept</button>
+              <button mat-raised-button color="warn" class="margin-lr-3" i18n (click)="cancelRequest(request)" [disabled]="disableAddingMembers">Reject</button>
             </li>
           </ul>
         </ng-template>

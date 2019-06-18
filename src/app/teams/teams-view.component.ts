@@ -123,6 +123,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     ).subscribe(() => this.getMembers());
   }
 
+  rejectRequest(request) {
+    this.teamsService.removeFromRequests(this.team, request)
+      .subscribe(() => this.getMembers());
+  }
+
   openDialog(data) {
     this.dialogRef = this.dialog.open(DialogsListComponent, {
       data,
