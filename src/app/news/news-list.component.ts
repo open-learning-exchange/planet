@@ -27,8 +27,6 @@ export class NewsListComponent implements OnChanges {
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
-
-  //i have tried to change this
   @Output() showForm = new EventEmitter<any>();
   @Output() showPost = new EventEmitter<any>();
 
