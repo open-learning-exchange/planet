@@ -20,6 +20,7 @@ import { NewsService } from '../news/news.service';
 })
 export class TeamsViewComponent implements OnInit, OnDestroy {
 
+  showForm = true;
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
   members = [];
@@ -78,6 +79,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.teamsService.teamActivity(this.team, 'teamVisit');
       }
     });
+  }
+
+  hidingAddMessage(data) {
+    this.showForm = (data._id === 'root' );
   }
 
   setStatus(team, user) {

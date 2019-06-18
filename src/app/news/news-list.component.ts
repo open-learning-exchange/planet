@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -28,13 +28,19 @@ export class NewsListComponent implements OnChanges {
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
 
+  //i have tried to change this
+  @Output() showForm = new EventEmitter<any>();
+  @Output() showPost = new EventEmitter<any>();
+
   constructor(
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService
-  ) {}
+  ) {
+    console.log(this.replyViewing);
+  }
 
   ngOnChanges() {
     this.replyObject = {};
@@ -47,6 +53,8 @@ export class NewsListComponent implements OnChanges {
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
+    this.showForm.emit(this.replyViewing);
+    this.showPost.emit(this.replyViewing);
   }
 
   showPreviousReplies() {
