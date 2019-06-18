@@ -14,7 +14,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   newsItems: any[] = [];
   newMessage = '';
   private onDestroy$ = new Subject<void>();
-  showPost=true;
+  showPost = true;
 
   constructor(
     private stateService: StateService,
