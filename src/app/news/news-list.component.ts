@@ -35,9 +35,7 @@ export class NewsListComponent implements OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService
-  ) {
-    console.log(this.replyViewing);
-  }
+  ) {}
 
   ngOnChanges() {
     this.replyObject = {};

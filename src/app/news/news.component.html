@@ -10,7 +10,7 @@
     <ng-container *ngIf="showForm">
       <div *planetAuthorizedRoles="'learner'" class="new-post-form">
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" [(ngModel)]="newMessage" i18n-placeholder placeholder="What would you like to share?"></planet-markdown-textbox>
+          <planet-markdown-textbox class="full-width" [(ngModel)]="newMessage" i18n-placeholder placeholder="What would you like to share?"></planet-markdown-textbox>
         </mat-form-field>
         <button mat-raised-button color="accent" class="full-width" (click)="postMessage()" [disabled]="!newMessage.trim()">Post</button>
       </div>
