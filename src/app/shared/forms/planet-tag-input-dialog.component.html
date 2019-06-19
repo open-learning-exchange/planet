@@ -2,7 +2,7 @@
   <span mat-dialog-title i18n *ngSwitchCase="'filter'">Collections</span>
   <span mat-dialog-title i18n *ngSwitchCase="'add'">Change Collections</span>
 </ng-container>
-<mat-dialog-content>
+<mat-dialog-content style= "max-height: calc(100vh - 310px)">
   <mat-form-field class="full-width">
     <input matInput i18n-placeholder placeholder="Filter by Collection Name" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
