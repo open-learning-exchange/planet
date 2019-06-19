@@ -37,7 +37,7 @@
         </ng-template>
       </ng-container>
       <ng-container *ngSwitchCase="'news'">
-        <button mat-stroked-button (click)="openAddMessageDialog()">New message</button>
+        <button mat-stroked-button (click)="openAddMessageDialog()" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" editSuccessMessage="Message has been updated successfully"></planet-news-list>
       </ng-container>
     </div>
