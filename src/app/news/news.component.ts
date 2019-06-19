@@ -14,7 +14,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   newsItems: any[] = [];
   newMessage = '';
   private onDestroy$ = new Subject<void>();
-  showPost = true;
+  showForm = true;
 
   constructor(
     private stateService: StateService,
@@ -22,7 +22,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   ) {}
 
   hidingPost(data) {
-    this.showPost = (data._id === 'root' );
+    this.showForm = (data._id === 'root' );
   }
 
   ngOnInit() {
