@@ -120,8 +120,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   openFeedback(feedback) {
     this.dialogsLoadingService.start();
-    this.feedbackServive.openFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
-    this.dialogsLoadingService.stop();
+    this.feedbackServive.openFeedback(feedback).subscribe(() => {
+      this.getFeedback(feedback.id);
+      this.dialogsLoadingService.stop();
+    });
   }
 
   scrollToBottom() {
