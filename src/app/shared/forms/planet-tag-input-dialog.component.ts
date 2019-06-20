@@ -21,6 +21,9 @@ import { mapToArray, isInMap } from '../utils';
     :host p[matLine] *:last-child {
       margin-right: 0;
     }
+    mat-dialog-content {
+      max-height: calc(100vh - 310px);
+    }
   ` ]
 })
 export class PlanetTagInputDialogComponent {
