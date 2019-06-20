@@ -1,6 +1,6 @@
 <ng-container *ngIf="replyViewing._id!=='root'">
   <div class="action-buttons">
-    <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
+    <button mat-stroked-button style="margin-top: 0.5rem" type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
     <button mat-stroked-button type="button" *ngIf="replyViewing.replyTo && replyViewing.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
   </div>
   <p i18n>Viewing replies for:</p>
