@@ -10,6 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -32,7 +33,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private feedbackServive: FeedbackService,
-    private router: Router
+    private router: Router,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -117,7 +119,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   openFeedback(feedback) {
-    this.feedbackServive.openFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
+    this.dialogsLoadingService.start();
+    this.feedbackServive.openFeedback(feedback).subscribe(() => {
+      this.getFeedback(feedback.id);
+      this.dialogsLoadingService.stop();
+    });
   }
 
   scrollToBottom() {
