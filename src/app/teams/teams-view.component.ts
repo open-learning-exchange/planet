@@ -20,7 +20,6 @@ import { NewsService } from '../news/news.service';
 })
 export class TeamsViewComponent implements OnInit, OnDestroy {
 
-  showForm = true;
   team: any;
   teamId = this.route.snapshot.paramMap.get('teamId');
   members = [];
@@ -34,6 +33,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   news: any[] = [];
   leftTileContent: 'description' | 'news' = 'news';
+  isRoot = true;
 
   constructor(
     private couchService: CouchService,
@@ -81,8 +81,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  hidingAddMessage(data) {
-    this.showForm = (data._id === 'root' );
+  toggleAdd(data) {
+    this.isRoot = (data._id === 'root' );
   }
 
   setStatus(team, user) {

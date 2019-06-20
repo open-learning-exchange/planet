@@ -37,8 +37,8 @@
         </ng-template>
       </ng-container>
       <ng-container *ngSwitchCase="'news'">
-        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showForm" i18n>New message</button>
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (showForm)="hidingAddMessage($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
+        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
       </ng-container>
     </div>
     <div class="right-tile">

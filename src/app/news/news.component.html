@@ -7,7 +7,7 @@
     <mat-toolbar-row class="primary-color font-size-1"></mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <ng-container *ngIf="showForm">
+    <ng-container *ngIf="isRoot">
       <div *planetAuthorizedRoles="'learner'" class="new-post-form">
         <mat-form-field class="full-width mat-form-field-type-no-underline">
           <planet-markdown-textbox class="full-width" [(ngModel)]="newMessage" i18n-placeholder placeholder="What would you like to share?"></planet-markdown-textbox>
@@ -16,7 +16,7 @@
       </div>
     </ng-container>
     <div class="news-container">
-      <planet-news-list [items]="newsItems" (showForm)="hidingPost($event)"></planet-news-list>
+      <planet-news-list [items]="newsItems" (viewChange)="toggleForm($event)"></planet-news-list>
     </div>
   </div>
 </div>

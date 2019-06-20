@@ -27,7 +27,7 @@ export class NewsListComponent implements OnChanges {
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
-  @Output() showForm = new EventEmitter<any>();
+  @Output() viewChange = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog,
@@ -48,7 +48,7 @@ export class NewsListComponent implements OnChanges {
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
-    this.showForm.emit(this.replyViewing);
+    this.viewChange.emit(this.replyViewing);
   }
 
   showPreviousReplies() {
