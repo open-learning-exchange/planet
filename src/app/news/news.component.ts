@@ -14,11 +14,17 @@ export class NewsComponent implements OnInit, OnDestroy {
   newsItems: any[] = [];
   newMessage = '';
   private onDestroy$ = new Subject<void>();
+  isRoot = true;
 
   constructor(
     private stateService: StateService,
     private newsService: NewsService
   ) {}
+
+  toggleForm(data) {
+    console.log(data);
+    this.isRoot = (data._id === 'root' );
+  }
 
   ngOnInit() {
     this.getMessages();

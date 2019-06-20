@@ -33,6 +33,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   news: any[] = [];
   leftTileContent: 'description' | 'news' = 'news';
+  isRoot = true;
 
   constructor(
     private couchService: CouchService,
@@ -78,6 +79,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.teamsService.teamActivity(this.team, 'teamVisit');
       }
     });
+  }
+
+  toggleAdd(data) {
+    this.isRoot = (data._id === 'root' );
   }
 
   setStatus(team, user) {
