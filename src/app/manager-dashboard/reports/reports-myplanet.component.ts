@@ -45,7 +45,9 @@ export class ReportsMyPlanetComponent implements OnInit {
           myPlanets.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code),
           [ 'androidId' ],
           { maxField: 'time' }
-        ).map((child: any) => child.max)
+        ).map((child: any) => {
+          return { count: child.count, ...child.max };
+        })
       })
     );
   }
