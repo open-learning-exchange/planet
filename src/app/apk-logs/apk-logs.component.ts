@@ -12,7 +12,7 @@ export class ApkLogsComponent {
   constructor(
     private couchService: CouchService,
   ) {
-    this.couchService.findAll('apk_logs').subscribe(apk_logs => this.apklogs = apk_logs);
+    this.couchService.findAll('apk_logs').subscribe(apklogs => this.apklogs = apklogs);
   }
 
 }
