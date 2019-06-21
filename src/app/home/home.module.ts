@@ -19,6 +19,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { CommunityTableComponent } from '../community/community-table.component';
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
 import { NewsModule } from '../news/news.module';
+import { ApkLogsComponent } from '../apk-logs/apk-logs.component';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import { NewsModule } from '../news/news.module';
     DashboardTileComponent,
     NotificationsComponent,
     PulsateIconDirective,
-    UpgradeComponent
+    UpgradeComponent,
+    ApkLogsComponent
   ]
 })
 export class HomeModule {}

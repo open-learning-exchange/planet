@@ -1,0 +1,22 @@
+<mat-toolbar>
+    <button class="btnBack" mat-icon-button routerLink="">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>Logs</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>My Planet</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <mat-expansion-panel *ngFor="let apk_log of apk_logs">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{apk_log.type}}</mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>{{apk_log.error}}</p>
+    </mat-expansion-panel>
+  </div>
+</div>

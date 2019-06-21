@@ -10,6 +10,7 @@ import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
 import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
 import { NewsComponent } from '../news/news.component';
+import { ApkLogsComponent } from '../apk-logs/apk-logs.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -33,7 +34,8 @@ const routes: Routes = [
       { path: 'surveys', loadChildren: '../surveys/surveys.module#SurveysModule' },
       { path: 'myAchievements', component: UsersAchievementsComponent },
       { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent },
-      { path: 'news', component: NewsComponent }
+      { path: 'news', component: NewsComponent },
+      { path: 'logs/myplanet', component: ApkLogsComponent }
     ]
   }
 ];
