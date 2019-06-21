@@ -90,7 +90,8 @@ export class SyncDirective {
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
       { db: 'myplanet_activities' },
-      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
+      { db: 'notifications', selector: { target: this.planetConfiguration.parentCode } }
     ];
   }
 
