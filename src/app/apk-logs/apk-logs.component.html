@@ -12,11 +12,11 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-expansion-panel *ngFor="let apk_log of apk_logs">
+    <mat-expansion-panel *ngFor="let apklog of apklogs">
       <mat-expansion-panel-header>
-        <mat-panel-title>{{apk_log.type}}</mat-panel-title>
+        <mat-panel-title>{{apklog.type}}</mat-panel-title>
       </mat-expansion-panel-header>
-      <p>{{apk_log.error}}</p>
+      <p>{{apklog.error}}</p>
     </mat-expansion-panel>
   </div>
 </div>
