@@ -14,7 +14,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 
 @Component({
   templateUrl: './feedback-view.component.html',
-  styleUrls: [ './feedback-view.scss' ]
+  styleUrls: ['./feedback-view.scss']
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
@@ -35,7 +35,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private feedbackServive: FeedbackService,
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getFeedback(params.get('id'))))
@@ -113,17 +113,22 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   closeFeedback(feedback) {
     this.feedbackServive.closeFeedback(feedback).subscribe(
-      () => this.router.navigate([ '/feedback' ]),
+      () => this.router.navigate(['/feedback']),
       () => this.planetMessageService.showAlert('There was an error closing this feedback.')
     );
   }
 
   openFeedback(feedback) {
     this.dialogsLoadingService.start();
-    this.feedbackServive.openFeedback(feedback).subscribe(() => {
-      this.getFeedback(feedback.id);
-      this.dialogsLoadingService.stop();
-    });
+    this.feedbackServive.openFeedback(feedback).subscribe(
+      success => {
+        this.getFeedback(feedback.id);
+        this.dialogsLoadingService.stop();
+      }, error => {
+        console.log(error);
+        this.planetMessageService.showAlert('There has been an error opening the feedback.');
+        this.dialogsLoadingService.stop();
+      });
   }
 
   scrollToBottom() {
@@ -133,5 +138,4 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   feedbackTrackByFn(index, item) {
     return item._id;
   }
-
 }
