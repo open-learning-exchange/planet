@@ -124,16 +124,24 @@
       <!--Bottom part-->
       <ul class="bottom-nav">
         <li>
+          <a mat-button planetFeedback i18n-title title="Feedback">
+            <mat-icon>help_outline</mat-icon>
+            <label i18n>Feedback</label>
+          </a>
+        </li>
+        <li>
           <a mat-button routerLink="/surveys" i18n-title title="Surveys">
             <mat-icon svgIcon="surveys"></mat-icon>
             <label i18n>Surveys</label>
           </a>
         </li>
         <li>
-          <a mat-button planetFeedback i18n-title title="Feedback">
-            <mat-icon svgIcon="feedback"></mat-icon>
-            <label i18n>Feedback</label>
-          </a>
+          <ng-container *planetAuthorizedRoles="'manager,monitor'">
+            <a mat-button planetSync i18n-title title="Sync">
+              <mat-icon svgIcon="feedback"></mat-icon>
+              <label i18n>Sync</label>
+            </a>
+          </ng-container>
         </li>
         <li>
           <a mat-button (click)="logoutClick()" i18n-title title="Logout">
