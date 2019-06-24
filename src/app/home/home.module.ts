@@ -19,7 +19,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { CommunityTableComponent } from '../community/community-table.component';
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
 import { NewsModule } from '../news/news.module';
-import { ApkLogsComponent } from '../apk-logs/apk-logs.component';
+import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 
 @NgModule({
   imports: [
@@ -45,7 +45,7 @@ import { ApkLogsComponent } from '../apk-logs/apk-logs.component';
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
-    ApkLogsComponent
+    LogsMyPlanetComponent
   ]
 })
 export class HomeModule {}

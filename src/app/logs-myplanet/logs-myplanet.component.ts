@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 
 @Component({
-  selector: 'planet-apk-logs',
-  templateUrl: './apk-logs.component.html'
+  templateUrl: './logs-myplanet.component.html'
 })
-export class ApkLogsComponent {
+export class LogsMyPlanetComponent {
 
   apklogs = [];
 
