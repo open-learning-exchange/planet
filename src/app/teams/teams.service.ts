@@ -174,7 +174,7 @@ export class TeamsService {
       'priority': 1,
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
-      target: user.userPlanetCode
+      userPlanetCode: user.userPlanetCode
     };
   }
 
