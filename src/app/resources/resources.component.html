@@ -1,10 +1,7 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n class="margin-lr">Library</span>
-    <button *ngIf="!parent && !isDialog" mat-stroked-button class="margin-lr-3" (click)="toggleMyLibrary()" i18n>
-      {myLibraryFilter, select, on {Community} off {myLibrary}} resources
-    </button>
+    <span *ngIf="!parent && !isDialog" i18n class="margin-lr">{myLibraryFilter, select, on {my} off {}}Library</span>
     <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
       <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false"></planet-tag-input>
     </mat-form-field>
