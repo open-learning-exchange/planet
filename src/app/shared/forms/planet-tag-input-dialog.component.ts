@@ -156,9 +156,14 @@ export class PlanetTagInputDialogComponent {
   }
 
   tagOption(tag) {
-    return this.tags.filter((t: any) =>
-      t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0)
-    ).map((t: any) => ({ name: t.name, value: t._id || t.name }));
+    if (tag.subTags === undefined || !tag.subTags.length) {
+      return this.tags.filter((t: any) =>
+        t.name !== tag.name &&
+        (t.attachedTo === undefined || t.attachedTo.length === 0)
+      ).map((t: any) => ({ name: t.name, value: t._id || t.name }));
+    } else {
+      return [];
+    }
   }
 
   tagForm(tag: any = {}) {

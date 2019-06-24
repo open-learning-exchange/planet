@@ -18,7 +18,9 @@
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Subcollection of..." formControlName="attachedTo">
           <mat-option>None</mat-option>
-          <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
+          <ng-container *ngFor="let tag of tags">
+            <mat-option *ngIf="tag.attachedTo === undefined || tag.attachedTo.length === 0" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
+          </ng-container>
         </mat-select>
       </mat-form-field>
       <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
@@ -31,7 +33,7 @@
           <mat-checkbox (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
           <span [ngClass]="{ 'mat-body-2': tag.subTags.length > 0, 'mat-body-1': tag.subTags.length === 0 }">{{tag.name + ' (' + (tag.count || 0) + ')'}}</span>
           <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" (click)="toggleSubcollection($event,tag._id)" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
-          <button mat-stroked-button *ngIf="isUserAdmin && tag.subTags.length === 0" (click)="editTagClick($event,tag)">Edit</button>
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
         </p>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">

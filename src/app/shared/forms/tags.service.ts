@@ -107,7 +107,7 @@ export class TagsService {
   }
 
   filterOutSubTags(tag: any) {
-    return tag.attachedTo === undefined || tag.attachedTo.length === 0;
+    return tag.subTags.length === 0 || tag.attachedTo === undefined || tag.attachedTo.length === 0;
   }
 
 }
