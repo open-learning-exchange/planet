@@ -145,8 +145,7 @@ export class TeamsService {
       const userId = user.userId || user._id;
       return this.userService.get()._id !== userId && user.name !== 'satellite';
     }).map((user: any) => {
-      const userId = user.userId || user._id;
-      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), userId, notificationParams);
+      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), user, notificationParams);
     });
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
@@ -164,7 +163,8 @@ export class TeamsService {
     }
   }
 
-  teamNotification(message, userId, { team, url }) {
+  teamNotification(message, user, { team, url }) {
+    const userId = user.userId || user._id;
     return {
       'user': userId,
       message,
@@ -173,7 +173,8 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: user.userPlanetCode
     };
   }
 

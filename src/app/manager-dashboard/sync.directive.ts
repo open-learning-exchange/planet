@@ -90,14 +90,15 @@ export class SyncDirective {
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
       { db: 'myplanet_activities' },
-      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } }
     ];
   }
 
   pullList() {
     return [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { target: this.planetConfiguration.code } }
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } }
     ];
   }
 
