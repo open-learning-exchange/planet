@@ -135,14 +135,14 @@
             <label i18n>Surveys</label>
           </a>
         </li>
-        <li>
-          <ng-container *planetAuthorizedRoles="'manager,monitor'">
+        <ng-container *planetAuthorizedRoles="'manager,monitor'">
+          <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">
               <mat-icon svgIcon="feedback"></mat-icon>
               <label i18n>Sync</label>
             </a>
-          </ng-container>
-        </li>
+          </li>
+        </ng-container>
         <li>
           <a mat-button (click)="logoutClick()" i18n-title title="Logout">
             <mat-icon svgIcon="logout"></mat-icon>
