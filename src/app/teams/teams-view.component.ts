@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, finalize } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -51,9 +51,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.couchService.get('teams/' + this.teamId)
-      .subscribe(data => {
+      .pipe(switchMap(data => {
         this.team = data;
-        this.getMembers(true);
+        return this.getMembers(true);
+      }))
+      .subscribe(() => {
         this.setStatus(this.team, this.userService.get());
       });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
@@ -67,18 +69,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   getMembers(initial = false) {
     if (this.team === undefined) {
-      return;
+      return of({});
     }
-    this.teamsService.getTeamMembers(this.team, true).subscribe((docs: any[]) => {
+    this.teamsService.getTeamMembers(this.team, true)
+    .pipe(switchMap((docs: any[]) => {
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
       this.members = docsWithName.filter(mem => mem.docType === 'membership');
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
       if (initial && this.userStatus === 'member') {
-        this.teamsService.teamActivity(this.team, 'teamVisit');
+        return this.teamsService.teamActivity(this.team, 'teamVisit');
       }
-    });
+      return of({});
+    }));
   }
 
   toggleAdd(data) {
@@ -99,11 +103,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.teamsService.toggleTeamMembership(
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
-    ).subscribe((newTeam) => {
-      this.getMembers();
-      this.team = newTeam;
+    ).pipe(
+      switchMap((newTeam) => {
+        this.team = newTeam;
+        return this.getMembers();
+      })
+    ).subscribe(() => {
       const msg = leaveTeam ? 'left' : 'joined';
-      if (newTeam.status === 'archived') {
+      if (this.team.status === 'archived') {
         this.router.navigate([ '/teams' ]);
       }
       this.planetMessageService.showMessage('You have ' + msg + ' team');
@@ -112,10 +119,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   requestToJoin() {
     this.teamsService.requestToJoinTeam(this.team, this.user._id).pipe(
-      switchMap(() => {
-        this.getMembers();
-        return this.sendNotifications('request');
-      })
+      switchMap(() => this.getMembers()),
+      switchMap(() => this.sendNotifications('request'))
     ).subscribe((newTeam) => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage('Request to join team sent');
@@ -176,9 +181,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           }),
           this.sendNotifications('addMember', selected.length)
         ]);
-      })
-    ).subscribe(([ notificationRes1, notificationRes2 ]) => {
-      this.getMembers();
+      }),
+      switchMap(() => this.getMembers())
+    ).subscribe(() => {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
     });

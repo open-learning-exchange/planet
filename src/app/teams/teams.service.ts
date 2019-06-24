@@ -189,7 +189,7 @@ export class TeamsService {
       'createdOn': this.stateService.configuration.code,
       'parentCode': this.stateService.configuration.parentCode
     };
-    this.couchService.updateDocument('team_activities', data).subscribe();
+    return this.couchService.updateDocument('team_activities', data);
   }
 
 }
