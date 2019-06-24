@@ -1,10 +1,10 @@
-<mat-table #table [dataSource]="myPlanets">
+<mat-table #table [dataSource]="myPlanets" matSort>
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef i18n>ID</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.androidId}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.deviceName}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSynced">
@@ -12,8 +12,12 @@
     <mat-cell *matCellDef="let element">{{element.last_synced | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="version">
-    <mat-header-cell *matHeaderCellDef i18n>version</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Version</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.versionName}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="count">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Count</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
