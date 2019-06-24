@@ -22,8 +22,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   ) {}
 
   toggleForm(data) {
-    console.log(data);
-    this.isRoot = (data._id === 'root' );
+    this.isRoot = data._id === 'root';
   }
 
   ngOnInit() {
