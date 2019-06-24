@@ -82,7 +82,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   toggleAdd(data) {
-    this.isRoot = (data._id === 'root' );
+    this.isRoot = data._id === 'root';
   }
 
   setStatus(team, user) {
