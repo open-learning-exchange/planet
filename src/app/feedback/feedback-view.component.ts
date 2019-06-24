@@ -14,7 +14,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 
 @Component({
   templateUrl: './feedback-view.component.html',
-  styleUrls: ['./feedback-view.scss']
+  styleUrls: [ './feedback-view.scss' ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
@@ -113,7 +113,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   closeFeedback(feedback) {
     this.feedbackServive.closeFeedback(feedback).subscribe(
-      () => this.router.navigate(['/feedback']),
+      () => this.router.navigate([ '/feedback' ]),
       () => this.planetMessageService.showAlert('There was an error closing this feedback.')
     );
   }
