@@ -61,7 +61,7 @@ export class SyncDirective {
     ).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
       this.syncComplete.emit();
-    }, error => this.planetMessageService.showMessage(error));
+    }, error => this.planetMessageService.showMessage(error.error.reason))
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
