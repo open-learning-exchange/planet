@@ -41,9 +41,7 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div *ngIf="showParams==='on'">
-      <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">
-        <div>{{prop.key}}: {{prop.value}}</div>
-      </div>
+      <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
     </div>
     <button class="margin-tb" mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
     <div class="chat-list" #chatList>
