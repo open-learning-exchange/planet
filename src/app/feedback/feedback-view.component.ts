@@ -42,7 +42,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       .pipe(debug('Getting feedback'), takeUntil(this.onDestroy$))
       .subscribe((result) => {
         this.setFeedback(result);
-        this.setCouchListener(result.docs[0]._id);
+        //this.setCouchListener(result.docs[0]._id);
       }, error => console.log(error));
     this.user = this.userService.get();
   }
@@ -120,15 +120,17 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   openFeedback(feedback) {
     this.dialogsLoadingService.start();
-    this.feedbackServive.openFeedback(feedback).subscribe(
-      () => {
-        this.getFeedback(feedback.id);
-        this.dialogsLoadingService.stop();
-      }, error => {
-        console.log(error);
-        this.planetMessageService.showAlert('There has been an error opening the feedback.');
-        this.dialogsLoadingService.stop();
-      });
+
+    this.feedbackServive.openFeedback(feedback)
+      .pipe(switchMap(() => this.getFeedback(feedback.id)))
+      .subscribe(
+        () => this.dialogsLoadingService.stop(),
+        error => {
+          console.log(error);
+          this.planetMessageService.showAlert('There has been an error opening the feedback.');
+          this.dialogsLoadingService.stop();
+        }
+      );
   }
 
   scrollToBottom() {
