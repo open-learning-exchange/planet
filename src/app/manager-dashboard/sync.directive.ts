@@ -17,7 +17,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 export class SyncDirective {
   @Output() syncComplete = new EventEmitter<void>();
 
-  replicators = [];
   planetConfiguration = this.stateService.configuration;
 
   constructor(
