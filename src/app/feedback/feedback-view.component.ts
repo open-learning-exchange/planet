@@ -35,7 +35,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private feedbackServive: FeedbackService,
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getFeedback(params.get('id'))))
@@ -140,4 +140,5 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   feedbackTrackByFn(index, item) {
     return item._id;
   }
+  
 }
