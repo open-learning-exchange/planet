@@ -10,6 +10,7 @@ import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
+import { parseToObject } from '../shared/utils';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -23,6 +24,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   newMessage = '';
   isActive = true;
   editTitleMode = false;
+  showParams = 'off';
   @ViewChild('chatList', { static: false }) chatListElement: ElementRef;
 
   constructor(
@@ -56,6 +58,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.feedback = result.docs[0];
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
     this.scrollToBottom();
+    this.feedback.params = parseToObject(this.feedback.url);
   }
 
   getFeedback(id) {
@@ -163,6 +166,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   feedbackTrackByFn(index, item) {
     return item._id;
+  }
+
+  toggleParams() {
+    this.showParams = this.showParams === 'off' ? 'on' : 'off';
   }
 
 }
