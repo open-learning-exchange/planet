@@ -124,7 +124,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.feedbackServive.openFeedback(feedback)
       .pipe(switchMap(() => this.getFeedback(feedback.id)))
       .subscribe(
-        () => this.dialogsLoadingService.stop(),
+        res => {
+          this.setFeedback(res);
+          this.dialogsLoadingService.stop();
+        },
         error => {
           console.log(error);
           this.planetMessageService.showAlert('There has been an error opening the feedback.');
@@ -140,5 +143,5 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   feedbackTrackByFn(index, item) {
     return item._id;
   }
-  
+
 }
