@@ -10,9 +10,12 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { debug } from '../../debug-operator';
 import { MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { createDeleteArray } from '../table-helpers';
 
 @Injectable()
 export class TagsService {
+
+  tags: any[];
 
   constructor(
     private couchService: CouchService,
@@ -61,7 +64,12 @@ export class TagsService {
   }
 
   deleteTag(tag) {
-    return this.couchService.delete('tags/' + tag._id + '?rev=' + tag._rev);
+    return this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })).pipe(
+      switchMap((tags: any[]) => {
+        let deleteTagsArray = createDeleteArray(tags);
+        return this.couchService.post('tags/_bulk_docs', { docs: deleteTagsArray })
+      })
+    );
   }
 
   findTag(tagKey: any, fullTags: any[]) {
