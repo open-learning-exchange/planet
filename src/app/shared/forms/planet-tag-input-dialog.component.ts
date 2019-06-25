@@ -148,15 +148,21 @@ export class PlanetTagInputDialogComponent {
       });
     }).bind(this);
     event.stopPropagation();
-    const options = this.tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
-      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
     const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
-      { placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox', options, required: false, reset: true }
+      {
+        placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox',
+        options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
+      }
     ];
     this.dialogsFormService.openDialogsForm('Edit Collection', [
       { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
       ...subcollectionField
     ], this.tagForm(tag), { onSubmit });
+  }
+
+  subcollectionOfOptions(tag, tags) {
+    return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
   }
 
   tagForm(tag: any = {}) {
