@@ -6,7 +6,11 @@ import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, empty } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
+import { TeamsService } from '../teams/teams.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'planet-news-list',
@@ -34,7 +38,10 @@ export class NewsListComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private couchService: CouchService,
+    private teamService: TeamsService,
+    private router: Router
   ) {}
 
   ngOnChanges() {
@@ -68,7 +75,8 @@ export class NewsListComponent implements OnChanges {
         if (response) {
           this.newsService.postNews(
             { ...news, ...response, viewableBy: this.viewableBy, viewableId: this.viewableId }, this.editSuccessMessage
-          ).subscribe(() => {
+          ).pipe(switchMap(() => this.teamRequest(this.viewableId)))
+          .subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
             this.dialogsLoadingService.stop();
           });
@@ -101,6 +109,25 @@ export class NewsListComponent implements OnChanges {
         this.planetMessageService.showAlert('There was a problem deleting this news.');
       }
     };
+  }
+
+  teamRequest(teamId) {
+    if (!teamId) {
+      return of(empty);
+    }
+    let teamObj = {};
+    return this.couchService.get('teams/' + teamId).pipe(
+      switchMap(team => {
+        teamObj = team;
+        return this.teamService.getTeamMembers(team);
+      }),
+      switchMap((docs: any[]) => {
+        const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
+        const members = docsWithName.filter(mem => mem.docType === 'membership');
+        return this.teamService.sendNotifications('message', members, {
+          url: this.router.url, team: { ...teamObj }
+        });
+      }));
   }
 
 }
