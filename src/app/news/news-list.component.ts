@@ -13,7 +13,13 @@ import { forkJoin } from 'rxjs';
   templateUrl: './news-list.component.html',
   styles: [ `
     mat-divider {
-      margin: 1rem 0;
+      margin: 1rem 0 0;
+      border-top-color: gray;
+      border-top-width: 1.5rem;
+    }
+
+    .replies {
+      background-color: gray;
     }
   ` ]
 })
