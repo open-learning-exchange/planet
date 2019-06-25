@@ -17,7 +17,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 export class SyncDirective {
   @Output() syncComplete = new EventEmitter<void>();
 
-  replicators = [];
   planetConfiguration = this.stateService.configuration;
 
   constructor(
@@ -40,13 +39,14 @@ export class SyncDirective {
   }
 
   syncPlanet() {
-    const deleteArray = this.replicators.filter(rep => {
+    const deleteArray = (replicators) => replicators.filter(rep => {
       const defaultList = this.replicatorList((type) => (val) => val.db + '_' + type);
       return rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1;
     }).map(rep => {
       return { ...rep, _deleted: true };
     });
-    this.syncService.deleteReplicators(deleteArray).pipe(
+    this.couchService.findAll('_replicator').pipe(
+      switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
       map(([ res, users ]) => this.updateParentUsers(users)),
       switchMap(() => {
