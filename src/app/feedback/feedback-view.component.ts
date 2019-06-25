@@ -42,7 +42,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       .pipe(debug('Getting feedback'), takeUntil(this.onDestroy$))
       .subscribe((result) => {
         this.setFeedback(result);
-        //this.setCouchListener(result.docs[0]._id);
+        this.setCouchListener(result.docs[0]._id);
       }, error => console.log(error));
     this.user = this.userService.get();
   }
