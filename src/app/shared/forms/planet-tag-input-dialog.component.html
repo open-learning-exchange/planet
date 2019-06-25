@@ -18,9 +18,7 @@
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Subcollection of..." formControlName="attachedTo">
           <mat-option>None</mat-option>
-          <ng-container *ngFor="let tag of tags">
-            <mat-option *ngIf="tag.attachedTo === undefined || tag.attachedTo.length === 0" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
-          </ng-container>
+          <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">{{tag.name}}</mat-option>
         </mat-select>
       </mat-form-field>
       <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
