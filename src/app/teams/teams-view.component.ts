@@ -5,8 +5,8 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, finalize } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
+import { takeUntil, switchMap, finalize, map } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -50,14 +50,15 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.couchService.get('teams/' + this.teamId)
-      .pipe(switchMap(data => {
+    this.couchService.get('teams/' + this.teamId).pipe(
+      switchMap(data => {
         this.team = data;
-        return this.getMembers(true);
-      }))
-      .subscribe(() => {
-        this.setStatus(this.team, this.userService.get());
-      });
+        return this.getMembers();
+      }),
+      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : [])
+    ).subscribe(() => {
+      this.setStatus(this.team, this.userService.get());
+    });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
   }
@@ -67,21 +68,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getMembers(initial = false) {
+  getMembers() {
     if (this.team === undefined) {
-      return of({});
+      return [];
     }
-    this.teamsService.getTeamMembers(this.team, true)
-    .pipe(switchMap((docs: any[]) => {
+    return this.teamsService.getTeamMembers(this.team, true).pipe(map((docs: any[]) => {
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
       this.members = docsWithName.filter(mem => mem.docType === 'membership');
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
-      if (initial && this.userStatus === 'member') {
-        return this.teamsService.teamActivity(this.team, 'teamVisit');
-      }
-      return of({});
     }));
   }
 
@@ -129,13 +125,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   acceptRequest(request) {
     this.teamsService.toggleTeamMembership(this.team, false, request).pipe(
-      switchMap(() => this.teamsService.removeFromRequests(this.team, request))
-    ).subscribe(() => this.getMembers());
+      switchMap(() => this.teamsService.removeFromRequests(this.team, request)),
+      switchMap(() => this.getMembers())
+    ).subscribe();
   }
 
   rejectRequest(request) {
-    this.teamsService.removeFromRequests(this.team, request)
-      .subscribe(() => this.getMembers());
+    this.teamsService.removeFromRequests(this.team, request).pipe(switchMap(() => this.getMembers())).subscribe();
   }
 
   openDialog(data) {
