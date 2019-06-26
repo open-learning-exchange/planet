@@ -8,6 +8,7 @@ import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -55,7 +56,8 @@ export class PlanetTagInputDialogComponent {
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
-    private userService: UserService
+    private userService: UserService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -145,6 +147,7 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
         this.data.initTags(this.mode === 'add' ? newTagId : undefined);
         this.dialogsFormService.closeDialogsForm();
+        this.dialogsLoadingService.stop();
       });
     }).bind(this);
     event.stopPropagation();
