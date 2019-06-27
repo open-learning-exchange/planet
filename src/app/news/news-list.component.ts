@@ -11,17 +11,7 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styles: [ `
-    mat-divider {
-      margin: 1rem 0 0;
-      border-top-color: gray;
-      border-top-width: 1.5rem;
-    }
-
-    .replies {
-      background-color: gray;
-    }
-  ` ]
+  styleUrls: ['./news-list.scss']
 })
 export class NewsListComponent implements OnChanges {
 

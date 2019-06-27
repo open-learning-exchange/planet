@@ -4,7 +4,8 @@
     <button mat-stroked-button type="button" *ngIf="replyViewing.replyTo && replyViewing.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
   </div>
   <p i18n>Viewing replies for:</p>
-  <planet-news-list-item
+  <div class="main-message">
+    <planet-news-list-item
     [item]="replyViewing"
     [replyObject]="replyObject"
     [showRepliesButton]="false"
@@ -12,9 +13,9 @@
     (updateNews)="openUpdateDialog($event)"
     (deleteNews)="openDeleteDialog($event)">
   </planet-news-list-item>
+  </div>
   <mat-divider></mat-divider>
 </ng-container>
-<div class="replies">
   <planet-news-list-item *ngFor="let item of displayedItems"
   [item]="item"
   [replyObject]="replyObject"
@@ -22,4 +23,3 @@
   (updateNews)="openUpdateDialog($event)"
   (deleteNews)="openDeleteDialog($event)">
 </planet-news-list-item>
-</div>

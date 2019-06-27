@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
   templateUrl: 'news-list-item.component.html',
   styles: [ `
     :host mat-card {
-      margin: 0 0.25rem;
+      margin: 0.25rem;
     }
   ` ]
 })
