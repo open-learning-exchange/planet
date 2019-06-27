@@ -11,7 +11,7 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styleUrls: ['./news-list.scss']
+  styleUrls: [ './news-list.scss' ]
 })
 export class NewsListComponent implements OnChanges {
 
