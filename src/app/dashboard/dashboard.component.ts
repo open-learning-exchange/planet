@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit {
   displayName: string = this.userService.get().firstName !== undefined ?
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   displayRole: string = this.userService.get().roles.join(', ').replace('_', '');
+  planetName: string;
 
   dateNow: any;
   visits = 0;
@@ -41,6 +42,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
 
+    this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
     this.initDashboard();
