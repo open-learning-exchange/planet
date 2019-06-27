@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
-import { MatTableDataSource } from '@angular/material';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { SelectionModel } from '@angular/cdk/collections';
-import { debug } from '../../debug-operator';
-import { MatDialog } from '@angular/material';
-import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { createDeleteArray } from '../table-helpers';
 
 @Injectable()
 export class TagsService {
-
-  tags: any[];
 
   constructor(
     private couchService: CouchService,

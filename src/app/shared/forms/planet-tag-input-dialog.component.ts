@@ -29,7 +29,6 @@ import { debug } from '../../debug-operator';
 export class PlanetTagInputDialogComponent {
 
   deleteDialog: any;
-  message = '';
   tags: any[] = [];
   selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
@@ -190,10 +189,6 @@ export class PlanetTagInputDialogComponent {
         type: 'tag',
         displayName
       }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
     });
   }
 
