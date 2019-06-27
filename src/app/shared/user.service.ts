@@ -237,4 +237,10 @@ export class UserService {
     return this.user.roles.findIndex(userRole => searchRoles.findIndex(searchRole => searchRole === userRole) > -1) > -1;
   }
 
+  isBetaEnabled(): boolean {
+    const configuration = this.stateService.configuration;
+    return configuration.betaEnabled === 'on' ||
+      configuration.betaEnabled === 'user' && this.user.betaEnabled === true;
+  }
+
 }
