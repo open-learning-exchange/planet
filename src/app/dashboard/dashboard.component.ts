@@ -27,6 +27,7 @@ export class DashboardComponent implements OnInit {
   examsCount = 0;
 
   myLifeItems = [
+    { title: 'Submissions', link: '/submissions', authorization: 'leader,manager' },
     { title: 'Achievements', link: '/myAchievements' },
     { title: 'News', link: '/news' },
     { title: 'Surveys', link: '/mySurveys' }
