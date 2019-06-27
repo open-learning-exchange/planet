@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
@@ -10,7 +10,6 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { debug } from '../../debug-operator';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -177,10 +176,6 @@ export class PlanetTagInputDialogComponent {
     const amount = 'single',
       okClick = this.deleteSelectedTag(tag),
       displayName = tag.name;
-    this.openDeleteDialog(okClick, amount, displayName);
-  }
-
-  openDeleteDialog(okClick, amount, displayName = '') {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
