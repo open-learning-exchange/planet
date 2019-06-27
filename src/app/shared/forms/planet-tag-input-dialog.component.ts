@@ -201,8 +201,7 @@ export class PlanetTagInputDialogComponent {
     return {
       request: this.tagsService.deleteTag(tag),
       onNext: (data) => {
-        // this.selection.deselect(tag._id);
-        this.tags = this.tags.filter((t: any) => data.id !== t._id);
+        this.data.initTags();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('Tag deleted: ' + tag.name);
       },

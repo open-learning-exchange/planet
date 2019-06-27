@@ -67,7 +67,7 @@ export class TagsService {
     return this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })).pipe(
       switchMap((tags: any[]) => {
         const deleteTagsArray = createDeleteArray(tags);
-        return this.couchService.post('tags/_bulk_docs', { docs: deleteTagsArray });
+        return this.couchService.bulkDocs('tags', [ ...deleteTagsArray, { ...tag, _deleted: true } ]);
       })
     );
   }
