@@ -99,7 +99,8 @@
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && role !== 'learner'">cancel</mat-icon>
             </mat-chip>
             <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
-        </mat-chip-list>
+          </mat-chip-list>
+          <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
@@ -107,11 +108,11 @@
         <mat-cell *matCellDef="let element">
           <span *ngIf="isUserAdmin && filterType === 'local'">
             <span *ngIf="!element.doc.isUserAdmin">
-              <button mat-icon-button *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
-                <mat-icon>lock</mat-icon>
+              <button mat-raised-button color="primary" *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
+                <mat-icon>lock_open</mat-icon><ng-container i18n>Activate</ng-container>
               </button>
-              <button mat-icon-button *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
-                <mat-icon>lock_open</mat-icon>
+              <button mat-raised-button color="primary" *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
+                <mat-icon>lock</mat-icon><ng-container i18n>Deactivate</ng-container>
               </button>
             </span>
             <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
