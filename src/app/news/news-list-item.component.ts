@@ -29,7 +29,9 @@ export class NewsListItemComponent {
       title: 'Reply to Post',
       placeholder: 'Your Story',
       initialValue: '',
-      news: { replyTo: news._id }
+      news: { 
+        replyTo: news._id,
+        messageType: "sync" }
     });
   }
 
