@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
+import { createDeleteArray } from '../table-helpers';
 
 @Injectable()
 export class TagsService {
@@ -50,6 +51,15 @@ export class TagsService {
           { ...tagData, _deleted: true },
           ...newLinks
         ]);
+      })
+    );
+  }
+
+  deleteTag(tag) {
+    return this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })).pipe(
+      switchMap((tags: any[]) => {
+        const deleteTagsArray = createDeleteArray(tags);
+        return this.couchService.bulkDocs('tags', [ ...deleteTagsArray, { ...tag, _deleted: true } ]);
       })
     );
   }

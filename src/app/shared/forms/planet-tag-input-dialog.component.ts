@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -9,6 +9,7 @@ import { UserService } from '../user.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -26,6 +27,7 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 })
 export class PlanetTagInputDialogComponent {
 
+  deleteDialog: any;
   tags: any[] = [];
   selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
   indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
@@ -57,7 +59,8 @@ export class PlanetTagInputDialogComponent {
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -166,6 +169,34 @@ export class PlanetTagInputDialogComponent {
   subcollectionOfOptions(tag, tags) {
     return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
       .map((t: any) => ({ name: t.name, value: t._id || t.name }));
+  }
+
+  deleteTag(event, tag) {
+    event.stopPropagation();
+    const amount = 'single',
+      okClick = this.deleteSelectedTag(tag),
+      displayName = tag.name;
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'tag',
+        displayName
+      }
+    });
+  }
+
+  deleteSelectedTag(tag) {
+    return {
+      request: this.tagsService.deleteTag(tag),
+      onNext: (data) => {
+        this.data.initTags();
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('Tag deleted: ' + tag.name);
+      },
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this tag.')
+    };
   }
 
   tagForm(tag: any = {}) {
