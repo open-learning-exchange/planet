@@ -6,6 +6,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { CoursesAddResourcesComponent } from './courses-add-resources.component';
+import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
+import { filterSpecificFields } from '../../shared/table-helpers';
 
 @Component({
   selector: 'planet-courses-step',
@@ -21,6 +24,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   stepForm: FormGroup;
   dialogRef: MatDialogRef<CoursesAddResourcesComponent>;
+  dialogSurveyRef: MatDialogRef<DialogsListComponent>;
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
@@ -30,6 +34,7 @@ export class CoursesStepComponent implements OnDestroy {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
+    private dialogsListService: DialogsListService
   ) {
     this.stepForm = this.fb.group({
       id: '',
@@ -85,6 +90,29 @@ export class CoursesStepComponent implements OnDestroy {
     } else {
       this.router.navigate([ '/courses/exam/', { type } ]);
     }
+  }
+
+  linkExam(type = 'courses') {
+    const initialSelection = this.steps[this.activeStepIndex].survey ? [ this.steps[this.activeStepIndex].survey._id ] : [];
+    this.dialogsListService.getListAndColumns('exams', { type })
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((surveys) => {
+        const data = {
+          okClick: this.dialogOkClick.bind(this),
+          filterPredicate: filterSpecificFields([ 'name' ]),
+          initialSelection,
+          ...surveys };
+        this.dialogSurveyRef = this.dialog.open(DialogsListComponent, {
+          data, height: '500px', width: '600px', autoFocus: false
+        });
+      });
+  }
+
+  dialogOkClick(selected) {
+    this.steps[this.activeStepIndex].survey = selected[0];
+    this.activeStep = this.steps[this.activeStepIndex];
+    this.stepsChange.emit(this.steps);
+    this.dialogSurveyRef.close();
   }
 
   stepsMoved(steps) {

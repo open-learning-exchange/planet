@@ -21,7 +21,7 @@
       </mat-form-field>
     </form>
     <ng-container *ngIf="activeStep?.resources?.length">
-      <span i18n class="margin-lr-4">Attached Resources: </span>
+      <span i18n class="margin-lr-4" i18n>Attached Resources: </span>
       <mat-chip-list>
         <mat-chip *ngFor="let resource of activeStep.resources; let i = index">
           <a target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
@@ -31,9 +31,15 @@
     </ng-container>
   </div>
   <div planetStepListActions>
-    <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>
-    <button mat-raised-button color="primary" (click)="addResources()">Add Resource</button>
-    <a mat-raised-button color="primary" (click)="addExam('survey')">{{ activeStep?.survey ? 'Update' : 'Add' }} Survey</a>
+    <a mat-raised-button color="primary" (click)="addExam()" i18n>{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>
+    <button mat-raised-button color="primary" (click)="addResources()" i18n>Add Resource</button>
+    <a mat-raised-button color="primary" [matMenuTriggerFor]="surveyMenu" i18n>{{ activeStep?.survey ? 'Update' : 'Add' }} Survey</a>
+    <mat-menu #surveyMenu="matMenu">
+      <a mat-menu-item (click)="addExam('survey')" i18n>
+        {{ activeStep?.survey ? 'Update' : 'Add' }} Survey
+      </a>
+      <a mat-menu-item (click)="linkExam('surveys')" i18n>Attach Existing</a>
+    </mat-menu>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </div>
 </planet-step-list>
