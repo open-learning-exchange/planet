@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -120,10 +120,12 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   openFeedback(feedback) {
     this.dialogsLoadingService.start();
-    this.feedbackServive.openFeedback(feedback).subscribe(() => {
-      this.getFeedback(feedback.id);
-      this.dialogsLoadingService.stop();
-    });
+    this.feedbackServive.openFeedback(feedback)
+      .pipe(switchMap(() => this.getFeedback(feedback.id)), finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(
+        res => this.setFeedback(res),
+        error => this.planetMessageService.showAlert('There has been an error opening the feedback.')
+      );
   }
 
   scrollToBottom() {
