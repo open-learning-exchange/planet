@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
@@ -23,6 +23,7 @@ import { ResourcesService } from './resources.service';
 import { TagsService } from '../shared/forms/tags.service';
 
 @Component({
+  selector: 'planet-resources-add',
   templateUrl: './resources-add.component.html',
   styleUrls: [ './resources-add.scss' ]
 })
@@ -41,6 +42,8 @@ export class ResourcesAddComponent implements OnInit {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control([]);
+  @Input() isDialog = false;
+  @Output() afterSubmit = new EventEmitter<any>();
 
   constructor(
     private router: Router,
@@ -56,6 +59,9 @@ export class ResourcesAddComponent implements OnInit {
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
+  }
+
+  ngOnInit() {
     this.createForm();
     this.resourceForm.setValidators(() => {
       if (this.file && this.file.size / 1024 / 1024 > 512) {
@@ -64,12 +70,9 @@ export class ResourcesAddComponent implements OnInit {
         return null;
       }
     });
-  }
-
-  ngOnInit() {
     this.userDetail = this.userService.get();
     this.resourcesService.requestResourcesUpdate(false, false);
-    if (this.route.snapshot.url[0].path === 'update') {
+    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
         .subscribe((resources: any[]) => {
           this.pageType = 'Update';
@@ -93,7 +96,7 @@ export class ResourcesAddComponent implements OnInit {
         '',
         CustomValidators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        this.route.snapshot.url[0].path === 'update'
+        !this.isDialog && this.route.snapshot.url[0].path === 'update'
           ? ac => this.validatorService.isNameAvailible$(this.dbName, 'title', ac, this.route.snapshot.params.id)
           : ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
       ],
@@ -145,8 +148,12 @@ export class ResourcesAddComponent implements OnInit {
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
-        this.updateResource(newResource, file).subscribe(() => {
-          this.router.navigate([ '/resources' ]);
+        this.updateResource(newResource, file).subscribe(([ resourceRes ]) => {
+          if (this.isDialog) {
+            this.afterSubmit.next(resourceRes);
+          } else {
+            this.router.navigate([ '/resources' ]);
+          }
           this.planetMessageService.showMessage(message);
         }, (err) => this.planetMessageService.showAlert('There was an error with this resource'));
       });
@@ -175,12 +182,14 @@ export class ResourcesAddComponent implements OnInit {
   updateResource(resourceInfo, file) {
     return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder })
     .pipe(switchMap((resourceRes) =>
-      forkJoin([ file ?
-        this.couchService.putAttachment(
-          this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
-          { headers: { 'Content-Type': file.type } }
-        ) :
-        of({}),
+      forkJoin([
+        of(resourceRes),
+        file ?
+          this.couchService.putAttachment(
+            this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
+            { headers: { 'Content-Type': file.type } }
+          ) :
+          of({}),
         this.couchService.bulkDocs(
           'tags',
           this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, this.tags.value, this.existingResource.tags)

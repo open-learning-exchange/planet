@@ -1,0 +1,14 @@
+<ng-container [ngSwitch]="view">
+  <planet-resources *ngSwitchCase="'resources'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-resources>
+  <planet-resources-add *ngSwitchCase="'resourcesAdd'" [isDialog]="true" (afterSubmit)="addNewResource($event)"></planet-resources-add>
+</ng-container>
+<mat-dialog-actions>
+  <ng-container *ngIf="data.canAdd">
+    <button color="accent" mat-raised-button (click)="toggleNewOrExisting()" i18n>
+      {view, select, resources {Create New Resource} resourcesAdd {Select Existing Resource(s)}}
+    </button>
+    <span class="margin-lr-8" i18n>OR</span>
+  </ng-container>
+  <button color="primary" mat-raised-button (click)="ok()" i18n>OK</button>
+  <button color="warn" mat-raised-button mat-dialog-close i18n>Cancel</button>
+</mat-dialog-actions>
