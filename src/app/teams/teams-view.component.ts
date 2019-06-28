@@ -271,7 +271,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
       data: {
-        okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team).subscribe(() => dialogRef.close()),
+        okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team)
+          .pipe(switchMap(() => this.getMembers())).subscribe(() => dialogRef.close()),
         excludeIds: this.resources.map(resource => resource.resource._id)
       }
     });
