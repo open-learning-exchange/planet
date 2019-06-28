@@ -130,8 +130,8 @@ export class TeamsService {
     };
   }
 
-  getTeamMembers(team, withRequests = false) {
-    const typeObj = withRequests ? {} : { docType: 'membership' };
+  getTeamMembers(team, withAllLinks = false) {
+    const typeObj = withAllLinks ? {} : { docType: 'membership' };
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0))
@@ -139,6 +139,15 @@ export class TeamsService {
       ...membershipDocs,
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));
+  }
+
+  getTeamResources(linkDocs: any[]) {
+    return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) =>
+      linkDocs.map(linkDoc => ({
+        linkDoc,
+        resource: resources.find(resource => resource._id === linkDoc.resourceId)
+      }))
+    ));
   }
 
   isTeamEmpty(team) {

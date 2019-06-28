@@ -86,6 +86,15 @@
             <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
           </mat-card>
         </ng-template>
+        <p i18n><b>Resources: ({{resources?.length || 0}})</b></p>
+        <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
+        <ng-template #resourceList>
+          <ul class="request-list">
+            <li *ngFor="let resource of resources">
+              <a [routerLink]="'/resources/view/' + resource.resource._id">{{resource.resource.title}}</a>
+            </li>
+          </ul>
+        </ng-template>
       </ng-container>
     </div>
   </div>
