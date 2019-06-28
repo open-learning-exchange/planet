@@ -46,7 +46,7 @@
           <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
           <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
         </button>
-        <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles>Manager Actions</button>
+        <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles [disabled]="!selection.selected.length">Manager Actions</button>
         <mat-menu #managerMenu="matMenu">
           <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>
