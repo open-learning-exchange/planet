@@ -278,4 +278,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  removeResource(resource) {
+    this.couchService.post('teams', { ...resource.linkDoc, _deleted: true })
+      .pipe(switchMap(() => this.getMembers()))
+      .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
+  }
+
 }
