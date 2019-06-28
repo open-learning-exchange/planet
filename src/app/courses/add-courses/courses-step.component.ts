@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
-import { CoursesAddResourcesComponent } from './courses-add-resources.component';
+import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 
 @Component({
   selector: 'planet-courses-step',
@@ -20,7 +20,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() addStepEvent = new EventEmitter<void>();
 
   stepForm: FormGroup;
-  dialogRef: MatDialogRef<CoursesAddResourcesComponent>;
+  dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
@@ -56,7 +56,7 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   addResources() {
-    this.dialogRef = this.dialog.open(CoursesAddResourcesComponent, {
+    this.dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
       data: {
         okClick: this.resourcsDialogOkClick.bind(this),

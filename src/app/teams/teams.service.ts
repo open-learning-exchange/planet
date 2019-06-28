@@ -202,4 +202,12 @@ export class TeamsService {
     return this.couchService.updateDocument('team_activities', data);
   }
 
+  linkResourcesToTeam(resources, team) {
+    const { teamPlanetCode, teamType } = team;
+    const links = resources.map(
+      resource => ({ resourceId: resource._id, teamId: team._id, teamPlanetCode, teamType, docType: 'resourceLink' })
+    );
+    return this.couchService.bulkDocs('teams', links);
+  }
+
 }

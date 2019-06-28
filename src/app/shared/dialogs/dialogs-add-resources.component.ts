@@ -11,12 +11,12 @@ import { ResourcesComponent } from '../../resources/resources.component';
     </mat-dialog-actions>
   `
 })
-export class CoursesAddResourcesComponent {
+export class DialogsAddResourcesComponent {
 
   @ViewChild(ResourcesComponent) resourcesComponent: ResourcesComponent;
 
   constructor(
-    public dialogRef: MatDialogRef<CoursesAddResourcesComponent>,
+    public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 

@@ -265,4 +265,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.leftTileContent = this.leftTileContent === 'news' ? 'description' : 'news';
   }
 
+  openResourcesDialog() {
+    const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+      width: '80vw',
+      data: {
+        okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team).subscribe(() => dialogRef.close()),
+        excludeIds: []
+      }
+    });
+  }
+
 }
