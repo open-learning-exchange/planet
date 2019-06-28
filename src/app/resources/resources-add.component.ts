@@ -118,7 +118,8 @@ export class ResourcesAddComponent implements OnInit {
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
-      updatedDate: this.couchService.datePlaceholder
+      updatedDate: this.couchService.datePlaceholder,
+      private: this.isDialog
     });
   }
 

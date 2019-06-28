@@ -92,6 +92,9 @@
           <ng-container *ngIf="existingResource.doc?._attachments">
             <mat-checkbox [disabled]="disableDelete || this.file" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
           </ng-container>
+          <ng-container *ngIf="isDialog">
+            <mat-checkbox formControlName="private" i18n-matTooltip matTooltip="If checked, resource will only be viewable by this team" i18n>Private Resource</mat-checkbox>
+          </ng-container>
         </div>
       </form>
     </div>
