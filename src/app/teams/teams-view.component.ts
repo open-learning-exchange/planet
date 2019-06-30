@@ -13,6 +13,7 @@ import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -34,6 +35,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   news: any[] = [];
   leftTileContent: 'description' | 'news' = 'news';
   isRoot = true;
+  visits = 0;
 
   constructor(
     private couchService: CouchService,
@@ -55,8 +57,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.team = data;
         return this.getMembers();
       }),
-      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : [])
-    ).subscribe(() => {
+      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
+      switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId: this.team._id })))
+    ).subscribe((activities) => {
+      this.visits = activities.length;
+      console.log(this.visits);
       this.setStatus(this.team, this.userService.get());
     });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });

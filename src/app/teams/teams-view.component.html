@@ -42,6 +42,7 @@
       </ng-container>
     </div>
     <div class="right-tile">
+      <p i18n><b>Total Visits: ({{visits}})</b></p>
       <p i18n><b>Joined Members: ({{members.length}})</b></p>
       <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
       <ng-template #memberList>
