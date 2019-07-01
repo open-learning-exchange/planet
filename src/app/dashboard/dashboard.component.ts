@@ -26,6 +26,13 @@ export class DashboardComponent implements OnInit {
   surveysCount = 0;
   examsCount = 0;
 
+  myLifeItems = [
+    { title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { title: 'Achievements', link: '/myAchievements' },
+    { title: 'News', link: '/news' },
+    { title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
+  ];
+
   constructor(
     private userService: UserService,
     private couchService: CouchService,
@@ -124,9 +131,10 @@ export class DashboardComponent implements OnInit {
 
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
-      this.surveysCount = surveys.filter((survey: any, index: number) => {
+      const surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
+      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: surveysCount } : item);
     });
   }
 

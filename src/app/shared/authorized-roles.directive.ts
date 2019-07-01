@@ -15,7 +15,7 @@ export class AuthorizedRolesDirective {
   @Input()
   set planetAuthorizedRoles(rolesString: string) {
     const authorizedRoles = (rolesString || '').split(',').map(val => val.trim());
-    if (this.userService.doesUserHaveRole([ '_admin', 'manager', ...authorizedRoles ])) {
+    if (rolesString === '_any' || this.userService.doesUserHaveRole([ '_admin', 'manager', ...authorizedRoles ])) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainer.clear();

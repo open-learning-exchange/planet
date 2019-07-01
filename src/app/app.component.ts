@@ -26,6 +26,9 @@ export class AppComponent {
       'myMeetups',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/meetups.svg'));
     iconRegistry.addSvgIcon(
+      'myLife',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/meetups.svg'));
+    iconRegistry.addSvgIcon(
       'myTeams',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team.svg'));
     iconRegistry.addSvgIcon(
