@@ -11,11 +11,14 @@ export class DialogsAddResourcesComponent {
   @ViewChild(ResourcesComponent) resourcesComponent: ResourcesComponent;
   @ViewChild(ResourcesAddComponent) resourcesAddComponent: ResourcesAddComponent;
   view: 'resources' | 'resourcesAdd' = 'resources';
+  linkInfo: any;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) {
+    this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
+  }
 
   ok() {
     switch (this.view) {

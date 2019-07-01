@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="view">
   <planet-resources *ngSwitchCase="'resources'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-resources>
-  <planet-resources-add *ngSwitchCase="'resourcesAdd'" [isDialog]="true" (afterSubmit)="addNewResource($event)"></planet-resources-add>
+  <planet-resources-add *ngSwitchCase="'resourcesAdd'" [isDialog]="true" [privateFor]="linkInfo" (afterSubmit)="addNewResource($event)"></planet-resources-add>
 </ng-container>
 <mat-dialog-actions>
   <ng-container *ngIf="data.canAdd">

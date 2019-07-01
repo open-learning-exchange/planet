@@ -43,6 +43,7 @@ export class ResourcesAddComponent implements OnInit {
   languages = languages;
   tags = this.fb.control([]);
   @Input() isDialog = false;
+  @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
 
   constructor(
@@ -181,7 +182,9 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   updateResource(resourceInfo, file) {
-    return this.couchService.updateDocument(this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder })
+    return this.couchService.updateDocument(
+      this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: this.privateFor }
+    )
     .pipe(switchMap((resourceRes) =>
       forkJoin([
         of(resourceRes),
