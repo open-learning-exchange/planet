@@ -1,9 +1,11 @@
 @import '../variables';
 
-mat-divider {
-  margin: 1rem 0;
+mat-card {
+  margin: 0.25rem;
 }
 
-.main-message {
-  border: 4px solid $grey;
+:host(.main-message) {
+  mat-card {
+    border: 4px solid $grey;
+  }
 }
