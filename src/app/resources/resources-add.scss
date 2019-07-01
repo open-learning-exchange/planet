@@ -1,5 +1,3 @@
-@import '../variables';
-
 :host {
   .view-container {
     display: grid;
@@ -11,6 +9,5 @@
 
   .actions-container {
     align-self: center;
-
   }
 }

@@ -6,7 +6,7 @@
   <mat-toolbar class="primary-color font-size-1" i18n>{{pageType}} Resource</mat-toolbar>
   <div class="view-container view-full-height">
     <div class="form-container">
-      <form class="form-spacing" [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
+      <form class="form-spacing" [formGroup]="resourceForm" novalidate>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
@@ -95,8 +95,8 @@
         </div>
       </form>
     </div>
-    <div class="actions-container">
-      <button mat-raised-button type="submit" [planetSubmit]="resourceForm.valid" color="primary" i18n>Submit</button>
+    <div class="actions-container inner-gaps by-column">
+      <button mat-raised-button type="button" [planetSubmit]="resourceForm.valid" color="primary" (click)="onSubmit()"  i18n>Submit</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </div>
   </div>
