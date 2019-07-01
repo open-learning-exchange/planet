@@ -4,7 +4,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{{'My' + ' '}}Course Progress</span>
+    <span i18n>My Course Progress</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [inputs]="chartData" [height]="yAxisLength" [showTotals]="false" (changeData)="changeData($event)">
