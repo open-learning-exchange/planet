@@ -1,0 +1,13 @@
+:host {
+  .view-container {
+    display: grid;
+    grid-template-rows: auto 42px;
+    > * {
+      overflow-y: auto;
+    }
+  }
+
+  .actions-container {
+    align-self: center;
+  }
+}
