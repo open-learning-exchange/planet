@@ -4,7 +4,7 @@ import { UserService } from '../shared/user.service';
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
-  styleUrls: [ './news-list.scss' ]
+  styleUrls: [ './news-list-item.scss' ]
 })
 export class NewsListItemComponent {
 
