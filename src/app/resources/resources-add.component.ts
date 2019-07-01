@@ -79,6 +79,7 @@ export class ResourcesAddComponent implements OnInit {
           this.pageType = 'Update';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
           this.existingResource = resource;
+          this.privateFor = resource.privateFor;
           // If the resource does not have an attachment, disable file downloadable toggle
           this.disableDownload = !resource.doc._attachments;
           this.disableDelete = !resource.doc._attachments;
@@ -97,9 +98,15 @@ export class ResourcesAddComponent implements OnInit {
         '',
         CustomValidators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        !this.isDialog && this.route.snapshot.url[0].path === 'update'
-          ? ac => this.validatorService.isNameAvailible$(this.dbName, 'title', ac, this.route.snapshot.params.id)
-          : ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
+        ac => this.validatorService.isUnique$(
+          this.dbName, 'title', ac,
+          {
+            selectors: {
+              '_id': this.existingResource._id && { '$ne': this.existingResource._id },
+              'privateFor': { '$or': [ this.privateFor, { '$exists': false } ] }
+            }
+          }
+        )
       ],
       author: '',
       year: '',
