@@ -193,11 +193,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendRejectionNotifications(user){
-    const notifications = this.requests.filter((user: any) => user._id === user._id)
+  sendRejectionNotifications(request) {
+    const notifications = this.requests.filter((user: any) => user._id === request._id)
     .map((user: any) => {
-      return this.teamsService.teamNotification(this.teamsService.teamNotificationMessage('rejected', { team: { ...this.team }}),
-      user, { url: this.router.url, team: { ...this.team }})
+      return this.teamsService.teamNotification(this.teamsService.teamNotificationMessage('rejected', { team: { ...this.team } }),
+      user, { url: this.router.url, team: { ...this.team } });
     });
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
