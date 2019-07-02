@@ -21,7 +21,6 @@ export class NewsListComponent implements OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = 'News has been updated successfully.';
-  @Input() replySuccessMessage = 'Reply has been posted successfully.';
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   displayedItems: any[] = [];
@@ -69,7 +68,7 @@ export class NewsListComponent implements OnChanges {
         if (response) {
           this.newsService.postNews(
             { ...news, ...response, viewableBy: this.viewableBy, viewableId: this.viewableId },
-            initialValue === '' ? this.replySuccessMessage : this.editSuccessMessage
+            initialValue === '' ? "Reply has been posted successfully." : this.editSuccessMessage
           ).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
             this.dialogsLoadingService.stop();
