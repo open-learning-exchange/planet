@@ -14,6 +14,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { ReportsService } from '../manager-dashboard/reports/reports.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -35,7 +36,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   news: any[] = [];
   leftTileContent: 'description' | 'news' = 'news';
   isRoot = true;
-  visits = 0;
+  visits = [];
 
   constructor(
     private couchService: CouchService,
@@ -48,7 +49,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     private dialogsListService: DialogsListService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
-    private newsService: NewsService
+    private newsService: NewsService,
+    private reportsService: ReportsService
   ) {}
 
   ngOnInit() {
@@ -60,8 +62,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId: this.team._id })))
     ).subscribe((activities) => {
-      this.visits = activities.length;
-      console.log(this.visits);
+      this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
+        this.visits[visit.user] = visit.count;
+      });
       this.setStatus(this.team, this.userService.get());
     });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });

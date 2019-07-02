@@ -42,14 +42,13 @@
       </ng-container>
     </div>
     <div class="right-tile">
-      <p i18n><b>Total Visits: ({{visits}})</b></p>
       <p i18n><b>Joined Members: ({{members.length}})</b></p>
       <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
       <ng-template #memberList>
         <ul>
           <li *ngFor="let member of members">
             <a [routerLink]="['/users/profile', member.name]">
-              {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>
+              {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span> <b i18n>[{{ visits[member.name] || 0 }} visits]</b>
             </a>
           </li>
         </ul>
