@@ -132,7 +132,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   rejectRequest(request) {
-    this.sendRejectionNotifications(request).subscribe();
+    let rejectedMember = [];
+    rejectedMember.push(request);
+    this.teamsService.sendNotifications('rejected', rejectedMember, { url: this.router.url, team: { ...this.team } }).subscribe();
     this.teamsService.removeFromRequests(this.team, request).pipe(switchMap(() => this.getMembers())).subscribe();
   }
 
@@ -191,15 +193,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     return this.teamsService.sendNotifications(type, this.members, {
       newMembersLength, url: this.router.url, team: { ...this.team }
     });
-  }
-
-  sendRejectionNotifications(request) {
-    const notifications = this.requests.filter((user: any) => user._id === request._id)
-    .map((user: any) => {
-      return this.teamsService.teamNotification(this.teamsService.teamNotificationMessage('rejected', { team: { ...this.team } }),
-      user, { url: this.router.url, team: { ...this.team } });
-    });
-    return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 
   openCourseDialog() {
