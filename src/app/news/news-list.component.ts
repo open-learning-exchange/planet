@@ -68,7 +68,7 @@ export class NewsListComponent implements OnChanges {
         if (response) {
           this.newsService.postNews(
             { ...news, ...response, viewableBy: this.viewableBy, viewableId: this.viewableId },
-            initialValue === '' ? "Reply has been posted successfully." : this.editSuccessMessage
+            initialValue === '' ? 'Reply has been posted successfully.' : this.editSuccessMessage
           ).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
             this.dialogsLoadingService.stop();
