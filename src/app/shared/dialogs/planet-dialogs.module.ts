@@ -13,6 +13,7 @@ import { DialogsListService } from './dialogs-list.service';
 import { DialogsLoadingComponent } from './dialogs-loading.component';
 import { ChangePasswordDirective } from './change-password.directive';
 import { SharedComponentsModule } from '../shared-components.module';
+import { SyncDirective } from '../../manager-dashboard/sync.directive';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { SharedComponentsModule } from '../shared-components.module';
     FeedbackDirective,
     DialogsListComponent,
     DialogsLoadingComponent,
-    ChangePasswordDirective
+    ChangePasswordDirective,
+    SyncDirective
   ],
   declarations: [
     DialogsFormComponent,
@@ -40,7 +42,8 @@ import { SharedComponentsModule } from '../shared-components.module';
     FeedbackDirective,
     DialogsListComponent,
     DialogsLoadingComponent,
-    ChangePasswordDirective
+    ChangePasswordDirective,
+    SyncDirective
   ],
   providers: [
     DialogsFormService,

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -10,6 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -32,7 +33,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private feedbackServive: FeedbackService,
-    private router: Router
+    private router: Router,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -117,7 +119,13 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   openFeedback(feedback) {
-    this.feedbackServive.openFeedback(feedback).subscribe(() => this.getFeedback(feedback.id));
+    this.dialogsLoadingService.start();
+    this.feedbackServive.openFeedback(feedback)
+      .pipe(switchMap(() => this.getFeedback(feedback.id)), finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(
+        res => this.setFeedback(res),
+        error => this.planetMessageService.showAlert('There has been an error opening the feedback.')
+      );
   }
 
   scrollToBottom() {

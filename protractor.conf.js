@@ -7,7 +7,7 @@ const { SpecReporter } = require('jasmine-spec-reporter'),
   user = userHandler(timeStamp);
 
 exports.config = {
-  allScriptsTimeout: 11000,
+  allScriptsTimeout: 110000,
   specs: [
     './e2e/**/*.e2e-spec.ts'
   ],
@@ -32,7 +32,7 @@ exports.config = {
     });
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
     browser.params.user = user.get();
-    
+
     return user.create().then(function(res) {
       defer.fulfill();
     })

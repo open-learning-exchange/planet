@@ -1,11 +1,8 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n class="margin-lr">Library</span>
-    <button *ngIf="!parent && !isDialog" mat-stroked-button class="margin-lr-3" (click)="toggleMyLibrary()" i18n>
-      {myLibraryFilter, select, on {Community} off {myLibrary}} resources
-    </button>
-    <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+    <span i18n>{myLibraryFilter, select, on {myLibrary} off {Library}}</span>
+    <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr">
       <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false"></planet-tag-input>
     </mat-form-field>
     <span class="toolbar-fill margin-lr-10"></span>
@@ -49,7 +46,7 @@
           <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
           <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
         </button>
-        <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles>Manager Actions</button>
+        <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles [disabled]="!selection.selected.length">Manager Actions</button>
         <mat-menu #managerMenu="matMenu">
           <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>

@@ -5,7 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{team?.name}}</h3>
-    <button class="margin-lr-5" mat-stroked-button i18n (click)="changeLeftTile()" *ngIf="userStatus === 'member'">Show { leftTileContent, select, description {News} news {Description} }</button>
+    <button class="margin-lr-5" mat-stroked-button i18n (click)="changeLeftTile()" *ngIf="userStatus === 'member'">Show { leftTileContent, select, description {Messages} news {Description} }</button>
     <span class="toolbar-fill"></span>
     <div>
       <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
@@ -37,8 +37,8 @@
         </ng-template>
       </ng-container>
       <ng-container *ngSwitchCase="'news'">
-        <button mat-stroked-button (click)="openAddMessageDialog()">Add message</button>
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" editSuccessMessage="Message has been updated successfully"></planet-news-list>
+        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
       </ng-container>
     </div>
     <div class="right-tile">
@@ -61,6 +61,7 @@
             <li *ngFor="let request of requests">
               <a [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
               <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(request)" [disabled]="disableAddingMembers">Accept</button>
+              <button mat-raised-button color="warn" class="margin-lr-3" i18n (click)="rejectRequest(request)" [disabled]="disableAddingMembers">Reject</button>
             </li>
           </ul>
         </ng-template>

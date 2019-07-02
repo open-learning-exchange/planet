@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   ));
   // For disposable returned by observer to unsubscribe
   animDisp: any;
+  onlineStatus = 'offline';
 
   private onDestroy$ = new Subject<void>();
 
@@ -63,6 +64,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         this.onUserUpdate();
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
+    this.onlineStatus = this.stateService.configuration.registrationRequest;
   }
 
   ngOnInit() {
@@ -108,6 +110,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {
+    const url = this.router.url;
     const routesWithBackground = [
       'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams', 'surveys', 'news',
       'mySurveys'
@@ -115,10 +118,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
     const isException = routesWithoutBackground
-      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
+      .findIndex((route) => url.indexOf(route) > -1) > -1;
     const isRoute = routesWithBackground
-      .findIndex((route) => this.router.url.indexOf(route) > -1) > -1;
-    return isRoute && !isException;
+      .findIndex((route) => url.indexOf(route) > -1) > -1;
+    return url === '/' && this.userService.isBetaEnabled() || isRoute && !isException;
   }
 
   onUserUpdate() {

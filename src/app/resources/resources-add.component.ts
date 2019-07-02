@@ -23,7 +23,8 @@ import { ResourcesService } from './resources.service';
 import { TagsService } from '../shared/forms/tags.service';
 
 @Component({
-  templateUrl: './resources-add.component.html'
+  templateUrl: './resources-add.component.html',
+  styleUrls: [ './resources-add.scss' ]
 })
 
 export class ResourcesAddComponent implements OnInit {

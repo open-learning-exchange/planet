@@ -17,7 +17,7 @@ const addTeamDialogFields = [ {
 }, {
   'type': 'textarea',
   'name': 'description',
-  'placeholder': 'Detail',
+  'placeholder': 'Description',
   'required': false
 } ];
 
@@ -42,7 +42,7 @@ export class TeamsService {
       requests: [ team.requests || [] ],
       teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
     };
-    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup)
+    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup, true)
       .pipe(
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
@@ -145,8 +145,7 @@ export class TeamsService {
       const userId = user.userId || user._id;
       return this.userService.get()._id !== userId && user.name !== 'satellite';
     }).map((user: any) => {
-      const userId = user.userId || user._id;
-      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), userId, notificationParams);
+      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), user, notificationParams);
     });
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
@@ -164,7 +163,8 @@ export class TeamsService {
     }
   }
 
-  teamNotification(message, userId, { team, url }) {
+  teamNotification(message, user, { team, url }) {
+    const userId = user.userId || user._id;
     return {
       'user': userId,
       message,
@@ -173,8 +173,24 @@ export class TeamsService {
       'type': 'team',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: user.userPlanetCode
     };
+  }
+
+  teamActivity(team: any, activity = 'teamVisit') {
+    const data = {
+      'teamId': team._id,
+      'title': team.title,
+      'user': this.userService.get().name,
+      'type': activity,
+      'teamType': team.teamType,
+      'teamPlanetCode': team.teamPlanetCode,
+      'time': this.couchService.datePlaceholder,
+      'createdOn': this.stateService.configuration.code,
+      'parentCode': this.stateService.configuration.parentCode
+    };
+    return this.couchService.updateDocument('team_activities', data);
   }
 
 }

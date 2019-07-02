@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -27,6 +27,7 @@ export class NewsListComponent implements OnChanges {
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
+  @Output() viewChange = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog,
@@ -47,6 +48,7 @@ export class NewsListComponent implements OnChanges {
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
+    this.viewChange.emit(this.replyViewing);
   }
 
   showPreviousReplies() {

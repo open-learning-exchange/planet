@@ -1,23 +1,28 @@
 <mat-card class="dashboard-card">
   <div class="left-tile accent-color">
-    <mat-icon svgIcon={{cardTitle}}></mat-icon>
-    <span><a [routerLink]="[link || emptyLink]">{{cardTitle}}</a></span>
+    <a class="left-tile accent-color" [routerLink]="[link || emptyLink]">
+      <mat-icon svgIcon={{cardTitle}}></mat-icon>
+      <span>{{cardTitle}}</span>
+    </a>
     <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="courses/myProgress">My Progress</a>
   </div>
   <div class="right-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
-      <div
-        class="dashboard-item cursor-pointer"
-        *ngFor="let item of itemData;let odd=odd"
-        [ngClass]="{'bg-grey': odd}"
-        [routerLink]="item.link"
-        cdkDrag
-      >
-        <span>{{item.title}}</span>
-        <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </div>
+      <ng-container *ngFor="let item of itemData;let odd=odd">
+        <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
+          <div
+            class="dashboard-item cursor-pointer"
+            [ngClass]="{'bg-grey': odd}"
+            [routerLink]="item.link"
+            cdkDrag
+          >
+            <span [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.title}}</span>
+            <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife'">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
       <span *ngIf="itemData.length === 0" class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]">
         Add item to {{cardTitle}}
       </span>

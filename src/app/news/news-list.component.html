@@ -4,7 +4,7 @@
     <button mat-stroked-button type="button" *ngIf="replyViewing.replyTo && replyViewing.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
   </div>
   <p i18n>Viewing replies for:</p>
-  <planet-news-list-item
+  <planet-news-list-item class="main-message"
     [item]="replyViewing"
     [replyObject]="replyObject"
     [showRepliesButton]="false"

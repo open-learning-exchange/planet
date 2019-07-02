@@ -4,11 +4,7 @@ import { UserService } from '../shared/user.service';
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
-  styles: [ `
-    :host mat-card {
-      margin: 0.25rem;
-    }
-  ` ]
+  styleUrls: [ './news-list-item.scss' ]
 })
 export class NewsListItemComponent {
 
@@ -29,7 +25,11 @@ export class NewsListItemComponent {
       title: 'Reply to Post',
       placeholder: 'Your Story',
       initialValue: '',
-      news: { replyTo: news._id }
+      news: {
+        replyTo: news._id,
+        messagePlanetCode: news.messagePlanetCode,
+        messageType: news.messageType
+      }
     });
   }
 

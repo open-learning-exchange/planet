@@ -20,11 +20,19 @@ export class DashboardComponent implements OnInit {
   displayName: string = this.userService.get().firstName !== undefined ?
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   displayRole: string = this.userService.get().roles.join(', ').replace('_', '');
+  planetName: string;
 
   dateNow: any;
   visits = 0;
   surveysCount = 0;
   examsCount = 0;
+
+  myLifeItems = [
+    { title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { title: 'Achievements', link: '/myAchievements' },
+    { title: 'News', link: '/news' },
+    { title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
+  ];
 
   constructor(
     private userService: UserService,
@@ -41,6 +49,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
 
+    this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
     this.initDashboard();
@@ -124,9 +133,10 @@ export class DashboardComponent implements OnInit {
 
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
-      this.surveysCount = surveys.filter((survey: any, index: number) => {
+      const surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
+      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: surveysCount } : item);
     });
   }
 

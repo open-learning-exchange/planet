@@ -77,12 +77,13 @@ export class UserService {
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
-          return this.getShelf();
+          return this.couchService.findAll('shelf', { 'selector': { '_id': this.user._id } });
         }
         return of({});
       }),
-      switchMap((shelf: any) => {
-        this.shelf = shelf;
+      switchMap(([ shelf ]: any[]) => {
+        // Combine with empty shelf in case all fields are not present
+        this.shelf = { ...this.emptyShelf, ...(shelf || {}) };
         return of(true);
       }));
   }
@@ -94,22 +95,6 @@ export class UserService {
       return properties.concat(newProperties).reduce(dedupeShelfReduce, [])
         .filter((prop) => [ 'requestId', '_attachments' ].indexOf(prop) === -1);
     }, []);
-  }
-
-  getShelf() {
-    return this.couchService.post(`shelf/_find`, { 'selector': { '_id': this.user._id } })
-      .pipe(
-        // If there are no matches, CouchDB throws an error
-        // User has no "shelf", so send empty object
-        catchError(err => {
-          // Observable of continues stream
-          return of({ docs: [ {} ] });
-        }),
-        // Combine with empty shelf in case all fields are not present
-        map(data => {
-          return Object.assign({}, this.emptyShelf, data.docs[0]);
-        })
-      );
   }
 
   unset(): any {
@@ -235,6 +220,12 @@ export class UserService {
 
   doesUserHaveRole(searchRoles: string[]) {
     return this.user.roles.findIndex(userRole => searchRoles.findIndex(searchRole => searchRole === userRole) > -1) > -1;
+  }
+
+  isBetaEnabled(): boolean {
+    const configuration = this.stateService.configuration;
+    return configuration.betaEnabled === 'on' ||
+      configuration.betaEnabled === 'user' && this.user.betaEnabled === true;
   }
 
 }
