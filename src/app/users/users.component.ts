@@ -10,7 +10,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, takeUntil, debounceTime, map } from 'rxjs/operators';
 import {
-  filterSpecificFields, filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
+  filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
 } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
