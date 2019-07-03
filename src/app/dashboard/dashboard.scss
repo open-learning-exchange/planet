@@ -53,8 +53,8 @@ $card-width: calc(106px + 2rem);
 }
 
 .horizontal-container {
-  height: $dashboard-height;
-  padding: 2rem;
+  height: calc(#{$dashboard-height} + 32px);
+  padding: 1rem;
   display: grid;
   grid-template-areas: "hcard";
   grid-template-columns: 1fr;
@@ -67,7 +67,7 @@ $card-width: calc(106px + 2rem);
 
   planet-dashboard-tile {
     overflow: hidden;
-    padding: 0.25rem 2px;
+    padding: 0 2px;
   }
 
   mat-card {
