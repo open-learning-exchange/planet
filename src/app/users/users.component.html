@@ -40,7 +40,6 @@
 <div class="space-container" *ngIf="displayTable">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-
     <div class="margin-lr-3" *ngIf="filterType==='local'">
       <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
