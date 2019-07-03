@@ -17,15 +17,23 @@ export class TagsService {
   getTags(db: string, parent: boolean) {
     return this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }).pipe(
       map((tags: any[]) => {
-        const tagCounts = tags.reduce(
-          (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
-          {}
+        const tagsInfo = this.tagsInfo(tags);
+        return this.fillSubTags(
+          tags.filter((tag: any) => tag.db === db && tag.docType === 'definition')
+            .map((tag: any) => ({ ...tag, count: tagsInfo.counts[tag._id] || 0 })),
+          tagsInfo.subTags
         );
-        return tags
-          .map((tag: any) => ({ ...tag, count: tagCounts[tag._id] || 0 }))
-          .filter((tag: any) => tag.db === db && tag.docType === 'definition')
-          .map(this.fillSubTags);
       })
+    );
+  }
+
+  tagsInfo(tags: any[]) {
+    return tags.reduce(
+      ({ counts, subTags }, tag: any) => ({
+        counts: tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
+        subTags: tag.attachedTo === undefined ? subTags : { ...subTags, [tag.attachedTo]: [ ...(subTags[tag.attachedTo] || []), tag ] }
+      }),
+      { counts: {}, subTags: {} }
     );
   }
 
@@ -69,8 +77,9 @@ export class TagsService {
     return { ...(fullTag ? fullTag : { _id: tagKey, name: tagKey, attachedTo: [] }) };
   }
 
-  fillSubTags(tag: any, index: number, tags: any[]) {
-    return { ...tag, subTags: tags.filter(({ attachedTo }) => (attachedTo || []).indexOf(tag._id) > -1) };
+  fillSubTags(tags: any[], subTagsObj?) {
+    subTagsObj = subTagsObj || this.tagsInfo(tags).subTags;
+    return tags.map((tag) => ({ ...tag, subTags: subTagsObj[tag._id] || [] }));
   }
 
   attachTagsToDocs(db: string, docs: any[], tags: any[]) {

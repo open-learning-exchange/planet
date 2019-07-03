@@ -42,7 +42,7 @@ export class ResourcesService {
     });
     this.stateService.couchStateListener('tags').subscribe(response => {
       if (response !== undefined) {
-        this.tags[response.planetField] = response.newData.map(this.tagsService.fillSubTags);
+        this.tags[response.planetField] = this.tagsService.fillSubTags(response.newData);
         this.setTags(this.resources[response.planetField], this.tags[response.planetField], response.planetField);
       }
     });

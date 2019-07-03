@@ -68,7 +68,7 @@ export class CoursesService {
   }
 
   mergeData({ courses, courses_progress, ratings, tags }, planetField = 'local', parent = false) {
-    tags = tags.map(this.tagsService.fillSubTags);
+    tags = this.tagsService.fillSubTags(tags);
     const data = courses.map((course: any) => ({
       doc: course,
       _id: course._id,
