@@ -159,7 +159,7 @@ export class TeamsService {
       case 'added':
         return `You have been added to <b>"${team.name}"</b> team.`;
       case 'rejected':
-        return `You have been rejected to join in <b>"${team.name}"</b> team.`;
+        return `You have not been accepted to <b>"${team.name}"</b> team.`;
       default:
         return `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`;
     }
