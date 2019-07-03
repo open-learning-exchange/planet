@@ -132,10 +132,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   rejectRequest(request) {
-    const rejectedMember = [];
-    rejectedMember.push(request);
-    this.teamsService.sendNotifications('rejected', rejectedMember, { url: this.router.url, team: { ...this.team } }).subscribe();
-    this.teamsService.removeFromRequests(this.team, request).pipe(switchMap(() => this.getMembers())).subscribe();
+    this.teamsService.removeFromRequests(this.team, request).pipe(
+      switchMap(() => this.getMembers()),
+      switchMap(() => this.teamsService.sendNotifications('rejected', [ request ], { url: this.router.url, team: this.team }))
+    ).subscribe();
   }
 
   openDialog(data) {
