@@ -10,7 +10,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, takeUntil, debounceTime, map } from 'rxjs/operators';
 import {
-  filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
+  filterSpecificFields, filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
 } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   searchValue = '';
   selectedChild: any = {};
   filterType = 'local';
-  filter: any;
+  filter = {'role' : ''};
   planetType = '';
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
@@ -51,7 +51,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   children: any;
   // List of all possible roles to add to users
   roleList: string[] = [ 'leader', 'monitor' ];
+  allRolesList: string[] = [ 'learner', 'leader', 'monitor', 'manager' ];
   selectedRoles: string[] = [];
+  filteredRoles: string[] = [];
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
@@ -106,6 +108,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterType === 'associated' ? { 'doc.roles': [ 'leader', 'learner' ] }
         : { 'doc.planetCode': child.code || this.stateService.configuration.code }
       ),
+      filterDropdowns(this.filter),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
       filterSpecificFields([ 'doc.name' ])
     ]);
@@ -347,4 +350,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
+  onFilterChange(filterValue: string) {
+    this.filter.role = filterValue;
+    this.allUsers.filter = filterValue === 'All' ? '' : ' ';
+  }
+
+  resetFilter() {
+    this.filteredRoles = [];
+    this.applyFilter('');
+  }
 }
