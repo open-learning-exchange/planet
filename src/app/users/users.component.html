@@ -24,12 +24,12 @@
   </ng-container>
 
   <mat-form-field class="font-size-1">
-    <mat-select placeholder="Filter by role" [value]="filter.role || 'All'" (selectionChange)="onFilterChange($event.value)">
+    <mat-select placeholder="Filter by role" [value] = "filteredRole" (selectionChange)="onFilterChange($event.value)">
       <mat-option i18n value="All">All</mat-option>
       <mat-option *ngFor="let role of allRolesList" value={{role}}>{{role}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <button class = "margin-lr-10" mat-raised-button color="primary" i18n (click)="resetFilter()" [disabled]="filteredRoles.filter === ''"><span>Clear</span></button>
+  <button class = "margin-lr-10" mat-raised-button color="primary" i18n (click)="resetFilter()"><span>Clear</span></button>
 
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">

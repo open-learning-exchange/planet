@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   searchValue = '';
   selectedChild: any = {};
   filterType = 'local';
-  filter = {'role' : ''};
+  filter = { 'doc.roles' : '' };
   planetType = '';
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
@@ -53,7 +53,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   roleList: string[] = [ 'leader', 'monitor' ];
   allRolesList: string[] = [ 'learner', 'leader', 'monitor', 'manager' ];
   selectedRoles: string[] = [];
-  filteredRoles: string[] = [];
+  filteredRole: string;
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
@@ -351,12 +351,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onFilterChange(filterValue: string) {
-    this.filter.role = filterValue;
+    this.filter['doc.roles'] = filterValue;
     this.allUsers.filter = filterValue === 'All' ? '' : ' ';
   }
 
   resetFilter() {
-    this.filteredRoles = [];
+    this.filteredRole = 'All';
+    this.filter[ 'doc.roles' ] = '';
     this.applyFilter('');
   }
 }
