@@ -10,20 +10,10 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { TagChangeEvent } from './planet-tag-input-item.component';
 
 @Component({
-  'templateUrl': 'planet-tag-input-dialog.component.html',
-  'styles': [ `
-    :host .mat-list-option span {
-      font-weight: inherit;
-    }
-    :host p[matLine] * {
-      margin-right: 0.25rem;
-    }
-    :host p[matLine] *:last-child {
-      margin-right: 0;
-    }
-  ` ]
+  'templateUrl': 'planet-tag-input-dialog.component.html'
 })
 export class PlanetTagInputDialogComponent {
 
@@ -68,7 +58,7 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: any) => tag)
       .forEach(tag => {
-        this.tagChange([ tag.tagId || tag ], { tagOne: !this.selectMany });
+        this.tagChange({ tags: [ tag.tagId || tag ], tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
@@ -82,12 +72,12 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagId !== undefined && this.mode === 'add') {
-      this.tagChange([ this.newTagId ]);
+      this.tagChange({ tags: [ this.newTagId ] });
     }
     this.newTagId = undefined;
   }
 
-  tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
+  tagChange({ tags, tagOne = false, deselectSubs = false }: TagChangeEvent) {
     const newState = !this.selected.get(tags[0]);
     const setAllTags = newState !== deselectSubs;
     tags.forEach((tag, index) => {
@@ -98,10 +88,6 @@ export class PlanetTagInputDialogComponent {
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
       }
     });
-  }
-
-  subTagIds(subTags: any[]) {
-    return subTags.map(subTag => subTag._id || subTag.name);
   }
 
   updateFilter(value) {
@@ -141,7 +127,7 @@ export class PlanetTagInputDialogComponent {
     }
   }
 
-  editTagClick(event, tag) {
+  editTagClick({ event, tag }) {
     const onSubmit = ((newTag) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
@@ -171,7 +157,7 @@ export class PlanetTagInputDialogComponent {
       .map((t: any) => ({ name: t.name, value: t._id || t.name }));
   }
 
-  deleteTag(event, tag) {
+  deleteTag({ event, tag }) {
     event.stopPropagation();
     const amount = 'single',
       okClick = this.deleteSelectedTag(tag),
@@ -221,7 +207,7 @@ export class PlanetTagInputDialogComponent {
     );
   }
 
-  toggleSubcollection(event, tagId) {
+  toggleSubcollection({ event, tagId }) {
     event.stopPropagation();
     const newState = !this.subcollectionIsOpen.get(tagId);
     this.subcollectionIsOpen.clear();

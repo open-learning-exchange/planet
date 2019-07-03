@@ -15,6 +15,7 @@ import { PlanetStepListComponent, PlanetStepListFormDirective, PlanetStepListIte
 import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.component';
 import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from './planet-tag-input-dialog.component';
 import { SharedComponentsModule } from '../shared-components.module';
+import { PlanetTagInputItemComponent } from './planet-tag-input-item.component';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { SharedComponentsModule } from '../shared-components.module';
     PlanetTagInputComponent,
     PlanetTagSelectedInputComponent,
     PlanetTagInputDialogComponent,
+    PlanetTagInputItemComponent,
     PlanetTagInputToggleIconComponent,
     PlanetStackedBarComponent,
     PlanetStepListComponent,
