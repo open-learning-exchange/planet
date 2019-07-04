@@ -17,10 +17,10 @@ export class TagsService {
   getTags(db: string, parent: boolean) {
     return this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }).pipe(
       map((tags: any[]) => {
+        tags = tags.filter((tag: any) => tag.db === db && tag.docType === 'definition');
         const tagsInfo = this.tagsInfo(tags);
         return this.fillSubTags(
-          tags.filter((tag: any) => tag.db === db && tag.docType === 'definition')
-            .map((tag: any) => ({ ...tag, count: tagsInfo.counts[tag._id] || 0 })),
+          tags.map((tag: any) => ({ ...tag, count: tagsInfo.counts[tag._id] || 0 })),
           tagsInfo.subTags
         );
       })
@@ -29,12 +29,19 @@ export class TagsService {
 
   tagsInfo(tags: any[]) {
     return tags.reduce(
-      ({ counts, subTags }, tag: any) => ({
+      ({ counts, subTags }, tag: any, index: number) => ({
         counts: tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
-        subTags: tag.attachedTo === undefined ? subTags : { ...subTags, [tag.attachedTo]: [ ...(subTags[tag.attachedTo] || []), tag ] }
+        subTags: tag.attachedTo === undefined ? subTags : { ...subTags, [tag.attachedTo]: [ ...(subTags[tag.attachedTo] || []), index ] }
       }),
       { counts: {}, subTags: {} }
     );
+  }
+
+  tagSort(tagA: any, tagB: any) {
+    const depthA = tagA._id.split('_').length;
+    const depthB = tagB._id.split('_').length;
+    const sortAFirst = depthA !== depthB ? depthA > depthB : tagA.name.toLowerCase() < tagB.name.toLowerCase();
+    return sortAFirst ? -1 : 1;
   }
 
   filterTags(tags: any[], filterString: string): string[] {
@@ -78,8 +85,11 @@ export class TagsService {
   }
 
   fillSubTags(tags: any[], subTagsObj?) {
+    const sortedTags = tags.sort(this.tagSort);
     subTagsObj = subTagsObj || this.tagsInfo(tags).subTags;
-    return tags.map((tag) => ({ ...tag, subTags: subTagsObj[tag._id] || [] }));
+    return sortedTags.reduce((newTags, tag) => [
+      ...newTags, { ...tag, subTags: subTagsObj[tag._id] ? subTagsObj[tag._id].map(tagIndex => newTags[tagIndex]) : [] }
+    ], []);
   }
 
   attachTagsToDocs(db: string, docs: any[], tags: any[]) {

@@ -143,7 +143,7 @@ export class PlanetTagInputDialogComponent {
     const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
       {
         placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox',
-        options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
+        options: this.subcollectionOfOptions(tag, this.data.allTags), required: false, reset: true
       }
     ];
     this.dialogsFormService.openDialogsForm('Edit Collection', [
@@ -153,7 +153,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   subcollectionOfOptions(tag, tags) {
-    return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+    return tags.filter((t: any) => t.name !== tag.name && tag._id.split('_').length < 4)
       .map((t: any) => ({ name: t.name, value: t._id || t.name }));
   }
 
