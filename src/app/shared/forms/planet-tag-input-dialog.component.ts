@@ -207,10 +207,14 @@ export class PlanetTagInputDialogComponent {
     );
   }
 
-  toggleSubcollection({ event, tagId }) {
+  toggleSubcollection({ event, tagId, keepOpen }) {
     event.stopPropagation();
     const newState = !this.subcollectionIsOpen.get(tagId);
-    this.subcollectionIsOpen.clear();
+    this.subcollectionIsOpen.forEach((value, key) => {
+      if (keepOpen.indexOf(key) === -1) {
+        this.subcollectionIsOpen.set(key, false);
+      }
+    });
     this.subcollectionIsOpen.set(tagId, newState);
   }
 

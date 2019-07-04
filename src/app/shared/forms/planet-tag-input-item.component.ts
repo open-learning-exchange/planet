@@ -50,7 +50,7 @@ export class PlanetTagInputItemComponent implements OnInit {
   }
 
   toggleSubcollection(event) {
-    this.onToggleSubcollection.emit(event);
+    this.onToggleSubcollection.emit({ ...event, keepOpen: [ ...event.keepOpen, this.tag._id ] });
   }
 
   editTagClick(event) {
