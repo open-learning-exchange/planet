@@ -143,6 +143,7 @@ export class DashboardComponent implements OnInit {
   getExams() {
     this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
       this.examsCount = exams.length;
+      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Submissions' ? { ...item, badge: this.examsCount } : item);
     });
   }
 
