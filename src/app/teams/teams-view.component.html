@@ -48,7 +48,7 @@
         <ul>
           <li *ngFor="let member of members">
             <a [routerLink]="['/users/profile', member.name]">
-              {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>
+              {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
             </a>
           </li>
         </ul>
