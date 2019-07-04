@@ -36,7 +36,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   news: any[] = [];
   leftTileContent: 'description' | 'news' = 'news';
   isRoot = true;
-  visits = [];
+  visits: any = {};
 
   constructor(
     private couchService: CouchService,
