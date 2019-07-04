@@ -133,10 +133,10 @@ export class DashboardComponent implements OnInit {
 
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
-      const surveysCount = surveys.filter((survey: any, index: number) => {
+      this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
-      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: surveysCount } : item);
+      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: this.surveysCount } : item);
     });
   }
 
