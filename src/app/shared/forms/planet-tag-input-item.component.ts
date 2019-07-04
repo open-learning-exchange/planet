@@ -18,6 +18,9 @@ export interface TagChangeEvent {
     :host p[matLine] *:last-child {
       margin-right: 0;
     }
+    :host .sub-depth-3 {
+      padding-left: 3.25rem;
+    }
   ` ]
 })
 export class PlanetTagInputItemComponent implements OnInit {

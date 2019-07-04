@@ -1,5 +1,5 @@
 <mat-list-item (click)="tagChange({ tags: [ tag._id || tag.name ].concat(subTagIds(tag.subTags)), deselectSubs: !isSubcollection })" class="cursor-pointer">
-  <mat-icon mat-list-icon *ngIf="isSubcollection">subdirectory_arrow_right</mat-icon>
+  <mat-icon mat-list-icon *ngIf="isSubcollection" [ngClass]="{'sub-depth-3':tag._id.split('_').length > 3}">subdirectory_arrow_right</mat-icon>
   <p matLine>
     <mat-checkbox (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
     <span [ngClass]="{ 'mat-body-2': tag.subTags?.length > 0, 'mat-body-1': (tag.subTags || []).length === 0 }">{{tag.name + ' (' + (tag.count || 0) + ')'}}</span>
