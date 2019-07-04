@@ -36,7 +36,6 @@ const loginForm = {
 })
 export class LoginFormComponent {
   public userForm: FormGroup;
-  private planetConfiguration: any = this.stateService.configuration;
   showPassword = false;
   showRepeatPassword = false;
 
@@ -98,7 +97,7 @@ export class LoginFormComponent {
   }
 
   createUser({ name, password }: { name: string, password: string }) {
-    const configuration = this.planetConfiguration;
+    const configuration = this.stateService.configuration;
     const opts = {
       metadata: {
         isUserAdmin: false,
@@ -124,16 +123,16 @@ export class LoginFormComponent {
   createParentSession({ name, password }) {
     return this.couchService.post('_session',
       { 'name': name, 'password': password },
-      { withCredentials: true, domain: this.planetConfiguration.parentDomain });
+      { withCredentials: true, domain: this.stateService.configuration.parentDomain });
   }
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
-    this.planetConfiguration = this.stateService.configuration;
+    const configuration = this.stateService.configuration;
     this.pouchAuthService.login(name, password).pipe(
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
-        const adminName = this.planetConfiguration.adminName.split('@')[0];
+        const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       })
     ).subscribe(() => {}, this.loginError.bind(this));
@@ -173,7 +172,7 @@ export class LoginFormComponent {
   }
 
   createSession(name, password) {
-    const msg = this.planetConfiguration.planetType === 'community' ? 'nation' : 'center';
+    const msg = this.stateService.configuration.planetType === 'community' ? 'nation' : 'center';
     return () => {
       // Post new session info to login_activity
       const obsArr = this.loginObservables(name, password);
@@ -191,12 +190,12 @@ export class LoginFormComponent {
 
   loginObservables(name, password) {
     const obsArr = [ this.userService.newSessionLog() ];
-    const localConfig = this.planetConfiguration;
+    const localConfig = this.stateService.configuration;
     const localAdminName = localConfig.adminName.split('@')[0];
     if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
       return obsArr;
     }
-    obsArr.push(this.createParentSession({ 'name': this.planetConfiguration.adminName, 'password': password }));
+    obsArr.push(this.createParentSession({ 'name': localConfig.adminName, 'password': password }));
     if (localConfig.registrationRequest === 'pending') {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
     }
