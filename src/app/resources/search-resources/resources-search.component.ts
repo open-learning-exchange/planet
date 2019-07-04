@@ -110,7 +110,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
     return ({
       category,
       items: data.reduce((list, { doc }) => list.concat(doc[category]), []).reduce(dedupeShelfReduce, []).filter(item => item)
-            .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
     });
   }
 
