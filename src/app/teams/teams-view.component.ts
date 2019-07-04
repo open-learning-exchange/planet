@@ -126,12 +126,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   acceptRequest(request) {
     this.teamsService.toggleTeamMembership(this.team, false, request).pipe(
       switchMap(() => this.teamsService.removeFromRequests(this.team, request)),
-      switchMap(() => this.getMembers())
+      switchMap(() => this.getMembers()),
+      switchMap(() => this.sendNotifications('added'))
     ).subscribe();
   }
 
   rejectRequest(request) {
-    this.teamsService.removeFromRequests(this.team, request).pipe(switchMap(() => this.getMembers())).subscribe();
+    this.teamsService.removeFromRequests(this.team, request).pipe(
+      switchMap(() => this.getMembers()),
+      switchMap(() => this.teamsService.sendNotifications('rejected', [ request ], { url: this.router.url, team: this.team }))
+    ).subscribe();
   }
 
   openDialog(data) {
