@@ -47,7 +47,7 @@ export class TeamsService {
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
             { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, ...team, ...response }
+              parentCode: configuration.parentCode, ...team, ...response, createdBy: userId }
           ) :
           empty()
         ),
@@ -158,6 +158,8 @@ export class TeamsService {
         return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`;
       case 'added':
         return `You have been added to <b>"${team.name}"</b> team.`;
+      case 'rejected':
+        return `You have not been accepted to <b>"${team.name}"</b> team.`;
       default:
         return `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`;
     }

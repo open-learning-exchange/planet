@@ -16,7 +16,7 @@
             [routerLink]="item.link"
             cdkDrag
           >
-            <span [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.title}}</span>
+            <span [matBadge]="item.badge" [matBadgeHidden]="item.badge===0">{{item.title}}</span>
             <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife'">
               <mat-icon>clear</mat-icon>
             </button>
