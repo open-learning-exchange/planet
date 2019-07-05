@@ -48,7 +48,10 @@
       <ng-template #memberList>
         <mat-card *ngFor="let member of members">
           <mat-card-header>
-            <a mat-card-title [routerLink]="['/users/profile', member.name]">
+            <a *ngIf="planetCode === member.userPlanetCode" mat-card-title [routerLink]="['/users/profile', member.name]">
+              {{member.name}}
+            </a>
+            <a *ngIf="planetCode !== member.userPlanetCode" mat-card-title [routerLink]="['/users/profile', member.name, { planet: member.userPlanetCode }]">
               {{member.name}}
             </a>
             <mat-card-subtitle>
@@ -56,7 +59,8 @@
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-actions>
-            <a [routerLink]="['/users/profile', member.name]" mat-raised-button color="primary">View Profile</a>
+            <a *ngIf="planetCode === member.userPlanetCode" [routerLink]="['/users/profile', member.name]" mat-raised-button color="primary">View Profile</a>
+            <a *ngIf="planetCode !== member.userPlanetCode" [routerLink]="['/users/profile', member.name, { planet: member.userPlanetCode }]" mat-raised-button color="primary">View Profile</a>
             <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="danger">Remove</button>
           </mat-card-actions>
         </mat-card>
@@ -67,10 +71,12 @@
         <ng-template #requestedList>
           <mat-card *ngFor="let request of requests">
             <mat-card-header>
-              <a mat-card-title [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
+              <a mat-card-title *ngIf="planetCode === member.userPlanetCode" [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
+              <a mat-card-title *ngIf="planetCode !== member.userPlanetCode" [routerLink]="['/users/profile', request.name, { planet: request.userPlanetCode }]">{{request.name}}</a>
             </mat-card-header>
             <mat-card-actions>
-              <a [routerLink]="['/users/profile', request.name]" mat-raised-button color="primary">View Profile</a>
+              <a *ngIf="planetCode === member.userPlanetCode" [routerLink]="['/users/profile', request.name]" mat-raised-button color="primary">View Profile</a>
+              <a *ngIf="planetCode !== member.userPlanetCode" [routerLink]="['/users/profile', request.name, { planet: request.userPlanetCode }]" mat-raised-button color="primary">View Profile</a>
               <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
               <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
             </mat-card-actions>

@@ -15,6 +15,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -38,6 +39,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   isRoot = true;
   visits: any = {};
   leader: string;
+  planetCode: string;
 
   constructor(
     private couchService: CouchService,
@@ -51,12 +53,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
     this.couchService.get('teams/' + this.teamId).pipe(
       switchMap(data => {
+        this.planetCode = this.stateService.configuration.code;
         this.team = data;
         return this.getMembers();
       }),
