@@ -34,9 +34,9 @@ import { ResourcesSearchComponent } from './search-resources/resources-search.co
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(ResourcesSearchComponent, { static: false }) searchComponent: ResourcesSearchComponent;
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
@@ -81,7 +81,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     ]
   );
 
-  @ViewChild(PlanetTagInputComponent)
+  @ViewChild(PlanetTagInputComponent, { static: false })
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(

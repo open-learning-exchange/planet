@@ -14,7 +14,7 @@ export class NewsListItemComponent implements AfterViewChecked {
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
-  @ViewChild('content') content;
+  @ViewChild('content', { static: false }) content;
   contentHeight = 0;
   currentUser = this.userService.get();
   showLess = true;

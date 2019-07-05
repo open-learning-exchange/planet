@@ -45,8 +45,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedback.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   user: any = {};
   private onDestroy$ = new Subject<void>();
   emptyData = false;

@@ -35,8 +35,8 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 })
 export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   allUsers = new MatTableDataSource();
   message = '';
   searchValue = '';

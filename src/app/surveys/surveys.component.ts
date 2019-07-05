@@ -47,8 +47,8 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   surveys = new MatTableDataSource();
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   displayedColumns = [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();

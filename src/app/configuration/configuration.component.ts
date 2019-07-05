@@ -37,7 +37,7 @@ const removeProtocol = (str: string) => {
   ` ]
 })
 export class ConfigurationComponent implements OnInit {
-  @ViewChild('stepper') stepper: MatStepper;
+  @ViewChild('stepper', { static: false }) stepper: MatStepper;
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';

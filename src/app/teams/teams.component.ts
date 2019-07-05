@@ -29,8 +29,8 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 export class TeamsComponent implements OnInit, AfterViewInit {
 
   teams = new MatTableDataSource();
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   userMembership: any[] = [];
   displayedColumns = [ 'name', 'createdDate', 'teamType', 'action' ];
   dbName = 'teams';

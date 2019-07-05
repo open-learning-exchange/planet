@@ -25,8 +25,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   planetConfiguration = this.stateService.configuration;
   displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();
