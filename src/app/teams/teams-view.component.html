@@ -5,7 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{team?.name}}</h3>
-    <button class="margin-lr-5" mat-stroked-button i18n (click)="changeLeftTile();" *ngIf="userStatus === 'member'">Show { leftTileContent, select, description {Messages} news {Description}}</button>
+    <button class="margin-lr-5" mat-stroked-button i18n (click)="changeLeftTile()" *ngIf="userStatus === 'member'">Show { leftTileContent, select, description {Messages} news {Description}}</button>
     <span class="toolbar-fill"></span>
     <div>
       <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
