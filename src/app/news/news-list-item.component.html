@@ -14,9 +14,10 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <td-markdown [content]="item.message"></td-markdown>
+    <td-markdown [content]="item.displayMessage"></td-markdown>
   </mat-card-content>
   <mat-card-actions class="display-flex">
+    <button *ngIf="item.showMore || item.showLess" mat-button type="button" (click)="toggleShowMoreLess(item)" i18n>{{ item.showMore ? "Show More" : "Show Less" }}</button>
     <button mat-button type="button" (click)="addReply(item)" i18n>Reply</button>
     <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
