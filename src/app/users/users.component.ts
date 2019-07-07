@@ -226,7 +226,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     // //REPLACE THIS!
     // this.couchService.findAll('teams').then(teamsDb => {
     //   const docsWithUser = teamsDb.filter(doc => doc.userId === user._id)
-    //   this.couchService.bulkDocs('teams', docsWithUser.map(doc => 
+    //   this.couchService.bulkDocs('teams', docsWithUser.map(doc =>
     //     this.couchService.delete('teams/' + doc._id + '?rev=' + doc._rev))
     //   );
     // })
@@ -234,8 +234,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    
-    this.deleteUserFromTeams(user)
+
+    this.deleteUserFromTeams(user);
 
     return {
       request: this.couchService.get('shelf/' + userId).pipe(
