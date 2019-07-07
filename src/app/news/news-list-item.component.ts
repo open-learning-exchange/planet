@@ -25,10 +25,10 @@ export class NewsListItemComponent implements OnInit {
   }
 
   setDisplayMessage(news) {
-    let lines: string[] = news.message.split('\n\n');
+    const lines: string[] = news.message.split('\n\n');
     if (lines.length > 6) {
       let message: string = lines[0];
-      for (let i=1; i<=5; i++) {
+      for (let i = 1; i <= 5; i++) {
         message = message + '\n\n' + lines[i];
       }
       news.displayMessage = message;
