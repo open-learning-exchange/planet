@@ -53,7 +53,7 @@ export class SyncDirective {
       switchMap(([ achievements, teamResources ]: any[]) =>
         forkJoin(this.achievementResourceReplicator(achievements), this.teamResourcesReplicator(teamResources))
       ),
-      switchMap((replicators: any[]) => {
+      switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat()));
       }),

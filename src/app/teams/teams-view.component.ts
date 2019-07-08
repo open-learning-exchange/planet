@@ -274,22 +274,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team)
           .pipe(switchMap(() => this.getMembers())).subscribe(() => dialogRef.close()),
         excludeIds: this.resources.map(r => r.resource._id),
-        canAdd: true,
-        db: 'teams',
-        linkId: this.teamId,
-        resource
+        canAdd: true, db: 'teams', linkId: this.teamId, resource
       }
     });
   }
 
   removeResource(resource) {
-    this.couchService.post('teams', { ...resource.linkDoc, _deleted: true })
-      .pipe(switchMap(() => this.getMembers()))
+    this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()))
       .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
-  }
-
-  editResource(resource) {
-    this.openResourcesDialog(resource);
   }
 
 }

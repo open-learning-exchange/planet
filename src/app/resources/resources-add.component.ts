@@ -41,7 +41,16 @@ export class ResourcesAddComponent implements OnInit {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control([]);
-  @Input() existingResource: any = {};
+  _existingResource: any = {};
+  get existingResource(): any {
+    return this._existingResource;
+  }
+  @Input() set existingResource(resource) {
+    this._existingResource = resource;
+    if (this.resourceForm) {
+      this.setFormValues(resource);
+    }
+  }
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
@@ -73,20 +82,12 @@ export class ResourcesAddComponent implements OnInit {
     });
     this.userDetail = this.userService.get();
     this.resourcesService.requestResourcesUpdate(false, false);
-    this.resourceForm.patchValue(this.existingResource.doc);
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
         .subscribe((resources: any[]) => {
           this.pageType = 'Update';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
           this.existingResource = resource;
-          this.privateFor = resource.privateFor;
-          // If the resource does not have an attachment, disable file downloadable toggle
-          this.disableDownload = !resource.doc._attachments;
-          this.disableDelete = !resource.doc._attachments;
-          this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments)[0] : '';
-          this.resourceForm.patchValue(resource.doc);
-          this.tags.setValue(resource.tags.map((tag: any) => tag._id));
         }, (error) => {
           console.log(error);
         });
@@ -130,6 +131,17 @@ export class ResourcesAddComponent implements OnInit {
       updatedDate: this.couchService.datePlaceholder,
       private: this.isDialog
     });
+    this.resourceForm.patchValue(this.existingResource.doc || {});
+  }
+
+  setFormValues(resource) {
+    this.privateFor = resource.privateFor;
+    // If the resource does not have an attachment, disable file downloadable toggle
+    this.disableDownload = !resource.doc._attachments;
+    this.disableDelete = !resource.doc._attachments;
+    this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments)[0] : '';
+    this.resourceForm.patchValue(resource.doc);
+    this.tags.setValue(resource.tags.map((tag: any) => tag._id));
   }
 
   // Function which takes a MIME Type as a string and returns whether the file is an
