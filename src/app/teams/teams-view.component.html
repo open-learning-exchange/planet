@@ -53,7 +53,7 @@
           <div class="card-grid">
             <mat-card *ngFor="let member of members">
               <mat-card-header>
-                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
+                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]" [ngClass]="{'member-name': member.userPlanetCode !== this.planetCode}">
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>

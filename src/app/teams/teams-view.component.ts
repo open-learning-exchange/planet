@@ -44,7 +44,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   planetCode: string;
   deleteDialog: any;
   leaveDialog: any;
-  message = '';
 
   constructor(
     private couchService: CouchService,
@@ -361,5 +360,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       switchMap(() => this.getMembers())
     ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
   }
+
+
 
 }
