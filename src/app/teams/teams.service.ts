@@ -214,7 +214,10 @@ export class TeamsService {
   linkResourcesToTeam(resources, team) {
     const { teamPlanetCode, teamType } = team;
     const links = resources.map(
-      resource => ({ resourceId: resource._id, teamId: team._id, teamPlanetCode, teamType, docType: 'resourceLink' })
+      resource => ({
+        resourceId: resource.doc._id, sourcePlanet: resource.doc.sourcePlanet,
+        teamId: team._id, teamPlanetCode, teamType, docType: 'resourceLink'
+      })
     );
     return this.couchService.bulkDocs('teams', links);
   }

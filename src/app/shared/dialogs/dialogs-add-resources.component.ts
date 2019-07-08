@@ -50,7 +50,7 @@ export class DialogsAddResourcesComponent {
   }
 
   addNewResource(resource) {
-    this.data.okClick(this.existingResource.doc ? [] : [ { _id: resource.id } ]);
+    this.data.okClick(this.existingResource.doc ? [] : [ resource ]);
   }
 
   toggleNewOrExisting() {
