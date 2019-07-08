@@ -79,7 +79,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.selectorType()).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+    this.activityService.getLoginActivities(this.activityParams()).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
@@ -88,14 +88,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(this.selectorType()).subscribe((averageRatings) => {
+    this.activityService.getRatingInfo(this.activityParams()).subscribe((averageRatings) => {
       this.reports.resourceRatings = averageRatings.filter(item => item.type === 'resource').slice(0, 5);
       this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
     });
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.selectorType()).subscribe(({ byResource, byMonth }) => {
+    this.activityService.getResourceVisits(this.activityParams()).subscribe(({ byResource, byMonth }) => {
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
@@ -193,9 +193,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       .filter((month: number) => month > planetLaunchDate);
   }
 
-  selectorType() {
-    const typeFilter =  this.filter ? { androidId: { '$exists': this.filter === 'myplanet' } } : {};
-    return { createdOn: this.planetCode, ...typeFilter };
+  activityParams(): { planetCode, fromMyPlanet? } {
+    return { planetCode: this.planetCode, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
 }

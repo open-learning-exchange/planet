@@ -82,10 +82,10 @@ export class ManagerService {
   getLogs(tillDate?: number) {
     const configuration = this.configuration;
     return forkJoin([
-      this.activityService.getLoginActivities(configuration.code, tillDate),
+      this.activityService.getLoginActivities({ planetCode: configuration.code, tillDate }),
       this.activityService.getAdminActivities(configuration.code, tillDate),
-      this.activityService.getResourceVisits(configuration.code, tillDate),
-      this.activityService.getRatingInfo(configuration.code, tillDate)
+      this.activityService.getResourceVisits({ planetCode: configuration.code, tillDate }),
+      this.activityService.getRatingInfo({ planetCode: configuration.code, tillDate })
     ]).pipe(map(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
       return ({
         resourceVisits: resourceVisits.byResource.reduce((total, visit) => total + visit.count, 0),
