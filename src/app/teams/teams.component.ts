@@ -121,6 +121,15 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  toggleDeleteMembership(team) {
+    this.teamsService.toggleTeamDeleteMembership(team).subscribe((newTeam: any) => {
+      this.planetMessageService.showMessage('You have deleted a team.');
+      if (newTeam.status === 'archived') {
+        this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+      }
+    });
+  }
+
   requestToJoin(team) {
     this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
       switchMap(() => this.teamsService.getTeamMembers(team)),

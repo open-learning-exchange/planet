@@ -51,7 +51,12 @@
         <mat-cell *matCellDef="let element">
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
-              <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
+              <span *ngIf="user._id === element.doc.createdBy; else leaveButton">
+                <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleDeleteMembership(element.doc)"><mat-icon>delete_forever</mat-icon> Delete</button>
+              </span>
+              <ng-template #leaveButton>
+                <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
+              </ng-template>
               <button mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n><mat-icon>edit</mat-icon> Edit</button>
             </ng-container>
             <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
