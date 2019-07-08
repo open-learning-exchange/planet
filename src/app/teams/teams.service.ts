@@ -219,7 +219,14 @@ export class TeamsService {
         teamId: team._id, teamPlanetCode, teamType, docType: 'resourceLink'
       })
     );
+    if (teamPlanetCode !== this.stateService.configuration.code) {
+      this.updateSendDocs(resources, teamPlanetCode);
+    }
     return this.couchService.bulkDocs('teams', links);
+  }
+
+  updateSendDocs(resources, sendTo) {
+    this.couchService.bulkDocs('send_items', resources.map(resource => ({ db: 'resources', sendTo, item: resource }))).subscribe();
   }
 
 }
