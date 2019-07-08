@@ -95,7 +95,7 @@
               <button type="button" mat-icon-button (click)="removeResource(resource)" color="warn" class="mini-icon-button" matSuffix>
                 <mat-icon>remove_circle</mat-icon>
               </button>
-              <button type="button" mat-icon-button (click)="editResource(resource.resource)" class="mini-icon-button" matSuffix>
+              <button type="button" mat-icon-button (click)="editResource(resource.resource)" class="mini-icon-button" *ngIf="resource.resource.private===true" matSuffix>
                 <mat-icon>edit</mat-icon>
               </button>
             </li>
