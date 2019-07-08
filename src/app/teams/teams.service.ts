@@ -103,7 +103,7 @@ export class TeamsService {
     );
   }
 
-  toggleTeamDeleteMembership(team) {
+  deleteTeam(team) {
     return this.updateTeam({ ...team, status: 'archived' })
       .pipe(
       switchMap((newTeam) => of({ ...team, ...newTeam }))

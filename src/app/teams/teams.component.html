@@ -52,7 +52,7 @@
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <span *ngIf="user._id === element.doc.createdBy; else leaveButton">
-                <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleDeleteMembership(element.doc)"><mat-icon>delete_forever</mat-icon> Delete</button>
+                <button mat-raised-button color="primary" class="margin-lr-3" (click)="deleteTeam(element.doc)"><mat-icon>delete_forever</mat-icon> Delete</button>
               </span>
               <ng-template #leaveButton>
                 <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
