@@ -48,11 +48,12 @@ export class ReportsService {
     );
   }
 
-  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time' }: any = { field: 'createdOn' }) {
-    return planetCode ? findDocuments({ ...{ [field]: planetCode }, ...this.timeFilter(dateField, tillDate) }) : undefined;
+  selector(planetCode: any, { field = 'createdOn', tillDate, dateField = 'time' }: any = { field: 'createdOn' }) {
+    planetCode = typeof planetCode === 'string' ? { [field]: planetCode } : planetCode;
+    return planetCode ? findDocuments({ ...planetCode, ...this.timeFilter(dateField, tillDate) }) : undefined;
   }
 
-  getTotalUsers(planetCode: string, local: boolean) {
+  getTotalUsers(planetCode: any, local: boolean) {
     const obs = local ?
       this.couchService.findAll('_users') :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
@@ -70,7 +71,7 @@ export class ReportsService {
     }));
   }
 
-  getLoginActivities(planetCode?: string, tillDate?: number) {
+  getLoginActivities(planetCode?: any, tillDate?: number) {
     return this.couchService.findAll('login_activities', this.selector(planetCode, { tillDate, dateField: 'loginTime' }))
     .pipe(map((loginActivities: any) => {
       return ({
@@ -81,7 +82,7 @@ export class ReportsService {
     }));
   }
 
-  getRatingInfo(planetCode?: string, tillDate?: number) {
+  getRatingInfo(planetCode?: any, tillDate?: number) {
     return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time' }))
     .pipe(map((ratings: any) => {
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
@@ -91,7 +92,7 @@ export class ReportsService {
     }));
   }
 
-  getResourceVisits(planetCode?: string, tillDate?: number) {
+  getResourceVisits(planetCode?: any, tillDate?: number) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time' }))
     .pipe(map((resourceActivites) => {
       return ({
@@ -115,7 +116,7 @@ export class ReportsService {
     return this.couchService.get('child_statistics/' + code);
   }
 
-  getAdminActivities(planetCode?: string, tillDate?: number) {
+  getAdminActivities(planetCode?: any, tillDate?: number) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }))
     .pipe(map(adminActivities => {
       return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
