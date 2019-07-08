@@ -32,7 +32,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
   news: any[] = [];
-  leftTileContent: 'description' | 'news' = 'description';
+  leftTileContent: 'description' | 'news';
   isRoot = true;
 
   constructor(
