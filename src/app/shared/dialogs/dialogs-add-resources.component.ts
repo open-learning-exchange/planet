@@ -12,12 +12,19 @@ export class DialogsAddResourcesComponent {
   @ViewChild(ResourcesAddComponent) resourcesAddComponent: ResourcesAddComponent;
   view: 'resources' | 'resourcesAdd' = 'resources';
   linkInfo: any;
+  updateResource = false;
+  existingResource: any = {};
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
+    if (this.data.resource) {
+      this.updateResource = true;
+      this.view = 'resourcesAdd';
+      this.existingResource = { doc: this.data.resource, _id: this.data.resource._id, _rev: this.data.resource._rev };
+    }
   }
 
   ok() {
@@ -43,7 +50,7 @@ export class DialogsAddResourcesComponent {
   }
 
   addNewResource(resource) {
-    this.data.okClick([ { _id: resource.id } ]);
+    this.data.okClick(this.existingResource.doc ? [] : [ { _id: resource.id } ]);
   }
 
   toggleNewOrExisting() {

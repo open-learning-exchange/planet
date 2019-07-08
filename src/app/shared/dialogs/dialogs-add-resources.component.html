@@ -1,9 +1,9 @@
 <ng-container [ngSwitch]="view">
   <planet-resources *ngSwitchCase="'resources'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-resources>
-  <planet-resources-add *ngSwitchCase="'resourcesAdd'" [isDialog]="true" [privateFor]="linkInfo" (afterSubmit)="addNewResource($event)"></planet-resources-add>
+  <planet-resources-add *ngSwitchCase="'resourcesAdd'" [isDialog]="true" [privateFor]="linkInfo" [existingResource]="existingResource" (afterSubmit)="addNewResource($event)"></planet-resources-add>
 </ng-container>
 <mat-dialog-actions>
-  <ng-container *ngIf="data.canAdd">
+  <ng-container *ngIf="data.canAdd && !updateResource">
     <button color="accent" mat-raised-button (click)="toggleNewOrExisting()" i18n>
       {view, select, resources {Create New Resource} resourcesAdd {Select Existing Resource(s)}}
     </button>

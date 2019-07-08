@@ -267,16 +267,17 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.leftTileContent = this.leftTileContent === 'news' ? 'description' : 'news';
   }
 
-  openResourcesDialog() {
+  openResourcesDialog(resource?) {
     const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
       data: {
         okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team)
           .pipe(switchMap(() => this.getMembers())).subscribe(() => dialogRef.close()),
-        excludeIds: this.resources.map(resource => resource.resource._id),
+        excludeIds: this.resources.map(r => r.resource._id),
         canAdd: true,
         db: 'teams',
-        linkId: this.teamId
+        linkId: this.teamId,
+        resource
       }
     });
   }
@@ -285,6 +286,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.couchService.post('teams', { ...resource.linkDoc, _deleted: true })
       .pipe(switchMap(() => this.getMembers()))
       .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
+  }
+
+  editResource(resource) {
+    this.openResourcesDialog(resource);
   }
 
 }

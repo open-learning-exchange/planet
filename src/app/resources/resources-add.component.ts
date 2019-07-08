@@ -31,7 +31,6 @@ import { TagsService } from '../shared/forms/tags.service';
 export class ResourcesAddComponent implements OnInit {
   constants = constants;
   file: any;
-  existingResource: any = {};
   deleteAttachment = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
@@ -42,6 +41,7 @@ export class ResourcesAddComponent implements OnInit {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control([]);
+  @Input() existingResource: any = {};
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
@@ -73,6 +73,7 @@ export class ResourcesAddComponent implements OnInit {
     });
     this.userDetail = this.userService.get();
     this.resourcesService.requestResourcesUpdate(false, false);
+    this.resourceForm.patchValue(this.existingResource.doc);
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
         .subscribe((resources: any[]) => {
@@ -156,7 +157,8 @@ export class ResourcesAddComponent implements OnInit {
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-        const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
+        const message = newResource.title +
+          (this.pageType === 'Update' || this.existingResource.doc ?  ' Updated Successfully' : ' Added');
         this.updateResource(newResource, file).subscribe(([ resourceRes ]) => {
           if (this.isDialog) {
             this.afterSubmit.next(resourceRes);
