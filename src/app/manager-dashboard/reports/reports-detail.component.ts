@@ -22,6 +22,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   reports: any = {};
   charts: Chart[] = [];
   onDestroy$ = new Subject<void>();
+  filter = '';
+  codeParam = '';
 
   constructor(
     private activityService: ReportsService,
@@ -39,12 +41,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         return;
       }
       const planets = this.activityService.attachNamesToPlanets((planetState && planetState.newData) || []);
-      const codeParam = params.get('code');
-      const planet = planets.find((p: any) => p.doc.code === codeParam);
-      this.planetCode = codeParam || this.stateService.configuration.code;
+      this.codeParam = params.get('code');
+      const planet = planets.find((p: any) => p.doc.code === this.codeParam);
+      this.planetCode = this.codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
       this.planetName = planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : this.stateService.configuration.name;
-      this.initializeData(!codeParam);
+      this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
   }
@@ -52,6 +54,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  onFilterChange(filterValue: string) {
+    this.filter = filterValue;
+    this.initializeData(!this.codeParam);
   }
 
   initializeData(local: boolean) {
@@ -72,7 +79,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.planetCode).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+    this.activityService.getLoginActivities(this.activityParams()).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
@@ -81,14 +88,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(this.planetCode).subscribe((averageRatings) => {
+    this.activityService.getRatingInfo(this.activityParams()).subscribe((averageRatings) => {
       this.reports.resourceRatings = averageRatings.filter(item => item.type === 'resource').slice(0, 5);
       this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
     });
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.planetCode).subscribe(({ byResource, byMonth }) => {
+    this.activityService.getResourceVisits(this.activityParams()).subscribe(({ byResource, byMonth }) => {
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
@@ -184,6 +191,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return Array(12).fill(1)
       .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
       .filter((month: number) => month > planetLaunchDate);
+  }
+
+  activityParams(): { planetCode, fromMyPlanet? } {
+    return { planetCode: this.planetCode, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
 }

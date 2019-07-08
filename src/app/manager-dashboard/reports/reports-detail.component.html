@@ -4,6 +4,20 @@
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
+  <mat-button-toggle-group
+    class="margin-lr-5 font-size-1"
+    (change)="onFilterChange($event.value)"
+    #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="planet" [checked]="this.filter === 'planet'" i18n>
+      Planet
+    </mat-button-toggle>
+    <mat-button-toggle value="myplanet" [checked]="this.filter === 'myplanet'" i18n>
+      myPlanet
+    </mat-button-toggle>
+    <mat-button-toggle value="" [checked]="this.filter === ''" i18n>
+      Both
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar>
