@@ -47,9 +47,17 @@
       <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
       <ng-template #memberList>
         <mat-card *ngFor="let member of members">
-          <a [routerLink]="['/users/profile', member.name]">
-            {{member.name}} <span i18n *ngIf="member.name === currentUserName">(You)</span>{{' '}}<span i18n *ngIf="member.userId === team.createdBy">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
-          </a>
+          <mat-card-header>
+            <a mat-card-title [routerLink]="['/users/profile', member.name]">
+              {{member.name}}
+            </a>
+            <mat-card-subtitle>
+              <span i18n *ngIf="member.name === currentUserName">(You)</span>{{' '}}<span i18n *ngIf="member.userId === team.createdBy">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions>
+            <a [routerLink]="['/users/profile', member.name]" mat-raised-button color="primary">View Profile</a>
+          </mat-card-actions>
         </mat-card>
       </ng-template>
       <ng-container *ngIf="userStatus === 'member'">
@@ -57,9 +65,14 @@
         <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
         <ng-template #requestedList>
           <mat-card *ngFor="let request of requests">
-            <a [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
-            <button mat-raised-button color="primary" class="margin-lr-3" i18n (click)="acceptRequest(request)" [disabled]="disableAddingMembers">Accept</button>
-            <button mat-raised-button color="warn" class="margin-lr-3" i18n (click)="rejectRequest(request)" [disabled]="disableAddingMembers">Reject</button>
+            <mat-card-header>
+              <a mat-card-title [routerLink]="['/users/profile', request.name]">{{request.name}}</a>
+            </mat-card-header>
+            <mat-card-actions>
+              <a [routerLink]="['/users/profile', request.name]" mat-raised-button color="primary">View Profile</a>
+              <button mat-raised-button color="primary" i18n (click)="acceptRequest(request)" [disabled]="disableAddingMembers">Accept</button>
+              <button mat-raised-button color="warn" i18n (click)="rejectRequest(request)" [disabled]="disableAddingMembers">Reject</button>
+            </mat-card-actions>
           </mat-card>
         </ng-template>
         <p i18n><b>Courses: ({{team?.courses?.length || 0}})</b></p>
