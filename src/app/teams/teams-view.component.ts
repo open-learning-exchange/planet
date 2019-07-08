@@ -361,6 +361,4 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
   }
 
-
-
 }
