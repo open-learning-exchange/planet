@@ -223,26 +223,24 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteUserFromTeams(user) {
-    // //REPLACE THIS!
-    // this.couchService.findAll('teams').then(teamsDb => {
-    //   const docsWithUser = teamsDb.filter(doc => doc.userId === user._id)
-    //   this.couchService.bulkDocs('teams', docsWithUser.map(doc =>
-    //     this.couchService.delete('teams/' + doc._id + '?rev=' + doc._rev))
-    //   );
-    // })
+    return this.couchService.findAll('teams', { selector: { userId: user._id }}).pipe(
+      switchMap(teams => {
+        const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
+        return this.couchService.bulkDocs('teams', docsWithUser)
+      })
+    )
   }
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-
-    this.deleteUserFromTeams(user);
 
     return {
       request: this.couchService.get('shelf/' + userId).pipe(
         switchMap(shelfUser => {
           return forkJoin([
             this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
-            this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev)
+            this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
+            this.deleteUserFromTeams(user)
           ]);
         })
       ),
