@@ -31,7 +31,20 @@ export class TagsService {
 
   filterTags(tags: any[], filterString: string): string[] {
     // Includes any tag with a sub tag that matches in addition to tags that match
-    return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+    const subTags: Array<any> = [];
+    let targetTag: any;
+    tags.forEach(tag => {
+      tag.subTags.forEach(subTag => {
+        if ( subTag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1) {
+          targetTag = tag;
+        }
+      });
+    });
+    const copy = { ...targetTag };
+    copy.subTags =  copy.subTags.filter((subTag: any) => subTag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+    subTags.push(copy);
+    return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1).length ?
+    tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1) : subTags;
   }
 
   updateTag(tag) {
