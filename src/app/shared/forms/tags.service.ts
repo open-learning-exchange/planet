@@ -43,9 +43,13 @@ export class TagsService {
         switchMap(res => of([ res ]))
       );
     }
-    return (tag._id ? this.couchService.findAll('tags', findDocuments({ 'tagId': tag._id })) : of([])).pipe(
+    return (tag._id ?
+      this.couchService.findAll('tags', findDocuments({ '$or': [ { 'tagId': tag._id }, { 'attachedTo': tag._id } ] })) :
+      of([])
+    ).pipe(
       switchMap((oldLinks: any[]) => {
-        const newLinks = oldLinks.map(t => ({ ...t, tagId: newId }));
+        const replaceField = (oldValue, newValue) => oldValue === undefined ? undefined : newValue;
+        const newLinks = oldLinks.map(t => ({ ...t, tagId: replaceField(t.tagId, newId), attachedTo: replaceField(t.attachedTo, newId) }));
         return this.couchService.bulkDocs('tags', [
           { ...tagData, _rev: undefined, _id: newId },
           { ...tagData, _deleted: true },
