@@ -1,0 +1,32 @@
+<mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step completed="false">
+    <ng-template matStepLabel i18n>Planet Detail</ng-template>
+    <b i18n>Please provide PLANET detail to clone from</b>
+    <form class="form-spacing" [formGroup]="loginForm">
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Server URL" formControlName="url" required>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.url"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.name"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
+        <mat-error><planet-form-error-messages [control]="loginForm.controls.password"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <div class="full-width">
+        <button mat-raised-button color="primary" matStepperNext i18n (click)="verifyAdmin()">Next</button>
+      </div>
+    </form>
+    <div id="login-status">{{message}}</div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel i18n>Planet Cloning</ng-template>
+    <b i18n>Configuration is valid. Do you like to continue cloning.</b>
+    <div>
+      <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
+      <button mat-raised-button color="primary" (click)="clonePlanet()" i18n>Next</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>
