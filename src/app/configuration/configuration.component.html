@@ -22,7 +22,7 @@
   </mat-step>
 
   <mat-step [stepControl]="configurationFormGroup">
-    <ng-template matStepLabel i18n>{{configurationType === 'new' ? 'Set Up' : 'Update'}} Configuration</ng-template>
+    <ng-template matStepLabel i18n>{ configurationType, select, new {Set Up Configuration} update {Update Configuration}}</ng-template>
     <form class="form-spacing configuration-form" [formGroup]="configurationFormGroup">
       <mat-form-field>
         <mat-select i18n-placeholder placeholder="Select Nation/Community" (selectionChange)="onChange($event.value)" formControlName="planetType" required>
@@ -92,7 +92,7 @@
 
   <mat-step [stepControl]="contactFormGroup">
     <form class="form-spacing" [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
-      <ng-template matStepLabel i18n>{{configurationType === 'new' ? '' : 'Update'}} Contact Details</ng-template>
+      <ng-template matStepLabel i18n>{ configurationType, select, new {Contact Details} update {Update Contact Details}}</ng-template>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
         <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
@@ -114,7 +114,7 @@
       </mat-form-field>
       <div class="full-width">
         <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-        <button mat-raised-button type="submit" color="primary" i18n>Submit</button>
+        <button mat-raised-button type="submit" color="primary" i18n>{ configurationType, select, new {Submit} update {Update}}</button>
       </div>
     </form>
   </mat-step>

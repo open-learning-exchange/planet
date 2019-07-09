@@ -68,7 +68,8 @@ export class SyncDirective {
     const bothList = [
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
       { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } }
+      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } },
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
     ];
     const pushList = [ ...this.pushList(), ...bothList ];
     const pullList = [ ...this.pullList(), ...bothList ];
@@ -90,7 +91,6 @@ export class SyncDirective {
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
       { db: 'myplanet_activities' },
-      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } }
     ];
   }
