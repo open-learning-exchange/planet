@@ -223,12 +223,12 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteUserFromTeams(user) {
-    return this.couchService.findAll('teams', { selector: { userId: user._id }}).pipe(
+    return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
       switchMap(teams => {
         const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
-        return this.couchService.bulkDocs('teams', docsWithUser)
+        return this.couchService.bulkDocs('teams', docsWithUser);
       })
-    )
+    );
   }
 
   deleteUser(user) {
