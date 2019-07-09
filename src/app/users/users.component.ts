@@ -19,7 +19,6 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { TeamsService } from '../teams/teams.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -64,7 +63,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
-    private teamsService: TeamsService,
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
