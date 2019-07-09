@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log(this.router.url);
     this.getPlanetVersion();
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
@@ -28,7 +29,9 @@ export class LoginComponent implements OnInit {
         switchMap(noAdmin => {
           // false means there is admin
           if (noAdmin) {
-            this.router.navigate([ '/login/configuration' ]);
+            if (this.router.url !== '/login/migration') {
+              this.router.navigate([ '/login/configuration' ]);
+            }
             return of([]);
           }
           return this.couchService.findAll('configurations');

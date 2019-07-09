@@ -5,6 +5,7 @@ import { LoginComponent } from './login.component';
 import { LoginFormComponent } from './login-form.component';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
 import { ConfigurationComponent } from '../configuration/configuration.component';
+import { MigrationComponent } from '../configuration/migration.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent,
@@ -12,6 +13,8 @@ const routes: Routes = [
       { path: '', component: LoginFormComponent },
       { path: 'newmember', component: LoginFormComponent },
       { path: 'configuration', component: ConfigurationComponent,
+      canActivate: [ ConfigurationGuard ] },
+      { path: 'migration', component: MigrationComponent,
       canActivate: [ ConfigurationGuard ] }
     ]
   }
