@@ -59,7 +59,7 @@ export class ReportsService {
       findDocuments({
         ...{ [field]: planetCode },
         ...this.timeFilter(dateField, tillDate),
-        ...({ androidId: { '$exists': fromMyPlanet } })
+        ...(fromMyPlanet ? { androidId: { '$exists': fromMyPlanet } } : {})
       }) :
       undefined;
   }
