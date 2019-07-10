@@ -15,7 +15,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
   styles: [ `
     /* Column Widths */
     .mat-column-teamType {
-      max-width: 50px;
+      max-width: 100px;
     }
   ` ]
 })
@@ -25,7 +25,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   userMembership: any[] = [];
-  displayedColumns = [ 'name', 'createdDate', 'action', 'teamType' ];
+  displayedColumns = [ 'name', 'createdDate', 'teamType', 'action' ];
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
