@@ -105,11 +105,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.leftTileContent = this.userStatus === 'member' ? 'news' : 'description';
   }
 
-  toggleMembership(team, leaveTeam, memId?) {
+  toggleMembership(team, leaveTeam) {
     this.teamsService.toggleTeamMembership(
       team, leaveTeam,
-      this.members.find(memId) || this.members.find(doc => doc.userId === this.user._id)
-      || { userId: this.user._id, userPlanetCode: this.user.planetCode }
+      this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
       switchMap((newTeam) => {
         this.team = newTeam;
