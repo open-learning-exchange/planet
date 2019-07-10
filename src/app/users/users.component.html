@@ -26,7 +26,7 @@
   <mat-form-field class="font-size-1 margin-lr-5">
     <mat-select placeholder="Filter by role" [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let role of allRolesList" value={{role}}>{{role}}</mat-option>
+      <mat-option *ngFor="let role of allRolesList" [value]="role">{{role}}</mat-option>
     </mat-select>
   </mat-form-field>
   <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()"><span>Clear</span></button>
