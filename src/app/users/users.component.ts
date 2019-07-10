@@ -351,13 +351,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onFilterChange(filterValue: string) {
-    this.filter['doc.roles'] = filterValue;
-    this.allUsers.filter = filterValue === 'All' ? '' : this.allUsers.filter || ' ';
+    this.filter['doc.roles'] = filterValue === 'All' ? '' : filterValue;
+    this.changeFilter(this.filterType);
   }
 
   resetFilter() {
     this.filteredRole = 'All';
-    this.filter[ 'doc.roles' ] = '';
+    this.filter['doc.roles'] = '';
     this.applyFilter('');
   }
 }
