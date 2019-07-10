@@ -30,13 +30,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   displayedColumns = [ 'name' ];
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
-  currentUser = this.userService.get()._id;
+  currentUserId = this.userService.get()._id;
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
   news: any[] = [];
   leftTileContent: 'description' | 'news';
   isRoot = true;
   visits: any = {};
+  leader: string;
 
   constructor(
     private couchService: CouchService,
@@ -59,7 +60,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.team = data;
         return this.getMembers();
       }),
-      switchMap(() => this.isMember() ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
+      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId: this.team._id })))
     ).subscribe((activities) => {
       this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
@@ -84,6 +85,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
       this.members = docsWithName.filter(mem => mem.docType === 'membership');
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
+      this.leader = this.team.createdBy;
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
     }));
@@ -100,12 +102,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    this.userStatus = team.createdBy === user._id ? 'leader' : this.userStatus;
-    this.leftTileContent = this.isMember() ? 'news' : 'description';
-  }
-
-  isMember() {
-    return this.userStatus === 'member' || this.userStatus === 'leader';
+    this.leftTileContent = this.userStatus === 'member' ? 'news' : 'description';
   }
 
   toggleMembership(team, leaveTeam, memId?) {
