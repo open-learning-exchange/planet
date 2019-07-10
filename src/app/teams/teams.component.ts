@@ -100,10 +100,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       team, leaveTeam, membershipDoc
     ).pipe(
       switchMap((newTeam: any) => {
-        if (newTeam.status == 'archived') {
+        if (newTeam.status === 'archived') {
           this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
         }
-      return this.getMembershipStatus()
+        return this.getMembershipStatus();
     })).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
       const msg = leaveTeam ? 'left' : 'joined';
