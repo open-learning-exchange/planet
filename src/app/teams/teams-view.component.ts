@@ -136,7 +136,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   removeMember(member) {
     this.teamsService.toggleTeamMembership(this.team, true, member).pipe(
       switchMap(() => this.getMembers()),
-      switchMap(() => this.sendNotifications('removed'))
+      switchMap(() => this.sendNotifications('removed', { members: [ member ] }))
     ).subscribe();
   }
 
@@ -151,7 +151,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   rejectRequest(request) {
     this.teamsService.removeFromRequests(this.team, request).pipe(
       switchMap(() => this.getMembers()),
-      switchMap(() => this.teamsService.sendNotifications('rejected', [ request ], { url: this.router.url, team: this.team }))
+      switchMap(() => this.sendNotifications('rejected', { members: [ request ] }))
     ).subscribe();
   }
 
@@ -196,7 +196,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           this.teamsService.sendNotifications('added', selected, {
             url: this.router.url, team: { ...this.team }
           }),
-          this.sendNotifications('addMember', selected.length)
+          this.sendNotifications('addMember', { newMembersLength: selected.length })
         ]);
       }),
       switchMap(() => this.getMembers())
@@ -206,8 +206,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendNotifications(type, newMembersLength = 0) {
-    return this.teamsService.sendNotifications(type, this.members, {
+  sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
+    return this.teamsService.sendNotifications(type, members || this.members, {
       newMembersLength, url: this.router.url, team: { ...this.team }
     });
   }

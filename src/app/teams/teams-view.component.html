@@ -57,7 +57,7 @@
           </mat-card-header>
           <mat-card-actions>
             <a [routerLink]="['/users/profile', member.name]" mat-raised-button color="primary">View Profile</a>
-            <button *ngIf="member.userId !== currentUserId && userStatus === 'leader'" (click)="removeMember(member)" mat-raised-button color="danger">Remove</button>
+            <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="removeMember(member)" mat-raised-button color="danger">Remove</button>
           </mat-card-actions>
         </mat-card>
       </ng-template>
