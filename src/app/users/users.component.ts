@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   searchValue = '';
   selectedChild: any = {};
   filterType = 'local';
-  filter: any;
+  filter = { 'doc.roles' : '' };
   planetType = '';
   displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
@@ -51,7 +51,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   children: any;
   // List of all possible roles to add to users
   roleList: string[] = [ 'leader', 'monitor' ];
+  allRolesList: string[] = [ ...this.roleList, 'learner', 'manager' ].sort();
   selectedRoles: string[] = [];
+  filteredRole: string;
   selection = new SelectionModel(true, []);
   private dbName = '_users';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
@@ -106,6 +108,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterType === 'associated' ? { 'doc.roles': [ 'leader', 'learner' ] }
         : { 'doc.planetCode': child.code || this.stateService.configuration.code }
       ),
+      filterDropdowns(this.filter),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
       filterSpecificFields([ 'doc.name' ])
     ]);
@@ -357,4 +360,14 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
+  onFilterChange(filterValue: string) {
+    this.filter['doc.roles'] = filterValue === 'All' ? '' : filterValue;
+    this.changeFilter(this.filterType);
+  }
+
+  resetFilter() {
+    this.filteredRole = 'All';
+    this.filter['doc.roles'] = '';
+    this.applyFilter('');
+  }
 }
