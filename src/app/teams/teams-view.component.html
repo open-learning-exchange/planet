@@ -20,7 +20,7 @@
             Leave
           </button>
         </ng-container>
-        <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="requestToJoin()">
+        <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
           <ng-container i18n>Request to Join</ng-container>
         </button>
         <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
@@ -57,7 +57,7 @@
           </mat-card-header>
           <mat-card-actions>
             <a [routerLink]="['/users/profile', member.name]" mat-raised-button color="primary">View Profile</a>
-            <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="removeMember(member)" mat-raised-button color="danger">Remove</button>
+            <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="danger">Remove</button>
           </mat-card-actions>
         </mat-card>
       </ng-template>
@@ -71,8 +71,8 @@
             </mat-card-header>
             <mat-card-actions>
               <a [routerLink]="['/users/profile', request.name]" mat-raised-button color="primary">View Profile</a>
-              <button mat-raised-button color="primary" i18n (click)="acceptRequest(request)" [disabled]="disableAddingMembers">Accept</button>
-              <button mat-raised-button color="warn" i18n (click)="rejectRequest(request)" [disabled]="disableAddingMembers">Reject</button>
+              <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
+              <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
             </mat-card-actions>
           </mat-card>
         </ng-template>
