@@ -231,7 +231,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     ]).subscribe(() => {
       this.planetMessageService.showMessage('Achievements successfully updated');
       this.goBack();
-    },  (err) => {
+    }, (err) => {
       this.planetMessageService.showAlert('There was an error updating your achievements');
     });
   }

@@ -66,7 +66,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readNotification(notification) {
-    const updateNotificaton =  { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, 'status': 'read' };
     if (notification.status === 'unread') {
       this.couchService.put('notifications/' + notification._id, updateNotificaton)
       .subscribe((data) => {

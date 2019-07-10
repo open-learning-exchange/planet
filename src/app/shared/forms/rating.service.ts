@@ -60,7 +60,7 @@ export class RatingService {
         const ratingInfo = this.addRatingToItem(item._id, ratingIndex, ratings, Object.assign({}, startingRating));
         return { ...item, rating: ratingInfo };
       }
-      return { ...item,  rating: Object.assign({}, startingRating) };
+      return { ...item, rating: Object.assign({}, startingRating) };
     });
   }
 

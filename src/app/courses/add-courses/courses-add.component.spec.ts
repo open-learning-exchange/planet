@@ -21,7 +21,7 @@ describe('CoursesAddComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule,  RouterTestingModule.withRoutes([
+      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule.withRoutes([
         { path: 'courses', component: CoursesAddComponent } ]), HttpClientModule, MaterialModule, BrowserAnimationsModule ],
       declarations: [ CoursesAddComponent, FormErrorMessagesComponent ],
       providers: [ CouchService, ValidatorService ],
