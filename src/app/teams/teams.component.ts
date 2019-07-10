@@ -15,7 +15,8 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
   styles: [ `
     /* Column Widths */
     .mat-column-teamType {
-      max-width: 100px;
+      max-width: 80px;
+      padding-right: 20px;
     }
   ` ]
 })
