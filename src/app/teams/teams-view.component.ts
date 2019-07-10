@@ -30,7 +30,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   displayedColumns = [ 'name' ];
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
-  currentUserName = this.userService.get().name;
+  currentUser = this.userService.get()._id;
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
   news: any[] = [];
@@ -59,7 +59,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.team = data;
         return this.getMembers();
       }),
-      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
+      switchMap(() => this.isMember() ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId: this.team._id })))
     ).subscribe((activities) => {
       this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
@@ -100,13 +100,19 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    this.leftTileContent = this.userStatus === 'member' ? 'news' : 'description';
+    this.userStatus = team.createdBy === user._id ? 'leader' : this.userStatus;
+    this.leftTileContent = this.isMember() ? 'news' : 'description';
   }
 
-  toggleMembership(team, leaveTeam) {
+  isMember() {
+    return this.userStatus === 'member' || this.userStatus === 'leader';
+  }
+
+  toggleMembership(team, leaveTeam, memId?) {
     this.teamsService.toggleTeamMembership(
       team, leaveTeam,
-      this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
+      this.members.find(memId) || this.members.find(doc => doc.userId === this.user._id)
+      || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
       switchMap((newTeam) => {
         this.team = newTeam;
@@ -129,6 +135,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage('Request to join team sent');
     });
+  }
+
+  removeMember(member) {
+    this.teamsService.toggleTeamMembership(this.team, true, member).pipe(
+      switchMap(() => this.getMembers()),
+      switchMap(() => this.sendNotifications('removed'))
+    ).subscribe();
   }
 
   acceptRequest(request) {
