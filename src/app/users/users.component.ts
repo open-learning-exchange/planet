@@ -51,7 +51,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   children: any;
   // List of all possible roles to add to users
   roleList: string[] = [ 'leader', 'monitor' ];
-  allRolesList: string[] = [ 'learner', 'leader', 'monitor', 'manager' ];
+  allRolesList: string[] = [ ...this.roleList, 'learner', 'manager' ].sort();
   selectedRoles: string[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
