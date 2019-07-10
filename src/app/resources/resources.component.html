@@ -88,8 +88,8 @@
           <h3 class="header">
             <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{element.doc.title}}</a>
             <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{element.doc.title}}</a></ng-template>
-            <mat-icon class="margin-lr-3" i18n-title title="In Library" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
-            <mat-icon class="margin-lr-3" i18n-title title="In Library" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+            <mat-icon class="margin-lr-3 cursor-pointer" i18n-title title="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
+            <mat-icon class="margin-lr-3 cursor-pointer" i18n-title title="In Library" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
           </h3>
           <td-markdown class="content" [content]="element.doc.description"></td-markdown>
           <mat-chip-list #tagsList class="tags-list">
