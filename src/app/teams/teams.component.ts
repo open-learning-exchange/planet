@@ -11,7 +11,13 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
-  templateUrl: './teams.component.html'
+  templateUrl: './teams.component.html',
+  styles: [ `
+    /* Column Widths */
+    .mat-column-teamType {
+      max-width: 50px;
+    }
+  ` ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
@@ -19,7 +25,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   userMembership: any[] = [];
-  displayedColumns = [ 'name', 'createdDate', 'action' ];
+  displayedColumns = [ 'name', 'createdDate', 'action', 'teamType' ];
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
