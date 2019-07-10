@@ -30,20 +30,16 @@ export class TagsService {
   }
 
   filterTags(tags: any[], filterString: string): string[] {
-    // Includes any tag with a sub tag that matches in addition to tags that match
-    if ( tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1).length ) {
-      return tags.filter((tag: any) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
-    }
-    let targetTag: any;
-    tags.forEach(tag => {
-      tag.subTags.forEach(subTag => {
-        if ( subTag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1) {
-          targetTag = { ...tag };
-        }
-      });
-    });
-    targetTag.subTags =  targetTag.subTags.filter((subTag: any) => subTag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1);
-    return [ targetTag ];
+    const tagTest = (tag) => tag.name.toLowerCase().indexOf(filterString.toLowerCase()) > -1;
+    return tags.reduce((newTags, tag) => {
+      const newTag = { ...tag, subTags: (tag.subTags || []).filter(tagTest) };
+      if (tagTest(tag)) {
+        newTags.push(tag);
+      } else if (newTag.subTags.length > 0) {
+        newTags.push(newTag);
+      }
+      return newTags;
+    }, []);
   }
 
   updateTag(tag) {
