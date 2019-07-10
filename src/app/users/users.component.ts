@@ -231,7 +231,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-
     return {
       request: this.couchService.get('shelf/' + userId).pipe(
         switchMap(shelfUser => {
