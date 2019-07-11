@@ -36,6 +36,16 @@
           {{element.doc.createdDate | date: 'mediumDate'}}
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="teamType">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {
+            element.doc.teamType, select, local {Local} sync {
+              {planetType, select, community {Connected with Nation} nation {Connected with Earth}}
+            }
+          }
+        </mat-cell>
+      </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
