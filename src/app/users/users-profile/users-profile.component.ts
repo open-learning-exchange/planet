@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './users-profile.component.html',
@@ -35,7 +36,8 @@ export class UsersProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private router: Router,
-    private usersAchievementsService: UsersAchievementsService
+    private usersAchievementsService: UsersAchievementsService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {
@@ -52,7 +54,7 @@ export class UsersProfileComponent implements OnInit {
     this.couchService.findAll('login_activities', findDocuments({ 'user': name }, 0, [ { 'loginTime': 'desc' } ]))
     .subscribe((logins: any) => {
       this.totalLogins = logins.length;
-      this.lastLogin = logins[0].loginTime;
+      this.lastLogin = logins.length ? logins[0].loginTime : '';
     });
   }
 
@@ -67,9 +69,11 @@ export class UsersProfileComponent implements OnInit {
   }
 
   profileView() {
-    const dbName = this.planetCode === null ? this.dbName : 'child_users';
-    const userId = this.planetCode === null ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.editable = userId.indexOf('@') === -1;
+    const relationship = this.planetCode === this.stateService.configuration.parentCode ? 'parent' : 'child';
+    const dbName = this.planetCode === null ? this.dbName : `${relationship}_users`;
+    const userId = this.planetCode === null || relationship === 'parent'
+      ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
+    this.editable = userId.indexOf('@') === -1 && relationship !== 'parent';
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
