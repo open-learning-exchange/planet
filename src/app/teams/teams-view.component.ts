@@ -87,10 +87,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     return this.teamsService.getTeamMembers(this.team, true).pipe(map((docs: any[]) => {
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
+      this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
-        .sort((a, b) => a.userId === this.team.createdBy ? -1 : 0);
+        .sort((a, b) => a.userId === this.leader ? -1 : 0);
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
-      this.leader = this.team.createdBy;
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
     }));

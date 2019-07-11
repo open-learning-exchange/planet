@@ -57,7 +57,7 @@ export class TeamsService {
           empty()
         ),
         switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code }) :
+          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
           of(response)
         )
       );
@@ -123,10 +123,10 @@ export class TeamsService {
   }
 
   membershipProps(team, memberInfo, docType) {
-    const { userId, userPlanetCode } = memberInfo;
+    const { userId, userPlanetCode, isLeader } = memberInfo;
     const { _id: teamId, teamPlanetCode, teamType } = team;
     return {
-      teamId, userId, teamPlanetCode, teamType, userPlanetCode, docType
+      teamId, userId, teamPlanetCode, teamType, userPlanetCode, docType, isLeader
     };
   }
 
