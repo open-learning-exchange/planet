@@ -35,15 +35,15 @@ export class TeamsService {
     private validatorService: ValidatorService
   ) {}
 
-  teamNameValidator(id: string = '') {
-    return ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { '_id': { '$ne': id } } });
-  }
-
   addTeamDialog(userId: string, team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = team._id ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ team.name || '', CustomValidators.required, this.teamNameValidator(team._id) ],
+      name: [
+        team.name || '',
+        CustomValidators.required,
+        ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id } } })
+      ],
       description: team.description || '',
       requests: [ team.requests || [] ],
       teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
