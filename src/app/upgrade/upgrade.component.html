@@ -18,13 +18,13 @@
       <mat-card-header>
         <div mat-card-avatar class="upgrade_mat-card-icon"></div>
         <mat-card-title i18n>Success!</mat-card-title>
-        <mat-card-subtitle i18n>Reboot is required</mat-card-subtitle>
+        <mat-card-subtitle i18n *ngIf="mode==='planet'">Reboot is required</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p i18n>
-            The upgrade of the system has been done successfully.<br>
-            Please restart your system to apply changes
+          The upgrade of the system has been done successfully.
         </p>
+        <p i18n *ngIf="mode==='planet'">Please restart your system to apply changes</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" routerLink="/" i18n>OK</button>
