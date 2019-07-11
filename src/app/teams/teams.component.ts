@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -31,6 +32,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   emptyData = false;
   user = this.userService.get();
   isAuthorized = false;
+  planetType = this.stateService.configuration.planetType;
 
   constructor(
     private userService: UserService,
@@ -38,7 +40,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private router: Router,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private stateService: StateService
   ) {
     this.dialogsLoadingService.start();
   }
