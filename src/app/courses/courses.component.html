@@ -92,8 +92,8 @@
         <mat-cell  *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
-            <mat-icon class="margin-lr-3 cursor-pointer" i18n-title title="myCourse" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
-            <mat-icon class="margin-lr-3 cursor-pointer" i18n-title title="Course" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
+            <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
+            <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
           </h3>
           <td-markdown class="content">{{ element.doc.description }}</td-markdown>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
