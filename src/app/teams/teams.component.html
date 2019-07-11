@@ -33,7 +33,7 @@
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created on</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{element.doc.createdDate | date: 'mediumDate'}}
+          {{element.doc.createdDate | date: 'medium'}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="teamType">
