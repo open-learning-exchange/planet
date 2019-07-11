@@ -40,8 +40,7 @@ export class TeamsService {
     const title = team._id ? 'Update Team' : 'Create Team';
     const formGroup = {
       name: [
-        team.name || '',
-        CustomValidators.required,
+        team.name || '', CustomValidators.required,
         ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id } } })
       ],
       description: team.description || '',
