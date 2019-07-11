@@ -23,6 +23,9 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     :host p[matLine] *:last-child {
       margin-right: 0;
     }
+    :host mat-dialog-actions {
+      padding: 0;
+    }
   ` ]
 })
 export class PlanetTagInputDialogComponent {
