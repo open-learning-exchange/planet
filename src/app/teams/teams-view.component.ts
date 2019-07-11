@@ -16,6 +16,7 @@ import { NewsService } from '../news/news.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
+import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
