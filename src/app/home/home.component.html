@@ -3,7 +3,7 @@
     <button mat-icon-button class="menu-button" (click)="toggleNav()" i18n-title title="Menu" *ngIf="layout === 'modern' || forceModern"><mat-icon>menu</mat-icon></button>
     <a routerLink="/">
       <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo"/>
-      <h1 i18n>Planet Learning</h1>
+      <h1><ng-container i18n>Planet</ng-container> {{planetName}}</h1>
     </a>
   </span>
   <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
