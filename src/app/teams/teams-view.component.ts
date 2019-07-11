@@ -16,6 +16,7 @@ import { NewsService } from '../news/news.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
+import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -35,6 +36,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsListComponent>;
   user = this.userService.get();
   news: any[] = [];
+  resources: any[] = [];
   leftTileContent: 'description' | 'news';
   isRoot = true;
   visits: any = {};
@@ -85,15 +87,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     if (this.team === undefined) {
       return [];
     }
-    return this.teamsService.getTeamMembers(this.team, true).pipe(map((docs: any[]) => {
-      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId.split(':')[1] }));
+    return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1] }));
       this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
         .sort((a, b) => a.userId === this.leader ? -1 : 0);
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
-    }));
+      return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
+    }), map(resources => this.resources = resources));
   }
 
   toggleAdd(data) {
@@ -263,6 +266,23 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   changeLeftTile() {
     this.leftTileContent = this.leftTileContent === 'news' ? 'description' : 'news';
+  }
+
+  openResourcesDialog(resource?) {
+    const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
+      width: '80vw',
+      data: {
+        okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team)
+          .pipe(switchMap(() => this.getMembers())).subscribe(() => dialogRef.close()),
+        excludeIds: this.resources.map(r => r.resource._id),
+        canAdd: true, db: 'teams', linkId: this.teamId, resource
+      }
+    });
+  }
+
+  removeResource(resource) {
+    this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()))
+      .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
   }
 
 }

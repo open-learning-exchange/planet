@@ -49,13 +49,13 @@ export class SyncDirective {
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
       map(([ res, users ]) => this.updateParentUsers(users)),
-      switchMap(() => {
-        return this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code }));
-      }),
-      switchMap(achievements => this.achievementResourceReplicator(achievements)),
-      switchMap(replicators => {
+      switchMap(() => this.getAchievementsAndTeamResources()),
+      switchMap(([ achievements, teamResources ]: any[]) =>
+        forkJoin(this.achievementResourceReplicator(achievements), this.teamResourcesReplicator(teamResources))
+      ),
+      switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
-        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators));
+        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat()));
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
     ).subscribe(data => {
@@ -182,6 +182,23 @@ export class SyncDirective {
       const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
       return this.couchService.bulkDocs('parent_users', docs);
     })).subscribe((res) => console.log(res));
+  }
+
+  getAchievementsAndTeamResources() {
+    return forkJoin([
+      this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code })),
+      this.couchService.findAll(
+        'teams', findDocuments({ docType: 'resourceLink', teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
+      )
+    ]);
+  }
+
+  teamResourcesReplicator(teamResources: any[]) {
+    return this.syncService.replicatorsArrayWithTags(
+      teamResources.map(linkDoc => ({ db: 'resources', item: { _id: linkDoc.resourceId } })),
+      'push',
+      'local'
+    );
   }
 
 }

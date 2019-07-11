@@ -1,8 +1,8 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!isDialog">
   <a mat-icon-button routerLink="/resources"><mat-icon>arrow_back</mat-icon></a>
 </mat-toolbar>
 
-<div class="space-container">
+<div [ngClass]="{'space-container':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" i18n>{{pageType}} Resource</mat-toolbar>
   <div class="view-container view-full-height">
     <div class="form-container">
@@ -92,10 +92,13 @@
           <ng-container *ngIf="existingResource.doc?._attachments">
             <mat-checkbox [disabled]="disableDelete || this.file" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
           </ng-container>
+          <ng-container *ngIf="isDialog">
+            <mat-checkbox formControlName="private" i18n-matTooltip matTooltip="If checked, resource will only be viewable by this team" i18n>Private Resource</mat-checkbox>
+          </ng-container>
         </div>
       </form>
     </div>
-    <div class="actions-container inner-gaps by-column">
+    <div class="actions-container inner-gaps by-column" *ngIf="!isDialog">
       <button mat-raised-button type="button" [planetSubmit]="resourceForm.valid" color="primary" (click)="onSubmit()"  i18n>Submit</button>
       <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </div>

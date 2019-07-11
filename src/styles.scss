@@ -121,6 +121,21 @@ body {
     margin: 0 3px;
   }
 
+  .mini-icon-button {
+    height: 1.5em;
+    width: 1.5em;
+    vertical-align: baseline;
+    font: inherit;
+
+    .mat-icon {
+      font-size: inherit;
+      height: 1.125em;
+      line-height: 1.125;
+      width: 1em;
+      vertical-align: top;
+    }
+  }
+
   $list-title-height: 36px;
 
   .list-content-menu, .table-selection-top {
