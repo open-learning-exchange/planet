@@ -130,7 +130,7 @@ export const filteredItemsInPage = (filteredData: any[], pageIndex: number, page
 
 export const selectedOutOfFilter = (filteredData: any[], selection: any, paginator: any = {}) => {
   const itemsInPage = filteredItemsInPage(filteredData, paginator.pageIndex, paginator.pageSize);
-  return selection.selected.filter((selectedId) => itemsInPage.find((filtered: any) =>  filtered._id === selectedId ) === undefined);
+  return selection.selected.filter((selectedId) => itemsInPage.find((filtered: any) => filtered._id === selectedId ) === undefined);
 };
 
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));

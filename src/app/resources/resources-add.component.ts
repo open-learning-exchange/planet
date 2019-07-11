@@ -144,7 +144,7 @@ export class ResourcesAddComponent implements OnInit {
         const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
         // Start with empty object so this.resourceForm.value does not change
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-        const message = newResource.title + (this.pageType === 'Update' ?  ' Updated Successfully' : ' Added');
+        const message = newResource.title + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
         this.updateResource(newResource, file).subscribe(() => {
           this.router.navigate([ '/resources' ]);
           this.planetMessageService.showMessage(message);

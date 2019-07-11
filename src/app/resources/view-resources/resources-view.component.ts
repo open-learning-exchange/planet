@@ -37,7 +37,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   // If parent route, url will use parent domain.  If not uses this domain.
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
-  get urlPrefix()  {
+  get urlPrefix() {
     let domain = environment.couchAddress + '/';
     if (this.parent) {
       domain = 'http://' + this.planetConfiguration.parentDomain + '/';

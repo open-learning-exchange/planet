@@ -185,10 +185,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   readNotification(notification) {
-    const updateNotificaton =  { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, 'status': 'read' };
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       this.userService.setNotificationStateChange();
-    },  (err) => console.log(err));
+    }, (err) => console.log(err));
   }
 
   sizeChange(forceModern: boolean) {

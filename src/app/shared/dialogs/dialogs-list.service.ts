@@ -31,7 +31,7 @@ export class DialogsListService {
       const { _id, roles, isUserAdmin, requestId } = user;
       return (
         _id !== this.userService.get()._id && _id !== 'org.couchdb.user:satellite' &&
-        (roles.indexOf('learner') > -1 ||  roles.indexOf('leader') > -1 || isUserAdmin === true) &&
+        (roles.indexOf('learner') > -1 || roles.indexOf('leader') > -1 || isUserAdmin === true) &&
         requestId === undefined
       );
     };
