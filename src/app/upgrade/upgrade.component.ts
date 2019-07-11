@@ -15,7 +15,6 @@ import { StateService } from '../shared/state.service';
 })
 export class UpgradeComponent {
   mode = 'planet';
-  isModePlanet = (this.mode === 'planet');
   enabled: Boolean = true;
   message = 'Start upgrade';
   output = '';
