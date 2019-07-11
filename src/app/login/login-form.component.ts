@@ -203,7 +203,7 @@ export class LoginFormComponent {
   }
 
   getConfigurationSyncDown(configuration, credentials) {
-    const replicators =  {
+    const replicators = {
       dbSource: 'communityregistrationrequests',
       dbTarget: 'configurations',
       type: 'pull',

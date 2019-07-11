@@ -115,7 +115,7 @@ export class MeetupsAddComponent implements OnInit {
       })
     ).subscribe(() => {
         this.router.navigate([ '/meetups' ]);
-        this.planetMessageService.showMessage(meetupInfo.title  + ' Updated Successfully');
+        this.planetMessageService.showMessage(meetupInfo.title + ' Updated Successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -129,7 +129,7 @@ export class MeetupsAddComponent implements OnInit {
       'endDate': Date.parse(meetupInfo.endDate),
     }).subscribe(() => {
       this.router.navigate([ '/meetups' ]);
-      this.planetMessageService.showMessage(meetupInfo.title  + ' Added');
+      this.planetMessageService.showMessage(meetupInfo.title + ' Added');
     }, (err) => console.log(err));
   }
 
@@ -156,7 +156,7 @@ export class MeetupsAddComponent implements OnInit {
   toggleDaily(val, showCheckbox) {
     // empty the array
     this.meetupForm.setControl('day', this.fb.array([]));
-    switch (val)  {
+    switch (val) {
       case 'daily':
         // add all days to the array if the course is daily
         this.meetupForm.setControl('day', this.fb.array(this.days));
