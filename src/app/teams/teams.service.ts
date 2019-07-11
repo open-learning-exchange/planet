@@ -8,6 +8,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
+import { ValidatorService } from '../validators/validator.service';
 
 const addTeamDialogFields = [ {
   'type': 'textbox',
@@ -30,14 +31,18 @@ export class TeamsService {
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private validatorService: ValidatorService
   ) {}
 
   addTeamDialog(userId: string, team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = team._id ? 'Update Team' : 'Create Team';
     const formGroup = {
-      name: [ team.name || '', CustomValidators.required ],
+      name: [
+        team.name || '', CustomValidators.required,
+        ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id || '' }, status: 'active' } })
+      ],
       description: team.description || '',
       requests: [ team.requests || [] ],
       teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
