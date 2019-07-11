@@ -41,7 +41,7 @@ export class TeamsService {
     const formGroup = {
       name: [
         team.name || '', CustomValidators.required,
-        ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id } } })
+        ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id || '' }, status: 'active' } })
       ],
       description: team.description || '',
       requests: [ team.requests || [] ],
