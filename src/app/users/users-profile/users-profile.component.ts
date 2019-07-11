@@ -69,7 +69,7 @@ export class UsersProfileComponent implements OnInit {
   }
 
   profileView() {
-    const relationship = this.planetCode && this.planetCode === this.stateService.configuration.parentCode ? 'parent' : 'child';
+    const relationship = this.planetCode === this.stateService.configuration.parentCode ? 'parent' : 'child';
     const dbName = this.planetCode === null ? this.dbName : `${relationship}_users`;
     const userId = this.planetCode === null || relationship === 'parent'
       ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
