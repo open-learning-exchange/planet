@@ -37,6 +37,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   classicToolbarWidth = 0;
   @ViewChild('content') private mainContent;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
+  planetName;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -72,6 +73,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.onUserUpdate();
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotification();
+    });
+    this.planetName = this.stateService.configuration.name;
+    this.stateService.couchStateListener('configurations').subscribe((res) => {
+      if (res !== undefined) {
+        this.planetName = this.stateService.configuration.name;
+      }
     });
   }
 

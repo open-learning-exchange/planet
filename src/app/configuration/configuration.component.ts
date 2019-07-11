@@ -243,7 +243,8 @@ export class ConfigurationComponent implements OnInit {
     }
     const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
-      this.configurationService.updateConfiguration(configuration).subscribe(null,
+      this.configurationService.updateConfiguration(configuration).subscribe(
+        () => this.stateService.requestData('configurations', 'local'),
         err => this.planetMessageService.showAlert('There was an error updating the configuration'),
         () => {
           // Navigate back to the manager dashboard
