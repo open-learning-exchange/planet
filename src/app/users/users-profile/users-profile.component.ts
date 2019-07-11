@@ -69,11 +69,11 @@ export class UsersProfileComponent implements OnInit {
   }
 
   profileView() {
-    const dbName = this.planetCode === null ? this.dbName :
-      this.stateService.configuration.planetType === 'community' ? 'parent_users' : 'child_users';
-    const userId = this.planetCode === null || this.stateService.configuration.planetType === 'community'
+    const relationship = this.planetCode && this.planetCode === this.stateService.configuration.parentCode ? 'parent' : 'child';
+    const dbName = this.planetCode === null ? this.dbName : `${relationship}_users`;
+    const userId = this.planetCode === null || relationship === 'parent'
       ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.editable = userId.indexOf('@') === -1;
+    this.editable = userId.indexOf('@') === -1 && relationship !== 'parent';
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
