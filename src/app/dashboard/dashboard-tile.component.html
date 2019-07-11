@@ -18,7 +18,7 @@
           >
             <span [matBadge]="item.badge" [matBadgeHidden]="item.badge===0">{{item.title}}</span>
             <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife'">
-              <mat-icon>clear</mat-icon>
+              <mat-icon [inline]="true">clear</mat-icon>
             </button>
           </div>
         </ng-container>
