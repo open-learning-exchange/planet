@@ -169,12 +169,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   openDialog(data) {
-    this.dialogRef = this.dialog.open(DialogsListComponent, {
-      data,
-      height: '500px',
-      width: '600px',
-      autoFocus: false
-    });
+    if (data.tableData.length === 0) {
+      this.planetMessageService.showAlert('Your data is empty');
+    } else {
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data,
+        height: '500px',
+        width: '600px',
+        autoFocus: false
+      });
+    }
   }
 
   updateTeam() {

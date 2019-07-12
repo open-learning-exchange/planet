@@ -97,6 +97,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   openInviteMemberDialog() {
     this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
+      if (res.tableData.length === 0) {
+        this.planetMessageService.showAlert('Your data is empty');
+      } else {
       res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
       const data = {
         okClick: this.sendInvitations.bind(this),
@@ -112,7 +115,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         width: '600px',
         autoFocus: false
       });
-    });
+    }});
   }
 
   sendInvitations(selected: string[]) {
