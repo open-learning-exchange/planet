@@ -111,11 +111,12 @@ package_docker(){
   # $1: directory
   # $2: tag
   # $3: tag latest
+  # $4: platform flag ('--platform <platform>')
   build_message processing $2
   if [ ! -z "$gtag" ] || [ ! -z "$TRAVIS_TAG" ]; then
-    docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=multi .
+    docker build -f $1 -t $2 $4 --build-arg LANGUAGE_MODE=multi .
   else
-    docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=single  .
+    docker build -f $1 -t $2 $4 --build-arg LANGUAGE_MODE=single  .
   fi
   if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
@@ -165,8 +166,9 @@ deploy_docker(){
   # $1: directory
   # $2: tag
   # $3: tag latest
+  # $4: platform flag ('--platform <platform>')
     login_docker
-    package_docker $1 $2 $3
+    package_docker $1 $2 $3 $4
     push_docker $2 $3
 }
 

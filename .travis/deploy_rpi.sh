@@ -61,6 +61,6 @@ fi
 if [[ $image = planet ]]
   then
   prepare_planet_rpi
-  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST
+  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_RPI $PLANET_RPI_LATEST '--platform=linux/arm'
   deploy_tag $PLANET_RPI $PLANET_RPI_VERSIONED
 fi
