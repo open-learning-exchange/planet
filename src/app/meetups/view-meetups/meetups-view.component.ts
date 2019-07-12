@@ -100,22 +100,23 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       if (res.tableData.length === 0) {
         this.planetMessageService.showAlert('Your data is empty');
       } else {
-      res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
-      const data = {
-        okClick: this.sendInvitations.bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        itemDescription: 'members',
-        nameProperty: 'name',
-        ...res
-      };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        height: '500px',
-        width: '600px',
-        autoFocus: false
-      });
-    }});
+        res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
+        const data = {
+          okClick: this.sendInvitations.bind(this),
+          filterPredicate: filterSpecificFields([ 'name' ]),
+          allowMulti: true,
+          itemDescription: 'members',
+          nameProperty: 'name',
+          ...res
+        };
+        this.dialogRef = this.dialog.open(DialogsListComponent, {
+          data: data,
+          height: '500px',
+          width: '600px',
+          autoFocus: false
+        });
+      }
+    });
   }
 
   sendInvitations(selected: string[]) {
