@@ -64,8 +64,8 @@ prepare_planet_rpi(){
   # https://stackoverflow.com/questions/37540792/jenkins-script-tar-write-error
   tar -xf reuse-artifact.tar -C ./ng-app/dist
   # New rpi alpine image requires the --platform flag which requires docker experimental cli
-  echo '{"experimental":true}' | tee /etc/docker/daemon.json
-  service docker restart
+  echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+  sudo service docker restart
 }
 
 prepare_db_init_rpi(){
