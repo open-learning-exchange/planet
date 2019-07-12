@@ -20,7 +20,7 @@
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table primary-link-hover" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="teams" matSortActive="createdDate" matSortDirection="desc" matSort>
+    <mat-table #table [dataSource]="teams" matSortActive="createdDate" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">

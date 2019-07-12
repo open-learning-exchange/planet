@@ -35,7 +35,7 @@
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="meetups" matSort>
+    <mat-table #table [dataSource]="meetups" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">

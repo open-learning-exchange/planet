@@ -34,7 +34,7 @@
 
 <div class="space-container primary-link-hover">
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="submissions" matSort>
+    <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
