@@ -11,8 +11,8 @@ Vagrant.configure(2) do |config|
     config.vbguest.auto_update = false
   end
 
-  BOX = "ole/stretch64"
-  BOX_VERSION = "0.7.11"
+  BOX = "treehouses/buster64"
+  BOX_VERSION = "0.8.5"
 
   # production VM
   config.vm.define "prod" do |prod|
