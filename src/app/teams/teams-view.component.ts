@@ -138,7 +138,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
             if (this.team.status === 'archived') {
               this.router.navigate([ '/teams' ]);
             }
-            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);},
+            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
+          },
         },
         changeType: 'leave',
         type: 'team',
