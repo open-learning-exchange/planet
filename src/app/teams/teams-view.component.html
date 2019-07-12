@@ -20,10 +20,10 @@
             Add Resources
           </button>
           <ng-container *planetAuthorizedRoles>
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="archiveTeam(team)" i18n> Delete</button>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="archiveTeam(team)" i18n>Delete</button>
           </ng-container>
           <ng-container *ngIf="currentUserId !== leader">
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n> Leave</button>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openLeaveDialog(team, true)" i18n>Leave</button>
           </ng-container>
         </ng-container>
         <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
