@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class NewsListItemComponent {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   currentUser = this.userService.get();
-  showLess:boolean = true;
+  showLess = true;
 
   constructor(
     private userService: UserService
@@ -24,7 +24,7 @@ export class NewsListItemComponent {
   remToPx(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
-  
+
   toggleShowLess() {
     if (this.showLess) {
       this.showLess = false;
