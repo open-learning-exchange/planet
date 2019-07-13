@@ -25,14 +25,6 @@ export class NewsListItemComponent {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
 
-  toggleShowLess() {
-    if (this.showLess) {
-      this.showLess = false;
-    } else {
-      this.showLess = true;
-    }
-  }
-
   addReply(news) {
     this.updateNews.emit({
       title: 'Reply to Post',

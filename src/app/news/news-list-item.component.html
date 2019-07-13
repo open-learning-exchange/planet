@@ -17,7 +17,7 @@
     <td-markdown [content]="item.message"></td-markdown>
   </mat-card-content>
   <mat-card-actions class="display-flex">
-    <button mat-button *ngIf="content.scrollHeight > remToPx(6)" (click)="toggleShowLess()" i18n>{{ showLess ? "Show More" : "Show Less" }}</button>
+    <button mat-button *ngIf="content.scrollHeight > remToPx(6)" (click)="this.showLess = !this.showLess" i18n>{{ showLess ? "Show More" : "Show Less" }}</button>
     <button mat-button type="button" (click)="addReply(item)" i18n>Reply</button>
     <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
