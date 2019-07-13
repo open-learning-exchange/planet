@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit {
+export class NewsListItemComponent {
 
   @Input() item;
   @Input() replyObject;
@@ -15,39 +15,21 @@ export class NewsListItemComponent implements OnInit {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   currentUser = this.userService.get();
+  showLess:boolean = true;
 
   constructor(
     private userService: UserService
   ) {}
 
-  ngOnInit() {
-    this.setDisplayMessage(this.item);
+  remToPx(rem) {
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
-
-  setDisplayMessage(news) {
-    const lines: string[] = news.message.split('\n\n');
-    if (lines.length > 6) {
-      let message: string = lines[0];
-      for (let i = 1; i <= 5; i++) {
-        message = message + '\n\n' + lines[i];
-      }
-      news.displayMessage = message;
-      news.showMore = true;
-      news.showLess = false;
+  
+  toggleShowLess() {
+    if (this.showLess) {
+      this.showLess = false;
     } else {
-      news.displayMessage = news.message;
-      news.showMore = false;
-      news.showLess = false;
-    }
-  }
-
-  toggleShowMoreLess(news) {
-    if (news.showMore) {
-      news.displayMessage = news.message;
-      news.showMore = false;
-      news.showLess = true;
-    } else if (news.showLess) {
-      this.setDisplayMessage(news);
+      this.showLess = true;
     }
   }
 
