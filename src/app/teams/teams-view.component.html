@@ -33,7 +33,7 @@
   <div class="view-container view-full-height">
     <div class="left-tile" [ngSwitch]="leftTileContent">
       <ng-container *ngSwitchCase="'description'">
-        <p *ngIf="team?.description; else emptyText">{{team?.description}}</p>
+        <td-markdown *ngIf="team?.description; else emptyText">{{ team?.description }}</td-markdown>
         <p><ng-container i18n>Created</ng-container> {{ team.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
           <p i18n>The team has no description.</p>

@@ -16,7 +16,7 @@ const addTeamDialogFields = [ {
   'placeholder': 'Name',
   'required': true
 }, {
-  'type': 'textarea',
+  'type': 'markdown',
   'name': 'description',
   'placeholder': 'Description',
   'required': false
