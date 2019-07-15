@@ -60,7 +60,8 @@
               </mat-card-subtitle>
             </mat-card-header>
             <mat-card-actions>
-              <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="danger">Remove</button>
+              <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="warn">Remove</button>
+              <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-raised-button color="primary">Make Leader</button>
             </mat-card-actions>
           </mat-card>
         </div>
