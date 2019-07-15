@@ -52,7 +52,7 @@ export class TeamsService {
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
             { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, ...team, ...response, createdBy: userId }
+              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response }
           ) :
           empty()
         ),
