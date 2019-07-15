@@ -28,8 +28,9 @@ import {
   MatStepperModule,
   MatProgressSpinnerModule,
   MatTableModule,
+  MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule,
+  MatTooltipModule
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
@@ -64,8 +65,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSortModule,
     MatStepperModule,
     MatTableModule,
+    MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule,
+    MatTooltipModule
   ]
 })
 export class MaterialModule {}
