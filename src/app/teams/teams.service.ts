@@ -114,6 +114,10 @@ export class TeamsService {
     );
   }
 
+  changeTeamLeadership(oldLeader, newLeader) {
+    return this.couchService.bulkDocs(this.dbName, [ { ...newLeader, isLeader: true }, { ...oldLeader, isLeader: false } ]);
+  }
+
   // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
   updateShelf(membershipDoc) {
     const { userId, teamId } = membershipDoc;

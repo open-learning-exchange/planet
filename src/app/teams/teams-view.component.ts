@@ -287,10 +287,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   makeLeader(member) {
     const currentLeader = this.members.find(mem => mem.userId === this.leader);
-    forkJoin([
-      this.teamsService.updateMembershipDoc(this.team, false, { ...member, isLeader: true }),
-      this.teamsService.updateMembershipDoc(this.team, false, { ...currentLeader, isLeader: false })
-    ]).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
+    this.teamsService.changeTeamLeadership(currentLeader, member)
+    .pipe(
+      switchMap(() => this.getMembers())
+    ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
   }
 
 }
