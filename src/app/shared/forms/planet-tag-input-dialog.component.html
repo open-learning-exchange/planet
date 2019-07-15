@@ -44,7 +44,7 @@
             <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)"></mat-checkbox>
             <span class="mat-body-1">{{subTag.name + ' (' + (subTag.count || 0) + ')'}}</span>
             <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
-            <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event,tag)">Delete</button>
+            <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event,subTag)">Delete</button>
           </p>
         </mat-list-item>
       </ng-container>
