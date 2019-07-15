@@ -49,20 +49,21 @@
       <p i18n><b>Joined Members: ({{members.length}})</b></p>
       <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
       <ng-template #memberList>
-        <mat-card *ngFor="let member of members">
-          <mat-card-header>
-            <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
-              {{member.name}}
-            </a>
-            <mat-card-subtitle>
-              <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
-            </mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-actions>
-            <a [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]" mat-raised-button color="primary">View Profile</a>
-            <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="danger">Remove</button>
-          </mat-card-actions>
-        </mat-card>
+        <div class="members-grid">
+          <mat-card *ngFor="let member of members">
+            <mat-card-header>
+              <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
+                {{member.name}}
+              </a>
+              <mat-card-subtitle>
+                <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions>
+              <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="danger">Remove</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
       </ng-template>
       <ng-container *ngIf="userStatus === 'member'">
         <p i18n><b>Requested Members: ({{requests.length}})</b></p>
@@ -73,7 +74,6 @@
               <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.name}}</a>
             </mat-card-header>
             <mat-card-actions>
-              <a [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]" mat-raised-button color="primary">View Profile</a>
               <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
               <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
             </mat-card-actions>
