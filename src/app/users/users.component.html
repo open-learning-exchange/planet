@@ -107,6 +107,9 @@
               {{role}}
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && role !== 'learner'">cancel</mat-icon>
             </mat-chip>
+            <ng-container *ngFor="let role of element.doc.roles">
+              <mat-chip *ngIf="role !== 'learner'" i18n>learner</mat-chip>
+            </ng-container>
             <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
           </mat-chip-list>
           <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
