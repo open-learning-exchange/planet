@@ -8,7 +8,6 @@ import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
-import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   imports: [
@@ -18,8 +17,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     PlanetDialogsModule,
     NewsModule,
     DialogsAddResourcesModule,
-    CovalentMarkdownModule,
-    MatTabsModule
+    CovalentMarkdownModule
   ],
   declarations: [
     TeamsComponent,
