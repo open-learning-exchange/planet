@@ -146,7 +146,7 @@ export class TeamsService {
       linkDocs.map(linkDoc => ({
         linkDoc,
         resource: resources.find(resource => resource._id === linkDoc.resourceId)
-      }))
+      })).sort((a, b) => a.resource.title.toLowerCase() > b.resource.title.toLowerCase() ? 1 : -1)
     ));
   }
 
