@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
   surveysCount = 0;
   examsCount = 0;
 
-  myLifeItems = [
+  myLifeItems: any[] = [
     { title: 'mySubmissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
     { title: 'myAchievements', link: '/myAchievements' },
     { title: 'ourNews', link: '/news' },
