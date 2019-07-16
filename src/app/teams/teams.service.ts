@@ -221,7 +221,7 @@ export class TeamsService {
     const { teamPlanetCode, teamType } = team;
     const links = resources.map(
       resource => ({
-        resourceId: resource.doc._id, sourcePlanet: resource.doc.sourcePlanet, title: resource.title,
+        resourceId: resource.doc._id, sourcePlanet: resource.doc.sourcePlanet, title: resource.doc.title,
         teamId: team._id, teamPlanetCode, teamType, docType: 'resourceLink'
       })
     );
