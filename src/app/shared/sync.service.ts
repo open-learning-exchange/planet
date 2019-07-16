@@ -36,7 +36,6 @@ export class SyncService {
     this.parentProtocol = replicator.parentProtocol || environment.parentProtocol;
     this.parentDomain = this.stateService.configuration.parentDomain || replicator.parentDomain;
     this.code = this.stateService.configuration.code || replicator.code;
-    console.log(this.parentDomain, this.parentProtocol, this.code);
     return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
   }
 

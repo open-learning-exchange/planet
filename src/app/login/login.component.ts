@@ -21,7 +21,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.router.url);
     this.getPlanetVersion();
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
