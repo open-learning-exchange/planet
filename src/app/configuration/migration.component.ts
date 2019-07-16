@@ -15,9 +15,7 @@ const removeProtocol = (str: string) => {
   return /\/\/(.*?)$/.exec(str)[1];
 };
 
-const getProtocol = (str: string) => {
-  return /^[^:]+(?=:\/\/)/.exec(str)[0];
-}
+const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 
 @Component({
   selector: 'planet-migration',
@@ -63,7 +61,6 @@ export class MigrationComponent implements OnInit {
       ],
       password: [ '', Validators.required ]
     });
-    
   }
 
   verifyAdmin() {
@@ -81,7 +78,7 @@ export class MigrationComponent implements OnInit {
   clonePlanet() {
     this.couchService.get('_node/nonode@nohost/_config', { domain: this.parentDomain, protocol: this.parentProtocol }).pipe(
     switchMap(configs => {
-      let obsArr = [];
+      const obsArr = [];
       Object.keys(configs).forEach(section => {
         Object.keys(configs[section]).forEach(key => {
           obsArr.push(this.couchService.put('_node/nonode@nohost/_config/' + section + '/' + key, configs[section][key]));
@@ -107,4 +104,5 @@ export class MigrationComponent implements OnInit {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.parentDomain}". Please hold on.`);
     });
   }
+
 }
