@@ -96,9 +96,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.setStatus(this.team, this.userService.get());
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-    }), map(
-      resources => this.resources = resources.filter(resource => resource.linkDoc.title || resource.resource && resource.resource.title))
-    );
+    }), map(resources => this.resources = resources));
   }
 
   toggleAdd(data) {
