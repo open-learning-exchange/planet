@@ -28,11 +28,12 @@ export class DashboardComponent implements OnInit {
   surveysCount = 0;
   examsCount = 0;
 
-  myLifeItems = [
-    { title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
-    { title: 'Achievements', link: '/myAchievements' },
-    { title: 'News', link: '/news' },
-    { title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
+  myLifeItems: any[] = [
+    { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { firstLine: 'my', title: 'Achievements', link: '/myAchievements' },
+    { firstLine: 'our', title: 'News', link: '/news' },
+    { firstLine: 'my', title: 'Surveys', link: '/mySurveys', badge: this.surveysCount },
+    { firstLine: 'my', title: 'Health', tooltip: 'This section is under construction' }
   ];
 
   constructor(
