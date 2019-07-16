@@ -17,7 +17,8 @@
             [matTooltip]="item.tooltip"
             cdkDrag
           >
-            <span [matBadge]="item.badge" [matBadgeHidden]="item.badge===0">{{item.title}}</span>
+            <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
+            <p>{{item.title}}</p>
             <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife'">
               <mat-icon [inline]="true">clear</mat-icon>
             </button>
