@@ -11,9 +11,10 @@
       <ng-container *ngFor="let item of itemData;let odd=odd">
         <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
           <div
-            class="dashboard-item cursor-pointer"
-            [ngClass]="{'bg-grey': odd}"
+            class="dashboard-item"
+            [ngClass]="{'bg-grey': odd, 'cursor-pointer': item.link}"
             [routerLink]="item.link"
+            [matTooltip]="item.tooltip"
             cdkDrag
           >
             <span [matBadge]="item.badge" [matBadgeHidden]="item.badge===0">{{item.title}}</span>
