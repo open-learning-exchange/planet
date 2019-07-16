@@ -12,6 +12,7 @@
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Search">
   </mat-form-field>
 </div>
+<mat-toolbar *ngIf="tableData.data.length === 0">There are no items to select</mat-toolbar>
 <mat-table #table [dataSource]="tableData">
   <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
@@ -25,6 +26,7 @@
     class="cursor-pointer">
   </mat-row>
 </mat-table>
+
 <mat-paginator #paginator
   [pageSize]="5"
   [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
