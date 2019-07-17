@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -20,12 +20,15 @@ export class NewsListItemComponent {
   showLess = true;
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngAfterViewChecked() {
-    if (this.content) {
-      this.contentHeight = this.content.nativeElement.children[0].children[0].offsetHeight;
+    const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].offsetHeight;
+    if (offsetHeight && offsetHeight !== this.contentHeight) {
+      this.contentHeight = offsetHeight;
+      this.cdRef.detectChanges();
     }
   }
 
