@@ -111,7 +111,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ).pipe(
       switchMap((newTeam: any) => {
         if (newTeam.status === 'archived') {
-          this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+          this.removeTeam;
         }
         return this.getMembershipStatus();
     })).subscribe(() => {
@@ -122,10 +122,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   removeTeamFromTable(team) {
-    this.teamsService.deleteTeamFromTable(team).subscribe((newTeam: any) => {
+    this.teamsService.deleteTeamFromTable(team).subscribe(() => {
       this.planetMessageService.showMessage('You have deleted a team.');
-      this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+      this.removeTeam(team);
     });
+  }
+
+  removeTeam(newTeam: any){
+    this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
 
   requestToJoin(team) {
