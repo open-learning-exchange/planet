@@ -103,11 +103,8 @@ export class TeamsService {
     );
   }
 
-  deleteTeam(team) {
-    return this.updateTeam({ ...team, status: 'archived' })
-      .pipe(
-      switchMap((newTeam) => of({ ...team, ...newTeam }))
-    );
+  deleteTeamFromTable(team) {
+    return this.updateTeam({ ...team, status: 'archived' });
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {

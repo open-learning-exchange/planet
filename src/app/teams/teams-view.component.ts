@@ -131,6 +131,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  removeTeamFromTable(team) {
+    this.teamsService.deleteTeamFromTable(team).subscribe((newTeam: any) => {
+      this.planetMessageService.showMessage('You have deleted a team.');
+      this.router.navigate([ '/teams' ]);
+    });
+  }
+
   changeMembership(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
     changeObject.obs.pipe(
