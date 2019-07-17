@@ -111,7 +111,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ).pipe(
       switchMap((newTeam: any) => {
         if (newTeam.status === 'archived') {
-          this.removeTeam;
+          this.removeTeam(team);
         }
         return this.getMembershipStatus();
     })).subscribe(() => {
