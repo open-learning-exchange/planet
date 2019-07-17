@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { UserService } from '../shared/user.service';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent {
+export class NewsListItemComponent implements AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
