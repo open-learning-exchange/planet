@@ -34,7 +34,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyData = false;
   filter = {
     type: 'exam',
-    status: ''
+    status: 'requires grading'
   };
 
   constructor(
@@ -109,7 +109,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onFilterChange(filterValue: string, field: string) {
     if (field === 'type') {
-      this.filter.status = '';
+      this.filter.status = filterValue === 'exam' ? 'requires grading' : '';
     }
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
