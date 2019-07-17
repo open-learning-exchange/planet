@@ -128,7 +128,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  removeTeam(newTeam: any){
+  removeTeam(newTeam: any) {
     this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
 
