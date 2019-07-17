@@ -114,7 +114,7 @@ Vagrant.configure(2) do |config|
 
       # Add initial Couch databases here
       chmod +x couchdb-setup.sh
-      ./couchdb-setup.sh -p 5984 -i
+      . couchdb-setup.sh -p 5984 -i
       # End Couch database addition
     SHELL
 
