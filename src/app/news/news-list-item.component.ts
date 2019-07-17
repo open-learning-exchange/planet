@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -14,12 +14,20 @@ export class NewsListItemComponent {
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
+  @ViewChild('content') content;
+  contentHeight = 0;
   currentUser = this.userService.get();
   showLess = true;
 
   constructor(
     private userService: UserService
   ) {}
+
+  ngAfterViewChecked() {
+    if (this.content) {
+      this.contentHeight = this.content.nativeElement.children[0].children[0].offsetHeight;
+    }
+  }
 
   remToPx(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
