@@ -13,10 +13,11 @@
       <ng-container *ngIf="item.updatedDate !== item.time && item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'medium'}}</ng-container>
     </mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content [ngClass]="{'show-less': showLess}" #content>
     <td-markdown [content]="item.message"></td-markdown>
   </mat-card-content>
   <mat-card-actions class="display-flex">
+    <button mat-button *ngIf="contentHeight > content.clientHeight || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? "Show More" : "Show Less" }}</button>
     <button mat-button type="button" (click)="addReply(item)" i18n>Reply</button>
     <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
