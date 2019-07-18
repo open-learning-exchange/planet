@@ -55,7 +55,6 @@ stages:
 jobs:
   include:
     - stage: docker-creation
-      <<: *_use_nodejs
       script:
         - set -e
         - source ./.travis/travis_utils.sh
