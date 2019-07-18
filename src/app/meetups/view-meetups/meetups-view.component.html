@@ -6,7 +6,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail.title}}</h3>
     <span class="toolbar-fill"></span>
-    <div> 
+    <div>
       <ng-container *ngIf="!parent">
         <button mat-stroked-button class="margin-lr-3" [disabled]="this.dateNow > (meetupDetail.endDate || meetupDetail.startDate)" (click)="openInviteMemberDialog()">
           <span i18n>Invite Member</span>
@@ -25,7 +25,7 @@
         <ng-template #na i18n> N/A </ng-template>
       </p>
       <p *ngIf="meetupDetail.category" i18n><b>Category:</b> {{meetupDetail.category}}</p>
-      <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate ? '-' : '' }} {{meetupDetail.endDate | date: 'fullDate'}}</p>
+      <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate && meetupDetail.endDate !== meetupDetail.startDate ? '- ' + (meetupDetail.endDate | date: 'fullDate') : '' }}</p>
       <p *ngIf="meetupDetail.startTime || meetupDetail.endTime" i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
       <p *ngIf="meetupDetail.recurring" i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>

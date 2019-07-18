@@ -94,7 +94,7 @@
             <p>
               <span i18n>Date:</span>
               <span>{{ ' ' + (element.startDate | date: 'fullDate') + ' ' }}</span>
-              <span *ngIf="element.endDate && element.endDate != element.startDate">{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
+              <span *ngIf="element.endDate && element.endDate !== element.startDate">{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
               <span *ngIf="element.startTime || element.endTime" i18n>at</span>
               <span>{{ ' ' + element.startTime }}</span>
               <span *ngIf="element.endTime">{{ ' - ' + element.endTime }}</span>
