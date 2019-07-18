@@ -313,7 +313,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         allowMulti: false,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data, height: '500px', width: '600px', autoFocus: false
+        data, maxHeight: '500px', width: '600px', autoFocus: false
       });
     });
   }

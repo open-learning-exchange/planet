@@ -185,7 +185,7 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
         ...planets };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
-        height: '500px',
+        maxHeight: '500px',
         width: '600px',
         autoFocus: false
       });

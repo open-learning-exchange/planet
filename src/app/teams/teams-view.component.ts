@@ -171,7 +171,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   openDialog(data) {
     this.dialogRef = this.dialog.open(DialogsListComponent, {
       data,
-      height: '500px',
+      maxHeight: '500px',
       width: '600px',
       autoFocus: false
     });
