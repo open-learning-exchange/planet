@@ -11,8 +11,8 @@ Vagrant.configure(2) do |config|
     config.vbguest.auto_update = false
   end
 
-  BOX = "ole/stretch64"
-  BOX_VERSION = "0.7.11"
+  BOX = "treehouses/buster64"
+  BOX_VERSION = "0.8.5"
 
   # production VM
   config.vm.define "prod" do |prod|
@@ -114,7 +114,7 @@ Vagrant.configure(2) do |config|
 
       # Add initial Couch databases here
       chmod +x couchdb-setup.sh
-      ./couchdb-setup.sh -p 5984 -i
+      . couchdb-setup.sh -p 5984 -i
       # End Couch database addition
     SHELL
 
