@@ -21,12 +21,18 @@ const routes: Routes = [
       { path: 'requests', component: CommunityComponent },
       { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
-      { path: 'myLibrary', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true } },
+      {
+        path: 'myLibrary',
+        loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true }
+      },
       { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'submissions', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) },
       { path: 'submissions/:type', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) },
-      { path: 'mySurveys', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule), data: { mySurveys: true } },
+      {
+        path: 'mySurveys',
+        loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule), data: { mySurveys: true }
+      },
       { path: 'upgrade', component: UpgradeComponent },
       { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
