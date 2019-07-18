@@ -103,7 +103,7 @@ export class TeamsService {
     );
   }
 
-  deleteTeamFromTable(team) {
+  archiveTeam(team) {
     return this.updateTeam({ ...team, status: 'archived' });
   }
 

@@ -49,7 +49,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button *planetAuthorizedRoles mat-raised-button color="primary" class="margin-lr-3" (click)="removeTeamFromTable(element.doc)"><mat-icon>delete_forever</mat-icon> Delete</button>
+          <button *planetAuthorizedRoles mat-raised-button color="primary" class="margin-lr-3" (click)="archiveTeam(element.doc)"><mat-icon>delete_forever</mat-icon> Delete</button>
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <ng-container *ngIf="!element.isLeader">
