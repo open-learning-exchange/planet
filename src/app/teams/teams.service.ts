@@ -103,6 +103,10 @@ export class TeamsService {
     );
   }
 
+  archiveTeam(team) {
+    return this.updateTeam({ ...team, status: 'archived' });
+  }
+
   updateMembershipDoc(team, leaveTeam, memberInfo) {
     const deleted = leaveTeam ? { _deleted: true } : {};
     const membershipProps = this.membershipProps(team, memberInfo, 'membership');

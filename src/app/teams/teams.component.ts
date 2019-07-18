@@ -88,7 +88,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const team = { doc, membershipDoc };
       switch (membershipDoc.docType) {
         case 'membership':
-          return { ...team, userStatus: 'member' };
+          return { ...team, userStatus: 'member', isLeader: membershipDoc.isLeader };
         case 'request':
           return { ...team, userStatus: 'requesting' };
         default:
@@ -111,7 +111,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ).pipe(
       switchMap((newTeam: any) => {
         if (newTeam.status === 'archived') {
-          this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
+          this.removeTeamFromTable(team);
         }
         return this.getMembershipStatus();
     })).subscribe(() => {
@@ -119,6 +119,17 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const msg = leaveTeam ? 'left' : 'joined';
       this.planetMessageService.showMessage('You have ' + msg + ' team.');
     });
+  }
+
+  archiveTeam(team) {
+    this.teamsService.archiveTeam(team).subscribe(() => {
+      this.planetMessageService.showMessage('You have deleted a team.');
+      this.removeTeamFromTable(team);
+    });
+  }
+
+  removeTeamFromTable(newTeam: any) {
+    this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
 
   requestToJoin(team) {
