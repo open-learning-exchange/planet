@@ -70,7 +70,7 @@ export class DialogsFormComponent {
       this.dialogsLoadingService.stop();
       this.dialogListRef = this.dialog.open(DialogsListComponent, {
         data: data,
-        height: '500px',
+        maxHeight: '500px',
         width: '600px',
         autoFocus: false
       });
