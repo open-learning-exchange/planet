@@ -94,8 +94,9 @@
             </ng-container>
           </h3>
           <td-markdown class="content"
-              [content]="element.doc.sourcePlanet !== stateService.configuration.code ? '(source: ' + (element.doc.sourcePlanet || 'NA') + ') '
-                + element.doc.description : element.doc.description">
+            [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
+              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+              element.doc.description">
           </td-markdown>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
