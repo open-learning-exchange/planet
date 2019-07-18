@@ -88,7 +88,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const team = { doc, membershipDoc };
       switch (membershipDoc.docType) {
         case 'membership':
-          return { ...team, userStatus: 'member' };
+          return { ...team, userStatus: 'member', isLeader: membershipDoc.isLeader };
         case 'request':
           return { ...team, userStatus: 'requesting' };
         default:
