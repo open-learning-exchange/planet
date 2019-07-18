@@ -97,7 +97,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         toolbarElement.querySelector('.navbar-right').offsetWidth +
         parseInt(toolbarStyle.paddingLeft, 10) +
         parseInt(toolbarStyle.paddingRight, 10);
-      this.mainContent._updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     }
   }
