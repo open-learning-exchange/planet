@@ -1,4 +1,4 @@
-FROM node:8.11.2-alpine as builder
+FROM node:10.16.0-alpine as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 ARG LANGUAGE_MODE="single"
