@@ -70,26 +70,32 @@ export class DashboardComponent implements OnInit {
   }
 
   initDashboard() {
-
     const userShelf = this.userService.shelf;
+    let obs = [];
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
-      return;
+    } else {
+      obs = [
+        this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
+        this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
+        this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
+        this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true })
+      ];
     }
 
     forkJoin([
-      this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-      this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }),
       this.getTeamMembership().pipe(
         switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }))
-      )
+      ),
+      ...obs
     ]).subscribe(dashboardItems => {
-      this.data.resources = dashboardItems[0];
-      this.data.courses = dashboardItems[1];
-      this.data.meetups = dashboardItems[2];
-      this.data.myTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
+      this.data.myTeams = dashboardItems[0];
+      if (dashboardItems.length > 1) {
+        this.data.resources = dashboardItems[1];
+        this.data.courses = dashboardItems[2];
+        this.data.meetups = dashboardItems[3];
+        this.data.myTeams = [ ...dashboardItems[4].map(team => ({ ...team, fromShelf: true })), ...this.data.myTeams ];
+      }
     });
   }
 
