@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, selectedOutOfFilter } from '../shared/table-helpers';
+import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -74,7 +74,10 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogsLoadingService.stop();
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
-    this.meetups.filterPredicate = filterSpecificFields([ 'title', 'description' ]);
+    this.meetups.filterPredicate = composeFilterFunctions([
+      filterSpecificFieldsByWord([ 'title' ]),
+      filterSpecificFields([ 'description' ])
+    ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedShelf(source.selected);

@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
+import { filterSpecificFieldsByWord, sortNumberOrString } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -48,7 +48,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getTeams();
-    this.teams.filterPredicate = filterSpecificFields([ 'doc.name' ]);
+    this.teams.filterPredicate = filterSpecificFieldsByWord([ 'doc.name' ]);
     this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
