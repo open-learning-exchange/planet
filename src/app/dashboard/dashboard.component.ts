@@ -82,7 +82,6 @@ export class DashboardComponent implements OnInit {
         this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true })
       ];
     }
-
     forkJoin([
       this.getTeamMembership().pipe(
         switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }))
