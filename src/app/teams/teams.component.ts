@@ -11,6 +11,7 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -35,6 +36,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   isAuthorized = false;
   planetType = this.stateService.configuration.planetType;
   leaveDialog: any;
+  message = '';
+  deleteDialog: any;
 
   constructor(
     private userService: UserService,
@@ -140,9 +143,34 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   archiveTeam(team) {
-    this.teamsService.archiveTeam(team).subscribe(() => {
-      this.planetMessageService.showMessage('You have deleted a team.');
-      this.removeTeamFromTable(team);
+    return {
+      request: this.teamsService.archiveTeam(team),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted a team.');
+        this.removeTeamFromTable(team);
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+    };
+  }
+
+  archiveClick(team) {
+    this.openDeleteDialog(this.archiveTeam(team), 'single', team.name);
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '') {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'team',
+        displayName
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+      this.message = '';
     });
   }
 
