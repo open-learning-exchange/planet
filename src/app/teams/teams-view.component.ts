@@ -17,6 +17,8 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -42,6 +44,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   visits: any = {};
   leader: string;
   planetCode: string;
+  message = '';
+  deleteDialog: any;
 
   constructor(
     private couchService: CouchService,
@@ -287,9 +291,35 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteResource(resource){
+    return {
+      request: this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers())),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage(`${resource.resource.title} removed`);
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+    };
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '') {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'resource',
+        displayName
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+    this.message = '';
+    });
+  }
+
   removeResource(resource) {
-    this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()))
-      .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
+    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.resource.title);
   }
 
   makeLeader(member) {
