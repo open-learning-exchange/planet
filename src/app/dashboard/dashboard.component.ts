@@ -74,7 +74,6 @@ export class DashboardComponent implements OnInit {
     const userShelf = this.userService.shelf;
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
-      return;
     }
 
     forkJoin([
