@@ -214,7 +214,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           filterPredicate: filterSpecificFields([ 'name' ])
         },
-        height: '500px',
+        maxHeight: '500px',
         width: '600px',
         autoFocus: false
       });

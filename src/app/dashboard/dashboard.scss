@@ -99,6 +99,9 @@ $card-width: calc(106px + 2rem);
       .mat-subheading-2 {
         margin: 0;
       }
+      span {
+        white-space: pre;
+      }
     }
     .date {
       grid-area: date;

@@ -131,6 +131,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  archiveTeam(team) {
+    this.teamsService.archiveTeam(team).subscribe(() => {
+      this.planetMessageService.showMessage('You have deleted a team.');
+      this.router.navigate([ '/teams' ]);
+    });
+  }
+
   changeMembership(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
     changeObject.obs.pipe(
@@ -171,7 +178,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   openDialog(data) {
     this.dialogRef = this.dialog.open(DialogsListComponent, {
       data,
-      height: '500px',
+      maxHeight: '500px',
       width: '600px',
       autoFocus: false
     });
@@ -274,7 +281,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       data: {
         okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team)
           .pipe(switchMap(() => this.getMembers())).subscribe(() => dialogRef.close()),
-        excludeIds: this.resources.map(r => r.resource._id),
+        excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: 'teams', linkId: this.teamId, resource
       }
     });
@@ -283,6 +290,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   removeResource(resource) {
     this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()))
       .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
+  }
+
+  makeLeader(member) {
+    const currentLeader = this.members.find(mem => mem.userId === this.leader);
+    this.teamsService.changeTeamLeadership(currentLeader, member)
+    .pipe(
+      switchMap(() => this.getMembers())
+    ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
   }
 
 }

@@ -135,7 +135,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   setFormValues(resource) {
-    this.privateFor = resource.privateFor;
+    this.privateFor = resource.doc.privateFor;
     // If the resource does not have an attachment, disable file downloadable toggle
     this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;

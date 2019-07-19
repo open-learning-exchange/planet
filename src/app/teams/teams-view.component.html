@@ -19,9 +19,12 @@
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
             Add Resources
           </button>
-          <button mat-raised-button color="accent" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n>
-            Leave
-          </button>
+          <ng-container *planetAuthorizedRoles>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="archiveTeam(team)" i18n> Delete</button>
+          </ng-container>
+          <ng-container *ngIf="currentUserId !== leader">
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n> Leave</button>
+          </ng-container>
         </ng-container>
         <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
           <ng-container i18n>Request to Join</ng-container>
@@ -60,7 +63,8 @@
               </mat-card-subtitle>
             </mat-card-header>
             <mat-card-actions>
-              <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="danger">Remove</button>
+              <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="warn">Remove</button>
+              <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-raised-button color="primary">Make Leader</button>
             </mat-card-actions>
           </mat-card>
         </div>
@@ -91,11 +95,12 @@
         <ng-template #resourceList>
           <ul class="request-list">
             <li *ngFor="let resource of resources">
-              <a [routerLink]="'/resources/view/' + resource.resource._id">{{resource.resource.title}}</a>
+              <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">{{resource.resource.title}}</a>
+              <span *ngIf="resource.resource===undefined" i18n-matTooltip matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">{{resource.linkDoc.title}}</span>
               <button type="button" mat-icon-button (click)="removeResource(resource)" color="warn" class="mini-icon-button" matSuffix>
                 <mat-icon>remove_circle</mat-icon>
               </button>
-              <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" class="mini-icon-button" *ngIf="resource.resource.private===true" matSuffix>
+              <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" class="mini-icon-button" *ngIf="resource.resource?.private===true" matSuffix>
                 <mat-icon>edit</mat-icon>
               </button>
             </li>
