@@ -283,9 +283,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           this.dialogsLoadingService.start(),
           this.teamsService.linkResourcesToTeam(resources, this.team)
           .pipe(switchMap(() => this.getMembers())).subscribe(() => {
-            dialogRef.close(),
-            this.dialogsLoadingService.stop()
-          })
+            dialogRef.close();
+            this.dialogsLoadingService.stop();
+          });
         },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: 'teams', linkId: this.teamId, resource
