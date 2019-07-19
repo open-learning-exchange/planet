@@ -138,9 +138,10 @@ export class TeamsService {
     const typeObj = withAllLinks ? {} : { docType: 'membership' };
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
-      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0))
-    ]).pipe(map(([ membershipDocs, shelves ]) => [
-      ...membershipDocs,
+      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
+      this.couchService.findAll('_users')
+    ]).pipe(map(([ membershipDocs, shelves, users ]) => [
+      ...membershipDocs.map(doc => ({ ...doc, userDoc: users.find(user => user._id === doc.userId) })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));
   }
