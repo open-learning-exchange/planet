@@ -127,14 +127,14 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  openLeaveDialog(team, leaveTeam) {
+  openLeaveDialog(team) {
     this.leaveDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.toggleMembership(team, leaveTeam),
+          request: this.toggleMembership(team, true),
           onNext: () => {
             this.leaveDialog.close();
-            const msg = leaveTeam ? 'left' : 'joined';
+            const msg = 'left';
             if (this.team.status === 'archived') {
               this.router.navigate([ '/teams' ]);
             }
