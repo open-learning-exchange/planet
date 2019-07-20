@@ -97,7 +97,7 @@
             <mat-card *ngFor="let course of team?.courses">
               <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
               <mat-card-actions>
-                <button mat-raised-button color="warn" i18n>Remove</button>
+                <button mat-raised-button color="warn" (click)="team?.courses.splice(i, 1)" i18n>Remove</button>
               </mat-card-actions>
             </mat-card>
           </ng-template>
