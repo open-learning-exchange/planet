@@ -280,7 +280,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       width: '80vw',
       data: {
         okClick: (resources: any[]) => {
-          this.dialogsLoadingService.start(),
           this.teamsService.linkResourcesToTeam(resources, this.team)
           .pipe(switchMap(() => this.getMembers())).subscribe(() => {
             dialogRef.close();

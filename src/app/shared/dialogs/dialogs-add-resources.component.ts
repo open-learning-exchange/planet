@@ -2,6 +2,7 @@ import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
+import { DialogsLoadingService } from './dialogs-loading.service';
 
 @Component({
   templateUrl: 'dialogs-add-resources.component.html'
@@ -17,7 +18,8 @@ export class DialogsAddResourcesComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
@@ -28,6 +30,7 @@ export class DialogsAddResourcesComponent {
   }
 
   ok() {
+    this.dialogsLoadingService.start();
     switch (this.view) {
       case 'resources':
         this.addExistingResources();
