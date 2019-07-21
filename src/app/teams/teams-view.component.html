@@ -36,12 +36,12 @@
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
       </mat-tab>
-      <mat-tab i18n-label label="Description">
+      <mat-tab i18n-label label="Plan">
         <td-markdown *ngIf="team?.description; else emptyText">{{ team?.description }}</td-markdown>
         <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
-          <p i18n>The team has no description.</p>
-          <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Description</button>
+          <p i18n>The team has no plan.</p>
+          <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Plan</button>
         </ng-template>
       </mat-tab>
       <mat-tab>
