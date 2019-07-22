@@ -20,6 +20,10 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
       max-width: 150px;
       padding-right: 0.5rem;
     }
+    .mat-column-createdDate {
+      max-width: 180px;
+      padding-right: 0.5rem;
+    }
   ` ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
