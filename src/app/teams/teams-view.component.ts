@@ -18,8 +18,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './teams-view.component.html',
