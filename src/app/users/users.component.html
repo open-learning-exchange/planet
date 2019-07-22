@@ -107,7 +107,7 @@
             <ng-container *ngFor="let role of element.doc.roles; index as i">
               <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
                 {{role}}
-                <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && role !== 'learner'">cancel</mat-icon>
+                <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
               </mat-chip>
             </ng-container>
             <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
