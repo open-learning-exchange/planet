@@ -5,11 +5,6 @@
   @include left-right-grid-areas;
 
   .view-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-areas: "lt rt";
-    grid-column-gap: 0.5rem;
-
     mat-card {
       margin: 0.25rem;
     }

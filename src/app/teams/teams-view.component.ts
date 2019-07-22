@@ -37,7 +37,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   news: any[] = [];
   resources: any[] = [];
-  leftTileContent: 'description' | 'news';
   isRoot = true;
   visits: any = {};
   leader: string;
@@ -110,7 +109,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    this.leftTileContent = this.userStatus === 'member' ? 'news' : 'description';
   }
 
   toggleMembership(team, leaveTeam) {
@@ -269,10 +267,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }, 'Message has been posted successfully')
     .pipe(switchMap(() => this.sendNotifications('message')))
     .pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
-  }
-
-  changeLeftTile() {
-    this.leftTileContent = this.leftTileContent === 'news' ? 'description' : 'news';
   }
 
   openResourcesDialog(resource?) {
