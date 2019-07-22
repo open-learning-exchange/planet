@@ -90,7 +90,7 @@ export class DashboardComponent implements OnInit {
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
       this.data.myTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ]
-                            .filter(team => team.status !== 'archived');
+        .filter(team => team.status !== 'archived');
     });
   }
 
