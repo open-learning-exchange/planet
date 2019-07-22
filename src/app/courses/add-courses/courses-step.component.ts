@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-courses-step',
@@ -30,6 +31,7 @@ export class CoursesStepComponent implements OnDestroy {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.stepForm = this.fb.group({
       id: '',
@@ -71,6 +73,7 @@ export class CoursesStepComponent implements OnDestroy {
     ];
     this.activeStep = this.steps[this.activeStepIndex];
     this.stepsChange.emit(this.steps);
+    this.dialogsLoadingService.stop();
     this.dialogRef.close();
   }
 
