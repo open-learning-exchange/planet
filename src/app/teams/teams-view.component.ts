@@ -42,6 +42,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   visits: any = {};
   leader: string;
   planetCode: string;
+  deleteDialog: any;
   leaveDialog: any;
   message = '';
   deleteDialog: any;
@@ -321,9 +322,26 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  openRemoveResourceDialog(resource) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.removeResource(resource),
+          onNext: () => {
+            this.deleteDialog.close();
+            this.planetMessageService.showMessage(`${resource.resource.title} removed`);
+          },
+          onError: () => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+        },
+        changeType: 'remove',
+        type: 'resource',
+        displayName: resource.resource.title
+      }
+    });
+  }
+
   removeResource(resource) {
-    this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()))
-      .subscribe(() => this.planetMessageService.showMessage(`${resource.resource.title} removed`));
+    return this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()));
   }
 
   makeLeader(member) {
