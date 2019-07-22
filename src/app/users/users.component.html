@@ -103,7 +103,7 @@
         <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <mat-chip-list>
-            <mat-chip i18n>learner</mat-chip>
+            <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>learner</mat-chip>
             <ng-container *ngFor="let role of element.doc.roles; index as i">
               <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
                 {{role}}
