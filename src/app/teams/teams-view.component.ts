@@ -44,7 +44,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   visits: any = {};
   leader: string;
   planetCode: string;
-  message = '';
   deleteDialog: any;
 
   constructor(
@@ -291,35 +290,26 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteResource(resource) {
-    return {
-      request: this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers())),
-      onNext: () => {
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage(`${resource.resource.title} removed`);
-      },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this resource.')
-    };
-  }
-
-  openDeleteDialog(okClick, amount, displayName = '') {
+  openRemoveResourceDialog(resource) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick,
-        amount,
-        changeType: 'delete',
+        okClick: {
+          request: this.removeResource(resource),
+          onNext: () => {
+            this.deleteDialog.close();
+            this.planetMessageService.showMessage(`${resource.resource.title} removed`);
+          },
+          onError: () => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+        },
+        changeType: 'remove',
         type: 'resource',
-        displayName
+        displayName: resource.resource.title
       }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-    this.message = '';
     });
   }
 
   removeResource(resource) {
-    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.resource.title);
+    return this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()));
   }
 
   makeLeader(member) {
