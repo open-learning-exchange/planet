@@ -43,6 +43,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   leader: string;
   planetCode: string;
   leaveDialog: any;
+  message = '';
+  deleteDialog: any;
 
   constructor(
     private couchService: CouchService,
@@ -147,9 +149,25 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   archiveTeam(team) {
-    this.teamsService.archiveTeam(team).subscribe(() => {
-      this.planetMessageService.showMessage('You have deleted a team.');
-      this.router.navigate([ '/teams' ]);
+    return {
+      request: this.teamsService.archiveTeam(team),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted a team.');
+        this.router.navigate([ '/teams' ]);
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+    };
+  }
+
+  archiveClick(team) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.archiveTeam(team),
+        changeType: 'delete',
+        type: 'team',
+        displayName: team.name
+      }
     });
   }
 
