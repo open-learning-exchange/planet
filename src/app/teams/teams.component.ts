@@ -108,7 +108,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleMembership(team, membershipDoc) {
+  leaveTeam(team, membershipDoc) {
     return this.teamsService.toggleTeamMembership(
       team, true, membershipDoc
     ).pipe(
@@ -124,7 +124,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.leaveDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.toggleMembership(team, membershipDoc),
+          request: this.leaveTeam(team, membershipDoc),
           onNext: () => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
