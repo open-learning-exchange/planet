@@ -9,7 +9,7 @@ export class MyPlanetTableComponent implements OnChanges, AfterViewInit {
 
   @Input() data = [];
   myPlanets = new MatTableDataSource();
-  displayedColumns = [ 'id', 'name', 'lastSynced', 'version', 'totalSynced' ];
+  displayedColumns = [ 'id', 'name', 'lastSynced', 'version', 'count' ];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
