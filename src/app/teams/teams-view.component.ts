@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
@@ -41,6 +42,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   visits: any = {};
   leader: string;
   planetCode: string;
+  leaveDialog: any;
 
   constructor(
     private couchService: CouchService,
@@ -112,7 +114,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(
+    return this.teamsService.toggleTeamMembership(
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
@@ -120,12 +122,27 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.team = newTeam;
         return this.getMembers();
       })
-    ).subscribe(() => {
-      const msg = leaveTeam ? 'left' : 'joined';
-      if (this.team.status === 'archived') {
-        this.router.navigate([ '/teams' ]);
+    );
+  }
+
+  openLeaveDialog(team) {
+    this.leaveDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.toggleMembership(team, true),
+          onNext: () => {
+            this.leaveDialog.close();
+            const msg = 'left';
+            if (this.team.status === 'archived') {
+              this.router.navigate([ '/teams' ]);
+            }
+            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
+          },
+        },
+        changeType: 'leave',
+        type: 'team',
+        displayName: team.name
       }
-      this.planetMessageService.showMessage('You have ' + msg + ' team');
     });
   }
 

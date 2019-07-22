@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -10,6 +10,7 @@ import { filterSpecificFields, sortNumberOrString } from '../shared/table-helper
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -33,6 +34,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   user = this.userService.get();
   isAuthorized = false;
   planetType = this.stateService.configuration.planetType;
+  leaveDialog: any;
 
   constructor(
     private userService: UserService,
@@ -41,6 +43,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private teamsService: TeamsService,
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog,
     private stateService: StateService
   ) {
     this.dialogsLoadingService.start();
@@ -105,19 +108,34 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleMembership(team, leaveTeam, membershipDoc) {
-    this.teamsService.toggleTeamMembership(
-      team, leaveTeam, membershipDoc
+  leaveTeam(team, membershipDoc) {
+    return this.teamsService.toggleTeamMembership(
+      team, true, membershipDoc
     ).pipe(
       switchMap((newTeam: any) => {
         if (newTeam.status === 'archived') {
           this.removeTeamFromTable(team);
         }
         return this.getMembershipStatus();
-    })).subscribe(() => {
-      this.teams.data = this.teamList(this.teams.data);
-      const msg = leaveTeam ? 'left' : 'joined';
-      this.planetMessageService.showMessage('You have ' + msg + ' team.');
+    }));
+  }
+
+  openLeaveDialog(team, membershipDoc) {
+    this.leaveDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.leaveTeam(team, membershipDoc),
+          onNext: () => {
+            this.leaveDialog.close();
+            this.teams.data = this.teamList(this.teams.data);
+            const msg = 'left';
+            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
+          },
+        },
+        changeType: 'leave',
+        type: 'team',
+        displayName: team.name
+      }
     });
   }
 

@@ -53,7 +53,7 @@
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <ng-container *ngIf="!element.isLeader">
-                <button mat-raised-button color="primary" class="margin-lr-3" (click)="toggleMembership(element.doc, true, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
+                <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
               </ng-container>
               <button mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n><mat-icon>edit</mat-icon> Edit</button>
             </ng-container>
