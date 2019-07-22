@@ -18,7 +18,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
-import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -162,22 +161,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   archiveClick(team) {
-    this.openDeleteDialog(this.archiveTeam(team), 'single', team.name);
-  }
-
-  openDeleteDialog(okClick, amount, displayName = '') {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick,
-        amount,
+        okClick: this.archiveTeam(team),
         changeType: 'delete',
         type: 'team',
-        displayName
+        displayName: team.name
       }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
     });
   }
 

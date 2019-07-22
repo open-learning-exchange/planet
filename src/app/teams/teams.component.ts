@@ -11,7 +11,6 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { debug } from '../debug-operator';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -155,22 +154,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   archiveClick(team) {
-    this.openDeleteDialog(this.archiveTeam(team), 'single', team.name);
-  }
-
-  openDeleteDialog(okClick, amount, displayName = '') {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick,
-        amount,
+        okClick: this.archiveTeam(team),
         changeType: 'delete',
         type: 'team',
-        displayName
+        displayName: team.name
       }
-    });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
     });
   }
 
