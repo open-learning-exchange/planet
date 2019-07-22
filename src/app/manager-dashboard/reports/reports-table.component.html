@@ -1,5 +1,5 @@
 <mat-table #table [dataSource]="logs" matSort>
-  <ng-container matColumnDef="name">
+  <ng-container matColumnDef="planetName">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element"><a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a></mat-cell>
   </ng-container>

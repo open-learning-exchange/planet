@@ -139,6 +139,8 @@ export const commonSortingDataAccessor = (item: any, property: string) => {
   switch (property) {
     case 'rating':
       return item.rating.rateSum / item.rating.totalRating || 0;
+    case 'planetName':
+      return item.nameDoc ? sortNumberOrString(item.nameDoc, 'name') : sortNumberOrString(item.doc, 'name');
     default:
       return item[property] ? sortNumberOrString(item, property) : sortNumberOrString(item.doc, property);
   }
